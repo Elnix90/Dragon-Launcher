@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.ui
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -95,6 +96,8 @@ fun SettingsScreen(onBack: () -> Unit) {
     var center by remember { mutableStateOf(Offset.Zero) }
 
     val points: SnapshotStateList<UiSwipePoint> = remember { mutableStateListOf() }
+    var selectedPointId by remember { mutableStateOf<String?>(null) }
+
 
     var showAddDialog by remember { mutableStateOf(false) }
 
@@ -144,6 +147,10 @@ fun SettingsScreen(onBack: () -> Unit) {
             )
         }
 
+        points.forEach {
+            Text(it.toString(), color = actionColor(it.action))
+        }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -173,7 +180,7 @@ fun SettingsScreen(onBack: () -> Unit) {
 
                         drawCircle(
                             color = actionColor(p.action),
-                            radius = POINT_RADIUS_PX + if(p.isSelected) 5 else 0,
+                            radius = POINT_RADIUS_PX + if (p.id == selectedPointId) 5 else 0,
                             center = Offset(px, py)
                         )
                         drawCircle(
@@ -207,27 +214,51 @@ fun SettingsScreen(onBack: () -> Unit) {
                                     }
                                 }
 
-                                points.forEach { it.isSelected = false }
-                                if (best <= TOUCH_THRESHOLD_PX) closest?.isSelected = true
+                                selectedPointId = if (best <= TOUCH_THRESHOLD_PX) {
+                                    closest?.id
+                                } else {
+                                    null
+                                }
                             },
                             onDrag = { change, _ ->
                                 change.consume()
-                                val selected = points.find { it.isSelected } ?: return@detectDragGestures
+                                val selected = points.find { it.id == selectedPointId } ?: return@detectDragGestures
 
                                 val dx = change.position.x - center.x
                                 val dy = center.y - change.position.y
                                 var angle = Math.toDegrees(atan2(dx.toDouble(), dy.toDouble()))
                                 if (angle < 0) angle += 360.0
 
-                                val index = points.indexOf(selected)
-                                if (index >= 0) {
-                                    points[index] = selected.copy(angleDeg = angle)
+                                val idx = points.indexOf(selected)
+                                if (idx >= 0) {
+                                    points[idx] = selected.copy(angleDeg = angle)
                                 }
                                 recomposeTrigger++
                             },
                             onDragEnd = {
-                                points.forEach { it.isSelected = false }
                                 autoSeparate(points)
+                                selectedPointId = null
+                            }
+                        )
+                    }
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onTap = { offset ->
+                                // check if tapped on a point
+                                var tapped: UiSwipePoint? = null
+                                var d = Float.MAX_VALUE
+
+                                points.forEach { p ->
+                                    val px = center.x + radius * sin(Math.toRadians(p.angleDeg)).toFloat()
+                                    val py = center.y - radius * cos(Math.toRadians(p.angleDeg)).toFloat()
+                                    val dist = hypot(offset.x - px, offset.y - py)
+                                    if (dist < d) {
+                                        d = dist
+                                        tapped = p
+                                    }
+                                }
+
+                                selectedPointId = if (d <= TOUCH_THRESHOLD_PX) tapped?.id else null
                             }
                         )
                     }
@@ -243,9 +274,16 @@ fun SettingsScreen(onBack: () -> Unit) {
                 Text("Add point")
             }
 
-            Button(onClick = {
-                if (points.isNotEmpty()) points.removeAt(points.lastIndex)
-            }) {
+
+            Button(
+                enabled = selectedPointId != null,
+                onClick = {
+                    val id = selectedPointId ?: return@Button
+                    val index = points.indexOfFirst { it.id == id }
+                    if (index >= 0) points.removeAt(index)
+                    selectedPointId = null
+                }
+            ) {
                 Text("Remove point")
             }
         }

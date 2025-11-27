@@ -7,9 +7,14 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.R
 import org.elnix.dragonlauncher.data.SwipeActionSerializable
 
 @Composable
@@ -17,12 +22,18 @@ fun AddPointDialog(
     onDismiss: () -> Unit,
     onActionSelected: (SwipeActionSerializable) -> Unit
 ) {
+    var showAppPicker by remember { mutableStateOf(false) }
+    var showUrlInput by remember { mutableStateOf(false) }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {},
         title = { Text("Choose action") },
         text = {
             Column {
+                Button(onClick = { showAppPicker = true }) {
+                    Text("Open App")
+                }
 
                 Button(onClick = {
                     onActionSelected(SwipeActionSerializable.OpenAppDrawer)
@@ -36,21 +47,31 @@ fun AddPointDialog(
                     onActionSelected(SwipeActionSerializable.ControlPanel)
                 }) { Text("Control Panel") }
 
-                Spacer(Modifier.height(12.dp))
-
-                // Example: URL
-                Button(onClick = {
-                    onActionSelected(SwipeActionSerializable.OpenUrl("https://www.google.com"))
-                }) { Text("Open URL") }
-
-                Spacer(Modifier.height(12.dp))
-
-                // Example: App picker (you can replace with real picker later)
-                Button(onClick = {
-                    onActionSelected(SwipeActionSerializable.LaunchApp("com.android.chrome"))
-                }) { Text("Launch Chrome") }
+                Button(onClick = { showUrlInput = true }) {
+                    Text("Open URL")
+                }
             }
         },
-        containerColor = Color.Black,
+        containerColor = Color(R.color.surface)
     )
+
+    if (showAppPicker) {
+        AppPickerDialog(
+            onDismiss = { showAppPicker = false },
+            onAppSelected = {
+                onActionSelected(it)
+                showAppPicker = false
+            }
+        )
+    }
+
+    if (showUrlInput) {
+        UrlInputDialog(
+            onDismiss = { showUrlInput = false },
+            onUrlSelected = {
+                onActionSelected(it)
+                showUrlInput = false
+            }
+        )
+    }
 }
