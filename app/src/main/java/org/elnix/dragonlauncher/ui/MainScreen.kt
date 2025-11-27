@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -41,6 +42,8 @@ fun MainScreen(
     val hold = RememberHoldToOpenSettings(
         onSettings = onLongPress3Sec
     )
+
+    BackHandler { }
 
     Box(
         modifier = Modifier
