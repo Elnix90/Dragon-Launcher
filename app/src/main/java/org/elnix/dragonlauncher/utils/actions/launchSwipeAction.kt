@@ -13,7 +13,12 @@ import org.elnix.dragonlauncher.services.SystemControl
 class AppLaunchException(message: String, cause: Throwable? = null) : Exception(message, cause)
 
 
-fun launchSwipeAction(ctx: Context, action: SwipeActionSerializable?, onAppDrawer: () -> Unit) {
+fun launchSwipeAction(
+    ctx: Context,
+    action: SwipeActionSerializable?,
+    onAppSettings: (() -> Unit)? = null,
+    onAppDrawer: (() -> Unit)? = null
+) {
     if (action == null) return
 
     when (action) {
@@ -51,7 +56,9 @@ fun launchSwipeAction(ctx: Context, action: SwipeActionSerializable?, onAppDrawe
         }
 
         SwipeActionSerializable.OpenAppDrawer -> {
-            onAppDrawer()
+            onAppDrawer?.invoke()
         }
+
+        SwipeActionSerializable.OpenDragonLauncherSettings -> onAppSettings?.invoke()
     }
 }

@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.ui.helpers
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -57,6 +58,6 @@ fun UrlInputDialog(
         dismissButton = {
             Button(onClick = onDismiss) { Text("Cancel") }
         },
-        containerColor = Color(R.color.surface)
+        containerColor = MaterialTheme.colorScheme.surface
     )
 }

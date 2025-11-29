@@ -110,7 +110,7 @@ fun AppDrawerScreen(
                 AppItem(
                     app = app,
                     showIcons = showIcons,
-                    onClick = { launchSwipeAction(ctx, app.action) {} },
+                    onClick = { launchSwipeAction(ctx, app.action) },
                     onLongClick = { dialogApp = app }
                 )
             }
@@ -125,7 +125,7 @@ fun AppDrawerScreen(
                 dialogApp = null
             },
             onOpen = {
-                launchSwipeAction(ctx, app.action) { }
+                launchSwipeAction(ctx, app.action)
             },
             onSettings = {
                 val i = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {

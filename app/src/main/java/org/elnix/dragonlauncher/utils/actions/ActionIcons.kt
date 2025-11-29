@@ -45,36 +45,11 @@ fun actionIcon(action: SwipeActionSerializable): Painter {
 
         SwipeActionSerializable.OpenAppDrawer ->
             painterResource(R.drawable.ic_action_drawer)
+
+        SwipeActionSerializable.OpenDragonLauncherSettings -> painterResource(R.drawable.dragon_launcher_foreground)
     }
 }
 
-
-//fun actionIconBitmap(action: SwipeActionSerializable, context: Context): ImageBitmap {
-//
-//
-//    return when (action) {
-//        is SwipeActionSerializable.LaunchApp -> {
-//            try {
-//                val drawable = pm.getApplicationIcon(action.packageName)
-//                drawable.toBitmap(48, 48).asImageBitmap()
-//            } catch (e: Exception) {
-//                vectorToBitmap(context, R.drawable.ic_app_default)
-//            }
-//        }
-//
-//        is SwipeActionSerializable.OpenUrl ->
-//            vectorToBitmap(context, R.drawable.ic_action_web)
-//
-//        SwipeActionSerializable.NotificationShade ->
-//            vectorToBitmap(context, R.drawable.ic_action_notification)
-//
-//        SwipeActionSerializable.ControlPanel ->
-//            vectorToBitmap(context, R.drawable.ic_action_grid)
-//
-//        SwipeActionSerializable.OpenAppDrawer ->
-//            vectorToBitmap(context, R.drawable.ic_action_drawer)
-//    }
-//}
 
 fun actionIconBitmap(
     action: SwipeActionSerializable,
@@ -82,7 +57,7 @@ fun actionIconBitmap(
     tintColor: Color // Add this!
 ): ImageBitmap {
     val bitmap = createUntintedBitmap(action, context)
-    return if (action is SwipeActionSerializable.LaunchApp) {
+    return if (action is SwipeActionSerializable.LaunchApp || action is SwipeActionSerializable.OpenDragonLauncherSettings) {
         bitmap
     } else {
         tintBitmap(bitmap, tintColor)
@@ -92,27 +67,30 @@ fun actionIconBitmap(
 private fun createUntintedBitmap(action: SwipeActionSerializable, context: Context): ImageBitmap {
     return when (action) {
         is SwipeActionSerializable.LaunchApp -> {
-            try {
-                val drawable = context.packageManager.getApplicationIcon(action.packageName)
-                drawable.toBitmap(48, 48).asImageBitmap()
-            } catch (_: Exception) {
-                vectorToBitmap(context, R.drawable.ic_app_default)
-            }
+            loadDrawableAsBitmap(
+                context.packageManager.getApplicationIcon(action.packageName),
+                48,
+                48
+            )
         }
 
         is SwipeActionSerializable.OpenUrl ->
-            vectorToBitmap(context, R.drawable.ic_action_web)
+            loadDrawableResAsBitmap(context, R.drawable.ic_action_web)
 
         SwipeActionSerializable.NotificationShade ->
-            vectorToBitmap(context, R.drawable.ic_action_notification)
+            loadDrawableResAsBitmap(context, R.drawable.ic_action_notification)
 
         SwipeActionSerializable.ControlPanel ->
-            vectorToBitmap(context, R.drawable.ic_action_grid)
+            loadDrawableResAsBitmap(context, R.drawable.ic_action_grid)
 
         SwipeActionSerializable.OpenAppDrawer ->
-            vectorToBitmap(context, R.drawable.ic_action_drawer)
+            loadDrawableResAsBitmap(context, R.drawable.ic_action_drawer)
+
+        SwipeActionSerializable.OpenDragonLauncherSettings ->
+            loadDrawableResAsBitmap(context, R.drawable.dragon_launcher_foreground)
     }
 }
+
 
 private fun tintBitmap(original: ImageBitmap, color: Color): ImageBitmap {
     val bitmap = Bitmap.createBitmap(
@@ -138,16 +116,29 @@ private fun createDefaultBitmap(): ImageBitmap {
     return bitmap.asImageBitmap()
 }
 
-private fun vectorToBitmap(context: Context, drawableResId: Int): ImageBitmap {
-    val drawable = ContextCompat.getDrawable(context, drawableResId) ?: return createDefaultBitmap()
 
-    // Create fixed-size bitmap (48x48 for icons)
-    val bitmap = Bitmap.createBitmap(48, 48, Bitmap.Config.ARGB_8888)
-    val canvas = Canvas(bitmap)
+private fun loadDrawableResAsBitmap(context: Context, resId: Int): ImageBitmap {
+    val drawable = ContextCompat.getDrawable(context, resId)
+        ?: return createDefaultBitmap()
 
-    // Scale vector to fit bitmap
-    drawable.setBounds(0, 0, canvas.width, canvas.height)
-    drawable.draw(canvas)
+    return loadDrawableAsBitmap(drawable, 48, 48)
+}
 
-    return bitmap.asImageBitmap()
+@Suppress("SameParameterValue")
+private fun loadDrawableAsBitmap(
+    drawable: android.graphics.drawable.Drawable,
+    width: Int,
+    height: Int
+): ImageBitmap {
+    // Adaptive icon support
+    val bmp = if (drawable is android.graphics.drawable.AdaptiveIconDrawable) {
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        bitmap
+    } else {
+        drawable.toBitmap(width, height)
+    }
+    return bmp.asImageBitmap()
 }

@@ -19,6 +19,7 @@ sealed class SwipeActionSerializable {
     object NotificationShade : SwipeActionSerializable()
     object ControlPanel : SwipeActionSerializable()
     object OpenAppDrawer : SwipeActionSerializable()
+    object  OpenDragonLauncherSettings: SwipeActionSerializable()
 }
 
 // Gson type adapter for sealed class
@@ -39,9 +40,10 @@ class SwipeActionAdapter : JsonSerializer<SwipeActionSerializable>, JsonDeserial
                 obj.addProperty("type", "OpenUrl")
                 obj.addProperty("url", src.url)
             }
-            is SwipeActionSerializable.NotificationShade -> obj.addProperty("type", "NotificationShade")
-            is SwipeActionSerializable.ControlPanel -> obj.addProperty("type", "ControlPanel")
-            is SwipeActionSerializable.OpenAppDrawer -> obj.addProperty("type", "OpenAppDrawer")
+            SwipeActionSerializable.NotificationShade -> obj.addProperty("type", "NotificationShade")
+            SwipeActionSerializable.ControlPanel -> obj.addProperty("type", "ControlPanel")
+            SwipeActionSerializable.OpenAppDrawer -> obj.addProperty("type", "OpenAppDrawer")
+            SwipeActionSerializable.OpenDragonLauncherSettings -> obj.addProperty("type", "OpenDragonLauncherSettings")
         }
         return obj
     }
@@ -59,6 +61,7 @@ class SwipeActionAdapter : JsonSerializer<SwipeActionSerializable>, JsonDeserial
             "NotificationShade" -> SwipeActionSerializable.NotificationShade
             "ControlPanel" -> SwipeActionSerializable.ControlPanel
             "OpenAppDrawer" -> SwipeActionSerializable.OpenAppDrawer
+            "OpenDragonLauncherSettings" -> SwipeActionSerializable.OpenDragonLauncherSettings
             else -> null
         }
     }

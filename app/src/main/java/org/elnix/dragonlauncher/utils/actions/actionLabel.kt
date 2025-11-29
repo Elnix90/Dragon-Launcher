@@ -32,5 +32,8 @@ fun actionLabel(action: SwipeActionSerializable): String {
 
         SwipeActionSerializable.OpenAppDrawer ->
             "App Drawer"
+
+        SwipeActionSerializable.OpenDragonLauncherSettings ->
+            "Dragon Launcher Settings"
     }
 }

@@ -33,11 +33,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.atan2
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import org.elnix.dragonlauncher.data.SwipeActionSerializable
 import org.elnix.dragonlauncher.data.SwipePointSerializable
 import org.elnix.dragonlauncher.data.datastore.SettingsStore
 import org.elnix.dragonlauncher.utils.actions.actionColor
 import org.elnix.dragonlauncher.utils.actions.actionIcon
+import org.elnix.dragonlauncher.utils.actions.actionIconBitmap
 import org.elnix.dragonlauncher.utils.actions.actionLabel
 import kotlin.math.cos
 import kotlin.math.hypot
@@ -102,6 +104,7 @@ fun MainScreenOverlay(
 
             cumulativeAngle += adjustedDiff
         }
+        @Suppress("AssignedValueIsNeverRead")
         lastAngle = angle0to360
 
         lineColor = if (angleLineColor != null) angleLineColor!!
@@ -128,7 +131,6 @@ fun MainScreenOverlay(
     // Distance thresholds for 3 circles
     val circleR1 = 400f
     val circleR2 = 700f
-    val circleR3 = 1300f
 
     // Safe zone = dragging returns close to origin → cancel
     val cancelZone = 150f
@@ -176,6 +178,7 @@ fun MainScreenOverlay(
             }
             hoveredAction = null
             currentAction = null
+            @Suppress("AssignedValueIsNeverRead")
             bannerVisible = false
         }
     }
@@ -305,18 +308,21 @@ fun MainScreenOverlay(
                         val py = start.y -
                                 radius * cos(Math.toRadians(point.angleDeg)).toFloat()
 
-                        // draw outer colored point
-                        drawCircle(
-                            color = actionColor(action),
-                            radius = 30f,      // POINT_RADIUS_PX
-                            center = Offset(px, py)
-                        )
-
                         // draw inner black circle
                         drawCircle(
                             color = Color.Black,
-                            radius = 30f - 4f,
+                            radius = 40f,
                             center = Offset(px, py)
+                        )
+
+                        drawImage(
+                            image = actionIconBitmap(
+                                action = action,
+                                context = ctx,
+                                tintColor = actionColor(action)
+                            ),
+                            dstOffset = IntOffset(px.toInt() - 28, py.toInt() - 28),
+                            dstSize = IntSize(56, 56)
                         )
                     }
                 }
@@ -360,6 +366,6 @@ fun MainScreenOverlay(
 
 fun actionTint(action: SwipeActionSerializable): Color =
     when (action) {
-        is SwipeActionSerializable.LaunchApp -> Color.Unspecified
+        is SwipeActionSerializable.LaunchApp, SwipeActionSerializable.OpenDragonLauncherSettings  -> Color.Unspecified
         else -> actionColor(action)
     }

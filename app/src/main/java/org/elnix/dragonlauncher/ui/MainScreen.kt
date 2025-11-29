@@ -116,7 +116,14 @@ fun MainScreen(
             isDragging = isDragging,
             surface = size,
             points =points,
-            onLaunch = { launchSwipeAction(ctx, it) { onAppDrawer() } }
+            onLaunch = {
+                launchSwipeAction(
+                    ctx = ctx,
+                    action = it,
+                    onAppSettings = onLongPress3Sec,
+                    onAppDrawer = onAppDrawer
+                )
+            }
         )
 
         HoldToActivateArc(
