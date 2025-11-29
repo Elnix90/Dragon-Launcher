@@ -57,7 +57,7 @@ fun MainScreenOverlay(
     val rgbLine by SettingsStore.getRGBLine(ctx)
         .collectAsState(initial = true)
     val debugInfos by SettingsStore.getDebugInfos(ctx)
-        .collectAsState(initial = true)
+        .collectAsState(initial = false)
     val angleLineColor by SettingsStore.getAngleLineColor(ctx)
         .collectAsState(initial = null)
     val showLaunchingAppLabel by SettingsStore.getShowLaunchingAppLabel(ctx)

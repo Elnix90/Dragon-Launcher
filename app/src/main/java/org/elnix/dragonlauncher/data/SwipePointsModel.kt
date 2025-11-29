@@ -11,6 +11,6 @@ data class UiCircle(
 data class UiSwipePoint(
     val id: String,
     var angleDeg: Double,
-    var action: SwipeActionSerializable?,
+    var action: SwipeActionSerializable,
     var circleNumber: Int
 )

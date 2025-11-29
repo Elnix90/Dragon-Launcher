@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
@@ -41,14 +40,18 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.distinctUntilChanged
+import org.elnix.dragonlauncher.data.SwipeActionSerializable
 import org.elnix.dragonlauncher.data.SwipePointSerializable
 import org.elnix.dragonlauncher.data.UiCircle
 import org.elnix.dragonlauncher.data.UiSwipePoint
 import org.elnix.dragonlauncher.data.datastore.SwipeDataStore
 import org.elnix.dragonlauncher.ui.helpers.AddPointDialog
 import org.elnix.dragonlauncher.utils.actions.actionColor
+import org.elnix.dragonlauncher.utils.actions.actionIconBitmap
 import org.elnix.dragonlauncher.utils.circles.autoSeparate
 import org.elnix.dragonlauncher.utils.circles.randomFreeAngle
 import org.elnix.dragonlauncher.utils.circles.updatePointPosition
@@ -59,7 +62,7 @@ import kotlin.math.sin
 
 // Config
 const val MIN_ANGLE_GAP = 18.0
-private const val POINT_RADIUS_PX = 30f
+private const val POINT_RADIUS_PX = 40f
 private const val TOUCH_THRESHOLD_PX = 100f
 
 
@@ -88,7 +91,7 @@ fun SettingsScreen(
             UiSwipePoint(
                 it.id ?: UUID.randomUUID().toString(),
                 it.angleDeg,
-                it.action,
+                it.action ?: SwipeActionSerializable.ControlPanel,
                 it.circleNumber
             )
         })
@@ -139,7 +142,7 @@ fun SettingsScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(WindowInsets.systemBars.asPaddingValues())
-            .imePadding()
+            .padding(20.dp)
     ) {
 
         Row(
@@ -163,9 +166,7 @@ fun SettingsScreen(
                 .onSizeChanged { center = Offset(it.width / 2f, it.height / 2f) }
         ) {
 
-            // --------------------------
-            // DRAWING (REWRITTEN)
-            // --------------------------
+
             key(recomposeTrigger) {
                 Canvas(Modifier.fillMaxSize()) {
 
@@ -185,15 +186,24 @@ fun SettingsScreen(
                         val px = center.x + circle.radius * sin(Math.toRadians(p.angleDeg)).toFloat()
                         val py = center.y - circle.radius * cos(Math.toRadians(p.angleDeg)).toFloat()
 
+//                        drawCircle(
+//                            color = actionColor(p.action),
+//                            radius = POINT_RADIUS_PX,
+//                            center = Offset(px, py)
+//                        )
                         drawCircle(
-                            color = actionColor(p.action),
+                            color = Color.Black,
                             radius = POINT_RADIUS_PX,
                             center = Offset(px, py)
                         )
-                        drawCircle(
-                            color = Color.Black,
-                            radius = POINT_RADIUS_PX - 4,
-                            center = Offset(px, py)
+                        drawImage(
+                            image = actionIconBitmap(
+                                action = p.action,
+                                context = ctx,
+                                tintColor = actionColor(p.action)
+                            ),
+                            dstOffset = IntOffset(px.toInt() - 28, py.toInt() - 28),
+                            dstSize = IntSize(56, 56)
                         )
                     }
 
@@ -211,17 +221,23 @@ fun SettingsScreen(
                         )
                         drawCircle(
                             color = Color.Black,
-                            radius = POINT_RADIUS_PX - 4,
+                            radius = POINT_RADIUS_PX - 2,
                             center = Offset(px, py)
+                        )
+                        drawImage(
+                            image = actionIconBitmap(
+                                action = p.action,
+                                context = ctx,
+                                tintColor = actionColor(p.action)
+                            ),
+                            dstOffset = IntOffset(px.toInt() - 28, py.toInt() - 28),
+                            dstSize = IntSize(56, 56)
                         )
                     }
                 }
             }
 
 
-            // --------------------------
-            // DRAG / TAP HANDLING (UPDATED FOR MULTI-CIRCLE)
-            // --------------------------
             Box(
                 Modifier
                     .matchParentSize()
