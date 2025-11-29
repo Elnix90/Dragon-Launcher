@@ -1,10 +1,11 @@
-package org.elnix.dragonlauncher.ui.utils.circles
+package org.elnix.dragonlauncher.utils.circles
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.geometry.Offset
 import org.elnix.dragonlauncher.data.UiCircle
 import org.elnix.dragonlauncher.data.UiSwipePoint
 import kotlin.collections.find
+import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.hypot
 
@@ -25,7 +26,7 @@ fun updatePointPosition(
 
     // 3. Find circle whose radius is closest to dragged position
     val distFromCenter = hypot(dx, dy)
-    val closest = circles.minByOrNull { c -> kotlin.math.abs(c.radius - distFromCenter) }
+    val closest = circles.minByOrNull { c -> abs(c.radius - distFromCenter) }
         ?: return
 
     // 4. Reassign circle if needed

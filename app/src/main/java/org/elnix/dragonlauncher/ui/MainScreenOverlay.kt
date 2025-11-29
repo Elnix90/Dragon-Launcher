@@ -1,16 +1,13 @@
 package org.elnix.dragonlauncher.ui
 
-import android.R.attr.action
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarDefaults.actionColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,9 +36,9 @@ import androidx.compose.ui.text.font.FontWeight
 import org.elnix.dragonlauncher.data.SwipeActionSerializable
 import org.elnix.dragonlauncher.data.SwipePointSerializable
 import org.elnix.dragonlauncher.data.datastore.SettingsStore
-import org.elnix.dragonlauncher.ui.utils.actions.actionColor
-import org.elnix.dragonlauncher.ui.utils.actions.actionIcon
-import org.elnix.dragonlauncher.ui.utils.actions.actionLabel
+import org.elnix.dragonlauncher.utils.actions.actionColor
+import org.elnix.dragonlauncher.utils.actions.actionIcon
+import org.elnix.dragonlauncher.utils.actions.actionLabel
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.sin

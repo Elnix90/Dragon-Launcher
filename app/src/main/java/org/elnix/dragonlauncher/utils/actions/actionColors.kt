@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.utils.actions
+package org.elnix.dragonlauncher.utils.actions
 
 import androidx.compose.ui.graphics.Color
 import org.elnix.dragonlauncher.data.SwipeActionSerializable

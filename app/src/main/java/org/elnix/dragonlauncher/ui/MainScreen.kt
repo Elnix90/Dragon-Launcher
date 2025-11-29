@@ -29,7 +29,7 @@ import org.elnix.dragonlauncher.data.datastore.SettingsStore
 import org.elnix.dragonlauncher.data.datastore.SwipeDataStore
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
 import org.elnix.dragonlauncher.ui.helpers.rememberHoldToOpenSettings
-import org.elnix.dragonlauncher.ui.utils.actions.launchSwipeAction
+import org.elnix.dragonlauncher.utils.actions.launchSwipeAction
 
 @Composable
 fun MainScreen(

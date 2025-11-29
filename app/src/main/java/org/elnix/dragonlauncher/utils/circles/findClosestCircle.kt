@@ -1,7 +1,8 @@
-package org.elnix.dragonlauncher.ui.utils.circles
+package org.elnix.dragonlauncher.utils.circles
 
 import androidx.compose.ui.geometry.Offset
 import org.elnix.dragonlauncher.data.UiCircle
+import kotlin.math.abs
 import kotlin.math.hypot
 
 fun findClosestCircle(
@@ -14,7 +15,7 @@ fun findClosestCircle(
 
     circles.forEach { c ->
         val dist = hypot(pos.x - center.x, pos.y - center.y)
-        val diff = kotlin.math.abs(dist - c.radius)
+        val diff = abs(dist - c.radius)
         if (diff < bestDiff) {
             bestDiff = diff
             best = c

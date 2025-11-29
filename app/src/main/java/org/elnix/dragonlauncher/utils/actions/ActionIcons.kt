@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.utils.actions
+package org.elnix.dragonlauncher.utils.actions
 
 import androidx.core.graphics.drawable.toBitmap
 import android.content.pm.PackageManager

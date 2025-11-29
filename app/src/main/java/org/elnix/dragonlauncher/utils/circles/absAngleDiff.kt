@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.utils.circles
+package org.elnix.dragonlauncher.utils.circles
 
 import kotlin.math.abs
 import kotlin.math.min

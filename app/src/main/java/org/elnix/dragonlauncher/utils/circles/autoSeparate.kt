@@ -1,6 +1,5 @@
-package org.elnix.dragonlauncher.ui.utils.circles
+package org.elnix.dragonlauncher.utils.circles
 
-import org.elnix.dragonlauncher.data.UiCircle
 import org.elnix.dragonlauncher.data.UiSwipePoint
 import org.elnix.dragonlauncher.ui.MIN_ANGLE_GAP
 import kotlin.collections.filter

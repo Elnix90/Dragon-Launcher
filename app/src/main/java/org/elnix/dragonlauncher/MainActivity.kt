@@ -2,6 +2,7 @@ package org.elnix.dragonlauncher
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -13,6 +14,13 @@ import org.elnix.dragonlauncher.ui.theme.DragonLauncherTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        // Use hardware acceleration
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+            WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
+        )
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {

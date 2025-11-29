@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Dragon Launcher</string>
+    <string name="accessibility_service_description">Allows DragonLauncher to open the notification shade and quick settings panel.</string>
 </resources>

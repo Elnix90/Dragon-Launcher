@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.utils.colors
+package org.elnix.dragonlauncher.utils.colors
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
