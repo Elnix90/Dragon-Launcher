@@ -49,6 +49,7 @@ import org.elnix.dragonlauncher.data.UiCircle
 import org.elnix.dragonlauncher.data.UiSwipePoint
 import org.elnix.dragonlauncher.data.datastore.SwipeDataStore
 import org.elnix.dragonlauncher.ui.helpers.AddPointDialog
+import org.elnix.dragonlauncher.ui.utils.actions.actionColor
 import org.elnix.dragonlauncher.ui.utils.circles.autoSeparate
 import org.elnix.dragonlauncher.ui.utils.circles.randomFreeAngle
 import org.elnix.dragonlauncher.ui.utils.circles.updatePointPosition
@@ -61,16 +62,6 @@ import kotlin.math.sin
 const val MIN_ANGLE_GAP = 18.0
 private const val POINT_RADIUS_PX = 30f
 private const val TOUCH_THRESHOLD_PX = 100f
-
-fun actionColor(action: SwipeActionSerializable?): Color =
-    when (action) {
-        is SwipeActionSerializable.LaunchApp -> Color(0xFF55AAFF)
-        is SwipeActionSerializable.OpenUrl -> Color(0xFF66DD77)
-        SwipeActionSerializable.NotificationShade -> Color(0xFFFFBB44)
-        SwipeActionSerializable.ControlPanel -> Color(0xFFFF6688)
-        SwipeActionSerializable.OpenAppDrawer -> Color(0xFFDD55FF)
-        else -> Color.Red
-    }
 
 
 @Composable

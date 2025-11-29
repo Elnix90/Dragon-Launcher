@@ -7,6 +7,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarDefaults.actionColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +38,9 @@ import androidx.compose.ui.text.font.FontWeight
 import org.elnix.dragonlauncher.data.SwipeActionSerializable
 import org.elnix.dragonlauncher.data.SwipePointSerializable
 import org.elnix.dragonlauncher.data.datastore.SettingsStore
+import org.elnix.dragonlauncher.ui.utils.actions.actionColor
+import org.elnix.dragonlauncher.ui.utils.actions.actionIcon
+import org.elnix.dragonlauncher.ui.utils.actions.actionLabel
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.sin
@@ -318,6 +323,7 @@ fun MainScreenOverlay(
         }
     }
     if (hoveredAction != null) {
+        val currentAction = hoveredAction!!
         Box(
             Modifier
                 .fillMaxWidth()
@@ -326,12 +332,21 @@ fun MainScreenOverlay(
                 .alpha(alpha),
             contentAlignment = Alignment.TopCenter
         ) {
-            Text(
-                text = hoveredAction.toString(),
-                color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Row(
+                horizontalArrangement = Arrangement.Center
+            ){
+//                Icon(
+//                    painter = actionIcon(currentAction),
+//                    contentDescription = actionLabel(currentAction),
+////                    tint = actionColor(currentAction)
+//                )
+                Text(
+                    text = actionLabel(currentAction),
+                    color = actionColor(currentAction),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 
