@@ -55,6 +55,7 @@
         <activity
             android:name=".AppDrawerActivity"
             android:exported="false"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.DragonLauncher" />
 
         <activity
