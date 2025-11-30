@@ -3,8 +3,11 @@ package org.elnix.dragonlauncher.ui
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -19,8 +22,12 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -42,6 +49,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -70,6 +78,7 @@ import org.elnix.dragonlauncher.utils.actions.actionLabel
 import org.elnix.dragonlauncher.utils.circles.autoSeparate
 import org.elnix.dragonlauncher.utils.circles.randomFreeAngle
 import org.elnix.dragonlauncher.utils.circles.updatePointPosition
+import org.elnix.dragonlauncher.utils.colors.adjustBrightness
 import java.util.UUID
 import kotlin.math.cos
 import kotlin.math.hypot
@@ -246,8 +255,8 @@ fun SettingsScreen(
                         val py = center.y - circle.radius * cos(Math.toRadians(p.angleDeg)).toFloat()
 
                         drawCircle(
-                            color = circleColor ?: AmoledDefault.CircleColor,
-                            radius = POINT_RADIUS_PX + 8,
+                            color = (circleColor ?: AmoledDefault.CircleColor).adjustBrightness(2f),
+                            radius = POINT_RADIUS_PX + 10,
                             center = Offset(px, py)
                         )
 
@@ -349,24 +358,81 @@ fun SettingsScreen(
 
 
         Row(
-            Modifier.fillMaxWidth(),
+            Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            Button(onClick = { showAddDialog = true }) {
-                Text("Add point")
-            }
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add point",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable { showAddDialog = true }
+                    .background(MaterialTheme.colorScheme.primary.copy(0.2f))
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.primary.copy(0.5f),
+                        shape = CircleShape
+                    )
+                    .padding(25.dp)
+            )
 
-            Button(
-                enabled = selectedPoint != null,
-                onClick = {
-                    val id = selectedPoint?.id ?: return@Button
-                    val index = points.indexOfFirst { it.id == id }
-                    if (index >= 0) points.removeAt(index)
-                    selectedPoint = null
-                }
-            ) {
-                Text("Remove point")
-            }
+            val removeEnabled = selectedPoint != null
+
+            Icon(
+                imageVector = Icons.Default.Remove,
+                contentDescription = "Remove point",
+                tint = MaterialTheme.colorScheme.error.copy(if (removeEnabled) 1f else 0.2f),
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable(removeEnabled) {
+                        selectedPoint?.id.let { id ->
+                            val index = points.indexOfFirst { it.id == id }
+                            if (index >= 0) points.removeAt(index)
+                            selectedPoint = null
+                        }
+                    }
+                    .background(MaterialTheme.colorScheme.error.copy(if (removeEnabled) 0.2f else 0f))
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.error.copy(if (removeEnabled) 1f else 0.2f),
+                        shape = CircleShape
+                    )
+                    .padding(25.dp)
+            )
+
+            Icon(
+                imageVector = Icons.Default.ContentCopy,
+                contentDescription = "Copy point",
+                tint = Color(0xFFE19807).copy(if (removeEnabled) 1f else 0.2f),
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable(removeEnabled) {
+                        selectedPoint?.let { point ->
+                            val circleNumber = 0
+                            val newAngle = randomFreeAngle(points)
+
+                            val point = UiSwipePoint(
+                                id = UUID.randomUUID().toString(),
+                                angleDeg = newAngle,
+                                action = point.action,
+                                circleNumber = circleNumber
+                            )
+
+                            points.add(point)
+                            autoSeparate(points, circleNumber)
+                        }
+                    }
+                    .background(Color(0xFFE19807).copy(if (removeEnabled) 0.2f else 0f))
+                    .border(
+                        width = 1.dp,
+                        color = Color(0xFFE19807).copy(if (removeEnabled) 1f else 0.2f),
+                        shape = CircleShape
+                    )
+                    .padding(25.dp)
+            )
         }
     }
 
