@@ -62,6 +62,7 @@ import org.elnix.dragonlauncher.data.stores.ColorSettingsStore
 import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.ui.helpers.AddPointDialog
 import org.elnix.dragonlauncher.ui.theme.AmoledDefault
+import org.elnix.dragonlauncher.utils.AppDrawerViewModel
 import org.elnix.dragonlauncher.utils.actions.actionColor
 import org.elnix.dragonlauncher.utils.actions.actionIcon
 import org.elnix.dragonlauncher.utils.actions.actionIconBitmap
@@ -83,6 +84,7 @@ private const val TOUCH_THRESHOLD_PX = 100f
 @Suppress("AssignedValueIsNeverRead")
 @Composable
 fun SettingsScreen(
+    viewModel: AppDrawerViewModel,
     onAdvSettings: () -> Unit,
     onBack: () -> Unit
 ) {
@@ -370,6 +372,7 @@ fun SettingsScreen(
 
     if (showAddDialog) {
         AddPointDialog(
+            viewModel = viewModel,
             onDismiss = {
                 @Suppress("AssignedValueIsNeverRead")
                 showAddDialog = false

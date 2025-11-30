@@ -26,9 +26,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.elnix.dragonlauncher.R
 import org.elnix.dragonlauncher.data.SwipeActionSerializable
 import org.elnix.dragonlauncher.ui.actionTint
+import org.elnix.dragonlauncher.utils.AppDrawerViewModel
 import org.elnix.dragonlauncher.utils.actions.actionColor
 import org.elnix.dragonlauncher.utils.actions.actionIcon
 import org.elnix.dragonlauncher.utils.actions.actionLabel
@@ -36,6 +38,7 @@ import org.elnix.dragonlauncher.utils.actions.actionLabel
 @Suppress("AssignedValueIsNeverRead")
 @Composable
 fun AddPointDialog(
+    viewModel: AppDrawerViewModel,
     onDismiss: () -> Unit,
     onActionSelected: (SwipeActionSerializable) -> Unit
 ) {
@@ -98,6 +101,7 @@ fun AddPointDialog(
 
     if (showAppPicker) {
         AppPickerDialog(
+            viewModel = viewModel,
             onDismiss = { showAppPicker = false },
             onAppSelected = {
                 onActionSelected(it)

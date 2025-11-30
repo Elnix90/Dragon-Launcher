@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -14,15 +15,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.ui.SettingsScreen
 import org.elnix.dragonlauncher.ui.theme.DragonLauncherTheme
 import org.elnix.dragonlauncher.data.stores.ColorSettingsStore
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore
+import org.elnix.dragonlauncher.utils.AppDrawerViewModel
+import kotlin.getValue
 import kotlin.jvm.java
 
 class SettingsActivity : ComponentActivity() {
+
+    private val viewModel : AppDrawerViewModel by viewModels()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -58,6 +66,11 @@ class SettingsActivity : ComponentActivity() {
                     startActivity(Intent(this@SettingsActivity, AdvancedSettingsActivity::class.java))
                     navigateToAdvancedSettings.value = false
                 }
+            }
+
+
+            lifecycleScope.launch {
+                viewModel.loadApps()
             }
 
             // Colors
@@ -116,6 +129,7 @@ class SettingsActivity : ComponentActivity() {
 //                customNoteTypeDrawing = customNoteTypeDrawing
             ) {
                 SettingsScreen(
+                    viewModel = viewModel,
                     onAdvSettings = { navigateToAdvancedSettings.value = true }
                 ) {
                     finish()
