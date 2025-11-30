@@ -9,6 +9,7 @@ You can customize your list of fast access apps easily in the settings, and also
 
 ## Screenshots
 
+<img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/1.jpg" width="30%"  alt="App ScreenShot"/>
 
 ## Installation
 
