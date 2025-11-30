@@ -84,7 +84,7 @@ class MainActivity : ComponentActivity() {
             val navigateToWelcomeScreen = remember { mutableStateOf(false) }
 
             val hasInitialized by PrivateSettingsStore.getHasInitialized(ctx)
-                .collectAsState(initial = false)
+                .collectAsState(initial = true)
 
             LaunchedEffect(hasInitialized) {
                 if (!hasInitialized) {

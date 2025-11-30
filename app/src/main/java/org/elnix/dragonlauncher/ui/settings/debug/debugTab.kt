@@ -39,7 +39,7 @@ fun DebugTab(
     val hasSeenWelcome by PrivateSettingsStore.getHasSeenWelcome(ctx)
         .collectAsState(initial = false)
     val hasInitialized by PrivateSettingsStore.getHasInitialized(ctx)
-        .collectAsState(initial = false)
+        .collectAsState(initial = true)
 
     val isForceSwitchToggled by DebugSettingsStore.getForceAppLanguageSelector(ctx).collectAsState(initial = false)
 

@@ -83,23 +83,25 @@ fun WelcomeScreen(
             )
         }
 
-        FloatingActionButton(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp),
-            onClick = {
-                val next = pagerState.currentPage + 1
-                if (next < 3) {
-                    scope.launch { pagerState.animateScrollToPage(next) }
-                }
-            },
-            containerColor = MaterialTheme.colorScheme.primary,
-            shape = CircleShape
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                contentDescription = "Next"
-            )
+        if (pagerState.currentPage < 2) {
+            FloatingActionButton(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp),
+                onClick = {
+                    val next = pagerState.currentPage + 1
+                    if (next < 3) {
+                        scope.launch { pagerState.animateScrollToPage(next) }
+                    }
+                },
+                containerColor = MaterialTheme.colorScheme.primary,
+                shape = CircleShape
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = "Next"
+                )
+            }
         }
     }
 }

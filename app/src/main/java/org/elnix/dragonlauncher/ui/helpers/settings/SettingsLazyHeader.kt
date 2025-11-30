@@ -58,7 +58,7 @@ fun SettingsLazyHeader(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(WindowInsets.systemBars.asPaddingValues())
-            .padding(horizontal = 16.dp)
+            .padding(16.dp)
             .imePadding(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
