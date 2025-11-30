@@ -69,7 +69,7 @@ fun AppDrawerScreen(
     LaunchedEffect(true) {
         awaitFrame()
         focusRequester.requestFocus()
-        delay(500)
+        delay(50)
         keyboard?.show()
     }
 

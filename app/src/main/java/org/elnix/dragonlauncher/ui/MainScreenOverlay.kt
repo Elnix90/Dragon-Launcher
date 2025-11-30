@@ -291,7 +291,7 @@ fun MainScreenOverlay(
 
                     // Draw actual selected point
                     // find the matching SwipePointSerializable
-                    val point = points.firstOrNull { it.action == action }
+                    val point = points.filter{ it.circleNumber == targetCircle }.firstOrNull { it.action == action }
                     if (point != null) {
 
                         // same circle radii as SettingsScreen

@@ -239,7 +239,7 @@ fun SettingsScreen(
 
                         drawCircle(
                             color = circleColor,
-                            radius = POINT_RADIUS_PX + 4,
+                            radius = POINT_RADIUS_PX + 8,
                             center = Offset(px, py)
                         )
 
