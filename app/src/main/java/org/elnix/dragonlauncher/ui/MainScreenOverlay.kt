@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui
 
+import android.R.attr.action
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -35,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import org.elnix.dragonlauncher.data.SwipeActionSerializable
 import org.elnix.dragonlauncher.data.SwipePointSerializable
+import org.elnix.dragonlauncher.data.UiSwipePoint
 import org.elnix.dragonlauncher.data.stores.ColorSettingsStore
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore
@@ -131,7 +133,7 @@ fun MainScreenOverlay(
     // Launch app logic
 
     // -- For displaying the banner --
-    var hoveredAction by remember { mutableStateOf<SwipeActionSerializable?>(null) }
+    var hoveredAction by remember { mutableStateOf<SwipePointSerializable?>(null) }
     var bannerVisible by remember { mutableStateOf(false) }
 
     // Distance thresholds for 3 circles
@@ -142,7 +144,7 @@ fun MainScreenOverlay(
     val cancelZone = 150f
 
     // The chosen swipe action
-    var currentAction: SwipeActionSerializable? by remember { mutableStateOf(null) }
+    var currentAction: SwipePointSerializable? by remember { mutableStateOf(null) }
 
     val targetCircle =
         when {
@@ -160,7 +162,7 @@ fun MainScreenOverlay(
                     minOf(d, 360 - d)
                 }
 
-        currentAction = if (dist > cancelZone) closestPoint?.action else null
+        currentAction = if (dist > cancelZone) closestPoint else null
 
         hoveredAction = currentAction
         bannerVisible = currentAction != null
@@ -180,7 +182,7 @@ fun MainScreenOverlay(
     LaunchedEffect(isDragging) {
         if (!isDragging) {
             if (currentAction != null) {
-                onLaunch(currentAction)
+                onLaunch(currentAction?.action)
             }
             hoveredAction = null
             currentAction = null
@@ -285,7 +287,8 @@ fun MainScreenOverlay(
                     style = Stroke(width = 3f)
                 )
 
-                hoveredAction?.let { action ->
+                hoveredAction?.let { point ->
+                    val action = point.action!!
                     drawCircle(
                         color = circleColor ?: AmoledDefault.CircleColor,
                         radius = 200f + (targetCircle * 140f),
@@ -296,7 +299,7 @@ fun MainScreenOverlay(
 
                     // Draw actual selected point
                     // find the matching SwipePointSerializable
-                    val point = points.filter{ it.circleNumber == targetCircle }.firstOrNull { it.action == action }
+                    val point = points.filter{ it.circleNumber == targetCircle }.firstOrNull { it == point }
                     if (point != null) {
 
                         // same circle radii as SettingsScreen
@@ -342,7 +345,7 @@ fun MainScreenOverlay(
         }
     }
     if (hoveredAction != null && (showLaunchingAppLabel || showLaunchingAppIcon)) {
-        val currentAction = hoveredAction!!
+        val currentAction = hoveredAction!!.action!!
             Box(
             Modifier
                 .fillMaxWidth()
