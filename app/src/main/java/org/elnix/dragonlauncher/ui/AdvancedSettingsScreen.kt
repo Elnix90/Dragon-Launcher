@@ -13,10 +13,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Launch
 import androidx.compose.material.icons.filled.BugReport
+import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.ColorLens
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Launch
+import androidx.compose.material.icons.filled.ReportProblem
 import androidx.compose.material.icons.filled.Restore
+import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.R
@@ -41,6 +47,8 @@ import org.elnix.dragonlauncher.data.stores.LanguageSettingsStore
 import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore
+import org.elnix.dragonlauncher.ui.helpers.TextDivider
+import org.elnix.dragonlauncher.ui.helpers.settings.ContributorItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
 import org.elnix.dragonlauncher.ui.settings.backup.BackupTab
@@ -130,6 +138,75 @@ fun AdvancedSettingsScreen(
             }
         }
 
+
+        item { TextDivider(stringResource(R.string.about)) }
+
+        item {
+            SettingsItem(
+                title = stringResource(R.string.source_code),
+                icon = Icons.Default.Code,
+                leadIcon = Icons.AutoMirrored.Filled.Launch
+            ) {
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = "https://github.com/Elnix90/Dragon-Launcher".toUri()
+                }
+                ctx.startActivity(intent)
+            }
+        }
+
+        item {
+            SettingsItem(
+                title = stringResource(R.string.check_for_update),
+                description = stringResource(R.string.check_for_updates_text),
+                icon = Icons.Default.Update,
+                leadIcon = Icons.AutoMirrored.Filled.Launch
+            ) {
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = "https://github.com/Elnix90/Dragon-Launcher/releases/latest".toUri()
+                }
+                ctx.startActivity(intent)
+            }
+        }
+
+        item {
+            SettingsItem(
+                title = stringResource(R.string.report_a_bug),
+                description =stringResource(R.string.open_an_issue_on_github),
+                icon = Icons.Default.ReportProblem,
+                leadIcon = Icons.AutoMirrored.Filled.Launch
+            ) {
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = "https://github.com/Elnix90/Dragon-Launcher/issues/new".toUri()
+                }
+                ctx.startActivity(intent)
+            }
+        }
+
+
+        item {
+            TextDivider(
+                stringResource(R.string.contributors),
+                Modifier.padding(horizontal = 60.dp)
+            )
+        }
+
+        item {
+            ContributorItem(
+                name = "Elnix90",
+                imageRes = R.drawable.elnix90,
+                description = stringResource(R.string.app_developer),
+                githubUrl = "https://github.com/Elnix90"
+            )
+        }
+
+        item {
+            ContributorItem(
+                name = "ragebreaker (mlm-games)",
+                imageRes = R.drawable.ragebreaker,
+                description = stringResource(R.string.thanks_for_the_inspiration),
+                githubUrl = "https://github.com/mlm-games/CCLauncher"
+            )
+        }
 
         item {
             Text(

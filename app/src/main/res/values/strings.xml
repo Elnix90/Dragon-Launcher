@@ -68,4 +68,13 @@
     <string name="dark_theme">Dark Theme</string>
     <string name="amoled_theme">AMOLED Theme</string>
     <string name="system_theme">System Theme</string>
+    <string name="about">About</string>
+    <string name="check_for_update">Check for updates</string>
+    <string name="source_code">Source code</string>
+    <string name="report_a_bug">Report a bug</string>
+    <string name="open_an_issue_on_github">Open a new issue on github</string>
+    <string name="contributors">Contributors</string>
+    <string name="thanks_for_the_inspiration">Thanks for the inspiration, and some part of the code :)</string>
+    <string name="app_developer">Lead Developer</string>
+    <string name="check_for_updates_text">Check for release on Github</string>
 </resources>

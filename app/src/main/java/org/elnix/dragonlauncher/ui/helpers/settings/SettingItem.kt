@@ -1,8 +1,11 @@
 package org.elnix.dragonlauncher.ui.helpers.settings
 
+import android.R.attr.description
+import android.R.attr.enabled
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,9 +26,11 @@ import org.elnix.dragonlauncher.utils.colors.adjustBrightness
 @Composable
 fun SettingsItem(
     title: String,
+    description: String? = null,
     enabled: Boolean = true,
     comingSoon: Boolean = false,
     icon: ImageVector? = null,
+    leadIcon: ImageVector? = null,
     onClick: () -> Unit
 ) {
     Row(
@@ -40,7 +45,13 @@ fun SettingsItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(15.dp)) {
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(15.dp),
+            modifier = Modifier.weight(1f)
+        ) {
+
             if (icon != null) {
                 Icon(
                     imageVector = icon,
@@ -48,19 +59,40 @@ fun SettingsItem(
                     tint = MaterialTheme.colorScheme.primary.adjustBrightness(if (enabled) 1f else 0.5f)
                 )
             }
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface.adjustBrightness(if (enabled) 1f else 0.5f)
-            )
-            if (comingSoon) {
-                Spacer(Modifier.weight(1f))
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+                modifier = Modifier.weight(1f)
+            ) {
                 Text(
-                    text = stringResource(R.string.coming_soon),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurface.adjustBrightness(0.5f)
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface.adjustBrightness(if (enabled) 1f else 0.5f)
+                )
+
+                if (description != null) {
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.adjustBrightness(if (enabled) 0.8f else 0.4f)
+                    )
+                }
+            }
+            if (leadIcon != null) {
+                Icon(
+                    imageVector = leadIcon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary.adjustBrightness(if (enabled) 1f else 0.5f)
                 )
             }
+        }
+
+        if (comingSoon) {
+            Text(
+                text = stringResource(R.string.coming_soon),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurface.adjustBrightness(0.5f)
+            )
         }
     }
 }
