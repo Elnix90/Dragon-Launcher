@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui
 
-import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -27,9 +26,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
-import org.elnix.dragonlauncher.data.datastore.PrivateSettingsStore
-import org.elnix.dragonlauncher.data.datastore.SettingsStore
-import org.elnix.dragonlauncher.data.datastore.SwipeDataStore
+import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore
+import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
+import org.elnix.dragonlauncher.data.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
 import org.elnix.dragonlauncher.ui.helpers.rememberHoldToOpenSettings
 import org.elnix.dragonlauncher.utils.actions.launchSwipeAction
@@ -52,7 +51,7 @@ fun MainScreen(
     )
 
     val defaultColor = Color.Red
-    val rgbLoading by SettingsStore.getRGBLoading(ctx)
+    val rgbLoading by UiSettingsStore.getRGBLoading(ctx)
         .collectAsState(initial = true)
 
     val hasSeenWelcome by PrivateSettingsStore.getHasSeenWelcome(ctx).collectAsState(initial = true)
@@ -62,7 +61,7 @@ fun MainScreen(
         if (!hasSeenWelcome) onGoWelcome()
     }
 
-    val points by SwipeDataStore.getPointsFlow(ctx).collectAsState(emptyList())
+    val points by SwipeSettingsStore.getPointsFlow(ctx).collectAsState(emptyList())
 
     // To prevent the user from exiting the app on back, since it's a launcher
     BackHandler { }

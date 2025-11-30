@@ -1,139 +1,198 @@
 package org.elnix.dragonlauncher.ui
 
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.filled.BugReport
+import androidx.compose.material.icons.filled.ColorLens
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.data.datastore.PrivateSettingsStore
-import org.elnix.dragonlauncher.data.datastore.SettingsStore
-import org.elnix.dragonlauncher.ui.colors.ColorPickerRow
-import org.elnix.dragonlauncher.ui.helpers.SwitchRow
-import org.elnix.dragonlauncher.ui.helpers.TextDivider
+import org.elnix.dragonlauncher.R
+import org.elnix.dragonlauncher.data.stores.ColorModesSettingsStore
+import org.elnix.dragonlauncher.data.stores.DebugSettingsStore
+import org.elnix.dragonlauncher.data.stores.LanguageSettingsStore
+import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore
+import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
+import org.elnix.dragonlauncher.data.stores.UiSettingsStore
+import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
+import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
+import org.elnix.dragonlauncher.ui.settings.backup.BackupTab
+import org.elnix.dragonlauncher.ui.settings.backup.BackupViewModel
+import org.elnix.dragonlauncher.utils.copyToClipboard
+import org.elnix.dragonlauncher.utils.showToast
 
 
+@Suppress("AssignedValueIsNeverRead")
 @Composable
 fun AdvancedSettingsScreen(
+    navController: NavController,
     onBack: (() -> Unit)
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val rgbLoading by SettingsStore.getRGBLoading(ctx)
-        .collectAsState(initial = true)
 
-    val rgbLine by SettingsStore.getRGBLine(ctx)
-        .collectAsState(initial = true)
-
-    val debugInfos by SettingsStore.getDebugInfos(ctx)
+    val isDebugModeEnabled by DebugSettingsStore.getDebugEnabled(ctx)
+        .collectAsState(initial = false)
+    val forceAppLanguageSelector by DebugSettingsStore.getForceAppLanguageSelector(ctx)
         .collectAsState(initial = false)
 
-    val showLaunchingAppLabel by SettingsStore.getShowLaunchingAppLabel(ctx)
-        .collectAsState(initial = true)
 
-    val showLaunchingAppIcon by SettingsStore.getShowLaunchingAppIcon(ctx)
-        .collectAsState(initial = true)
+    var toast by remember { mutableStateOf<Toast?>(null) }
+    val versionName = ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName ?: "unknown"
+    var timesClickedOnVersion by remember { mutableIntStateOf(0) }
 
-    val showAppLaunchPreviewCircle by SettingsStore.getShowAppLaunchPreviewCircle(ctx)
-        .collectAsState(initial = true)
-
-    val angleLineColor by SettingsStore.getAngleLineColor(ctx)
-        .collectAsState(initial = null)
-
-    val hasSeenWelcome by PrivateSettingsStore.getHasSeenWelcome(ctx)
-        .collectAsState(initial = false)
 
     BackHandler { onBack() }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(WindowInsets.systemBars.asPaddingValues())
-            .padding(15.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ){
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Color.White)
+    SettingsLazyHeader(
+        title = stringResource(R.string.settings),
+        onBack = onBack,
+        helpText = stringResource(R.string.settings),
+        onReset = {
+            scope.launch {
+                PrivateSettingsStore.resetAll(ctx)
+                UiSettingsStore.resetAll(ctx)
+                DebugSettingsStore.resetAll(ctx)
+                SwipeSettingsStore.resetAll(ctx)
+                LanguageSettingsStore.resetAll(ctx)
+                ColorModesSettingsStore.resetAll(ctx)
+            }
+        }
+    ) {
+        item {
+            SettingsItem(
+                title = stringResource(R.string.appearance),
+                icon = Icons.Default.ColorLens
+            ) {
+                navController.navigate(SETTINGS.APPEARANCE)
             }
         }
 
-        SwitchRow(
-            debugInfos,
-            "Debug Infos",
-        ) { scope.launch { SettingsStore.setDebugInfos(ctx, it) } }
+        item {
+            SettingsItem(
+                title = stringResource(R.string.settings_language_title),
+                icon = Icons.Default.Language,
+                onClick = {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !forceAppLanguageSelector) {
+                        openSystemLanguageSettings(ctx)
+                    } else {
+                        navController.navigate(SETTINGS.LANGUAGE)
+                    }
+                }
+            )
+        }
 
+        item {
+           SettingsItem(
+               title = stringResource(R.string.backup_restore),
+               icon = Icons.Default.Restore
+            ) {
+                navController.navigate(SETTINGS.BACKUP)
+            }
+        }
 
-        SwitchRow(
-            rgbLoading,
-            "RGB loading settings",
-        ) { scope.launch { SettingsStore.setRGBLoading(ctx, it) } }
-
-        SwitchRow(
-            rgbLine,
-            "RGB line selector",
-        ) { scope.launch { SettingsStore.setRGBLine(ctx, it) } }
-
-        SwitchRow(
-            showLaunchingAppLabel,
-            "Show App label",
-        ) { scope.launch { SettingsStore.setShowLaunchingAppLabel(ctx, it) } }
-
-        SwitchRow(
-            showLaunchingAppIcon,
-            "Show App icon",
-        ) { scope.launch { SettingsStore.setShowLaunchingAppIcon(ctx, it) } }
-
-
-        SwitchRow(
-            showAppLaunchPreviewCircle,
-            "Show App launch preview circle",
-        ) { scope.launch { SettingsStore.setShowAppLaunchPreviewCircle(ctx, it) } }
-
-
-        ColorPickerRow(
-            label = "Angle Line Color",
-            defaultColor = Color.Red,
-            currentColor = angleLineColor ?: Color.Transparent
-        ) {
-            scope.launch { SettingsStore.setAngleLineColor(ctx, it) }
+        item {
+            if (isDebugModeEnabled) {
+                SettingsItem(
+                    title = stringResource(R.string.debug),
+                    icon = Icons.Default.BugReport
+                ) {
+                    navController.navigate(SETTINGS.DEBUG)
+                }
+            }
         }
 
 
-        TextDivider("Debug")
+        item {
+            Text(
+                text = "${stringResource(R.string.version)} $versionName",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier
+                    .padding(top = 8.dp, bottom = 16.dp)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {
+                        toast?.cancel()
 
-        SwitchRow(
-            hasSeenWelcome,
-            "Has seen welcome",
-        ) { scope.launch { PrivateSettingsStore.setHasSeenWelcome(ctx, it) } }
+                        when {
+
+                            timesClickedOnVersion == 0 -> {
+                                ctx.copyToClipboard(versionName)
+                                ctx.showToast("Version name copied to clipboard")
+                                timesClickedOnVersion += 1
+                            }
+
+                            isDebugModeEnabled -> {
+                                toast = Toast.makeText(
+                                    ctx,
+                                    "Debug Mode is already enabled",
+                                    Toast.LENGTH_SHORT
+                                )
+                                toast?.show()
+                            }
+
+
+                            timesClickedOnVersion < 6 -> {
+                                timesClickedOnVersion++
+                                if (timesClickedOnVersion > 2) {
+                                    toast = Toast.makeText(
+                                        ctx,
+                                        "${7 - timesClickedOnVersion} more times to enable Debug Mode",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                }
+                                toast?.show()
+                            }
+
+                            else -> {
+                                scope.launch {
+                                    DebugSettingsStore.setDebugEnabled(ctx, true)
+                                    navController.navigate(SETTINGS.DEBUG)
+                                }
+                            }
+                        }
+                    }
+            )
+        }
     }
+}
+
+
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+private fun openSystemLanguageSettings(context: Context) {
+    val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS).apply {
+        data = Uri.fromParts("package", context.packageName, null)
+    }
+    context.startActivity(intent)
 }

@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.utils.colors.AppObjectsColors
 
 @Composable
 fun SwitchRow(
@@ -59,7 +60,8 @@ fun SwitchRow(
         Switch(
             checked = checked,
             enabled = enabled,
-            onCheckedChange = { if (onToggle != null) onToggle(it) else onCheck(it) }
+            onCheckedChange = { if (onToggle != null) onToggle(it) else onCheck(it) },
+            colors = AppObjectsColors.switchColors()
         )
     }
 }

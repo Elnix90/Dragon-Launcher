@@ -42,13 +42,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.data.helpers.ColorPickerMode
 import org.elnix.dragonlauncher.data.helpers.colorPickerText
-import org.elnix.dragonlauncher.data.datastore.ColorModesSettingsStore.getColorPickerMode
-import org.elnix.dragonlauncher.data.datastore.ColorModesSettingsStore.setColorPickerMode
+import org.elnix.dragonlauncher.data.stores.ColorModesSettingsStore.getColorPickerMode
+import org.elnix.dragonlauncher.data.stores.ColorModesSettingsStore.setColorPickerMode
 import org.elnix.dragonlauncher.utils.colors.AppObjectsColors
 import org.elnix.dragonlauncher.utils.colors.adjustBrightness
 import org.elnix.dragonlauncher.utils.colors.randomColor

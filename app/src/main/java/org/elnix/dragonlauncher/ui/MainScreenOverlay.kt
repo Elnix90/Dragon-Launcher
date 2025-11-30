@@ -7,7 +7,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,8 +35,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import org.elnix.dragonlauncher.data.SwipeActionSerializable
 import org.elnix.dragonlauncher.data.SwipePointSerializable
-import org.elnix.dragonlauncher.data.datastore.SettingsStore
-import org.elnix.dragonlauncher.ui.theme.circleColor
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore
+import org.elnix.dragonlauncher.data.stores.DebugSettingsStore
+import org.elnix.dragonlauncher.data.stores.UiSettingsStore
+import org.elnix.dragonlauncher.ui.theme.AmoledDefault
 import org.elnix.dragonlauncher.utils.actions.actionColor
 import org.elnix.dragonlauncher.utils.actions.actionIcon
 import org.elnix.dragonlauncher.utils.actions.actionIconBitmap
@@ -57,16 +58,19 @@ fun MainScreenOverlay(
 ) {
     val ctx = LocalContext.current
 
-    val rgbLine by SettingsStore.getRGBLine(ctx)
+    val rgbLine by UiSettingsStore.getRGBLine(ctx)
         .collectAsState(initial = true)
-    val debugInfos by SettingsStore.getDebugInfos(ctx)
+    val debugInfos by DebugSettingsStore.getDebugInfos(ctx)
         .collectAsState(initial = false)
-    val angleLineColor by SettingsStore.getAngleLineColor(ctx)
-        .collectAsState(initial = null)
-    val showLaunchingAppLabel by SettingsStore.getShowLaunchingAppLabel(ctx)
+    val angleLineColor by ColorSettingsStore.getAngleLineColor(ctx)
+        .collectAsState(initial = AmoledDefault.AngleLineColor)
+    val circleColor by ColorSettingsStore.getCircleColor(ctx)
+        .collectAsState(initial = AmoledDefault.CircleColor)
+    val showLaunchingAppLabel by UiSettingsStore.getShowLaunchingAppLabel(ctx)
         .collectAsState(initial = true)
-
-    val showLaunchingAppIcon by SettingsStore.getShowLaunchingAppIcon(ctx)
+    val showLaunchingAppIcon by UiSettingsStore.getShowLaunchingAppIcon(ctx)
+        .collectAsState(initial = true)
+    val showAppLaunchPreview by UiSettingsStore.getShowAppLaunchPreview(ctx)
         .collectAsState(initial = true)
 
 
@@ -108,9 +112,10 @@ fun MainScreenOverlay(
         @Suppress("AssignedValueIsNeverRead")
         lastAngle = angle0to360
 
-        lineColor = if (angleLineColor != null) angleLineColor!!
-                    else if (rgbLine) Color.hsv(angle0to360.toFloat(),1f,1f)
-                    else circleColor
+
+        lineColor = if (rgbLine) Color.hsv(angle0to360.toFloat(),1f,1f)
+                    else angleLineColor ?: AmoledDefault.AngleLineColor
+
     } else {
         dx = 0f; dy = 0f
         dist = 0f
@@ -282,7 +287,7 @@ fun MainScreenOverlay(
 
                 hoveredAction?.let { action ->
                     drawCircle(
-                        color = circleColor,
+                        color = circleColor ?: AmoledDefault.CircleColor,
                         radius = 200f + (targetCircle * 140f),
                         center = start,
                         style = Stroke(4f)
@@ -309,7 +314,7 @@ fun MainScreenOverlay(
 
 
                         drawCircle(
-                            color = circleColor,
+                            color = circleColor ?: AmoledDefault.CircleColor,
                             radius = 44f,
                             center = Offset(px, py)
                         )
@@ -320,15 +325,17 @@ fun MainScreenOverlay(
                             center = Offset(px, py)
                         )
 
-                        drawImage(
-                            image = actionIconBitmap(
-                                action = action,
-                                context = ctx,
-                                tintColor = actionColor(action)
-                            ),
-                            dstOffset = IntOffset(px.toInt() - 28, py.toInt() - 28),
-                            dstSize = IntSize(56, 56)
-                        )
+                        if (showAppLaunchPreview) {
+                            drawImage(
+                                image = actionIconBitmap(
+                                    action = action,
+                                    context = ctx,
+                                    tintColor = actionColor(action)
+                                ),
+                                dstOffset = IntOffset(px.toInt() - 28, py.toInt() - 28),
+                                dstSize = IntSize(56, 56)
+                            )
+                        }
                     }
                 }
             }

@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
@@ -57,9 +58,10 @@ import org.elnix.dragonlauncher.data.SwipeActionSerializable
 import org.elnix.dragonlauncher.data.SwipePointSerializable
 import org.elnix.dragonlauncher.data.UiCircle
 import org.elnix.dragonlauncher.data.UiSwipePoint
-import org.elnix.dragonlauncher.data.datastore.SwipeDataStore
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore
+import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.ui.helpers.AddPointDialog
-import org.elnix.dragonlauncher.ui.theme.circleColor
+import org.elnix.dragonlauncher.ui.theme.AmoledDefault
 import org.elnix.dragonlauncher.utils.actions.actionColor
 import org.elnix.dragonlauncher.utils.actions.actionIcon
 import org.elnix.dragonlauncher.utils.actions.actionIconBitmap
@@ -78,12 +80,16 @@ private const val POINT_RADIUS_PX = 40f
 private const val TOUCH_THRESHOLD_PX = 100f
 
 
+@Suppress("AssignedValueIsNeverRead")
 @Composable
 fun SettingsScreen(
     onAdvSettings: () -> Unit,
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
+
+    val circleColor by ColorSettingsStore.getCircleColor(ctx)
+        .collectAsState(initial = AmoledDefault.CircleColor)
 
     var center by remember { mutableStateOf(Offset.Zero) }
 
@@ -106,7 +112,7 @@ fun SettingsScreen(
 
     // Load
     LaunchedEffect(Unit) {
-        val saved = SwipeDataStore.getPoints(ctx)
+        val saved = SwipeSettingsStore.getPoints(ctx)
         points.clear()
         points.addAll(saved.map {
             UiSwipePoint(
@@ -142,7 +148,7 @@ fun SettingsScreen(
         snapshotFlow { points.toList() }
             .distinctUntilChanged()
             .collect { list ->
-                SwipeDataStore.save(
+                SwipeSettingsStore.save(
                     ctx,
                     list.map {
                         SwipePointSerializable(
@@ -194,7 +200,7 @@ fun SettingsScreen(
                     // 1. Draw all circles
                     circles.forEach { circle ->
                         drawCircle(
-                            color = circleColor,
+                            color = circleColor ?: AmoledDefault.CircleColor,
                             radius = circle.radius,
                             center = center,
                             style = Stroke(4f)
@@ -208,7 +214,7 @@ fun SettingsScreen(
                         val py = center.y - circle.radius * cos(Math.toRadians(p.angleDeg)).toFloat()
 
                         drawCircle(
-                            color = circleColor,
+                            color = circleColor ?: AmoledDefault.CircleColor,
                             radius = POINT_RADIUS_PX + 4,
                             center = Offset(px, py)
                         )
@@ -238,7 +244,7 @@ fun SettingsScreen(
                         val py = center.y - circle.radius * cos(Math.toRadians(p.angleDeg)).toFloat()
 
                         drawCircle(
-                            color = circleColor,
+                            color = circleColor ?: AmoledDefault.CircleColor,
                             radius = POINT_RADIUS_PX + 8,
                             center = Offset(px, py)
                         )
@@ -394,7 +400,8 @@ fun SettingsScreen(
             Modifier
                 .fillMaxWidth()
                 .offset(y = offsetY)
-                .padding(top = 20.dp)
+                .padding(WindowInsets.systemBars.asPaddingValues())
+                .padding(20.dp)
                 .alpha(alpha),
             contentAlignment = Alignment.TopCenter
         ) {

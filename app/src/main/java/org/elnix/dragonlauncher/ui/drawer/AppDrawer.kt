@@ -41,6 +41,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.delay
+import org.elnix.dragonlauncher.data.stores.UiSettingsStore
 import org.elnix.dragonlauncher.utils.AppDrawerViewModel
 import org.elnix.dragonlauncher.utils.actions.launchSwipeAction
 
@@ -55,6 +56,8 @@ fun AppDrawerScreen(
     val ctx = LocalContext.current
     val apps by viewModel.userApps.collectAsState()
 
+    val autoLaunchSingleMatch by UiSettingsStore.getAutoLaunchSingleMatch(ctx)
+        .collectAsState(initial = true)
 
     var query by remember { mutableStateOf(TextFieldValue("")) }
     var dialogApp by remember { mutableStateOf<AppModel?>(null) }
@@ -66,13 +69,18 @@ fun AppDrawerScreen(
     val keyboard = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
 
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         awaitFrame()
         focusRequester.requestFocus()
         delay(50)
         keyboard?.show()
     }
 
+    LaunchedEffect(filtered) {
+        if (autoLaunchSingleMatch && filtered.size == 1) {
+            launchSwipeAction(ctx, filtered.first().action)
+        }
+    }
 
     Column(
         modifier = Modifier
