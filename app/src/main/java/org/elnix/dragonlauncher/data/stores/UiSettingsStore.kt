@@ -17,7 +17,7 @@ object UiSettingsStore {
         val showLaunchingAppLabel: Boolean = true,
         val showLaunchingAppIcon: Boolean = true,
         val showAppLaunchPreviewCircle: Boolean = true,
-        val fullscreen: Boolean = false,
+        val fullscreen: Boolean = true,
         val autoOpenSingleMatch: Boolean = true,
     )
 
