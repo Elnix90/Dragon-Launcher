@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 
 class PackageReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        val vm = (context.applicationContext as LauncherApplication).appViewModel
+        val vm = (context.applicationContext as MyApplication).appViewModel
         vm.viewModelScope.launch {
             vm.reloadApps()
         }
