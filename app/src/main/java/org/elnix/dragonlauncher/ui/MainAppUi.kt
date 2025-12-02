@@ -97,7 +97,7 @@ fun MainAppUi(
                 onBack = { goMainScreen() }
             )
         }
-        composable(SETTINGS.ADVANCED_ROOT) { AdvancedSettingsScreen(navController) { goSettingsRoot() } }
+        composable(SETTINGS.ADVANCED_ROOT) { AdvancedSettingsScreen(navController, onReset = { goMainScreen() } ) { goSettingsRoot() } }
 
 
         composable(SETTINGS.APPEARANCE) { AppearanceTab(navController) { goAdvSettingsRoot() } }

@@ -65,6 +65,8 @@ fun DebugTab(
             }
         }
 
+        item { TextDivider("Debug things") }
+
         item{
             SwitchRow(
                 state = debugInfos,
@@ -76,8 +78,6 @@ fun DebugTab(
                 }
             }
         }
-
-        item { TextDivider("Debug things") }
 
         item {
             Button(

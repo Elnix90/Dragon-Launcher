@@ -38,6 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.R
 import org.elnix.dragonlauncher.data.stores.ColorModesSettingsStore
@@ -60,7 +61,8 @@ import org.elnix.dragonlauncher.utils.showToast
 @Composable
 fun AdvancedSettingsScreen(
     navController: NavController,
-    onBack: (() -> Unit)
+    onReset: () -> Unit,
+    onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -85,7 +87,6 @@ fun AdvancedSettingsScreen(
         helpText = stringResource(R.string.settings),
         onReset = {
             scope.launch {
-                PrivateSettingsStore.resetAll(ctx)
                 UiSettingsStore.resetAll(ctx)
                 DebugSettingsStore.resetAll(ctx)
                 SwipeSettingsStore.resetAll(ctx)
@@ -93,6 +94,11 @@ fun AdvancedSettingsScreen(
                 ColorModesSettingsStore.resetAll(ctx)
                 ColorSettingsStore.resetAll(ctx)
                 DrawerSettingsStore.resetAll(ctx)
+
+                // Small delay to allow the default apps to load before initializing
+                delay(200)
+                PrivateSettingsStore.resetAll(ctx)
+                onReset()
             }
         }
     ) {

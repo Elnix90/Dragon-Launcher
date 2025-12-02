@@ -175,14 +175,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-
-        // Clear entire navigation stack
-        navControllerHolder.value?.let { nav ->
-            nav.navigate(ROUTES.MAIN) {
-                popUpTo(0) { inclusive = true }
-            }
-        }
-    }
+//    override fun onPause() {
+//        super.onPause()
+//
+//        // Clear entire navigation stack
+//        navControllerHolder.value?.let { nav ->
+//            nav.navigate(ROUTES.MAIN) {
+//                popUpTo(0) { inclusive = true }
+//            }
+//        }
+//    }
 }
