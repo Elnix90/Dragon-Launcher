@@ -287,6 +287,7 @@ object ColorSettingsStore {
                 }
             }
 
+            putIfNonDefault(PRIMARY_COLOR.name,        prefs[PRIMARY_COLOR],        default.Primary)
             putIfNonDefault(ON_PRIMARY_COLOR.name,     prefs[ON_PRIMARY_COLOR],     default.OnPrimary)
             putIfNonDefault(SECONDARY_COLOR.name,      prefs[SECONDARY_COLOR],      default.Secondary)
             putIfNonDefault(ON_SECONDARY_COLOR.name,   prefs[ON_SECONDARY_COLOR],   default.OnSecondary)
