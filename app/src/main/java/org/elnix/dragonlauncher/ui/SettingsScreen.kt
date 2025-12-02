@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -175,6 +176,7 @@ fun SettingsScreen(
     }
 
 
+    BackHandler { onBack() }
 
     Column(
         Modifier

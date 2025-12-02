@@ -9,11 +9,14 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.data.SwipeActionSerializable
@@ -23,6 +26,7 @@ import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.MainAppUi
+import org.elnix.dragonlauncher.ui.ROUTES
 import org.elnix.dragonlauncher.ui.settings.backup.BackupViewModel
 import org.elnix.dragonlauncher.ui.theme.DragonLauncherTheme
 import org.elnix.dragonlauncher.utils.AppDrawerViewModel
@@ -32,6 +36,9 @@ class MainActivity : ComponentActivity() {
 
     private val appsViewModel : AppDrawerViewModel by viewModels()
     private val backupViewModel : BackupViewModel by viewModels()
+
+    private var navControllerHolder = mutableStateOf<NavHostController?>(null)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -71,10 +78,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val ctx = LocalContext.current
 
-//            val navigateToSettings = remember { mutableStateOf(false) }
-//            val navigateToAppDrawer = remember { mutableStateOf(false) }
-//            val navigateToWelcomeScreen = remember { mutableStateOf(false) }
-
             val hasInitialized by PrivateSettingsStore.getHasInitialized(ctx)
                 .collectAsState(initial = true)
 
@@ -105,27 +108,6 @@ class MainActivity : ComponentActivity() {
                     PrivateSettingsStore.setHasInitialized(ctx, true)
                 }
             }
-
-//            LaunchedEffect(navigateToSettings.value) {
-//                if (navigateToSettings.value) {
-//                    startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
-//                    navigateToSettings.value = false
-//                }
-//            }
-//
-//            LaunchedEffect(navigateToAppDrawer.value) {
-//                if (navigateToAppDrawer.value) {
-//                    startActivity(Intent(this@MainActivity, AppDrawerActivity::class.java))
-//                    navigateToAppDrawer.value = false
-//                }
-//            }
-//
-//            LaunchedEffect(navigateToWelcomeScreen.value) {
-//                if (navigateToWelcomeScreen.value) {
-//                    startActivity(Intent(this@MainActivity, WelcomeActivity::class.java))
-//                    navigateToWelcomeScreen.value = false
-//                }
-//            }
 
             // Colors
 
@@ -181,10 +163,25 @@ class MainActivity : ComponentActivity() {
 //                customNoteTypeDrawing = customNoteTypeDrawing
             ) {
 
+                val navController = rememberNavController()
+                navControllerHolder.value = navController
+
                 MainAppUi(
                     backupViewModel = backupViewModel,
-                    appsViewModel = appsViewModel
+                    appsViewModel = appsViewModel,
+                    navController = navController
                 )
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        // Clear entire navigation stack
+        navControllerHolder.value?.let { nav ->
+            nav.navigate(ROUTES.MAIN) {
+                popUpTo(0) { inclusive = true }
             }
         }
     }

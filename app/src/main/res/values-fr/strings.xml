@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Dragon Launcher</string>
     <string name="accessibility_service_description">Permet à DragonLauncher d\'ouvrir le volet de notifications et le panneau des réglages rapides.</string>
+    <string name="app_drawer">Tiroir d\'applications</string>
 </resources>

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -40,7 +41,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.delay
-import org.elnix.dragonlauncher.data.stores.UiSettingsStore
+import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.utils.AppDrawerViewModel
 import org.elnix.dragonlauncher.utils.actions.launchSwipeAction
 
@@ -50,14 +51,16 @@ import org.elnix.dragonlauncher.utils.actions.launchSwipeAction
 fun AppDrawerScreen(
     appsViewModel: AppDrawerViewModel,
     showIcons: Boolean,
+    searchBarBottom: Boolean,
     onClose: () -> Unit
 ) {
     val ctx = LocalContext.current
     val apps by appsViewModel.userApps.collectAsState()
     val icons by appsViewModel.icons.collectAsState()
 
-    val autoLaunchSingleMatch by UiSettingsStore.getAutoLaunchSingleMatch(ctx)
+    val autoLaunchSingleMatch by DrawerSettingsStore.getAutoLaunchSingleMatch(ctx)
         .collectAsState(initial = true)
+
 
     var query by remember { mutableStateOf(TextFieldValue("")) }
     var dialogApp by remember { mutableStateOf<AppModel?>(null) }
@@ -79,6 +82,7 @@ fun AppDrawerScreen(
     LaunchedEffect(filtered) {
         if (autoLaunchSingleMatch && filtered.size == 1) {
             launchSwipeAction(ctx, filtered.first().action)
+            onClose()
         }
     }
 
@@ -87,34 +91,38 @@ fun AppDrawerScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(WindowInsets().asPaddingValues())
+            .imePadding()
             .padding(15.dp)
     ) {
 
-        OutlinedTextField(
-            value = query,
-            onValueChange = { query = it },
-            singleLine = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusRequester(focusRequester)
-                .focusable(true),
-            placeholder = { Text("Search apps…") },
-            textStyle = LocalTextStyle.current.copy(color = Color.White),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
-                cursorColor = Color.White,
-                focusedLabelColor = Color.White
+        if (!searchBarBottom) {
+            OutlinedTextField(
+                value = query,
+                onValueChange = { query = it },
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester)
+                    .focusable(true),
+                placeholder = { Text("Search apps…") },
+                textStyle = LocalTextStyle.current.copy(color = Color.White),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    cursorColor = Color.White,
+                    focusedLabelColor = Color.White
+                )
             )
-        )
 
-        Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(12.dp))
+        }
 
         LazyColumn(
             modifier = Modifier
-               .fillMaxSize()
+                .weight(1f)
+                .fillMaxWidth()
                 .pointerInput(Unit) {
                     detectVerticalDragGestures { _, _ -> }  // Consume drag
                 }
@@ -129,6 +137,33 @@ fun AppDrawerScreen(
                 )
             }
         }
+
+        if (searchBarBottom) {
+
+            Spacer(Modifier.height(12.dp))
+
+            OutlinedTextField(
+                value = query,
+                onValueChange = { query = it },
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester)
+                    .focusable(true),
+                placeholder = { Text("Search apps…") },
+                textStyle = LocalTextStyle.current.copy(color = Color.White),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    cursorColor = Color.White,
+                    focusedLabelColor = Color.White
+                )
+            )
+
+        }
+
     }
 
     if (dialogApp != null) {

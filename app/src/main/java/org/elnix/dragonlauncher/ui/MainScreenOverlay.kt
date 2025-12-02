@@ -1,13 +1,20 @@
 package org.elnix.dragonlauncher.ui
 
-import android.R.attr.action
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,12 +36,11 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlin.math.atan2
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.IntOffset
 import org.elnix.dragonlauncher.data.SwipeActionSerializable
 import org.elnix.dragonlauncher.data.SwipePointSerializable
 import org.elnix.dragonlauncher.data.stores.ColorSettingsStore
@@ -45,6 +51,7 @@ import org.elnix.dragonlauncher.utils.actions.actionColor
 import org.elnix.dragonlauncher.utils.actions.actionIcon
 import org.elnix.dragonlauncher.utils.actions.actionIconBitmap
 import org.elnix.dragonlauncher.utils.actions.actionLabel
+import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.sin
@@ -73,9 +80,15 @@ fun MainScreenOverlay(
         .collectAsState(initial = true)
     val showLaunchingAppIcon by UiSettingsStore.getShowLaunchingAppIcon(ctx)
         .collectAsState(initial = true)
+
     val showAppLaunchPreview by UiSettingsStore.getShowAppLaunchPreview(ctx)
         .collectAsState(initial = true)
+    val showAppCirclePreview by UiSettingsStore.getShowCirclePreview(ctx)
+        .collectAsState(initial = true)
+    val showAppLinePreview by UiSettingsStore.getShowLinePreview(ctx)
+        .collectAsState(initial = true)
 
+    val backgroundColor = MaterialTheme.colorScheme.background
 
     var lastAngle by remember { mutableStateOf<Double?>(null) }
     var cumulativeAngle by remember { mutableDoubleStateOf(0.0) }   // continuous rotation without jumps
@@ -241,104 +254,111 @@ fun MainScreenOverlay(
 
         Canvas(modifier = Modifier.fillMaxSize()) {
             if (start != null && current != null) {
-                val circleRadius = 48f
-                drawCircle(
-                    color = lineColor,
-                    radius = circleRadius,
-                    center = start,
-                    style = Stroke(width = 3f)
-                )
-
-                drawLine(
-                    color = lineColor,
-                    start = start,
-                    end = current,
-                    strokeWidth = 4f,
-                    cap = StrokeCap.Round
-                )
-
-                drawCircle(
-                    color = Color.Black,
-                    radius = circleRadius - 2,
-                    center = start
-                )
-
-                drawCircle(
-                    color = lineColor,
-                    radius = 8f,
-                    center = current,
-                    style = Fill
-                )
-
-                val arcRadius = 72f
-                val rect = Rect(
-                    start.x - arcRadius,
-                    start.y - arcRadius,
-                    start.x + arcRadius,
-                    start.y + arcRadius
-                )
-
-                drawArc(
-                    color = lineColor,
-                    startAngle = -90f,
-                    sweepAngle = sweepAngle,
-                    useCenter = false,
-                    topLeft = rect.topLeft,
-                    size = Size(rect.width, rect.height),
-                    style = Stroke(width = 3f)
-                )
-
-                hoveredAction?.let { point ->
-                    val action = point.action!!
+                if (showAppLinePreview) {
+                    val circleRadius = 48f
                     drawCircle(
-                        color = circleColor ?: AmoledDefault.CircleColor,
-                        radius = 200f + (targetCircle * 140f),
+                        color = lineColor,
+                        radius = circleRadius,
                         center = start,
-                        style = Stroke(4f)
+                        style = Stroke(width = 3f)
                     )
 
+                    drawLine(
+                        color = lineColor,
+                        start = start,
+                        end = current,
+                        strokeWidth = 4f,
+                        cap = StrokeCap.Round
+                    )
 
-                    // Draw actual selected point
-                    // find the matching SwipePointSerializable
-                    val point = points.filter{ it.circleNumber == targetCircle }.firstOrNull { it == point }
-                    if (point != null) {
+                    drawCircle(
+                        color = backgroundColor,
+                        radius = circleRadius - 2,
+                        center = start
+                    )
 
-                        // same circle radii as SettingsScreen
-                        val radius = when (point.circleNumber) {
-                            0 -> 200f
-                            1 -> 340f
-                            else -> 480f
+                    drawCircle(
+                        color = lineColor,
+                        radius = 8f,
+                        center = current,
+                        style = Fill
+                    )
+
+                    val arcRadius = 72f
+                    val rect = Rect(
+                        start.x - arcRadius,
+                        start.y - arcRadius,
+                        start.x + arcRadius,
+                        start.y + arcRadius
+                    )
+
+                    drawArc(
+                        color = lineColor,
+                        startAngle = -90f,
+                        sweepAngle = sweepAngle,
+                        useCenter = false,
+                        topLeft = rect.topLeft,
+                        size = Size(rect.width, rect.height),
+                        style = Stroke(width = 3f)
+                    )
+                }
+
+                if (showAppCirclePreview || showAppLinePreview) {
+                    hoveredAction?.let { point ->
+                        val action = point.action!!
+                        if (showAppCirclePreview) {
+                            drawCircle(
+                                color = circleColor ?: AmoledDefault.CircleColor,
+                                radius = 200f + (targetCircle * 140f),
+                                center = start,
+                                style = Stroke(4f)
+                            )
                         }
 
-                        // compute point position relative to origin
-                        val px = start.x +
-                                radius * sin(Math.toRadians(point.angleDeg)).toFloat()
-                        val py = start.y -
-                                radius * cos(Math.toRadians(point.angleDeg)).toFloat()
+
+                        // Draw actual selected point
+                        // find the matching SwipePointSerializable
+                        val point = points.firstOrNull { it == point }
+                        if (point != null) {
+
+                            // same circle radii as SettingsScreen
+                            val radius = when (point.circleNumber) {
+                                0 -> 200f
+                                1 -> 340f
+                                else -> 480f
+                            }
+
+                            // compute point position relative to origin
+                            val px = start.x +
+                                    radius * sin(Math.toRadians(point.angleDeg)).toFloat()
+                            val py = start.y -
+                                    radius * cos(Math.toRadians(point.angleDeg)).toFloat()
 
 
-                        drawCircle(
-                            color = circleColor ?: AmoledDefault.CircleColor,
-                            radius = 44f,
-                            center = Offset(px, py)
-                        )
+                            if (showAppCirclePreview) {
+                                drawCircle(
+                                    color = circleColor ?: AmoledDefault.CircleColor,
+                                    radius = 44f,
+                                    center = Offset(px, py)
+                                )
 
-                        drawCircle(
-                            color = Color.Black,
-                            radius = 40f,
-                            center = Offset(px, py)
-                        )
-
-                        if (showAppLaunchPreview) {
-                            drawImage(
-                                image = actionIconBitmap(
-                                    action = action,
-                                    context = ctx,
-                                    tintColor = actionColor(action)
-                                ),
-                                dstOffset = IntOffset(px.toInt() - 28, py.toInt() - 28),
-                                dstSize = IntSize(56, 56)
-                            )
+                                drawCircle(
+                                    color = backgroundColor,
+                                    radius = 40f,
+                                    center = Offset(px, py)
+                                )
+                            }
+                            if (showAppLaunchPreview) {
+                                drawImage(
+                                    image = actionIconBitmap(
+                                        action = action,
+                                        context = ctx,
+                                        tintColor = actionColor(action)
+                                    ),
+                                    dstOffset = IntOffset(px.toInt() - 28, py.toInt() - 28),
+                                    dstSize = IntSize(56, 56)
+                                )
+                            }
                         }
                     }
                 }

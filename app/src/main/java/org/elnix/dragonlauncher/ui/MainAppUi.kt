@@ -4,11 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import org.elnix.dragonlauncher.data.stores.UiSettingsStore
+import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.drawer.AppDrawerScreen
+import org.elnix.dragonlauncher.ui.settings.DrawerTab
 import org.elnix.dragonlauncher.ui.settings.appearance.AppearanceTab
 import org.elnix.dragonlauncher.ui.settings.appearance.ColorSelectorTab
 import org.elnix.dragonlauncher.ui.settings.backup.BackupTab
@@ -25,7 +26,7 @@ object SETTINGS {
     const val ADVANCED_ROOT = "settings/advanced"
     const val APPEARANCE = "settings/advanced/appearance"
     const val COLORS = "settings/advanced/appearance/colors"
-//    const val CUSTOMISATION = "settings/customisation"
+    const val DRAWER = "settings/drawer"
     const val BACKUP = "settings/advanced/backup"
     const val DEBUG = "/advanced/debug"
     const val LANGUAGE = "settings/advanced/language"
@@ -40,18 +41,26 @@ object ROUTES {
 @Composable
 fun MainAppUi(
     backupViewModel: BackupViewModel,
-    appsViewModel: AppDrawerViewModel
+    appsViewModel: AppDrawerViewModel,
+    navController: NavHostController
 ) {
     val ctx = LocalContext.current
-    val navController = rememberNavController()
 
-    val showAppIconsInDrawer by UiSettingsStore.getShowAppIconsInDrawer(ctx)
+    val showAppIconsInDrawer by DrawerSettingsStore.getShowAppIconsInDrawer(ctx)
+        .collectAsState(initial = true)
+
+    val searchBarBottom by DrawerSettingsStore.getSearchBarBottom(ctx)
         .collectAsState(initial = true)
 
 
+    fun goMainScreen() {
+        navController.navigate(ROUTES.MAIN) {
+            popUpTo(0) { inclusive = true }
+        }
+    }
+
     fun goSettingsRoot() =  navController.navigate(SETTINGS.ROOT)
     fun goAdvSettingsRoot() =  navController.navigate(SETTINGS.ADVANCED_ROOT)
-    fun goMainScreen() = navController.navigate(ROUTES.MAIN)
     fun goDrawer() = navController.navigate(ROUTES.DRAWER)
     fun goWelcome() = navController.navigate(ROUTES.WELCOME)
 
@@ -69,7 +78,7 @@ fun MainAppUi(
             )
         }
 
-        composable(ROUTES.DRAWER) { AppDrawerScreen(appsViewModel, showAppIconsInDrawer) { goMainScreen() } }
+        composable(ROUTES.DRAWER) { AppDrawerScreen(appsViewModel, showAppIconsInDrawer, searchBarBottom) { goMainScreen() } }
 
 
         // Settings + Welcome
@@ -92,6 +101,7 @@ fun MainAppUi(
 
 
         composable(SETTINGS.APPEARANCE) { AppearanceTab(navController) { goAdvSettingsRoot() } }
+        composable(SETTINGS.DRAWER) { DrawerTab { goAdvSettingsRoot() } }
         composable(SETTINGS.COLORS) { ColorSelectorTab { goAdvSettingsRoot() } }
         composable(SETTINGS.DEBUG) { DebugTab(navController) { goAdvSettingsRoot() } }
         composable(SETTINGS.LANGUAGE) { LanguageTab { goAdvSettingsRoot() } }

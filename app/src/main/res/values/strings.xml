@@ -77,4 +77,6 @@
     <string name="thanks_for_the_inspiration">Thanks for the inspiration, and some part of the code :)</string>
     <string name="app_developer">Lead Developer</string>
     <string name="check_for_updates_text">Check for release on Github</string>
+    <string name="app_drawer">App Drawer</string>
+    <string name="drawer_tab_text">Here you can customize apperance/behavior of you  app drawer</string>
 </resources>

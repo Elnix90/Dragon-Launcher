@@ -17,6 +17,7 @@ import androidx.compose.material.icons.automirrored.filled.Launch
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.ColorLens
+import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Launch
 import androidx.compose.material.icons.filled.ReportProblem
@@ -43,6 +44,7 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.R
 import org.elnix.dragonlauncher.data.stores.ColorModesSettingsStore
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore
+import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.data.stores.LanguageSettingsStore
 import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
@@ -92,6 +94,7 @@ fun AdvancedSettingsScreen(
                 SwipeSettingsStore.resetAll(ctx)
                 LanguageSettingsStore.resetAll(ctx)
                 ColorModesSettingsStore.resetAll(ctx)
+                DrawerSettingsStore.resetAll(ctx)
             }
         }
     ) {
@@ -124,6 +127,15 @@ fun AdvancedSettingsScreen(
                icon = Icons.Default.Restore
             ) {
                 navController.navigate(SETTINGS.BACKUP)
+            }
+        }
+
+        item {
+            SettingsItem(
+                title = stringResource(R.string.app_drawer),
+                icon = Icons.Default.GridOn
+            ) {
+                navController.navigate(SETTINGS.DRAWER)
             }
         }
 

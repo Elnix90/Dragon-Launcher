@@ -13,6 +13,7 @@ import org.elnix.dragonlauncher.data.stores.LanguageSettingsStore
 import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore
 import org.elnix.dragonlauncher.data.stores.ColorSettingsStore
+import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore
 import org.json.JSONObject
 import java.io.OutputStreamWriter
 
@@ -32,6 +33,7 @@ object SettingsBackupManager {
 
 
                 putIfNotEmpty("actions", mapActionsToJson(SwipeSettingsStore.getAll(ctx)))
+                putIfNotEmpty("drawer", mapToJson(DrawerSettingsStore.getAll(ctx)))
                 putIfNotEmpty("color_mode", mapStringToJson(ColorModesSettingsStore.getAll(ctx)))
                 putIfNotEmpty("color", mapIntToJson(ColorSettingsStore.getAll(ctx)))
                 putIfNotEmpty("debug", mapToJson(DebugSettingsStore.getAll(ctx)))
@@ -77,6 +79,10 @@ object SettingsBackupManager {
                     SwipeSettingsStore.setAll(ctx, jsonToActionsMap(it))
                 }
 
+                // ------------------ ACTIONS ------------------
+                obj.optJSONObject("drawer")?.let {
+                    DrawerSettingsStore.setAll(ctx, jsonToMap(it))
+                }
 
                 // ------------------ COLOR MODE ------------------
                 obj.optJSONObject("color_mode")?.let {

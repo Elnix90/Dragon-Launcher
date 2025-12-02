@@ -46,10 +46,10 @@ fun AppearanceTab(
     val showAppLaunchPreview by UiSettingsStore.getShowAppLaunchPreview(ctx)
         .collectAsState(initial = true)
 
-    val autoLaunchSingleMatch by UiSettingsStore.getAutoLaunchSingleMatch(ctx)
+    val showAppCirclePreview by UiSettingsStore.getShowCirclePreview(ctx)
         .collectAsState(initial = true)
 
-    val showAppIconsInDrawer by UiSettingsStore.getShowAppIconsInDrawer(ctx)
+    val showAppLinePreview by UiSettingsStore.getShowLinePreview(ctx)
         .collectAsState(initial = true)
 
 
@@ -121,16 +121,16 @@ fun AppearanceTab(
 
         item {
             SwitchRow(
-                autoLaunchSingleMatch,
-                "Auto Launch Single Match",
-            ) { scope.launch { UiSettingsStore.setAutoLaunchSingleMatch(ctx, it) } }
+                showAppCirclePreview,
+                "Show App circle preview",
+            ) { scope.launch { UiSettingsStore.setShowCirclePreview(ctx, it) } }
         }
 
         item {
             SwitchRow(
-                showAppIconsInDrawer,
-                "Show App Icons in Drawer",
-            ) { scope.launch { UiSettingsStore.setShowAppIconsInDrawer(ctx, it) } }
+                showAppLinePreview,
+                "Show App line preview",
+            ) { scope.launch { UiSettingsStore.setShowLinePreview(ctx, it) } }
         }
     }
 }

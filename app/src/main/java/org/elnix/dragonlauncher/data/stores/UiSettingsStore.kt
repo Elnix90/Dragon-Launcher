@@ -18,8 +18,8 @@ object UiSettingsStore {
         val showLaunchingAppIcon: Boolean = true,
         val showAppLaunchPreviewCircle: Boolean = true,
         val fullscreen: Boolean = true,
-        val autoOpenSingleMatch: Boolean = true,
-        val showAppIconsInDrawer: Boolean = true
+        val showAppCirclePreview: Boolean = true,
+        val showAppLinePreview: Boolean = true,
     )
 
 
@@ -50,7 +50,7 @@ object UiSettingsStore {
         ctx.uiDatastore.edit { it[SHOW_LAUNCHING_APP_ICON] = enabled }
     }
 
-    private val SHOW_APP_LAUNCH_PREVIEW = booleanPreferencesKey("show_ap_launch_preview")
+    private val SHOW_APP_LAUNCH_PREVIEW = booleanPreferencesKey("show_app_launch_preview")
     fun getShowAppLaunchPreview(ctx: Context): Flow<Boolean> =
         ctx.uiDatastore.data.map { it[SHOW_APP_LAUNCH_PREVIEW] ?: true }
     suspend fun setShowAppLaunchPreview(ctx: Context, enabled: Boolean) {
@@ -64,19 +64,21 @@ object UiSettingsStore {
         ctx.uiDatastore.edit { it[FULLSCREEN] = enabled }
     }
 
-    private val AUTO_LAUNCH_SINGLE_MATCH = booleanPreferencesKey("auto_launch_single_match")
-    fun getAutoLaunchSingleMatch(ctx: Context): Flow<Boolean> =
-        ctx.uiDatastore.data.map { it[AUTO_LAUNCH_SINGLE_MATCH] ?: true }
-    suspend fun setAutoLaunchSingleMatch(ctx: Context, enabled: Boolean) {
-        ctx.uiDatastore.edit { it[AUTO_LAUNCH_SINGLE_MATCH] = enabled }
+    private val SHOW_CIRCLE_PREVIEW = booleanPreferencesKey("show_circle_preview")
+    fun getShowCirclePreview(ctx: Context): Flow<Boolean> =
+        ctx.uiDatastore.data.map { it[SHOW_CIRCLE_PREVIEW] ?: true }
+    suspend fun setShowCirclePreview(ctx: Context, enabled: Boolean) {
+        ctx.uiDatastore.edit { it[SHOW_CIRCLE_PREVIEW] = enabled }
     }
 
-    private val SHOW_APP_ICONS_IN_DRAWER = booleanPreferencesKey("show_app_icons_in_drawer")
-    fun getShowAppIconsInDrawer(ctx: Context): Flow<Boolean> =
-        ctx.uiDatastore.data.map { it[SHOW_APP_ICONS_IN_DRAWER] ?: true }
-    suspend fun setShowAppIconsInDrawer(ctx: Context, enabled: Boolean) {
-        ctx.uiDatastore.edit { it[SHOW_APP_ICONS_IN_DRAWER] = enabled }
+    private val SHOW_LINE_PREVIEW = booleanPreferencesKey("show_line_preview")
+    fun getShowLinePreview(ctx: Context): Flow<Boolean> =
+        ctx.uiDatastore.data.map { it[SHOW_LINE_PREVIEW] ?: true }
+    suspend fun setShowLinePreview(ctx: Context, enabled: Boolean) {
+        ctx.uiDatastore.edit { it[SHOW_LINE_PREVIEW] = enabled }
     }
+
+
 
     suspend fun resetAll(ctx: Context) {
         ctx.uiDatastore.edit { prefs ->
@@ -86,8 +88,8 @@ object UiSettingsStore {
             prefs.remove(SHOW_LAUNCHING_APP_ICON)
             prefs.remove(SHOW_APP_LAUNCH_PREVIEW)
             prefs.remove(FULLSCREEN)
-            prefs.remove(AUTO_LAUNCH_SINGLE_MATCH)
-            prefs.remove(SHOW_APP_ICONS_IN_DRAWER)
+            prefs.remove(SHOW_CIRCLE_PREVIEW)
+            prefs.remove(SHOW_LINE_PREVIEW)
         }
     }
 
@@ -109,8 +111,8 @@ object UiSettingsStore {
             putIfNonDefault(SHOW_LAUNCHING_APP_ICON.name, prefs[SHOW_LAUNCHING_APP_ICON], defaults.showLaunchingAppIcon)
             putIfNonDefault(SHOW_APP_LAUNCH_PREVIEW.name, prefs[SHOW_APP_LAUNCH_PREVIEW], defaults.showAppLaunchPreviewCircle)
             putIfNonDefault(FULLSCREEN.name, prefs[FULLSCREEN], defaults.fullscreen)
-            putIfNonDefault(AUTO_LAUNCH_SINGLE_MATCH.name, prefs[AUTO_LAUNCH_SINGLE_MATCH], defaults.autoOpenSingleMatch)
-            putIfNonDefault(SHOW_APP_ICONS_IN_DRAWER.name, prefs[SHOW_APP_ICONS_IN_DRAWER], defaults.showAppIconsInDrawer)
+            putIfNonDefault(SHOW_CIRCLE_PREVIEW.name, prefs[SHOW_CIRCLE_PREVIEW], defaults.showAppCirclePreview)
+            putIfNonDefault(SHOW_LINE_PREVIEW.name, prefs[SHOW_LINE_PREVIEW], defaults.showAppLinePreview)
         }
     }
 
@@ -142,12 +144,12 @@ object UiSettingsStore {
                 prefs[FULLSCREEN] = it.toBoolean()
             }
 
-            backup[AUTO_LAUNCH_SINGLE_MATCH.name]?.let {
-                prefs[AUTO_LAUNCH_SINGLE_MATCH] = it.toBoolean()
+            backup[SHOW_CIRCLE_PREVIEW.name]?.let {
+                prefs[SHOW_CIRCLE_PREVIEW] = it.toBoolean()
             }
 
-            backup[SHOW_APP_ICONS_IN_DRAWER.name]?.let {
-                prefs[SHOW_APP_ICONS_IN_DRAWER] = it.toBoolean()
+            backup[SHOW_LINE_PREVIEW.name]?.let {
+                prefs[SHOW_LINE_PREVIEW] = it.toBoolean()
             }
         }
     }
