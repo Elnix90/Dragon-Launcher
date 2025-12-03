@@ -208,7 +208,22 @@ fun SettingsScreen(
                 .fillMaxSize()
                 .weight(1f)
                 .padding(12.dp)
-                .onSizeChanged { center = Offset(it.width / 2f, it.height / 2f) }
+                .onSizeChanged { size ->
+                    val w = size.width.toFloat()
+                    val h = size.height.toFloat()
+                    center = Offset(w / 2f, h / 2f)
+
+                    // Max radius so the circle stays inside horizontal bounds
+                    val maxHorizontalRadius = center.x - POINT_RADIUS_PX
+
+                    circles.forEach { circle ->
+                        val clamped = minOf(circle.radius, maxHorizontalRadius)
+                        if (circle.radius != clamped) {
+                            circle.radius = clamped
+                        }
+                    }
+                }
+
         ) {
 
 
