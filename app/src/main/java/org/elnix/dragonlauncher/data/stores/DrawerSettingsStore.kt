@@ -20,7 +20,7 @@ object DrawerSettingsStore {
         val showAppIconsInDrawer: Boolean = true,
         val showAppLabelInDrawer: Boolean = true,
         val searchBarBottom: Boolean = false,
-        val gridSize: Int = 4,
+        val gridSize: Int = 6,
         val initialPAge: Int = 0
     )
 
