@@ -200,13 +200,29 @@ object DrawerSettingsStore {
                     )
                 }
             }
-
-            return v as? Boolean ?: throw BackupTypeException(
-                key = key,
-                expected = "Boolean",
-                actual = v::class.simpleName,
-                value = v
-            )
+            return when (v) {
+                is Boolean -> v
+                is Number -> v.toInt() != 0
+                is String -> {
+                    val trimmed = v.trim().lowercase()
+                    when (trimmed) {
+                        "true", "1", "yes", "y", "on" -> true
+                        "false", "0", "no", "n", "off" -> false
+                        else -> throw BackupTypeException(
+                            key = key,
+                            expected = "Boolean",
+                            actual = "String",
+                            value = v
+                        )
+                    }
+                }
+                else -> throw BackupTypeException(
+                    key = key,
+                    expected = "Boolean",
+                    actual = v::class.simpleName,
+                    value = v
+                )
+            }
         }
 
         fun getIntStrict(key: String): Int {
