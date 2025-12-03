@@ -1,3 +1,5 @@
+@file:Suppress("AssignedValueIsNeverRead")
+
 package org.elnix.dragonlauncher.ui
 
 import androidx.compose.animation.core.animateDpAsState
@@ -200,7 +202,6 @@ fun MainScreenOverlay(
             }
             hoveredAction = null
             currentAction = null
-            @Suppress("AssignedValueIsNeverRead")
             bannerVisible = false
         }
     }
@@ -303,7 +304,7 @@ fun MainScreenOverlay(
                     )
                 }
 
-                if (showAppCirclePreview || showAppLinePreview) {
+                if (showAppCirclePreview || showAppLinePreview || showAppLaunchPreview) {
                     hoveredAction?.let { point ->
                         val action = point.action!!
                         if (showAppCirclePreview) {
