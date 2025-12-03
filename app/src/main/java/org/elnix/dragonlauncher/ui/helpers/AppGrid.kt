@@ -6,6 +6,7 @@ import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -44,7 +45,7 @@ fun AppGrid(
     if (gridSize == 1) {
         LazyColumn(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .pointerInput(Unit) {
                     detectVerticalDragGestures { _, _ -> }
                 }
@@ -63,7 +64,7 @@ fun AppGrid(
     } else {
         LazyVerticalGrid(
             columns = GridCells.Fixed(gridSize),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxSize()
         ) {
             items(apps.size, ) { index ->
                 val app = apps[index]
