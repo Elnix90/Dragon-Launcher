@@ -1,1 +1,1 @@
-First version
+Corrected import/export that now serialize correctly the actions, and import that import correctly them,Added split apk support for even smaller apks, Fixed language issue on android 13+ devices, it now works, but only translated in french
