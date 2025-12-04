@@ -1,15 +1,16 @@
 package org.elnix.dragonlauncher.data
 
 import com.google.gson.*
+import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 
 // Keep the same data classes, no @Serializable needed
 data class SwipePointSerializable(
-    val circleNumber: Int,
-    val angleDeg: Double,
-    val action: SwipeActionSerializable? = null,
-    val id: String? = null
+    @SerializedName("a") val circleNumber: Int,
+    @SerializedName("b") val angleDeg: Double,
+    @SerializedName("c") val action: SwipeActionSerializable? = null,
+    @SerializedName("d") val id: String? = null
 )
 
 // Use sealed class for actions

@@ -140,7 +140,14 @@ object SettingsBackupManager {
                     when (store) {
                         DataStoreName.SWIPE -> jsonObj.optJSONArray(store.backupKey)?.let { jsonArr ->
                             val pointsString = jsonArr.toString()
-                            val pointsList = SwipeJson.decode(pointsString)
+                            val cleanJsonString = jsonArr.toString(2) // Pretty print = clean JSON
+
+                            Log.e("Debug", "Raw array: $jsonArr")
+                            Log.e("Debug", "Clean JSON: $cleanJsonString")
+
+                            val pointsList = SwipeJson.decode(cleanJsonString)
+
+                            Log.e("Debug", "Decoded points: $pointsList")
                             SwipeSettingsStore.save(ctx, pointsList)
                         }
                         DataStoreName.DRAWER -> jsonObj.optJSONObject(store.backupKey)?.let {
