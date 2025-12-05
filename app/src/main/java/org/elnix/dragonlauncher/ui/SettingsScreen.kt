@@ -225,9 +225,9 @@ fun SettingsScreen(
                     // Proportional radii: largest fits screen, others reduce evenly
                     val baseRadius = availableWidth * 0.65f  // ~35% of screen width
                     circles.clear()
-                    circles.add(UiCircle(id = 0, radius = baseRadius * 0.85f, points = mutableStateListOf()))
+                    circles.add(UiCircle(id = 0, radius = baseRadius * 0.35f, points = mutableStateListOf()))
                     circles.add(UiCircle(id = 1, radius = baseRadius * 0.60f, points = mutableStateListOf()))
-                    circles.add(UiCircle(id = 2, radius = baseRadius * 0.35f, points = mutableStateListOf()))
+                    circles.add(UiCircle(id = 2, radius = baseRadius * 0.85f, points = mutableStateListOf()))
                 }
         ) {
 
