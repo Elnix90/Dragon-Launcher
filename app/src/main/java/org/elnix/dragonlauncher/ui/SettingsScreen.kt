@@ -43,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -143,6 +144,9 @@ fun SettingsScreen(
         animationSpec = tween(150)
     )
 
+    var availableWidth by remember { mutableFloatStateOf(0f) }
+
+
     // Load
     LaunchedEffect(Unit) {
         val saved = SwipeSettingsStore.getPoints(ctx)
@@ -155,18 +159,6 @@ fun SettingsScreen(
                 it.circleNumber
             )
         })
-
-        circles.clear()
-
-        repeat(3) { index ->
-            circles.add(
-                UiCircle(
-                    id = index,
-                    radius = 200f + (index * 140f),
-                    points = mutableStateListOf()
-                )
-            )
-        }
 
         // assign points into circles
         points.forEach { p ->
@@ -228,16 +220,14 @@ fun SettingsScreen(
                     val w = size.width.toFloat()
                     val h = size.height.toFloat()
                     center = Offset(w / 2f, h / 2f)
+                    availableWidth = w - (POINT_RADIUS_PX * 2)  // Safe space for points + padding
 
-                    // Max radius so the circle stays inside horizontal bounds
-                    val maxHorizontalRadius = center.x - POINT_RADIUS_PX
-
-                    circles.forEach { circle ->
-                        val clamped = minOf(circle.radius, maxHorizontalRadius)
-                        if (circle.radius != clamped) {
-                            circle.radius = clamped
-                        }
-                    }
+                    // Proportional radii: largest fits screen, others reduce evenly
+                    val baseRadius = availableWidth * 0.65f  // ~35% of screen width
+                    circles.clear()
+                    circles.add(UiCircle(id = 0, radius = baseRadius * 0.85f, points = mutableStateListOf()))
+                    circles.add(UiCircle(id = 1, radius = baseRadius * 0.60f, points = mutableStateListOf()))
+                    circles.add(UiCircle(id = 2, radius = baseRadius * 0.35f, points = mutableStateListOf()))
                 }
         ) {
 

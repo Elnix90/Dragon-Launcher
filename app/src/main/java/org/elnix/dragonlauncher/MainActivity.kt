@@ -1,5 +1,7 @@
 package org.elnix.dragonlauncher
 
+import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -40,6 +42,7 @@ class MainActivity : ComponentActivity() {
     private var navControllerHolder = mutableStateOf<NavHostController?>(null)
 
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
 
         // Use hardware acceleration
@@ -49,6 +52,8 @@ class MainActivity : ComponentActivity() {
         )
 
         super.onCreate(savedInstanceState)
+
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
 //        WindowCompat.setDecorFitsSystemWindows(window, false)
 
