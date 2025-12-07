@@ -9,9 +9,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.drawer.AppDrawerScreen
-import org.elnix.dragonlauncher.ui.settings.appearance.DrawerTab
 import org.elnix.dragonlauncher.ui.settings.appearance.AppearanceTab
 import org.elnix.dragonlauncher.ui.settings.appearance.ColorSelectorTab
+import org.elnix.dragonlauncher.ui.settings.appearance.DrawerTab
 import org.elnix.dragonlauncher.ui.settings.backup.BackupTab
 import org.elnix.dragonlauncher.ui.settings.backup.BackupViewModel
 import org.elnix.dragonlauncher.ui.settings.debug.DebugTab

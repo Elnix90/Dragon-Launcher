@@ -79,4 +79,6 @@
     <string name="check_for_updates_text">Check for release on Github</string>
     <string name="app_drawer">App Drawer</string>
     <string name="drawer_tab_text">Here you can customize apperance/behavior of you  app drawer</string>
+    <string name="set_default_launcher">Set as default launcher</string>
+    <string name="close">Close</string>
 </resources>

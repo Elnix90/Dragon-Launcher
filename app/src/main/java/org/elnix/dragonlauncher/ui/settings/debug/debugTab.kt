@@ -40,6 +40,8 @@ fun DebugTab(
         .collectAsState(initial = false)
     val hasInitialized by PrivateSettingsStore.getHasInitialized(ctx)
         .collectAsState(initial = true)
+    val showSetDefaultLauncherBanner by PrivateSettingsStore.getShowSetDefaultLauncherBanner(ctx)
+        .collectAsState(initial = true)
 
     val isForceSwitchToggled by DebugSettingsStore.getForceAppLanguageSelector(ctx).collectAsState(initial = false)
 
@@ -100,11 +102,22 @@ fun DebugTab(
         item{
             SwitchRow(
                 state = hasInitialized,
-                text = "Has inititialized",
-                defaultValue = false
+                text = "Has initialized"
             ) {
                 scope.launch {
                     PrivateSettingsStore.setHasInitialized(ctx, it)
+                }
+            }
+        }
+
+        item{
+            SwitchRow(
+                state = showSetDefaultLauncherBanner,
+                text = "Hide set default launcher banner",
+                defaultValue = true
+            ) {
+                scope.launch {
+                    PrivateSettingsStore.setShowSetDefaultLauncherBanner(ctx, it)
                 }
             }
         }
@@ -132,4 +145,3 @@ fun DebugTab(
         }
     }
 }
-
