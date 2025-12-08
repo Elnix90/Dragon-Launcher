@@ -504,6 +504,7 @@ fun SettingsScreen(
                 .clip(CircleShape)
                 .clickable {
                     isCircleDistanceMode = !isCircleDistanceMode
+                    selectedPoint = null
                 }
                 .background(
                     MaterialTheme.colorScheme.primary.copy(if (isCircleDistanceMode) 0.2f else 0.1f)
