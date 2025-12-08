@@ -15,6 +15,13 @@
 The main Idea of this launcher is to launch your apps via gestures.
 You can customize your list of fast access apps easily in the settings, and also use the app drawer to pick an app and launch it automatically
 
+
+## Privacy & security
+
+ * **No** data collection
+ * Dragon Launcher has no access to internet -> it can't steal you data
+ * No permission requested for the app to work (excepted accessibility for notifications but it's optional)
+
 ## Screenshots
 
 <p align="center">
