@@ -64,7 +64,16 @@ fun launchSwipeAction(
         }
 
         SwipeActionSerializable.OpenDragonLauncherSettings -> onAppSettings?.invoke()
-        SwipeActionSerializable.Lock -> null// TODO("Lock the phone (maybe using admin rights or accessibility")
+
+        SwipeActionSerializable.Lock -> {
+            if (!SystemControl.isServiceEnabled(ctx)) {
+                ctx.showToast("Please enable accessibility settings to use that feature")
+                SystemControl.openServiceSettings(ctx)
+                return
+            }
+            SystemControl.lockScreen(ctx)
+        }
+
         is SwipeActionSerializable.OpenFile -> {
             try {
                 val uri = action.uri.toUri()
