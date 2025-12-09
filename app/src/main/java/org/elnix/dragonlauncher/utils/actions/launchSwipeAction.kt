@@ -2,13 +2,11 @@ package org.elnix.dragonlauncher.utils.actions
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import org.elnix.dragonlauncher.data.SwipeActionSerializable
 import org.elnix.dragonlauncher.services.SystemControl
+import org.elnix.dragonlauncher.utils.hasUriPermission
 import org.elnix.dragonlauncher.utils.showToast
-import java.io.File
 
 
 /**
@@ -16,11 +14,11 @@ import java.io.File
  */
 class AppLaunchException(message: String, cause: Throwable? = null) : Exception(message, cause)
 
-private const val FILE_PROVIDER_AUTHORITY = "org.elnix.dragonlauncher.fileprovider"
 
 fun launchSwipeAction(
     ctx: Context,
     action: SwipeActionSerializable?,
+    onReselectFile: (() -> Unit)? = null,
     onAppSettings: (() -> Unit)? = null,
     onAppDrawer: (() -> Unit)? = null
 ) {
@@ -66,52 +64,32 @@ fun launchSwipeAction(
         }
 
         SwipeActionSerializable.OpenDragonLauncherSettings -> onAppSettings?.invoke()
-<<<<<<< Updated upstream
-        SwipeActionSerializable.Lock -> null// TODO("Lock the phone (maybe using admin rights")
-=======
-
-        SwipeActionSerializable.Lock -> {
-            if (!SystemControl.isServiceEnabled(ctx)) {
-                ctx.showToast("Please enable accessibility settings to use that feature")
-                SystemControl.openServiceSettings(ctx)
-                return
-            }
-            SystemControl.lockScreen(ctx)
-        }
-
->>>>>>> Stashed changes
+        SwipeActionSerializable.Lock -> null// TODO("Lock the phone (maybe using admin rights or accessibility")
         is SwipeActionSerializable.OpenFile -> {
             try {
-                val file = File(action.filePath)
-                if (!file.exists()) {
-                    ctx.showToast("File not found: ${action.filePath} (Check All Files Access)")
+                val uri = action.uri.toUri()
+
+                if (!ctx.hasUriPermission(uri)) {
+                    ctx.showToast("Please reselect the file to allow access")
+                    onReselectFile?.invoke()
                     return
                 }
-
-                // --- Crucial change: Use FileProvider instead of Uri.fromFile ---
-                // FileProvider creates a content:// Uri with temporary permissions for the target app.
-                val uri = FileProvider.getUriForFile(
-                    ctx,
-                    FILE_PROVIDER_AUTHORITY,
-                    file
-                )
 
                 val intent = Intent(Intent.ACTION_VIEW).apply {
                     setDataAndType(uri, action.mimeType ?: "*/*")
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    // Grant temporary permission to the receiving application
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
-                // -----------------------------------------------------------------
 
                 if (intent.resolveActivity(ctx.packageManager) != null) {
                     ctx.startActivity(intent)
                 } else {
                     ctx.showToast("No app available to open this file")
                 }
+
             } catch (e: Exception) {
                 ctx.showToast("Unable to open file: ${e.message}")
-                Log.e("File", "Error opening file: $e")
+//                Log.e("OpenFile", e.toString())
             }
         }
     }

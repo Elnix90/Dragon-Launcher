@@ -25,7 +25,10 @@ data class SwipePointSerializable(
 sealed class SwipeActionSerializable {
     data class LaunchApp(val packageName: String) : SwipeActionSerializable()
     data class OpenUrl(val url: String) : SwipeActionSerializable()
-    data class OpenFile(val filePath: String, val mimeType: String? = null) : SwipeActionSerializable()
+    data class OpenFile(
+        val uri: String,
+        val mimeType: String? = null
+    ) : SwipeActionSerializable()
     object NotificationShade : SwipeActionSerializable()
     object ControlPanel : SwipeActionSerializable()
     object OpenAppDrawer : SwipeActionSerializable()
@@ -53,7 +56,7 @@ class SwipeActionAdapter : JsonSerializer<SwipeActionSerializable>, JsonDeserial
             }
             is SwipeActionSerializable.OpenFile -> {
                 obj.addProperty("type", "OpenFile")
-                obj.addProperty("filePath", src.filePath)
+                obj.addProperty("uri", src.uri)
                 obj.addProperty("mimeType", src.mimeType)
             }
             SwipeActionSerializable.NotificationShade -> obj.addProperty("type", "NotificationShade")
@@ -76,7 +79,7 @@ class SwipeActionAdapter : JsonSerializer<SwipeActionSerializable>, JsonDeserial
             "LaunchApp" -> SwipeActionSerializable.LaunchApp(obj.get("packageName").asString)
             "OpenUrl" -> SwipeActionSerializable.OpenUrl(obj.get("url").asString)
             "OpenFile" -> SwipeActionSerializable.OpenFile(
-                obj.get("filePath").asString,
+                obj.get("uri").asString,
                 obj.get("mimeType")?.asString
             )
             "NotificationShade" -> SwipeActionSerializable.NotificationShade

@@ -1,8 +1,6 @@
 package org.elnix.dragonlauncher.ui.helpers
 
-import android.content.Context
-import android.net.Uri
-import android.provider.DocumentsContract
+import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
@@ -17,31 +15,29 @@ fun FilePickerDialog(
 ) {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
+        contract = ActivityResultContracts.OpenDocument(),
         onResult = { uri ->
             uri?.let {
                 val mimeType = context.contentResolver.getType(it)
-                val relativePath = getRelativeFilePath(context, it)
+
+                // Take persistable permission
+                context.contentResolver.takePersistableUriPermission(
+                    it,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+
                 val action = SwipeActionSerializable.OpenFile(
-                    filePath = relativePath,
+                    uri = it.toString(),
                     mimeType = mimeType
                 )
                 onFileSelected(action)
             } ?: onDismiss()
         }
     )
-    LaunchedEffect(Unit) { launcher.launch("*/*") }
-}
 
-fun getRelativeFilePath(context: Context, uri: Uri): String {
-    return when {
-        DocumentsContract.isDocumentUri(context, uri) -> {
-            val docId = DocumentsContract.getDocumentId(uri)
-            val splitId = docId.split(":").toTypedArray()
-            if (splitId.size > 1 && splitId[0] == "primary") {
-                splitId[1].replace("%20", " ").trim('/')
-            } else docId
-        }
-        else -> uri.lastPathSegment ?: "Unknown file"
+    LaunchedEffect(Unit) {
+        launcher.launch(arrayOf("*/*"))
     }
+
 }

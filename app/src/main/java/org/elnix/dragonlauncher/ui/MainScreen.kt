@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -26,14 +27,18 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
+import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.data.SwipePointSerializable
 import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore
+import org.elnix.dragonlauncher.ui.helpers.FilePickerDialog
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
 import org.elnix.dragonlauncher.ui.helpers.rememberHoldToOpenSettings
 import org.elnix.dragonlauncher.utils.AppDrawerViewModel
 import org.elnix.dragonlauncher.utils.actions.launchSwipeAction
 
+@Suppress("AssignedValueIsNeverRead")
 @Composable
 fun MainScreen(
     appsViewModel: AppDrawerViewModel,
@@ -42,6 +47,9 @@ fun MainScreen(
     onLongPress3Sec: () -> Unit
 ) {
     val ctx = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    var showFilePicker: SwipePointSerializable? by remember { mutableStateOf(null) }
 
     val icons by appsViewModel.icons.collectAsState()
 
@@ -118,11 +126,12 @@ fun MainScreen(
             current = current,
             isDragging = isDragging,
             surface = size,
-            points =points,
+            points = points,
             onLaunch = {
                 launchSwipeAction(
                     ctx = ctx,
-                    action = it,
+                    action = it?.action,
+                    onReselectFile = { showFilePicker = it },
                     onAppSettings = onLongPress3Sec,
                     onAppDrawer = onAppDrawer
                 )
@@ -136,4 +145,30 @@ fun MainScreen(
             rgbLoading = rgbLoading
         )
     }
+
+    if (showFilePicker != null) {
+        val currentPoint = showFilePicker!!
+
+        FilePickerDialog(
+            onDismiss = { showFilePicker = null },
+            onFileSelected = { newAction ->
+
+                // Build the updated point
+                val updatedPoint = currentPoint.copy(action = newAction)
+
+                // Replace only this point
+                val finalList = points.map { p ->
+                    if (p == currentPoint) updatedPoint else p
+                }
+
+
+                scope.launch {
+                    SwipeSettingsStore.save(ctx, finalList)
+                }
+
+                showFilePicker = null
+            }
+        )
+    }
+
 }

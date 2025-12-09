@@ -66,7 +66,7 @@ fun MainScreenOverlay(
     isDragging: Boolean,
     surface: IntSize,
     points: List<SwipePointSerializable>,
-    onLaunch: (SwipeActionSerializable?) -> Unit
+    onLaunch: (SwipePointSerializable?) -> Unit
 ) {
     val ctx = LocalContext.current
 
@@ -204,7 +204,7 @@ fun MainScreenOverlay(
     LaunchedEffect(isDragging) {
         if (!isDragging) {
             if (currentAction != null) {
-                onLaunch(currentAction?.action)
+                onLaunch(currentAction)
             }
             hoveredAction = null
             currentAction = null
@@ -372,7 +372,7 @@ fun MainScreenOverlay(
     }
     if (hoveredAction != null && (showLaunchingAppLabel || showLaunchingAppIcon)) {
         val currentAction = hoveredAction!!.action!!
-            Box(
+        Box(
             Modifier
                 .fillMaxWidth()
                 .offset(y = offsetY)
