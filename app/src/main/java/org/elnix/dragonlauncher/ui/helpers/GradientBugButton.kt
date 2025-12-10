@@ -79,7 +79,8 @@ fun GradientBigButton(
         Text(
             text = text,
             color = if (enabled) Color.White else Color.White.copy(alpha = 0.6f),
-            fontSize = 20.sp
+            fontSize = 20.sp,
+            textAlign = TextAlign.Center
         )
     }
 }
