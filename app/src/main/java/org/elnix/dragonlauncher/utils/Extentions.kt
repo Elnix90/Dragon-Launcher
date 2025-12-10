@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.widget.Toast
+import androidx.core.net.toUri
 import org.elnix.dragonlauncher.R
 
 /**
@@ -52,6 +53,14 @@ fun Context.copyToClipboard(text: String) {
     showToast("")
 }
 
+
+
+fun Context.openUrl(url: String) {
+    if (url.isEmpty()) return
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.data = url.toUri()
+    startActivity(intent)
+}
 
 
 val Context.isDefaultLauncher: Boolean

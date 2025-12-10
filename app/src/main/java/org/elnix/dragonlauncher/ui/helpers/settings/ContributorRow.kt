@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui.helpers.settings
 
-import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,7 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
+import org.elnix.dragonlauncher.utils.openUrl
 
 @Composable
 fun ContributorItem(
@@ -36,17 +34,14 @@ fun ContributorItem(
     description: String? = null,
     githubUrl: String,
 ) {
-    val context = LocalContext.current
+    val ctx = LocalContext.current
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surface)
-            .clickable {
-                val intent = Intent(Intent.ACTION_VIEW, githubUrl.toUri())
-                context.startActivity(intent)
-            }
+            .clickable { ctx.openUrl(githubUrl) }
             .padding(14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(14.dp)

@@ -37,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -57,6 +56,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
 import org.elnix.dragonlauncher.utils.copyToClipboard
 import org.elnix.dragonlauncher.utils.isDefaultLauncher
+import org.elnix.dragonlauncher.utils.openUrl
 import org.elnix.dragonlauncher.utils.showToast
 
 
@@ -185,12 +185,7 @@ fun AdvancedSettingsScreen(
                 title = stringResource(R.string.source_code),
                 icon = Icons.Default.Code,
                 leadIcon = Icons.AutoMirrored.Filled.Launch
-            ) {
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = "https://github.com/Elnix90/Dragon-Launcher".toUri()
-                }
-                ctx.startActivity(intent)
-            }
+            ) { ctx.openUrl("https://github.com/Elnix90/Dragon-Launcher") }
         }
 
         item {
@@ -199,12 +194,7 @@ fun AdvancedSettingsScreen(
                 description = stringResource(R.string.check_for_updates_text),
                 icon = Icons.Default.Update,
                 leadIcon = Icons.AutoMirrored.Filled.Launch
-            ) {
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = "https://github.com/Elnix90/Dragon-Launcher/releases/latest".toUri()
-                }
-                ctx.startActivity(intent)
-            }
+            ) { ctx.openUrl("https://github.com/Elnix90/Dragon-Launcher/releases/latest") }
         }
 
         item {
@@ -213,12 +203,7 @@ fun AdvancedSettingsScreen(
                 description =stringResource(R.string.open_an_issue_on_github),
                 icon = Icons.Default.ReportProblem,
                 leadIcon = Icons.AutoMirrored.Filled.Launch
-            ) {
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = "https://github.com/Elnix90/Dragon-Launcher/issues/new".toUri()
-                }
-                ctx.startActivity(intent)
-            }
+            ) { ctx.openUrl("https://github.com/Elnix90/Dragon-Launcher/issues/new") }
         }
 
 
