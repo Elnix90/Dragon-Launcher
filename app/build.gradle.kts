@@ -10,18 +10,12 @@ android {
         version = release(36)
     }
 
-//    sourceSets {
-//        getByName("main") {
-//            assets.srcDir("fastlane/metadata/android/en-US/changelogs")
-//        }
-//    }
-
     defaultConfig {
         applicationId = "org.elnix.dragonlauncher"
         minSdk = 27
         targetSdk = 36
-        versionCode = 10
-        versionName = "1.1.6"
+        versionCode = 11
+        versionName = "1.1.7"
     }
 
     signingConfigs {
@@ -46,7 +40,7 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-//            signingConfig = signingConfigs.getByName("release")
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -99,8 +93,9 @@ dependencies {
 }
 
 
+
+// Copy files in the fastlane/metadata dir to the assets folder, where they are compiled and added to the app
 tasks.register<Copy>("copyChangelogsToAssets") {
-    // Correct path: from project root fastlane/ to app/src/main/assets
     from("../fastlane/metadata/android/en-US/changelogs")
     into(file("src/main/assets/changelogs"))
     include("*.txt")

@@ -1,0 +1,4 @@
+1.1.7
+* Refactor of changelogs system, added what's new screen and changelogs screen
+* Corrected flashing set as default launcher banner
+* Made long click on settings copy useful things to clipboard
