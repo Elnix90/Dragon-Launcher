@@ -354,6 +354,18 @@ fun MainScreenOverlay(
                                 )
                             }
                             if (showAppLaunchPreview) {
+
+                                drawCircle(
+                                    color = circleColor ?: AmoledDefault.CircleColor,
+                                    radius = 44f,
+                                    center = Offset(px, py)
+                                )
+
+                                drawCircle(
+                                    color = backgroundColor,
+                                    radius = 40f,
+                                    center = Offset(px, py)
+                                )
                                 drawImage(
                                     image = actionIconBitmap(
                                         action = action,
