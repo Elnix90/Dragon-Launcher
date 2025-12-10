@@ -403,6 +403,20 @@ fun MainScreenOverlay(
             }
         }
     }
+    // Debug to test calendar and alarms openning
+//    Row(
+//        modifier = Modifier.fillMaxWidth()
+//    ){
+//        Button(
+//            onClick = { openCalendar(ctx) },
+//            colors = AppObjectsColors.buttonColors()
+//        ) { Text("Test open calendar") }
+//
+//        Button(
+//            onClick = { openAlarmApp(ctx) },
+//            colors = AppObjectsColors.buttonColors()
+//        ) { Text("Test open alarm") }
+//    }
 }
 
 fun actionTint(action: SwipeActionSerializable): Color =
