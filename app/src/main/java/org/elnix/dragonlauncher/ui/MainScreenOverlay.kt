@@ -93,6 +93,8 @@ fun MainScreenOverlay(
         .collectAsState(initial = true)
     val showAppPreviewIconCenterStartPosition by UiSettingsStore.getShowAppPreviewIconCenterStartPosition(ctx)
         .collectAsState(initial = false)
+    val linePreviewSnapToAction by UiSettingsStore.getLinePreviewSnapToAction(ctx)
+        .collectAsState(initial = false)
 
 
     val backgroundColor = MaterialTheme.colorScheme.background
@@ -119,6 +121,7 @@ fun MainScreenOverlay(
     val angle0to360: Double
 
     val lineColor: Color
+    val circleRadius = 48f
 
     if (start != null && current != null) {
         dx = current.x - start.x
@@ -264,8 +267,10 @@ fun MainScreenOverlay(
 
         Canvas(modifier = Modifier.fillMaxSize()) {
             if (start != null && current != null) {
+
+
                 if (showAppLinePreview) {
-                    val circleRadius = 48f
+
                     drawCircle(
                         color = lineColor,
                         radius = circleRadius,
@@ -273,26 +278,35 @@ fun MainScreenOverlay(
                         style = Stroke(width = 3f)
                     )
 
-                    drawLine(
-                        color = lineColor,
-                        start = start,
-                        end = current,
-                        strokeWidth = 4f,
-                        cap = StrokeCap.Round
-                    )
+                    if (!(linePreviewSnapToAction && hoveredAction != null)) {
+//                        actionLine(
+//                            start = start,
+//                            end = current,
+//                            radius = circleRadius -2,
+//                            color = lineColor,
+//                            backgroundColor = backgroundColor
+//                        )
+                        drawLine(
+                            color = lineColor,
+                            start = start,
+                            end = current,
+                            strokeWidth = 4f,
+                            cap = StrokeCap.Round
+                        )
 
-                    drawCircle(
-                        color = backgroundColor,
-                        radius = circleRadius - 2,
-                        center = start
-                    )
+                        drawCircle(
+                            color = backgroundColor,
+                            radius = circleRadius - 2,
+                            center = start
+                        )
 
-                    drawCircle(
-                        color = lineColor,
-                        radius = 8f,
-                        center = current,
-                        style = Fill
-                    )
+                        drawCircle(
+                            color = lineColor,
+                            radius = 8f,
+                            center = current,
+                            style = Fill
+                        )
+                    }
                 }
 
                 if (showAppPreviewIconCenterStartPosition && hoveredAction != null) {
@@ -340,45 +354,67 @@ fun MainScreenOverlay(
                             )
                         }
 
+                        // same circle radii as SettingsScreen
+                        val radius = dragRadii[targetCircle].toFloat()
+
+                        // compute point position relative to origin
+                        val px = start.x +
+                                radius * sin(Math.toRadians(point.angleDeg)).toFloat()
+                        val py = start.y -
+                                radius * cos(Math.toRadians(point.angleDeg)).toFloat()
 
                         // Draw actual selected point
                         // find the matching SwipePointSerializable
-                        val point = points.firstOrNull { it == point }
-                        if (point != null) {
+//                        val point = points.firstOrNull { it == point }
+//                        if (point != null) {
 
-                            // same circle radii as SettingsScreen
-                            val radius = dragRadii[targetCircle].toFloat()
 
-                            // compute point position relative to origin
-                            val px = start.x +
-                                    radius * sin(Math.toRadians(point.angleDeg)).toFloat()
-                            val py = start.y -
-                                    radius * cos(Math.toRadians(point.angleDeg)).toFloat()
-                            
-                            if (showAppLaunchPreview) {
+                        if (linePreviewSnapToAction) {
+                            drawLine(
+                                color = lineColor,
+                                start = start,
+                                end = Offset(px,py),
+                                strokeWidth = 4f,
+                                cap = StrokeCap.Round
+                            )
 
-                                drawCircle(
-                                    color = circleColor ?: AmoledDefault.CircleColor,
-                                    radius = 44f,
-                                    center = Offset(px, py)
-                                )
+                            drawCircle(
+                                color = backgroundColor,
+                                radius = circleRadius - 2,
+                                center = start
+                            )
 
-                                drawCircle(
-                                    color = backgroundColor,
-                                    radius = 40f,
-                                    center = Offset(px, py)
-                                )
-                                drawImage(
-                                    image = actionIconBitmap(
-                                        action = action,
-                                        context = ctx,
-                                        tintColor = actionColor(action)
-                                    ),
-                                    dstOffset = IntOffset(px.toInt() - 28, py.toInt() - 28),
-                                    dstSize = IntSize(56, 56)
-                                )
-                            }
+                            drawCircle(
+                                color = lineColor,
+                                radius = 8f,
+                                center = current,
+                                style = Fill
+                            )
                         }
+                        if (showAppLaunchPreview) {
+                            drawCircle(
+                                color = circleColor ?: AmoledDefault.CircleColor,
+                                radius = 44f,
+                                center = Offset(px, py)
+                            )
+
+                            drawCircle(
+                                color = backgroundColor,
+                                radius = 40f,
+                                center = Offset(px, py)
+                            )
+
+                            drawImage(
+                                image = actionIconBitmap(
+                                    action = action,
+                                    context = ctx,
+                                    tintColor = actionColor(action)
+                                ),
+                                dstOffset = IntOffset(px.toInt() - 28, py.toInt() - 28),
+                                dstSize = IntSize(56, 56)
+                            )
+                        }
+//                        }
                     }
                 }
             }
@@ -438,3 +474,37 @@ fun actionTint(action: SwipeActionSerializable): Color =
         is SwipeActionSerializable.LaunchApp, SwipeActionSerializable.OpenDragonLauncherSettings  -> Color.Unspecified
         else -> actionColor(action)
     }
+
+
+
+@Composable
+private fun actionLine(
+    start: Offset,
+    end: Offset,
+    radius: Float,
+    color: Color,
+    backgroundColor: Color
+) {
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        drawLine(
+            color = color,
+            start = start,
+            end = end,
+            strokeWidth = 4f,
+            cap = StrokeCap.Round
+        )
+
+        drawCircle(
+            color = backgroundColor,
+            radius = radius - 2,
+            center = start
+        )
+
+        drawCircle(
+            color = color,
+            radius = 8f,
+            center = end,
+            style = Fill
+        )
+    }
+}

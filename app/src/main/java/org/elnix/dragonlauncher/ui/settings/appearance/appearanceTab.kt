@@ -58,6 +58,9 @@ fun AppearanceTab(
     val showAppPreviewIconCenterStartPosition by UiSettingsStore.getShowAppPreviewIconCenterStartPosition(ctx)
         .collectAsState(initial = false)
 
+    val linePreviewSnapToAction by UiSettingsStore.getLinePreviewSnapToAction(ctx)
+        .collectAsState(initial = false)
+
     SettingsLazyHeader(
         title = stringResource(R.string.appearance),
         onBack = onBack,
@@ -150,6 +153,13 @@ fun AppearanceTab(
                 showAppPreviewIconCenterStartPosition,
                 "Show App Icon angle preview in center of start dragging position",
             ) { scope.launch { UiSettingsStore.setShowAppPreviewIconCenterStartPosition(ctx, it) } }
+        }
+
+        item {
+            SwitchRow(
+                linePreviewSnapToAction,
+                "Line Preview snap to action",
+            ) { scope.launch { UiSettingsStore.setLinePreviewSnapToAction(ctx, it) } }
         }
     }
 }

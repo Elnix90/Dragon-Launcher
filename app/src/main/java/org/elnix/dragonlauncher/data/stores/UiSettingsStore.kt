@@ -27,7 +27,8 @@ object UiSettingsStore {
         val firstCircleDragDistance: Int = 400,
         val secondCircleDragDistance: Int = 700,
         val cancelZoneDragDistance: Int = 150,
-        val showAppPreviewIconCenterStartPosition: Boolean = false
+        val showAppPreviewIconCenterStartPosition: Boolean = false,
+        val linePreviewSnapToAction: Boolean = false
     )
 
     private val defaults = UiSettingsBackup()
@@ -48,6 +49,8 @@ object UiSettingsStore {
         val CANCEL_ZONE_DRAG_DISTANCE = intPreferencesKey(UiSettingsBackup::cancelZoneDragDistance.name)
         val SHOW_APP_PREVIEW_ICON_CENTER_START_POSITION = booleanPreferencesKey("showAppPreviewIconCenterStartPosition")
 
+
+        val LINE_PREVIEW_SNAP_TO_ACTION = booleanPreferencesKey("linePreviewSnapToAction")
         val ALL = listOf(
             RGB_LOADING,
             RGB_LINE,
@@ -62,7 +65,8 @@ object UiSettingsStore {
             FIRST_CIRCLE_DRAG_DISTANCE,
             SECOND_CIRCLE_DRAG_DISTANCE,
             CANCEL_ZONE_DRAG_DISTANCE,
-            SHOW_APP_PREVIEW_ICON_CENTER_START_POSITION
+            SHOW_APP_PREVIEW_ICON_CENTER_START_POSITION,
+            LINE_PREVIEW_SNAP_TO_ACTION
         )
     }
 
@@ -165,6 +169,17 @@ object UiSettingsStore {
         ctx.uiDatastore.edit { it[Keys.SHOW_APP_PREVIEW_ICON_CENTER_START_POSITION] = value }
     }
 
+    fun getLinePreviewSnapToAction(ctx: Context): Flow<Boolean> =
+        ctx.uiDatastore.data.map { it[Keys.LINE_PREVIEW_SNAP_TO_ACTION] ?: defaults.linePreviewSnapToAction }
+
+    suspend fun setLinePreviewSnapToAction(ctx: Context, value: Boolean) {
+        ctx.uiDatastore.edit { it[Keys.LINE_PREVIEW_SNAP_TO_ACTION] = value }
+    }
+
+
+    // --------------------------------
+    // BACKUP / RESTORE / RESET
+    // --------------------------------
 
 
     suspend fun resetAll(ctx: Context) {
@@ -199,6 +214,7 @@ object UiSettingsStore {
             putIfChanged(Keys.SHOW_ANGLE_PREVIEW, defaults.showAppAnglePreview)
             putIfChanged(Keys.SNAP_POINTS, defaults.snapPoints)
             putIfChanged(Keys.SHOW_APP_PREVIEW_ICON_CENTER_START_POSITION, defaults.showAppPreviewIconCenterStartPosition)
+            putIfChanged(Keys.LINE_PREVIEW_SNAP_TO_ACTION, defaults.linePreviewSnapToAction)
 
             putIfChanged(Keys.FIRST_CIRCLE_DRAG_DISTANCE, defaults.firstCircleDragDistance)
             putIfChanged(Keys.SECOND_CIRCLE_DRAG_DISTANCE, defaults.secondCircleDragDistance)
@@ -267,6 +283,7 @@ object UiSettingsStore {
             applyBoolean(Keys.SHOW_ANGLE_PREVIEW)
             applyBoolean(Keys.SNAP_POINTS)
             applyBoolean(Keys.SHOW_APP_PREVIEW_ICON_CENTER_START_POSITION)
+            applyBoolean(Keys.LINE_PREVIEW_SNAP_TO_ACTION)
 
             applyInt(Keys.FIRST_CIRCLE_DRAG_DISTANCE)
             applyInt(Keys.SECOND_CIRCLE_DRAG_DISTANCE)
