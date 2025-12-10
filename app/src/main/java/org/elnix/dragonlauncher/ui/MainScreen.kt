@@ -34,6 +34,7 @@ import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.helpers.FilePickerDialog
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
+import org.elnix.dragonlauncher.ui.helpers.UserValidation
 import org.elnix.dragonlauncher.ui.helpers.rememberHoldToOpenSettings
 import org.elnix.dragonlauncher.utils.AppDrawerViewModel
 import org.elnix.dragonlauncher.utils.actions.launchSwipeAction
@@ -50,6 +51,12 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
 
     var showFilePicker: SwipePointSerializable? by remember { mutableStateOf(null) }
+    var showMethodDialog by remember { mutableStateOf(false) }
+
+
+    val showMethodAsking by PrivateSettingsStore.getShowMethodAsking(ctx)
+        .collectAsState(initial = false)
+
 
     val icons by appsViewModel.icons.collectAsState()
 
@@ -66,7 +73,12 @@ fun MainScreen(
     val rgbLoading by UiSettingsStore.getRGBLoading(ctx)
         .collectAsState(initial = true)
 
-    val hasSeenWelcome by PrivateSettingsStore.getHasSeenWelcome(ctx).collectAsState(initial = true)
+    val hasSeenWelcome by PrivateSettingsStore.getHasSeenWelcome(ctx)
+        .collectAsState(initial = true)
+
+    val useAccessibilityInsteadOfContextToExpandActionPanel by PrivateSettingsStore
+        .getUseAccessibilityInsteadOfContextToExpandActionPanel(ctx)
+        .collectAsState(initial = false)
 
 
     LaunchedEffect(hasSeenWelcome) {
@@ -131,6 +143,8 @@ fun MainScreen(
                 launchSwipeAction(
                     ctx = ctx,
                     action = it?.action,
+                    useAccessibilityInsteadOfContextToExpandActionPanel = useAccessibilityInsteadOfContextToExpandActionPanel,
+                    onAskWhatMethodToUseToOpenQuickActions = { showMethodDialog = true },
                     onReselectFile = { showFilePicker = it },
                     onAppSettings = onLongPress3Sec,
                     onAppDrawer = onAppDrawer
@@ -171,4 +185,33 @@ fun MainScreen(
         )
     }
 
+
+    if (showMethodDialog and showMethodAsking) {
+        UserValidation(
+            title = "What method to open the quick actions?",
+            message = "Did the quick actions open or was it the notifications?",
+            validateText = "Quick Actions",
+            cancelText = "Notifications",
+            canDismissByOuterClick = false,
+            doNotRemindMeAgain = {
+                scope.launch {
+                    PrivateSettingsStore.setShowMethodAsking(ctx, false)
+                }
+            },
+            onCancel = {
+                // The simple ctx method didn't work, so forced to use the accessibility method, that doesn't work well on my phone
+                scope.launch {
+                    PrivateSettingsStore.setUseAccessibilityInsteadOfContextToExpandActionPanel(ctx, true)
+                }
+                showMethodDialog = false
+            },
+            onAgree = {
+                // The simple ctx method worked, keep it
+                scope.launch {
+                    PrivateSettingsStore.setUseAccessibilityInsteadOfContextToExpandActionPanel(ctx, false)
+                }
+                showMethodDialog = false
+            }
+        )
+    }
 }

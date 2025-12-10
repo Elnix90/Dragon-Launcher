@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.utils
 
+import android.app.SearchManager
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -7,6 +8,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.net.Uri
+import android.provider.AlarmClock
+import android.provider.CalendarContract
+import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.core.net.toUri
 import org.elnix.dragonlauncher.R
@@ -114,4 +119,69 @@ val Context.isDefaultLauncher: Boolean
 fun Context.hasUriPermission(uri: Uri): Boolean {
     val perms = contentResolver.persistedUriPermissions
     return perms.any { it.uri == uri && it.isReadPermission }
+}
+
+
+
+fun openSearch(context: Context) {
+    val intent = Intent(Intent.ACTION_WEB_SEARCH)
+    intent.putExtra(SearchManager.QUERY, "")
+    context.startActivity(intent)
+}
+
+//@SuppressLint("WrongConstant")
+fun expandQuickActionsDrawer(context: Context) {
+    try {
+        //  (Android 12+)
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//            val statusBarManager = context.getSystemService(Context.STATUS_BAR_SERVICE) as StatusBarManager
+//            statusBarManager.expandNotificationsPanel()
+//            return
+//        }
+
+        // Fall back -> reflection for older versions
+        val statusBarService = context.getSystemService("statusbar")
+        val statusBarManager = Class.forName("android.app.StatusBarManager")
+        val method = statusBarManager.getMethod("expandNotificationsPanel")
+        method.invoke(statusBarService)
+    } catch (_: Exception) {
+        // If all else fails, try to use the notification intent
+        try {
+            val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+            context.startActivity(intent)
+        } catch (e2: Exception) {
+            e2.printStackTrace()
+        }
+    }
+}
+
+fun openAlarmApp(context: Context) {
+    try {
+        val intent = Intent(AlarmClock.ACTION_SHOW_ALARMS)
+        context.startActivity(intent)
+    } catch (e: Exception) {
+        Log.d("TAG", e.toString())
+    }
+}
+
+fun openCalendar(context: Context) {
+    try {
+        val calendarUri = CalendarContract.CONTENT_URI
+            .buildUpon()
+            .appendPath("time")
+            .build()
+        context.startActivity(Intent(Intent.ACTION_VIEW, calendarUri))
+    } catch (e: Exception) {
+        e.printStackTrace()
+        try {
+            val intent = Intent(Intent.ACTION_MAIN).setClassName(
+                context,
+                "app.cclauncher.helper.FakeHomeActivity"
+            )
+            intent.addCategory(Intent.CATEGORY_APP_CALENDAR)
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }

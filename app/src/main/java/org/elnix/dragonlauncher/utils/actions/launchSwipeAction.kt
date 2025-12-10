@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.core.net.toUri
 import org.elnix.dragonlauncher.data.SwipeActionSerializable
 import org.elnix.dragonlauncher.services.SystemControl
+import org.elnix.dragonlauncher.utils.expandQuickActionsDrawer
 import org.elnix.dragonlauncher.utils.hasUriPermission
 import org.elnix.dragonlauncher.utils.showToast
 
@@ -18,6 +19,8 @@ class AppLaunchException(message: String, cause: Throwable? = null) : Exception(
 fun launchSwipeAction(
     ctx: Context,
     action: SwipeActionSerializable?,
+    useAccessibilityInsteadOfContextToExpandActionPanel: Boolean = false,
+    onAskWhatMethodToUseToOpenQuickActions: (() -> Unit)? = null,
     onReselectFile: (() -> Unit)? = null,
     onAppSettings: (() -> Unit)? = null,
     onAppDrawer: (() -> Unit)? = null
@@ -56,7 +59,14 @@ fun launchSwipeAction(
         }
 
         SwipeActionSerializable.ControlPanel -> {
-            SystemControl.expandQuickSettings(ctx)
+            if (useAccessibilityInsteadOfContextToExpandActionPanel) {
+                SystemControl.expandQuickSettings(
+                    ctx
+                )
+            }
+            else expandQuickActionsDrawer(ctx)
+            onAskWhatMethodToUseToOpenQuickActions?.invoke()
+
         }
 
         SwipeActionSerializable.OpenAppDrawer -> {

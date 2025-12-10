@@ -1,8 +1,5 @@
 package org.elnix.dragonlauncher.ui.helpers
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -50,6 +47,7 @@ fun UserValidation(
     titleIcon: ImageVector = Icons.Default.Warning,
     titleColor: Color = MaterialTheme.colorScheme.error,
     copy: Boolean = false,
+    canDismissByOuterClick: Boolean = true,
     onCancel: () -> Unit,
     onAgree: () -> Unit
 ) {
@@ -57,7 +55,7 @@ fun UserValidation(
     var doNotRemindMeAgainChecked by remember { mutableStateOf(false) }
 
     AlertDialog(
-        onDismissRequest = { onCancel() },
+        onDismissRequest = if (canDismissByOuterClick) { { onCancel() } } else { {} },
         confirmButton = {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
