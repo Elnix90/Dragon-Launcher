@@ -91,6 +91,9 @@ fun MainScreenOverlay(
         .collectAsState(initial = true)
     val showAppAnglePreview by UiSettingsStore.getShowAnglePreview(ctx)
         .collectAsState(initial = true)
+    val showAppPreviewIconCenterStartPosition by UiSettingsStore.getShowAppPreviewIconCenterStartPosition(ctx)
+        .collectAsState(initial = false)
+
 
     val backgroundColor = MaterialTheme.colorScheme.background
 
@@ -289,6 +292,19 @@ fun MainScreenOverlay(
                         radius = 8f,
                         center = current,
                         style = Fill
+                    )
+                }
+
+                if (showAppPreviewIconCenterStartPosition && hoveredAction != null) {
+                    val currentAction = hoveredAction!!.action!!
+                    drawImage(
+                        image = actionIconBitmap(
+                            action = currentAction,
+                            context = ctx,
+                            tintColor = actionColor(currentAction)
+                        ),
+                        dstOffset = IntOffset(start.x.toInt() - 28, start.y.toInt() - 28),
+                        dstSize = IntSize(56, 56)
                     )
                 }
 
