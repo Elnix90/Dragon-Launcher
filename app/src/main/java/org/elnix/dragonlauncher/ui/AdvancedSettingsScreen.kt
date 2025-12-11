@@ -217,7 +217,6 @@ fun AdvancedSettingsScreen(
                         contentDescription = "Open link in github",
                         tint = MaterialTheme.colorScheme.primary
                     )
-
                 }
             }
         }
