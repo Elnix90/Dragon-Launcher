@@ -1,19 +1,25 @@
 package org.elnix.dragonlauncher.ui.helpers
 
-import android.R.attr.fontWeight
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.Slider
-import androidx.compose.runtime.*
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.utils.colors.AppObjectsColors
-import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun GridSizeSlider() {
@@ -21,7 +27,7 @@ fun GridSizeSlider() {
     val scope = rememberCoroutineScope()
 
     val gridSize by DrawerSettingsStore.getGridSize(ctx).collectAsState(initial = 1)
-    var sliderValue by remember { mutableStateOf(gridSize.toFloat()) }
+    var sliderValue by remember { mutableFloatStateOf(gridSize.toFloat()) }
 
     LaunchedEffect(gridSize) {
         sliderValue = gridSize.toFloat()
