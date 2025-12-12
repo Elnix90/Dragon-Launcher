@@ -144,6 +144,7 @@ fun SettingsScreen(
     val circles: SnapshotStateList<UiCircle> = remember { mutableStateListOf() }
 
     var selectedPoint by remember { mutableStateOf<UiSwipePoint?>(null) }
+    var lastSelectedCircle by remember { mutableIntStateOf(1) }
     val aPointIsSelected = selectedPoint != null
 
     var showAddDialog by remember { mutableStateOf(false) }
@@ -377,8 +378,6 @@ fun SettingsScreen(
                     Canvas(Modifier.fillMaxSize()) {
                         circleDataList.sortedBy { it.radius }.reversed().forEach { circleData ->
 
-//                            val color = circleColors.getOrElse(index) { Color.Gray }
-
                             drawCircle(
                                 color = backgroundColor,
                                 radius = circleData.radius.toFloat(),
@@ -431,6 +430,9 @@ fun SettingsScreen(
 
                                     selectedPoint =
                                         if (best <= TOUCH_THRESHOLD_PX) closest else null
+
+                                    selectedPoint?.let { lastSelectedCircle = it.circleNumber }
+
                                     bannerVisible = selectedPoint != null
                                 },
                                 onDrag = { change, _ ->
@@ -438,6 +440,8 @@ fun SettingsScreen(
 
                                     val selected = points.find { it.id == selectedPoint?.id }
                                         ?: return@detectDragGestures
+
+                                    lastSelectedCircle = selected.circleNumber
 
                                     // All points that are part of the same circle
                                     val sameCirclePoints =
@@ -487,6 +491,9 @@ fun SettingsScreen(
                                         if (best <= TOUCH_THRESHOLD_PX)
                                             if (selectedPoint?.id == tapped?.id) null else tapped
                                         else null
+
+                                    selectedPoint?.let { lastSelectedCircle = it.circleNumber }
+
                                     bannerVisible = selectedPoint != null
                                 }
                             )
@@ -760,7 +767,7 @@ fun SettingsScreen(
                 showAddDialog = false
             },
             onActionSelected = { action ->
-                val circleNumber = 0
+                val circleNumber = lastSelectedCircle
                 val newAngle = randomFreeAngle(circleNumber, points)
 
                 val point = UiSwipePoint(
