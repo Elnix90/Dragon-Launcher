@@ -1,6 +1,8 @@
 package org.elnix.dragonlauncher.data.stores
 
 import android.content.Context
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -30,6 +32,8 @@ object DrawerSettingsStore : BaseSettingsStore() {
         val initialPage: Int = 0,
         val leftDrawerAction: DrawerActions = DrawerActions.TOGGLE_KB,
         val rightDrawerAction: DrawerActions = DrawerActions.CLOSE,
+        val leftDrawerWidth: Int = 50,
+        val rightDrawerWidth: Int = 50
     )
 
     private val defaults = DrawerSettingsBackup()
@@ -48,6 +52,8 @@ object DrawerSettingsStore : BaseSettingsStore() {
         const val INITIAL_PAGE = "initialPage"
         const val LEFT_DRAWER_ACTION = "leftDrawerAction"
         const val RIGHT_DRAWER_ACTION = "rightDrawerAction"
+        const val LEFT_DRAWER_WIDTH = "leftDrawerWidth"
+        const val RIGHT_DRAWER_WIDTH = "rightDrawerWidth"
     }
 
     private val AUTO_OPEN_SINGLE_MATCH = booleanPreferencesKey(Keys.AUTO_OPEN_SINGLE_MATCH)
@@ -60,6 +66,8 @@ object DrawerSettingsStore : BaseSettingsStore() {
     private val INITIAL_PAGE = intPreferencesKey(Keys.INITIAL_PAGE)
     private val LEFT_DRAWER_ACTION = stringPreferencesKey(Keys.LEFT_DRAWER_ACTION)
     private val RIGHT_DRAWER_ACTION = stringPreferencesKey(Keys.RIGHT_DRAWER_ACTION)
+    private val LEFT_DRAWER_WIDTH = intPreferencesKey(Keys.LEFT_DRAWER_WIDTH)
+    private val RIGHT_DRAWER_WIDTH = intPreferencesKey(Keys.RIGHT_DRAWER_WIDTH)
 
     // -------------------------------------------------------------------------
     // Accessors + Mutators
@@ -139,6 +147,21 @@ object DrawerSettingsStore : BaseSettingsStore() {
     }
 
 
+    fun getLeftDrawerWidth(ctx: Context): Flow<Dp> =
+        ctx.drawerDataStore.data.map { it[LEFT_DRAWER_WIDTH]?.dp ?: defaults.leftDrawerWidth.dp }
+
+    suspend fun setLeftDrawerWidth(ctx: Context, width: Int) {
+        ctx.drawerDataStore.edit { it[LEFT_DRAWER_WIDTH] = width }
+    }
+
+    fun getRightDrawerWidth(ctx: Context): Flow<Dp> =
+        ctx.drawerDataStore.data.map { it[RIGHT_DRAWER_WIDTH]?.dp ?: defaults.rightDrawerWidth.dp }
+?
+    suspend fun setRightDrawerWidth(ctx: Context, width: Int) {
+        ctx.drawerDataStore.edit { it[RIGHT_DRAWER_WIDTH] = width }
+    }
+
+
     // -------------------------------------------------------------------------
     // Reset
     // -------------------------------------------------------------------------
@@ -154,6 +177,8 @@ object DrawerSettingsStore : BaseSettingsStore() {
             prefs.remove(INITIAL_PAGE)
             prefs.remove(LEFT_DRAWER_ACTION)
             prefs.remove(RIGHT_DRAWER_ACTION)
+            prefs.remove(LEFT_DRAWER_WIDTH)
+            prefs.remove(RIGHT_DRAWER_WIDTH)
         }
     }
 
@@ -180,6 +205,8 @@ object DrawerSettingsStore : BaseSettingsStore() {
             putIfNonDefault(Keys.GRID_SIZE, prefs[GRID_SIZE], defaults.gridSize)
             putIfNonDefault(Keys.INITIAL_PAGE, prefs[INITIAL_PAGE], defaults.initialPage)
             putIfNonDefault(Keys.LEFT_DRAWER_ACTION, prefs[LEFT_DRAWER_ACTION],  defaults.leftDrawerAction)
+            putIfNonDefault(Keys.LEFT_DRAWER_WIDTH, prefs[RIGHT_DRAWER_WIDTH],  defaults.leftDrawerWidth)
+            putIfNonDefault(Keys.RIGHT_DRAWER_WIDTH, prefs[RIGHT_DRAWER_WIDTH],  defaults.leftDrawerWidth)
         }
     }
 
@@ -215,6 +242,8 @@ object DrawerSettingsStore : BaseSettingsStore() {
             val v = raw[key] ?: return when (key) {
                 Keys.GRID_SIZE -> defaults.gridSize
                 Keys.INITIAL_PAGE -> defaults.initialPage
+                Keys.LEFT_DRAWER_WIDTH -> defaults.leftDrawerWidth
+                Keys.RIGHT_DRAWER_WIDTH -> defaults.rightDrawerWidth
                 else -> throw BackupTypeException(key, "Int", null, null)
             }
 
@@ -250,7 +279,9 @@ object DrawerSettingsStore : BaseSettingsStore() {
             gridSize = getIntStrict(Keys.GRID_SIZE),
             initialPage = getIntStrict(Keys.INITIAL_PAGE),
             leftDrawerAction = getDrawerActionStrict(Keys.LEFT_DRAWER_ACTION),
-            rightDrawerAction = getDrawerActionStrict(Keys.RIGHT_DRAWER_ACTION)
+            rightDrawerAction = getDrawerActionStrict(Keys.RIGHT_DRAWER_ACTION),
+            leftDrawerWidth = getIntStrict(Keys.LEFT_DRAWER_WIDTH),
+            rightDrawerWidth = getIntStrict(Keys.RIGHT_DRAWER_WIDTH)
         )
 
         ctx.drawerDataStore.edit { prefs ->
@@ -264,6 +295,8 @@ object DrawerSettingsStore : BaseSettingsStore() {
             prefs[INITIAL_PAGE] = backup.initialPage
             prefs[LEFT_DRAWER_ACTION] = backup.leftDrawerAction.name
             prefs[RIGHT_DRAWER_ACTION] = backup.rightDrawerAction.name
+            prefs[LEFT_DRAWER_WIDTH] = backup.leftDrawerWidth
+            prefs[RIGHT_DRAWER_WIDTH] = backup.rightDrawerWidth
         }
     }
 }

@@ -6,10 +6,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.R
+import org.elnix.dragonlauncher.data.helpers.DrawerActions
 import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore
+import org.elnix.dragonlauncher.data.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.helpers.GridSizeSlider
+import org.elnix.dragonlauncher.ui.helpers.SliderWithLabel
 import org.elnix.dragonlauncher.ui.helpers.SwitchRow
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
 
@@ -39,6 +43,18 @@ fun DrawerTab(onBack: () -> Unit) {
 
     val searchBarBottom by DrawerSettingsStore.getSearchBarBottom(ctx)
         .collectAsState(initial = true)
+
+
+    val leftDrawerAction by DrawerSettingsStore.getLeftDrawerAction(ctx)
+        .collectAsState(initial = DrawerActions.TOGGLE_KB)
+
+    val rightDrawerAction by DrawerSettingsStore.getRightDrawerAction(ctx)
+        .collectAsState(initial = DrawerActions.CLOSE)
+
+    val leftDrawerWidth by DrawerSettingsStore.getLeftDrawerWidth(ctx)
+        .collectAsState(initial = 75.dp)
+    val rightDrawerSize  by DrawerSettingsStore.getRightDrawerWidth(ctx)
+        .collectAsState(initial = 75.dp)
 
     SettingsLazyHeader(
         title = stringResource(R.string.app_drawer),
@@ -96,6 +112,18 @@ fun DrawerTab(onBack: () -> Unit) {
 
         item {
             GridSizeSlider()
+        }
+        item {
+            SliderWithLabel(
+                label = stringResource(R.string.circleR1),
+                value = circleR1,
+                valueRange = 0f..1000f,
+                showValue = false,
+                color = circleDataList.find { it.name == "circleR1" }!!.color,
+                onReset = { scope.launch { UiSettingsStore.setFirstCircleDragDistance(ctx, 400) } }
+            ) {
+                scope.launch { UiSettingsStore.setFirstCircleDragDistance(ctx, it) }
+            }
         }
     }
 }

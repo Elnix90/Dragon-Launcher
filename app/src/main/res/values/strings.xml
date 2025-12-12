@@ -96,4 +96,5 @@
     <string name="changelogs">Changelogs</string>
     <string name="changelogs_help">The list of updates the app got since the first version</string>
     <string name="whats_new">What\'s new</string>
+    <string name="left_drawer_action">Left Drawer action</string>
 </resources>
