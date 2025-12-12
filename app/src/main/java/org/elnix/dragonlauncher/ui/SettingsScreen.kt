@@ -228,7 +228,8 @@ fun SettingsScreen(
 
 
     BackHandler {
-        if(isCircleDistanceMode) isCircleDistanceMode = false
+        if (isCircleDistanceMode) isCircleDistanceMode = false
+        if (selectedPoint != null) selectedPoint = null
         else onBack()
     }
 
