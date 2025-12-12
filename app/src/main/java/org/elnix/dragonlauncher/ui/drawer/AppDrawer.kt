@@ -5,8 +5,10 @@ import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -217,56 +219,60 @@ fun AppDrawerScreen(
     }
 
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .clickable(
-                enabled = clickEmptySpaceToRaiseKeyboard,
-                indication = null,
-                interactionSource = null
-            ) {
-                if (!isSearchFocused) {
-                    focusRequester.requestFocus()
-                    keyboardController?.show()
-                } else {
-                    focusManager.clearFocus()
-                    keyboardController?.hide()
+    Row (
+        modifier = Modifier.fillMaxSize()
+    ){
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(0.8f)
+                .clickable(
+                    enabled = clickEmptySpaceToRaiseKeyboard,
+                    indication = null,
+                    interactionSource = null
+                ) {
+                    if (!isSearchFocused) {
+                        focusRequester.requestFocus()
+                        keyboardController?.show()
+                    } else {
+                        focusManager.clearFocus()
+                        keyboardController?.hide()
+                    }
+                }
+                .background(MaterialTheme.colorScheme.background)
+                .padding(WindowInsets.systemBars.asPaddingValues())
+                .padding(15.dp)
+        ) {
+
+
+            if (!searchBarBottom) {
+                DrawerTextInput()
+            }
+
+            HorizontalPager(
+                state = pagerState
+            ) { pageIndex ->
+
+                val list = when (pageIndex) {
+                    0 -> filteredUser
+                    pages.indexOf("Work").takeIf { it > 0 } -> filteredWork
+                    pages.indexOf("System") -> filteredSystem
+                    else -> filteredAll
+                }
+
+                AppGrid(
+                    apps = list,
+                    icons = icons,
+                    gridSize = gridSize,
+                    txtColor = MaterialTheme.colorScheme.onSurface,
+                    showIcons = showIcons,
+                    showLabels = showLabels,
+                    onLongClick = { dialogApp = it }
+                ) {
+                    launchSwipeAction(ctx, it.action)
+                    onClose()
                 }
             }
-            .background(MaterialTheme.colorScheme.background)
-            .padding(WindowInsets.systemBars.asPaddingValues())
-            .padding(15.dp)
-    ) {
-
-
-        if (!searchBarBottom) {
-            DrawerTextInput()
-        }
-
-        HorizontalPager(
-            state = pagerState
-        ) { pageIndex ->
-
-            val list = when (pageIndex) {
-                0 -> filteredUser
-                pages.indexOf("Work").takeIf { it > 0 } -> filteredWork
-                pages.indexOf("System") -> filteredSystem
-                else -> filteredAll
-            }
-
-            AppGrid(
-                apps = list,
-                icons = icons,
-                gridSize = gridSize,
-                txtColor = MaterialTheme.colorScheme.onSurface,
-                showIcons = showIcons,
-                showLabels = showLabels,
-                onLongClick = { dialogApp = it }
-            ) {
-                launchSwipeAction(ctx, it.action)
-                onClose()
-            }
-        }
 
 //        if (searchBarBottom) {
 //            Box(
@@ -278,6 +284,7 @@ fun AppDrawerScreen(
 //                DrawerTextInput()
 //            }
 //        }
+        }
     }
 
 //    if (searchBarBottom) {
