@@ -128,9 +128,6 @@ class WorkspaceViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun renameWorkspace(id: String, name: String) {
-        // Can't rename default workspaces
-        if (id in listOf("all", "user", "system", "work")) return
-
         _state.value = _state.value.copy(
             workspaces = _state.value.workspaces.map {
                 if (it.id == id) it.copy(name = name) else it
@@ -140,9 +137,6 @@ class WorkspaceViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun deleteWorkspace(id: String) {
-        // Can't delete default workspaces
-        if (id in listOf("all", "user", "system", "work")) return
-
         _state.value = _state.value.copy(
             workspaces = _state.value.workspaces.filterNot { it.id == id }
         )

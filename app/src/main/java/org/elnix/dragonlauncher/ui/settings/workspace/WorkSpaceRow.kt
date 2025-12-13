@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.ui.settings.workspace
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
 import org.burnoutcrew.reorderable.ReorderableLazyListState
 import org.burnoutcrew.reorderable.detectReorder
@@ -32,29 +32,25 @@ fun WorkspaceRow(
     reorderState: ReorderableLazyListState,
     isDragging: Boolean = false,
     onClick: () -> Unit,
-    onLongClick: () -> Unit,
     onCheck: (Boolean) -> Unit,
     onAction: (WorkspaceAction) -> Unit
 ) {
     val enabled = workspace.enabled
     val elevation = if (isDragging) 8.dp else 0.dp
+    val scale = if (isDragging) 1.05f else 1f
 
     Card(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.surface),
         colors = AppObjectsColors.cardColors(),
         shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(elevation)
+        elevation = CardDefaults.cardElevation(elevation),
+        modifier = Modifier
+            .scale(scale)
+            .clickable { onClick() }
     ){
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-//                .clip(RoundedCornerShape(12.dp))
-                .padding(16.dp)
-                .combinedClickable(
-                    onClick = onClick,
-                    onLongClick = onLongClick
-                ),
+                .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

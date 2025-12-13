@@ -54,8 +54,9 @@ fun resolveApp(
 
 
 val defaultWorkspaces = listOf(
-    Workspace("all", "All Apps", WorkspaceType.ALL, emptyList(), true),
-    Workspace("user", "User Apps", WorkspaceType.USER, emptyList(), true),
-    Workspace("system", "System Apps", WorkspaceType.SYSTEM, emptyList(), true),
-    Workspace("work", "Work Apps", WorkspaceType.WORK, emptyList(), true)
+    Workspace("all", "All", WorkspaceType.ALL, emptyList(), true),
+    Workspace("user", "User", WorkspaceType.USER, emptyList(), true),
+    Workspace("system", "System", WorkspaceType.SYSTEM, emptyList(), true),
+    // I set work profile disabled by default, enable it if you need it
+    Workspace("work", "Work", WorkspaceType.WORK, emptyList(), false)
 )

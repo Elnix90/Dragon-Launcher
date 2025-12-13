@@ -42,7 +42,6 @@ fun WorkspaceListScreen(
     val scope = rememberCoroutineScope()
     val state by workspaceViewModel.state.collectAsState()
 
-    var actionTarget by remember { mutableStateOf<String?>(null) }
     var showCreateDialog by remember { mutableStateOf(false) }
     var renameTarget by remember { mutableStateOf<String?>(null) }
     var nameBuffer by remember { mutableStateOf("") }
@@ -89,7 +88,6 @@ fun WorkspaceListScreen(
                         reorderState = reorderState,
                         isDragging = isDragging,
                         onClick = { onOpenWorkspace(ws.id) },
-                        onLongClick = { actionTarget = if (actionTarget == ws.id) null else ws.id },
                         onCheck = { scope.launch { workspaceViewModel.setWorkspaceEnabled(ws.id, it) } },
                         onAction = { action ->
                             when (action) {
@@ -98,10 +96,7 @@ fun WorkspaceListScreen(
                                     nameBuffer = ws.name
                                 }
                                 WorkspaceAction.Delete -> {
-                                    scope.launch {
-                                        workspaceViewModel.deleteWorkspace(ws.id)
-                                        actionTarget = null
-                                    }
+                                    scope.launch { workspaceViewModel.deleteWorkspace(ws.id) }
                                 }
                             }
                         }
