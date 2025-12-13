@@ -149,6 +149,11 @@ class WorkspaceViewModel(application: Application) : AndroidViewModel(applicatio
         persist()
     }
 
+    fun setWorkspaceOrder(newOrder: List<Workspace>) {
+        _state.value = _state.value.copy(workspaces = newOrder)
+        persist()
+    }
+
     fun renameApp(packageName: String, name: String) {
         _state.value = _state.value.copy(
             appOverrides = _state.value.appOverrides +
@@ -166,4 +171,14 @@ class WorkspaceViewModel(application: Application) : AndroidViewModel(applicatio
         )
         persist()
     }
+
+
+    fun resetWorkspacesAndOverrides() {
+        _state.value = WorkspaceState(
+            workspaces = defaultWorkspaces,
+            appOverrides = emptyMap()
+        )
+        persist()
+    }
+
 }

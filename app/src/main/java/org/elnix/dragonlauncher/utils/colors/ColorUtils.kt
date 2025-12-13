@@ -2,6 +2,8 @@ package org.elnix.dragonlauncher.utils.colors
 
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.DatePickerColors
@@ -282,6 +284,15 @@ object AppObjectsColors {
             timeSelectorUnselectedContentColor = colors.onSurface,
         )
     }
+
+    @Composable
+    fun cardColors(): CardColors {
+        val colors = MaterialTheme.colorScheme
+        return CardDefaults.cardColors(
+            colors.surface,
+            colors.onSurface,
+            colors.surface.copy(0.5f),
+            colors.onSurface.copy(0.5f),
+        )
+    }
 }
-
-
