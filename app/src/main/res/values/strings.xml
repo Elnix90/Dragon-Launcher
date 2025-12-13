@@ -109,4 +109,6 @@
     <string name="workspace_help">Here you can customize the differents apps workspaces, you can add / edit / remove them and bind apps to them</string>
     <string name="create_workspace">Create workspace</string>
     <string name="rename_workspace">Rename Workspace</string>
+    <string name="delete_workspace">Delete Workspace</string>
+    <string name="are_you_sure_to_delete_workspace">Are you sure to delete workspace</string>
 </resources>

@@ -28,6 +28,7 @@ import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.elnix.dragonlauncher.R
 import org.elnix.dragonlauncher.ui.drawer.Workspace
+import org.elnix.dragonlauncher.ui.helpers.UserValidation
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
 import org.elnix.dragonlauncher.utils.workspace.WorkspaceAction
 import org.elnix.dragonlauncher.utils.workspace.WorkspaceViewModel
@@ -45,6 +46,8 @@ fun WorkspaceListScreen(
     var showCreateDialog by remember { mutableStateOf(false) }
     var renameTarget by remember { mutableStateOf<String?>(null) }
     var nameBuffer by remember { mutableStateOf("") }
+
+    var showDeleteConfirm by remember { mutableStateOf<Workspace?>(null) }
 
     // Local mutable list synced with ViewModel state
     val uiList = remember { mutableStateListOf<Workspace>() }
@@ -95,9 +98,7 @@ fun WorkspaceListScreen(
                                     renameTarget = ws.id
                                     nameBuffer = ws.name
                                 }
-                                WorkspaceAction.Delete -> {
-                                    scope.launch { workspaceViewModel.deleteWorkspace(ws.id) }
-                                }
+                                WorkspaceAction.Delete -> { showDeleteConfirm = ws }
                             }
                         }
                     )
@@ -144,4 +145,18 @@ fun WorkspaceListScreen(
         },
         onDismiss = { renameTarget = null }
     )
+
+    if (showDeleteConfirm != null) {
+        val workSpaceToDelete = showDeleteConfirm!!
+        UserValidation(
+            title = stringResource(R.string.delete_workspace),
+            message = "${stringResource(R.string.are_you_sure_to_delete_workspace)} '${workSpaceToDelete.name}' ?",
+            onCancel = { showDeleteConfirm = null }
+        ) {
+            scope.launch {
+                workspaceViewModel.deleteWorkspace(workSpaceToDelete.id)
+                showDeleteConfirm = null
+            }
+        }
+    }
 }
