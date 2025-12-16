@@ -15,12 +15,12 @@ jobs:
         with:
           fetch-depth: 0
 
-#      - name: Extract version from tag
-#        id: version
-#        run: |
-#          TAG="${GITHUB_REF#refs/tags/}"
-#          echo "VERSION=$TAG" >> $GITHUB_ENV
-#
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          echo "VERSION=$TAG" >> $GITHUB_ENV
+
 
       - name: Read latest changelog
         id: changelog
