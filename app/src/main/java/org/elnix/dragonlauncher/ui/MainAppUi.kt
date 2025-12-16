@@ -75,7 +75,7 @@ object ROUTES {
 @Composable
 fun MainAppUi(
     backupViewModel: BackupViewModel,
-    appsViewModel: AppDrawerViewModel,
+    appViewModel: AppDrawerViewModel,
     workspaceViewModel: WorkspaceViewModel,
     navController: NavHostController
 ) {
@@ -191,7 +191,7 @@ fun MainAppUi(
             // Main App (LauncherScreen + Drawer)
             composable(ROUTES.MAIN) {
                 MainScreen(
-                    appsViewModel = appsViewModel,
+                    appsViewModel = appViewModel,
                     onAppDrawer = { goDrawer() },
                     onGoWelcome = { goWelcome() },
                     onLongPress3Sec = { goSettingsRoot() }
@@ -200,7 +200,7 @@ fun MainAppUi(
 
             composable(ROUTES.DRAWER) {
                 AppDrawerScreen(
-                    appsViewModel = appsViewModel,
+                    appsViewModel = appViewModel,
                     workspaceViewModel = workspaceViewModel,
                     showIcons = showAppIconsInDrawer,
                     showLabels = showAppLabelsInDrawer,
@@ -227,16 +227,16 @@ fun MainAppUi(
 
             composable(SETTINGS.ROOT) {
                 SettingsScreen(
-                    appsViewModel = appsViewModel,
+                    appsViewModel = appViewModel,
                     workspaceViewModel = workspaceViewModel,
                     onAdvSettings = { goAdvSettingsRoot() },
                     onBack = { goMainScreen() }
                 )
             }
-            composable(SETTINGS.ADVANCED_ROOT) { AdvancedSettingsScreen(navController, onReset = { goMainScreen() } ) { goSettingsRoot() } }
+            composable(SETTINGS.ADVANCED_ROOT) { AdvancedSettingsScreen(appViewModel, navController, onReset = { goMainScreen() } ) { goSettingsRoot() } }
 
             composable(SETTINGS.APPEARANCE) { AppearanceTab(navController) { goAdvSettingsRoot() } }
-            composable(SETTINGS.DRAWER)     { DrawerTab(appsViewModel) { goAdvSettingsRoot() } }
+            composable(SETTINGS.DRAWER)     { DrawerTab(appViewModel) { goAdvSettingsRoot() } }
             composable(SETTINGS.COLORS)     { ColorSelectorTab { goAdvSettingsRoot() } }
             composable(SETTINGS.DEBUG)      { DebugTab(navController, onShowWelcome = { goWelcome() } ) { goAdvSettingsRoot() } }
             composable(SETTINGS.LANGUAGE)   { LanguageTab { goAdvSettingsRoot() } }
@@ -261,7 +261,7 @@ fun MainAppUi(
             ) { backStack ->
                 WorkspaceDetailScreen(
                     workspaceId = backStack.arguments!!.getString("id")!!,
-                    appsViewModel = appsViewModel,
+                    appsViewModel = appViewModel,
                     workspaceViewModel = workspaceViewModel,
                     showIcons = showAppIconsInDrawer,
                     showLabels = showAppLabelsInDrawer,

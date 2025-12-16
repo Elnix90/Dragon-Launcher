@@ -51,6 +51,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.R
+import org.elnix.dragonlauncher.data.SwipeActionSerializable
 import org.elnix.dragonlauncher.data.stores.ColorModesSettingsStore
 import org.elnix.dragonlauncher.data.stores.ColorSettingsStore
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore
@@ -64,9 +65,12 @@ import org.elnix.dragonlauncher.ui.helpers.TextDivider
 import org.elnix.dragonlauncher.ui.helpers.settings.ContributorItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
+import org.elnix.dragonlauncher.utils.AppDrawerViewModel
+import org.elnix.dragonlauncher.utils.actions.launchSwipeAction
 import org.elnix.dragonlauncher.utils.colors.AppObjectsColors
 import org.elnix.dragonlauncher.utils.copyToClipboard
 import org.elnix.dragonlauncher.utils.getVersionCode
+import org.elnix.dragonlauncher.utils.obtainiumPackageName
 import org.elnix.dragonlauncher.utils.openUrl
 import org.elnix.dragonlauncher.utils.showToast
 
@@ -74,6 +78,7 @@ import org.elnix.dragonlauncher.utils.showToast
 @Suppress("AssignedValueIsNeverRead")
 @Composable
 fun AdvancedSettingsScreen(
+    appViewModel: AppDrawerViewModel,
     navController: NavController,
     onReset: () -> Unit,
     onBack: () -> Unit
@@ -88,6 +93,9 @@ fun AdvancedSettingsScreen(
     val forceAppLanguageSelector by DebugSettingsStore.getForceAppLanguageSelector(ctx)
         .collectAsState(initial = false)
 
+
+    val allApps by appViewModel.allApps.collectAsState()
+    val isObtainiumInstalled = allApps.filter { it.packageName == obtainiumPackageName }.size == 1
 
     var toast by remember { mutableStateOf<Toast?>(null) }
     val versionName = ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName ?: "unknown"
@@ -242,7 +250,10 @@ fun AdvancedSettingsScreen(
                 icon = Icons.Default.Update,
                 leadIcon = Icons.AutoMirrored.Filled.Launch,
                 onLongClick = { ctx.copyToClipboard("https://github.com/Elnix90/Dragon-Launcher/releases/latest")}
-            ) { ctx.openUrl("https://github.com/Elnix90/Dragon-Launcher/releases/latest") }
+            ) {
+                if (isObtainiumInstalled) launchSwipeAction(ctx, SwipeActionSerializable.LaunchApp(obtainiumPackageName))
+                else ctx.openUrl("https://github.com/Elnix90/Dragon-Launcher/releases/latest")
+            }
         }
 
         item {

@@ -182,7 +182,7 @@ class MainActivity : ComponentActivity() {
 
                 MainAppUi(
                     backupViewModel = backupViewModel,
-                    appsViewModel = appsViewModel,
+                    appViewModel = appsViewModel,
                     workspaceViewModel = workspaceViewModel,
                     navController = navController
                 )
