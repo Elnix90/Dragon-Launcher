@@ -26,16 +26,19 @@ import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.MainAppUi
-import org.elnix.dragonlauncher.ui.settings.backup.BackupViewModel
+import org.elnix.dragonlauncher.ui.ROUTES
+import org.elnix.dragonlauncher.ui.SETTINGS
 import org.elnix.dragonlauncher.ui.theme.DragonLauncherTheme
-import org.elnix.dragonlauncher.utils.AppDrawerViewModel
-import org.elnix.dragonlauncher.utils.workspace.WorkspaceViewModel
+import org.elnix.dragonlauncher.utils.models.AppDrawerViewModel
+import org.elnix.dragonlauncher.utils.models.AppLifecycleViewModel
+import org.elnix.dragonlauncher.utils.models.BackupViewModel
+import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 import java.util.UUID
 
 class MainActivity : ComponentActivity() {
 
+    private val appLifecycleViewModel : AppLifecycleViewModel by viewModels()
     private val appsViewModel : AppDrawerViewModel by viewModels()
-
     private val backupViewModel : BackupViewModel by viewModels()
     private val workspaceViewModel : WorkspaceViewModel by viewModels()
 
@@ -190,14 +193,24 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-//    override fun onPause() {
-//        super.onPause()
-//
-//        // Clear entire navigation stack
-//        navControllerHolder.value?.let { nav ->
-//            nav.navigate(ROUTES.MAIN) {
-//                popUpTo(0) { inclusive = true }
-//            }
-//        }
-//    }
+    override fun onPause() {
+        super.onPause()
+        appLifecycleViewModel.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val currentRoute = navControllerHolder.value
+            ?.currentBackStackEntry
+            ?.destination
+            ?.route
+
+        // If user was outside > 10s, and not in backup screen, go to MAIN
+        if (appLifecycleViewModel.resume(10_000) && currentRoute != SETTINGS.BACKUP) {
+            navControllerHolder.value?.navigate(ROUTES.MAIN) {
+                popUpTo(0) { inclusive = true }
+            }
+        }
+    }
 }

@@ -1,0 +1,35 @@
+- [ ] Correct angle text overlapping on settings screen
+- [x] Toolbar in drawer (auto-close)
+- [ ] Drag & drop items in settings
+- [ ] Disable circle/line switch
+- [x] Prevent duplicate drops on the same circle; new items go on the last circle
+- [x] Rename apps
+- [x] Change app icons/colors
+- [ ] Add double-click action
+- [ ] Open alarm/calendar apps
+- [ ] Show status bar (battery %, time)
+- [ ] Require pressing Exit twice to leave fullscreen
+- [x] Remove changelog header text divider
+- [ ] Allow editing points (like "pick")
+- [ ] Fix random free-angle issue and set it to the last used circle
+- [ ] Close settings like the drawer after some time
+- [x] Add drawer setting: tapping empty space closes, opens keyboard, or does nothing
+- [ ] Move apps between workspaces from the drawer
+- [ ] Make long-click action use variable arguments (more powerful)
+- [ ] Enable automatic backups
+- [ ] Ignore case in app picker search
+- [ ] Fix quick action width
+- [ ] Add reset options for renaming/app icons
+- [ ] Add "snap circles" (not to drag distance)
+- [ ] Add undo/redo in settings
+- [ ] Fix extra padding in fullscreen when swiping down
+- [ ] Show user apps in drawer preview
+- [ ] Use settings title as header instead of floating box
+- [ ] Improve backup/restore buttons: add icons and auto-backup option
+- [ ] Make each "What's New" sheet clickable (open release link; long-click to copy)
+- [ ] Remove click indication from drawer panels
+- [ ] Correct incorrect width behavior
+- [x] Change toggle behavior: unchecked hides panel, add DISABLED action
+- [ ] Fix lag during reload; show loading indicator in app picker
+- [ ] Show beta tag in version number
+- [x] Open Obtainium when checking updates (if installed)

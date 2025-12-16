@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.settings.backup
 
+import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -32,6 +33,8 @@ import org.elnix.dragonlauncher.ui.helpers.GradientBigButton
 import org.elnix.dragonlauncher.ui.helpers.UserValidation
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
 import org.elnix.dragonlauncher.utils.SettingsBackupManager
+import org.elnix.dragonlauncher.utils.models.BackupResult
+import org.elnix.dragonlauncher.utils.models.BackupViewModel
 import org.json.JSONObject
 
 @Suppress("AssignedValueIsNeverRead")
@@ -100,6 +103,11 @@ fun BackupTab(
                 )
                 return@rememberLauncherForActivityResult
             }
+
+            ctx.contentResolver.takePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            )
 
             // Read JSON from selected file
             scope.launch {

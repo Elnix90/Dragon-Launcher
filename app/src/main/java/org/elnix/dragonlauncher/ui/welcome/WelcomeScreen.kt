@@ -46,8 +46,8 @@ import org.elnix.dragonlauncher.R
 import org.elnix.dragonlauncher.data.DataStoreName
 import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.helpers.UserValidation
-import org.elnix.dragonlauncher.ui.settings.backup.BackupResult
-import org.elnix.dragonlauncher.ui.settings.backup.BackupViewModel
+import org.elnix.dragonlauncher.utils.models.BackupResult
+import org.elnix.dragonlauncher.utils.models.BackupViewModel
 import org.elnix.dragonlauncher.ui.settings.backup.ImportSettingsDialog
 import org.elnix.dragonlauncher.utils.SettingsBackupManager
 import org.json.JSONObject
@@ -61,7 +61,7 @@ fun WelcomeScreen(
     val pagerState = rememberPagerState(pageCount = { 3 })
     val scope = rememberCoroutineScope()
     val ctx = LocalContext.current
-    
+
 
     var selectedStoresForImport by remember { mutableStateOf(listOf<DataStoreName>()) }
     var importJson by remember { mutableStateOf<JSONObject?>(null) }

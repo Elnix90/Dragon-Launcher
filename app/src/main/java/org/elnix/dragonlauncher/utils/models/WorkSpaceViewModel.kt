@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.utils.workspace
+package org.elnix.dragonlauncher.utils.models
 
 import android.annotation.SuppressLint
 import android.app.Application

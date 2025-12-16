@@ -42,7 +42,7 @@ import org.elnix.dragonlauncher.ui.helpers.GridSizeSlider
 import org.elnix.dragonlauncher.ui.helpers.SwitchRow
 import org.elnix.dragonlauncher.ui.helpers.TextDivider
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
-import org.elnix.dragonlauncher.utils.AppDrawerViewModel
+import org.elnix.dragonlauncher.utils.models.AppDrawerViewModel
 
 
 @Composable

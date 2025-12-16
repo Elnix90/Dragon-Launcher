@@ -88,7 +88,7 @@ import org.elnix.dragonlauncher.ui.helpers.RepeatingPressButton
 import org.elnix.dragonlauncher.ui.helpers.SliderWithLabel
 import org.elnix.dragonlauncher.ui.theme.AmoledDefault
 import org.elnix.dragonlauncher.ui.theme.LocalExtraColors
-import org.elnix.dragonlauncher.utils.AppDrawerViewModel
+import org.elnix.dragonlauncher.utils.models.AppDrawerViewModel
 import org.elnix.dragonlauncher.utils.actions.actionColor
 import org.elnix.dragonlauncher.utils.actions.actionIcon
 import org.elnix.dragonlauncher.utils.actions.actionIconBitmap
@@ -98,7 +98,7 @@ import org.elnix.dragonlauncher.utils.circles.normalizeAngle
 import org.elnix.dragonlauncher.utils.circles.randomFreeAngle
 import org.elnix.dragonlauncher.utils.circles.updatePointPosition
 import org.elnix.dragonlauncher.utils.colors.adjustBrightness
-import org.elnix.dragonlauncher.utils.workspace.WorkspaceViewModel
+import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 import java.math.RoundingMode
 import java.util.UUID
 import kotlin.math.cos

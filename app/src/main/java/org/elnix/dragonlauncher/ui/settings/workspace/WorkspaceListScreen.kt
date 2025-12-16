@@ -31,7 +31,7 @@ import org.elnix.dragonlauncher.ui.drawer.Workspace
 import org.elnix.dragonlauncher.ui.helpers.UserValidation
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
 import org.elnix.dragonlauncher.utils.workspace.WorkspaceAction
-import org.elnix.dragonlauncher.utils.workspace.WorkspaceViewModel
+import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 
 
 @Composable

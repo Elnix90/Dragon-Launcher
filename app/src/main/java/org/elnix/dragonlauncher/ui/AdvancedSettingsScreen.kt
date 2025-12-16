@@ -65,7 +65,7 @@ import org.elnix.dragonlauncher.ui.helpers.TextDivider
 import org.elnix.dragonlauncher.ui.helpers.settings.ContributorItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
-import org.elnix.dragonlauncher.utils.AppDrawerViewModel
+import org.elnix.dragonlauncher.utils.models.AppDrawerViewModel
 import org.elnix.dragonlauncher.utils.actions.launchSwipeAction
 import org.elnix.dragonlauncher.utils.colors.AppObjectsColors
 import org.elnix.dragonlauncher.utils.copyToClipboard

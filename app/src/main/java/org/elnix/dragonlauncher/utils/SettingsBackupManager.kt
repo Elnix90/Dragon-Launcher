@@ -65,17 +65,32 @@ object SettingsBackupManager {
                                 put(store.backupKey, obj)
                             }
                         }
+
+                        DataStoreName.APPS -> null
                     }
                 }
             }
 
             Log.d(TAG, "Generated JSON: $json")
 
+//            withContext(Dispatchers.IO) {
+//                ctx.contentResolver.openOutputStream(uri)?.use { output ->
+//                    OutputStreamWriter(output).use { it.write(json.toString(2)) }
+//                }
+//            }
             withContext(Dispatchers.IO) {
-                ctx.contentResolver.openOutputStream(uri)?.use { output ->
-                    OutputStreamWriter(output).use { it.write(json.toString(2)) }
+                val output = ctx.contentResolver.openOutputStream(uri)
+                if (output == null) {
+                    Log.e(TAG, "Failed to open OutputStream - URI permission expired!")
+                    throw IllegalStateException("Cannot write to URI - permission expired")
+                }
+                output.use {
+                    OutputStreamWriter(it).use { writer ->
+                        writer.write(json.toString(2))
+                    }
                 }
             }
+
 
             Log.i(TAG, "Export completed successfully.")
         } catch (e: Exception) {
@@ -134,6 +149,8 @@ object SettingsBackupManager {
                         DataStoreName.WORKSPACES -> obj.optJSONObject(store.backupKey)?.let {
                             WorkspaceSettingsStore.setAll(ctx, it)
                         }
+
+                        DataStoreName.APPS -> null
                     }
                 }
             }
@@ -190,6 +207,8 @@ object SettingsBackupManager {
                         DataStoreName.WORKSPACES -> jsonObj.optJSONObject(store.backupKey)?.let {
                             WorkspaceSettingsStore.setAll(ctx, it)
                         }
+
+                        DataStoreName.APPS -> null
                     }
                 }
             }

@@ -7,7 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.data.stores.LanguageSettingsStore
-import org.elnix.dragonlauncher.utils.AppDrawerViewModel
+import org.elnix.dragonlauncher.utils.models.AppDrawerViewModel
 
 class MyApplication : Application() {
     val appViewModel by lazy {

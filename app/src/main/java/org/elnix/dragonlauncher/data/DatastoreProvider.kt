@@ -13,7 +13,8 @@ enum class DataStoreName(val value: String, val backupKey: String) {
     DRAWER("drawerDatastore", "drawer"),
 
     DEBUG("debugDatastore", "debug"),
-    WORKSPACES("workspacesDataStore", "workspaces")
+    WORKSPACES("workspacesDataStore", "workspaces"),
+    APPS("appsDatastore","apps")
 }
 
 val Context.uiDatastore by preferencesDataStore(name = DataStoreName.UI.value)
@@ -25,3 +26,4 @@ val Context.languageDatastore by preferencesDataStore(name = DataStoreName.LANGU
 val Context.drawerDataStore by preferencesDataStore(name = DataStoreName.DRAWER.value)
 val Context.debugDatastore by preferencesDataStore(name = DataStoreName.DEBUG.value)
 val Context.workspaceDataStore by preferencesDataStore(name = DataStoreName.WORKSPACES.value)
+val Context.appDrawerDataStore by preferencesDataStore(name = DataStoreName.APPS.value)

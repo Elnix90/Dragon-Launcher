@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.utils
+package org.elnix.dragonlauncher.utils.models
 
 import android.annotation.SuppressLint
 import android.app.Application
@@ -9,7 +9,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.core.content.ContextCompat
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
@@ -25,13 +24,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.R
+import org.elnix.dragonlauncher.data.appDrawerDataStore
 import org.elnix.dragonlauncher.ui.drawer.AppModel
 import org.elnix.dragonlauncher.ui.drawer.AppOverride
 import org.elnix.dragonlauncher.ui.drawer.Workspace
 import org.elnix.dragonlauncher.ui.drawer.WorkspaceType
+import org.elnix.dragonlauncher.ui.drawer.resolveApp
 import org.elnix.dragonlauncher.utils.actions.loadDrawableAsBitmap
 
-val Context.appDrawerDataStore by preferencesDataStore("app_drawer")
 
 class AppDrawerViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -88,6 +88,7 @@ class AppDrawerViewModel(application: Application) : AndroidViewModel(applicatio
                 .distinctBy { it.packageName }
                 .filter { it.packageName !in removed }
                 .sortedBy { it.name.lowercase() }
+                .map { resolveApp(it,overrides) }
         }
 
 

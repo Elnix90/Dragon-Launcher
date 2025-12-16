@@ -46,10 +46,10 @@ import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.data.helpers.DrawerActions
 import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.helpers.AppGrid
-import org.elnix.dragonlauncher.utils.AppDrawerViewModel
+import org.elnix.dragonlauncher.utils.models.AppDrawerViewModel
 import org.elnix.dragonlauncher.utils.ImageUtils
 import org.elnix.dragonlauncher.utils.actions.launchSwipeAction
-import org.elnix.dragonlauncher.utils.workspace.WorkspaceViewModel
+import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 
 @Suppress("AssignedValueIsNeverRead")
 @OptIn(ExperimentalComposeUiApi::class)

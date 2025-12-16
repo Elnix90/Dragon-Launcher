@@ -36,7 +36,7 @@ import org.elnix.dragonlauncher.ui.helpers.FilePickerDialog
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
 import org.elnix.dragonlauncher.ui.helpers.UserValidation
 import org.elnix.dragonlauncher.ui.helpers.rememberHoldToOpenSettings
-import org.elnix.dragonlauncher.utils.AppDrawerViewModel
+import org.elnix.dragonlauncher.utils.models.AppDrawerViewModel
 import org.elnix.dragonlauncher.utils.actions.launchSwipeAction
 
 @Suppress("AssignedValueIsNeverRead")

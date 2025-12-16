@@ -35,11 +35,11 @@ import org.elnix.dragonlauncher.ui.drawer.AppModel
 import org.elnix.dragonlauncher.ui.helpers.AppGrid
 import org.elnix.dragonlauncher.ui.helpers.AppPickerDialog
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
-import org.elnix.dragonlauncher.utils.AppDrawerViewModel
+import org.elnix.dragonlauncher.utils.models.AppDrawerViewModel
 import org.elnix.dragonlauncher.utils.ImageUtils
 import org.elnix.dragonlauncher.utils.actions.launchSwipeAction
 import org.elnix.dragonlauncher.utils.showToast
-import org.elnix.dragonlauncher.utils.workspace.WorkspaceViewModel
+import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 
 @Composable
 fun WorkspaceDetailScreen(

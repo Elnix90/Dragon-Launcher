@@ -35,7 +35,6 @@ import org.elnix.dragonlauncher.ui.settings.appearance.AppearanceTab
 import org.elnix.dragonlauncher.ui.settings.appearance.ColorSelectorTab
 import org.elnix.dragonlauncher.ui.settings.appearance.DrawerTab
 import org.elnix.dragonlauncher.ui.settings.backup.BackupTab
-import org.elnix.dragonlauncher.ui.settings.backup.BackupViewModel
 import org.elnix.dragonlauncher.ui.settings.debug.DebugTab
 import org.elnix.dragonlauncher.ui.settings.language.LanguageTab
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceDetailScreen
@@ -43,11 +42,12 @@ import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceListScreen
 import org.elnix.dragonlauncher.ui.welcome.WelcomeScreen
 import org.elnix.dragonlauncher.ui.whatsnew.ChangelogsScreen
 import org.elnix.dragonlauncher.ui.whatsnew.WhatsNewBottomSheet
-import org.elnix.dragonlauncher.utils.AppDrawerViewModel
 import org.elnix.dragonlauncher.utils.getVersionCode
 import org.elnix.dragonlauncher.utils.isDefaultLauncher
 import org.elnix.dragonlauncher.utils.loadChangelogs
-import org.elnix.dragonlauncher.utils.workspace.WorkspaceViewModel
+import org.elnix.dragonlauncher.utils.models.AppDrawerViewModel
+import org.elnix.dragonlauncher.utils.models.BackupViewModel
+import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 
 // -------------------- SETTINGS --------------------
 

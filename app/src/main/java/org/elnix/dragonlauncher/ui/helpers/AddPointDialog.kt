@@ -34,11 +34,11 @@ import org.elnix.dragonlauncher.data.SwipeActionSerializable
 import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.actionTint
 import org.elnix.dragonlauncher.ui.theme.LocalExtraColors
-import org.elnix.dragonlauncher.utils.AppDrawerViewModel
+import org.elnix.dragonlauncher.utils.models.AppDrawerViewModel
 import org.elnix.dragonlauncher.utils.actions.actionColor
 import org.elnix.dragonlauncher.utils.actions.actionIcon
 import org.elnix.dragonlauncher.utils.actions.actionLabel
-import org.elnix.dragonlauncher.utils.workspace.WorkspaceViewModel
+import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 
 @Suppress("AssignedValueIsNeverRead")
 @Composable
