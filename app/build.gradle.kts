@@ -71,7 +71,14 @@ android {
             isMinifyEnabled = false
             isShrinkResources = false
         }
+        create("debuggableRelease") {
+            initWith(getByName("release"))
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isDebuggable = true
+        }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17

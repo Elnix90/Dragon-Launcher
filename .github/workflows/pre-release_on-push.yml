@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - fastlane/**
+      - README.md
+      - TODO.md
 
 jobs:
   build:
@@ -49,13 +53,16 @@ jobs:
         run: |
           MIN="DragonLauncher-v${{ env.versionName }}-beta-${{ github.run_number }}.apk"
           UNMIN="DragonLauncher-v${{ env.versionName }}-beta-${{ github.run_number }}-unminified.apk"
-          
+          DEBUG="DragonLauncher-v${{ env.versionName }}-beta-${{ github.run_number }}-debuggable.apk"
+
           mv app/build/outputs/apk/release/app-release.apk "$MIN"
           mv app/build/outputs/apk/unminifiedRelease/app-unminifiedRelease.apk "$UNMIN"
-          
+          mv app/build/outputs/apk/debuggableRelease/app-debuggableRelease.apk "$DEBUG"  # FIXED: app-debuggableRelease.apk
+
           echo "APK_MIN=$MIN" >> $GITHUB_ENV
           echo "APK_UNMIN=$UNMIN" >> $GITHUB_ENV
-      
+          echo "APK_DEBUG=$DEBUG" >> $GITHUB_ENV
+  
 
       # Create tag before release
       - name: Create tag
@@ -74,5 +81,6 @@ jobs:
           files: |
             ${{ env.APK_MIN }}
             ${{ env.APK_UNMIN }}
+            ${{ env.APK_DEBUG }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

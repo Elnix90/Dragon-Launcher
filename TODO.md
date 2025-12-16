@@ -33,3 +33,4 @@
 - [ ] Fix lag during reload; show loading indicator in app picker
 - [ ] Show beta tag in version number
 - [x] Open Obtainium when checking updates (if installed)
+- [ ] Auto Backup Feature
