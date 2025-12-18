@@ -1,4 +1,9 @@
 1.1.3
+2025-12-07
+
+[NEW]
 * Added new banner "Set as default launcher" when not
 * Added circles drag distance customization feature
+
+[FIXED]
 * Corrected some minor bugs

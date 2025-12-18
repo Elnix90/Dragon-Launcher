@@ -1,8 +1,16 @@
 1.2.0
+2025-12-13
+
+[NEW]
 * Major 1.2.0 Update
 * Workspaces update ! All the apps are nested inside workspaces, that can be fully customized
 * You can rename apps
 * You can change apps icons
-* A lot if UI improvements
-* Fixed default launcher check and banner glitches
 * Added searchbar on app picker
+
+
+[IMPROVED]
+* A lot if UI improvements
+
+[FIXED]
+* Fixed default launcher check and banner glitches

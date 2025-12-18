@@ -1,4 +1,11 @@
 1.1.7
+2025-12-10
+
+[NEW]
 * Refactor of changelogs system, added what's new screen and changelogs screen
-* Corrected flashing set as default launcher banner
+
+[IMPROVED]
 * Made long click on settings copy useful things to clipboard
+
+[FIXED]
+* Corrected flashing set as default launcher banner

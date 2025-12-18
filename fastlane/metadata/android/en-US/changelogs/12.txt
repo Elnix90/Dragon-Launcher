@@ -1,5 +1,10 @@
 1.1.8
+2025-12-12
+
+[IMPROVED]
 * Refactored setting stores base classes
 * Some UI/UX improvements
-* Fixed do no remind me again bugs
 * Lots of small improvements
+
+[FIXED]
+* Fixed do no remind me again bugs

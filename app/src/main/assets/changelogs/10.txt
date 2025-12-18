@@ -1,4 +1,7 @@
 1.1.6
+2025-12-10
+
+[NEW]
 * Added reload apps icon
 * Added color customization for icons
 * Added option to restrict app to launch to a close angle (customizable), Added option to show the line indicator snap to the selected point, Added option to draw action in the center of the start point additionally to the circle one, Corrected some UI issues, Added android app settings in settings

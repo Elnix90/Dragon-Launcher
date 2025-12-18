@@ -1,4 +1,9 @@
 1.2.1
+2025-12-14
+
+[IMPROVED]
+* Improved workflows runs, now outputs a minified and unminified apk on bate pre releases
+
+[FIXED]
 * Patch: Fixed minified app crash on start if user created workspaces (kinda annoying)
 * Fixed app crash when loading icon of an ap that was uninstalled and set in the circles
-* Improved workflows runs, now outputs a minified and unminified apk on bate pre releases

@@ -1,4 +1,9 @@
 1.0.1
-* Corrected import/export that now serialize correctly the actions and import that import correctly them
+2025-12-01
+
+[NEW]
 * Added split apk support for even smaller apks
+
+[FIXED]
+* Corrected import/export that now serialize correctly the actions and import that import correctly them
 * Fixed language issue on android 13+ devices, it now works, but only translated in french

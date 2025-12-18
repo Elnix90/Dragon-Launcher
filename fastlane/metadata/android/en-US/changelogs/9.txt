@@ -1,3 +1,6 @@
 1.1.5
+2025-12-09
+
+[NEW]
 * Added Open File Action
 * Added reload apps button (beta) in add apps dialog

@@ -1,4 +1,7 @@
 1.2.2
+2025-12-15
+
+[IMPROVED]
 * Allowed user to customize any workspace, and choose their types
 * Improved some UI
 * Can edit workspace types and title correctly

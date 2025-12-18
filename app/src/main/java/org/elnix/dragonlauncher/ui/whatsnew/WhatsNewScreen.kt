@@ -24,11 +24,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.R
+import java.util.Date
 
 data class Update(
     val versionCode: Int,
     val versionName: String,
-    val changes: List<String>
+    val date: Date,
+    val knownIssues: List<String>?,
+    val whatsNew: List<String>?,
+    val fixed: List<String>?,
+    val improved: List<String>?,
 )
 
 

@@ -1,3 +1,8 @@
 1.1.1
-* Fixed BIG backup issue, due to how Gson serialize
+2025-12-04
+
+[NEW]
 * Tried to make apps load their custom icons, not working yet
+
+[FIXED]
+* Fixed BIG backup issue, due to how Gson serialize

@@ -1,8 +1,13 @@
 1.0.2
+2025-12-02
+
+[NEW]
 * Refactored navigation system to use NavHost for cleaner implementation and better performance
 * Added user and system app selections in the app picker in settings,
-* Optimized icon fetching to reduce UI lag and improve responsiveness
-* Made fullscreen mode the default for a more immersive experience
 * Added support for split APKs to tailor apps by architecture
 * Added language support for Android 13+ devices (partial translation in progress)
+
+[IMPROVED]
+* Optimized icon fetching to reduce UI lag and improve responsiveness
+* Made fullscreen mode the default for a more immersive experience
 * Documented and enhanced README with screenshots and metadata

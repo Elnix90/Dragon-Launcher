@@ -1,9 +1,16 @@
 1.1.0
+2025-12-03
+
+[NEW]
 * Full refactor of settings system
 * Full refactor of backup system
 * Added app drawer grid, customizable
 * Added support for system apps and also Work profile on drawer + app picker
+* Added import feature on welcome screen
+
+[IMPROVED]
 * Successfully raise the keyboard when entering drawer thanks to CCLauncher's code
 * Allowed user to snap points on circle/ free move
-* Added import feature on welcome scree
+
+[FIXED]
 * Fixed a lot of bug everywhere, graphical or not
