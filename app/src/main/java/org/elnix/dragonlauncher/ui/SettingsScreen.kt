@@ -243,11 +243,13 @@ fun SettingsScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(WindowInsets.systemBars.asPaddingValues())
-            .padding(20.dp)
+//            .padding(20.dp)
     ) {
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(onClick = onBack) {
@@ -270,7 +272,7 @@ fun SettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f)
-                .padding(12.dp)
+                .padding(32.dp)
                 .onSizeChanged { size ->
                     val w = size.width.toFloat()
                     val h = size.height.toFloat()
