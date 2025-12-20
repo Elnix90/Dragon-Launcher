@@ -2,20 +2,31 @@ package org.elnix.dragonlauncher.data
 
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
+import org.elnix.dragonlauncher.data.stores.AppsSettingsStore
+import org.elnix.dragonlauncher.data.stores.BehaviorSettingsStore
+import org.elnix.dragonlauncher.data.stores.ColorModesSettingsStore
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore
+import org.elnix.dragonlauncher.data.stores.DebugSettingsStore
+import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore
+import org.elnix.dragonlauncher.data.stores.LanguageSettingsStore
+import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore
+import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
+import org.elnix.dragonlauncher.data.stores.UiSettingsStore
+import org.elnix.dragonlauncher.data.stores.WorkspaceSettingsStore
 
-enum class DataStoreName(val value: String, val backupKey: String) {
-    UI("uiDatastore", "ui"),
-    COLOR_MODE("colorModeDatastore", "color_mode"),
-    COLOR("colorDatastore", "color"),
-    PRIVATE_SETTINGS("privateSettingsStore", "debug"),
-    SWIPE("swipePointsDatastore", "actions"),
-    LANGUAGE("languageDatastore", "language"),
-    DRAWER("drawerDatastore", "drawer"),
+enum class DataStoreName(val value: String, val backupKey: String, val store: BaseSettingsStore) {
+    UI("uiDatastore", "ui", UiSettingsStore),
+    COLOR_MODE("colorModeDatastore", "color_mode", ColorModesSettingsStore),
+    COLOR("colorDatastore", "color", ColorSettingsStore),
+    PRIVATE_SETTINGS("privateSettingsStore", "debug", PrivateSettingsStore),
+    SWIPE("swipePointsDatastore", "actions", SwipeSettingsStore),
+    LANGUAGE("languageDatastore", "language", LanguageSettingsStore),
+    DRAWER("drawerDatastore", "drawer", DrawerSettingsStore),
 
-    DEBUG("debugDatastore", "debug"),
-    WORKSPACES("workspacesDataStore", "workspaces"),
-    APPS("appsDatastore","apps"),
-    BEHAVIOR("behaviorDatastore", "behavior")
+    DEBUG("debugDatastore", "debug", DebugSettingsStore),
+    WORKSPACES("workspacesDataStore", "workspaces", WorkspaceSettingsStore),
+    APPS("appsDatastore","apps", AppsSettingsStore),
+    BEHAVIOR("behaviorDatastore", "behavior", BehaviorSettingsStore)
 }
 
 val Context.uiDatastore by preferencesDataStore(name = DataStoreName.UI.value)

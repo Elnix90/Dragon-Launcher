@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 import org.elnix.dragonlauncher.data.BaseSettingsStore
 import org.elnix.dragonlauncher.data.SwipeActionSerializable
 import org.elnix.dragonlauncher.data.SwipeJson
-import org.elnix.dragonlauncher.data.uiDatastore
+import org.elnix.dragonlauncher.data.behaviorDataStore
 
 object BehaviorSettingsStore : BaseSettingsStore() {
     override val name: String = "Ui"
@@ -36,26 +36,27 @@ object BehaviorSettingsStore : BaseSettingsStore() {
     }
 
     fun getBackAction(ctx: Context): Flow<SwipeActionSerializable?> =
-        ctx.uiDatastore.data.map { json ->
+        ctx.behaviorDataStore.data.map { json ->
             json[Keys.BACK_ACTION]?.takeIf { it.isNotBlank() }?.let { SwipeJson.decodeAction(it) }
         }
 
     fun getDoubleClickAction(ctx: Context): Flow<SwipeActionSerializable?> =
-        ctx.uiDatastore.data.map { json ->
+        ctx.behaviorDataStore.data.map { json ->
             json[Keys.DOUBLE_CLICK_ACTION]?.takeIf { it.isNotBlank() }?.let { SwipeJson.decodeAction(it) }
         }
 
     suspend fun setBackAction(ctx: Context, value: SwipeActionSerializable?) {
-        ctx.uiDatastore.edit {
+        ctx.behaviorDataStore.edit {
             if (value != null) {
                 it[Keys.BACK_ACTION] = SwipeJson.encodeAction(value)
             } else {
                 it.remove(Keys.BACK_ACTION)
-            }        }
+            }
+        }
     }
 
     suspend fun setDoubleClickAction(ctx: Context, value: SwipeActionSerializable?) {
-        ctx.uiDatastore.edit {
+        ctx.behaviorDataStore.edit {
             println(value)
             if (value != null) {
                 println("Encoded: " + SwipeJson.encodeAction(value))
@@ -63,15 +64,16 @@ object BehaviorSettingsStore : BaseSettingsStore() {
                 print(it[Keys.DOUBLE_CLICK_ACTION])
             } else {
                 it.remove(Keys.DOUBLE_CLICK_ACTION)
-            }        }
+            }
+        }
     }
 
 
     fun getKeepScreenOn(ctx: Context): Flow<Boolean> =
-        ctx.uiDatastore.data.map { it[Keys.KEEP_SCREEN_ON] ?: defaults.keepScreenOn }
+        ctx.behaviorDataStore.data.map { it[Keys.KEEP_SCREEN_ON] ?: defaults.keepScreenOn }
 
     suspend fun setKeepScreenOn(ctx: Context, value: Boolean) {
-        ctx.uiDatastore.edit { it[Keys.KEEP_SCREEN_ON] = value }
+        ctx.behaviorDataStore.edit { it[Keys.KEEP_SCREEN_ON] = value }
     }
 
 
@@ -81,13 +83,13 @@ object BehaviorSettingsStore : BaseSettingsStore() {
 
 
     override suspend fun resetAll(ctx: Context) {
-        ctx.uiDatastore.edit { prefs ->
+        ctx.behaviorDataStore.edit { prefs ->
             Keys.ALL.forEach { prefs.remove(it) }
         }
     }
 
     suspend fun getAll(ctx: Context): Map<String, Any> {
-        val prefs = ctx.uiDatastore.data.first()
+        val prefs = ctx.behaviorDataStore.data.first()
 
         return buildMap {
 
@@ -109,7 +111,7 @@ object BehaviorSettingsStore : BaseSettingsStore() {
 
 
     suspend fun setAll(ctx: Context, backup: Map<String, Any?>) {
-        ctx.uiDatastore.edit { prefs ->
+        ctx.behaviorDataStore.edit { prefs ->
             fun applyString(key: Preferences.Key<String>) {
                 val raw = backup[key.name] ?: return
                 val stringValue = when (raw) {

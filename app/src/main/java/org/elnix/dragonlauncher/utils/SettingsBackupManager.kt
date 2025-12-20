@@ -66,22 +66,16 @@ object SettingsBackupManager {
                                 put(store.backupKey, obj)
                             }
                         }
-
-                        DataStoreName.APPS -> null
                         DataStoreName.BEHAVIOR -> BehaviorSettingsStore.getAll(ctx).takeIf { it.isNotEmpty() }?.let {
                             put(store.backupKey, JSONObject(it))
                         }
+                        DataStoreName.APPS -> {}
                     }
                 }
             }
 
             Log.d(TAG, "Generated JSON: $json")
 
-//            withContext(Dispatchers.IO) {
-//                ctx.contentResolver.openOutputStream(uri)?.use { output ->
-//                    OutputStreamWriter(output).use { it.write(json.toString(2)) }
-//                }
-//            }
             withContext(Dispatchers.IO) {
                 val output = ctx.contentResolver.openOutputStream(uri)
                 if (output == null) {
@@ -103,71 +97,71 @@ object SettingsBackupManager {
         }
     }
 
-    /**
-     * Imports only the requested stores from the backup JSON file.
-     * @param requestedStores List of DataStoreName objects to restore.
-     */
-    suspend fun importSettings(ctx: Context, uri: Uri, requestedStores: List<DataStoreName>) {
-        try {
-            val json = withContext(Dispatchers.IO) {
-                ctx.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
-            }
-
-            if (json.isNullOrBlank()) {
-                Log.e(TAG, "Invalid or empty file")
-                throw IllegalArgumentException("Invalid or empty file")
-            }
-
-            Log.d(TAG, "Loaded JSON: $json")
-            val obj = JSONObject(json)
-
-            withContext(Dispatchers.IO) {
-                requestedStores.forEach { store ->
-                    when (store) {
-                        DataStoreName.SWIPE -> obj.optJSONArray(store.backupKey)?.let { jsonArr ->
-                            val pointsString = jsonArr.toString()
-                            val pointsList = SwipeJson.decode(pointsString)
-                            SwipeSettingsStore.save(ctx, pointsList)
-                        }
-                        DataStoreName.DRAWER -> obj.optJSONObject(store.backupKey)?.let {
-                            DrawerSettingsStore.setAll(ctx, jsonToStringMap(it))
-                        }
-                        DataStoreName.COLOR_MODE -> obj.optJSONObject(store.backupKey)?.let {
-                            ColorModesSettingsStore.setAll(ctx, jsonToStringMap(it))
-                        }
-                        DataStoreName.COLOR -> obj.optJSONObject(store.backupKey)?.let {
-                            ColorSettingsStore.setAll(ctx, jsonToIntMap(it))
-                        }
-                        DataStoreName.PRIVATE_SETTINGS -> obj.optJSONObject(store.backupKey)?.let {
-                            DebugSettingsStore.setAll(ctx, jsonToBooleanMap(it))
-                        }
-                        DataStoreName.LANGUAGE -> obj.optJSONObject(store.backupKey)?.let {
-                            LanguageSettingsStore.setAll(ctx, jsonToStringMap(it))
-                        }
-                        DataStoreName.UI -> obj.optJSONObject(store.backupKey)?.let {
-                            UiSettingsStore.setAll(ctx, jsonToStringMap(it))
-                        }
-                        DataStoreName.DEBUG -> obj.optJSONObject(store.backupKey)?.let {
-                            DebugSettingsStore.setAll(ctx, jsonToBooleanMap(it))
-                        }
-                        DataStoreName.WORKSPACES -> obj.optJSONObject(store.backupKey)?.let {
-                            WorkspaceSettingsStore.setAll(ctx, it)
-                        }
-
-                        DataStoreName.APPS -> null
-                        DataStoreName.BEHAVIOR -> obj.optJSONObject(store.backupKey)?.let {
-                            BehaviorSettingsStore.setAll(ctx, jsonToStringMap(it))
-                        }
-                    }
-                }
-            }
-
-            Log.i(TAG, "Import completed successfully.")
-        } catch (e: Exception) {
-            Log.e(TAG, "Error during import", e)
-            throw e
-        }
-    }
+//    /**
+//     * Imports only the requested stores from the backup JSON file.
+//     * @param requestedStores List of DataStoreName objects to restore.
+//     */
+//    suspend fun importSettings(ctx: Context, uri: Uri, requestedStores: List<DataStoreName>) {
+//        try {
+//            val json = withContext(Dispatchers.IO) {
+//                ctx.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
+//            }
+//
+//            if (json.isNullOrBlank()) {
+//                Log.e(TAG, "Invalid or empty file")
+//                throw IllegalArgumentException("Invalid or empty file")
+//            }
+//
+//            Log.d(TAG, "Loaded JSON: $json")
+//            val obj = JSONObject(json)
+//
+//            withContext(Dispatchers.IO) {
+//                requestedStores.forEach { store ->
+//                    when (store) {
+//                        DataStoreName.SWIPE -> obj.optJSONArray(store.backupKey)?.let { jsonArr ->
+//                            val pointsString = jsonArr.toString()
+//                            val pointsList = SwipeJson.decode(pointsString)
+//                            SwipeSettingsStore.save(ctx, pointsList)
+//                        }
+//                        DataStoreName.DRAWER -> obj.optJSONObject(store.backupKey)?.let {
+//                            DrawerSettingsStore.setAll(ctx, jsonToStringMap(it))
+//                        }
+//                        DataStoreName.COLOR_MODE -> obj.optJSONObject(store.backupKey)?.let {
+//                            ColorModesSettingsStore.setAll(ctx, jsonToStringMap(it))
+//                        }
+//                        DataStoreName.COLOR -> obj.optJSONObject(store.backupKey)?.let {
+//                            ColorSettingsStore.setAll(ctx, jsonToIntMap(it))
+//                        }
+//                        DataStoreName.PRIVATE_SETTINGS -> obj.optJSONObject(store.backupKey)?.let {
+//                            DebugSettingsStore.setAll(ctx, jsonToBooleanMap(it))
+//                        }
+//                        DataStoreName.LANGUAGE -> obj.optJSONObject(store.backupKey)?.let {
+//                            LanguageSettingsStore.setAll(ctx, jsonToStringMap(it))
+//                        }
+//                        DataStoreName.UI -> obj.optJSONObject(store.backupKey)?.let {
+//                            UiSettingsStore.setAll(ctx, jsonToStringMap(it))
+//                        }
+//                        DataStoreName.DEBUG -> obj.optJSONObject(store.backupKey)?.let {
+//                            DebugSettingsStore.setAll(ctx, jsonToBooleanMap(it))
+//                        }
+//                        DataStoreName.WORKSPACES -> obj.optJSONObject(store.backupKey)?.let {
+//                            WorkspaceSettingsStore.setAll(ctx, it)
+//                        }
+//
+//                        DataStoreName.APPS -> null
+//                        DataStoreName.BEHAVIOR -> obj.optJSONObject(store.backupKey)?.let {
+//                            BehaviorSettingsStore.setAll(ctx, jsonToStringMap(it))
+//                        }
+//                    }
+//                }
+//            }
+//
+//            Log.i(TAG, "Import completed successfully.")
+//        } catch (e: Exception) {
+//            Log.e(TAG, "Error during import", e)
+//            throw e
+//        }
+//    }
 
     /**
      * Imports settings directly from parsed JSON (no file needed).
@@ -213,11 +207,10 @@ object SettingsBackupManager {
                         DataStoreName.WORKSPACES -> jsonObj.optJSONObject(store.backupKey)?.let {
                             WorkspaceSettingsStore.setAll(ctx, it)
                         }
-
-                        DataStoreName.APPS -> null
                         DataStoreName.BEHAVIOR -> jsonObj.optJSONObject(store.backupKey)?.let {
-                            WorkspaceSettingsStore.setAll(ctx, it)
+                            BehaviorSettingsStore.setAll(ctx, jsonToStringMap(it))
                         }
+                        DataStoreName.APPS -> {}
                     }
                 }
             }

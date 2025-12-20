@@ -52,16 +52,10 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.R
+import org.elnix.dragonlauncher.data.DataStoreName
 import org.elnix.dragonlauncher.data.SwipeActionSerializable
-import org.elnix.dragonlauncher.data.stores.ColorModesSettingsStore
-import org.elnix.dragonlauncher.data.stores.ColorSettingsStore
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore
-import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore
-import org.elnix.dragonlauncher.data.stores.LanguageSettingsStore
 import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore
-import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
-import org.elnix.dragonlauncher.data.stores.UiSettingsStore
-import org.elnix.dragonlauncher.data.stores.WorkspaceSettingsStore
 import org.elnix.dragonlauncher.ui.helpers.TextDivider
 import org.elnix.dragonlauncher.ui.helpers.settings.ContributorItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
@@ -111,14 +105,10 @@ fun AdvancedSettingsScreen(
         helpText = stringResource(R.string.settings),
         onReset = {
             scope.launch {
-                UiSettingsStore.resetAll(ctx)
-                DebugSettingsStore.resetAll(ctx)
-                SwipeSettingsStore.resetAll(ctx)
-                LanguageSettingsStore.resetAll(ctx)
-                ColorModesSettingsStore.resetAll(ctx)
-                ColorSettingsStore.resetAll(ctx)
-                DrawerSettingsStore.resetAll(ctx)
-                WorkspaceSettingsStore.resetAll(ctx)
+                // Reset all stores, one by one, using their defined resetAll functions
+                DataStoreName.entries.filter { it.store != PrivateSettingsStore }.forEach {
+                    it.store.resetAll(ctx)
+                }
 
                 // Small delay to allow the default apps to load before initializing
                 delay(200)

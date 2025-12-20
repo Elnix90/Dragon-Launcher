@@ -24,14 +24,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.R
-import org.elnix.dragonlauncher.data.stores.ColorModesSettingsStore
-import org.elnix.dragonlauncher.data.stores.ColorSettingsStore
+import org.elnix.dragonlauncher.data.DataStoreName
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore
-import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore
-import org.elnix.dragonlauncher.data.stores.LanguageSettingsStore
 import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore
-import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
-import org.elnix.dragonlauncher.data.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.helpers.SwitchRow
 import org.elnix.dragonlauncher.ui.helpers.TextDivider
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
@@ -68,16 +63,8 @@ fun DebugTab(
     val doNotRemindMeAgainNotificationsBehavior by PrivateSettingsStore.getShowMethodAsking(ctx)
         .collectAsState(initial = true)
 
-    val settingsStores = listOf(
-        ColorSettingsStore,
-        ColorModesSettingsStore,
-        DebugSettingsStore,
-        DrawerSettingsStore,
-        LanguageSettingsStore,
-        PrivateSettingsStore,
-        SwipeSettingsStore,
-        UiSettingsStore
-    )
+
+    val settingsStores = DataStoreName.entries.map { it.store }
 
     SettingsLazyHeader(
         title = stringResource(R.string.debug),

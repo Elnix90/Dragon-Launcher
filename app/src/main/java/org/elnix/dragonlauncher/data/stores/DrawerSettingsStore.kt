@@ -48,7 +48,6 @@ object DrawerSettingsStore : BaseSettingsStore() {
         const val AUTO_SHOW_KEYBOARD_ON_DRAWER = "autoShowKeyboardOnDrawer"
         const val CLICK_EMPTY_SPACE_TO_RAISE_KEYBOARD = "clickEmptySpaceToRaiseKeyboard"
         const val GRID_SIZE = "gridSize"
-//        const val INITIAL_PAGE = "initialPage"
         const val LEFT_DRAWER_ACTION = "leftDrawerAction"
         const val RIGHT_DRAWER_ACTION = "rightDrawerAction"
         const val LEFT_DRAWER_WIDTH = "leftDrawerWidth"
@@ -62,7 +61,6 @@ object DrawerSettingsStore : BaseSettingsStore() {
     private val AUTO_SHOW_KEYBOARD_ON_DRAWER = booleanPreferencesKey(Keys.AUTO_SHOW_KEYBOARD_ON_DRAWER)
     private val CLICK_EMPTY_SPACE_TO_RAISE_KEYBOARD = booleanPreferencesKey(Keys.CLICK_EMPTY_SPACE_TO_RAISE_KEYBOARD)
     private val GRID_SIZE = intPreferencesKey(Keys.GRID_SIZE)
-//    private val INITIAL_PAGE = intPreferencesKey(Keys.INITIAL_PAGE)
     private val LEFT_DRAWER_ACTION = stringPreferencesKey(Keys.LEFT_DRAWER_ACTION)
     private val RIGHT_DRAWER_ACTION = stringPreferencesKey(Keys.RIGHT_DRAWER_ACTION)
     private val LEFT_DRAWER_WIDTH = floatPreferencesKey(Keys.LEFT_DRAWER_WIDTH)
@@ -166,7 +164,6 @@ object DrawerSettingsStore : BaseSettingsStore() {
             prefs.remove(AUTO_SHOW_KEYBOARD_ON_DRAWER)
             prefs.remove(CLICK_EMPTY_SPACE_TO_RAISE_KEYBOARD)
             prefs.remove(GRID_SIZE)
-//            prefs.remove(INITIAL_PAGE)
             prefs.remove(LEFT_DRAWER_ACTION)
             prefs.remove(RIGHT_DRAWER_ACTION)
             prefs.remove(LEFT_DRAWER_WIDTH)
@@ -195,7 +192,6 @@ object DrawerSettingsStore : BaseSettingsStore() {
             putIfNonDefault(Keys.AUTO_SHOW_KEYBOARD_ON_DRAWER, prefs[AUTO_SHOW_KEYBOARD_ON_DRAWER], defaults.autoShowKeyboardOnDrawer)
             putIfNonDefault(Keys.CLICK_EMPTY_SPACE_TO_RAISE_KEYBOARD, prefs[CLICK_EMPTY_SPACE_TO_RAISE_KEYBOARD], defaults.clickEmptySpaceToRaiseKeyboard)
             putIfNonDefault(Keys.GRID_SIZE, prefs[GRID_SIZE], defaults.gridSize)
-//            putIfNonDefault(Keys.INITIAL_PAGE, prefs[INITIAL_PAGE], defaults.initialPage)
             putIfNonDefault(Keys.LEFT_DRAWER_ACTION, prefs[LEFT_DRAWER_ACTION], defaults.leftDrawerAction)
             putIfNonDefault(Keys.LEFT_DRAWER_WIDTH, prefs[RIGHT_DRAWER_WIDTH], defaults.leftDrawerWidth)
             putIfNonDefault(Keys.RIGHT_DRAWER_WIDTH, prefs[RIGHT_DRAWER_WIDTH], defaults.leftDrawerWidth)
@@ -233,7 +229,6 @@ object DrawerSettingsStore : BaseSettingsStore() {
         fun getIntStrict(key: String): Int {
             val v = raw[key] ?: return when (key) {
                 Keys.GRID_SIZE -> defaults.gridSize
-//                Keys.INITIAL_PAGE -> defaults.initialPage
                 else -> throw BackupTypeException(key, "Int", null, null)
             }
 
@@ -282,7 +277,6 @@ object DrawerSettingsStore : BaseSettingsStore() {
             autoShowKeyboardOnDrawer = getBooleanStrict(Keys.AUTO_SHOW_KEYBOARD_ON_DRAWER),
             clickEmptySpaceToRaiseKeyboard = getBooleanStrict(Keys.CLICK_EMPTY_SPACE_TO_RAISE_KEYBOARD),
             gridSize = getIntStrict(Keys.GRID_SIZE),
-//            initialPage = getIntStrict(Keys.INITIAL_PAGE),
             leftDrawerAction = getDrawerActionStrict(Keys.LEFT_DRAWER_ACTION),
             rightDrawerAction = getDrawerActionStrict(Keys.RIGHT_DRAWER_ACTION),
             leftDrawerWidth = getFloatStrict(Keys.LEFT_DRAWER_WIDTH),
@@ -297,7 +291,6 @@ object DrawerSettingsStore : BaseSettingsStore() {
             prefs[AUTO_SHOW_KEYBOARD_ON_DRAWER] = backup.autoShowKeyboardOnDrawer
             prefs[CLICK_EMPTY_SPACE_TO_RAISE_KEYBOARD] = backup.clickEmptySpaceToRaiseKeyboard
             prefs[GRID_SIZE] = backup.gridSize
-//            prefs[INITIAL_PAGE] = backup.initialPage
             prefs[LEFT_DRAWER_ACTION] = backup.leftDrawerAction.name
             prefs[RIGHT_DRAWER_ACTION] = backup.rightDrawerAction.name
             prefs[LEFT_DRAWER_WIDTH] = backup.leftDrawerWidth

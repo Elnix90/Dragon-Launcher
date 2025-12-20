@@ -7,8 +7,6 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.core.content.ContextCompat
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
@@ -19,12 +17,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.R
-import org.elnix.dragonlauncher.data.appDrawerDataStore
+import org.elnix.dragonlauncher.data.stores.AppsSettingsStore
 import org.elnix.dragonlauncher.ui.drawer.AppModel
 import org.elnix.dragonlauncher.ui.drawer.AppOverride
 import org.elnix.dragonlauncher.ui.drawer.Workspace
@@ -56,9 +53,6 @@ class AppDrawerViewModel(application: Application) : AndroidViewModel(applicatio
     @SuppressLint("StaticFieldLeak")
     private val ctx = application.applicationContext
     private val gson = Gson()
-    @Suppress("PrivatePropertyName")
-    private val DATASTORE_KEY = stringPreferencesKey("cached_apps_json")
-
     init {
         loadApps()
     }
@@ -96,9 +90,7 @@ class AppDrawerViewModel(application: Application) : AndroidViewModel(applicatio
     private fun loadApps() {
         viewModelScope.launch(Dispatchers.IO) {
             // Load cached apps first
-            val cachedJson = ctx.appDrawerDataStore.data
-                .map { it[DATASTORE_KEY] }
-                .firstOrNull()
+            val cachedJson = AppsSettingsStore.getCachedApps(ctx)
 
             if (!cachedJson.isNullOrEmpty()) {
                 val type = object : TypeToken<List<AppModel>>() {}.type
@@ -166,8 +158,6 @@ class AppDrawerViewModel(application: Application) : AndroidViewModel(applicatio
 
         // Save list into datastore
         val json = gson.toJson(installedApps)
-        ctx.appDrawerDataStore.edit { prefs ->
-            prefs[DATASTORE_KEY] = json
-        }
+        AppsSettingsStore.saveCachedApps(ctx, json)
     }
 }
