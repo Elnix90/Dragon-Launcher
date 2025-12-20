@@ -16,33 +16,44 @@ object BehaviorSettingsStore : BaseSettingsStore() {
 
     private data class UiSettingsBackup(
         val requirePressingBackTwiceToExit: Boolean = true,
-        val doubleBackFeedback: Boolean = false
+        val doubleBackFeedback: Boolean = false,
+        val keepScreenOn: Boolean = false
     )
 
     private val defaults = UiSettingsBackup()
 
     private object Keys {
-        val REQUIRE_PRESSING_BACK_TWICE_TO_EXIT = booleanPreferencesKey("requirePressingBackTwiceToExit")
-        val DOUBLE_BACK_FEEDBACK = booleanPreferencesKey("doubleBackFeedback")
+//        val REQUIRE_PRESSING_BACK_TWICE_TO_EXIT = booleanPreferencesKey("requirePressingBackTwiceToExit")
+//        val DOUBLE_BACK_FEEDBACK = booleanPreferencesKey("doubleBackFeedback")
+        val KEEP_SCREEN_ON = booleanPreferencesKey("keepScreenOn")
         val ALL = listOf(
-            REQUIRE_PRESSING_BACK_TWICE_TO_EXIT,
-            DOUBLE_BACK_FEEDBACK
+//            REQUIRE_PRESSING_BACK_TWICE_TO_EXIT,
+//            DOUBLE_BACK_FEEDBACK,
+            KEEP_SCREEN_ON
         )
     }
 
-    fun getRequirePressingBackTwiceToExit(ctx: Context): Flow<Boolean> =
-        ctx.uiDatastore.data.map { it[Keys.REQUIRE_PRESSING_BACK_TWICE_TO_EXIT] ?: defaults.requirePressingBackTwiceToExit }
+//    fun getRequirePressingBackTwiceToExit(ctx: Context): Flow<Boolean> =
+//        ctx.uiDatastore.data.map { it[Keys.REQUIRE_PRESSING_BACK_TWICE_TO_EXIT] ?: defaults.requirePressingBackTwiceToExit }
+//
+//    suspend fun setRequirePressingBackTwiceToExit(ctx: Context, value: Boolean) {
+//        ctx.uiDatastore.edit { it[Keys.REQUIRE_PRESSING_BACK_TWICE_TO_EXIT] = value }
+//    }
+//
+//    fun getDoubleBackFeedback(ctx: Context): Flow<Boolean> =
+//        ctx.uiDatastore.data.map { it[Keys.DOUBLE_BACK_FEEDBACK] ?: defaults.requirePressingBackTwiceToExit }
+//
+//    suspend fun setDoubleBackFeedback(ctx: Context, value: Boolean) {
+//        ctx.uiDatastore.edit { it[Keys.DOUBLE_BACK_FEEDBACK] = value }
+//    }
 
-    suspend fun setRequirePressingBackTwiceToExit(ctx: Context, value: Boolean) {
-        ctx.uiDatastore.edit { it[Keys.REQUIRE_PRESSING_BACK_TWICE_TO_EXIT] = value }
+    fun getKeepScreenOn(ctx: Context): Flow<Boolean> =
+        ctx.uiDatastore.data.map { it[Keys.KEEP_SCREEN_ON] ?: defaults.keepScreenOn }
+
+    suspend fun setKeepScreenOn(ctx: Context, value: Boolean) {
+        ctx.uiDatastore.edit { it[Keys.KEEP_SCREEN_ON] = value }
     }
 
-    fun getDoubleBackFeedback(ctx: Context): Flow<Boolean> =
-        ctx.uiDatastore.data.map { it[Keys.DOUBLE_BACK_FEEDBACK] ?: defaults.requirePressingBackTwiceToExit }
-
-    suspend fun setDoubleBackFeedback(ctx: Context, value: Boolean) {
-        ctx.uiDatastore.edit { it[Keys.DOUBLE_BACK_FEEDBACK] = value }
-    }
 
     // --------------------------------
     // BACKUP / RESTORE / RESET
@@ -70,8 +81,9 @@ object BehaviorSettingsStore : BaseSettingsStore() {
                 if (v != null && v != default) put(key.name, v)
             }
 
-            putIfChanged(Keys.REQUIRE_PRESSING_BACK_TWICE_TO_EXIT, defaults.requirePressingBackTwiceToExit)
-            putIfChanged(Keys.DOUBLE_BACK_FEEDBACK, defaults.doubleBackFeedback)
+//            putIfChanged(Keys.REQUIRE_PRESSING_BACK_TWICE_TO_EXIT, defaults.requirePressingBackTwiceToExit)
+//            putIfChanged(Keys.DOUBLE_BACK_FEEDBACK, defaults.doubleBackFeedback)
+            putIfChanged(Keys.KEEP_SCREEN_ON, defaults.keepScreenOn)
         }
     }
 
@@ -125,8 +137,9 @@ object BehaviorSettingsStore : BaseSettingsStore() {
                 prefs[key] = intValue
             }
 
-            applyBoolean(Keys.REQUIRE_PRESSING_BACK_TWICE_TO_EXIT)
-            applyBoolean(Keys.DOUBLE_BACK_FEEDBACK)
+//            applyBoolean(Keys.REQUIRE_PRESSING_BACK_TWICE_TO_EXIT)
+//            applyBoolean(Keys.DOUBLE_BACK_FEEDBACK)
+            applyBoolean(Keys.KEEP_SCREEN_ON)
         }
     }
 }

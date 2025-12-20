@@ -139,8 +139,7 @@ fun AdvancedSettingsScreen(
         item {
             SettingsItem(
                 title = stringResource(R.string.behavior),
-                icon = Icons.Default.QuestionMark,
-                enabled = false
+                icon = Icons.Default.QuestionMark
             ) {
                 navController.navigate(SETTINGS.BEHAVIOR)
             }

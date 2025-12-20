@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.data.SwipeActionSerializable
 import org.elnix.dragonlauncher.data.SwipePointSerializable
+import org.elnix.dragonlauncher.data.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.data.stores.ColorSettingsStore
 import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
@@ -79,6 +80,16 @@ class MainActivity : ComponentActivity() {
         val controller = WindowInsetsControllerCompat(window, window.decorView)
 
         lifecycleScope.launch {
+            BehaviorSettingsStore.getKeepScreenOn(this@MainActivity).collectLatest { enabled ->
+                if (enabled) {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                } else {
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
             UiSettingsStore.getFullscreen(this@MainActivity).collectLatest { enabled ->
                 if (enabled) {
                     controller.hide(
@@ -100,10 +111,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val ctx = LocalContext.current
-            
+
             // To prevent the user from exiting the app on back, since it's a launcher
             BackHandler { }
 
+            // May be used in the future for some quit action / operation
 //            DoubleBackToExit()
 
             val hasInitialized by PrivateSettingsStore.getHasInitialized(ctx)
@@ -238,5 +250,6 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(packageReceiver)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 }

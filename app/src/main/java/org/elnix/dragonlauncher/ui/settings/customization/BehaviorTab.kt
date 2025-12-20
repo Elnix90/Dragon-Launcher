@@ -20,10 +20,13 @@ fun BehaviorTab(onBack: () -> Unit) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val requirePressingBackTwiceToExit by BehaviorSettingsStore.getRequirePressingBackTwiceToExit(ctx)
-        .collectAsState(initial = true)
+//    val requirePressingBackTwiceToExit by BehaviorSettingsStore.getRequirePressingBackTwiceToExit(ctx)
+//        .collectAsState(initial = true)
+//
+//    val doubleBAckFeedback by BehaviorSettingsStore.getDoubleBackFeedback(ctx)
+//        .collectAsState(initial = false)
 
-    val doubleBAckFeedback by BehaviorSettingsStore.getDoubleBackFeedback(ctx)
+    val keepScreenOn by BehaviorSettingsStore.getKeepScreenOn(ctx)
         .collectAsState(initial = false)
 
     SettingsLazyHeader(
@@ -38,30 +41,38 @@ fun BehaviorTab(onBack: () -> Unit) {
     ) {
         item {
             SwitchRow(
-                requirePressingBackTwiceToExit,
-                stringResource(R.string.require_pressing_back_twice_to_exit),
+                keepScreenOn,
+                stringResource(R.string.keep_screen_on),
             ) {
-                scope.launch {
-                    BehaviorSettingsStore.setRequirePressingBackTwiceToExit(ctx, it)
-                    if (!it) BehaviorSettingsStore.setDoubleBackFeedback(ctx, false)
-                }
+                scope.launch { BehaviorSettingsStore.setKeepScreenOn(ctx, it) }
             }
         }
-
-        if (requirePressingBackTwiceToExit || doubleBAckFeedback) {
-            item {
-                SwitchRow(
-                    requirePressingBackTwiceToExit,
-                    stringResource(R.string.double_back_press_feedback),
-                ) {
-                    scope.launch {
-                        BehaviorSettingsStore.setDoubleBackFeedback(
-                            ctx,
-                            it
-                        )
-                    }
-                }
-            }
-        }
+//        item {
+//            SwitchRow(
+//                requirePressingBackTwiceToExit,
+//                stringResource(R.string.require_pressing_back_twice_to_exit),
+//            ) {
+//                scope.launch {
+//                    BehaviorSettingsStore.setRequirePressingBackTwiceToExit(ctx, it)
+//                    if (!it) BehaviorSettingsStore.setDoubleBackFeedback(ctx, false)
+//                }
+//            }
+//        }
+//
+//        if (requirePressingBackTwiceToExit || doubleBAckFeedback) {
+//            item {
+//                SwitchRow(
+//                    requirePressingBackTwiceToExit,
+//                    stringResource(R.string.double_back_press_feedback),
+//                ) {
+//                    scope.launch {
+//                        BehaviorSettingsStore.setDoubleBackFeedback(
+//                            ctx,
+//                            it
+//                        )
+//                    }
+//                }
+//            }
+//        }
     }
 }
