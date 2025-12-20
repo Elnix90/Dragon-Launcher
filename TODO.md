@@ -35,5 +35,5 @@
 - [x] Open Obtainium when checking updates (if installed)
 - [ ] Auto Backup Feature
 - [x] Add 'Special actions' for back, double, maybe triple click
-- [ ] Add 'keep screen on' option (in future behavior tab)
+- [x] Add 'keep screen on' option (in future behavior tab)
 - [ ] Add toggle bluetooth, wifi, data, etc actions

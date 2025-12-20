@@ -24,26 +24,12 @@ jobs:
 
       - name: Read latest changelog
         id: changelog
+        shell: bash
         run: |
           DIR="fastlane/metadata/android/en-US/changelogs"
-
-          FILE=$(ls "$DIR"/*.txt | sed 's#.*/##' | sed 's/\.txt$//' | sort -n | tail -1)
-
-          CHANGELOG_FILE="$DIR/$FILE.txt"
-
-          echo "Using changelog: $CHANGELOG_FILE"
-
-          VERSION_NAME=$(head -n 1 "$CHANGELOG_FILE")
-          BODY=$(tail -n +2 "$CHANGELOG_FILE")
-
-          {
-            echo "changelog<<EOF"
-            echo "## $VERSION_NAME"
-            echo
-            echo "$BODY"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
-      
+          echo "changelog<<EOF" >> "$GITHUB_OUTPUT"
+          .github/scripts/read-changelog.sh >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"      
 
       - name: Set up JDK
         uses: actions/setup-java@v4

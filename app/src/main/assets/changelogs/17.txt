@@ -1,0 +1,18 @@
+1.2.3
+2025-12-20
+
+[NEW]
+* Behavior tab:
+* New custom actions: back action & double click action, fully customizable like the points
+* New 'keep screen on' option
+* F-droid metadata
+* MIT license
+
+[FIXED]
+* Overflow workflow path-ignore
+* signing config fixes
+
+[IMPROVED]
+* More immersive app drawer preview when only 1 gridSize
+* Added recent screenshots and animated gif to readme
+* UI Tweaks
