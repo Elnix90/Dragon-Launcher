@@ -144,4 +144,6 @@
     <string name="everything_ready">Everything Ready!</string>
     <string name="reset_app_icon">Reset App Icon</string>
     <string name="home">Home</string>
+    <string name="edit_point">Edit Point</string>
+    <string name="choose_action">Choose Action</string>
 </resources>

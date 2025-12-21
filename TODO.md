@@ -10,7 +10,7 @@
 - [ ] Show status bar (battery %, time)
 - [ ] ~~Require pressing Exit twice to leave fullscreen~~
 - [x] Remove changelog header text divider
-- [ ] Allow editing points (like "pick")
+- [x] Allow editing points (like "pick")
 - [x] Fix random free-angle issue and set it to the last used circle
 - [x] Close settings like the drawer after some time
 - [x] Add drawer setting: tapping empty space closes, opens keyboard, or does nothing

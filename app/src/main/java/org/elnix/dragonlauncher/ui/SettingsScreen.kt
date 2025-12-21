@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.ChangeCircle
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Grid3x3
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Remove
@@ -153,6 +154,7 @@ fun SettingsScreen(
     val aPointIsSelected = selectedPoint != null
 
     var showAddDialog by remember { mutableStateOf(false) }
+    var showEditDialog by remember { mutableStateOf<UiSwipePoint?>(null) }
     var recomposeTrigger by remember { mutableIntStateOf(0) }
 
 
@@ -797,6 +799,22 @@ fun SettingsScreen(
                 )
 
                 Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = stringResource(R.string.edit_point),
+                    tint = MaterialTheme.colorScheme.secondary.copy(if (aPointIsSelected) 1f else 0.2f),
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable(aPointIsSelected) { showEditDialog = selectedPoint }
+                        .background(MaterialTheme.colorScheme.secondary.copy(if (aPointIsSelected) 0.2f else 0f))
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.secondary.copy(if (aPointIsSelected) 1f else 0.2f),
+                            shape = CircleShape
+                        )
+                        .padding(25.dp)
+                )
+
+                Icon(
                     imageVector = Icons.Default.Remove,
                     contentDescription = "Remove point",
                     tint = MaterialTheme.colorScheme.error.copy(if (aPointIsSelected) 1f else 0.2f),
@@ -923,6 +941,24 @@ fun SettingsScreen(
                 }
 
                 showAddDialog = false
+            }
+        )
+    }
+
+    if (showEditDialog != null) {
+        val editPoint = showEditDialog!!
+
+        AddPointDialog(
+            appsViewModel = appsViewModel,
+            workspaceViewModel = workspaceViewModel,
+            onDismiss = { showEditDialog = null },
+            onActionSelected = { action ->
+
+                applyChange {
+                    points.find { it.id == editPoint.id }?.action = action
+                }
+
+                showEditDialog = null
             }
         )
     }
