@@ -22,9 +22,8 @@
 - [x] Add reset options for renaming/app icons
 - [x] Add "snap circles" (not to drag distance)
 - [ ] Add undo/redo in settings
-- [ ] Fix extra padding in fullscreen when swiping down
-- [ ] Show user apps in drawer preview
-- [ ] Use settings title as header instead of floating box
+- [x] Fix extra padding in fullscreen when swiping down
+- [x] Show user apps in drawer preview
 - [ ] Improve backup/restore buttons: add icons and auto-backup option
 - [ ] Make each "What's New" sheet clickable (open release link; long-click to copy)
 - [ ] Remove click indication from drawer panels
