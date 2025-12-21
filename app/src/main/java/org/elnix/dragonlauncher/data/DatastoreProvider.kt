@@ -14,18 +14,17 @@ import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore
 import org.elnix.dragonlauncher.data.stores.WorkspaceSettingsStore
 
-enum class DataStoreName(val value: String, val backupKey: String, val store: BaseSettingsStore) {
+enum class DataStoreName(val value: String, val backupKey: String?, val store: BaseSettingsStore) {
     UI("uiDatastore", "ui", UiSettingsStore),
     COLOR_MODE("colorModeDatastore", "color_mode", ColorModesSettingsStore),
     COLOR("colorDatastore", "color", ColorSettingsStore),
-    PRIVATE_SETTINGS("privateSettingsStore", "debug", PrivateSettingsStore),
+    PRIVATE_SETTINGS("privateSettingsStore", null, PrivateSettingsStore),
     SWIPE("swipePointsDatastore", "actions", SwipeSettingsStore),
     LANGUAGE("languageDatastore", "language", LanguageSettingsStore),
     DRAWER("drawerDatastore", "drawer", DrawerSettingsStore),
-
     DEBUG("debugDatastore", "debug", DebugSettingsStore),
     WORKSPACES("workspacesDataStore", "workspaces", WorkspaceSettingsStore),
-    APPS("appsDatastore","apps", AppsSettingsStore),
+    APPS("appsDatastore",null, AppsSettingsStore),
     BEHAVIOR("behaviorDatastore", "behavior", BehaviorSettingsStore)
 }
 

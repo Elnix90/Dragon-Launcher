@@ -39,6 +39,7 @@ fun WelcomePageLauncher() {
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(15.dp)
         ){
             Icon(
                 imageVector = Icons.Default.RocketLaunch,

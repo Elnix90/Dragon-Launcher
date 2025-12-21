@@ -253,7 +253,7 @@ fun SettingsScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Color.White)
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = MaterialTheme.colorScheme.onBackground)
             }
 
             Text(
@@ -264,7 +264,7 @@ fun SettingsScreen(
             )
 
             IconButton(onClick = onAdvSettings) {
-                Icon(Icons.Default.Settings, null, tint = Color.White)
+                Icon(Icons.Default.Settings, null, tint = MaterialTheme.colorScheme.onBackground)
             }
         }
 

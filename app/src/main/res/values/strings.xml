@@ -140,4 +140,6 @@
     <string name="long_click_to_access_settings">Long click 3s to access settings</string>
     <string name="swipe_to_open_app">Swipe to open your configured apps / shortcuts</string>
     <string name="configure_your_apps">Configure your apps and shortcuts in settings</string>
+    <string name="theme_selector">Theme selector</string>
+    <string name="everything_ready">Everything Ready!</string>
 </resources>

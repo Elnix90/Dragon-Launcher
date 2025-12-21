@@ -26,7 +26,7 @@ fun ExportSettingsDialog(
     onDismiss: () -> Unit,
     onConfirm: (selectedStores: List<DataStoreName>) -> Unit
 ) {
-    val allStores = DataStoreName.entries
+    val allStores = DataStoreName.entries.filter { it.backupKey != null }
 
     val selected = remember(allStores) {
         mutableStateMapOf<DataStoreName, Boolean>().apply {
@@ -67,7 +67,7 @@ fun ExportSettingsDialog(
                             ),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(store.backupKey.replaceFirstChar { it.uppercase() })
+                        Text(store.backupKey!!.replaceFirstChar { it.uppercase() })
                         Checkbox(
                             checked = selected[store] ?: true,
                             onCheckedChange = null

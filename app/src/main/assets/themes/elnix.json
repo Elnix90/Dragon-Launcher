@@ -1,0 +1,72 @@
+{
+  "ui": {
+    "showLaunchingAppIcon": false,
+    "showAppLaunchPreviewCircle": false,
+    "showAppCirclePreview": false,
+    "showAppLinePreview": false,
+    "show_app_angle_preview": false,
+    "firstCircleDragDistance": 277,
+    "secondCircleDragDistance": 525,
+    "cancelZoneDragDistance": 50
+  },
+  "color_mode": {
+    "colorPickerMode": "GRADIENT",
+    "colorCustomisationMode": "ALL"
+  },
+  "color": {
+    "primary_color": -6619136,
+    "secondary_color": -4587520,
+    "tertiary_color": -2162688,
+    "surface_color": -13697024,
+    "delete_color": -13172736,
+    "notification_shade_color": -16763770
+  },
+  "drawer": {
+    "showAppIconsInDrawer": "false",
+    "clickEmptySpaceToRaiseKeyboard": "true",
+    "gridSize": "1",
+    "leftDrawerAction": "NONE",
+    "leftDrawerWidth": "0.11505978",
+    "rightDrawerWidth": "0.11505978"
+  },
+  "workspaces": {
+    "appOverrides": {},
+    "workspaces": [
+      {
+        "appIds": [
+          "com.android.settings"
+        ],
+        "enabled": true,
+        "id": "user",
+        "name": "User",
+        "type": "USER"
+      },
+      {
+        "appIds": [],
+        "enabled": true,
+        "id": "system",
+        "name": "System",
+        "type": "SYSTEM"
+      },
+      {
+        "appIds": [],
+        "enabled": false,
+        "id": "all",
+        "name": "All",
+        "type": "ALL"
+      },
+      {
+        "appIds": [],
+        "enabled": false,
+        "id": "work",
+        "name": "Work",
+        "type": "WORK"
+      }
+    ]
+  },
+  "behavior": {
+    "backAction": "{\"type\":\"OpenDragonLauncherSettings\"}",
+    "doubleClickAction": "{\"type\":\"LaunchApp\",\"packageName\":\"im.molly.app\"}",
+    "keepScreenOn": true
+  }
+}

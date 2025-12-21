@@ -39,4 +39,6 @@
 - [ ] Add toggle bluetooth, wifi, data, etc actions
 - [x] Make check for updates show Obtainium icon if installed
 - [x] DO not show what's new on welcome screen
-- [ ] Add privacy welcome screen
+- [X] Add privacy welcome screen
+- [ ] Allow preview theme, add multiple images  for the theme
+- [ ] Allow set plain bg

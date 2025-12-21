@@ -34,7 +34,7 @@ fun ImportSettingsDialog(
 
     // Filter stores that exist in backup JSON
     val availableStores = allStores.filter {
-        backupJson.has(it.backupKey)
+        backupJson.has(it.backupKey) && it.backupKey != null
     }
 
     val selected = remember(availableStores) {
@@ -76,7 +76,7 @@ fun ImportSettingsDialog(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            store.backupKey.replaceFirstChar {
+                            store.backupKey!!.replaceFirstChar {
                                 if (it.isLowerCase()) it.titlecase(Locale.ROOT)
                                 else it.toString()
                             }

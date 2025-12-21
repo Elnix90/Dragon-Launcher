@@ -3,10 +3,7 @@ package org.elnix.dragonlauncher.ui.welcome
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.PrivacyTip
@@ -29,59 +26,41 @@ fun WelcomePagePrivacy() {
         "Works fully offline (No internet access)",
         "No data collection",
         "No tracking",
-        "no Ads",
+        "No ads",
         "Fully open source"
     )
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    WelcomePagerHeader(
+        title = stringResource(R.string.privacy_first),
+        icon = Icons.Default.PrivacyTip
     ) {
-        Spacer(Modifier.weight(1f))
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ){
-            Icon(
-                imageVector = Icons.Default.PrivacyTip,
-                contentDescription = "Privacy",
-                modifier = Modifier.size(80.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-
-            Text(
-                text = stringResource(R.string.privacy_first),
-                color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 26.sp
-            )
-        }
-
-        Spacer(Modifier.height(40.dp))
-
         Column(
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            items.forEach {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ){
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = null,
-                        tint = Color(0xFF007900)
-                    )
-                    Text(
-                        text = it,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 20.sp,
-                    )
+            Column(
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                items.forEach {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ){
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = Color(0xFF007900)
+                        )
+                        Text(
+                            text = it,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontSize = 20.sp,
+                        )
+                    }
                 }
             }
         }
-
-        Spacer(Modifier.weight(1f))
     }
 }

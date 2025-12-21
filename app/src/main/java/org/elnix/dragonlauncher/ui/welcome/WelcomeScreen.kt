@@ -58,7 +58,7 @@ fun WelcomeScreen(
     onEnterSettings: () -> Unit,
     onEnterApp: () -> Unit
 ) {
-    val pagerState = rememberPagerState(pageCount = { 5 })
+    val pagerState = rememberPagerState(pageCount = { 6 })
     val scope = rememberCoroutineScope()
     val ctx = LocalContext.current
 
@@ -150,8 +150,9 @@ fun WelcomeScreen(
                     0 -> WelcomePageIntro { settingsImportLauncher.launch(arrayOf("application/json")) }
                     1 -> WelcomePagePrivacy()
                     2 -> WelcomePageTutorial()
-                    3 -> WelcomePageLauncher()
-                    4 -> WelcomePageFinish(
+                    3 -> WelcomePageTheme()
+                    4 -> WelcomePageLauncher()
+                    5 -> WelcomePageFinish(
                         onEnterSettings = {
                             setHasSeen()
                             onEnterSettings()
@@ -168,18 +169,18 @@ fun WelcomeScreen(
 
             AnimatedPagerIndicator(
                 currentPage = pagerState.currentPage,
-                total = 5
+                total = 6
             )
         }
 
-        if (pagerState.currentPage < 4) {
+        if (pagerState.currentPage < 5) {
             FloatingActionButton(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(16.dp),
                 onClick = {
                     val next = pagerState.currentPage + 1
-                    if (next < 5) {
+                    if (next < 6) {
                         scope.launch { pagerState.animateScrollToPage(next) }
                     }
                 },

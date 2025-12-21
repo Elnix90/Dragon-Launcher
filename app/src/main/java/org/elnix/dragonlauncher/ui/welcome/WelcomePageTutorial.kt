@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,77 +27,82 @@ import org.elnix.dragonlauncher.utils.colors.AppObjectsColors
 fun WelcomePageTutorial() {
 
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    WelcomePagerHeader(
+        title = stringResource(R.string.quick_tutorial),
+        icon = Icons.AutoMirrored.Filled.Help
     ) {
-        Spacer(Modifier.weight(1f))
 
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
 
-        Card(
-            colors = AppObjectsColors.cardColors(),
-        ){
-            Column(
-                modifier = Modifier.padding(5.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Card(
+                colors = AppObjectsColors.cardColors(),
             ){
-                Text(
-                    text = stringResource(R.string.long_click_to_access_settings),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
+                Column(
+                    modifier = Modifier.padding(5.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    Text(
+                        text = stringResource(R.string.long_click_to_access_settings),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(5.dp)
+                        )
 
-                Image(
-                    painterResource(R.drawable.long_click_3second),
-                    contentDescription = stringResource(R.string.long_click_to_access_settings),
-                )
+                    Image(
+                        painterResource(R.drawable.long_click_3second),
+                        contentDescription = stringResource(R.string.long_click_to_access_settings),
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(15.dp))
+
+            Card(
+                colors = AppObjectsColors.cardColors(),
+            ){
+                Column(
+                    modifier = Modifier.padding(5.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    Text(
+                        text = stringResource(R.string.configure_your_apps),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(5.dp)
+                    )
+
+                    Image(
+                        painterResource(R.drawable.configure_your_apps),
+                        contentDescription = stringResource(R.string.configure_your_apps),
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(15.dp))
+
+            Card(
+                colors = AppObjectsColors.cardColors(),
+            ){
+                Column(
+                    modifier = Modifier.padding(5.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    Text(
+                        text = stringResource(R.string.swipe_to_open_app),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(5.dp)
+                    )
+
+                    Image(
+                        painterResource(R.drawable.swipe_to_open_app),
+                        contentDescription = stringResource(R.string.swipe_to_open_app),
+                    )
+                }
             }
         }
-
-        Spacer(Modifier.height(15.dp))
-
-        Card(
-            colors = AppObjectsColors.cardColors(),
-        ){
-            Column(
-                modifier = Modifier.padding(5.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
-                Text(
-                    text = stringResource(R.string.configure_your_apps),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-
-                Image(
-                    painterResource(R.drawable.configure_your_apps),
-                    contentDescription = stringResource(R.string.configure_your_apps),
-                )
-            }
-        }
-
-        Spacer(Modifier.height(15.dp))
-
-        Card(
-            colors = AppObjectsColors.cardColors(),
-        ){
-            Column(
-                modifier = Modifier.padding(5.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
-                Text(
-                    text = stringResource(R.string.swipe_to_open_app),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-
-                Image(
-                    painterResource(R.drawable.swipe_to_open_app),
-                    contentDescription = stringResource(R.string.swipe_to_open_app),
-                )
-            }
-        }
-
-        Spacer(Modifier.weight(1f))
     }
 }

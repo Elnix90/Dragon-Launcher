@@ -10,6 +10,7 @@ import org.elnix.dragonlauncher.data.BackupTypeException
 import org.elnix.dragonlauncher.data.BaseSettingsStore
 import org.elnix.dragonlauncher.data.ColorCustomisationMode
 import org.elnix.dragonlauncher.data.DefaultThemes
+import org.elnix.dragonlauncher.data.applyDefaultThemeColors
 import org.elnix.dragonlauncher.data.colorModeDatastore
 import org.elnix.dragonlauncher.data.helpers.ColorPickerMode
 
@@ -171,5 +172,8 @@ object ColorModesSettingsStore : BaseSettingsStore() {
             prefs[COLOR_CUSTOMISATION_MODE] = backup.colorCustomisationMode.name
             prefs[DEFAULT_THEME] = backup.defaultTheme.name
         }
+
+        // Apply colorscheme
+        applyDefaultThemeColors(ctx, backup.defaultTheme)
     }
 }

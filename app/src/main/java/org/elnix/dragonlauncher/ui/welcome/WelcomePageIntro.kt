@@ -13,8 +13,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -23,6 +25,10 @@ import org.elnix.dragonlauncher.R
 
 @Composable
 fun WelcomePageIntro(onImport: () -> Unit) {
+
+    val ctx = LocalContext.current
+    val versionName = ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName ?: "unknown"
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -31,7 +37,7 @@ fun WelcomePageIntro(onImport: () -> Unit) {
         Spacer(Modifier.weight(1f))
 
         Image(
-            painter = painterResource(R.drawable.ic_app_logo),
+            painter = painterResource(R.drawable.dragon_launcher_foreground),
             contentDescription = "App Logo",
             modifier = Modifier.size(260.dp)
         )
@@ -40,17 +46,25 @@ fun WelcomePageIntro(onImport: () -> Unit) {
 
         Text(
             "Welcome to Dragon Launcher",
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 26.sp,
             textAlign = TextAlign.Center
+        )
+
+        Text(
+            text = "${stringResource(R.string.version)} $versionName",
+            color = MaterialTheme.colorScheme.onBackground,
+            fontSize = 13.sp,
+            textAlign = TextAlign.Center,
+            fontStyle = FontStyle.Italic
         )
 
         Spacer(Modifier.height(12.dp))
 
         Text(
             "Fast. Minimal. Powerful gestures.",
-            color = Color(0xFFBBBBBB),
-            fontSize = 16.sp
+            color = MaterialTheme.colorScheme.secondary,
+            fontSize = 18.sp
         )
 
         Spacer(Modifier.weight(1f))
