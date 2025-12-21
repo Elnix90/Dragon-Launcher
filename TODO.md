@@ -37,6 +37,6 @@
 - [x] Add 'Special actions' for back, double, maybe triple click
 - [x] Add 'keep screen on' option (in future behavior tab)
 - [ ] Add toggle bluetooth, wifi, data, etc actions
-- [ ] Make check for updates show Obtainium icon if installed
+- [x] Make check for updates show Obtainium icon if installed
 - [ ] DO not show what's new on welcome screen
 - [ ] Add privacy welcome screen
