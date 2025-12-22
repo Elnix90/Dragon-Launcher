@@ -34,6 +34,8 @@
 - [x] Add 'keep screen on' option (in future behavior tab)
 - [ ] Add toggle bluetooth, wifi, data, etc actions
 - [x] Make check for updates show Obtainium icon if installed
+- [ ] Add "Recent apps" action
+- [ ] Allow user set wallpaper / set plain wallpaper system wide
 - [x] DO not show what's new on welcome screen
 - [X] Add privacy welcome screen
 - [ ] Allow preview theme, add multiple images  for the theme
