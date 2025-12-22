@@ -244,10 +244,6 @@ fun BackupTab(
             }
         }
 
-        item {
-            Text(autoBackupUri.toString())
-        }
-
         if (autoBackupEnabled) {
             if (backupPath != null) {
                 item {
