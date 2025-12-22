@@ -40,6 +40,8 @@ You can customize your list of fast access apps easily in the settings, and also
   <img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/6.jpg" width="22%" alt="App ScreenShot 6"/>
   <img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/7.jpg" width="22%" alt="App ScreenShot 7"/>
   <img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/8.jpg" width="22%" alt="App ScreenShot 8"/>
+  <img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/9.jpg" width="22%" alt="App ScreenShot 9"/>
+  <img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/10.jpg" width="22%" alt="App ScreenShot 10"/>
 </p>
 
 ## Installation

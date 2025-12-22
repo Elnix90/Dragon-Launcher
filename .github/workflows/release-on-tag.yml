@@ -54,7 +54,7 @@ jobs:
       - name: Rename APK
         run: |
           NAME="DragonLauncher-${{ env.VERSION }}.apk"
-          mv app/build/outputs/apk/release/app-release.apk "$NAME"
+          mv app/build/outputs/apk/stable/release/app-stable-release.apk "$NAME"
           echo "APK=$NAME" >> $GITHUB_ENV
 
       - name: Create GitHub Release
