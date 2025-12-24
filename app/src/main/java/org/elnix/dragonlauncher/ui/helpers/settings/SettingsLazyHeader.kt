@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui.helpers.settings
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -60,7 +59,7 @@ fun SettingsLazyHeader(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+//            .background(MaterialTheme.colorScheme.background)
     ) {
 
         if (banner != null) { banner() }
@@ -73,8 +72,8 @@ fun SettingsLazyHeader(
         ) {
             LazyColumn (
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background),
+                    .fillMaxWidth(),
+//                    .background(MaterialTheme.colorScheme.background),
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 item {

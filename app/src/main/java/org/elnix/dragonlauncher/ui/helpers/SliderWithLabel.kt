@@ -86,6 +86,7 @@ fun SliderWithLabel(
  */
 @Composable
 fun SliderWithLabel(
+    modifier: Modifier = Modifier,
     label: String,
     value: Float,
     color: Color,
@@ -94,7 +95,7 @@ fun SliderWithLabel(
     onDragStateChange: (Boolean) -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(5.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

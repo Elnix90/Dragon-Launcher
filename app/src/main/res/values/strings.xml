@@ -160,4 +160,16 @@
     <string name="right_padding">Right Padding</string>
     <string name="up_padding">Top Padding</string>
     <string name="down_padding">Bottom Padding</string>
+    <string name="wallpaper">Wallpaper</string>
+    <string name="wallpaper_help">Set wallpaper for home/lock screen and use it or not in the launcher</string>
+    <string name="select_image">Select Image</string>
+    <string name="set_plain_wallpaper">Set plain wallpaper</string>
+    <string name="plain_wallpaper_color">Plain Wallpaper Color</string>
+    <string name="use_main_wallpaper">Use main screen wallpaper</string>
+    <string name="use_drawer_wallpaper">Use drawer screen wallpaper</string>
+    <string name="apply_wallpaper_to">Apply wallpaper to</string>
+    <string name="main_screen">Main Screen</string>
+    <string name="drawer_screen">Drawer Screen</string>
+    <string name="main_blur_amount">Main screen wallpaper blur amount</string>
+    <string name="drawer_blur_amount">Drawer screen wallpaper blur amount</string>
 </resources>

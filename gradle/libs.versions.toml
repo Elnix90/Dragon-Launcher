@@ -1,5 +1,6 @@
 [versions]
 agp = "8.13.2"
+androidImageCropper = "4.7.0"
 gson = "2.13.2"
 kotlin = "2.2.21"
 coreKtx = "1.17.0"
@@ -17,6 +18,7 @@ appcompat = "1.7.1"
 
 
 [libraries]
+android-image-cropper = { module = "com.vanniktech:android-image-cropper", version.ref = "androidImageCropper" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }

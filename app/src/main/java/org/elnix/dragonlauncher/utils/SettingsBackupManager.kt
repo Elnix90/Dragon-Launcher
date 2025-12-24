@@ -18,6 +18,7 @@ import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.data.stores.LanguageSettingsStore
 import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore
+import org.elnix.dragonlauncher.data.stores.WallpaperSettingsStore
 import org.elnix.dragonlauncher.data.stores.WorkspaceSettingsStore
 import org.json.JSONArray
 import org.json.JSONObject
@@ -117,6 +118,11 @@ object SettingsBackupManager {
                             put(store.backupKey!!, JSONObject(it))
                         }
 
+                        DataStoreName.WALLPAPER -> WallpaperSettingsStore.getAll(ctx).takeIf { it.isNotEmpty() }?.let {
+                            put(store.backupKey!!, JSONObject(it))
+                        }
+
+
                         // Those 2 aren't meant to be backupable
                         DataStoreName.APPS -> {}
                         DataStoreName.PRIVATE_SETTINGS -> {}
@@ -195,6 +201,10 @@ object SettingsBackupManager {
                         DataStoreName.BACKUP -> jsonObj.optJSONObject(store.backupKey)?.let {
                             BackupSettingsStore.setAll(ctx, jsonToStringMap(it))
                         }
+                        DataStoreName.WALLPAPER -> jsonObj.optJSONObject(store.backupKey)?.let {
+                            WallpaperSettingsStore.setAll(ctx, jsonToStringMap(it))
+                        }
+
                         DataStoreName.APPS -> {}
                         DataStoreName.PRIVATE_SETTINGS -> {}
                     }

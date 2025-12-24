@@ -31,9 +31,9 @@ import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.MainAppUi
 import org.elnix.dragonlauncher.ui.ROUTES
-import org.elnix.dragonlauncher.ui.SETTINGS
 import org.elnix.dragonlauncher.ui.theme.DragonLauncherTheme
 import org.elnix.dragonlauncher.utils.SettingsBackupManager
+import org.elnix.dragonlauncher.utils.ignoredReturnRoutes
 import org.elnix.dragonlauncher.utils.models.AppDrawerViewModel
 import org.elnix.dragonlauncher.utils.models.AppLifecycleViewModel
 import org.elnix.dragonlauncher.utils.models.BackupViewModel
@@ -238,8 +238,8 @@ class MainActivity : ComponentActivity() {
             ?.destination
             ?.route
 
-        // If user was outside > 10s, and not in backup screen, go to MAIN
-        if (appLifecycleViewModel.resume(10_000) && currentRoute != SETTINGS.BACKUP) {
+        // If user was outside > 10s, and not in the ignored list
+        if (appLifecycleViewModel.resume(10_000) && currentRoute !in ignoredReturnRoutes) {
             navControllerHolder.value?.navigate(ROUTES.MAIN) {
                 popUpTo(0) { inclusive = true }
             }

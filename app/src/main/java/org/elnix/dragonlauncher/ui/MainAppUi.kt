@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.data.helpers.DrawerActions
 import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore
+import org.elnix.dragonlauncher.data.stores.WallpaperSettingsStore
 import org.elnix.dragonlauncher.ui.drawer.AppDrawerScreen
 import org.elnix.dragonlauncher.ui.helpers.SetDefaultLauncherBanner
 import org.elnix.dragonlauncher.ui.settings.backup.BackupTab
@@ -35,6 +36,7 @@ import org.elnix.dragonlauncher.ui.settings.customization.AppearanceTab
 import org.elnix.dragonlauncher.ui.settings.customization.BehaviorTab
 import org.elnix.dragonlauncher.ui.settings.customization.ColorSelectorTab
 import org.elnix.dragonlauncher.ui.settings.customization.DrawerTab
+import org.elnix.dragonlauncher.ui.settings.customization.WallpaperTab
 import org.elnix.dragonlauncher.ui.settings.debug.DebugTab
 import org.elnix.dragonlauncher.ui.settings.language.LanguageTab
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceDetailScreen
@@ -55,6 +57,7 @@ object SETTINGS {
     const val ROOT = "settings"
     const val ADVANCED_ROOT = "settings/advanced"
     const val APPEARANCE = "settings/advanced/appearance"
+    const val WALLPAPER = "settings/advanced/wallpaper"
     const val BEHAVIOR = "settings/advanced/behavior"
     const val COLORS = "settings/advanced/appearance/colors"
     const val DRAWER = "settings/advanced/drawer"
@@ -128,6 +131,13 @@ fun MainAppUi(
         .collectAsState(initial = false)
 
 
+    val useMainWallpaper by WallpaperSettingsStore.getUseOnMain(ctx).collectAsState(initial = false)
+    val mainWallpaper by WallpaperSettingsStore.loadMainBlurredFlow(ctx).collectAsState(initial = null)
+    val useDrawerWallpaper by WallpaperSettingsStore.getUseOnDrawer(ctx).collectAsState(initial = false)
+    val drawerWallpaper by WallpaperSettingsStore.loadDrawerBlurredFlow(ctx).collectAsState(initial = null)
+
+
+
     val lifecycleOwner = LocalLifecycleOwner.current
     var isDefaultLauncher by remember { mutableStateOf(ctx.isDefaultLauncher) }
 
@@ -167,6 +177,7 @@ fun MainAppUi(
     fun goAdvSettingsRoot() =  navController.navigate(SETTINGS.ADVANCED_ROOT)
     fun goDrawer() = navController.navigate(ROUTES.DRAWER)
     fun goWelcome() = navController.navigate(ROUTES.WELCOME)
+    fun goAppearance() = navController.navigate(SETTINGS.APPEARANCE)
 
 
 
@@ -192,6 +203,8 @@ fun MainAppUi(
             composable(ROUTES.MAIN) {
                 MainScreen(
                     appsViewModel = appViewModel,
+                    wallpaper = mainWallpaper,
+                    useWallpaper = useMainWallpaper,
                     onAppDrawer = { goDrawer() },
                     onGoWelcome = { goWelcome() },
                     onLongPress3Sec = { goSettingsRoot() }
@@ -211,6 +224,8 @@ fun MainAppUi(
                     leftWidth = leftDrawerWidth,
                     rightAction = rightDrawerAction,
                     rightWidth = rightDrawerWidth,
+                    wallpaper = drawerWallpaper,
+                    useWallpaper = useDrawerWallpaper,
                 ) { goMainScreen() }
             }
 
@@ -236,9 +251,10 @@ fun MainAppUi(
             composable(SETTINGS.ADVANCED_ROOT) { AdvancedSettingsScreen(appViewModel, navController, onReset = { goMainScreen() } ) { goSettingsRoot() } }
 
             composable(SETTINGS.APPEARANCE) { AppearanceTab(navController) { goAdvSettingsRoot() } }
+            composable(SETTINGS.WALLPAPER)  { WallpaperTab { goAppearance() } }
             composable(SETTINGS.BEHAVIOR)   { BehaviorTab(appViewModel, workspaceViewModel) { goAdvSettingsRoot() } }
             composable(SETTINGS.DRAWER)     { DrawerTab(appViewModel) { goAdvSettingsRoot() } }
-            composable(SETTINGS.COLORS)     { ColorSelectorTab { goAdvSettingsRoot() } }
+            composable(SETTINGS.COLORS)     { ColorSelectorTab { goAppearance() } }
             composable(SETTINGS.DEBUG)      { DebugTab(navController, onShowWelcome = { goWelcome() } ) { goAdvSettingsRoot() } }
             composable(SETTINGS.LANGUAGE)   { LanguageTab { goAdvSettingsRoot() } }
             composable(SETTINGS.BACKUP)     { BackupTab(backupViewModel) { goAdvSettingsRoot() } }

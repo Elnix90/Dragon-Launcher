@@ -1,9 +1,11 @@
 package org.elnix.dragonlauncher.ui.drawer
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -39,6 +41,8 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -73,6 +77,8 @@ fun AppDrawerScreen(
     leftWidth: Float,
     rightAction: DrawerActions,
     rightWidth: Float,
+    wallpaper: Bitmap?,
+    useWallpaper: Boolean,
     onClose: () -> Unit
 ) {
     val ctx = LocalContext.current
@@ -185,10 +191,24 @@ fun AppDrawerScreen(
         )
     }
 
+    if (useWallpaper) {
+        wallpaper?.let { bmp ->
+            Image(
+                bitmap = bmp.asImageBitmap(),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        } ?: ctx.showToast("No wallpaper yet, please select one")
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .then(
+                if (!useWallpaper) Modifier.background(MaterialTheme.colorScheme.background)
+                else Modifier
+            )
             .clickable(
                 enabled = clickEmptySpaceToRaiseKeyboard,
                 indication = null,
@@ -408,8 +428,8 @@ fun AppDrawerSearch(
             onEnterPressed()
         }),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.background,
-            unfocusedContainerColor = MaterialTheme.colorScheme.background,
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
         )

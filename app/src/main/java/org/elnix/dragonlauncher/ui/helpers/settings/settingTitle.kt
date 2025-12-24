@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui.helpers.settings
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,7 +31,7 @@ fun SettingsTitle(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
+//            .background(MaterialTheme.colorScheme.background)
     ) {
 
         IconButton(

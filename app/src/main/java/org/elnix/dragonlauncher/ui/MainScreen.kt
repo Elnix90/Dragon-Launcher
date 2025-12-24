@@ -1,6 +1,8 @@
 package org.elnix.dragonlauncher.ui
 
+import android.graphics.Bitmap
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -21,7 +23,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
@@ -38,11 +42,14 @@ import org.elnix.dragonlauncher.ui.helpers.UserValidation
 import org.elnix.dragonlauncher.ui.helpers.rememberHoldToOpenSettings
 import org.elnix.dragonlauncher.utils.actions.launchSwipeAction
 import org.elnix.dragonlauncher.utils.models.AppDrawerViewModel
+import org.elnix.dragonlauncher.utils.showToast
 
 @Suppress("AssignedValueIsNeverRead")
 @Composable
 fun MainScreen(
     appsViewModel: AppDrawerViewModel,
+    wallpaper: Bitmap?,
+    useWallpaper: Boolean,
     onAppDrawer: () -> Unit,
     onGoWelcome: () -> Unit,
     onLongPress3Sec: () -> Unit
@@ -137,10 +144,24 @@ fun MainScreen(
     }
 
 
+    if (useWallpaper) {
+        wallpaper?.let { bmp ->
+            Image(
+                bitmap = bmp.asImageBitmap(),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        } ?: ctx.showToast("No wallpaper yet, please select one")
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .then(
+                if (!useWallpaper) Modifier.background(MaterialTheme.colorScheme.background)
+                else Modifier
+            )
             .padding(
                 start = leftPadding.dp,
                 top = upPadding.dp,

@@ -13,6 +13,7 @@ import org.elnix.dragonlauncher.data.stores.LanguageSettingsStore
 import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore
+import org.elnix.dragonlauncher.data.stores.WallpaperSettingsStore
 import org.elnix.dragonlauncher.data.stores.WorkspaceSettingsStore
 
 enum class DataStoreName(val value: String, val backupKey: String?, val store: BaseSettingsStore) {
@@ -27,7 +28,8 @@ enum class DataStoreName(val value: String, val backupKey: String?, val store: B
     WORKSPACES("workspacesDataStore", "workspaces", WorkspaceSettingsStore),
     APPS("appsDatastore",null, AppsSettingsStore),
     BEHAVIOR("behaviorDatastore", "behavior", BehaviorSettingsStore),
-    BACKUP("backupDatastore", "backup", BackupSettingsStore)
+    BACKUP("backupDatastore", "backup", BackupSettingsStore),
+    WALLPAPER("wallpaperDatastore", "wallpaper", WallpaperSettingsStore)
 }
 
 val Context.uiDatastore by preferencesDataStore(name = DataStoreName.UI.value)
@@ -42,3 +44,4 @@ val Context.workspaceDataStore by preferencesDataStore(name = DataStoreName.WORK
 val Context.appDrawerDataStore by preferencesDataStore(name = DataStoreName.APPS.value)
 val Context.behaviorDataStore by preferencesDataStore(name = DataStoreName.BEHAVIOR.value)
 val Context.backupDatastore by preferencesDataStore(name = DataStoreName.BACKUP.value)
+val Context.wallpaperSettingsStore by preferencesDataStore(name = DataStoreName.WALLPAPER.value)
