@@ -14,6 +14,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import org.elnix.dragonlauncher.data.BaseSettingsStore
+import org.elnix.dragonlauncher.data.getBooleanStrict
+import org.elnix.dragonlauncher.data.getFloatStrict
+import org.elnix.dragonlauncher.data.getStringStrict
 import org.elnix.dragonlauncher.data.wallpaperSettingsStore
 import java.io.ByteArrayOutputStream
 
@@ -191,19 +194,9 @@ object WallpaperSettingsStore : BaseSettingsStore() {
                 .firstOrNull()
         )
 
-    fun loadMainOriginalFlow(ctx: Context): Flow<Bitmap?> =
-        ctx.wallpaperSettingsStore.data.map {
-            decodeBitmap(it[Keys.MAIN_ORIGINAL])
-        }
-
     fun loadMainBlurredFlow(ctx: Context): Flow<Bitmap?> =
         ctx.wallpaperSettingsStore.data.map {
             decodeBitmap(it[Keys.MAIN_BLURRED])
-        }
-
-    fun loadDrawerOriginalFlow(ctx: Context): Flow<Bitmap?> =
-        ctx.wallpaperSettingsStore.data.map {
-            decodeBitmap(it[Keys.DRAWER_ORIGINAL])
         }
 
     fun loadDrawerBlurredFlow(ctx: Context): Flow<Bitmap?> =
@@ -261,34 +254,31 @@ object WallpaperSettingsStore : BaseSettingsStore() {
     }
 
 
-
     suspend fun setAll(ctx: Context, backup: Map<String, Any?>) {
         ctx.wallpaperSettingsStore.edit { prefs ->
+            prefs[Keys.USE_ON_MAIN] =
+                getBooleanStrict(backup, Keys.USE_ON_MAIN, defaults.useOnMain)
 
-            fun apply(key: Preferences.Key<Boolean>) {
-                (backup[key.name] as? Boolean)?.let { prefs[key] = it }
-            }
+            prefs[Keys.USE_ON_DRAWER] =
+                getBooleanStrict(backup, Keys.USE_ON_DRAWER, defaults.useOnDrawer)
 
-            fun apply(key: Preferences.Key<Float>) {
-                (backup[key.name] as? Number)?.toFloat()?.let {
-                    prefs[key] = it
-                }
-            }
+            prefs[Keys.MAIN_BLUR_RADIUS] =
+                getFloatStrict(backup, Keys.MAIN_BLUR_RADIUS, defaults.mainBlurRadius)
 
-            fun apply(key: Preferences.Key<String>) {
-                (backup[key.name] as? String)?.let {
-                    prefs[key] = it
-                }
-            }
+            prefs[Keys.DRAWER_BLUR_RADIUS] =
+                getFloatStrict(backup, Keys.DRAWER_BLUR_RADIUS, defaults.drawerBlurRadius)
 
-            apply(Keys.USE_ON_MAIN)
-            apply(Keys.USE_ON_DRAWER)
-            apply(Keys.MAIN_BLUR_RADIUS)
-            apply(Keys.DRAWER_BLUR_RADIUS)
-            apply(Keys.MAIN_ORIGINAL)
-            apply(Keys.MAIN_BLURRED)
-            apply(Keys.DRAWER_ORIGINAL)
-            apply(Keys.DRAWER_BLURRED)
+            prefs[Keys.MAIN_ORIGINAL] =
+                getStringStrict(backup, Keys.MAIN_ORIGINAL, "")
+
+            prefs[Keys.MAIN_BLURRED] =
+                getStringStrict(backup, Keys.MAIN_BLURRED, "")
+
+            prefs[Keys.DRAWER_ORIGINAL] =
+                getStringStrict(backup, Keys.DRAWER_ORIGINAL, "")
+
+            prefs[Keys.DRAWER_BLURRED] =
+                getStringStrict(backup, Keys.DRAWER_BLURRED, "")
         }
     }
 }
