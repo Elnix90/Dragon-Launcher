@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.utils
 
-import android.app.SearchManager
 import android.app.role.RoleManager
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -9,10 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.provider.AlarmClock
-import android.provider.CalendarContract
 import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
 import androidx.core.net.toUri
 import org.elnix.dragonlauncher.R
@@ -93,7 +89,7 @@ val Context.isDefaultLauncher: Boolean
 
 
 
-//
+
 //fun hasAllFilesAccess(context: Context): Boolean {
 //    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 //        // Android 11+
@@ -137,11 +133,11 @@ fun Context.hasUriReadWritePermission(uri: Uri): Boolean {
 
 
 
-fun openSearch(context: Context) {
-    val intent = Intent(Intent.ACTION_WEB_SEARCH)
-    intent.putExtra(SearchManager.QUERY, "")
-    context.startActivity(intent)
-}
+//fun openSearch(context: Context) {
+//    val intent = Intent(Intent.ACTION_WEB_SEARCH)
+//    intent.putExtra(SearchManager.QUERY, "")
+//    context.startActivity(intent)
+//}
 
 //@SuppressLint("WrongConstant")
 fun expandQuickActionsDrawer(context: Context) {
@@ -169,36 +165,36 @@ fun expandQuickActionsDrawer(context: Context) {
     }
 }
 
-fun openAlarmApp(context: Context) {
-    try {
-        val intent = Intent(AlarmClock.ACTION_SHOW_ALARMS)
-        context.startActivity(intent)
-    } catch (e: Exception) {
-        Log.d("TAG", e.toString())
-    }
-}
-
-fun openCalendar(context: Context) {
-    try {
-        val calendarUri = CalendarContract.CONTENT_URI
-            .buildUpon()
-            .appendPath("time")
-            .build()
-        context.startActivity(Intent(Intent.ACTION_VIEW, calendarUri))
-    } catch (e: Exception) {
-        e.printStackTrace()
-        try {
-            val intent = Intent(Intent.ACTION_MAIN).setClassName(
-                context,
-                "org.elnix.dragonlauncher.MainActivity"
-            )
-            intent.addCategory(Intent.CATEGORY_APP_CALENDAR)
-            context.startActivity(intent)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-}
+//fun openAlarmApp(context: Context) {
+//    try {
+//        val intent = Intent(AlarmClock.ACTION_SHOW_ALARMS)
+//        context.startActivity(intent)
+//    } catch (e: Exception) {
+//        Log.d("TAG", e.toString())
+//    }
+//}
+//
+//fun openCalendar(context: Context) {
+//    try {
+//        val calendarUri = CalendarContract.CONTENT_URI
+//            .buildUpon()
+//            .appendPath("time")
+//            .build()
+//        context.startActivity(Intent(Intent.ACTION_VIEW, calendarUri))
+//    } catch (e: Exception) {
+//        e.printStackTrace()
+//        try {
+//            val intent = Intent(Intent.ACTION_MAIN).setClassName(
+//                context,
+//                "org.elnix.dragonlauncher.MainActivity"
+//            )
+//            intent.addCategory(Intent.CATEGORY_APP_CALENDAR)
+//            context.startActivity(intent)
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
+//    }
+//}
 
 
 
@@ -217,13 +213,13 @@ fun Long.formatDateTime(): String {
         .format(Date(this))
 }
 
-fun Long.timeAgo(): String {
-    val seconds = (System.currentTimeMillis() - this) / 1000
-    return when {
-        seconds < 60 -> "${seconds}s ago"
-        seconds < 3600 -> "${seconds / 60}m ago"
-        seconds < 86400 -> "${seconds / 3600}h ago"
-        seconds < 2592000 -> "${seconds / 86400}d ago"
-        else -> "${seconds / 2592000}mo ago"
-    }
-}
+//fun Long.timeAgo(): String {
+//    val seconds = (System.currentTimeMillis() - this) / 1000
+//    return when {
+//        seconds < 60 -> "${seconds}s ago"
+//        seconds < 3600 -> "${seconds / 60}m ago"
+//        seconds < 86400 -> "${seconds / 3600}h ago"
+//        seconds < 2592000 -> "${seconds / 86400}d ago"
+//        else -> "${seconds / 2592000}mo ago"
+//    }
+//}
