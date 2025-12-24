@@ -43,3 +43,4 @@
 - [ ] Add issue template -> check todolist before feature request
 - [ ] Improve this shitty todo list
 - [ ] Improve auto backup : When uri file expired, show a banner like set as default launcher, and display a big resalect button instead of the 3 actual (or at least remove the trigger backup button
+- [ ] Add app specific quick actions on long click drawer like "Missed calls" for phone, etc...
