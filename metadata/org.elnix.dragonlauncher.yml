@@ -38,3 +38,9 @@ Builds:
     commit: v1.2.5
     gradle:
       - yes
+
+  - versionName: 1.2.6
+    versionCode: 20
+    commit: v1.2.6
+    gradle:
+      - yes
