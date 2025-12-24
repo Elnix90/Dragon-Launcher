@@ -87,6 +87,7 @@ import org.elnix.dragonlauncher.data.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.helpers.AddPointDialog
 import org.elnix.dragonlauncher.ui.helpers.RepeatingPressButton
 import org.elnix.dragonlauncher.ui.helpers.SliderWithLabel
+import org.elnix.dragonlauncher.ui.helpers.actionsInCircle
 import org.elnix.dragonlauncher.ui.theme.AmoledDefault
 import org.elnix.dragonlauncher.ui.theme.LocalExtraColors
 import org.elnix.dragonlauncher.utils.actions.actionColor
@@ -429,26 +430,14 @@ fun SettingsScreen(
                             val px = center.x + circle.radius * sin(Math.toRadians(p.angleDeg)).toFloat()
                             val py = center.y - circle.radius * cos(Math.toRadians(p.angleDeg)).toFloat()
 
-                            drawCircle(
-                                color = circleColor ?: AmoledDefault.CircleColor,
-                                radius = POINT_RADIUS_PX + 4,
-                                center = Offset(px, py)
-                            )
-
-                            drawCircle(
-                                color = backgroundColor,
-                                radius = POINT_RADIUS_PX,
-                                center = Offset(px, py)
-                            )
-
-                            drawImage(
-                                image = actionIconBitmap(
-                                    action = p.action,
-                                    context = ctx,
-                                    tintColor = actionColor(p.action, extraColors)
-                                ),
-                                dstOffset = IntOffset(px.toInt() - 28, py.toInt() - 28),
-                                dstSize = IntSize(56, 56)
+                            actionsInCircle(
+                                drawScope = this,
+                                action = p.action,
+                                circleColor = circleColor ?: AmoledDefault.CircleColor,
+                                backgroundColor = backgroundColor,
+                                colorAction = actionColor(p.action, extraColors),
+                                px = px, py = py,
+                                ctx = ctx
                             )
                         }
 

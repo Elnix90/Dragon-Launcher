@@ -172,4 +172,5 @@
     <string name="drawer_screen">Drawer Screen</string>
     <string name="main_blur_amount">Main screen wallpaper blur amount</string>
     <string name="drawer_blur_amount">Drawer screen wallpaper blur amount</string>
+    <string name="show_all_actions_on_current_circle">Show all actions in current circle</string>
 </resources>

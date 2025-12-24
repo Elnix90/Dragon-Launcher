@@ -49,6 +49,7 @@ import org.elnix.dragonlauncher.data.SwipePointSerializable
 import org.elnix.dragonlauncher.data.stores.ColorSettingsStore
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore
+import org.elnix.dragonlauncher.ui.helpers.actionsInCircle
 import org.elnix.dragonlauncher.ui.theme.AmoledDefault
 import org.elnix.dragonlauncher.ui.theme.ExtraColors
 import org.elnix.dragonlauncher.ui.theme.LocalExtraColors
@@ -97,6 +98,8 @@ fun MainScreenOverlay(
     val showAppPreviewIconCenterStartPosition by UiSettingsStore.getShowAppPreviewIconCenterStartPosition(ctx)
         .collectAsState(initial = false)
     val linePreviewSnapToAction by UiSettingsStore.getLinePreviewSnapToAction(ctx)
+        .collectAsState(initial = false)
+    val showAllActionsOnCurrentCircle by UiSettingsStore.getShowAllActionsOnCurrentCircle(ctx)
         .collectAsState(initial = false)
 
     val backgroundColor = MaterialTheme.colorScheme.background
@@ -307,12 +310,16 @@ fun MainScreenOverlay(
         val colorAction = if (hoveredAction != null) actionColor(hoveredAction!!.action, extraColors) else Color.Unspecified
 
 
+
+        // Main drawing canva (the lines, circles and selected actions
         Canvas(modifier = Modifier.fillMaxSize()) {
+
+            // Draw only if the user is dragging (has a start pos and a end (current) Offsets
             if (start != null && current != null) {
 
 
+                // The line that goes from start dragging pos to the user's finger
                 if (showAppLinePreview) {
-
                     drawCircle(
                         color = lineColor,
                         radius = circleRadius,
@@ -332,19 +339,9 @@ fun MainScreenOverlay(
                     }
                 }
 
-                if (showAppPreviewIconCenterStartPosition && hoveredAction != null) {
-                    val currentAction = hoveredAction!!.action!!
-                    drawImage(
-                        image = actionIconBitmap(
-                            action = currentAction,
-                            context = ctx,
-                            tintColor = colorAction
-                        ),
-                        dstOffset = IntOffset(start.x.toInt() - 28, start.y.toInt() - 28),
-                        dstSize = IntSize(56, 56)
-                    )
-                }
 
+                // The angle rotating around the start point (have to fiw that and allow more customization
+                // The "do you hate it" thing in settings
                 if (showAppAnglePreview) {
                     val arcRadius = 72f
                     val rect = Rect(
@@ -386,6 +383,8 @@ fun MainScreenOverlay(
                         val py = start.y -
                                 radius * cos(Math.toRadians(point.angleDeg)).toFloat()
 
+
+                        // If the user selected that the line has to snap to action, it is drawn here and not above
                         if (linePreviewSnapToAction) {
                             actionLine(
                                 drawScope = this,
@@ -396,36 +395,64 @@ fun MainScreenOverlay(
                                 backgroundColor = backgroundColor
                             )
                         }
+
+
+                        // if you choose to draw every actions, they are drawn here, excepted for
+                        // the selected one, that is always drawn last to prevent overlapping issues,
+                        // even though it shouldn't happened due to my separatePoints functions
+                        if (showAllActionsOnCurrentCircle) {
+                            points.filter { it.circleNumber == targetCircle && it != point }.forEach { p ->
+                                val px = start.x + radius * sin(Math.toRadians(p.angleDeg)).toFloat()
+                                val py = start.y - radius * cos(Math.toRadians(p.angleDeg)).toFloat()
+
+                                actionsInCircle(
+                                    drawScope = this,
+                                    action = p.action!!,
+                                    circleColor = circleColor ?: AmoledDefault.CircleColor,
+                                    backgroundColor = backgroundColor,
+                                    colorAction = actionColor(p.action, extraColors),
+                                    px = px, py = py,
+                                    ctx = ctx
+                                )
+                            }
+                        }
+
+                        // Draw here the actual selected action (if requested)
                         if (showAppLaunchPreview) {
-                            drawCircle(
-                                color = circleColor ?: AmoledDefault.CircleColor,
-                                radius = 44f,
-                                center = Offset(px, py)
-                            )
-
-                            drawCircle(
-                                color = backgroundColor,
-                                radius = 40f,
-                                center = Offset(px, py)
-                            )
-
-                            drawImage(
-                                image = actionIconBitmap(
-                                    action = action,
-                                    context = ctx,
-                                    tintColor = colorAction
-                                ),
-                                dstOffset = IntOffset(px.toInt() - 28, py.toInt() - 28),
-                                dstSize = IntSize(56, 56)
+                            actionsInCircle(
+                                drawScope = this,
+                                action = action,
+                                circleColor = circleColor ?: AmoledDefault.CircleColor,
+                                backgroundColor = backgroundColor,
+                                colorAction = colorAction,
+                                px = px, py = py,
+                                ctx = ctx
                             )
                         }
                     }
+                }
+
+
+                // Show the current selected app in the center of the circle
+                if (showAppPreviewIconCenterStartPosition && hoveredAction != null) {
+                    val currentAction = hoveredAction!!.action!!
+                    drawImage(
+                        image = actionIconBitmap(
+                            action = currentAction,
+                            context = ctx,
+                            tintColor = colorAction
+                        ),
+                        dstOffset = IntOffset(start.x.toInt() - 28, start.y.toInt() - 28),
+                        dstSize = IntSize(56, 56)
+                    )
                 }
             }
         }
     }
 
 
+
+    // Label on top of the screen to indicate the launching app
     if (hoveredAction != null && (showLaunchingAppLabel || showLaunchingAppIcon)) {
         val currentAction = hoveredAction!!.action!!
         Box(

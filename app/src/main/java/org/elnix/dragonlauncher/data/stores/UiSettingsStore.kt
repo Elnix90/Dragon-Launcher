@@ -31,7 +31,8 @@ object UiSettingsStore : BaseSettingsStore() {
         val cancelZoneDragDistance: Int = 150,
         val showAppPreviewIconCenterStartPosition: Boolean = false,
         val linePreviewSnapToAction: Boolean = false,
-        val minAngleFromAPointToActivateIt: Int = 30
+        val minAngleFromAPointToActivateIt: Int = 30,
+        val showAllActionsOnCurrentCircle: Boolean = false
     )
 
     private val defaults = UiSettingsBackup()
@@ -53,6 +54,7 @@ object UiSettingsStore : BaseSettingsStore() {
         val SHOW_APP_PREVIEW_ICON_CENTER_START_POSITION = booleanPreferencesKey("showAppPreviewIconCenterStartPosition")
         val LINE_PREVIEW_SNAP_TO_ACTION = booleanPreferencesKey("linePreviewSnapToAction")
         val MIN_ANGLE_FROM_A_POINT_TO_ACTIVATE_IT = intPreferencesKey("minAngleFromAPointToActivateIt")
+        val SHOW_ALL_ACTIONS_ON_CURRENT_CIRCLE = booleanPreferencesKey("showAllActionsOnCurrentCircle")
 
 
         val ALL = listOf(
@@ -71,7 +73,8 @@ object UiSettingsStore : BaseSettingsStore() {
             CANCEL_ZONE_DRAG_DISTANCE,
             SHOW_APP_PREVIEW_ICON_CENTER_START_POSITION,
             LINE_PREVIEW_SNAP_TO_ACTION,
-            MIN_ANGLE_FROM_A_POINT_TO_ACTIVATE_IT
+            MIN_ANGLE_FROM_A_POINT_TO_ACTIVATE_IT,
+            SHOW_ALL_ACTIONS_ON_CURRENT_CIRCLE
         )
     }
 
@@ -188,6 +191,13 @@ object UiSettingsStore : BaseSettingsStore() {
         ctx.uiDatastore.edit { it[Keys.MIN_ANGLE_FROM_A_POINT_TO_ACTIVATE_IT] = value }
     }
 
+    fun getShowAllActionsOnCurrentCircle(ctx: Context): Flow<Boolean> =
+        ctx.uiDatastore.data.map { it[Keys.SHOW_ALL_ACTIONS_ON_CURRENT_CIRCLE] ?: defaults.showAllActionsOnCurrentCircle }
+
+    suspend fun setShowAllActionsOnCurrentCircle(ctx: Context, value: Boolean) {
+        ctx.uiDatastore.edit { it[Keys.SHOW_ALL_ACTIONS_ON_CURRENT_CIRCLE] = value }
+    }
+
     // --------------------------------
     // BACKUP / RESTORE / RESET
     // --------------------------------
@@ -226,6 +236,7 @@ object UiSettingsStore : BaseSettingsStore() {
             putIfChanged(Keys.SNAP_POINTS, defaults.snapPoints)
             putIfChanged(Keys.SHOW_APP_PREVIEW_ICON_CENTER_START_POSITION, defaults.showAppPreviewIconCenterStartPosition)
             putIfChanged(Keys.LINE_PREVIEW_SNAP_TO_ACTION, defaults.linePreviewSnapToAction)
+            putIfChanged(Keys.SHOW_ALL_ACTIONS_ON_CURRENT_CIRCLE, defaults.showAllActionsOnCurrentCircle)
 
             putIfChanged(Keys.FIRST_CIRCLE_DRAG_DISTANCE, defaults.firstCircleDragDistance)
             putIfChanged(Keys.SECOND_CIRCLE_DRAG_DISTANCE, defaults.secondCircleDragDistance)
@@ -296,6 +307,7 @@ object UiSettingsStore : BaseSettingsStore() {
             applyBoolean(Keys.SNAP_POINTS)
             applyBoolean(Keys.SHOW_APP_PREVIEW_ICON_CENTER_START_POSITION)
             applyBoolean(Keys.LINE_PREVIEW_SNAP_TO_ACTION)
+            applyBoolean(Keys.SHOW_ALL_ACTIONS_ON_CURRENT_CIRCLE)
 
             applyInt(Keys.FIRST_CIRCLE_DRAG_DISTANCE)
             applyInt(Keys.SECOND_CIRCLE_DRAG_DISTANCE)

@@ -67,6 +67,8 @@ fun AppearanceTab(
     val minAngleFromAPointToActivateIt by UiSettingsStore.getMinAngleFromAPointToActivateIt(ctx)
         .collectAsState(initial = 0)
 
+    val showAllActionsOnCurrentCircle by UiSettingsStore.getShowAllActionsOnCurrentCircle(ctx)
+        .collectAsState(initial = false)
 
     SettingsLazyHeader(
         title = stringResource(R.string.appearance),
@@ -174,6 +176,13 @@ fun AppearanceTab(
                 linePreviewSnapToAction,
                 "Line Preview snap to action",
             ) { scope.launch { UiSettingsStore.setLinePreviewSnapToAction(ctx, it) } }
+        }
+
+        item {
+            SwitchRow(
+                state = showAllActionsOnCurrentCircle,
+                text = stringResource(R.string.show_all_actions_on_current_circle),
+            ) { scope.launch { UiSettingsStore.setShowAllActionsOnCurrentCircle(ctx, it) } }
         }
 
         item {
