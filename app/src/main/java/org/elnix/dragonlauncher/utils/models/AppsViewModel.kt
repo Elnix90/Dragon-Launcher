@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.utils.models
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import androidx.compose.ui.graphics.ImageBitmap
@@ -110,57 +111,72 @@ class AppDrawerViewModel(application: Application) : AndroidViewModel(applicatio
      * This is used by the BroadcastReceiver.
      */
     suspend fun reloadApps(ctx: Context) {
-        val installedApps = pm.getInstalledApplications(PackageManager.GET_META_DATA)
-            .map { appInfo ->
+        val intent = Intent(Intent.ACTION_MAIN).apply {
+            addCategory(Intent.CATEGORY_LAUNCHER)
+        }
 
-                val userId = appInfo.uid / 100000  // Extract user ID from UID
-                val isWorkProfile = userId > 10    // Work profiles typically start at user 10+
+        val resolveInfos = pm.queryIntentActivities(
+            intent,
+            PackageManager.MATCH_ALL
+        )
 
+        val apps = resolveInfos
+            .mapNotNull { resolveInfo ->
+                val activityInfo = resolveInfo.activityInfo ?: return@mapNotNull null
+                val appInfo = activityInfo.applicationInfo
 
-                val enabledState = pm.getApplicationEnabledSetting(appInfo.packageName)
-                val isEnabled = enabledState == PackageManager.COMPONENT_ENABLED_STATE_ENABLED ||
-                enabledState == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT
+                // Enabled state (launcher-relevant)
+                val isEnabled =
+                    activityInfo.enabled &&
+                            appInfo.enabled &&
+                            pm.getApplicationEnabledSetting(appInfo.packageName) !=
+                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED
 
-                val isSystem = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0 &&
-                        (appInfo.flags and ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0
+                if (!isEnabled) return@mapNotNull null
 
+                // Updated system apps = user apps (Gmail, Google, Maps, etc.)
+                val isUpdatedSystemApp =
+                    (appInfo.flags and ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0
+
+                // Pure system apps (OS internals)
+                val isPureSystemApp =
+                    (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0 &&
+                            !isUpdatedSystemApp
+
+                // Launcher-grade system classification
+                val isSystem =
+                    isPureSystemApp &&
+                            (
+                                    appInfo.packageName.startsWith("com.android.") ||
+                                            appInfo.packageName.startsWith("android")
+                                    )
 
                 AppModel(
-                    name = appInfo.loadLabel(pm).toString(),
+                    name = resolveInfo.loadLabel(pm).toString(),
                     packageName = appInfo.packageName,
-                    isEnabled = isEnabled,
+                    isEnabled = true,
                     isSystem = isSystem,
-                    isWorkProfile = isWorkProfile
+                    isWorkProfile = false // handled properly via LauncherApps if you add it
                 )
             }
+            .distinctBy { it.packageName }
             .sortedBy { it.name.lowercase() }
 
-        _apps.value = installedApps
+        _apps.value = apps
 
-        val iconMap = installedApps.associate { app ->
+        val iconMap = apps.associate { app ->
             val drawable = try {
-                // Method 1: Use loadUnbadgedIcon() for launcher-style icons
-                val appInfo = pm.getApplicationInfo(app.packageName, PackageManager.GET_META_DATA)
+                val appInfo = pm.getApplicationInfo(app.packageName, 0)
                 appInfo.loadUnbadgedIcon(pm)
-
             } catch (_: Exception) {
-                try {
-                    // Method 2: Fallback to adaptive icon with proper flags
-                    pm.getApplicationIcon(app.packageName)
-                } catch (_: Exception) {
-                    // Method 3: Final fallback to default icon
-                    ContextCompat.getDrawable(ctx, R.drawable.ic_app_default)!!
-                }
+                ContextCompat.getDrawable(ctx, R.drawable.ic_app_default)!!
             }
 
-            val bmp = loadDrawableAsBitmap(drawable, 128, 128)
-            app.packageName to bmp
+            app.packageName to loadDrawableAsBitmap(drawable, 128, 128)
         }
 
         _icons.value = iconMap
 
-        // Save list into datastore
-        val json = gson.toJson(installedApps)
-        AppsSettingsStore.saveCachedApps(ctx, json)
+        AppsSettingsStore.saveCachedApps(ctx, gson.toJson(apps))
     }
 }
