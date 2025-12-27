@@ -17,7 +17,6 @@ import org.elnix.dragonlauncher.data.getBooleanStrict
 import org.elnix.dragonlauncher.data.getFloatStrict
 import org.elnix.dragonlauncher.data.getIntStrict
 import org.elnix.dragonlauncher.data.helpers.DrawerActions
-import org.elnix.dragonlauncher.data.helpers.DrawerEnterActions
 import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore.Keys.AUTO_OPEN_SINGLE_MATCH
 import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore.Keys.AUTO_SHOW_KEYBOARD_ON_DRAWER
 import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore.Keys.CLICK_EMPTY_SPACE_TO_RAISE_KEYBOARD
@@ -52,7 +51,7 @@ object DrawerSettingsStore : BaseSettingsStore() {
         val rightDrawerAction: DrawerActions = DrawerActions.CLOSE,
         val leftDrawerWidth: Float = 0.1f,
         val rightDrawerWidth: Float = 0.1f,
-        val drawerEnterAction: DrawerEnterActions = DrawerEnterActions.CLEAR,
+        val drawerEnterAction: DrawerActions = DrawerActions.CLEAR,
         val scrollDownToCloseDrawerOnTop: Boolean = true
     )
 
@@ -191,14 +190,14 @@ object DrawerSettingsStore : BaseSettingsStore() {
         ctx.drawerDataStore.edit { it[RIGHT_DRAWER_WIDTH] = width }
     }
 
-    fun getDrawerEnterAction(ctx: Context): Flow<DrawerEnterActions> =
+    fun getDrawerEnterAction(ctx: Context): Flow<DrawerActions> =
         ctx.drawerDataStore.data.map {
-            DrawerEnterActions.valueOf(
+            DrawerActions.valueOf(
                 it[DRAWER_ENTER_ACTIONS] ?: defaults.drawerEnterAction.name
             )
         }
 
-    suspend fun setDrawerEnterAction(ctx: Context, v: DrawerEnterActions) {
+    suspend fun setDrawerEnterAction(ctx: Context, v: DrawerActions) {
         ctx.drawerDataStore.edit { it[DRAWER_ENTER_ACTIONS] = v.name }
     }
 
@@ -324,14 +323,14 @@ object DrawerSettingsStore : BaseSettingsStore() {
             }
         }
 
-        fun getDrawerEnterActionStrict(key: String): DrawerEnterActions {
+        fun getDrawerEnterActionStrict(key: String): DrawerActions {
             val v = raw[key] ?: return when (key) {
                 DRAWER_ENTER_ACTIONS.name -> defaults.drawerEnterAction
                 else -> throw BackupTypeException(key, "DrawerEnterAction", null, null)
             }
 
             return when (v) {
-                is String -> DrawerEnterActions.valueOf(v)
+                is String -> DrawerActions.valueOf(v)
                 else -> throw BackupTypeException(key, "DrawerEnterAction", v::class.simpleName, v)
             }
         }

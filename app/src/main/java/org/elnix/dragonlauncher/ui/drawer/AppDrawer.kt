@@ -53,7 +53,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.R
 import org.elnix.dragonlauncher.data.helpers.DrawerActions
-import org.elnix.dragonlauncher.data.helpers.DrawerEnterActions
 import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.components.dialogs.RenameAppDialog
 import org.elnix.dragonlauncher.ui.helpers.AppGrid
@@ -108,7 +107,7 @@ fun AppDrawerScreen(
         .collectAsState(initial = false)
 
     val drawerEnterAction by DrawerSettingsStore.getDrawerEnterAction(ctx)
-        .collectAsState(initial = DrawerEnterActions.CLEAR)
+        .collectAsState(initial = DrawerActions.CLEAR)
 
     val scrollDownToCloseDrawerOnTop by DrawerSettingsStore.getScrollDownToCloseDrawerOnTop(ctx)
         .collectAsState(initial = true)
@@ -188,8 +187,13 @@ fun AppDrawerScreen(
         when (action) {
             DrawerActions.CLOSE -> onClose()
             DrawerActions.TOGGLE_KB -> toggleKeyboard()
-            DrawerActions.NONE -> Unit
-            DrawerActions.DISABLED -> Unit
+
+            DrawerActions.CLEAR -> searchQuery = ""
+            DrawerActions.SEARCH_WEB -> {
+                if (searchQuery.isNotBlank()) ctx.openSearch(searchQuery)
+            }
+            DrawerActions.OPEN_FIRST_APP -> haveToLaunchFirstApp = true
+            DrawerActions.NONE, DrawerActions.DISABLED -> {}
         }
     }
 
@@ -199,17 +203,7 @@ fun AppDrawerScreen(
             searchQuery = searchQuery,
             onSearchChanged = { searchQuery = it },
             modifier = Modifier.focusRequester(focusRequester),
-            onEnterPressed = {
-                when (drawerEnterAction) {
-                    DrawerEnterActions.CLOSE_DRAWER -> onClose()
-                    DrawerEnterActions.CLEAR -> searchQuery = ""
-                    DrawerEnterActions.SEARCH_WEB -> {
-                        if (searchQuery.isNotBlank()) ctx.openSearch(searchQuery)
-                    }
-                    DrawerEnterActions.OPEN_FIRST_APP -> haveToLaunchFirstApp = true
-                    DrawerEnterActions.NOTHING -> {}
-                }
-            },
+            onEnterPressed = { launchDrawerAction(drawerEnterAction) },
             onFocusStateChanged = { isSearchFocused = it }
         )
     }
