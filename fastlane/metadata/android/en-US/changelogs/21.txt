@@ -1,0 +1,35 @@
+1.2.7
+2025-12-28
+
+[NEW]
+ * Status bar implementation with customizable time, date, and next alarm display
+ * App shortcuts support (launch app directly or via provided shortcuts)
+ * Icon packs support
+ * Drawer enter key actions (Close, Clear, Web search, Open first app)
+ * Option to close drawer with swipe down
+ * Broadcast receiver for app install / uninstall events
+
+[IMPROVED]
+ * Major status bar customization and settings visibility
+ * Drawer actions and enter actions merged for consistency
+ * Action point selector redesigned as a 2-column lazy grid
+ * Alerts dialogs refactored to custom dialogs
+ * More accurate detection of system vs user apps
+ * UI, structure, and internal refactors across the app
+ * Option to disable action circles border
+ * Auto-backup handling with banner when URI permission is missing
+ * Updated documentation and project metadata
+
+[FIXED]
+ * Crash with file providers not supporting persistable URI permissions
+ * Wallpaper not showing behind system bars
+ * User vs system apps detection bugs
+ * App removal issues when workspace removedAppIds was null
+ * Wallpaper datastore import corruption
+ * JSON import failures on some Samsung, Xiaomi, and Huawei devices
+ * Incorrect drawer enter key selector title
+ * Various typos and minor stability issues
+
+[ISSUES]
+ * Status bar feature still undergoing refinement on some devices
+ * Further refactors planned for data stores consistency

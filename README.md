@@ -17,24 +17,58 @@
 ## Features
 
 ### The main Idea of this launcher is to launch your apps via gestures.
- * You can customize your list of fast access apps easily in the settings
- * Use the app drawer to pick an app and launch it automatically
- * Icon Packs support
- * Change wallpaper, apply blur, separate wallpaper on drawer / main screen
- * Customize each colors separately for every little action / surface
+
+* You can customize your list of fast access apps easily in the settings
+* Use the app drawer to pick an app and browse apps
+
+### Gestures & Actions
+
+* Configurable swipe actions
+* Drawer enter key actions
+* Fast access app launching
+* Gesture-first navigation with minimal UI clutter
+
+### App Drawer
+
+* Swipe-down to close drawer
+* Configurable enter key behavior
+* App shortcuts support (when provided by apps)
+* Tap or long-press for quick actions
+
+### Status Bar
+
+* **Fully customizable**
+* Optional visibility per user preference
+* Custom time and date formatting
+* Next alarm display
+* Visual integration with launcher theme
+
+### Appearance
+
+* Deep customization features
+* Customize each colors separately for every little action / surface
+* Change wallpaper, apply blur, separate wallpaper on drawer / main screen
+* Icon packs support
+
+### Backup
+* Manual backups to phone's storage
+* Auto backup feature : auto backups on every app focus change
 
 
 ## Privacy & security
 
- * **No** data collection
- * Dragon Launcher has no access to internet -> it can't steal you data
- * No permission requested for the app to work (excepted accessibility for notifications but it's optional)
+* **No** data collection
+* Dragon Launcher has no even access to internet -> it cannot steal your data
+* No intrusive permissions requested for the app to work (except accessibility for notifications but it's optional)
+* All data stored locally (you can backup manually or use the auto backup feature)
 
+---
 ## Screenshots
 
 <p align="center">
   <img src="metadata/images/demo.gif" width="22%" alt="App demo animation"/>
   <img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/1.jpg" width="22%" alt="App ScreenShot 1"/>
+  <img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/16.jpg" width="22%" alt="App ScreenShot 16"/>
   <img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/2.jpg" width="22%" alt="App ScreenShot 2"/>
   <img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/3.jpg" width="22%" alt="App ScreenShot 3"/>
   <img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/4.jpg" width="22%" alt="App ScreenShot 4"/>
@@ -47,6 +81,9 @@
   <img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/11.jpg" width="22%" alt="App ScreenShot 11"/>
   <img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/12.jpg" width="22%" alt="App ScreenShot 12"/>
   <img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/13.jpg" width="22%" alt="App ScreenShot 13"/>
+  <img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/14.jpg" width="22%" alt="App ScreenShot 14"/>
+  <img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/15.jpg" width="22%" alt="App ScreenShot 15"/>
+
 </p>
 
 ## Usage
@@ -59,16 +96,15 @@
 
 ## Credits
 
-Dragon Launcher was inspired by [CCLauncher](https://github.com/mlm-games/CCLauncher). Some concepts, features, and code structures are adapted from this project
+* Dragon Launcher was inspired by [CCLauncher](https://github.com/mlm-games/CCLauncher). Some concepts, features, and code structures are adapted from this project
 
 ## Contributing
 
-Contributions are welcome! Feel free to submit pull requests or open issues.
+* Contributions are welcome! Feel free to submit pull requests or open issues.
 
-
-You may join the [discord server](https://discord.gg/XXKXQeXpvF) to discuss more easily about changes in the project:
+* You may join the [discord server](https://discord.gg/XXKXQeXpvF) to discuss more easily about changes in the project:
 
 ---
 ## License
 
-This project is open-source under the **GPL 3 Licence**.
+* This project is open-source under the **GPL 3 Licence**.
