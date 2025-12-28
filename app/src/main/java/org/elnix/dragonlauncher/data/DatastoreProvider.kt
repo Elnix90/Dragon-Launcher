@@ -31,7 +31,7 @@ enum class DataStoreName(val value: String, val backupKey: String?, val store: B
     BEHAVIOR("behaviorDatastore", "behavior", BehaviorSettingsStore),
     BACKUP("backupDatastore", "backup", BackupSettingsStore),
     WALLPAPER("wallpaperDatastore", "wallpaper", WallpaperSettingsStore),
-    STATUS_BAR("statusDatastore", "Status_bar", StatusBarSettingsStore)
+    STATUS_BAR("statusDatastore", "status_bar", StatusBarSettingsStore)
 }
 
 val Context.uiDatastore by preferencesDataStore(name = DataStoreName.UI.value)
