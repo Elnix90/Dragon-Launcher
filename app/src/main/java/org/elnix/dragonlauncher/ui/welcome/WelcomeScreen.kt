@@ -2,6 +2,7 @@
 
 package org.elnix.dragonlauncher.ui.welcome
 
+import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -26,7 +27,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -80,6 +80,12 @@ fun WelcomeScreen(
                 )
                 return@rememberLauncherForActivityResult
             }
+
+            // take persistable permission as in the backup launcher, to automatically reset the auto backup if it was the same
+            ctx.contentResolver.takePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            )
 
             // Read JSON from selected file
             scope.launch {
