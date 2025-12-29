@@ -152,7 +152,7 @@
     <string name="trigger_backup">Trigger Backup</string>
     <string name="select_backup_file">Select backup file</string>
     <string name="last_backup">Last backup</string>
-    <string name="backup_stores">Backup Stores</string>
+    <string name="auto_backup_stores">Automatic Backup Stores</string>
     <string name="recent_apps">Recent apps</string>
     <string name="open_recent_apps_color">Open Recent Apps Color</string>
     <string name="left_padding">Left Padding</string>

@@ -411,7 +411,7 @@ fun BackupTab(
 
 
 
-            item { TextDivider(stringResource(R.string.backup_stores)) }
+            item { TextDivider(stringResource(R.string.auto_backup_stores)) }
 
             item {
                 Column{
