@@ -203,7 +203,7 @@ fun SettingsScreen(
 
 
     /**
-     * The number of circles if the size of the current nest, minus one, cause it ignores the
+     * The number of circles; it's the size of the current nest, minus one, cause it ignores the
      * cancel zone
      */
     val circleNumber = currentNest.dragDistances.size - 1
