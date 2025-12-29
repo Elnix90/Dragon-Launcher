@@ -17,5 +17,8 @@
   },
   "Status_bar": {
     "showStatusBar": "false"
+  },
+  "color_mode": {
+    "defaultTheme": "AMOLED"
   }
 }
