@@ -439,7 +439,7 @@ fun BackupTab(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = store.backupKey!!.replaceFirstChar { it.uppercase() },
+                                text = store.store.name,
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Checkbox(
