@@ -1,14 +1,18 @@
 package org.elnix.dragonlauncher.utils.circles
 
+import org.elnix.dragonlauncher.data.UiCircle
 import org.elnix.dragonlauncher.data.UiSwipePoint
 import org.elnix.dragonlauncher.ui.minAngleGapForCircle
 
-fun randomFreeAngle(circleNumber: Int, list: List<UiSwipePoint>): Double {
+fun randomFreeAngle(circle: UiCircle?, list: List<UiSwipePoint>): Double? {
+
+    val circleRadius = circle?.radius ?: return null
+
     if (list.isEmpty()) return (0..359).random().toDouble()
 
     repeat(200) {
         val a = (0..359).random().toDouble()
-        if (list.none { absAngleDiff(it.angleDeg, a) < minAngleGapForCircle(circleNumber) }) return a
+        if (list.none { absAngleDiff(it.angleDeg, a) < minAngleGapForCircle(circleRadius) }) return a
     }
 
     // fallback: pick biggest gap

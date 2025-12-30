@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.utils.circles
 
+import org.elnix.dragonlauncher.data.UiCircle
 import org.elnix.dragonlauncher.data.UiSwipePoint
 import org.elnix.dragonlauncher.ui.minAngleGapForCircle
 import kotlin.math.abs
@@ -7,12 +8,15 @@ import kotlin.math.min
 
 fun autoSeparate(
     points: MutableList<UiSwipePoint>,
-    circleNumber: Int,
+    nestId: Int,
+    circle: UiCircle?,
     draggedPoint: UiSwipePoint
 ) {
+    val circleNumber = circle?.id ?: return
+
     repeat(20) {
         val pts = points
-            .filter { it.circleNumber == circleNumber }
+            .filter { it.nestId == nestId && it.circleNumber == circleNumber }
             .sortedBy { normalizeAngle(it.angleDeg) }
 
         if (pts.size <= 1) return
@@ -28,7 +32,7 @@ fun autoSeparate(
                 val b = normalizeAngle(p2.angleDeg)
 
                 val diff = absAngleDiff(a, b)
-                if (diff < minAngleGapForCircle(circleNumber)) {
+                if (diff < minAngleGapForCircle(circle.radius)) {
 
                     if (draggedPoint.id == p1.id || draggedPoint.id == p2.id) {
                         // Check if dragged point crossed midpoint
@@ -55,7 +59,7 @@ fun autoSeparate(
                     // Normal separation (no swap, just push apart)
                     val signed = signedAngleDiff(a, b)
                     val mid = normalizeAngle(a + signed / 2.0)
-                    val halfGap = minAngleGapForCircle(circleNumber) / 2.0
+                    val halfGap = minAngleGapForCircle(circle.radius) / 2.0
 
                     p1.angleDeg = normalizeAngle(mid - halfGap)
                     p2.angleDeg = normalizeAngle(mid + halfGap)

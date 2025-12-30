@@ -111,6 +111,7 @@ import org.elnix.dragonlauncher.utils.circles.randomFreeAngle
 import org.elnix.dragonlauncher.utils.circles.rememberNestNavigation
 import org.elnix.dragonlauncher.utils.models.AppsViewModel
 import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
+import org.elnix.dragonlauncher.utils.showToast
 import java.math.RoundingMode
 import java.util.UUID
 import kotlin.math.abs
@@ -122,20 +123,18 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 // Config
-fun minAngleGapForCircle(circleIndex: Int): Double {
-    return when (circleIndex) {
-        0 -> 27.0
-        1 -> 16.0
-        2 -> 11.0
-        else -> 8.0 + (3.0 / (circleIndex + 1)) // Decreases asymptotically
-    }
-}
-
-
 private const val POINT_RADIUS_PX = 40f
 private const val TOUCH_THRESHOLD_PX = 100f
 
 private const val SNAP_STEP_DEG = 15.0
+
+
+fun minAngleGapForCircle(circleRadius: Float): Double {
+    val arcLength = 2 * POINT_RADIUS_PX
+    val minAngleRad = arcLength / circleRadius
+    return Math.toDegrees(minAngleRad.toDouble())
+}
+
 
 @Suppress("AssignedValueIsNeverRead")
 @Composable
@@ -575,8 +574,9 @@ fun SettingsScreen(
                                         currentFilteredPoints.filter { it.circleNumber == selected.circleNumber }
                                     if (sameCirclePoints.isEmpty()) return@detectDragGestures
 
-                                    val p = currentFilteredPoints.find { it.id == selectedPoint?.id }
-                                        ?: return@detectDragGestures
+                                    val p =
+                                        currentFilteredPoints.find { it.id == selectedPoint?.id }
+                                            ?: return@detectDragGestures
                                     updatePointPosition(
                                         p,
                                         circles,
@@ -587,9 +587,10 @@ fun SettingsScreen(
                                     recomposeTrigger++
                                 },
                                 onDragEnd = {
-                                    val p = currentFilteredPoints.find { it.id == selectedPoint?.id }
-                                        ?: return@detectDragGestures
-                                    autoSeparate(points, p.circleNumber, p)
+                                    val p =
+                                        currentFilteredPoints.find { it.id == selectedPoint?.id }
+                                            ?: return@detectDragGestures
+                                    autoSeparate(points, nestId, circles.find { it.id == p.circleNumber }, p)
                                 }
                             )
                         }
@@ -787,13 +788,13 @@ fun SettingsScreen(
                     enabled = aPointIsSelected,
                     intervalMs = 35L,
                     onPress = {
-                        selectedPoint?.let {
+                        selectedPoint?.let { point ->
                             applyChange {
-                                it.angleDeg = normalizeAngle(it.angleDeg + 1)
-                                if (snapPoints) it.angleDeg = it.angleDeg
+                                point.angleDeg = normalizeAngle(point.angleDeg + 1)
+                                if (snapPoints) point.angleDeg = point.angleDeg
                                     .toInt()
                                     .toDouble()
-                                autoSeparate(points, it.circleNumber, it)
+                                autoSeparate(points, nestId, circles.find { it.id == point.circleNumber }, point)
                                 recomposeTrigger++
                             }
                         }
@@ -838,13 +839,13 @@ fun SettingsScreen(
                     enabled = aPointIsSelected,
                     intervalMs = 35L,
                     onPress = {
-                        selectedPoint?.let {
+                        selectedPoint?.let { point ->
                             applyChange {
-                                it.angleDeg = normalizeAngle(it.angleDeg - 1)
-                                if (snapPoints) it.angleDeg = it.angleDeg
+                                point.angleDeg = normalizeAngle(point.angleDeg - 1)
+                                if (snapPoints) point.angleDeg = point.angleDeg
                                     .toInt()
                                     .toDouble()
-                                autoSeparate(points, it.circleNumber, it)
+                                autoSeparate(points, nestId, circles.find { it.id == point.circleNumber }, point)
                                 recomposeTrigger++
                             }
                         }
@@ -946,7 +947,11 @@ fun SettingsScreen(
                         .clickable(aPointIsSelected) {
                             selectedPoint?.let { oldPoint ->
                                 val circleNumber = oldPoint.circleNumber
-                                val newAngle = randomFreeAngle(circleNumber, points)
+                                val newAngle =
+                                    randomFreeAngle(circles.find { it.id == oldPoint.circleNumber }, points) ?: run {
+                                        ctx.showToast("Error: no circle belonging to this point found")
+                                        return@clickable
+                                    }
 
                                 val newPoint = UiSwipePoint(
                                     id = UUID.randomUUID().toString(),
@@ -958,7 +963,12 @@ fun SettingsScreen(
 
                                 applyChange {
                                     points.add(newPoint)
-                                    autoSeparate(points, circleNumber, newPoint)
+                                    autoSeparate(
+                                        points,
+                                        nestId,
+                                        circles.find { it.id == newPoint.circleNumber },
+                                        newPoint
+                                    )
                                 }
                                 selectedPoint = newPoint
                             }
@@ -1120,7 +1130,10 @@ fun SettingsScreen(
             },
             onActionSelected = { action ->
                 val circleNumber = lastSelectedCircle.coerceAtMost(circleNumber - 1)
-                val newAngle = randomFreeAngle(circleNumber, points)
+                val newAngle = randomFreeAngle(circles.find { it.id == circleNumber }, points) ?: run {
+                    ctx.showToast("Error: no circle belonging to this point found")
+                    return@AddPointDialog
+                }
 
 
                 var finalAction = action
@@ -1142,7 +1155,7 @@ fun SettingsScreen(
 
                 applyChange {
                     points.add(point)
-                    autoSeparate(points, circleNumber, point)
+                    autoSeparate(points, nestId, circles.find { it.id == point.circleNumber }, point)
                 }
 
                 showAddDialog = false
@@ -1227,6 +1240,17 @@ fun SettingsScreen(
                  ) {
                      nests.forEach { Text(it.toString()) }
                  }
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+
+                    circles.forEach {
+                        Text(
+                            "${it.id } ${minAngleGapForCircle(it.radius)}"
+                        )
+                    }
+                }
             }
         }
     }
