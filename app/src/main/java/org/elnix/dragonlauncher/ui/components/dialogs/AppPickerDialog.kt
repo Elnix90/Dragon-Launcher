@@ -195,7 +195,7 @@ fun AppPickerDialog(
                     .collectAsState(initial = emptyList())
 
                 val filteredApps = if (isSearchBarEnabled)
-                    apps.filter { it.name.contains(searchQuery, ignoreCase = tru) || it.packageName.contains(searchQuery, ignoreCase = true) }
+                    apps.filter { it.name.contains(searchQuery, ignoreCase = true) || it.packageName.contains(searchQuery, ignoreCase = true) }
                 else apps
 
                 AppGrid(
