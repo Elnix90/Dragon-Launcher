@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +46,7 @@ import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
 import org.elnix.dragonlauncher.ui.helpers.rememberHoldToOpenSettings
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 import org.elnix.dragonlauncher.utils.actions.launchSwipeAction
+import org.elnix.dragonlauncher.utils.circles.rememberNestNavigation
 import org.elnix.dragonlauncher.utils.models.AppsViewModel
 
 @Suppress("AssignedValueIsNeverRead")
@@ -95,7 +95,6 @@ fun MainScreen(
 
     var start by remember { mutableStateOf<Offset?>(null) }
     var current by remember { mutableStateOf<Offset?>(null) }
-    var nestId by remember { mutableIntStateOf(0) }
     var isDragging by remember { mutableStateOf(false) }
     var size by remember { mutableStateOf(IntSize.Zero) }
 
@@ -172,9 +171,13 @@ fun MainScreen(
     val nests by SwipeSettingsStore.getNestsFlow(ctx).collectAsState(emptyList())
 
 
+    val nestNavigation = rememberNestNavigation(nests)
+    val nestId = nestNavigation.nestId
+
+
     fun launchAction(point: SwipePointSerializable?) {
         isDragging = false
-        nestId = 0
+        nestNavigation.goToNest(0)
         start = null
         current = null
 
@@ -187,7 +190,8 @@ fun MainScreen(
             onReselectFile = { showFilePicker = point },
             onAppSettings = onLongPress3Sec,
             onAppDrawer = onAppDrawer,
-            onOpenNestCircle = { nestId = it }
+            onOpenNestCircle = { nestNavigation.goToNest(it) },
+            onParentNest = { nestNavigation.goBack() }
         )
     }
 
@@ -197,7 +201,7 @@ fun MainScreen(
      */
     BackHandler {
         if (nestId != 0) {
-            nestId = nests.find { it.id == nestId }?.parentId ?: 0
+            nestNavigation.goBack()
         } else if (backAction != null) {
             launchAction(
                 SwipePointSerializable(

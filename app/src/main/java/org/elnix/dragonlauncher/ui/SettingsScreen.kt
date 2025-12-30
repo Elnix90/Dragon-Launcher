@@ -51,6 +51,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
@@ -59,6 +60,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -101,12 +103,12 @@ import org.elnix.dragonlauncher.ui.theme.addRemoveCirclesColor
 import org.elnix.dragonlauncher.ui.theme.copyColor
 import org.elnix.dragonlauncher.ui.theme.moveColor
 import org.elnix.dragonlauncher.utils.TAG
-import org.elnix.dragonlauncher.utils.TAGSwipe
 import org.elnix.dragonlauncher.utils.actions.actionColor
 import org.elnix.dragonlauncher.utils.actions.actionLabel
 import org.elnix.dragonlauncher.utils.circles.autoSeparate
 import org.elnix.dragonlauncher.utils.circles.normalizeAngle
 import org.elnix.dragonlauncher.utils.circles.randomFreeAngle
+import org.elnix.dragonlauncher.utils.circles.rememberNestNavigation
 import org.elnix.dragonlauncher.utils.models.AppsViewModel
 import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 import java.math.RoundingMode
@@ -161,6 +163,8 @@ fun SettingsScreen(
     var center by remember { mutableStateOf(Offset.Zero) }
 
     val points: SnapshotStateList<UiSwipePoint> = remember { mutableStateListOf() }
+
+
     val circles: SnapshotStateList<UiCircle> = remember { mutableStateListOf() }
 
     var selectedPoint by remember { mutableStateOf<UiSwipePoint?>(null) }
@@ -184,23 +188,23 @@ fun SettingsScreen(
     val nests by SwipeSettingsStore.getNestsFlow(ctx)
         .collectAsState(initial = emptyList())
 
+    val nestNavigation = rememberNestNavigation(nests)
+    val currentNest = nestNavigation.currentNest
+    val nestId = nestNavigation.nestId
 
-    var nestId by remember { mutableStateOf(0) }
-
-    val currentNest = nests.find { it.id == nestId } ?: CircleNest(id = nestId, parentId = 0)
-
-    val goBack = {
-        if (currentNest.parentId != nestId) {
-            nestId = currentNest.parentId
+    val filteredPoints by remember(points, nestId) {
+        derivedStateOf {
+            points.filter { it.nestId == nestId }
         }
     }
 
-    val goToNest = { newNestId: Int ->
-        if (newNestId != nestId) {
-            nestId = newNestId
-        }
-    }
+    val currentFilteredPoints by rememberUpdatedState(filteredPoints)
 
+    LaunchedEffect(points, nestId) {
+        Log.e(TAG, nestId.toString())
+        Log.e(TAG, currentNest.toString())
+        Log.e(TAG, points.filter { it.nestId == nestId }.toString())
+    }
 
     /**
      * The number of circles; it's the size of the current nest, minus one, cause it ignores the
@@ -383,7 +387,7 @@ fun SettingsScreen(
     BackHandler {
         if (isCircleDistanceMode) isCircleDistanceMode = false
         else if (selectedPoint != null) selectedPoint = null
-        else if (nestId != 0) goBack()
+        else if (nestId != 0) nestNavigation.goBack()
         else onBack()
     }
 
@@ -438,12 +442,10 @@ fun SettingsScreen(
                     // Proportional radii: largest fits screen, others reduce evenly
                     val baseRadius = availableWidth / 2 * 0.95f // almost half of screen width
                     circles.clear()
-                    Log.e(TAGSwipe, "--------")
 
                     currentNest.dragDistances.filter { it.key != -1 }
-                        .forEach { (circleNumber, distance) ->
+                        .forEach { (circleNumber, _) ->
 
-                            Log.e(TAGSwipe, "$circleNumber to $distance")
                             // Computes the radius from the base radius and increase it evenly depending on the circle number
                             val radius = circlesWidthIncrement * (circleNumber + 1) * baseRadius
 
@@ -471,10 +473,13 @@ fun SettingsScreen(
                                 style = Stroke(4f)
                             )
 
-                            val filteredPoints = points.filter { it.circleNumber == circle.id && it.nestId == nestId }
 
-                            // 2. Draw all points, selected last
-                            filteredPoints.sortedBy { it.id == selectedPoint?.id }.forEach { p ->
+                            // 2. Draw all points that belongs to the actual circle, selected last
+                            currentFilteredPoints
+                                .filter { it.circleNumber == circle.id }
+                                .sortedBy { it.id == selectedPoint?.id }
+                                .forEach { p ->
+
                                 val px =
                                     center.x + circle.radius * sin(Math.toRadians(p.angleDeg)).toFloat()
                                 val py =
@@ -535,7 +540,7 @@ fun SettingsScreen(
                                     var best = Float.MAX_VALUE
 
                                     // Can only select points on the same nest
-                                    points.filter { it.nestId == nestId }.forEach { p ->
+                                    currentFilteredPoints.forEach { p ->
                                         val circle =
                                             circles.getOrNull(p.circleNumber) ?: return@forEach
                                         val px =
@@ -567,10 +572,10 @@ fun SettingsScreen(
 
                                     // All points that are part of the same circle
                                     val sameCirclePoints =
-                                        points.filter { it.nestId == nestId && it.circleNumber == selected.circleNumber }
+                                        currentFilteredPoints.filter { it.circleNumber == selected.circleNumber }
                                     if (sameCirclePoints.isEmpty()) return@detectDragGestures
 
-                                    val p = points.find { it.id == selectedPoint?.id }
+                                    val p = currentFilteredPoints.find { it.id == selectedPoint?.id }
                                         ?: return@detectDragGestures
                                     updatePointPosition(
                                         p,
@@ -582,7 +587,7 @@ fun SettingsScreen(
                                     recomposeTrigger++
                                 },
                                 onDragEnd = {
-                                    val p = points.find { it.id == selectedPoint?.id }
+                                    val p = currentFilteredPoints.find { it.id == selectedPoint?.id }
                                         ?: return@detectDragGestures
                                     autoSeparate(points, p.circleNumber, p)
                                 }
@@ -594,7 +599,9 @@ fun SettingsScreen(
                                     var tapped: UiSwipePoint? = null
                                     var best = Float.MAX_VALUE
 
-                                    points.filter { it.nestId == nestId }.forEach { p ->
+                                    Log.d(TAG, currentFilteredPoints.toString())
+                                    currentFilteredPoints.forEach { p ->
+                                        Log.w(TAG, p.toString())
                                         val circle =
                                             circles.getOrNull(p.circleNumber) ?: return@forEach
                                         val px =
@@ -608,6 +615,7 @@ fun SettingsScreen(
                                             tapped = p
                                         }
                                     }
+                                    Log.w(TAG, "Tapped: $tapped")
 
                                     selectedPoint =
                                         if (best <= TOUCH_THRESHOLD_PX)
@@ -644,7 +652,7 @@ fun SettingsScreen(
                         .clip(CircleShape)
                         .clickable(canGoNest) {
                             // Open selected nest
-                            goToNest(nestToGo!!)
+                            nestNavigation.goToNest(nestToGo!!)
                             selectedPoint = null
                         }
                         .background(extraColors.openCircleNest.copy(if (canGoNest) 0.2f else 0f))
@@ -673,7 +681,7 @@ fun SettingsScreen(
                         .clip(CircleShape)
                         .clickable(canGoback) {
                             // Go back one nest
-                            goBack()
+                            nestNavigation.goBack()
                             selectedPoint = null
                         }
                         .background(extraColors.goParentNest.copy(if (canGoback) 0.2f else 0f))
@@ -689,7 +697,7 @@ fun SettingsScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.FullscreenExit,
-                        contentDescription = "Go revious nest",
+                        contentDescription = stringResource(R.string.go_parent_nest),
                         tint = extraColors.goParentNest.copy(if (canGoback) 1f else 0.5f)
                     )
                 }
@@ -1204,7 +1212,8 @@ fun SettingsScreen(
                 .padding(5.dp)
         ) {
             Column {
-                Text("current nests id: $nestId")
+                Text("nests id: $nestId")
+                Text("current nests id: ${currentNest.id}")
                 Text("nests number: ${nests.size}")
                 Text("circle number: $circleNumber")
                 Text("currentNest size: ${currentNest.dragDistances.size}")
