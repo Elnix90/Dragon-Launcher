@@ -32,7 +32,7 @@ import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore.Keys.SHOW_APP_IC
 import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore.Keys.SHOW_APP_LABEL_IN_DRAWER
 import org.elnix.dragonlauncher.data.uiDatastore
 
-object DrawerSettingsStore : BaseSettingsStore() {
+object DrawerSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
     override val name: String = "Drawer"
 
     // -------------------------------------------------------------------------
@@ -223,7 +223,7 @@ object DrawerSettingsStore : BaseSettingsStore() {
     // -------------------------------------------------------------------------
     // Backup export
     // -------------------------------------------------------------------------
-    suspend fun getAll(ctx: Context): Map<String, Any> {
+    override suspend fun getAll(ctx: Context): Map<String, Any> {
         val prefs = ctx.drawerDataStore.data.first()
 
         return buildMap {
@@ -301,12 +301,11 @@ object DrawerSettingsStore : BaseSettingsStore() {
     // -------------------------------------------------------------------------
     // Backup import
     // -------------------------------------------------------------------------
-    suspend fun setAll(ctx: Context, raw: Map<String, Any?>) {
-
+    override suspend fun setAll(ctx: Context, value: Map<String, Any?>) {
 
 
         fun getDrawerActionStrict(key: String): DrawerActions {
-            val v = raw[key] ?: return when (key) {
+            val v = value[key] ?: return when (key) {
                 LEFT_DRAWER_ACTION.name -> defaults.leftDrawerAction
                 RIGHT_DRAWER_ACTION.name -> defaults.rightDrawerAction
                 else -> throw BackupTypeException(key, "DrawerAction", null, null)
@@ -319,7 +318,7 @@ object DrawerSettingsStore : BaseSettingsStore() {
         }
 
         fun getDrawerEnterActionStrict(key: String): DrawerActions {
-            val v = raw[key] ?: return when (key) {
+            val v = value[key] ?: return when (key) {
                 DRAWER_ENTER_ACTIONS.name -> defaults.drawerEnterAction
                 else -> throw BackupTypeException(key, "DrawerEnterAction", null, null)
             }
@@ -332,37 +331,37 @@ object DrawerSettingsStore : BaseSettingsStore() {
 
         val backup = DrawerSettingsBackup(
             autoOpenSingleMatch = getBooleanStrict(
-                raw, AUTO_OPEN_SINGLE_MATCH, defaults.autoOpenSingleMatch
+                value, AUTO_OPEN_SINGLE_MATCH, defaults.autoOpenSingleMatch
             ),
             showAppIconsInDrawer = getBooleanStrict(
-                raw, SHOW_APP_ICONS_IN_DRAWER, defaults.showAppIconsInDrawer
+                value, SHOW_APP_ICONS_IN_DRAWER, defaults.showAppIconsInDrawer
             ),
             showAppLabelInDrawer = getBooleanStrict(
-                raw, SHOW_APP_LABEL_IN_DRAWER, defaults.showAppLabelInDrawer
+                value, SHOW_APP_LABEL_IN_DRAWER, defaults.showAppLabelInDrawer
             ),
             searchBarBottom = getBooleanStrict(
-                raw, SEARCH_BAR_BOTTOM, defaults.searchBarBottom
+                value, SEARCH_BAR_BOTTOM, defaults.searchBarBottom
             ),
             autoShowKeyboardOnDrawer = getBooleanStrict(
-                raw, AUTO_SHOW_KEYBOARD_ON_DRAWER, defaults.autoShowKeyboardOnDrawer
+                value, AUTO_SHOW_KEYBOARD_ON_DRAWER, defaults.autoShowKeyboardOnDrawer
             ),
             clickEmptySpaceToRaiseKeyboard = getBooleanStrict(
-                raw, CLICK_EMPTY_SPACE_TO_RAISE_KEYBOARD, defaults.clickEmptySpaceToRaiseKeyboard
+                value, CLICK_EMPTY_SPACE_TO_RAISE_KEYBOARD, defaults.clickEmptySpaceToRaiseKeyboard
             ),
             gridSize = getIntStrict(
-                raw, GRID_SIZE, defaults.gridSize
+                value, GRID_SIZE, defaults.gridSize
             ),
             leftDrawerAction = getDrawerActionStrict(LEFT_DRAWER_ACTION.name),
             rightDrawerAction = getDrawerActionStrict(RIGHT_DRAWER_ACTION.name),
             leftDrawerWidth = getFloatStrict(
-                raw, LEFT_DRAWER_WIDTH, defaults.leftDrawerWidth
+                value, LEFT_DRAWER_WIDTH, defaults.leftDrawerWidth
             ),
             rightDrawerWidth = getFloatStrict(
-                raw, RIGHT_DRAWER_WIDTH, defaults.rightDrawerWidth
+                value, RIGHT_DRAWER_WIDTH, defaults.rightDrawerWidth
             ),
             drawerEnterAction = getDrawerEnterActionStrict(DRAWER_ENTER_ACTIONS.name),
             scrollDownToCloseDrawerOnTop = getBooleanStrict(
-                raw, SCROLL_DOWN_TO_CLOSE_DRAWER_ON_TOP, defaults.scrollDownToCloseDrawerOnTop
+                value, SCROLL_DOWN_TO_CLOSE_DRAWER_ON_TOP, defaults.scrollDownToCloseDrawerOnTop
             )
         )
 

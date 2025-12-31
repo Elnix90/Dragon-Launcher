@@ -15,7 +15,7 @@ import org.elnix.dragonlauncher.data.stores.DebugSettingsStore.Keys.DEBUG_INFOS
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore.Keys.FORCE_APP_LANGUAGE_SELECTOR
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore.Keys.SETTINGS_DEBUG_INFOS
 
-object DebugSettingsStore : BaseSettingsStore() {
+object DebugSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
 
     override val name: String = "Debug"
 
@@ -100,7 +100,7 @@ object DebugSettingsStore : BaseSettingsStore() {
     // -------------------------------------------------------------------------
     // Backup export
     // -------------------------------------------------------------------------
-    suspend fun getAll(ctx: Context): Map<String, Any> {
+    override suspend fun getAll(ctx: Context): Map<String, Any> {
         val prefs = ctx.debugDatastore.data.first()
 
         return buildMap {
@@ -114,21 +114,21 @@ object DebugSettingsStore : BaseSettingsStore() {
     // -------------------------------------------------------------------------
     // Backup import
     // -------------------------------------------------------------------------
-    suspend fun setAll(ctx: Context, backup: Map<String, Any?>) {
+    override suspend fun setAll(ctx: Context, value: Map<String, Any?>) {
 
         ctx.debugDatastore.edit { prefs ->
 
             prefs[DEBUG_ENABLED] =
-                getBooleanStrict(backup, DEBUG_ENABLED, defaults.debugEnabled)
+                getBooleanStrict(value, DEBUG_ENABLED, defaults.debugEnabled)
 
             prefs[DEBUG_INFOS] =
-                getBooleanStrict(backup, DEBUG_INFOS, defaults.debugInfos)
+                getBooleanStrict(value, DEBUG_INFOS, defaults.debugInfos)
 
             prefs[SETTINGS_DEBUG_INFOS] =
-                getBooleanStrict(backup, SETTINGS_DEBUG_INFOS, defaults.settingsDebugInfo)
+                getBooleanStrict(value, SETTINGS_DEBUG_INFOS, defaults.settingsDebugInfo)
 
             prefs[FORCE_APP_LANGUAGE_SELECTOR] =
-                getBooleanStrict(backup,FORCE_APP_LANGUAGE_SELECTOR, defaults.forceAppLanguageSelector)
+                getBooleanStrict(value,FORCE_APP_LANGUAGE_SELECTOR, defaults.forceAppLanguageSelector)
         }
     }
 }

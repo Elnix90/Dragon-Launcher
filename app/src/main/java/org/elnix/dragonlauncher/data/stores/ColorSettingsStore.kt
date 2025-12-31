@@ -1,20 +1,47 @@
 package org.elnix.dragonlauncher.data.stores
 
-
 import android.content.Context
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import org.elnix.dragonlauncher.data.BackupTypeException
 import org.elnix.dragonlauncher.data.BaseSettingsStore
 import org.elnix.dragonlauncher.data.ColorCustomisationMode
 import org.elnix.dragonlauncher.data.DefaultThemes
 import org.elnix.dragonlauncher.data.colorDatastore
 import org.elnix.dragonlauncher.data.getDefaultColorScheme
+import org.elnix.dragonlauncher.data.getIntStrict
+import org.elnix.dragonlauncher.data.putIfNonDefault
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.ALL
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.ANGLE_LINE_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.BACKGROUND_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.CIRCLE_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.CONTROL_PANEL_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.ERROR_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.GO_PARENT_NEST
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.LAUNCHER_SETTINGS_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.LAUNCH_APP_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.LOCK_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.NOTIFICATION_SHADE_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.ON_BACKGROUND_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.ON_ERROR_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.ON_PRIMARY_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.ON_SECONDARY_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.ON_SURFACE_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.ON_TERTIARY_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.OPEN_APP_DRAWER_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.OPEN_CIRCLE_NEST
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.OPEN_FILE_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.OPEN_RECENT_APPS
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.OPEN_URL_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.OUTLINE_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.PRIMARY_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.RELOAD_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.SECONDARY_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.SURFACE_COLOR
+import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.Keys.TERTIARY_COLOR
 import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.setAngleLineColor
 import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.setBackground
 import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.setCircleColor
@@ -41,41 +68,76 @@ import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.setReloadColor
 import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.setSecondary
 import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.setSurface
 import org.elnix.dragonlauncher.data.stores.ColorSettingsStore.setTertiary
+import org.elnix.dragonlauncher.data.uiDatastore
 import org.elnix.dragonlauncher.ui.theme.AmoledDefault
 import org.elnix.dragonlauncher.ui.theme.ThemeColors
 import org.elnix.dragonlauncher.utils.colors.randomColor
 
-object ColorSettingsStore : BaseSettingsStore() {
+object ColorSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
     override val name: String = "Colors"
 
-    private val PRIMARY_COLOR = intPreferencesKey("primary_color")
-    private val ON_PRIMARY_COLOR = intPreferencesKey("on_primary_color")
-    private val SECONDARY_COLOR = intPreferencesKey("secondary_color")
-    private val ON_SECONDARY_COLOR = intPreferencesKey("on_secondary_color")
-    private val TERTIARY_COLOR = intPreferencesKey("tertiary_color")
-    private val ON_TERTIARY_COLOR = intPreferencesKey("on_tertiary_color")
-    private val BACKGROUND_COLOR = intPreferencesKey("background_color")
-    private val ON_BACKGROUND_COLOR = intPreferencesKey("on_background_color")
-    private val SURFACE_COLOR = intPreferencesKey("surface_color")
-    private val ON_SURFACE_COLOR = intPreferencesKey("on_surface_color")
-    private val ERROR_COLOR = intPreferencesKey("error_color")
-    private val ON_ERROR_COLOR = intPreferencesKey("on_error_color")
-    private val OUTLINE_COLOR = intPreferencesKey("outline_color")
-    private val ANGLE_LINE_COLOR = intPreferencesKey("delete_color")
-    private val CIRCLE_COLOR = intPreferencesKey("circle_color")
-    private val LAUNCH_APP_COLOR = intPreferencesKey("launch_app_color")
-    private val OPEN_URL_COLOR = intPreferencesKey("open_url_color")
-    private val NOTIFICATION_SHADE_COLOR = intPreferencesKey("notification_shade_color")
-    private val CONTROL_PANEL_COLOR = intPreferencesKey("control_panel_color")
-    private val OPEN_APP_DRAWER_COLOR = intPreferencesKey("open_app_drawer_color")
-    private val LAUNCHER_SETTINGS_COLOR = intPreferencesKey("launcher_settings_color")
-    private val LOCK_COLOR = intPreferencesKey("lock_color")
-    private val OPEN_FILE_COLOR = intPreferencesKey("open_file_color")
-    private val RELOAD_COLOR = intPreferencesKey("reload_color")
-    private val OPEN_RECENT_APPS = intPreferencesKey("open_recent_apps")
 
-    private val OPEN_CIRCLE_NEST = intPreferencesKey("open_circle_nest")
-    private val GO_PARENT_NEST = intPreferencesKey("go_parent_nest")
+    private object Keys {
+        val PRIMARY_COLOR = intPreferencesKey("primary_color")
+        val ON_PRIMARY_COLOR = intPreferencesKey("on_primary_color")
+        val SECONDARY_COLOR = intPreferencesKey("secondary_color")
+        val ON_SECONDARY_COLOR = intPreferencesKey("on_secondary_color")
+        val TERTIARY_COLOR = intPreferencesKey("tertiary_color")
+        val ON_TERTIARY_COLOR = intPreferencesKey("on_tertiary_color")
+        val BACKGROUND_COLOR = intPreferencesKey("background_color")
+        val ON_BACKGROUND_COLOR = intPreferencesKey("on_background_color")
+        val SURFACE_COLOR = intPreferencesKey("surface_color")
+        val ON_SURFACE_COLOR = intPreferencesKey("on_surface_color")
+        val ERROR_COLOR = intPreferencesKey("error_color")
+        val ON_ERROR_COLOR = intPreferencesKey("on_error_color")
+        val OUTLINE_COLOR = intPreferencesKey("outline_color")
+        val ANGLE_LINE_COLOR = intPreferencesKey("delete_color")
+        val CIRCLE_COLOR = intPreferencesKey("circle_color")
+        val LAUNCH_APP_COLOR = intPreferencesKey("launch_app_color")
+        val OPEN_URL_COLOR = intPreferencesKey("open_url_color")
+        val NOTIFICATION_SHADE_COLOR = intPreferencesKey("notification_shade_color")
+        val CONTROL_PANEL_COLOR = intPreferencesKey("control_panel_color")
+        val OPEN_APP_DRAWER_COLOR = intPreferencesKey("open_app_drawer_color")
+        val LAUNCHER_SETTINGS_COLOR = intPreferencesKey("launcher_settings_color")
+        val LOCK_COLOR = intPreferencesKey("lock_color")
+        val OPEN_FILE_COLOR = intPreferencesKey("open_file_color")
+        val RELOAD_COLOR = intPreferencesKey("reload_color")
+        val OPEN_RECENT_APPS = intPreferencesKey("open_recent_apps")
+
+        val OPEN_CIRCLE_NEST = intPreferencesKey("open_circle_nest")
+        val GO_PARENT_NEST = intPreferencesKey("go_parent_nest")
+
+        val ALL = listOf(
+            PRIMARY_COLOR,
+            ON_PRIMARY_COLOR,
+            SECONDARY_COLOR,
+            ON_SECONDARY_COLOR,
+            TERTIARY_COLOR,
+            ON_TERTIARY_COLOR,
+            BACKGROUND_COLOR,
+            ON_BACKGROUND_COLOR,
+            SURFACE_COLOR,
+            ON_SURFACE_COLOR,
+            ERROR_COLOR,
+            ON_ERROR_COLOR,
+            OUTLINE_COLOR,
+            ANGLE_LINE_COLOR,
+            CIRCLE_COLOR,
+            LAUNCH_APP_COLOR,
+            OPEN_URL_COLOR,
+            NOTIFICATION_SHADE_COLOR,
+            CONTROL_PANEL_COLOR,
+            OPEN_APP_DRAWER_COLOR,
+            LAUNCHER_SETTINGS_COLOR,
+            LOCK_COLOR,
+            OPEN_FILE_COLOR,
+            RELOAD_COLOR,
+            OPEN_RECENT_APPS,
+            OPEN_CIRCLE_NEST,
+            GO_PARENT_NEST
+        )
+    }
+
 
 
     // ------------------------------------------
@@ -185,7 +247,9 @@ object ColorSettingsStore : BaseSettingsStore() {
     }
 
     fun getCircleColor(ctx: Context) =
-        ctx.colorDatastore.data.map { it[CIRCLE_COLOR]?.let { color -> Color(color) } ?: AmoledDefault.CircleColor }
+        ctx.colorDatastore.data.map {
+            it[CIRCLE_COLOR]?.let { color -> Color(color) } ?: AmoledDefault.CircleColor
+        }
 
     suspend fun setCircleColor(ctx: Context, color: Color) {
         ctx.colorDatastore.edit { it[CIRCLE_COLOR] = color.toArgb() }
@@ -324,125 +388,215 @@ object ColorSettingsStore : BaseSettingsStore() {
     }
 
     override suspend fun resetAll(ctx: Context) {
-        ctx.colorDatastore.edit { prefs ->
-            prefs.remove(PRIMARY_COLOR)
-            prefs.remove(ON_PRIMARY_COLOR)
-            prefs.remove(SECONDARY_COLOR)
-            prefs.remove(ON_SECONDARY_COLOR)
-            prefs.remove(TERTIARY_COLOR)
-            prefs.remove(ON_TERTIARY_COLOR)
-            prefs.remove(BACKGROUND_COLOR)
-            prefs.remove(ON_BACKGROUND_COLOR)
-            prefs.remove(SURFACE_COLOR)
-            prefs.remove(ON_SURFACE_COLOR)
-            prefs.remove(ERROR_COLOR)
-            prefs.remove(ON_ERROR_COLOR)
-            prefs.remove(OUTLINE_COLOR)
-            prefs.remove(ANGLE_LINE_COLOR)
-            prefs.remove(CIRCLE_COLOR)
-
-            prefs.remove(LAUNCH_APP_COLOR)
-            prefs.remove(OPEN_URL_COLOR)
-            prefs.remove(NOTIFICATION_SHADE_COLOR)
-            prefs.remove(CONTROL_PANEL_COLOR)
-            prefs.remove(OPEN_APP_DRAWER_COLOR)
-            prefs.remove(LAUNCHER_SETTINGS_COLOR)
-            prefs.remove(LOCK_COLOR)
-            prefs.remove(OPEN_FILE_COLOR)
-            prefs.remove(RELOAD_COLOR)
-            prefs.remove(OPEN_RECENT_APPS)
-            prefs.remove(OPEN_CIRCLE_NEST)
-            prefs.remove(GO_PARENT_NEST)
+        ctx.uiDatastore.edit { prefs ->
+            ALL.forEach { prefs.remove(it) }
         }
     }
 
-    suspend fun getAll(ctx: Context): Map<String, Int> {
+    override suspend fun getAll(ctx: Context): Map<String, Any> {
         val prefs = ctx.colorDatastore.data.first()
         val colorMode = ColorModesSettingsStore.getColorCustomisationMode(ctx).first()
         val defaultTheme = ColorModesSettingsStore.getDefaultTheme(ctx).first()
 
-        val default = if (colorMode == ColorCustomisationMode.DEFAULT) getDefaultColorScheme(ctx, defaultTheme)
-                     else AmoledDefault
+        val default = if (colorMode == ColorCustomisationMode.DEFAULT) getDefaultColorScheme(
+            ctx,
+            defaultTheme
+        )
+        else AmoledDefault
         return buildMap {
-            fun putIfNonDefault(key: String, value: Int?, default: Color) {
-                if (value != null && value != default.toArgb()) {
-                    put(key, value)
-                }
-            }
 
-            putIfNonDefault(PRIMARY_COLOR.name,        prefs[PRIMARY_COLOR],        default.Primary)
-            putIfNonDefault(ON_PRIMARY_COLOR.name,     prefs[ON_PRIMARY_COLOR],     default.OnPrimary)
-            putIfNonDefault(SECONDARY_COLOR.name,      prefs[SECONDARY_COLOR],      default.Secondary)
-            putIfNonDefault(ON_SECONDARY_COLOR.name,   prefs[ON_SECONDARY_COLOR],   default.OnSecondary)
-            putIfNonDefault(TERTIARY_COLOR.name,       prefs[TERTIARY_COLOR],       default.Tertiary)
-            putIfNonDefault(ON_TERTIARY_COLOR.name,    prefs[ON_TERTIARY_COLOR],    default.OnTertiary)
-            putIfNonDefault(BACKGROUND_COLOR.name,     prefs[BACKGROUND_COLOR],     default.Background)
-            putIfNonDefault(ON_BACKGROUND_COLOR.name,  prefs[ON_BACKGROUND_COLOR],  default.OnBackground)
-            putIfNonDefault(SURFACE_COLOR.name,        prefs[SURFACE_COLOR],        default.Surface)
-            putIfNonDefault(ON_SURFACE_COLOR.name,     prefs[ON_SURFACE_COLOR],     default.OnSurface)
-            putIfNonDefault(ERROR_COLOR.name,          prefs[ERROR_COLOR],          default.Error)
-            putIfNonDefault(ON_ERROR_COLOR.name,       prefs[ON_ERROR_COLOR],       default.OnError)
-            putIfNonDefault(OUTLINE_COLOR.name,        prefs[OUTLINE_COLOR],        default.Outline)
-            putIfNonDefault(ANGLE_LINE_COLOR.name,     prefs[ANGLE_LINE_COLOR],     default.AngleLineColor)
-            putIfNonDefault(CIRCLE_COLOR.name,         prefs[CIRCLE_COLOR],         default.CircleColor)
+            putIfNonDefault(PRIMARY_COLOR, prefs[PRIMARY_COLOR], default.Primary)
+            putIfNonDefault(ON_PRIMARY_COLOR, prefs[ON_PRIMARY_COLOR], default.OnPrimary)
+            putIfNonDefault(SECONDARY_COLOR, prefs[SECONDARY_COLOR], default.Secondary)
+            putIfNonDefault(ON_SECONDARY_COLOR, prefs[ON_SECONDARY_COLOR], default.OnSecondary)
+            putIfNonDefault(TERTIARY_COLOR, prefs[TERTIARY_COLOR], default.Tertiary)
+            putIfNonDefault(ON_TERTIARY_COLOR, prefs[ON_TERTIARY_COLOR], default.OnTertiary)
+            putIfNonDefault(BACKGROUND_COLOR, prefs[BACKGROUND_COLOR], default.Background)
+            putIfNonDefault(ON_BACKGROUND_COLOR, prefs[ON_BACKGROUND_COLOR], default.OnBackground)
+            putIfNonDefault(SURFACE_COLOR, prefs[SURFACE_COLOR], default.Surface)
+            putIfNonDefault(ON_SURFACE_COLOR, prefs[ON_SURFACE_COLOR], default.OnSurface)
+            putIfNonDefault(ERROR_COLOR, prefs[ERROR_COLOR], default.Error)
+            putIfNonDefault(ON_ERROR_COLOR, prefs[ON_ERROR_COLOR], default.OnError)
+            putIfNonDefault(OUTLINE_COLOR, prefs[OUTLINE_COLOR], default.Outline)
+            putIfNonDefault(ANGLE_LINE_COLOR, prefs[ANGLE_LINE_COLOR], default.AngleLineColor)
+            putIfNonDefault(CIRCLE_COLOR, prefs[CIRCLE_COLOR], default.CircleColor)
 
-            putIfNonDefault(LAUNCH_APP_COLOR.name,        prefs[LAUNCH_APP_COLOR],        default.LaunchAppColor)
-            putIfNonDefault(OPEN_URL_COLOR.name,          prefs[OPEN_URL_COLOR],          default.OpenUrlColor)
-            putIfNonDefault(NOTIFICATION_SHADE_COLOR.name,prefs[NOTIFICATION_SHADE_COLOR],default.NotificationShadeColor)
-            putIfNonDefault(CONTROL_PANEL_COLOR.name,     prefs[CONTROL_PANEL_COLOR],     default.ControlPanelColor)
-            putIfNonDefault(OPEN_APP_DRAWER_COLOR.name,   prefs[OPEN_APP_DRAWER_COLOR],   default.OpenAppDrawerColor)
-            putIfNonDefault(LAUNCHER_SETTINGS_COLOR.name, prefs[LAUNCHER_SETTINGS_COLOR], default.LauncherSettingsColor)
-            putIfNonDefault(LOCK_COLOR.name,              prefs[LOCK_COLOR],              default.LockColor)
-            putIfNonDefault(OPEN_FILE_COLOR.name,         prefs[OPEN_FILE_COLOR],         default.OpenFileColor)
-            putIfNonDefault(RELOAD_COLOR.name,            prefs[RELOAD_COLOR],            default.ReloadColor)
-            putIfNonDefault(OPEN_RECENT_APPS.name,        prefs[OPEN_RECENT_APPS],        default.OpenRecentAppsColor)
-            putIfNonDefault(OPEN_CIRCLE_NEST.name,        prefs[OPEN_CIRCLE_NEST],        default.OpenCircleNestColor)
-            putIfNonDefault(GO_PARENT_NEST.name,          prefs[GO_PARENT_NEST],          default.GoParentNestColor)
+            putIfNonDefault(LAUNCH_APP_COLOR, prefs[LAUNCH_APP_COLOR], default.LaunchAppColor)
+            putIfNonDefault(OPEN_URL_COLOR, prefs[OPEN_URL_COLOR], default.OpenUrlColor)
+            putIfNonDefault(
+                NOTIFICATION_SHADE_COLOR,
+                prefs[NOTIFICATION_SHADE_COLOR],
+                default.NotificationShadeColor
+            )
+            putIfNonDefault(
+                CONTROL_PANEL_COLOR,
+                prefs[CONTROL_PANEL_COLOR],
+                default.ControlPanelColor
+            )
+            putIfNonDefault(
+                OPEN_APP_DRAWER_COLOR,
+                prefs[OPEN_APP_DRAWER_COLOR],
+                default.OpenAppDrawerColor
+            )
+            putIfNonDefault(
+                LAUNCHER_SETTINGS_COLOR,
+                prefs[LAUNCHER_SETTINGS_COLOR],
+                default.LauncherSettingsColor
+            )
+            putIfNonDefault(LOCK_COLOR, prefs[LOCK_COLOR], default.LockColor)
+            putIfNonDefault(OPEN_FILE_COLOR, prefs[OPEN_FILE_COLOR], default.OpenFileColor)
+            putIfNonDefault(RELOAD_COLOR, prefs[RELOAD_COLOR], default.ReloadColor)
+            putIfNonDefault(OPEN_RECENT_APPS, prefs[OPEN_RECENT_APPS], default.OpenRecentAppsColor)
+            putIfNonDefault(OPEN_CIRCLE_NEST, prefs[OPEN_CIRCLE_NEST], default.OpenCircleNestColor)
+            putIfNonDefault(GO_PARENT_NEST, prefs[GO_PARENT_NEST], default.GoParentNestColor)
 
         }
     }
 
-    suspend fun setAll(ctx: Context, data: Map<String, Any?>) {
+    override suspend fun setAll(ctx: Context, value: Map<String, Any?>) {
         ctx.colorDatastore.edit { prefs ->
 
-            fun setInt(key: Preferences.Key<Int>, raw: Any?) {
-                if (raw == null) return
-                val intVal = raw as? Int
-                    ?: throw BackupTypeException(key.name, "Int", raw::class.simpleName,raw)
-                prefs[key] = intVal
+            value[PRIMARY_COLOR.name]?.let {
+                prefs[PRIMARY_COLOR] =
+                    getIntStrict(value, PRIMARY_COLOR, prefs[PRIMARY_COLOR] ?: 0)
             }
 
-            data.forEach { (name, value) ->
-                when (name) {
-                    PRIMARY_COLOR.name        -> setInt(PRIMARY_COLOR, value)
-                    ON_PRIMARY_COLOR.name     -> setInt(ON_PRIMARY_COLOR, value)
-                    SECONDARY_COLOR.name      -> setInt(SECONDARY_COLOR, value)
-                    ON_SECONDARY_COLOR.name   -> setInt(ON_SECONDARY_COLOR, value)
-                    TERTIARY_COLOR.name       -> setInt(TERTIARY_COLOR, value)
-                    ON_TERTIARY_COLOR.name    -> setInt(ON_TERTIARY_COLOR, value)
-                    BACKGROUND_COLOR.name     -> setInt(BACKGROUND_COLOR, value)
-                    ON_BACKGROUND_COLOR.name  -> setInt(ON_BACKGROUND_COLOR, value)
-                    SURFACE_COLOR.name        -> setInt(SURFACE_COLOR, value)
-                    ON_SURFACE_COLOR.name     -> setInt(ON_SURFACE_COLOR, value)
-                    ERROR_COLOR.name          -> setInt(ERROR_COLOR, value)
-                    ON_ERROR_COLOR.name       -> setInt(ON_ERROR_COLOR, value)
-                    OUTLINE_COLOR.name        -> setInt(OUTLINE_COLOR, value)
-                    ANGLE_LINE_COLOR.name     -> setInt(ANGLE_LINE_COLOR, value)
-                    CIRCLE_COLOR.name         -> setInt(CIRCLE_COLOR, value)
+            value[ON_PRIMARY_COLOR.name]?.let {
+                prefs[ON_PRIMARY_COLOR] =
+                    getIntStrict(value, ON_PRIMARY_COLOR, prefs[ON_PRIMARY_COLOR] ?: 0)
+            }
 
-                    LAUNCH_APP_COLOR.name         -> setInt(LAUNCH_APP_COLOR, value)
-                    OPEN_URL_COLOR.name           -> setInt(OPEN_URL_COLOR, value)
-                    NOTIFICATION_SHADE_COLOR.name -> setInt(NOTIFICATION_SHADE_COLOR, value)
-                    CONTROL_PANEL_COLOR.name      -> setInt(CONTROL_PANEL_COLOR, value)
-                    OPEN_APP_DRAWER_COLOR.name    -> setInt(OPEN_APP_DRAWER_COLOR, value)
-                    LAUNCHER_SETTINGS_COLOR.name  -> setInt(LAUNCHER_SETTINGS_COLOR, value)
-                    LOCK_COLOR.name               -> setInt(LOCK_COLOR, value)
-                    OPEN_FILE_COLOR.name          -> setInt(OPEN_FILE_COLOR, value)
-                    RELOAD_COLOR.name             -> setInt(RELOAD_COLOR, value)
-                    OPEN_RECENT_APPS.name         -> setInt(OPEN_RECENT_APPS, value)
-                    OPEN_CIRCLE_NEST.name         -> setInt(OPEN_CIRCLE_NEST, value)
-                    GO_PARENT_NEST.name         -> setInt(GO_PARENT_NEST, value)
-                }
+            value[SECONDARY_COLOR.name]?.let {
+                prefs[SECONDARY_COLOR] =
+                    getIntStrict(value, SECONDARY_COLOR, prefs[SECONDARY_COLOR] ?: 0)
+            }
+
+            value[ON_SECONDARY_COLOR.name]?.let {
+                prefs[ON_SECONDARY_COLOR] =
+                    getIntStrict(value, ON_SECONDARY_COLOR, prefs[ON_SECONDARY_COLOR] ?: 0)
+            }
+
+            value[TERTIARY_COLOR.name]?.let {
+                prefs[TERTIARY_COLOR] =
+                    getIntStrict(value, TERTIARY_COLOR, prefs[TERTIARY_COLOR] ?: 0)
+            }
+
+            value[ON_TERTIARY_COLOR.name]?.let {
+                prefs[ON_TERTIARY_COLOR] =
+                    getIntStrict(value, ON_TERTIARY_COLOR, prefs[ON_TERTIARY_COLOR] ?: 0)
+            }
+
+            value[BACKGROUND_COLOR.name]?.let {
+                prefs[BACKGROUND_COLOR] =
+                    getIntStrict(value, BACKGROUND_COLOR, prefs[BACKGROUND_COLOR] ?: 0)
+            }
+
+            value[ON_BACKGROUND_COLOR.name]?.let {
+                prefs[ON_BACKGROUND_COLOR] =
+                    getIntStrict(value, ON_BACKGROUND_COLOR, prefs[ON_BACKGROUND_COLOR] ?: 0)
+            }
+
+            value[SURFACE_COLOR.name]?.let {
+                prefs[SURFACE_COLOR] =
+                    getIntStrict(value, SURFACE_COLOR, prefs[SURFACE_COLOR] ?: 0)
+            }
+
+            value[ON_SURFACE_COLOR.name]?.let {
+                prefs[ON_SURFACE_COLOR] =
+                    getIntStrict(value, ON_SURFACE_COLOR, prefs[ON_SURFACE_COLOR] ?: 0)
+            }
+
+            value[ERROR_COLOR.name]?.let {
+                prefs[ERROR_COLOR] =
+                    getIntStrict(value, ERROR_COLOR, prefs[ERROR_COLOR] ?: 0)
+            }
+
+            value[ON_ERROR_COLOR.name]?.let {
+                prefs[ON_ERROR_COLOR] =
+                    getIntStrict(value, ON_ERROR_COLOR, prefs[ON_ERROR_COLOR] ?: 0)
+            }
+
+            value[OUTLINE_COLOR.name]?.let {
+                prefs[OUTLINE_COLOR] =
+                    getIntStrict(value, OUTLINE_COLOR, prefs[OUTLINE_COLOR] ?: 0)
+            }
+
+            value[ANGLE_LINE_COLOR.name]?.let {
+                prefs[ANGLE_LINE_COLOR] =
+                    getIntStrict(value, ANGLE_LINE_COLOR, prefs[ANGLE_LINE_COLOR] ?: 0)
+            }
+
+            value[CIRCLE_COLOR.name]?.let {
+                prefs[CIRCLE_COLOR] =
+                    getIntStrict(value, CIRCLE_COLOR, prefs[CIRCLE_COLOR] ?: 0)
+            }
+
+            value[LAUNCH_APP_COLOR.name]?.let {
+                prefs[LAUNCH_APP_COLOR] =
+                    getIntStrict(value, LAUNCH_APP_COLOR, prefs[LAUNCH_APP_COLOR] ?: 0)
+            }
+
+            value[OPEN_URL_COLOR.name]?.let {
+                prefs[OPEN_URL_COLOR] =
+                    getIntStrict(value, OPEN_URL_COLOR, prefs[OPEN_URL_COLOR] ?: 0)
+            }
+
+            value[NOTIFICATION_SHADE_COLOR.name]?.let {
+                prefs[NOTIFICATION_SHADE_COLOR] =
+                    getIntStrict(
+                        value,
+                        NOTIFICATION_SHADE_COLOR,
+                        prefs[NOTIFICATION_SHADE_COLOR] ?: 0
+                    )
+            }
+
+            value[CONTROL_PANEL_COLOR.name]?.let {
+                prefs[CONTROL_PANEL_COLOR] =
+                    getIntStrict(value, CONTROL_PANEL_COLOR, prefs[CONTROL_PANEL_COLOR] ?: 0)
+            }
+
+            value[OPEN_APP_DRAWER_COLOR.name]?.let {
+                prefs[OPEN_APP_DRAWER_COLOR] =
+                    getIntStrict(value, OPEN_APP_DRAWER_COLOR, prefs[OPEN_APP_DRAWER_COLOR] ?: 0)
+            }
+
+            value[LAUNCHER_SETTINGS_COLOR.name]?.let {
+                prefs[LAUNCHER_SETTINGS_COLOR] =
+                    getIntStrict(
+                        value,
+                        LAUNCHER_SETTINGS_COLOR,
+                        prefs[LAUNCHER_SETTINGS_COLOR] ?: 0
+                    )
+            }
+
+            value[LOCK_COLOR.name]?.let {
+                prefs[LOCK_COLOR] =
+                    getIntStrict(value, LOCK_COLOR, prefs[LOCK_COLOR] ?: 0)
+            }
+
+            value[OPEN_FILE_COLOR.name]?.let {
+                prefs[OPEN_FILE_COLOR] =
+                    getIntStrict(value, OPEN_FILE_COLOR, prefs[OPEN_FILE_COLOR] ?: 0)
+            }
+
+            value[RELOAD_COLOR.name]?.let {
+                prefs[RELOAD_COLOR] =
+                    getIntStrict(value, RELOAD_COLOR, prefs[RELOAD_COLOR] ?: 0)
+            }
+
+            value[OPEN_RECENT_APPS.name]?.let {
+                prefs[OPEN_RECENT_APPS] =
+                    getIntStrict(value, OPEN_RECENT_APPS, prefs[OPEN_RECENT_APPS] ?: 0)
+            }
+
+            value[OPEN_CIRCLE_NEST.name]?.let {
+                prefs[OPEN_CIRCLE_NEST] =
+                    getIntStrict(value, OPEN_CIRCLE_NEST, prefs[OPEN_CIRCLE_NEST] ?: 0)
+            }
+
+            value[GO_PARENT_NEST.name]?.let {
+                prefs[GO_PARENT_NEST] =
+                    getIntStrict(value, GO_PARENT_NEST, prefs[GO_PARENT_NEST] ?: 0)
             }
         }
     }

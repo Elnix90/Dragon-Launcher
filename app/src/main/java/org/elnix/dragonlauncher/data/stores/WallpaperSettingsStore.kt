@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
@@ -17,10 +16,19 @@ import org.elnix.dragonlauncher.data.BaseSettingsStore
 import org.elnix.dragonlauncher.data.getBooleanStrict
 import org.elnix.dragonlauncher.data.getFloatStrict
 import org.elnix.dragonlauncher.data.getStringStrict
+import org.elnix.dragonlauncher.data.putIfNonDefault
+import org.elnix.dragonlauncher.data.stores.WallpaperSettingsStore.Keys.DRAWER_BLURRED
+import org.elnix.dragonlauncher.data.stores.WallpaperSettingsStore.Keys.DRAWER_BLUR_RADIUS
+import org.elnix.dragonlauncher.data.stores.WallpaperSettingsStore.Keys.DRAWER_ORIGINAL
+import org.elnix.dragonlauncher.data.stores.WallpaperSettingsStore.Keys.MAIN_BLURRED
+import org.elnix.dragonlauncher.data.stores.WallpaperSettingsStore.Keys.MAIN_BLUR_RADIUS
+import org.elnix.dragonlauncher.data.stores.WallpaperSettingsStore.Keys.MAIN_ORIGINAL
+import org.elnix.dragonlauncher.data.stores.WallpaperSettingsStore.Keys.USE_ON_DRAWER
+import org.elnix.dragonlauncher.data.stores.WallpaperSettingsStore.Keys.USE_ON_MAIN
 import org.elnix.dragonlauncher.data.wallpaperSettingsStore
 import java.io.ByteArrayOutputStream
 
-object WallpaperSettingsStore : BaseSettingsStore() {
+object WallpaperSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
 
     override val name: String = "Wallpaper"
 
@@ -78,39 +86,39 @@ object WallpaperSettingsStore : BaseSettingsStore() {
 
     suspend fun setUseOnMain(ctx: Context, enabled: Boolean) {
         ctx.wallpaperSettingsStore.edit {
-            it[Keys.USE_ON_MAIN] = enabled
+            it[USE_ON_MAIN] = enabled
         }
     }
 
     fun getUseOnMain(ctx: Context): Flow<Boolean> =
         ctx.wallpaperSettingsStore.data.map {
-            it[Keys.USE_ON_MAIN] ?: defaults.useOnMain
+            it[USE_ON_MAIN] ?: defaults.useOnMain
         }
 
     suspend fun setUseOnDrawer(ctx: Context, enabled: Boolean) {
         ctx.wallpaperSettingsStore.edit {
-            it[Keys.USE_ON_DRAWER] = enabled
+            it[USE_ON_DRAWER] = enabled
         }
     }
 
     fun getUseOnDrawer(ctx: Context): Flow<Boolean> =
         ctx.wallpaperSettingsStore.data.map {
-            it[Keys.USE_ON_DRAWER] ?: defaults.useOnDrawer
+            it[USE_ON_DRAWER] ?: defaults.useOnDrawer
         }
 
     suspend fun setMainBlurRadius(ctx: Context, radius: Float) {
-        ctx.wallpaperSettingsStore.edit { it[Keys.MAIN_BLUR_RADIUS] = radius }
+        ctx.wallpaperSettingsStore.edit { it[MAIN_BLUR_RADIUS] = radius }
     }
 
     fun getMainBlurRadius(ctx: Context): Flow<Float> =
-        ctx.wallpaperSettingsStore.data.map { it[Keys.MAIN_BLUR_RADIUS] ?: 0f }
+        ctx.wallpaperSettingsStore.data.map { it[MAIN_BLUR_RADIUS] ?: 0f }
 
     suspend fun setDrawerBlurRadius(ctx: Context, radius: Float) {
-        ctx.wallpaperSettingsStore.edit { it[Keys.DRAWER_BLUR_RADIUS] = radius }
+        ctx.wallpaperSettingsStore.edit { it[DRAWER_BLUR_RADIUS] = radius }
     }
 
     fun getDrawerBlurRadius(ctx: Context): Flow<Float> =
-        ctx.wallpaperSettingsStore.data.map { it[Keys.DRAWER_BLUR_RADIUS] ?: 0f }
+        ctx.wallpaperSettingsStore.data.map { it[DRAWER_BLUR_RADIUS] ?: 0f }
 
 
     private fun Bitmap.toBase64(): String {
@@ -134,7 +142,7 @@ object WallpaperSettingsStore : BaseSettingsStore() {
         bitmap: Bitmap
     ) {
         ctx.wallpaperSettingsStore.edit {
-            it[Keys.MAIN_ORIGINAL] = bitmap.toBase64()
+            it[MAIN_ORIGINAL] = bitmap.toBase64()
         }
     }
 
@@ -143,7 +151,7 @@ object WallpaperSettingsStore : BaseSettingsStore() {
         bitmap: Bitmap
     ) {
         ctx.wallpaperSettingsStore.edit {
-            it[Keys.MAIN_BLURRED] = bitmap.toBase64()
+            it[MAIN_BLURRED] = bitmap.toBase64()
         }
     }
 
@@ -152,7 +160,7 @@ object WallpaperSettingsStore : BaseSettingsStore() {
         bitmap: Bitmap
     ) {
         ctx.wallpaperSettingsStore.edit {
-            it[Keys.DRAWER_ORIGINAL] = bitmap.toBase64()
+            it[DRAWER_ORIGINAL] = bitmap.toBase64()
         }
     }
 
@@ -161,7 +169,7 @@ object WallpaperSettingsStore : BaseSettingsStore() {
         bitmap: Bitmap
     ) {
         ctx.wallpaperSettingsStore.edit {
-            it[Keys.DRAWER_BLURRED] = bitmap.toBase64()
+            it[DRAWER_BLURRED] = bitmap.toBase64()
         }
     }
 
@@ -169,39 +177,39 @@ object WallpaperSettingsStore : BaseSettingsStore() {
     suspend fun loadMainOriginal(ctx: Context): Bitmap? =
         decodeBitmap(
             ctx.wallpaperSettingsStore.data
-                .map { it[Keys.MAIN_ORIGINAL] }
+                .map { it[MAIN_ORIGINAL] }
                 .firstOrNull()
         )
 
     suspend fun loadMainBlurred(ctx: Context): Bitmap? =
         decodeBitmap(
             ctx.wallpaperSettingsStore.data
-                .map { it[Keys.MAIN_BLURRED] }
+                .map { it[MAIN_BLURRED] }
                 .firstOrNull()
         )
 
     suspend fun loadDrawerOriginal(ctx: Context): Bitmap? =
         decodeBitmap(
             ctx.wallpaperSettingsStore.data
-                .map { it[Keys.DRAWER_ORIGINAL] }
+                .map { it[DRAWER_ORIGINAL] }
                 .firstOrNull()
         )
 
     suspend fun loadDrawerBlurred(ctx: Context): Bitmap? =
         decodeBitmap(
             ctx.wallpaperSettingsStore.data
-                .map { it[Keys.DRAWER_BLURRED] }
+                .map { it[DRAWER_BLURRED] }
                 .firstOrNull()
         )
 
     fun loadMainBlurredFlow(ctx: Context): Flow<Bitmap?> =
         ctx.wallpaperSettingsStore.data.map {
-            decodeBitmap(it[Keys.MAIN_BLURRED])
+            decodeBitmap(it[MAIN_BLURRED])
         }
 
     fun loadDrawerBlurredFlow(ctx: Context): Flow<Bitmap?> =
         ctx.wallpaperSettingsStore.data.map {
-            decodeBitmap(it[Keys.DRAWER_BLURRED])
+            decodeBitmap(it[DRAWER_BLURRED])
         }
 
 
@@ -211,74 +219,88 @@ object WallpaperSettingsStore : BaseSettingsStore() {
         }
     }
 
-    suspend fun getAll(ctx: Context): Map<String, Any> {
+    override suspend fun getAll(ctx: Context): Map<String, Any> {
         val prefs = ctx.wallpaperSettingsStore.data.first()
 
         return buildMap {
 
-            fun putIfNotDefault(
-                key: Preferences.Key<Boolean>,
-                default: Boolean
-            ) {
-                val v = prefs[key] ?: return
-                if (v != default) put(key.name, v)
-            }
+            putIfNonDefault(
+                USE_ON_MAIN,
+                prefs[USE_ON_MAIN],
+                defaults.useOnMain
+            )
 
-            fun putIfNotDefault(
-                key: Preferences.Key<Float>,
-                default: Float
-            ) {
-                val v = prefs[key] ?: return
-                if (v != default) put(key.name, v)
-            }
+            putIfNonDefault(
+                USE_ON_DRAWER,
+                prefs[USE_ON_DRAWER],
+                defaults.useOnDrawer
+            )
 
-            fun putIfNotDefault(
-                key: Preferences.Key<String>,
-                default: String?
-            ) {
-                val v = prefs[key] ?: return
-                if (v != default) put(key.name, v)
-            }
+            putIfNonDefault(
+                MAIN_BLUR_RADIUS,
+                prefs[MAIN_BLUR_RADIUS],
+                defaults.mainBlurRadius
+            )
 
-            putIfNotDefault(Keys.USE_ON_MAIN, defaults.useOnMain)
-            putIfNotDefault(Keys.USE_ON_DRAWER, defaults.useOnDrawer)
+            putIfNonDefault(
+                DRAWER_BLUR_RADIUS,
+                prefs[DRAWER_BLUR_RADIUS],
+                defaults.drawerBlurRadius
+            )
 
-            putIfNotDefault(Keys.MAIN_BLUR_RADIUS, defaults.mainBlurRadius)
-            putIfNotDefault(Keys.DRAWER_BLUR_RADIUS, defaults.drawerBlurRadius)
+            putIfNonDefault(
+                MAIN_ORIGINAL,
+                prefs[MAIN_ORIGINAL],
+                defaults.mainOriginal
+            )
 
-            putIfNotDefault(Keys.MAIN_ORIGINAL, defaults.mainOriginal)
-            putIfNotDefault(Keys.MAIN_BLURRED, defaults.mainBlurred)
-            putIfNotDefault(Keys.DRAWER_ORIGINAL, defaults.drawerOriginal)
-            putIfNotDefault(Keys.DRAWER_BLURRED, defaults.drawerBlurred)
+            putIfNonDefault(
+                MAIN_BLURRED,
+                prefs[MAIN_BLURRED],
+                defaults.mainBlurred
+            )
+
+            putIfNonDefault(
+                DRAWER_ORIGINAL,
+                prefs[DRAWER_ORIGINAL],
+                defaults.drawerOriginal
+            )
+
+            putIfNonDefault(
+                DRAWER_BLURRED,
+                prefs[DRAWER_BLURRED],
+                defaults.drawerBlurred
+            )
         }
     }
 
 
-    suspend fun setAll(ctx: Context, backup: Map<String, Any?>) {
+
+    override suspend fun setAll(ctx: Context, value: Map<String, Any?>) {
         ctx.wallpaperSettingsStore.edit { prefs ->
-            prefs[Keys.USE_ON_MAIN] =
-                getBooleanStrict(backup, Keys.USE_ON_MAIN, defaults.useOnMain)
+            prefs[USE_ON_MAIN] =
+                getBooleanStrict(value, USE_ON_MAIN, defaults.useOnMain)
 
-            prefs[Keys.USE_ON_DRAWER] =
-                getBooleanStrict(backup, Keys.USE_ON_DRAWER, defaults.useOnDrawer)
+            prefs[USE_ON_DRAWER] =
+                getBooleanStrict(value, USE_ON_DRAWER, defaults.useOnDrawer)
 
-            prefs[Keys.MAIN_BLUR_RADIUS] =
-                getFloatStrict(backup, Keys.MAIN_BLUR_RADIUS, defaults.mainBlurRadius)
+            prefs[MAIN_BLUR_RADIUS] =
+                getFloatStrict(value, MAIN_BLUR_RADIUS, defaults.mainBlurRadius)
 
-            prefs[Keys.DRAWER_BLUR_RADIUS] =
-                getFloatStrict(backup, Keys.DRAWER_BLUR_RADIUS, defaults.drawerBlurRadius)
+            prefs[DRAWER_BLUR_RADIUS] =
+                getFloatStrict(value, DRAWER_BLUR_RADIUS, defaults.drawerBlurRadius)
 
-            prefs[Keys.MAIN_ORIGINAL] =
-                getStringStrict(backup, Keys.MAIN_ORIGINAL, "")
+            prefs[MAIN_ORIGINAL] =
+                getStringStrict(value, MAIN_ORIGINAL, "")
 
-            prefs[Keys.MAIN_BLURRED] =
-                getStringStrict(backup, Keys.MAIN_BLURRED, "")
+            prefs[MAIN_BLURRED] =
+                getStringStrict(value, MAIN_BLURRED, "")
 
-            prefs[Keys.DRAWER_ORIGINAL] =
-                getStringStrict(backup, Keys.DRAWER_ORIGINAL, "")
+            prefs[DRAWER_ORIGINAL] =
+                getStringStrict(value, DRAWER_ORIGINAL, "")
 
-            prefs[Keys.DRAWER_BLURRED] =
-                getStringStrict(backup, Keys.DRAWER_BLURRED, "")
+            prefs[DRAWER_BLURRED] =
+                getStringStrict(value, DRAWER_BLURRED, "")
         }
     }
 }

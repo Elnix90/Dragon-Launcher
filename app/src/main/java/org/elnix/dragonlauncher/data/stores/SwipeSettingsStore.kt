@@ -10,8 +10,10 @@ import org.elnix.dragonlauncher.data.CircleNest
 import org.elnix.dragonlauncher.data.SwipeJson
 import org.elnix.dragonlauncher.data.SwipePointSerializable
 import org.elnix.dragonlauncher.data.swipeDataStore
+import org.json.JSONArray
+import org.json.JSONObject
 
-object SwipeSettingsStore : BaseSettingsStore() {
+object SwipeSettingsStore : BaseSettingsStore<JSONObject>() {
 
     override val name: String = "Swipe"
 
@@ -60,6 +62,35 @@ object SwipeSettingsStore : BaseSettingsStore() {
         ctx.swipeDataStore.edit { prefs ->
             prefs.remove(POINTS)
             prefs.remove(CIRCLE_NESTS)
+        }
+    }
+
+    override suspend fun getAll(ctx: Context): JSONObject {
+        val points = getPoints(ctx)
+        val nests = getNests(ctx)
+
+        if (points.isEmpty() && nests.isEmpty()) return JSONObject()
+
+        return JSONObject().apply {
+            if (points.isNotEmpty()) {
+                put("points", JSONArray(SwipeJson.encodePointsPretty(points)))
+            }
+            if (nests.isNotEmpty()) {
+                put("nests", JSONArray(SwipeJson.encodeNestsPretty(nests)))
+            }
+        }
+    }
+
+
+    override suspend fun setAll(ctx: Context, value: JSONObject) {
+        if (value.has("points") || value.has("nests")) {
+            value.optJSONArray("points")?.let {
+                savePoints(ctx, SwipeJson.decodePoints(it.toString()))
+            }
+            value.optJSONArray("nests")?.let {
+                saveNests(ctx, SwipeJson.decodeNests(it.toString()))
+            }
+            return
         }
     }
 }

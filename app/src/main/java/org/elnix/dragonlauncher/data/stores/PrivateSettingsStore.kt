@@ -6,12 +6,23 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import org.elnix.dragonlauncher.data.BaseSettingsStore
+import org.elnix.dragonlauncher.data.getBooleanStrict
+import org.elnix.dragonlauncher.data.getIntStrict
 import org.elnix.dragonlauncher.data.privateSettingsStore
+import org.elnix.dragonlauncher.data.putIfNonDefault
+import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore.Keys.ALL
+import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore.Keys.HAS_INITIALIZED
+import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore.Keys.HAS_SEEN_WELCOME
+import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore.Keys.LAST_SEEN_VERSION_CODE
+import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore.Keys.SHOW_METHOD_ASKING
+import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore.Keys.SHOW_SET_DEFAULT_LAUNCHER_BANNER
+import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore.Keys.USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT
 import org.elnix.dragonlauncher.data.uiDatastore
 
-object PrivateSettingsStore : BaseSettingsStore() {
+object PrivateSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
     override val name: String = "Private"
 
     // ---------------------------------------------------------
@@ -28,38 +39,38 @@ object PrivateSettingsStore : BaseSettingsStore() {
 
     private val defaults = PrivateSettingsBackup()
 
-    // ---------------------------------------------------------
-    // Keys object (authoritative)
-    // ---------------------------------------------------------
+
     private object Keys {
-        const val HAS_SEEN_WELCOME = "hasSeenWelcome"
-        const val HAS_INITIALIZED = "hasInitialized"
-        const val SHOW_SET_DEFAULT_LAUNCHER_BANNER = "showSetDefaultLauncherBanner"
-        const val USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT = "useAccessibilityInsteadOfContextToExpandActionPanel"
-        const val SHOW_METHOD_ASKING = "showMethodAsking"
-        const val LAST_SEEN_VERSION_CODE = "lastSeenVersionCode"
+
+        val HAS_SEEN_WELCOME =
+            booleanPreferencesKey("hasSeenWelcome")
+
+        val HAS_INITIALIZED =
+            booleanPreferencesKey("hasInitialized")
+
+        val SHOW_SET_DEFAULT_LAUNCHER_BANNER =
+            booleanPreferencesKey("showSetDefaultLauncherBanner")
+
+        val USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT =
+            booleanPreferencesKey("useAccessibilityInsteadOfContextToExpandActionPanel")
+
+        val SHOW_METHOD_ASKING =
+            booleanPreferencesKey("showMethodAsking")
+
+        val LAST_SEEN_VERSION_CODE =
+            intPreferencesKey("lastSeenVersionCode")
+
+        val ALL = listOf(
+            HAS_SEEN_WELCOME,
+            HAS_INITIALIZED,
+            SHOW_SET_DEFAULT_LAUNCHER_BANNER,
+            USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT,
+            SHOW_METHOD_ASKING,
+            LAST_SEEN_VERSION_CODE
+        )
     }
 
 
-    // ---------------------------------------------------------
-    // DataStore preference keys
-    // ---------------------------------------------------------
-    private val HAS_SEEN_WELCOME =
-        booleanPreferencesKey(Keys.HAS_SEEN_WELCOME)
-
-    private val HAS_INITIALIZED =
-        booleanPreferencesKey(Keys.HAS_INITIALIZED)
-
-    private val SHOW_SET_DEFAULT_LAUNCHER_BANNER =
-        booleanPreferencesKey(Keys.SHOW_SET_DEFAULT_LAUNCHER_BANNER)
-
-    private val USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT =
-        booleanPreferencesKey(Keys.USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT)
-
-    private val SHOW_METHOD_ASKING =
-        booleanPreferencesKey(Keys.SHOW_METHOD_ASKING)
-
-    private val  LAST_SEEN_VERSION_CODE = intPreferencesKey(Keys.LAST_SEEN_VERSION_CODE)
 
     // ---------------------------------------------------------
     // Accessors
@@ -116,17 +127,99 @@ object PrivateSettingsStore : BaseSettingsStore() {
         ctx.uiDatastore.edit { it[LAST_SEEN_VERSION_CODE] = value }
     }
 
-    // ---------------------------------------------------------
-    // Reset
-    // ---------------------------------------------------------
+
     override suspend fun resetAll(ctx: Context) {
         ctx.privateSettingsStore.edit { prefs ->
-            prefs.remove(HAS_SEEN_WELCOME)
-            prefs.remove(HAS_INITIALIZED)
-            prefs.remove(SHOW_SET_DEFAULT_LAUNCHER_BANNER)
-            prefs.remove(USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT)
-            prefs.remove(SHOW_METHOD_ASKING)
-            prefs.remove(LAST_SEEN_VERSION_CODE)
+            ALL.forEach { prefs.remove(it) }
+        }
+    }
+
+
+    override suspend fun getAll(ctx: Context): Map<String, Any> {
+        val prefs = ctx.privateSettingsStore.data.first()
+
+        return buildMap {
+            putIfNonDefault(
+                HAS_SEEN_WELCOME,
+                prefs[HAS_SEEN_WELCOME],
+                defaults.hasSeenWelcome
+            )
+            putIfNonDefault(
+                HAS_INITIALIZED,
+                prefs[HAS_INITIALIZED],
+                defaults.hasInitialized
+            )
+            putIfNonDefault(
+                SHOW_SET_DEFAULT_LAUNCHER_BANNER,
+                prefs[SHOW_SET_DEFAULT_LAUNCHER_BANNER],
+                defaults.showSetDefaultLauncherBanner
+            )
+            putIfNonDefault(
+                USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT,
+                prefs[USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT],
+                defaults.useAccessibilityInsteadOfContextToExpandActionPanel
+            )
+            putIfNonDefault(
+                SHOW_METHOD_ASKING,
+                prefs[SHOW_METHOD_ASKING],
+                defaults.showMethodAsking
+            )
+            putIfNonDefault(
+                LAST_SEEN_VERSION_CODE,
+                prefs[LAST_SEEN_VERSION_CODE],
+                defaults.lastSeenVersionCode
+            )
+        }
+    }
+
+    override suspend fun setAll(ctx: Context, value: Map<String, Any?>) {
+        ctx.privateSettingsStore.edit { prefs ->
+
+            value[HAS_SEEN_WELCOME.name]?.let {
+                prefs[HAS_SEEN_WELCOME] =
+                    getBooleanStrict(value, HAS_SEEN_WELCOME, defaults.hasSeenWelcome)
+            }
+
+            value[HAS_INITIALIZED.name]?.let {
+                prefs[HAS_INITIALIZED] =
+                    getBooleanStrict(value, HAS_INITIALIZED, defaults.hasInitialized)
+            }
+
+            value[SHOW_SET_DEFAULT_LAUNCHER_BANNER.name]?.let {
+                prefs[SHOW_SET_DEFAULT_LAUNCHER_BANNER] =
+                    getBooleanStrict(
+                        value,
+                        SHOW_SET_DEFAULT_LAUNCHER_BANNER,
+                        defaults.showSetDefaultLauncherBanner
+                    )
+            }
+
+            value[USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT.name]?.let {
+                prefs[USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT] =
+                    getBooleanStrict(
+                        value,
+                        USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT,
+                        defaults.useAccessibilityInsteadOfContextToExpandActionPanel
+                    )
+            }
+
+            value[SHOW_METHOD_ASKING.name]?.let {
+                prefs[SHOW_METHOD_ASKING] =
+                    getBooleanStrict(
+                        value,
+                        SHOW_METHOD_ASKING,
+                        defaults.showMethodAsking
+                    )
+            }
+
+            value[LAST_SEEN_VERSION_CODE.name]?.let {
+                prefs[LAST_SEEN_VERSION_CODE] =
+                    getIntStrict(
+                        value,
+                        LAST_SEEN_VERSION_CODE,
+                        defaults.lastSeenVersionCode
+                    )
+            }
         }
     }
 }

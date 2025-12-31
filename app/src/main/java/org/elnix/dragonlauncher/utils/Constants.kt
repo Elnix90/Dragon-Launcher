@@ -19,5 +19,7 @@ val imageExts = listOf("png", "jpg", "jpeg", "webp")
 
 
 const val TAG = "DragonLauncherDebug"
+const val BACKUP_TAG = "SettingsBackupManager"
+
 
 const val TAGSwipe = "SwipeDebug"

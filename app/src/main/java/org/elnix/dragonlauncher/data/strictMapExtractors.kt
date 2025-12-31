@@ -62,14 +62,52 @@ fun getStringStrict(
     }
 }
 
+fun getStringSetStrict(
+    raw: Map<String, Any?>,
+    key: Preferences.Key<Set<String>>,
+    def: Set<String>
+): Set<String> {
+    val v = raw[key.name] ?: return def
+    return when (v) {
+        is Set<*> -> v.filterIsInstance<String>().toSet()
+        is List<*> -> v.filterIsInstance<String>().toSet()
+        is String -> listOf(v).toSet()
+        else -> throw BackupTypeException(key.name, "String Set", v::class.simpleName, v)
+    }
+}
+
+inline fun <reified E : Enum<E>> getEnumStrict(
+    raw: Map<String, Any?>,
+    key: Preferences.Key<String>,
+    def: E
+): E {
+    val v = raw[key.name] ?: return def
+
+    if (v !is String) {
+        throw BackupTypeException(
+            key.name,
+            "String (Enum name)",
+            v::class.simpleName,
+            v
+        )
+    }
+
+    return enumValues<E>().firstOrNull { it.name == v }
+        ?: throw BackupTypeException(
+            key.name,
+            "one of ${enumValues<E>().joinToString { it.name }}",
+            "String",
+            v
+        )
+}
 
 
 fun MutableMap<String, Any>.putIfNonDefault(
     key: Preferences.Key<*>,
     value: Any?,
-    def: Any
+    def: Any?
 ) {
-    if (value != null && value != def) {
+    if (value != null /*&& value != def*/) {
         put(key.name, value.toString())
     }
 }

@@ -6,15 +6,19 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import org.elnix.dragonlauncher.data.BackupTypeException
 import org.elnix.dragonlauncher.data.BaseSettingsStore
 import org.elnix.dragonlauncher.data.ColorCustomisationMode
 import org.elnix.dragonlauncher.data.DefaultThemes
 import org.elnix.dragonlauncher.data.applyDefaultThemeColors
 import org.elnix.dragonlauncher.data.colorModeDatastore
+import org.elnix.dragonlauncher.data.getEnumStrict
 import org.elnix.dragonlauncher.data.helpers.ColorPickerMode
+import org.elnix.dragonlauncher.data.putIfNonDefault
+import org.elnix.dragonlauncher.data.stores.ColorModesSettingsStore.Keys.COLOR_CUSTOMISATION_MODE
+import org.elnix.dragonlauncher.data.stores.ColorModesSettingsStore.Keys.COLOR_PICKER_MODE
+import org.elnix.dragonlauncher.data.stores.ColorModesSettingsStore.Keys.DEFAULT_THEME
 
-object ColorModesSettingsStore : BaseSettingsStore() {
+object ColorModesSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
 
     override val name: String = "Color Modes"
 
@@ -33,14 +37,12 @@ object ColorModesSettingsStore : BaseSettingsStore() {
     // Keys (String names used for backup + preference keys)
     // -------------------------------------------------------------------------
     private object Keys {
-        const val COLOR_PICKER_MODE = "colorPickerMode"
-        const val COLOR_CUSTOMISATION_MODE = "colorCustomisationMode"
-        const val DEFAULT_THEME = "defaultTheme"
+        val COLOR_PICKER_MODE = stringPreferencesKey("colorPickerMode")
+        val COLOR_CUSTOMISATION_MODE = stringPreferencesKey("colorCustomisationMode")
+        val DEFAULT_THEME = stringPreferencesKey("defaultTheme")
     }
 
-    private val COLOR_PICKER_MODE = stringPreferencesKey(Keys.COLOR_PICKER_MODE)
-    private val COLOR_CUSTOMISATION_MODE = stringPreferencesKey(Keys.COLOR_CUSTOMISATION_MODE)
-    private val DEFAULT_THEME = stringPreferencesKey(Keys.DEFAULT_THEME)
+
 
     // -------------------------------------------------------------------------
     // Accessors + Mutators
@@ -89,81 +91,49 @@ object ColorModesSettingsStore : BaseSettingsStore() {
     // -------------------------------------------------------------------------
     // Backup export
     // -------------------------------------------------------------------------
-    suspend fun getAll(ctx: Context): Map<String, String> {
+    override suspend fun getAll(ctx: Context): Map<String, Any> {
         val prefs = ctx.colorModeDatastore.data.first()
 
         return buildMap {
-            fun putIfNonDefault(key: String, value: Any?, defaultVal: Any) {
-                if (value != null && value != defaultVal) {
-                    put(key, value.toString())
-                }
-            }
 
             putIfNonDefault(
-                Keys.COLOR_PICKER_MODE,
+                COLOR_PICKER_MODE,
                 prefs[COLOR_PICKER_MODE],
                 defaults.colorPickerMode.name
             )
 
             putIfNonDefault(
-                Keys.COLOR_CUSTOMISATION_MODE,
+                COLOR_CUSTOMISATION_MODE,
                 prefs[COLOR_CUSTOMISATION_MODE],
                 defaults.colorCustomisationMode.name
             )
 
             putIfNonDefault(
-                Keys.DEFAULT_THEME,
+                DEFAULT_THEME,
                 prefs[DEFAULT_THEME],
                 defaults.defaultTheme.name
             )
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Backup import (strict)
-    // -------------------------------------------------------------------------
-    suspend fun setAll(ctx: Context, raw: Map<String, Any?>) {
 
-        fun getEnumStrict(
-            key: String,
-            values: Array<out Enum<*>>,
-            defaultValue: Enum<*>
-        ): String {
-            val v = raw[key] ?: return defaultValue.name
-            if (v !is String) {
-                throw BackupTypeException(
-                    key, "String (Enum name)", v::class.simpleName, v
-                )
-            }
-            if (values.none { it.name == v }) {
-                throw BackupTypeException(
-                    key, "one of ${values.joinToString()}", v, v
-                )
-            }
-            return v
-        }
+    override suspend fun setAll(ctx: Context, value: Map<String, Any?>) {
 
         val backup = ColorModesSettingsBackup(
-            colorPickerMode = ColorPickerMode.valueOf(
-                getEnumStrict(
-                    Keys.COLOR_PICKER_MODE,
-                    ColorPickerMode.entries.toTypedArray(),
-                    defaults.colorPickerMode
-                )
+            colorPickerMode = getEnumStrict(
+                value,
+                COLOR_PICKER_MODE,
+                defaults.colorPickerMode
             ),
-            colorCustomisationMode = ColorCustomisationMode.valueOf(
-                getEnumStrict(
-                    Keys.COLOR_CUSTOMISATION_MODE,
-                    ColorCustomisationMode.entries.toTypedArray(),
-                    defaults.colorCustomisationMode
-                )
+            colorCustomisationMode = getEnumStrict(
+                value,
+                COLOR_CUSTOMISATION_MODE,
+                defaults.colorCustomisationMode
             ),
-            defaultTheme = DefaultThemes.valueOf(
-                getEnumStrict(
-                    Keys.DEFAULT_THEME,
-                    DefaultThemes.entries.toTypedArray(),
-                    defaults.defaultTheme
-                )
+            defaultTheme = getEnumStrict(
+                value,
+                DEFAULT_THEME,
+                defaults.defaultTheme
             )
         )
 

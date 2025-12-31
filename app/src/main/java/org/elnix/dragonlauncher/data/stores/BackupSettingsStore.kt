@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.data.stores
 
 import android.content.Context
 import android.net.Uri
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
@@ -13,8 +12,15 @@ import kotlinx.coroutines.flow.map
 import org.elnix.dragonlauncher.data.BaseSettingsStore
 import org.elnix.dragonlauncher.data.DataStoreName
 import org.elnix.dragonlauncher.data.backupDatastore
+import org.elnix.dragonlauncher.data.getBooleanStrict
+import org.elnix.dragonlauncher.data.getStringSetStrict
+import org.elnix.dragonlauncher.data.getStringStrict
+import org.elnix.dragonlauncher.data.putIfNonDefault
+import org.elnix.dragonlauncher.data.stores.BackupSettingsStore.Keys.AUTO_BACKUP_ENABLED
+import org.elnix.dragonlauncher.data.stores.BackupSettingsStore.Keys.AUTO_BACKUP_URI
+import org.elnix.dragonlauncher.data.stores.BackupSettingsStore.Keys.BACKUP_STORES
 
-object BackupSettingsStore : BaseSettingsStore() {
+object BackupSettingsStore : BaseSettingsStore<Map<String, Any>>() {
 
     override val name: String = "Backup"
 
@@ -27,7 +33,6 @@ object BackupSettingsStore : BaseSettingsStore() {
     // Cause at runtime, the app crashes due to early .entries initialization
     private val defaultBackupStores: Set<String>
         get() = DataStoreName.entries
-            .filter { it.backupKey != null }
             .map { it.value }
             .toSet()
 
@@ -49,29 +54,29 @@ object BackupSettingsStore : BaseSettingsStore() {
 
     fun getAutoBackupEnabled(ctx: Context) = ctx
         .backupDatastore.data
-        .map { it[Keys.AUTO_BACKUP_ENABLED] ?: defaults.autoBackupEnabled }
+        .map { it[AUTO_BACKUP_ENABLED] ?: defaults.autoBackupEnabled }
 
     suspend fun setAutoBackupEnabled(ctx: Context, enabled: Boolean) {
-        ctx.backupDatastore.edit { it[Keys.AUTO_BACKUP_ENABLED] = enabled }
+        ctx.backupDatastore.edit { it[AUTO_BACKUP_ENABLED] = enabled }
     }
 
     fun getAutoBackupUri(ctx: Context) = ctx
         .backupDatastore.data
-        .map { it[Keys.AUTO_BACKUP_URI]?.ifBlank { null } }
+        .map { it[AUTO_BACKUP_URI]?.ifBlank { null } }
 
     suspend fun setAutoBackupUri(ctx: Context, uri: Uri?) {
         ctx.backupDatastore.edit {
-            it[Keys.AUTO_BACKUP_URI] = uri?.toString() ?: ""
+            it[AUTO_BACKUP_URI] = uri?.toString() ?: ""
         }
     }
 
     fun getBackupStores(ctx: Context) = ctx
         .backupDatastore.data
-        .map { it[Keys.BACKUP_STORES] ?: defaultBackupStores }
+        .map { it[BACKUP_STORES] ?: defaultBackupStores }
 
     suspend fun setBackupStores(ctx: Context, stores: List<DataStoreName>) {
         ctx.backupDatastore.edit { prefs ->
-            prefs[Keys.BACKUP_STORES] = stores.map { it.value }.toSet()
+            prefs[BACKUP_STORES] = stores.map { it.value }.toSet()
         }
     }
 
@@ -89,66 +94,42 @@ object BackupSettingsStore : BaseSettingsStore() {
         }
     }
 
-    suspend fun getAll(ctx: Context): Map<String, Any> {
+    override suspend fun getAll(ctx: Context): Map<String, Any> {
         val prefs = ctx.backupDatastore.data.first()
 
         return buildMap {
-            fun putIfChanged(key: Preferences.Key<Boolean>, default: Boolean) {
-                val v = prefs[key]
-                if (v != null && v != default) put(key.name, v)
-            }
 
-            fun putIfChanged(key: Preferences.Key<String>, default: String?) {
-                val v = prefs[key]
-                if (v != null && v != default) put(key.name, v)
-            }
+            putIfNonDefault(
+                AUTO_BACKUP_ENABLED,
+                prefs[AUTO_BACKUP_ENABLED],
+                defaults.autoBackupEnabled
+            )
 
-            fun putIfChanged(key: Preferences.Key<Set<String>>, default: Set<String>) {
-                val v = prefs[key]
-                if (v != null && v != default) put(key.name, v)
-            }
+            putIfNonDefault(
+                AUTO_BACKUP_URI,
+                prefs[AUTO_BACKUP_URI],
+                null
+            )
 
-            putIfChanged(Keys.AUTO_BACKUP_ENABLED, defaults.autoBackupEnabled)
-            putIfChanged(Keys.AUTO_BACKUP_URI, null)
-            putIfChanged(Keys.BACKUP_STORES, defaultBackupStores)
+            putIfNonDefault(
+                BACKUP_STORES,
+                prefs[BACKUP_STORES],
+                defaultBackupStores
+            )
         }
     }
 
-    suspend fun setAll(ctx: Context, backup: Map<String, Any?>) {
+    override suspend fun setAll(ctx: Context, value: Map<String, Any>) {
         ctx.backupDatastore.edit { prefs ->
-            fun applyString(key: Preferences.Key<String>) {
-                val raw = backup[key.name] ?: return
-                val stringValue = when (raw) {
-                    is String -> raw
-                    else -> raw.toString()
-                }
-                prefs[key] = stringValue
-            }
 
-            fun applyBoolean(key: Preferences.Key<Boolean>) {
-                val raw = backup[key.name] ?: return
-                val boolValue = when (raw) {
-                    is Boolean -> raw
-                    is String -> raw.toBooleanStrictOrNull() ?: return
-                    else -> return
-                }
-                prefs[key] = boolValue
-            }
+            prefs[AUTO_BACKUP_ENABLED] =
+                getBooleanStrict(value, AUTO_BACKUP_ENABLED, defaults.autoBackupEnabled)
 
-            fun applyStringSet(key: Preferences.Key<Set<String>>) {
-                val raw = backup[key.name] ?: return
-                val setValue = when (raw) {
-                    is Set<*> -> raw.filterIsInstance<String>().toSet()
-                    is List<*> -> raw.filterIsInstance<String>().toSet()
-                    is String -> listOf(raw).toSet()
-                    else -> return
-                }
-                prefs[key] = setValue
-            }
+            prefs[AUTO_BACKUP_URI] =
+                getStringStrict(value, AUTO_BACKUP_URI, "")
 
-            applyBoolean(Keys.AUTO_BACKUP_ENABLED)
-            applyString(Keys.AUTO_BACKUP_URI)
-            applyStringSet(Keys.BACKUP_STORES)
+            prefs[BACKUP_STORES] =
+                getStringSetStrict(value, BACKUP_STORES, defaultBackupStores)
         }
     }
 }

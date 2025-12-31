@@ -16,18 +16,24 @@ import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore
 import org.elnix.dragonlauncher.data.stores.WallpaperSettingsStore
 import org.elnix.dragonlauncher.data.stores.WorkspaceSettingsStore
+import org.json.JSONObject
 
-enum class DataStoreName(val value: String, val backupKey: String?, val store: BaseSettingsStore) {
+enum class DataStoreName(
+    val value: String,
+    val backupKey: String,
+    val store: BaseSettingsStore<*>,
+    val userBackup: Boolean = true
+) {
     UI("uiDatastore", "ui", UiSettingsStore),
     COLOR_MODE("colorModeDatastore", "color_mode", ColorModesSettingsStore),
     COLOR("colorDatastore", "color", ColorSettingsStore),
-    PRIVATE_SETTINGS("privateSettingsStore", null, PrivateSettingsStore),
+    PRIVATE_SETTINGS("privateSettingsStore", "private", PrivateSettingsStore, false),
     SWIPE("swipePointsDatastore", "new_actions", SwipeSettingsStore),
     LANGUAGE("languageDatastore", "language", LanguageSettingsStore),
     DRAWER("drawerDatastore", "drawer", DrawerSettingsStore),
     DEBUG("debugDatastore", "debug", DebugSettingsStore),
     WORKSPACES("workspacesDataStore", "workspaces", WorkspaceSettingsStore),
-    APPS("appsDatastore",null, AppsSettingsStore),
+    APPS("appsDatastore","apps", AppsSettingsStore),
     BEHAVIOR("behaviorDatastore", "behavior", BehaviorSettingsStore),
     BACKUP("backupDatastore", "backup", BackupSettingsStore),
     WALLPAPER("wallpaperDatastore", "wallpaper", WallpaperSettingsStore),
@@ -35,7 +41,7 @@ enum class DataStoreName(val value: String, val backupKey: String?, val store: B
 }
 
 val allStores = DataStoreName.entries
-val backupableStores = allStores.filter { it.backupKey != null }
+val backupableStores = allStores.filter { it.userBackup }
 
 val Context.uiDatastore by preferencesDataStore(name = DataStoreName.UI.value)
 val Context.colorModeDatastore by preferencesDataStore(name = DataStoreName.COLOR_MODE.value)

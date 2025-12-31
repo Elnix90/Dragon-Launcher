@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.first
 import org.elnix.dragonlauncher.data.BaseSettingsStore
 import org.elnix.dragonlauncher.data.languageDatastore
 
-object LanguageSettingsStore : BaseSettingsStore() {
+object LanguageSettingsStore : BaseSettingsStore<Map<String, String>>() {
     override val name: String = "Language"
 
     private val KEY_LANG = stringPreferencesKey("pref_app_language")
@@ -27,16 +27,16 @@ object LanguageSettingsStore : BaseSettingsStore() {
         }
     }
 
-    suspend fun getAll(ctx: Context): Map<String, String> {
+    override suspend fun getAll(ctx: Context): Map<String, String> {
         val prefs = ctx.languageDatastore.data.first()
         return buildMap {
             prefs[KEY_LANG]?.let { put(KEY_LANG.name, it) }
         }
     }
 
-    suspend fun setAll(ctx: Context, data: Map<String, String>) {
+    override suspend fun setAll(ctx: Context, value: Map<String, String>) {
         ctx.languageDatastore.edit { prefs ->
-            data[KEY_LANG.name]?.let { prefs[KEY_LANG] = it }
+            value[KEY_LANG.name]?.let { prefs[KEY_LANG] = it }
         }
     }
 }

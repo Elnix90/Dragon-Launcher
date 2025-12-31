@@ -50,6 +50,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.R
 import org.elnix.dragonlauncher.data.DataStoreName
+import org.elnix.dragonlauncher.data.backupableStores
 import org.elnix.dragonlauncher.data.stores.BackupSettingsStore
 import org.elnix.dragonlauncher.ui.components.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.helpers.GradientBigButton
@@ -78,7 +79,6 @@ fun BackupTab(
     val lastBackupTime by BackupSettingsStore.getLastBackupTime(ctx).collectAsState(initial = 0L)
 
     val backupStores by BackupSettingsStore.getBackupStores(ctx).collectAsState(initial = emptySet())
-    val availableStores = DataStoreName.entries.filter { it.backupKey != null }
 
     val result by backupViewModel.result.collectAsState()
 
@@ -415,7 +415,7 @@ fun BackupTab(
 
             item {
                 Column{
-                    availableStores.forEach { store ->
+                    backupableStores.forEach { store ->
                         val isSelected = backupStores.contains(store.value)
 
                         Row(
@@ -431,7 +431,7 @@ fun BackupTab(
                                         }
                                         BackupSettingsStore.setBackupStores(
                                             ctx,
-                                            availableStores.filter { updated.contains(it.value) })
+                                            backupableStores.filter { updated.contains(it.value) })
                                     }
                                 }
                                 .padding(12.dp),

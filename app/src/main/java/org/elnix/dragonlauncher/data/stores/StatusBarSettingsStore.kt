@@ -29,7 +29,7 @@ import org.elnix.dragonlauncher.data.stores.StatusBarSettingsStore.Keys.SHOW_TIM
 import org.elnix.dragonlauncher.data.stores.StatusBarSettingsStore.Keys.TIME_FORMATTER
 import org.elnix.dragonlauncher.ui.theme.AmoledDefault
 
-object StatusBarSettingsStore : BaseSettingsStore() {
+object StatusBarSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
 
     override val name: String = "Status Bar"
 
@@ -200,7 +200,9 @@ object StatusBarSettingsStore : BaseSettingsStore() {
             Keys.ALL.forEach { prefs.remove(it) }
         }
     }
-    suspend fun getAll(ctx: Context): Map<String, Any> {
+
+
+    override suspend fun getAll(ctx: Context): Map<String, Any> {
         val prefs = ctx.statusBarDatastore.data.first()
 
         return buildMap {
@@ -220,46 +222,46 @@ object StatusBarSettingsStore : BaseSettingsStore() {
         }
     }
 
-    suspend fun setAll(ctx: Context, backup: Map<String, Any?>) {
+    override suspend fun setAll(ctx: Context, value: Map<String, Any?>) {
         ctx.statusBarDatastore.edit { prefs ->
             prefs[SHOW_STATUS_BAR] =
-                getBooleanStrict(backup, SHOW_STATUS_BAR, defaults.showStatusBar)
+                getBooleanStrict(value, SHOW_STATUS_BAR, defaults.showStatusBar)
 
             prefs[BAR_BACKGROUND_COLOR] =
-                getIntStrict(backup, BAR_BACKGROUND_COLOR, defaults.barBackgroundColor)
+                getIntStrict(value, BAR_BACKGROUND_COLOR, defaults.barBackgroundColor)
 
             prefs[BAR_TEXT_COLOR] =
-                getIntStrict(backup, BAR_TEXT_COLOR, defaults.barTextColor)
+                getIntStrict(value, BAR_TEXT_COLOR, defaults.barTextColor)
 
             prefs[SHOW_TIME] =
-                getBooleanStrict(backup, SHOW_TIME, defaults.showTime)
+                getBooleanStrict(value, SHOW_TIME, defaults.showTime)
 
             prefs[SHOW_DATE] =
-                getBooleanStrict(backup, SHOW_DATE, defaults.showDate)
+                getBooleanStrict(value, SHOW_DATE, defaults.showDate)
 
             prefs[TIME_FORMATTER] =
-                getStringStrict(backup, TIME_FORMATTER, defaults.timeFormatter)
+                getStringStrict(value, TIME_FORMATTER, defaults.timeFormatter)
 
             prefs[DATE_FORMATTER] =
-                getStringStrict(backup, DATE_FORMATTER, defaults.dateFormatter)
+                getStringStrict(value, DATE_FORMATTER, defaults.dateFormatter)
 
             prefs[SHOW_NOTIFICATIONS] =
-                getBooleanStrict(backup, SHOW_NOTIFICATIONS, defaults.showNotifications)
+                getBooleanStrict(value, SHOW_NOTIFICATIONS, defaults.showNotifications)
 
             prefs[SHOW_BATTERY] =
-                getBooleanStrict(backup, SHOW_BATTERY, defaults.showBattery)
+                getBooleanStrict(value, SHOW_BATTERY, defaults.showBattery)
 
             prefs[SHOW_CONNECTIVITY] =
-                getBooleanStrict(backup, SHOW_CONNECTIVITY, defaults.showConnectivity)
+                getBooleanStrict(value, SHOW_CONNECTIVITY, defaults.showConnectivity)
 
             prefs[SHOW_NEXT_ALARM] =
-                getBooleanStrict(backup, SHOW_NEXT_ALARM, defaults.showNextAlarm)
+                getBooleanStrict(value, SHOW_NEXT_ALARM, defaults.showNextAlarm)
 
             prefs[Keys.LEFT_PADDING] =
-                getIntStrict(backup, Keys.LEFT_PADDING, defaults.leftPadding)
+                getIntStrict(value, Keys.LEFT_PADDING, defaults.leftPadding)
 
             prefs[Keys.RIGHT_PADDING] =
-                getIntStrict(backup, Keys.RIGHT_PADDING, defaults.rightPadding)
+                getIntStrict(value, Keys.RIGHT_PADDING, defaults.rightPadding)
         }
     }
 }

@@ -34,7 +34,7 @@ import org.elnix.dragonlauncher.data.stores.UiSettingsStore.Keys.SHOW_LINE_PREVI
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore.Keys.SNAP_POINTS
 import org.elnix.dragonlauncher.data.uiDatastore
 
-object UiSettingsStore : BaseSettingsStore() {
+object UiSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
     override val name: String = "Ui"
 
     private data class UiSettingsBackup(
@@ -206,10 +206,10 @@ object UiSettingsStore : BaseSettingsStore() {
     }
 
     fun getShowActionIconBorder(ctx: Context): Flow<Boolean> =
-        ctx.uiDatastore.data.map { it[Keys.SHOW_ACTION_ICON_BORDER] ?: defaults.showActionIconBorder }
+        ctx.uiDatastore.data.map { it[SHOW_ACTION_ICON_BORDER] ?: defaults.showActionIconBorder }
 
     suspend fun setShowActionIconBorder(ctx: Context, value: Boolean) {
-        ctx.uiDatastore.edit { it[Keys.SHOW_ACTION_ICON_BORDER] = value }
+        ctx.uiDatastore.edit { it[SHOW_ACTION_ICON_BORDER] = value }
     }
 
     suspend fun getIconPack(ctx: Context): String? {
@@ -239,7 +239,7 @@ object UiSettingsStore : BaseSettingsStore() {
         }
     }
 
-    suspend fun getAll(ctx: Context): Map<String, Any> {
+    override suspend fun getAll(ctx: Context): Map<String, Any> {
         val prefs = ctx.uiDatastore.data.first()
 
         return buildMap {
@@ -349,77 +349,77 @@ object UiSettingsStore : BaseSettingsStore() {
 
 
 
-    suspend fun setAll(ctx: Context, backup: Map<String, Any?>) {
+    override suspend fun setAll(ctx: Context, value: Map<String, Any?>) {
         ctx.uiDatastore.edit { prefs ->
 
             prefs[RGB_LOADING] =
-                getBooleanStrict(backup, RGB_LOADING, defaults.rgbLoading)
+                getBooleanStrict(value, RGB_LOADING, defaults.rgbLoading)
 
             prefs[RGB_LINE] =
-                getBooleanStrict(backup, RGB_LINE, defaults.rgbLine)
+                getBooleanStrict(value, RGB_LINE, defaults.rgbLine)
 
             prefs[SHOW_LAUNCHING_APP_LABEL] =
-                getBooleanStrict(backup, SHOW_LAUNCHING_APP_LABEL, defaults.showLaunchingAppLabel)
+                getBooleanStrict(value, SHOW_LAUNCHING_APP_LABEL, defaults.showLaunchingAppLabel)
 
             prefs[SHOW_LAUNCHING_APP_ICON] =
-                getBooleanStrict(backup, SHOW_LAUNCHING_APP_ICON, defaults.showLaunchingAppIcon)
+                getBooleanStrict(value, SHOW_LAUNCHING_APP_ICON, defaults.showLaunchingAppIcon)
 
             prefs[SHOW_APP_LAUNCH_PREVIEW] =
-                getBooleanStrict(backup, SHOW_APP_LAUNCH_PREVIEW, defaults.showAppLaunchPreview)
+                getBooleanStrict(value, SHOW_APP_LAUNCH_PREVIEW, defaults.showAppLaunchPreview)
 
             prefs[FULLSCREEN] =
-                getBooleanStrict(backup, FULLSCREEN, defaults.fullscreen)
+                getBooleanStrict(value, FULLSCREEN, defaults.fullscreen)
 
             prefs[SHOW_CIRCLE_PREVIEW] =
-                getBooleanStrict(backup, SHOW_CIRCLE_PREVIEW, defaults.showCirclePreview)
+                getBooleanStrict(value, SHOW_CIRCLE_PREVIEW, defaults.showCirclePreview)
 
             prefs[SHOW_LINE_PREVIEW] =
-                getBooleanStrict(backup, SHOW_LINE_PREVIEW, defaults.showLinePreview)
+                getBooleanStrict(value, SHOW_LINE_PREVIEW, defaults.showLinePreview)
 
             prefs[SHOW_ANGLE_PREVIEW] =
-                getBooleanStrict(backup, SHOW_ANGLE_PREVIEW, defaults.showAnglePreview)
+                getBooleanStrict(value, SHOW_ANGLE_PREVIEW, defaults.showAnglePreview)
 
             prefs[SNAP_POINTS] =
-                getBooleanStrict(backup, SNAP_POINTS, defaults.snapPoints)
+                getBooleanStrict(value, SNAP_POINTS, defaults.snapPoints)
 
             prefs[AUTO_SEPARATE_POINTS] =
-                getBooleanStrict(backup, AUTO_SEPARATE_POINTS, defaults.autoSeparatePoints)
+                getBooleanStrict(value, AUTO_SEPARATE_POINTS, defaults.autoSeparatePoints)
 
             prefs[SHOW_APP_PREVIEW_ICON_CENTER_START_POSITION] =
                 getBooleanStrict(
-                    backup,
+                    value,
                     SHOW_APP_PREVIEW_ICON_CENTER_START_POSITION,
                     defaults.showAppPreviewIconCenterStartPosition
                 )
 
             prefs[SHOW_ACTION_ICON_BORDER] =
                 getBooleanStrict(
-                    backup,
+                    value,
                     SHOW_ACTION_ICON_BORDER,
                     defaults.showActionIconBorder
                 )
 
             prefs[LINE_PREVIEW_SNAP_TO_ACTION] =
                 getBooleanStrict(
-                    backup,
+                    value,
                     LINE_PREVIEW_SNAP_TO_ACTION,
                     defaults.linePreviewSnapToAction
                 )
 
             prefs[SHOW_ALL_ACTIONS_ON_CURRENT_CIRCLE] =
                 getBooleanStrict(
-                    backup,
+                    value,
                     SHOW_ALL_ACTIONS_ON_CURRENT_CIRCLE,
                     defaults.showAllActionsOnCurrentCircle
                 )
 
             prefs[ICON_PACK_KEY] =
-                getStringStrict(backup, ICON_PACK_KEY, "")
+                getStringStrict(value, ICON_PACK_KEY, "")
 
 
             prefs[MIN_ANGLE_FROM_A_POINT_TO_ACTIVATE_IT] =
                 getIntStrict(
-                    backup,
+                    value,
                     MIN_ANGLE_FROM_A_POINT_TO_ACTIVATE_IT,
                     defaults.minAngleFromAPointToActivateIt
                 )
