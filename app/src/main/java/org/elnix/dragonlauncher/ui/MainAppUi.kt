@@ -44,6 +44,7 @@ import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.data.stores.WallpaperSettingsStore
 import org.elnix.dragonlauncher.ui.components.dialogs.UserValidation
+import org.elnix.dragonlauncher.ui.components.dialogs.WidgetPickerDialog
 import org.elnix.dragonlauncher.ui.drawer.AppDrawerScreen
 import org.elnix.dragonlauncher.ui.helpers.ReselectAutoBackupBanner
 import org.elnix.dragonlauncher.ui.helpers.SetDefaultLauncherBanner
@@ -56,6 +57,7 @@ import org.elnix.dragonlauncher.ui.settings.customization.IconPackTab
 import org.elnix.dragonlauncher.ui.settings.customization.StatusBarTab
 import org.elnix.dragonlauncher.ui.settings.customization.ThemesTab
 import org.elnix.dragonlauncher.ui.settings.customization.WallpaperTab
+import org.elnix.dragonlauncher.ui.settings.customization.WidgetsTab
 import org.elnix.dragonlauncher.ui.settings.debug.DebugTab
 import org.elnix.dragonlauncher.ui.settings.language.LanguageTab
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceDetailScreen
@@ -69,6 +71,7 @@ import org.elnix.dragonlauncher.utils.isDefaultLauncher
 import org.elnix.dragonlauncher.utils.loadChangelogs
 import org.elnix.dragonlauncher.utils.models.AppsViewModel
 import org.elnix.dragonlauncher.utils.models.BackupViewModel
+import org.elnix.dragonlauncher.utils.models.WidgetsViewModel
 import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 
 // -------------------- SETTINGS --------------------
@@ -81,6 +84,7 @@ object SETTINGS {
     const val ICON_PACK = "settings/advanced/appearance/icon_pack"
     const val STATUS_BAR = "settings/advanced/appearance/status_bar"
     const val THEME = "settings/advanced/appearance/theme"
+    const val WIDGETS = "settings/advanced/appearance/widgets"
     const val BEHAVIOR = "settings/advanced/behavior"
     const val COLORS = "settings/advanced/appearance/colors"
     const val DRAWER = "settings/advanced/drawer"
@@ -104,7 +108,9 @@ fun MainAppUi(
     backupViewModel: BackupViewModel,
     appsViewModel: AppsViewModel,
     workspaceViewModel: WorkspaceViewModel,
-    navController: NavHostController
+    widgetsViewModel: WidgetsViewModel,
+    navController: NavHostController,
+    onLaunchSystemWidgetPicker: () -> Unit
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -117,6 +123,8 @@ fun MainAppUi(
 
     val currentVersionCode = getVersionCode(ctx)
     var showWhatsNewBottomSheet by remember { mutableStateOf(false) }
+
+    var showWidgetPicker by remember { mutableStateOf(false) }
 
     val updates by produceState(initialValue = emptyList()) {
         value = loadChangelogs(ctx, versionCode)
@@ -212,6 +220,10 @@ fun MainAppUi(
 
 
 
+    fun launchWidgetsPicker(system: Boolean = true) {
+        if (system) onLaunchSystemWidgetPicker()
+        else showWidgetPicker = true
+    }
 
 
     val showSetAsDefaultBanner = showSetDefaultLauncherBanner &&
@@ -287,7 +299,8 @@ fun MainAppUi(
                     useWallpaper = useMainWallpaper,
                     onAppDrawer = { goDrawer() },
                     onGoWelcome = { goWelcome() },
-                    onLongPress3Sec = { goSettingsRoot() }
+                    onLongPress3Sec = { goSettingsRoot() },
+                    widgetsViewModel = widgetsViewModel
                 )
             }
 
@@ -335,6 +348,7 @@ fun MainAppUi(
             composable(SETTINGS.ICON_PACK)  { IconPackTab(appsViewModel) { goAppearance() } }
             composable(SETTINGS.STATUS_BAR) { StatusBarTab { goAppearance() } }
             composable(SETTINGS.THEME)      { ThemesTab { goAppearance() } }
+            composable(SETTINGS.WIDGETS)    { WidgetsTab(widgetsViewModel, { goAppearance() } ) { launchWidgetsPicker() } }
             composable(SETTINGS.BEHAVIOR)   { BehaviorTab(appsViewModel, workspaceViewModel) { goAdvSettingsRoot() } }
             composable(SETTINGS.DRAWER)     { DrawerTab(appsViewModel) { goAdvSettingsRoot() } }
             composable(SETTINGS.COLORS)     { ColorSelectorTab { goAppearance() } }
@@ -381,8 +395,12 @@ fun MainAppUi(
         }
     }
 
+    if (showWidgetPicker) {
+        WidgetPickerDialog(widgetsViewModel) { showWidgetPicker = false }
+    }
+
     // ------------------------------------------------------------
-    // RESULT DIALOG
+    // RESULT DIALOG ( IMPORT / EXPORT )
     // ------------------------------------------------------------
     result?.let { res ->
         val isError = res.error

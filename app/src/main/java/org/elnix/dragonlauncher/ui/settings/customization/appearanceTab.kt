@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.SignalCellular4Bar
 import androidx.compose.material.icons.filled.Style
 import androidx.compose.material.icons.filled.Wallpaper
+import androidx.compose.material.icons.filled.Widgets
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -121,6 +122,13 @@ fun AppearanceTab(
                 title = stringResource(R.string.theme_selector),
                 icon = Icons.Default.Style
             ) { navController.navigate(SETTINGS.THEME) }
+        }
+
+        item {
+            SettingsItem(
+                title = stringResource(R.string.widgets),
+                icon = Icons.Default.Widgets
+            ) { navController.navigate(SETTINGS.WIDGETS) }
         }
 
         item { TextDivider(stringResource(R.string.app_display)) }

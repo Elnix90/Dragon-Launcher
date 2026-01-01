@@ -1,0 +1,4 @@
+<!-- res/values/ids.xml -->
+<resources>
+    <item name="appwidget_host_id" type="id" />
+</resources>

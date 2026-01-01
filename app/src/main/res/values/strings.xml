@@ -230,4 +230,12 @@
     <string name="lock">Lock</string>
     <string name="reload_apps">Reload Apps</string>
     <string name="auto_separate">Auto Separate</string>
+    <string name="add_widget">Add Widget</string>
+    <string name="widgets">Widgets</string>
+    <string name="widgets_tab_help">Manage your workspace widgets: add, reorder, resize, and position them.</string>
+    <string name="widgets_tab_intro">Click a widget to select it, then drag to move or use the buttons to reorder. Selected widgets show a border and respond to gestures.</string>
+    <string name="widgets_list">Widget List</string>
+    <string name="widgets_empty">No widgets added yet. Tap + to add one!</string>
+    <string name="move_widget_up">Move Up</string>
+    <string name="move_widget_down">Move Down</string>
 </resources>

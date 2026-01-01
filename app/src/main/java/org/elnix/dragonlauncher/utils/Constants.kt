@@ -8,7 +8,8 @@ const val obtainiumPackageName = "dev.imranr.obtainium.fdroid"
 /** List of routes that the routes killer ignores when the user leave the app for too long, usually files pickers */
 val ignoredReturnRoutes = listOf(
     SETTINGS.BACKUP,
-    SETTINGS.WALLPAPER
+    SETTINGS.WALLPAPER,
+    SETTINGS.WIDGETS
 )
 
 
@@ -23,3 +24,4 @@ const val BACKUP_TAG = "SettingsBackupManager"
 
 
 const val TAGSwipe = "SwipeDebug"
+const val WIDGET_TAG = "WidgetsDebug"

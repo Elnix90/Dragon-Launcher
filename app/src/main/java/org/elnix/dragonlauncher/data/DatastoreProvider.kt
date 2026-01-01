@@ -15,8 +15,8 @@ import org.elnix.dragonlauncher.data.stores.StatusBarSettingsStore
 import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore
 import org.elnix.dragonlauncher.data.stores.WallpaperSettingsStore
+import org.elnix.dragonlauncher.data.stores.WidgetSettingsStore
 import org.elnix.dragonlauncher.data.stores.WorkspaceSettingsStore
-import org.json.JSONObject
 
 enum class DataStoreName(
     val value: String,
@@ -37,7 +37,8 @@ enum class DataStoreName(
     BEHAVIOR("behaviorDatastore", "behavior", BehaviorSettingsStore),
     BACKUP("backupDatastore", "backup", BackupSettingsStore),
     WALLPAPER("wallpaperDatastore", "wallpaper", WallpaperSettingsStore),
-    STATUS_BAR("statusDatastore", "status_bar", StatusBarSettingsStore)
+    STATUS_BAR("statusDatastore", "status_bar", StatusBarSettingsStore),
+    WIDGETS("widgetsDatastore", "widgets", WidgetSettingsStore)
 }
 
 val allStores = DataStoreName.entries
@@ -57,3 +58,4 @@ val Context.behaviorDataStore by preferencesDataStore(name = DataStoreName.BEHAV
 val Context.backupDatastore by preferencesDataStore(name = DataStoreName.BACKUP.value)
 val Context.wallpaperSettingsStore by preferencesDataStore(name = DataStoreName.WALLPAPER.value)
 val Context.statusBarDatastore by preferencesDataStore(name = DataStoreName.STATUS_BAR.value)
+val Context.widgetsDatastore by preferencesDataStore(name = DataStoreName.WIDGETS.value)

@@ -1,6 +1,8 @@
 package org.elnix.dragonlauncher.ui
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,6 +12,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -30,6 +34,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -40,19 +45,24 @@ import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.data.stores.StatusBarSettingsStore
 import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore
+import org.elnix.dragonlauncher.ui.components.WidgetHostView
 import org.elnix.dragonlauncher.ui.components.dialogs.FilePickerDialog
 import org.elnix.dragonlauncher.ui.components.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
 import org.elnix.dragonlauncher.ui.helpers.rememberHoldToOpenSettings
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
+import org.elnix.dragonlauncher.utils.WIDGET_TAG
 import org.elnix.dragonlauncher.utils.actions.launchSwipeAction
 import org.elnix.dragonlauncher.utils.circles.rememberNestNavigation
 import org.elnix.dragonlauncher.utils.models.AppsViewModel
+import org.elnix.dragonlauncher.utils.models.WidgetsViewModel
 
+@SuppressLint("LocalContextResourcesRead")
 @Suppress("AssignedValueIsNeverRead")
 @Composable
 fun MainScreen(
     appsViewModel: AppsViewModel,
+    widgetsViewModel: WidgetsViewModel,
     wallpaper: Bitmap?,
     useWallpaper: Boolean,
     onAppDrawer: () -> Unit,
@@ -66,6 +76,11 @@ fun MainScreen(
     var showMethodDialog by remember { mutableStateOf(false) }
     var lastClickTime by remember { mutableLongStateOf(0L) }
 
+    val widgets by widgetsViewModel.widgets.collectAsState()
+
+    LaunchedEffect(widgets) {
+        Log.e(WIDGET_TAG, widgets.toString())
+    }
 
 //    val showMethodAsking by PrivateSettingsStore.getShowMethodAsking(ctx)
 //        .collectAsState(initial = false)
@@ -173,6 +188,9 @@ fun MainScreen(
 
     val nestNavigation = rememberNestNavigation(nests)
     val nestId = nestNavigation.nestId
+
+
+    val dm = ctx.resources.displayMetrics
 
 
     fun launchAction(point: SwipePointSerializable?) {
@@ -308,6 +326,23 @@ fun MainScreen(
             .onSizeChanged { size = it }
             .then(hold.pointerModifier)
     ) {
+
+        widgets.forEach { widget ->
+            WidgetHostView(
+                widgetInfo = widget,
+                modifier = Modifier
+                    .offset {
+                        IntOffset(
+                            x = (widget.x * dm.widthPixels).toInt(),
+                            y = (widget.y * dm.heightPixels).toInt()
+                        )
+                    }
+                    .size(
+                        width = (widget.spanX * 100).dp,
+                        height = (widget.spanY * 100).dp
+                    )
+            )
+        }
 
         if (showStatusBar && isRealFullscreen) {
             StatusBar(
