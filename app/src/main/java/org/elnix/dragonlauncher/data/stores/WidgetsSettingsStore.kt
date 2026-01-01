@@ -24,7 +24,7 @@ object WidgetSettingsStore : BaseSettingsStore<JSONObject>() {
     suspend fun loadWidgets(ctx: Context): List<WidgetInfo> {
         return try {
             val allJson = getAll(ctx)
-            Log.d(WIDGET_TAG, "Raw: ${allJson.toString()}")
+            Log.d(WIDGET_TAG, "Raw: $allJson")
             val widgetsArray = allJson.optJSONArray("widgets") ?: return emptyList()
 
             val widgets = mutableListOf<WidgetInfo>()
@@ -78,7 +78,7 @@ object WidgetSettingsStore : BaseSettingsStore<JSONObject>() {
             put("widgets", widgetsArray)
         }
 
-        Log.d(WIDGET_TAG, "Saved: ${json.toString()}")
+        Log.d(WIDGET_TAG, "Saved: $json")
         setAll(ctx, json)
     }
 

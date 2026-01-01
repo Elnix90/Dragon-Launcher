@@ -33,12 +33,12 @@ enum class DataStoreName(
     DRAWER("drawerDatastore", "drawer", DrawerSettingsStore),
     DEBUG("debugDatastore", "debug", DebugSettingsStore),
     WORKSPACES("workspacesDataStore", "workspaces", WorkspaceSettingsStore),
-    APPS("appsDatastore","apps", AppsSettingsStore),
+    APPS("appsDatastore","apps", AppsSettingsStore, false),
     BEHAVIOR("behaviorDatastore", "behavior", BehaviorSettingsStore),
     BACKUP("backupDatastore", "backup", BackupSettingsStore),
     WALLPAPER("wallpaperDatastore", "wallpaper", WallpaperSettingsStore),
     STATUS_BAR("statusDatastore", "status_bar", StatusBarSettingsStore),
-    WIDGETS("widgetsDatastore", "widgets", WidgetSettingsStore)
+    WIDGETS("widgetsDatastore", "widgets", WidgetSettingsStore, false)
 }
 
 val allStores = DataStoreName.entries

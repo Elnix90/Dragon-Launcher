@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.data.helpers.WidgetInfo
 import org.elnix.dragonlauncher.data.stores.WidgetSettingsStore
+import kotlin.math.roundToInt
 
 class WidgetsViewModel(
     application: Application
@@ -75,20 +76,35 @@ class WidgetsViewModel(
 
 
 
-    private fun updateWidgetPosition(widgetId: Int, dxPx: Float, dyPx: Float) {
-
+    private fun updateWidgetPosition(
+        widgetId: Int,
+        dxPx: Float,
+        dyPx: Float,
+        snap: Boolean,
+        snapScale: Float
+    ) {
         val screenWidth = ctx.resources.displayMetrics.widthPixels.toFloat()
         val screenHeight = ctx.resources.displayMetrics.heightPixels.toFloat()
 
-
         val updated = _widgets.value.map { widget ->
             if (widget.id == widgetId) {
+                var newX = widget.x + dxPx / screenWidth
+                var newY = widget.y + dyPx / screenHeight
+
+                if (snap) {
+                    val snapX = snapScale / screenWidth
+                    val snapY = snapScale / screenHeight
+                    newX = (newX / snapX).roundToInt() * snapX
+                    newY = (newY / snapY).roundToInt() * snapY
+                }
+
                 widget.copy(
-                    x = widget.x + dxPx / screenWidth,
-                    y = widget.y + dyPx / screenHeight
+                    x = newX,
+                    y = newY
                 )
             } else widget
         }
+
         _widgets.value = updated
 
         viewModelScope.launch {
@@ -98,8 +114,9 @@ class WidgetsViewModel(
         }
     }
 
-    fun offsetWidget(widgetId: Int, dxPx: Float, dyPx: Float) {
-        updateWidgetPosition(widgetId, dxPx, dyPx)
+
+    fun offsetWidget(widgetId: Int, dxPx: Float, dyPx: Float, snap: Boolean, snapScale: Float = 100f) {
+        updateWidgetPosition(widgetId, dxPx, dyPx, snap, snapScale)
     }
 
 
@@ -137,15 +154,25 @@ class WidgetsViewModel(
 
 
     /**
-     * Resizes widget while compensating position to maintain visual anchor point.
+     * Resizes a widget while compensating position to maintain visual anchor point.
      * Left/Top resize moves position opposite to drag direction so visual edge stays fixed.
+     * Optionally snaps the widget's span to a given scale.
      *
      * @param widgetId ID of widget to resize
      * @param corner Resize corner/handle being dragged
      * @param dxPx Horizontal drag delta in pixels
      * @param dyPx Vertical drag delta in pixels
+     * @param snap If true, snap the widget's width/height to multiples of snapScale
+     * @param snapScale Scale in pixels for snapping (default 10px)
      */
-    fun resizeWidget(widgetId: Int, corner: ResizeCorner, dxPx: Float, dyPx: Float) {
+    fun resizeWidget(
+        widgetId: Int,
+        corner: ResizeCorner,
+        dxPx: Float,
+        dyPx: Float,
+        snap: Boolean,
+        snapScale: Float = 100f
+    ) {
         val screenWidth = ctx.resources.displayMetrics.widthPixels.toFloat()
         val screenHeight = ctx.resources.displayMetrics.heightPixels.toFloat()
         val cellSizePx = 100f
@@ -181,6 +208,13 @@ class WidgetsViewModel(
                     }
                 }
 
+                if (snap) {
+                    val snapX = snapScale / cellSizePx
+                    val snapY = snapScale / cellSizePx
+                    newSpanX = (newSpanX / snapX).roundToInt() * snapX
+                    newSpanY = (newSpanY / snapY).roundToInt() * snapY
+                }
+
                 widget.copy(
                     spanX = newSpanX,
                     spanY = newSpanY,
@@ -189,6 +223,7 @@ class WidgetsViewModel(
                 )
             } else widget
         }
+
         _widgets.value = updated
 
         viewModelScope.launch {

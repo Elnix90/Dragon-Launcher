@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ui.settings.customization
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -19,9 +20,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.FormatClear
+import androidx.compose.material.icons.filled.FormatSize
+import androidx.compose.material.icons.filled.GridOff
+import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.MoveDown
 import androidx.compose.material.icons.filled.MoveUp
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -34,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
@@ -46,6 +52,7 @@ import org.elnix.dragonlauncher.R
 import org.elnix.dragonlauncher.data.helpers.WidgetInfo
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
 import org.elnix.dragonlauncher.ui.helpers.CircleIconButton
+import org.elnix.dragonlauncher.ui.helpers.UpDownButton
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
 import org.elnix.dragonlauncher.utils.models.WidgetsViewModel
 
@@ -63,6 +70,8 @@ fun WidgetsTab(
 
     val isSelected = selected != null
 
+    var snapMove by remember { mutableStateOf(false) }
+    var snapResize by remember { mutableStateOf(false) }
 
     fun removeWidget(widget: WidgetInfo) {
         widgetsViewModel.removeWidget(widget.id) {
@@ -96,6 +105,41 @@ fun WidgetsTab(
 
     Box(Modifier.fillMaxSize()) {
 
+        if (snapMove) {
+            Canvas(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                val spacing = 100f
+                val lineWidth = 1f
+                val color = Color.White.copy(alpha = 0.25f)
+
+                // Vertical lines
+                var x = 0f
+                while (x <= size.width) {
+                    drawLine(
+                        color = color,
+                        start = Offset(x, 0f),
+                        end = Offset(x, size.height),
+                        strokeWidth = lineWidth
+                    )
+                    x += spacing
+                }
+
+                // Horizontal lines
+                var y = 0f
+                while (y <= size.height) {
+                    drawLine(
+                        color = color,
+                        start = Offset(0f, y),
+                        end = Offset(size.width, y),
+                        strokeWidth = lineWidth
+                    )
+                    y += spacing
+                }
+            }
+        }
+
+
 
         /* ---------------- Widget canvas ---------------- */
 
@@ -107,10 +151,16 @@ fun WidgetsTab(
                     selected = widget.id == selected?.id,
                     onSelect = { selected = widget },
                     onMove = { dx, dy ->
-                        widgetsViewModel.offsetWidget(widget.id, dx, dy)
+                        widgetsViewModel.offsetWidget(widget.id, dx, dy, false)
+                    },
+                    onMoveEnd = {
+                        widgetsViewModel.offsetWidget(widget.id, 0f, 0f, snapMove)
                     },
                     onResize = { corner, dx, dy ->
-                        widgetsViewModel.resizeWidget(widget.id, corner, dx, dy)
+                        widgetsViewModel.resizeWidget(widget.id, corner, dx, dy, false)
+                    },
+                    onResizeEnd = { corner ->
+                        widgetsViewModel.resizeWidget(widget.id, corner, 0f, 0f, snapResize)
                     },
                     onRemove = { removeWidget(it) }
                 )
@@ -128,17 +178,6 @@ fun WidgetsTab(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Delete selected widget
-            CircleIconButton(
-                icon = Icons.Default.Delete,
-                contentDescription = stringResource(R.string.delete_widget),
-                color = MaterialTheme.colorScheme.error,
-                enabled = isSelected,
-                padding = 16.dp
-            ) {
-                selected?.let { removeWidget(it) }
-            }
-
             // Launch system widget picker
             CircleIconButton(
                 icon = Icons.Default.Add,
@@ -149,55 +188,76 @@ fun WidgetsTab(
                 onLaunchSystemWidgetPicker()
             }
 
-            // Select previous widget
-            CircleIconButton(
-                icon = Icons.Default.ArrowUpward,
-                contentDescription = stringResource(R.string.select_previous_widget),
-                color = MaterialTheme.colorScheme.primary,
-                padding = 16.dp
-            ) {
-                if (widgets.isNotEmpty()) {
-                    val idx = widgets.indexOfFirst { it == selected }
-                    val next = if (idx <= 0) widgets.last() else widgets[idx - 1]
-                    selected = next
-                }
-            }
 
-            // Select next widget
+            // Delete selected widget
             CircleIconButton(
-                icon = Icons.Default.ArrowDownward,
-                contentDescription = stringResource(R.string.select_next_widget),
-                color = MaterialTheme.colorScheme.primary,
-                padding = 16.dp
-            ) {
-                if (widgets.isNotEmpty()) {
-                    val idx = widgets.indexOfFirst { it == selected }
-                    val next = if (idx == -1 || idx == widgets.lastIndex) widgets.first() else widgets[idx + 1]
-                    selected = next
-                }
-            }
-
-            // Move selected widget up
-            CircleIconButton(
-                icon = Icons.Default.MoveDown,
-                contentDescription = stringResource(R.string.move_widget_up),
-                color = MaterialTheme.colorScheme.primary,
+                icon = Icons.Default.Remove,
+                contentDescription = stringResource(R.string.delete_widget),
+                color = MaterialTheme.colorScheme.error,
                 enabled = isSelected,
                 padding = 16.dp
             ) {
-                selected?.let { widgetsViewModel.moveWidgetUp(it.id) }
+                selected?.let { removeWidget(it) }
             }
 
-            // Move selected widget down
-            CircleIconButton(
-                icon = Icons.Default.MoveUp,
-                contentDescription = stringResource(R.string.move_widget_down),
+
+            UpDownButton(
+                upIcon = Icons.Default.ArrowUpward,
+                downIcon = Icons.Default.ArrowDownward,
                 color = MaterialTheme.colorScheme.primary,
-                enabled = isSelected,
-                padding = 16.dp
-            ) {
-                selected?.let { widgetsViewModel.moveWidgetDown(it.id) }
-            }
+                upEnabled = true,
+                downEnabled = true,
+                upClickable = true,
+                downClickable = true,
+                padding = 16.dp,
+                onClickUp = {
+                    if (widgets.isNotEmpty()) {
+                        val idx = widgets.indexOfFirst { it == selected }
+                        val next = if (idx <= 0) widgets.last() else widgets[idx - 1]
+                        selected = next
+                    }
+                },
+                onClickDown = {
+                    if (widgets.isNotEmpty()) {
+                        val idx = widgets.indexOfFirst { it == selected }
+                        val next = if (idx == -1 || idx == widgets.lastIndex) widgets.first() else widgets[idx + 1]
+                        selected = next
+                    }
+                }
+            )
+
+
+            UpDownButton(
+                upIcon = Icons.Default.MoveUp,
+                downIcon = Icons.Default.MoveDown,
+                color = MaterialTheme.colorScheme.primary,
+                upEnabled = isSelected,
+                downEnabled = isSelected,
+                upClickable = isSelected,
+                downClickable = isSelected,
+                padding = 16.dp,
+                onClickUp = {
+                    selected?.let { widgetsViewModel.moveWidgetUp(it.id) }
+
+                },
+                onClickDown = {
+                    selected?.let { widgetsViewModel.moveWidgetDown(it.id) }
+
+                }
+            )
+
+            UpDownButton(
+                upIcon = if (snapMove) Icons.Default.GridOn else Icons.Default.GridOff,
+                downIcon = if (snapResize) Icons.Default.FormatSize else Icons.Default.FormatClear,
+                color = MaterialTheme.colorScheme.primary,
+                upEnabled = snapMove,
+                downEnabled = snapResize,
+                upClickable = true,
+                downClickable = true,
+                padding = 16.dp,
+                onClickUp = { snapMove = !snapMove },
+                onClickDown = { snapResize = !snapResize }
+            )
         }
     }
 }
@@ -227,7 +287,9 @@ private fun DraggableWidget(
     selected: Boolean,
     onSelect: () -> Unit,
     onMove: (Float, Float) -> Unit,
+    onMoveEnd: () -> Unit,
     onResize: (WidgetsViewModel.ResizeCorner, Float, Float) -> Unit,
+    onResizeEnd: (WidgetsViewModel.ResizeCorner) -> Unit,
     onRemove: (WidgetInfo) -> Unit
 ) {
     val ctx = LocalContext.current
@@ -275,6 +337,9 @@ private fun DraggableWidget(
                         onDrag = { change, dragAmount ->
                             change.consume()
                             onMove(dragAmount.x, dragAmount.y)
+                        },
+                        onDragEnd = {
+                            onMoveEnd()
                         }
                     )
                 }
@@ -294,7 +359,11 @@ private fun DraggableWidget(
                     .clip(CircleShape)
                     .background(Color.Transparent)
                     .pointerInput(WidgetsViewModel.ResizeCorner.Top) {
-                        detectDragGestures { change, dragAmount ->
+                        detectDragGestures(
+                            onDragEnd = {
+                                onResizeEnd(WidgetsViewModel.ResizeCorner.Top)
+                            }
+                        ) { change, dragAmount ->
                             change.consume()
                             onResize(WidgetsViewModel.ResizeCorner.Top, 0f, dragAmount.y)
                         }
@@ -317,7 +386,11 @@ private fun DraggableWidget(
                     .clip(CircleShape)
                     .background(Color.Transparent)
                     .pointerInput(WidgetsViewModel.ResizeCorner.Bottom) {
-                        detectDragGestures { change, dragAmount ->
+                        detectDragGestures(
+                            onDragEnd = {
+                                onResizeEnd(WidgetsViewModel.ResizeCorner.Bottom)
+                            }
+                        ) { change, dragAmount ->
                             change.consume()
                             onResize(WidgetsViewModel.ResizeCorner.Bottom, 0f, dragAmount.y)
                         }
@@ -340,7 +413,11 @@ private fun DraggableWidget(
                     .clip(CircleShape)
                     .background(Color.Transparent)
                     .pointerInput(WidgetsViewModel.ResizeCorner.Left) {
-                        detectDragGestures { change, dragAmount ->
+                        detectDragGestures(
+                            onDragEnd = {
+                                onResizeEnd(WidgetsViewModel.ResizeCorner.Left)
+                            }
+                        ) { change, dragAmount ->
                             change.consume()
                             onResize(WidgetsViewModel.ResizeCorner.Left, dragAmount.x, 0f)
                         }
@@ -363,7 +440,11 @@ private fun DraggableWidget(
                     .clip(CircleShape)
                     .background(Color.Transparent)
                     .pointerInput(WidgetsViewModel.ResizeCorner.Right) {
-                        detectDragGestures { change, dragAmount ->
+                        detectDragGestures(
+                            onDragEnd = {
+                                onResizeEnd(WidgetsViewModel.ResizeCorner.Right)
+                            }
+                        ) { change, dragAmount ->
                             change.consume()
                             onResize(WidgetsViewModel.ResizeCorner.Right, dragAmount.x, 0f)
                         }
