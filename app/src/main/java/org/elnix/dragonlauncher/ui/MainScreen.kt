@@ -33,6 +33,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -191,6 +192,8 @@ fun MainScreen(
 
 
     val dm = ctx.resources.displayMetrics
+    val density = LocalDensity.current
+    val cellSizePx = widgetsViewModel.cellSizePx
 
 
     fun launchAction(point: SwipePointSerializable?) {
@@ -338,8 +341,8 @@ fun MainScreen(
                         )
                     }
                     .size(
-                        width = (widget.spanX * 100).dp,
-                        height = (widget.spanY * 100).dp
+                        width = with(density) { (widget.spanX * cellSizePx).toDp() },
+                        height = with(density) { (widget.spanY * cellSizePx).toDp() }
                     )
             )
         }

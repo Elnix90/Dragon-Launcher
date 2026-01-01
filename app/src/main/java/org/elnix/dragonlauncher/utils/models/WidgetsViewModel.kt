@@ -25,6 +25,8 @@ class WidgetsViewModel(
     private val _widgets = MutableStateFlow<List<WidgetInfo>>(emptyList())
     val widgets: StateFlow<List<WidgetInfo>> = _widgets.asStateFlow()
 
+    val cellSizePx = 100f
+
     init {
         loadWidgets()
     }
@@ -115,7 +117,7 @@ class WidgetsViewModel(
     }
 
 
-    fun offsetWidget(widgetId: Int, dxPx: Float, dyPx: Float, snap: Boolean, snapScale: Float = 100f) {
+    fun offsetWidget(widgetId: Int, dxPx: Float, dyPx: Float, snap: Boolean, snapScale: Float = cellSizePx) {
         updateWidgetPosition(widgetId, dxPx, dyPx, snap, snapScale)
     }
 
@@ -153,6 +155,35 @@ class WidgetsViewModel(
     }
 
 
+    fun centerWidget(widgetId: Int) {
+        val screenWidth = ctx.resources.displayMetrics.widthPixels.toFloat()
+        val screenHeight = ctx.resources.displayMetrics.heightPixels.toFloat()
+
+        val updated = _widgets.value.map { widget ->
+            if (widget.id == widgetId) {
+                val widgetWidthPx = widget.spanX * cellSizePx
+                val widgetHeightPx = widget.spanY * cellSizePx
+
+                val centerXPx = (screenWidth - widgetWidthPx) / 2f
+                val centerYPx = (screenHeight - widgetHeightPx) / 2f
+
+                widget.copy(
+                    x = centerXPx / screenWidth,
+                    y = centerYPx / screenHeight
+                )
+            } else widget
+        }
+
+        _widgets.value = updated
+
+        viewModelScope.launch {
+            updated.find { it.id == widgetId }?.let {
+                WidgetSettingsStore.saveWidget(ctx, it)
+            }
+        }
+    }
+
+
     /**
      * Resizes a widget while compensating position to maintain visual anchor point.
      * Left/Top resize moves position opposite to drag direction so visual edge stays fixed.
@@ -171,11 +202,10 @@ class WidgetsViewModel(
         dxPx: Float,
         dyPx: Float,
         snap: Boolean,
-        snapScale: Float = 100f
+        snapScale: Float = cellSizePx
     ) {
         val screenWidth = ctx.resources.displayMetrics.widthPixels.toFloat()
         val screenHeight = ctx.resources.displayMetrics.heightPixels.toFloat()
-        val cellSizePx = 100f
 
         val updated = _widgets.value.map { widget ->
             if (widget.id == widgetId) {

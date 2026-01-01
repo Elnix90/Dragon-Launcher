@@ -14,6 +14,7 @@ import org.elnix.dragonlauncher.data.stores.DebugSettingsStore.Keys.DEBUG_ENABLE
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore.Keys.DEBUG_INFOS
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore.Keys.FORCE_APP_LANGUAGE_SELECTOR
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore.Keys.SETTINGS_DEBUG_INFOS
+import org.elnix.dragonlauncher.data.stores.DebugSettingsStore.Keys.WIDGETS_DEBUG_INFOS
 
 object DebugSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
 
@@ -26,6 +27,7 @@ object DebugSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
         val debugEnabled: Boolean = false,
         val debugInfos: Boolean = false,
         val settingsDebugInfo: Boolean = false,
+        val widgetsDebugInfo: Boolean = false,
         val forceAppLanguageSelector: Boolean = false
     )
 
@@ -38,12 +40,14 @@ object DebugSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
         val DEBUG_ENABLED = booleanPreferencesKey(DebugSettingsBackup::debugEnabled.name)
         val DEBUG_INFOS = booleanPreferencesKey(DebugSettingsBackup::debugInfos.name)
         val SETTINGS_DEBUG_INFOS = booleanPreferencesKey(DebugSettingsBackup::settingsDebugInfo.name)
+        val WIDGETS_DEBUG_INFOS = booleanPreferencesKey(DebugSettingsBackup::widgetsDebugInfo.name)
         val FORCE_APP_LANGUAGE_SELECTOR = booleanPreferencesKey(DebugSettingsBackup::forceAppLanguageSelector.name)
 
         val ALL = listOf(
             DEBUG_ENABLED,
             DEBUG_INFOS,
             SETTINGS_DEBUG_INFOS,
+            WIDGETS_DEBUG_INFOS,
             FORCE_APP_LANGUAGE_SELECTOR
         )
     }
@@ -79,6 +83,15 @@ object DebugSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
         ctx.debugDatastore.edit { it[SETTINGS_DEBUG_INFOS] = enabled }
     }
 
+    fun getWidgetsDebugInfos(ctx: Context): Flow<Boolean> =
+        ctx.debugDatastore.data.map { prefs ->
+            prefs[WIDGETS_DEBUG_INFOS] ?: defaults.widgetsDebugInfo
+        }
+
+    suspend fun setWidgetsDebugInfos(ctx: Context, enabled: Boolean) {
+        ctx.debugDatastore.edit { it[WIDGETS_DEBUG_INFOS] = enabled }
+    }
+
     fun getForceAppLanguageSelector(ctx: Context): Flow<Boolean> =
         ctx.debugDatastore.data.map { prefs ->
             prefs[FORCE_APP_LANGUAGE_SELECTOR] ?: defaults.forceAppLanguageSelector
@@ -107,6 +120,7 @@ object DebugSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
             putIfNonDefault(DEBUG_ENABLED, prefs[DEBUG_ENABLED], defaults.debugEnabled)
             putIfNonDefault(DEBUG_INFOS, prefs[DEBUG_INFOS], defaults.debugInfos)
             putIfNonDefault(SETTINGS_DEBUG_INFOS, prefs[SETTINGS_DEBUG_INFOS], defaults.settingsDebugInfo)
+            putIfNonDefault(WIDGETS_DEBUG_INFOS, prefs[WIDGETS_DEBUG_INFOS], defaults.widgetsDebugInfo)
             putIfNonDefault(FORCE_APP_LANGUAGE_SELECTOR, prefs[FORCE_APP_LANGUAGE_SELECTOR], defaults.forceAppLanguageSelector)
         }
     }
@@ -126,6 +140,9 @@ object DebugSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
 
             prefs[SETTINGS_DEBUG_INFOS] =
                 getBooleanStrict(value, SETTINGS_DEBUG_INFOS, defaults.settingsDebugInfo)
+
+            prefs[WIDGETS_DEBUG_INFOS] =
+                getBooleanStrict(value, WIDGETS_DEBUG_INFOS, defaults.widgetsDebugInfo)
 
             prefs[FORCE_APP_LANGUAGE_SELECTOR] =
                 getBooleanStrict(value,FORCE_APP_LANGUAGE_SELECTOR, defaults.forceAppLanguageSelector)

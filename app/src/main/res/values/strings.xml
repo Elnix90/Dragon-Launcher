@@ -247,4 +247,5 @@
     <string name="move_point_to_right">Move point to right</string>
     <string name="move_point_to_left">Move point to left</string>
     <string name="toggle_drag_cdistances_editing">Toggle drag circle editing</string>
+    <string name="center_selectded_widget">Center seelcted widget</string>
 </resources>

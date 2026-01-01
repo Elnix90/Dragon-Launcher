@@ -8,6 +8,7 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.CenterFocusStrong
 import androidx.compose.material.icons.filled.FormatClear
 import androidx.compose.material.icons.filled.FormatSize
 import androidx.compose.material.icons.filled.GridOff
@@ -28,6 +30,7 @@ import androidx.compose.material.icons.filled.MoveDown
 import androidx.compose.material.icons.filled.MoveUp
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,6 +46,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -50,6 +54,7 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.MainActivity
 import org.elnix.dragonlauncher.R
 import org.elnix.dragonlauncher.data.helpers.WidgetInfo
+import org.elnix.dragonlauncher.data.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
 import org.elnix.dragonlauncher.ui.helpers.CircleIconButton
 import org.elnix.dragonlauncher.ui.helpers.UpDownButton
@@ -64,7 +69,13 @@ fun WidgetsTab(
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
+
+    val widgetsDebugInfos by DebugSettingsStore.getWidgetsDebugInfos(ctx)
+        .collectAsState(initial = false)
+
     val widgets by widgetsViewModel.widgets.collectAsState()
+
+    val cellSizePx = widgetsViewModel.cellSizePx
 
     var selected by remember { mutableStateOf<WidgetInfo?>(null) }
 
@@ -109,7 +120,6 @@ fun WidgetsTab(
             Canvas(
                 modifier = Modifier.fillMaxSize()
             ) {
-                val spacing = 100f
                 val lineWidth = 1f
                 val color = Color.White.copy(alpha = 0.25f)
 
@@ -122,7 +132,7 @@ fun WidgetsTab(
                         end = Offset(x, size.height),
                         strokeWidth = lineWidth
                     )
-                    x += spacing
+                    x += cellSizePx
                 }
 
                 // Horizontal lines
@@ -134,7 +144,7 @@ fun WidgetsTab(
                         end = Offset(size.width, y),
                         strokeWidth = lineWidth
                     )
-                    y += spacing
+                    y += cellSizePx
                 }
             }
         }
@@ -200,6 +210,15 @@ fun WidgetsTab(
                 selected?.let { removeWidget(it) }
             }
 
+            // Center selected widget
+            CircleIconButton(
+                icon = Icons.Default.CenterFocusStrong,
+                contentDescription = stringResource(R.string.center_selectded_widget),
+                color = MaterialTheme.colorScheme.secondary,
+                padding = 16.dp
+            ) {
+                selected?.let { widgetsViewModel.centerWidget(it.id) }
+            }
 
             UpDownButton(
                 upIcon = Icons.Default.ArrowUpward,
@@ -260,6 +279,20 @@ fun WidgetsTab(
             )
         }
     }
+
+    if (widgetsDebugInfos) {
+        Box(
+            modifier = Modifier
+                .background(Color.DarkGray.copy(0.5f))
+                .padding(5.dp)
+        ) {
+            Column {
+                widgets.forEach {
+                    Text(it.toString())
+                }
+            }
+        }
+    }
 }
 
 
@@ -297,6 +330,11 @@ private fun DraggableWidget(
     val borderColor = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent
     val shape = RoundedCornerShape(12.dp)
 
+    val cellSizePx = widgetsViewModel.cellSizePx
+
+
+    val density = LocalDensity.current
+
     Box(
         modifier = Modifier
             .offset {
@@ -306,8 +344,8 @@ private fun DraggableWidget(
                 )
             }
             .size(
-                width = (widget.spanX * 100f).dp,
-                height = (widget.spanY * 100f).dp
+                width = with(density) { (widget.spanX * cellSizePx).toDp() },
+                height = with(density) { (widget.spanY * cellSizePx).toDp() }
             )
             .border(
                 width = if (selected) 2.dp else 0.dp,

@@ -66,6 +66,8 @@ fun DebugTab(
         .collectAsState(initial = false)
     val settingsDebugInfos by DebugSettingsStore.getSettingsDebugInfos(ctx)
         .collectAsState(initial = false)
+    val widgetsDebugInfos by DebugSettingsStore.getWidgetsDebugInfos(ctx)
+        .collectAsState(initial = false)
 
     val useAccessibilityInsteadOfContextToExpandActionPanel by PrivateSettingsStore
         .getUseAccessibilityInsteadOfContextToExpandActionPanel(ctx)
@@ -147,6 +149,19 @@ fun DebugTab(
                 }
             }
         }
+
+        item{
+            SwitchRow(
+                state = widgetsDebugInfos,
+                text = "Show debug infos in widgets page",
+                defaultValue = false
+            ) {
+                scope.launch {
+                    DebugSettingsStore.setWidgetsDebugInfos(ctx, it)
+                }
+            }
+        }
+
 
         item {
             Button(
