@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.utils.models
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,8 +21,6 @@ class FloatingAppsViewModel(
     @SuppressLint("StaticFieldLeak")
     private val ctx = application.applicationContext
 
-    private val appWidgetManager = AppWidgetManager.getInstance(ctx)
-
     private val _floatingApps = MutableStateFlow<List<FloatingAppObject>>(emptyList())
     val floatingApps = _floatingApps.asStateFlow()
 
@@ -40,14 +37,13 @@ class FloatingAppsViewModel(
         viewModelScope.launch {
             val app = FloatingAppObject(
                 id = Random.nextInt(),
-                action = action,
-                spanX = calculateSpanX(info?.minWidth?.toFloat() ?: 1.5f),
-                spanY = calculateSpanY(info?.minHeight?.toFloat() ?: 1.5f),
+                action = action
             )
 
             _floatingApps.value += app
 
             centerFloatingApp(app.id)
+            resetFloatingAppSize(app.id, info)
 
             FloatingAppsSettingsStore.saveFloatingApp(ctx, app)
         }
@@ -165,6 +161,26 @@ class FloatingAppsViewModel(
         }
     }
 
+
+    fun resetFloatingAppSize(appId: Int, info: AppWidgetProviderInfo? = null) {
+        val updated = _floatingApps.value.map { floatingApp ->
+            if (floatingApp.id == appId) {
+
+                floatingApp.copy(
+                    spanX = calculateSpanX(info?.minWidth?.toFloat() ?: 1.5f),
+                    spanY = calculateSpanY(info?.minHeight?.toFloat() ?: 1.5f),
+                )
+            } else floatingApp
+        }
+
+        _floatingApps.value = updated
+
+        viewModelScope.launch {
+            updated.find { it.id == appId }?.let {
+                FloatingAppsSettingsStore.saveFloatingApp(ctx, it)
+            }
+        }
+    }
 
     /**
      * Resizes a floatingApp while compensating position to maintain visual anchor point.

@@ -393,7 +393,11 @@ class MainActivity : ComponentActivity() {
                     workspaceViewModel = workspaceViewModel,
                     floatingAppsViewModel = floatingAppsViewModel,
                     navController = navController,
-                    onLaunchSystemWidgetPicker = { (ctx as MainActivity).launchWidgetPicker() }
+                    onLaunchSystemWidgetPicker = { (ctx as MainActivity).launchWidgetPicker() },
+                    onResetWidgetSize = { id, widgetId ->
+                        val info = appWidgetManager.getAppWidgetInfo(widgetId)
+                        floatingAppsViewModel.resetFloatingAppSize(id, info)
+                    }
                 )
             }
         }

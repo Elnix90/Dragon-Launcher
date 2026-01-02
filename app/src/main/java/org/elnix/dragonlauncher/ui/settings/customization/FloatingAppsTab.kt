@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.MoveDown
 import androidx.compose.material.icons.filled.MoveUp
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -75,7 +76,8 @@ fun FloatingAppsTab(
     workspaceViewModel: WorkspaceViewModel,
     floatingAppsViewModel: FloatingAppsViewModel,
     onBack: () -> Unit,
-    onLaunchSystemWidgetPicker: () -> Unit
+    onLaunchSystemWidgetPicker: () -> Unit,
+    onResetWidgetSize: (id: Int, widgetId: Int) -> Unit
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -229,20 +231,43 @@ fun FloatingAppsTab(
                 selected?.let { removeWidget(it) }
             }
 
-            // Center selected widget
-            CircleIconButton(
-                icon = Icons.Default.CenterFocusStrong,
-                contentDescription = stringResource(R.string.center_selected_floating_app),
-                color = MaterialTheme.colorScheme.secondary,
-                padding = 16.dp
-            ) {
-                selected?.let { floatingAppsViewModel.centerFloatingApp(it.id) }
-            }
+//            // Center selected widget
+//            CircleIconButton(
+//                icon = Icons.Default.CenterFocusStrong,
+//                contentDescription = stringResource(R.string.center_selected_floating_app),
+//                color = MaterialTheme.colorScheme.secondary,
+//                padding = 16.dp
+//            ) {
+//            }
+
+            UpDownButton(
+                upIcon = Icons.Default.CenterFocusStrong,
+                downIcon = Icons.Default.Restore,
+                color = MaterialTheme.colorScheme.primary,
+                upEnabled = isSelected,
+                downEnabled = isSelected,
+                upClickable = isSelected,
+                downClickable = isSelected,
+                padding = 16.dp,
+                onClickUp = {
+                    selected?.let { floatingAppsViewModel.centerFloatingApp(it.id) }
+
+                },
+                onClickDown = {
+                    selected?.let {
+                        if (it.action is SwipeActionSerializable.OpenWidget) {
+                            onResetWidgetSize(it.id, it.action.widgetId)
+                        } else {
+                            floatingAppsViewModel.resetFloatingAppSize(it.id)
+                        }
+                    }
+                }
+            )
 
             UpDownButton(
                 upIcon = Icons.Default.ArrowUpward,
                 downIcon = Icons.Default.ArrowDownward,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.secondary,
                 upEnabled = true,
                 downEnabled = true,
                 upClickable = true,
@@ -264,23 +289,22 @@ fun FloatingAppsTab(
                 }
             )
 
+            val upDownEnabled = isSelected && floatingApps.size > 1
 
             UpDownButton(
                 upIcon = Icons.Default.MoveUp,
                 downIcon = Icons.Default.MoveDown,
-                color = MaterialTheme.colorScheme.primary,
-                upEnabled = isSelected,
-                downEnabled = isSelected,
-                upClickable = isSelected,
-                downClickable = isSelected,
+                color = MaterialTheme.colorScheme.tertiary,
+                upEnabled = upDownEnabled,
+                downEnabled = upDownEnabled,
+                upClickable = upDownEnabled,
+                downClickable = upDownEnabled,
                 padding = 16.dp,
                 onClickUp = {
-                    selected?.let { floatingAppsViewModel.moveFloatingAppUp(it.id) }
-
+                    selected?.let { floatingAppsViewModel.moveFloatingAppDown(it.id) }
                 },
                 onClickDown = {
-                    selected?.let { floatingAppsViewModel.moveFloatingAppDown(it.id) }
-
+                    selected?.let { floatingAppsViewModel.moveFloatingAppUp(it.id) }
                 }
             )
 
@@ -288,8 +312,8 @@ fun FloatingAppsTab(
                 upIcon = if (snapMove) Icons.Default.GridOn else Icons.Default.GridOff,
                 downIcon = if (snapResize) Icons.Default.FormatSize else Icons.Default.FormatClear,
                 color = MaterialTheme.colorScheme.primary,
-                upEnabled = snapMove,
-                downEnabled = snapResize,
+                upEnabled = true,
+                downEnabled = true,
                 upClickable = true,
                 downClickable = true,
                 padding = 16.dp,

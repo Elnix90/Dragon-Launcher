@@ -110,7 +110,8 @@ fun MainAppUi(
     workspaceViewModel: WorkspaceViewModel,
     floatingAppsViewModel: FloatingAppsViewModel,
     navController: NavHostController,
-    onLaunchSystemWidgetPicker: () -> Unit
+    onLaunchSystemWidgetPicker: () -> Unit,
+    onResetWidgetSize: (id: Int, widgetId: Int) -> Unit
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -348,7 +349,16 @@ fun MainAppUi(
             composable(SETTINGS.ICON_PACK)     { IconPackTab(appsViewModel) { goAppearance() } }
             composable(SETTINGS.STATUS_BAR)    { StatusBarTab { goAppearance() } }
             composable(SETTINGS.THEME)         { ThemesTab { goAppearance() } }
-            composable(SETTINGS.FLOATING_APPS) { FloatingAppsTab(appsViewModel, workspaceViewModel, floatingAppsViewModel, ::goAppearance ) { launchWidgetsPicker() } }
+            composable(SETTINGS.FLOATING_APPS) {
+                FloatingAppsTab(
+                    appsViewModel = appsViewModel,
+                    workspaceViewModel = workspaceViewModel,
+                    floatingAppsViewModel = floatingAppsViewModel,
+                    onBack = ::goAppearance,
+                    onLaunchSystemWidgetPicker = ::launchWidgetsPicker,
+                    onResetWidgetSize = onResetWidgetSize
+                )
+            }
             composable(SETTINGS.BEHAVIOR)      { BehaviorTab(appsViewModel, workspaceViewModel) { goAdvSettingsRoot() } }
             composable(SETTINGS.DRAWER)        { DrawerTab(appsViewModel) { goAdvSettingsRoot() } }
             composable(SETTINGS.COLORS)        { ColorSelectorTab { goAppearance() } }
