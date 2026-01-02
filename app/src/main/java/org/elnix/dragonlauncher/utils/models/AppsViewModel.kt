@@ -41,9 +41,6 @@ import org.xmlpull.v1.XmlPullParser
 class AppsViewModel(application: Application) : AndroidViewModel(application) {
 
 
-    private val _reloadTrigger = MutableStateFlow(0)
-    val reloadTrigger = _reloadTrigger.asStateFlow()
-
 
     private val _apps = MutableStateFlow<List<AppModel>>(emptyList())
     val allApps: StateFlow<List<AppModel>> = _apps.asStateFlow()
@@ -174,7 +171,6 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
 
         _apps.value = apps
         _icons.value = loadIcons(apps)
-        _reloadTrigger.value += 1
 
         withContext(Dispatchers.IO) {
             AppsSettingsStore.saveCachedApps(ctx, gson.toJson(apps))

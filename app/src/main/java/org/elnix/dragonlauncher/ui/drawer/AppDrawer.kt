@@ -90,7 +90,7 @@ fun AppDrawerScreen(
     val workspaces = workspaceState.workspaces
     val overrides = workspaceState.appOverrides
 
-    val reloadTrigger by appsViewModel.reloadTrigger.collectAsState()
+    val allApps by appsViewModel.allApps.collectAsState()
 
     val selectedWorkspaceId by workspaceViewModel.selectedWorkspaceId.collectAsState()
     val initialIndex = workspaces.indexOfFirst { it.id == selectedWorkspaceId }
@@ -262,7 +262,7 @@ fun AppDrawerScreen(
             ) {
 
                 HorizontalPager(state = pagerState) { pageIndex ->
-                    key(reloadTrigger, workspaces[pageIndex].id) {
+                    key(allApps) {
                         val workspace = workspaces[pageIndex]
 
                         val apps by appsViewModel

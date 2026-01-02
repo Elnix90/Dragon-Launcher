@@ -10,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -44,6 +45,7 @@ import org.elnix.dragonlauncher.data.helpers.WorkspaceViewMode.ADDED
 import org.elnix.dragonlauncher.data.helpers.WorkspaceViewMode.DEFAULTS
 import org.elnix.dragonlauncher.data.helpers.WorkspaceViewMode.REMOVED
 import org.elnix.dragonlauncher.data.helpers.workspaceViewMode
+import org.elnix.dragonlauncher.data.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.ui.components.dialogs.AppPickerDialog
 import org.elnix.dragonlauncher.ui.components.dialogs.RenameAppDialog
 import org.elnix.dragonlauncher.ui.drawer.AppLongPressDialog
@@ -72,6 +74,8 @@ fun WorkspaceDetailScreen(
     val workspaceState by workspaceViewModel.state.collectAsState()
     val workspace = workspaceState.workspaces.first { it.id == workspaceId }
 
+    val workspaceDebugInfos by DebugSettingsStore.getWorkspacesDebugInfos(ctx)
+        .collectAsState(initial = false)
 
     var selectedView by remember { mutableStateOf(DEFAULTS) }
 
@@ -179,6 +183,14 @@ fun WorkspaceDetailScreen(
         ) {
             Icon(Icons.Default.Add, null)
         }
+
+        if (workspaceDebugInfos) {
+            Column(
+                modifier = Modifier.background(Color.DarkGray.copy(0.5f))
+            ) {
+                Text(workspace.toString())
+            }
+        }
     }
 
     if (showAppPicker) {
@@ -220,14 +232,30 @@ fun WorkspaceDetailScreen(
                     }
                 )
             },
-            onRemoveFromWorkspace = {
-                scope.launch {
-                    workspaceViewModel.removeAppFromWorkspace(
-                        workspaceId,
-                        app.packageName
-                    )
+            onRemoveFromWorkspace = if (app.packageName !in (workspace.removedAppIds ?: emptyList())) {
+                {
+                    workspaceId.let {
+                        scope.launch {
+                            workspaceViewModel.removeAppFromWorkspace(
+                                it,
+                                app.packageName
+                            )
+                        }
+                    }
                 }
-            },
+            } else null,
+            onAddToWorkspace = if (app.packageName in (workspace.removedAppIds ?: emptyList())) {
+                {
+                    workspaceId.let {
+                        scope.launch {
+                            workspaceViewModel.addAppToWorkspace(
+                                it,
+                                app.packageName
+                            )
+                        }
+                    }
+                }
+            } else null,
             onRenameApp = {
                 renameText = app.name
                 renameTargetPackage = app.packageName

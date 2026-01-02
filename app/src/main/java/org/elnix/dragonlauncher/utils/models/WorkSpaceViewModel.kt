@@ -202,6 +202,9 @@ class WorkspaceViewModel(application: Application) : AndroidViewModel(applicatio
         persist()
     }
 
+
+
+
     fun renameApp(packageName: String, name: String) {
         _state.value = _state.value.copy(
             appOverrides = _state.value.appOverrides +
