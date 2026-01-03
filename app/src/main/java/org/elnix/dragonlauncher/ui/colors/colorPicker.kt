@@ -43,7 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -61,6 +60,7 @@ import org.elnix.dragonlauncher.ui.helpers.SliderWithLabel
 import org.elnix.dragonlauncher.utils.colors.AppObjectsColors
 import org.elnix.dragonlauncher.utils.colors.adjustBrightness
 import org.elnix.dragonlauncher.utils.colors.randomColor
+import org.elnix.dragonlauncher.utils.colors.toHexWithAlpha
 import org.elnix.dragonlauncher.utils.copyToClipboard
 import org.elnix.dragonlauncher.utils.pasteClipboard
 
@@ -364,13 +364,4 @@ private fun ColorPicker(
         }
 
     }
-}
-
-
-
-
-// --- Utility: convert color → #AARRGGBB ---
-fun toHexWithAlpha(color: Color): String {
-    val argb = color.toArgb() // already AARRGGBB
-    return "#%08X".format(argb)
 }

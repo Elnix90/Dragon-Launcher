@@ -51,7 +51,6 @@ fun GradientColorPicker(
     var value by remember { mutableFloatStateOf(hsvArray[2]) }
 
     var selectedColor by remember { mutableStateOf(initialColor) }
-    var alpha by remember { mutableFloatStateOf(initialColor.alpha) }
 
     val hueColor = remember(hue) { Color.hsv(hue, 1f, 1f) }
 

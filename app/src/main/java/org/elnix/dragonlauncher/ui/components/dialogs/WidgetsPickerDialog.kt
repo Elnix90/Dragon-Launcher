@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.components.dialogs
 
+import android.annotation.SuppressLint
 import android.appwidget.AppWidgetHost
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
@@ -36,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -102,6 +104,7 @@ private fun WidgetItem(
     onAddWidget: (appWidgetId: Int) -> Unit
 ) {
     val ctx = LocalContext.current
+    val density = LocalDensity.current
 
     Card(
         modifier = Modifier
@@ -132,7 +135,7 @@ private fun WidgetItem(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "${provider.minWidth / ctx.resources.displayMetrics.density.toInt()}x${provider.minHeight / ctx.resources.displayMetrics.density.toInt()} cells",
+                    text = "${provider.minWidth / density.density}x${provider.minHeight / density.density} cells",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -176,6 +179,7 @@ private fun WidgetPreviewImage(
     }
 }
 
+@SuppressLint("UseCompatLoadingForDrawables")
 fun loadWidgetPreview(
     provider: AppWidgetProviderInfo,
     context: android.content.Context

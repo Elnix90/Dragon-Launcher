@@ -48,6 +48,7 @@ fun UrlInputDialog(
                 onClick = {
                     val ok = text.startsWith("http://") || text.startsWith("https://")
                     if (!ok) {
+                        @Suppress("AssignedValueIsNeverRead")
                         error = true
                         return@Button
                     }

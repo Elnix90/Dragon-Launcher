@@ -56,7 +56,7 @@ fun CustomAlertDialog(
                 title?.invoke()
             }
 
-            Box(Modifier.padding(15.dp),){
+            Box(Modifier.padding(15.dp)){
                 text?.invoke()
             }
 

@@ -280,7 +280,7 @@ fun WorkspaceDetailScreen(
 
     RenameAppDialog(
         visible = showRenameAppDialog,
-        title = ctx.getString(R.string.rename_app),
+        title = stringResource(R.string.rename_app),
         name = renameText,
         onNameChange = { renameText = it },
         onConfirm = {

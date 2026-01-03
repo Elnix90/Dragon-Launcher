@@ -47,7 +47,7 @@ fun SettingsItem(
                 onLongClick = onLongClick,
                 onClick = onClick
             )
-            .background(MaterialTheme.colorScheme.surface.copy(if (enabled) 1f else 0.5f),)
+            .background(MaterialTheme.colorScheme.surface.copy(if (enabled) 1f else 0.5f))
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween

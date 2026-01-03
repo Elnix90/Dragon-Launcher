@@ -29,7 +29,7 @@ fun drawerActionIcon(action: DrawerActions) = when (action) {
 }
 
 fun drawerActionsLabel(ctx: Context,action: DrawerActions) = when (action) {
-    CLOSE -> ctx.getString(R.string.close_drawer)
+    CLOSE -> ctx.getString(R.string.close_app_drawer)
     TOGGLE_KB -> ctx.getString(R.string.toggle_kb)
     NONE -> ctx.getString(R.string.none)
     DISABLED -> ""

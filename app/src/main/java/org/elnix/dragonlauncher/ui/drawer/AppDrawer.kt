@@ -47,6 +47,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -392,7 +393,7 @@ fun AppDrawerScreen(
 
     RenameAppDialog(
         visible = showRenameAppDialog,
-        title = ctx.getString(R.string.rename_app),
+        title = stringResource(R.string.rename_app),
         name = renameText,
         onNameChange = { renameText = it },
         onConfirm = {

@@ -26,14 +26,12 @@ fun rememberHoldToOpenSettings(
     val scope = rememberCoroutineScope()
 
     var fingerDown by remember { mutableStateOf(false) }
-    var fingerPosition by remember { mutableStateOf<Offset?>(null) }
     var anchor by remember { mutableStateOf<Offset?>(null) }
     var progress by remember { mutableFloatStateOf(0f) }
 
     fun reset() {
         fingerDown = false
         anchor = null
-        fingerPosition = null
         progress = 0f
     }
 
@@ -46,7 +44,6 @@ fun rememberHoldToOpenSettings(
 
                     val down = awaitFirstDown()
                     fingerDown = true
-                    fingerPosition = down.position
                     anchor = down.position
                     progress = 0f
 
@@ -76,8 +73,6 @@ fun rememberHoldToOpenSettings(
                             reset()
                             break
                         }
-
-                        fingerPosition = change.position
 
                         // Check drag distance
                         val dist = anchor?.let {

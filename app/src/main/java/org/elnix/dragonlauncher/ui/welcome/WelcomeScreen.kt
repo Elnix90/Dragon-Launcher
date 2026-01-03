@@ -2,6 +2,7 @@
 
 package org.elnix.dragonlauncher.ui.welcome
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.BackHandler
@@ -48,6 +49,7 @@ import org.elnix.dragonlauncher.utils.models.BackupResult
 import org.elnix.dragonlauncher.utils.models.BackupViewModel
 import org.json.JSONObject
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun WelcomeScreen(
     backupVm: BackupViewModel,

@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.settings.backup
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
@@ -41,7 +42,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -65,6 +65,7 @@ import org.elnix.dragonlauncher.utils.models.BackupViewModel
 import org.elnix.dragonlauncher.utils.showToast
 import org.json.JSONObject
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Suppress("AssignedValueIsNeverRead")
 @Composable
 fun BackupTab(
@@ -222,9 +223,9 @@ fun BackupTab(
     // UI
     // ------------------------------------------------------------
     SettingsLazyHeader(
-        title = stringResource(R.string.backup_restore),
+        title = ctx.getString(R.string.backup_restore),
         onBack = onBack,
-        helpText = stringResource(R.string.backup_restore_text),
+        helpText = ctx.getString(R.string.backup_restore_text),
         resetText = null,
         onReset = null
     ) {
@@ -244,12 +245,12 @@ fun BackupTab(
             )
         }
 
-        item { TextDivider(stringResource(R.string.automatic_backups)) }
+        item { TextDivider(ctx.getString(R.string.automatic_backups)) }
 
         item {
             SwitchRow(
                 state = autoBackupEnabled,
-                text = stringResource(R.string.automatic_backups)
+                text = ctx.getString(R.string.automatic_backups)
             ) { enabled ->
                 scope.launch {
                     BackupSettingsStore.setAutoBackupEnabled(ctx, enabled)
@@ -315,7 +316,7 @@ fun BackupTab(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = stringResource(R.string.change),
+                                text = ctx.getString(R.string.change),
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -340,7 +341,7 @@ fun BackupTab(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = stringResource(R.string.remove),
+                                text = ctx.getString(R.string.remove),
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -365,7 +366,7 @@ fun BackupTab(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = stringResource(R.string.trigger_backup),
+                                text = ctx.getString(R.string.trigger_backup),
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -391,7 +392,7 @@ fun BackupTab(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = stringResource(R.string.select_backup_file),
+                                text = ctx.getString(R.string.select_backup_file),
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -403,7 +404,7 @@ fun BackupTab(
             if (backupPath != null) {
                 item {
                     Text(
-                        text = "${stringResource(R.string.last_backup)} : ${lastBackupTime.formatDateTime()}",
+                        text = "${ctx.getString(R.string.last_backup)} : ${lastBackupTime.formatDateTime()}",
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -411,7 +412,7 @@ fun BackupTab(
 
 
 
-            item { TextDivider(stringResource(R.string.auto_backup_stores)) }
+            item { TextDivider(ctx.getString(R.string.auto_backup_stores)) }
 
             item {
                 Column{
@@ -528,23 +529,25 @@ fun BackupTab(
 // Shared Buttons (internal)
 // ------------------------------------------------------------
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun BackupButtons(
     onExport: () -> Unit,
     onImport: () -> Unit
 ) {
+    val ctx = LocalContext.current
     Column(
         Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         GradientBigButton(
-            text = stringResource(R.string.export_settings),
+            text = ctx.getString(R.string.export_settings),
             onClick = onExport,
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Upload,
-                    contentDescription = stringResource(R.string.export_settings),
+                    contentDescription = ctx.getString(R.string.export_settings),
                     tint = MaterialTheme.colorScheme.primary
                 )
             },
@@ -552,12 +555,12 @@ fun BackupButtons(
         )
 
         GradientBigButton(
-            text = stringResource(R.string.import_settings),
+            text = ctx.getString(R.string.import_settings),
             onClick = onImport,
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Download,
-                    contentDescription = stringResource(R.string.import_settings),
+                    contentDescription = ctx.getString(R.string.import_settings),
                     tint = MaterialTheme.colorScheme.primary
                 )
             },

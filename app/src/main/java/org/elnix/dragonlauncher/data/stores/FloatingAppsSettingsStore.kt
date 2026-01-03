@@ -117,7 +117,6 @@ object FloatingAppsSettingsStore : BaseSettingsStore<JSONObject>() {
     override suspend fun getAll(ctx: Context): JSONObject {
         val prefs = ctx.floatingAppsDatastore.data.first()
         val raw = prefs[Keys.FLOATING_APPS_KEY] ?: return JSONObject()
-        println(raw)
         return JSONObject(raw)
     }
 

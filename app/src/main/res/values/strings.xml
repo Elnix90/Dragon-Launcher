@@ -1,14 +1,14 @@
 <resources>
     <string name="app_name">Dragon Launcher</string>
-    <string name="accessibility_service_description">Allows DragonLauncher to open the notification shade, quick settings panel, open recent apps and check for current activity (for xiaomi users that cannot set Dragon as default launcher without loosing gesture navigation</string>
+    <string name="accessibility_service_description">Allows DragonLauncher to open the notification shade, quick settings panel, open recent apps and check for current activity (for xiaomi users that cannot set Dragon as default launcher without losing gesture navigation</string>
     <string name="help">Help</string>
     <string name="back">Back</string>
     <string name="reset_default_settings">Reset default settings</string>
     <string name="reset_settings_in_this_tab">Reset default settings in this tab</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="do_not_remind_me_again">Do not remind me again</string>
-    <string name="coming_soon">Coming Soon...</string>
+    <string name="coming_soon">Coming Soon…</string>
     <string name="settings">Settings</string>
     <string name="appearance">Appearance / Customisation</string>
     <string name="appearance_tab_text">Change appearance settings</string>
@@ -56,8 +56,6 @@
     <string name="outline_color">Outline Color</string>
     <string name="angle_line_color">Angle Line Color</string>
     <string name="circle_color">Circle Color</string>
-    <string name="complete_color">Complete Color</string>
-    <string name="select_color">Select Color</string>
     <string name="launch_app_color">Launch App Color</string>
     <string name="open_url_color">Open URL Color</string>
     <string name="notification_shade_color">Notification Shade Color</string>
@@ -98,11 +96,9 @@
     <string name="whats_new">What\'s new</string>
     <string name="left_drawer_action">Left Drawer action</string>
     <string name="right_drawer_action">Right Drawer Action</string>
-    <string name="left_action_width">Left Action Width</string>
-    <string name="right_action_width">Right Action Width</string>
     <string name="drawer_actions_width">Drawer Actions Width</string>
     <string name="drawer_actions">Drawer Actions</string>
-    <string name="close_drawer">Close Drawer</string>
+    <string name="close_app_drawer">Close Drawer</string>
     <string name="toggle_kb">Toggle Keyboard</string>
     <string name="behavior">Behavior</string>
     <string name="workspaces">Workspaces</string>
@@ -114,7 +110,6 @@
     <string name="search_apps">Search Apps</string>
     <string name="remove_from_workspace">Remove From Workspace</string>
     <string name="add_to_workspace">Add To Workspace</string>
-    <string name="system_workspace_cant_edit">System Workspace, can\'t edit</string>
     <string name="change_app_icon">Change App Icon</string>
     <string name="app_info">App Info</string>
     <string name="uninstall">Uninstall</string>
@@ -130,8 +125,6 @@
     <string name="reset_workspace">Reset Workspace</string>
     <string name="workspace">Workspace</string>
     <string name="behavior_help">Here you can edit the behavior related settings of the app.</string>
-    <string name="require_pressing_back_twice_to_exit">Require pressing Back twice to exit</string>
-    <string name="double_back_press_feedback">Double back press feedback (Toast)</string>
     <string name="keep_screen_on">Keep Screen On</string>
     <string name="back_action">Back Action</string>
     <string name="double_click_action">Double Click Action</string>
@@ -146,7 +139,6 @@
     <string name="home">Home</string>
     <string name="edit_point">Edit Point</string>
     <string name="choose_action">Choose Action</string>
-    <string name="debug_toast">Debug Toast</string>
     <string name="automatic_backups">Automatic backups</string>
     <string name="change">Change</string>
     <string name="remove">Remove</string>
@@ -181,11 +173,9 @@
     <string name="did_the_notif_or_quick_actions">Did the quick actions open or was it the notifications?</string>
     <string name="quick_actions">Quick Actions</string>
     <string name="notifications">Notification</string>
-    <string name="drawer_action_close_drawer">Close drawer</string>
     <string name="drawer_action_clear">Clear</string>
     <string name="drawer_action_search_web">Search the web</string>
     <string name="drawer_action_open_first_app">Open first app</string>
-    <string name="drawer_action_nothing">Nothing</string>
     <string name="reselect_auto_backup_file">Reselect Auto backup file</string>
     <string name="transparency">Transparency</string>
     <string name="save">Save</string>
@@ -201,7 +191,6 @@
     <string name="status_bar_tab_text">Customize what is displayed in the status bar.</string>
     <string name="display">Display</string>
     <string name="show_time">Show time</string>
-    <string name="show_seconds">Show seconds</string>
     <string name="show_notifications">Show notifications</string>
     <string name="show_battery">Show battery</string>
     <string name="show_connectivity">Show Wi-Fi, data and airplane mode</string>
@@ -215,8 +204,6 @@
     <string name="date_format_examples">Examples: MMM dd, E dd, dd/MM, MMMM d</string>
     <string name="invalid_format">Invalid format. Check examples above.</string>
     <string name="next_alarm_at">Alarm %1$s</string>
-    <string name="no_alarm_permission">Alarm access denied</string>
-    <string name="no_alarms_set">No alarms</string>
     <string name="show_next_alarm">Show Next Alarm</string>
     <string name="theme_selector_help">Select a predefined themes, you can backup your settings and propose you theme in a pull request on github</string>
     <string name="open_nest_circle">Open Circle Nest</string>
@@ -237,21 +224,13 @@
     <string name="widgets">Widgets</string>
     <string name="widgets_floating_apps">Widgets / Floating Apps</string>
     <string name="floating_apps_tab_help">Manage your workspace widgets and floating apps: add, reorder, resize, and position them.</string>
-    <string name="widgets_tab_intro">Click a widget to select it, then drag to move or use the buttons to reorder. Selected widgets show a border and respond to gestures.</string>
-    <string name="widgets_list">Widget List</string>
-    <string name="widgets_empty">No widgets added yet. Tap + to add one!</string>
-    <string name="move_widget_up">Move Up</string>
-    <string name="move_widget_down">Move Down</string>
     <string name="delete_widget">Delete widget</string>
-    <string name="select_previous_widget">Select previous widget</string>
-    <string name="select_next_widget">Select next widget</string>
     <string name="add_point">Add Point</string>
     <string name="remove_point">Remove Point</string>
     <string name="copy_point">Copy Point</string>
     <string name="move_point_to_right">Move point to right</string>
     <string name="move_point_to_left">Move point to left</string>
-    <string name="toggle_drag_cdistances_editing">Toggle drag circle editing</string>
-    <string name="center_selected_floating_app">Center selected floating app / widget</string>
+    <string name="toggle_drag_distances_editing">Toggle drag circle editing</string>
     <string name="device_admin_description">Used to prevent Xiaomi to kill the app</string>
     <string name="device_admin_label">Dragon Launcher</string>
     <string name="ghosted">Ghosted</string>

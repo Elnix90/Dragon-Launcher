@@ -86,7 +86,7 @@ fun AppGrid(
             columns = GridCells.Fixed(gridSize),
             modifier = Modifier.fillMaxSize()
         ) {
-            items(apps.size, ) { index ->
+            items(apps.size) { index ->
                 val app = apps[index]
 
                 Column(

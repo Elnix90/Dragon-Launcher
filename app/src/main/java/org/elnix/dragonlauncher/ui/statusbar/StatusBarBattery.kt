@@ -10,7 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 @Composable
 fun StatusBarBattery(textColor: Color) {
     val ctx = LocalContext.current
-    var level by remember { mutableStateOf(100) }
+    var level by remember { mutableIntStateOf(100) }
 
     DisposableEffect(Unit) {
         val receiver = object : BroadcastReceiver() {

@@ -3,7 +3,6 @@ package org.elnix.dragonlauncher.utils
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.compose.runtime.Composable
 import java.time.LocalDate
 import java.time.LocalTime
@@ -37,12 +36,10 @@ fun detectSystemLauncher(ctx: Context): String? {
     val am = ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 
     // Method 1: Check foreground task (most reliable)
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        val task = am.getRunningTasks(1)?.firstOrNull()
-        val topPkg = task?.topActivity?.packageName
-        if (systemLaunchers.contains(topPkg)) {
-            return topPkg
-        }
+    val task = am.getRunningTasks(1)?.firstOrNull()
+    val topPkg = task?.topActivity?.packageName
+    if (systemLaunchers.contains(topPkg)) {
+        return topPkg
     }
 
     // Method 2: Query intent resolvers (default home)

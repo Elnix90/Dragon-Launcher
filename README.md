@@ -1,6 +1,7 @@
 <div align="center">
 
-![App Icon](./app/src/main/res/drawable/dragon_launcher_foreground.png)
+<img src="app/src/main/res/drawable/dragon_launcher_foreground.png" width="22%" alt="App Icon"/>
+
 # Dragon Launcher - Fast Gesture based android launcher
 
 ### Dragon Launcher is a highly customizable Android launcher focused on speed and efficiency.
@@ -78,9 +79,11 @@
 
 ---
 ## Screenshots
+<p align="center">
+    <img src="metadata/images/demo.gif" alt="App demo animation"/>
+</p>
 
 <p align="center">
-  <img src="metadata/images/demo.gif" width="22%" alt="App demo animation"/>
   <img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/1.jpg" width="22%" alt="App ScreenShot 1"/>
   <img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/16.jpg" width="22%" alt="App ScreenShot 16"/>
   <img src="https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/2.jpg" width="22%" alt="App ScreenShot 2"/>

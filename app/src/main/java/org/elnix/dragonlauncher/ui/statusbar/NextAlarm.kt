@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter
 
 
 @Composable
-fun StatusBarNextAlarm(textColor: Color, ) {
+fun StatusBarNextAlarm(textColor: Color) {
     val ctx = LocalContext.current
     var nextAlarm by remember { mutableStateOf<NextAlarmInfo?>(null) }
 

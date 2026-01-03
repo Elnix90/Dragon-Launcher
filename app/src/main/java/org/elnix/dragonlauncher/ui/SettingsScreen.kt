@@ -691,7 +691,7 @@ fun SettingsScreen(
                 } else {
                     Icons.Outlined.ChangeCircle
                 },
-                contentDescription = stringResource(R.string.toggle_drag_cdistances_editing),
+                contentDescription = stringResource(R.string.toggle_drag_distances_editing),
                 color = MaterialTheme.colorScheme.primary,
                 padding = 10.dp
             ) {
