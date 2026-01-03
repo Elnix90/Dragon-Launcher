@@ -79,7 +79,7 @@ fun DebugTab(
     val workspaceDebugInfos by DebugSettingsStore.getWorkspacesDebugInfos(ctx)
         .collectAsState(initial = false)
 
-    val useAccessibilityInsteadOfContextToExpandActionPanel by PrivateSettingsStore
+    val useAccessibilityInsteadOfContextToExpandActionPanel by DebugSettingsStore
         .getUseAccessibilityInsteadOfContextToExpandActionPanel(ctx)
         .collectAsState(initial = false)
 
@@ -267,7 +267,7 @@ fun DebugTab(
                 text = "useAccessibilityInsteadOfContextToExpandActionPanel"
             ) {
                 scope.launch {
-                    PrivateSettingsStore.setUseAccessibilityInsteadOfContextToExpandActionPanel(
+                    DebugSettingsStore.setUseAccessibilityInsteadOfContextToExpandActionPanel(
                         ctx,
                         it
                     )

@@ -19,7 +19,6 @@ import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore.Keys.HAS_SEEN_W
 import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore.Keys.LAST_SEEN_VERSION_CODE
 import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore.Keys.SHOW_METHOD_ASKING
 import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore.Keys.SHOW_SET_DEFAULT_LAUNCHER_BANNER
-import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore.Keys.USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT
 import org.elnix.dragonlauncher.data.uiDatastore
 
 object PrivateSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
@@ -32,7 +31,6 @@ object PrivateSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
         val hasSeenWelcome: Boolean = false,
         val hasInitialized: Boolean = false,
         val showSetDefaultLauncherBanner: Boolean = true,
-        val useAccessibilityInsteadOfContextToExpandActionPanel: Boolean = true,
         val showMethodAsking: Boolean = true,
         val lastSeenVersionCode: Int = 0
     )
@@ -51,9 +49,6 @@ object PrivateSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
         val SHOW_SET_DEFAULT_LAUNCHER_BANNER =
             booleanPreferencesKey("showSetDefaultLauncherBanner")
 
-        val USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT =
-            booleanPreferencesKey("useAccessibilityInsteadOfContextToExpandActionPanel")
-
         val SHOW_METHOD_ASKING =
             booleanPreferencesKey("showMethodAsking")
 
@@ -64,7 +59,6 @@ object PrivateSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
             HAS_SEEN_WELCOME,
             HAS_INITIALIZED,
             SHOW_SET_DEFAULT_LAUNCHER_BANNER,
-            USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT,
             SHOW_METHOD_ASKING,
             LAST_SEEN_VERSION_CODE
         )
@@ -102,14 +96,7 @@ object PrivateSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
         ctx.privateSettingsStore.edit { it[SHOW_SET_DEFAULT_LAUNCHER_BANNER] = v }
     }
 
-    fun getUseAccessibilityInsteadOfContextToExpandActionPanel(ctx: Context): Flow<Boolean> =
-        ctx.privateSettingsStore.data.map { prefs ->
-            prefs[USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT] ?: defaults.useAccessibilityInsteadOfContextToExpandActionPanel
-        }
 
-    suspend fun setUseAccessibilityInsteadOfContextToExpandActionPanel(ctx: Context, v: Boolean) {
-        ctx.privateSettingsStore.edit { it[USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT] = v }
-    }
 
     fun getShowMethodAsking(ctx: Context): Flow<Boolean> =
         ctx.privateSettingsStore.data.map { prefs ->
@@ -154,11 +141,7 @@ object PrivateSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
                 prefs[SHOW_SET_DEFAULT_LAUNCHER_BANNER],
                 defaults.showSetDefaultLauncherBanner
             )
-            putIfNonDefault(
-                USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT,
-                prefs[USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT],
-                defaults.useAccessibilityInsteadOfContextToExpandActionPanel
-            )
+
             putIfNonDefault(
                 SHOW_METHOD_ASKING,
                 prefs[SHOW_METHOD_ASKING],
@@ -191,15 +174,6 @@ object PrivateSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
                         value,
                         SHOW_SET_DEFAULT_LAUNCHER_BANNER,
                         defaults.showSetDefaultLauncherBanner
-                    )
-            }
-
-            value[USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT.name]?.let {
-                prefs[USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT] =
-                    getBooleanStrict(
-                        value,
-                        USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT,
-                        defaults.useAccessibilityInsteadOfContextToExpandActionPanel
                     )
             }
 

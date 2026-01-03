@@ -11,6 +11,7 @@ import org.elnix.dragonlauncher.data.BaseSettingsStore
 import org.elnix.dragonlauncher.data.debugDatastore
 import org.elnix.dragonlauncher.data.getBooleanStrict
 import org.elnix.dragonlauncher.data.getStringStrict
+import org.elnix.dragonlauncher.data.privateSettingsStore
 import org.elnix.dragonlauncher.data.putIfNonDefault
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore.Keys.AUTO_RAISE_DRAGON_ON_SYSTEM_LAUNCHER
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore.Keys.DEBUG_ENABLED
@@ -18,6 +19,7 @@ import org.elnix.dragonlauncher.data.stores.DebugSettingsStore.Keys.DEBUG_INFOS
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore.Keys.FORCE_APP_LANGUAGE_SELECTOR
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore.Keys.SETTINGS_DEBUG_INFOS
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore.Keys.SYSTEM_LAUNCHER_PACKAGE_NAME
+import org.elnix.dragonlauncher.data.stores.DebugSettingsStore.Keys.USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore.Keys.WIDGETS_DEBUG_INFOS
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore.Keys.WORKSPACES_DEBUG_INFO
 
@@ -36,8 +38,9 @@ object DebugSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
         val workspacesDebugInfo: Boolean = false,
         val forceAppLanguageSelector: Boolean = false,
         val autoRaiseDragonOnSystemLauncher: Boolean = false,
-        val systemLauncherPackageName: String = ""
-    )
+        val systemLauncherPackageName: String = "",
+        val useAccessibilityInsteadOfContextToExpandActionPanel: Boolean = true,
+        )
 
     private val defaults = DebugSettingsBackup()
 
@@ -53,6 +56,8 @@ object DebugSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
         val FORCE_APP_LANGUAGE_SELECTOR = booleanPreferencesKey(DebugSettingsBackup::forceAppLanguageSelector.name)
         val AUTO_RAISE_DRAGON_ON_SYSTEM_LAUNCHER = booleanPreferencesKey(DebugSettingsBackup::autoRaiseDragonOnSystemLauncher.name)
         val SYSTEM_LAUNCHER_PACKAGE_NAME = stringPreferencesKey(DebugSettingsBackup::systemLauncherPackageName.name)
+        val USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT =
+            booleanPreferencesKey(DebugSettingsBackup::useAccessibilityInsteadOfContextToExpandActionPanel.name)
 
         val ALL = listOf(
             DEBUG_ENABLED,
@@ -62,7 +67,8 @@ object DebugSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
             WORKSPACES_DEBUG_INFO,
             FORCE_APP_LANGUAGE_SELECTOR,
             AUTO_RAISE_DRAGON_ON_SYSTEM_LAUNCHER,
-            SYSTEM_LAUNCHER_PACKAGE_NAME
+            SYSTEM_LAUNCHER_PACKAGE_NAME,
+            USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT
         )
     }
 
@@ -146,6 +152,18 @@ object DebugSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
     }
 
 
+
+    fun getUseAccessibilityInsteadOfContextToExpandActionPanel(ctx: Context): Flow<Boolean> =
+        ctx.privateSettingsStore.data.map { prefs ->
+            prefs[USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT] ?: defaults.useAccessibilityInsteadOfContextToExpandActionPanel
+        }
+
+    suspend fun setUseAccessibilityInsteadOfContextToExpandActionPanel(ctx: Context, v: Boolean) {
+        ctx.privateSettingsStore.edit { it[USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT] = v }
+    }
+
+
+
     // -------------------------------------------------------------------------
     // Reset
     // -------------------------------------------------------------------------
@@ -170,6 +188,11 @@ object DebugSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
             putIfNonDefault(FORCE_APP_LANGUAGE_SELECTOR, prefs[FORCE_APP_LANGUAGE_SELECTOR], defaults.forceAppLanguageSelector)
             putIfNonDefault(AUTO_RAISE_DRAGON_ON_SYSTEM_LAUNCHER, prefs[AUTO_RAISE_DRAGON_ON_SYSTEM_LAUNCHER], defaults.autoRaiseDragonOnSystemLauncher)
             putIfNonDefault(SYSTEM_LAUNCHER_PACKAGE_NAME, prefs[SYSTEM_LAUNCHER_PACKAGE_NAME], defaults.systemLauncherPackageName)
+            putIfNonDefault(
+                USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT,
+                prefs[USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT],
+                defaults.useAccessibilityInsteadOfContextToExpandActionPanel
+            )
         }
     }
 
@@ -203,6 +226,15 @@ object DebugSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
 
             prefs[SYSTEM_LAUNCHER_PACKAGE_NAME] =
                 getStringStrict(value,SYSTEM_LAUNCHER_PACKAGE_NAME, defaults.systemLauncherPackageName)
+
+            value[USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT.name]?.let {
+                prefs[USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT] =
+                    getBooleanStrict(
+                        value,
+                        USE_ACCESSIBILITY_INSTEAD_OF_CONTEXT,
+                        defaults.useAccessibilityInsteadOfContextToExpandActionPanel
+                    )
+            }
         }
     }
 }
