@@ -60,7 +60,7 @@
 ## Privacy & security
 
 * **No** data collection
-* Dragon Launcher has no even access to internet -> it cannot steal your data
+* Dragon Launcher has not even access to internet -> it cannot steal your data
 * No intrusive permissions requested for the app to work
 * Uses Accessibility permissions (optionally) to:
   1. Expand notifications panel (needed by android)
