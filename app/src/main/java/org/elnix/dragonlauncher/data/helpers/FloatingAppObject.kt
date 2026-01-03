@@ -10,5 +10,6 @@ data class FloatingAppObject(
     val x: Float = 0f,
     val y: Float = 0f,
     val angle: Double = 0.0,
-    val ghosted: Boolean? = false
+    val ghosted: Boolean? = false,
+    val foreground: Boolean? = true
 )

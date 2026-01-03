@@ -234,4 +234,5 @@
     <string name="device_admin_description">샤오미가 앱을 종료하는 것을 막기 위해 사용되었습니다</string>
     <string name="device_admin_label">드래곤 런처</string>
     <string name="ghosted">고스트</string>
+    <string name="foreground">전경</string>
 </resources>

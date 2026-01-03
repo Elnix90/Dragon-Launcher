@@ -234,4 +234,5 @@
     <string name="device_admin_description">Xiaomi को ऐप को मारने से रोकने के लिए उपयोग किया जाता है</string>
     <string name="device_admin_label">ड्रैगन लांचर</string>
     <string name="ghosted">भूत</string>
+    <string name="foreground">अग्रभूमि</string>
 </resources>

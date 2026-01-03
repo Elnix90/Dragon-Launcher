@@ -3,7 +3,7 @@ name: Build & Pre-Release
 on:
   push:
     branches:
-      - main
+      - dev
     paths:
         - 'app/**'
         - 'build.gradle**'

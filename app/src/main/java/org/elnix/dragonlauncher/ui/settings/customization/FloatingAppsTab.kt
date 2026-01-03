@@ -196,8 +196,8 @@ fun FloatingAppsTab(
                         floatingAppsViewModel.resizeFloatingApp(floatingApp.id, corner, 0f, 0f, snapResize)
                     },
                     onRemove = { removeWidget(floatingApp) },
-                    onGhost = { ghosted ->
-                        floatingAppsViewModel.setGhostedFloatingApp(floatingApp.id, ghosted)
+                    onEdit = {
+                        floatingAppsViewModel.editFloatingApp(it)
                     }
                 )
             }
@@ -402,7 +402,7 @@ private fun DraggableFloatingApp(
     onResize: (FloatingAppsViewModel.ResizeCorner, Float, Float) -> Unit,
     onResizeEnd: (FloatingAppsViewModel.ResizeCorner) -> Unit,
     onRemove: () -> Unit,
-    onGhost: (ghosted: Boolean) -> Unit
+    onEdit: (FloatingAppObject) -> Unit
 ) {
     val ctx = LocalContext.current
     val borderColor = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent
@@ -603,7 +603,7 @@ private fun DraggableFloatingApp(
 
     // If close to top
     val offsetY = if (app.y < 0.05f) y + height.toInt()
-    else y - 100
+    else y - 200
 
     if (selected) {
         Box(
@@ -615,20 +615,43 @@ private fun DraggableFloatingApp(
                     )
                 }
         ) {
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Checkbox(
-                    checked = app.ghosted == true,
-                    onCheckedChange = { onGhost(it) }
-                )
+            Column {
 
-                Text(
-                    text = stringResource(R.string.ghosted),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 12.sp
-                )
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = app.ghosted == true,
+                        onCheckedChange = {
+                            onEdit(app.copy(ghosted = it))
+                        }
+                    )
+
+                    Text(
+                        text = stringResource(R.string.ghosted),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 12.sp
+                    )
+                }
+
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = app.foreground == true,
+                        onCheckedChange = {
+                            onEdit(app.copy(foreground = it))
+                        }
+                    )
+
+                    Text(
+                        text = stringResource(R.string.foreground),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 12.sp
+                    )
+                }
             }
         }
     }

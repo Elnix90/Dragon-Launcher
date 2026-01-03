@@ -234,4 +234,5 @@
     <string name="device_admin_description">Utilisé pour empêcher Xiaomi de couper l’application</string>
     <string name="device_admin_label">Lance-dragons</string>
     <string name="ghosted">Ghosté</string>
+    <string name="foreground">Premier plan</string>
 </resources>

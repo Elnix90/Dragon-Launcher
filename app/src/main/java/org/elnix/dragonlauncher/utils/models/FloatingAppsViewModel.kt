@@ -262,20 +262,16 @@ class FloatingAppsViewModel(
     }
 
 
-    fun setGhostedFloatingApp(appId: Int, ghostedState: Boolean) {
+    fun editFloatingApp(app: FloatingAppObject) {
         val updated = _floatingApps.value.map { floatingApp ->
-            if (floatingApp.id == appId) {
-
-                floatingApp.copy(
-                   ghosted = ghostedState
-                )
-            } else floatingApp
+            if (floatingApp.id == app.id) app
+            else floatingApp
         }
 
         _floatingApps.value = updated
 
         viewModelScope.launch {
-            updated.find { it.id == appId }?.let {
+            updated.find { it.id == app.id }?.let {
                 FloatingAppsSettingsStore.saveFloatingApp(ctx, it)
             }
         }

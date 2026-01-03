@@ -13,6 +13,7 @@ import org.elnix.dragonlauncher.data.helpers.FloatingAppObject
 import org.elnix.dragonlauncher.utils.FLOATING_APPS_TAG
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.Collections.emptyList
 
 object FloatingAppsSettingsStore : BaseSettingsStore<JSONObject>() {
 
@@ -40,7 +41,9 @@ object FloatingAppsSettingsStore : BaseSettingsStore<JSONObject>() {
                     x = obj.optDouble("x", 0.0).toFloat(),
                     y = obj.optDouble("y", 0.0).toFloat(),
                     angle = obj.optDouble("angle", 0.0),
-                    ghosted = obj.optBoolean("ghosted", false)
+                    ghosted = obj.optBoolean("ghosted", false),
+                    foreground = obj.optBoolean("foreground", true)
+
                 ))
             }
             Log.d(FLOATING_APPS_TAG, "Loaded ${floatingApps.size} floatingApps")
@@ -70,6 +73,7 @@ object FloatingAppsSettingsStore : BaseSettingsStore<JSONObject>() {
                     put("y", floatingApp.y)
                     put("angle", floatingApp.angle)
                     put("ghosted", floatingApp.ghosted)
+                    put("foreground", floatingApp.foreground)
                 })
             }
         }
@@ -96,6 +100,7 @@ object FloatingAppsSettingsStore : BaseSettingsStore<JSONObject>() {
                     put("y", floatingApp.y)
                     put("angle", floatingApp.angle)
                     put("ghosted", floatingApp.ghosted)
+                    put("foreground", floatingApp.foreground)
                 })
             }
         }

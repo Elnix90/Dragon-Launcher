@@ -234,4 +234,5 @@
     <string name="device_admin_description">Used to prevent Xiaomi to kill the app</string>
     <string name="device_admin_label">Dragon Launcher</string>
     <string name="ghosted">Ghosted</string>
+    <string name="foreground">Foreground</string>
 </resources>

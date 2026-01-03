@@ -234,4 +234,5 @@
     <string name="device_admin_description">Xiaomiがアプリを停止させるのを防ぐために使われました</string>
     <string name="device_admin_label">ドラゴンランチャー</string>
     <string name="ghosted">ゴースト</string>
+    <string name="foreground">前景</string>
 </resources>

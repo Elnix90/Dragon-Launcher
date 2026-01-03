@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.R
 import org.elnix.dragonlauncher.data.SwipePointSerializable
+import org.elnix.dragonlauncher.data.helpers.FloatingAppObject
 import org.elnix.dragonlauncher.data.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.data.stores.PrivateSettingsStore
@@ -289,6 +290,17 @@ fun MainScreen(
                             continue
                         }
 
+                        if (isInsideForegroundWidget(
+                                pos = pos,
+                                floatingAppObjects = floatingAppObjects, // 👈 Pass this
+                                dm = dm,
+                                density = density, // 👈 Pass this
+                                cellSizePx = cellSizePx
+                            )) {
+                            // Let widget handle scroll - do NOT consume or process
+                            continue
+                        }
+
                         start = down.position
                         current = down.position
                         isDragging = true
@@ -493,4 +505,30 @@ private fun isInsideActiveZone(
             pos.x <= size.width - right &&
             pos.y >= top &&
             pos.y <= size.height - bottom
+}
+
+
+
+/**
+ * Checks if pointer position is inside any foreground widget bounds.
+ */
+private fun isInsideForegroundWidget(
+    pos: Offset,
+    floatingAppObjects: List<FloatingAppObject>, // 👈 You'll need to pass this
+    dm: android.util.DisplayMetrics,
+    density: androidx.compose.ui.unit.Density,
+    cellSizePx: Float
+): Boolean {
+    return floatingAppObjects.any { widget ->
+        // Skip if not foreground
+        if (widget.foreground == false) return@any false
+
+        val left = (widget.x * dm.widthPixels).toInt()
+        val top = (widget.y * dm.heightPixels).toInt()
+        val right = left + with(density) { (widget.spanX * cellSizePx).toDp() }.value.times(density.density).toInt()
+        val bottom = top + with(density) { (widget.spanY * cellSizePx).toDp() }.value.times(density.density).toInt()
+
+        pos.x >= left && pos.x <= right &&
+                pos.y >= top && pos.y <= bottom
+    }
 }

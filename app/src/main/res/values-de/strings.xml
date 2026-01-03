@@ -234,4 +234,5 @@
     <string name="device_admin_description">Wurde genutzt, um zu verhindern, dass Xiaomi die App abbrachte.</string>
     <string name="device_admin_label">Drachenwerfer</string>
     <string name="ghosted">Geghostet</string>
+    <string name="foreground">Vordergrund</string>
 </resources>

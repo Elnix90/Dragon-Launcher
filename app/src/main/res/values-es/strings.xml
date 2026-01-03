@@ -234,4 +234,5 @@
     <string name="device_admin_description">Se usó para evitar que Xiaomi cancelara la app</string>
     <string name="device_admin_label">Lanzador de Dragones</string>
     <string name="ghosted">Fantasma</string>
+    <string name="foreground">Primer plano</string>
 </resources>
