@@ -1,20 +1,16 @@
-1.3.0
-2025-12-30
-
+2.0.0
+2026-01-3
 [NOTE]
 * Accessibility: optional expand notifications, recent apps, lock screen
-
+* Device admin optionally used to prevent system to kill Dragon
 [NEW]
 * Circle Nests system; can create sub circles
+* Widgets and floating apps Support, fully customisable, even more than default launcher
 * Can add/remove circles
 * Theme selector
-
 [IMPROVED]
 * Lots of UI improvements
 * App behaviors improved: backup, natural feeling
-
 [FIXED]
 * Crash issues from previous releases fixed
-
-[ISSUES]
-* Some known crash bugs were reported, should be fixed
+* Minor bug fixes

@@ -50,3 +50,9 @@ Builds:
     commit: v1.2.7
     gradle:
       - yes
+
+  - versionName: 2.0.0
+    versionCode: 23
+    commit: v2.0.0
+    gradle:
+      - yes
