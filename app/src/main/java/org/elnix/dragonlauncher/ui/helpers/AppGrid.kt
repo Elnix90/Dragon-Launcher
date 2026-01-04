@@ -84,7 +84,12 @@ fun AppGrid(
     } else {
         LazyVerticalGrid(
             columns = GridCells.Fixed(gridSize),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .then(
+                    if (onClose != null) Modifier.nestedScroll(nestedConnection)
+                    else Modifier
+                )
         ) {
             items(apps.size) { index ->
                 val app = apps[index]
