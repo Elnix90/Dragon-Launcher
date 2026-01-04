@@ -13,11 +13,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -63,11 +66,13 @@ import org.elnix.dragonlauncher.R
 import org.elnix.dragonlauncher.data.SwipeActionSerializable
 import org.elnix.dragonlauncher.data.helpers.FloatingAppObject
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore
+import org.elnix.dragonlauncher.data.stores.StatusBarSettingsStore
 import org.elnix.dragonlauncher.ui.components.FloatingAppsHostView
 import org.elnix.dragonlauncher.ui.components.dialogs.AddPointDialog
 import org.elnix.dragonlauncher.ui.helpers.CircleIconButton
 import org.elnix.dragonlauncher.ui.helpers.UpDownButton
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
+import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 import org.elnix.dragonlauncher.utils.models.AppsViewModel
 import org.elnix.dragonlauncher.utils.models.FloatingAppsViewModel
 import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
@@ -114,27 +119,106 @@ fun FloatingAppsTab(
 
     var showAddDialog by remember { mutableStateOf(false) }
 
-    SettingsLazyHeader(
-        title = "${stringResource(R.string.widgets_floating_apps)} (${widgetNumber}) (${floatingAppsNumber})",
-        onBack = onBack,
-        helpText = stringResource(R.string.floating_apps_tab_help),
-        onReset = {
-            scope.launch {
-                floatingAppsViewModel.resetAllFloatingApps()
-            }
-        },
-        content = {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .pointerInput(Unit) {
-                        detectTapGestures {
-                            selected = null
-                        }
-                    }
+
+    /** ───────────────────────────────────────────────────────────────────────────────────────────
+     * Status bar things, copy paste from the getters, do no change that, it's just for displaying
+     * the status bar if enabled to preview more easily
+    ──────────────────────────────────────────────────────────────────────────────────────────────*/
+    val systemInsets = WindowInsets.systemBars.asPaddingValues()
+
+    val isRealFullscreen = systemInsets.calculateTopPadding() == 0.dp
+
+    val showStatusBar by StatusBarSettingsStore.getShowStatusBar(ctx)
+        .collectAsState(initial = false)
+
+    val statusBarBackground by StatusBarSettingsStore.getBarBackgroundColor(ctx)
+        .collectAsState(initial = Color.Transparent)
+
+    val statusBarText by StatusBarSettingsStore.getBarTextColor(ctx)
+        .collectAsState(initial = MaterialTheme.colorScheme.onBackground)
+
+    val showTime by StatusBarSettingsStore.getShowTime(ctx)
+        .collectAsState(initial = false)
+
+    val showDate by StatusBarSettingsStore.getShowDate(ctx)
+        .collectAsState(initial = false)
+
+    val timeFormatter by StatusBarSettingsStore.getTimeFormatter(ctx)
+        .collectAsState("HH:mm:ss")
+
+    val dateFormatter by StatusBarSettingsStore.getDateFormatter(ctx)
+        .collectAsState("MMM dd")
+
+    val showNotifications by StatusBarSettingsStore.getShowNotifications(ctx)
+        .collectAsState(initial = false)
+
+    val showBattery by StatusBarSettingsStore.getShowBattery(ctx)
+        .collectAsState(initial = false)
+
+    val showConnectivity by StatusBarSettingsStore.getShowConnectivity(ctx)
+        .collectAsState(initial = false)
+
+    val showNextAlarm by StatusBarSettingsStore.getShowNextAlarm(ctx)
+        .collectAsState(false)
+
+    val leftPadding by StatusBarSettingsStore.getLeftPadding(ctx)
+        .collectAsState(initial = 5)
+
+    val rightPadding by StatusBarSettingsStore.getRightPadding(ctx)
+        .collectAsState(initial = 5)
+
+    val topPadding by StatusBarSettingsStore.getTopPadding(ctx)
+        .collectAsState(initial = 2)
+
+    val bottomPadding by StatusBarSettingsStore.getBottomPadding(ctx)
+        .collectAsState(initial = 2)
+
+    /** ───────────────────────────────────────────────────────────────── */
+
+
+    Column{
+
+        if (showStatusBar && isRealFullscreen) {
+            StatusBar(
+                backgroundColor = statusBarBackground,
+                textColor = statusBarText,
+                showTime = showTime,
+                showDate = showDate,
+                timeFormatter = timeFormatter,
+                dateFormatter = dateFormatter,
+                showNotifications = showNotifications,
+                showBattery = showBattery,
+                showConnectivity = showConnectivity,
+                showNextAlarm = showNextAlarm,
+                leftPadding = leftPadding,
+                rightPadding = rightPadding,
+                topPadding = topPadding,
+                bottomPadding = bottomPadding
             )
         }
-    )
+
+        SettingsLazyHeader(
+            title = "${stringResource(R.string.widgets_floating_apps)} (${widgetNumber}) (${floatingAppsNumber})",
+            onBack = onBack,
+            helpText = stringResource(R.string.floating_apps_tab_help),
+            onReset = {
+                scope.launch {
+                    floatingAppsViewModel.resetAllFloatingApps()
+                }
+            },
+            content = {
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .pointerInput(Unit) {
+                            detectTapGestures {
+                                selected = null
+                            }
+                        }
+                )
+            }
+        )
+    }
 
     Box(Modifier.fillMaxSize()) {
 
