@@ -481,7 +481,9 @@ fun MainScreenOverlay(
             currentAction = currentAction,
             extraColors = extraColors,
             label = label,
-            topPadding = 20.dp
+            topPadding = 20.dp,
+            showLabel = showLaunchingAppLabel,
+            showIcon = showLaunchingAppIcon
         )
     }
 

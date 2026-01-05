@@ -1149,7 +1149,9 @@ fun SettingsScreen(
             icons = icons,
             currentAction = currentAction,
             extraColors = extraColors,
-            label = label
+            label = label,
+            showLabel = true,
+            showIcon = true
         )
     }
 

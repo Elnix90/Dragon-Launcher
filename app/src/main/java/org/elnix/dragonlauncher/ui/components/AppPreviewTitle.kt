@@ -33,38 +33,48 @@ fun AppPreviewTitle(
     currentAction: SwipeActionSerializable,
     extraColors: ExtraColors,
     label: String,
-    topPadding: Dp = 60.dp
+    topPadding: Dp = 60.dp,
+    showLabel: Boolean,
+    showIcon: Boolean
 ) {
     val ctx = LocalContext.current
 
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .offset(y = offsetY)
-            .padding(top = topPadding)
-            .alpha(alpha),
-        contentAlignment = Alignment.TopCenter
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
-            verticalAlignment = Alignment.CenterVertically,
+    if (showIcon || showLabel) {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .offset(y = offsetY)
+                .padding(top = topPadding)
+                .alpha(alpha),
+            contentAlignment = Alignment.TopCenter
         ) {
-            Image(
-                painter = BitmapPainter(actionIconBitmap(
-                    icons,
-                    currentAction,
-                    ctx,
-                    tintColor = actionColor(currentAction, extraColors)
-                )),
-                contentDescription = label,
-                modifier = Modifier.size(22.dp)
-            )
-            Text(
-                text = label,
-                color = actionColor(currentAction, extraColors),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (showIcon) {
+                    Image(
+                        painter = BitmapPainter(
+                            actionIconBitmap(
+                                icons,
+                                currentAction,
+                                ctx,
+                                tintColor = actionColor(currentAction, extraColors)
+                            )
+                        ),
+                        contentDescription = label,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+                if (showLabel) {
+                    Text(
+                        text = label,
+                        color = actionColor(currentAction, extraColors),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
         }
     }
 }
