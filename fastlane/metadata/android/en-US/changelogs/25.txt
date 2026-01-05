@@ -1,0 +1,16 @@
+2.0.2
+2026-01-05
+[NEW]
+ * Debug JSON settings inspector
+ * Clock/date click actions + status bar UI tweaks
+ * Overlay bar top padding option
+ * Work profile detection/support
+ * Logging system
+ * force widget picker
+[FIXED]
+ * App list refresh, system apps loading, VM workflow
+ * UI spacing/readability and notch-safe padding
+ * Icon/label options, work profile launching
+ * Gesture,crash on boot (Gson)
+ * Status bar layout issues, widget picker fallback
+ * Changelog version typo and v2.0.1 merge
