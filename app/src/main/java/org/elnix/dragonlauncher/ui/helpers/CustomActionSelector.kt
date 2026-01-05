@@ -126,7 +126,8 @@ fun CustomActionSelector(
                 textAlign = TextAlign.Right,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 12.dp)            )
+                    .padding(start = 12.dp)
+            )
         }
 
         Row(
