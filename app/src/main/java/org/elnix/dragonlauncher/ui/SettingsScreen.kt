@@ -202,9 +202,9 @@ fun SettingsScreen(
     val currentFilteredPoints by rememberUpdatedState(filteredPoints)
 
     LaunchedEffect(points, nestId) {
-        logE(TAG, nestId.toString())
-        logE(TAG, currentNest.toString())
-        logE(TAG, points.filter { it.nestId == nestId }.toString())
+        logD(TAG, nestId.toString())
+        logD(TAG, currentNest.toString())
+        logD(TAG, points.filter { it.nestId == nestId }.toString())
     }
 
     /**
@@ -400,6 +400,7 @@ fun SettingsScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .systemBarsPadding()
+            .padding(top = 30.dp)
     ) {
         Row(
             modifier = Modifier
@@ -927,17 +928,17 @@ fun SettingsScreen(
                             .clip(CircleShape)
                             .clickable {
 
-                                logE(TAG, nests.toString())
-                                logE(TAG, "Received add update, current nests size: ${nests.size}")
+                                logD(TAG, nests.toString())
+                                logD(TAG, "Received add update, current nests size: ${nests.size}")
 
 
                                 // The new circle id is the size minus one, cause circleIndexes
                                 // starts at 0 and the cancel zone is always in the list
                                 val newCircleNumber = currentNest.dragDistances.size - 1
 
-                                logE(TAG, "new circle number: $newCircleNumber")
+                                logD(TAG, "new circle number: $newCircleNumber")
 
-                                logE(TAG, nests.map {
+                                logD(TAG, nests.map {
                                     if (it.id == nestId) {
                                         it.copy(
                                             dragDistances = it.dragDistances + (newCircleNumber to defaultDragDistance(
@@ -1150,6 +1151,7 @@ fun SettingsScreen(
             currentAction = currentAction,
             extraColors = extraColors,
             label = label,
+            topPadding = 80.dp,
             showLabel = true,
             showIcon = true
         )

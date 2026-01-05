@@ -235,4 +235,5 @@
     <string name="device_admin_label">ड्रैगन लांचर</string>
     <string name="ghosted">भूत</string>
     <string name="foreground">अग्रभूमि</string>
+    <string name="app_label_icon_overlay_top_padding">ऐप लेबल/आइकन ओवरले टॉप पैडिंग</string>
 </resources>

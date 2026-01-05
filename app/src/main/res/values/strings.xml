@@ -235,4 +235,7 @@
     <string name="device_admin_label">Dragon Launcher</string>
     <string name="ghosted">Ghosted</string>
     <string name="foreground">Foreground</string>
+    <string name="app_label_icon_overlay_top_padding">App label/icon overlay top padding</string>
+    <string name="show_launching_app_icon">Show App icon</string>
+    <string name="show_launching_app_label">Show App Label</string>
 </resources>

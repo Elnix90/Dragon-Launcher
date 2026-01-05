@@ -235,4 +235,5 @@
     <string name="device_admin_label">Drachenwerfer</string>
     <string name="ghosted">Geghostet</string>
     <string name="foreground">Vordergrund</string>
+    <string name="app_label_icon_overlay_top_padding">App-Label/Icon-Overlay oben Polsterung</string>
 </resources>

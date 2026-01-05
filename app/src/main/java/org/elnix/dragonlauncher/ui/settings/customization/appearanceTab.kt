@@ -1,5 +1,8 @@
 package org.elnix.dragonlauncher.ui.settings.customization
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ColorLens
 import androidx.compose.material.icons.filled.Palette
@@ -11,19 +14,27 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.R
+import org.elnix.dragonlauncher.data.SwipeActionSerializable
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.SETTINGS
+import org.elnix.dragonlauncher.ui.components.AppPreviewTitle
 import org.elnix.dragonlauncher.ui.helpers.SliderWithLabel
 import org.elnix.dragonlauncher.ui.helpers.SwitchRow
 import org.elnix.dragonlauncher.ui.helpers.TextDivider
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
+import org.elnix.dragonlauncher.ui.theme.LocalExtraColors
 
 
 @Composable
@@ -76,6 +87,23 @@ fun AppearanceTab(
 
     val showActionIconBorder by UiSettingsStore.getShowActionIconBorder(ctx)
         .collectAsState(initial = false)
+
+    val appLabelIconOverlayTopPadding by UiSettingsStore.getAppLabelIconOverlayTopPadding(ctx)
+        .collectAsState(initial = 30)
+    var isDraggingAppLabelIcon by remember { mutableStateOf(false) }
+
+    val alpha by animateFloatAsState(
+        targetValue = if (isDraggingAppLabelIcon) 1f else 0f,
+        animationSpec = tween(150)
+    )
+    val offsetY by animateDpAsState(
+        targetValue = if (isDraggingAppLabelIcon) 0.dp else (-20).dp,
+        animationSpec = tween(150)
+    )
+    val extraColors = LocalExtraColors.current
+
+    val icons = emptyMap<String, ImageBitmap>()
+
 
     SettingsLazyHeader(
         title = stringResource(R.string.appearance),
@@ -161,15 +189,32 @@ fun AppearanceTab(
         item {
             SwitchRow(
                 showLaunchingAppLabel,
-                "Show App label",
+                stringResource(R.string.show_launching_app_label),
             ) { scope.launch { UiSettingsStore.setShowLaunchingAppLabel(ctx, it) } }
         }
 
         item {
             SwitchRow(
                 showLaunchingAppIcon,
-                "Show App icon",
+                stringResource(R.string.show_launching_app_icon),
             ) { scope.launch { UiSettingsStore.setShowLaunchingAppIcon(ctx, it) } }
+        }
+
+        item {
+            SliderWithLabel(
+                label = stringResource(R.string.app_label_icon_overlay_top_padding),
+                value = appLabelIconOverlayTopPadding,
+                showValue = true,
+                valueRange = 0f..360f,
+                color = MaterialTheme.colorScheme.primary,
+                onReset = { scope.launch { UiSettingsStore.setAppLabelIconOverlayTopPadding(ctx, 30) } },
+                onChange = {
+                    scope.launch { UiSettingsStore.setAppLabelIconOverlayTopPadding(ctx, it) }
+                },
+                onDragStateChange = {
+                    isDraggingAppLabelIcon = it
+                }
+            )
         }
 
         item {
@@ -227,6 +272,7 @@ fun AppearanceTab(
                 scope.launch { UiSettingsStore.setMinAngleFromAPointToActivateIt(ctx, it) }
             }
         }
+
         item {
             SwitchRow(
                 state = showAllActionsOnCurrentCircle,
@@ -240,5 +286,19 @@ fun AppearanceTab(
                 text = stringResource(R.string.show_actions_icon_border),
             ) { scope.launch { UiSettingsStore.setShowActionIconBorder(ctx, it) } }
         }
+    }
+
+    if (isDraggingAppLabelIcon) {
+        AppPreviewTitle(
+            offsetY = offsetY,
+            alpha = alpha,
+            icons = icons,
+            currentAction = SwipeActionSerializable.OpenDragonLauncherSettings,
+            extraColors = extraColors,
+            label = stringResource(R.string.dragon_launcher_settings),
+            topPadding = appLabelIconOverlayTopPadding.dp,
+            showLabel = showLaunchingAppLabel,
+            showIcon = showLaunchingAppIcon
+        )
     }
 }

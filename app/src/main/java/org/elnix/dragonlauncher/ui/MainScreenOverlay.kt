@@ -100,6 +100,8 @@ fun MainScreenOverlay(
         .collectAsState(initial = false)
     val showActionIconBorder by UiSettingsStore.getShowActionIconBorder(ctx)
         .collectAsState(initial = false)
+    val appLabelIconOverlayTopPadding by UiSettingsStore.getAppLabelIconOverlayTopPadding(ctx)
+        .collectAsState(initial = 30)
 
 //    val backgroundColor = MaterialTheme.colorScheme.background
     val extraColors = LocalExtraColors.current
@@ -481,7 +483,7 @@ fun MainScreenOverlay(
             currentAction = currentAction,
             extraColors = extraColors,
             label = label,
-            topPadding = 20.dp,
+            topPadding = appLabelIconOverlayTopPadding.dp,
             showLabel = showLaunchingAppLabel,
             showIcon = showLaunchingAppIcon
         )

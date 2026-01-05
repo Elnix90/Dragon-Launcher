@@ -11,10 +11,12 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import org.elnix.dragonlauncher.data.BaseSettingsStore
 import org.elnix.dragonlauncher.data.appDrawerDataStore
+import org.elnix.dragonlauncher.data.behaviorDataStore
 import org.elnix.dragonlauncher.data.getBooleanStrict
 import org.elnix.dragonlauncher.data.getIntStrict
 import org.elnix.dragonlauncher.data.getStringStrict
 import org.elnix.dragonlauncher.data.putIfNonDefault
+import org.elnix.dragonlauncher.data.stores.UiSettingsStore.Keys.APP_LABEL_ICON_OVERLAY_TOP_PADDING
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore.Keys.AUTO_SEPARATE_POINTS
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore.Keys.FULLSCREEN
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore.Keys.ICON_PACK_KEY
@@ -54,7 +56,8 @@ object UiSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
         val minAngleFromAPointToActivateIt: Int = 30,
         val showAllActionsOnCurrentCircle: Boolean = false,
         val iconPackKey: String? = null,
-        val showActionIconBorder: Boolean = true
+        val showActionIconBorder: Boolean = true,
+        val appLabelIconOverlayTopPadding: Int = 30
     )
 
     private val defaults = UiSettingsBackup()
@@ -78,6 +81,8 @@ object UiSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
         val ICON_PACK_KEY = stringPreferencesKey("selected_icon_pack")
         val SHOW_ACTION_ICON_BORDER = booleanPreferencesKey("showActionIconBorder")
 
+        val APP_LABEL_ICON_OVERLAY_TOP_PADDING =
+            intPreferencesKey("appLabelIconOverlayTopPadding")
 
         val ALL = listOf(
             RGB_LOADING,
@@ -96,7 +101,8 @@ object UiSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
             MIN_ANGLE_FROM_A_POINT_TO_ACTIVATE_IT,
             SHOW_ALL_ACTIONS_ON_CURRENT_CIRCLE,
             ICON_PACK_KEY,
-            SHOW_ACTION_ICON_BORDER
+            SHOW_ACTION_ICON_BORDER,
+            APP_LABEL_ICON_OVERLAY_TOP_PADDING
         )
     }
 
@@ -228,6 +234,15 @@ object UiSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
         }
     }
 
+    suspend fun setAppLabelIconOverlayTopPadding(ctx: Context, value: Int) {
+        ctx.behaviorDataStore.edit { it[APP_LABEL_ICON_OVERLAY_TOP_PADDING] = value }
+    }
+
+    fun getAppLabelIconOverlayTopPadding(ctx: Context): Flow<Int> =
+        ctx.behaviorDataStore.data.map { it[APP_LABEL_ICON_OVERLAY_TOP_PADDING] ?: defaults.appLabelIconOverlayTopPadding }
+
+
+
     // --------------------------------
     // BACKUP / RESTORE / RESET
     // --------------------------------
@@ -344,6 +359,12 @@ object UiSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
                 prefs[SHOW_ACTION_ICON_BORDER],
                 defaults.showActionIconBorder
             )
+
+            putIfNonDefault(
+                APP_LABEL_ICON_OVERLAY_TOP_PADDING,
+                prefs[APP_LABEL_ICON_OVERLAY_TOP_PADDING],
+                defaults.appLabelIconOverlayTopPadding
+            )
         }
     }
 
@@ -422,6 +443,13 @@ object UiSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
                     value,
                     MIN_ANGLE_FROM_A_POINT_TO_ACTIVATE_IT,
                     defaults.minAngleFromAPointToActivateIt
+                )
+
+            prefs[APP_LABEL_ICON_OVERLAY_TOP_PADDING] =
+                getIntStrict(
+                    value,
+                    APP_LABEL_ICON_OVERLAY_TOP_PADDING,
+                    defaults.appLabelIconOverlayTopPadding
                 )
         }
     }

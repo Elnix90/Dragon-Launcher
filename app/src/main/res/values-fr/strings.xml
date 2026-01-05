@@ -235,4 +235,5 @@
     <string name="device_admin_label">Lance-dragons</string>
     <string name="ghosted">Ghosté</string>
     <string name="foreground">Premier plan</string>
+    <string name="app_label_icon_overlay_top_padding">Rembourrage supérieur superposé à l’étiquette/icône de l’application</string>
 </resources>

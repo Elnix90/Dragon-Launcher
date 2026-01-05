@@ -34,7 +34,7 @@ object BehaviorSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
         val leftPadding: Int = 60,
         val rightPadding: Int = 60,
         val upPadding: Int = 80,
-        val downPadding: Int = 100
+        val downPadding: Int = 100,
     )
 
     private val defaults = UiSettingsBackup()
@@ -89,33 +89,34 @@ object BehaviorSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
         ctx.behaviorDataStore.edit { it[KEEP_SCREEN_ON] = value }
     }
 
-    fun getLeftPadding(ctx: Context): Flow<Int> =
-        ctx.behaviorDataStore.data.map { it[LEFT_PADDING] ?: defaults.leftPadding }
-
-    fun getRightPadding(ctx: Context): Flow<Int> =
-        ctx.behaviorDataStore.data.map { it[RIGHT_PADDING] ?: defaults.rightPadding }
-
-    fun getUpPadding(ctx: Context): Flow<Int> =
-        ctx.behaviorDataStore.data.map { it[UP_PADDING] ?: defaults.upPadding }
-
-    fun getDownPadding(ctx: Context): Flow<Int> =
-        ctx.behaviorDataStore.data.map { it[DOWN_PADDING] ?: defaults.downPadding }
-
     suspend fun setLeftPadding(ctx: Context, value: Int) {
         ctx.behaviorDataStore.edit { it[LEFT_PADDING] = value }
     }
+
+    fun getLeftPadding(ctx: Context): Flow<Int> =
+        ctx.behaviorDataStore.data.map { it[LEFT_PADDING] ?: defaults.leftPadding }
 
     suspend fun setRightPadding(ctx: Context, value: Int) {
         ctx.behaviorDataStore.edit { it[RIGHT_PADDING] = value }
     }
 
+    fun getRightPadding(ctx: Context): Flow<Int> =
+        ctx.behaviorDataStore.data.map { it[RIGHT_PADDING] ?: defaults.rightPadding }
+
     suspend fun setUpPadding(ctx: Context, value: Int) {
         ctx.behaviorDataStore.edit { it[UP_PADDING] = value }
     }
 
+    fun getUpPadding(ctx: Context): Flow<Int> =
+        ctx.behaviorDataStore.data.map { it[UP_PADDING] ?: defaults.upPadding }
+
     suspend fun setDownPadding(ctx: Context, value: Int) {
         ctx.behaviorDataStore.edit { it[DOWN_PADDING] = value }
     }
+
+    fun getDownPadding(ctx: Context): Flow<Int> =
+        ctx.behaviorDataStore.data.map { it[DOWN_PADDING] ?: defaults.downPadding }
+
 
     override suspend fun resetAll(ctx: Context) {
         ctx.behaviorDataStore.edit { prefs ->

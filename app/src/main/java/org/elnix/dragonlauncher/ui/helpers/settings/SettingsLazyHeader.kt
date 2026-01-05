@@ -61,6 +61,7 @@ fun SettingsLazyHeader(
         modifier = Modifier
             .fillMaxSize()
             .systemBarsPadding()
+            .padding(top = 30.dp)
     ) {
 
         if (banner != null) { banner() }

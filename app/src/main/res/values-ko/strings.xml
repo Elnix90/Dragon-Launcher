@@ -235,4 +235,5 @@
     <string name="device_admin_label">드래곤 런처</string>
     <string name="ghosted">고스트</string>
     <string name="foreground">전경</string>
+    <string name="app_label_icon_overlay_top_padding">앱 라벨/아이콘 오버레이 상단 패딩</string>
 </resources>
