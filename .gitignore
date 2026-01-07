@@ -8,6 +8,6 @@
 .externalNativeBuild
 .cxx
 local.properties
-.env
+.env2
 .kotlin
 crash.txt

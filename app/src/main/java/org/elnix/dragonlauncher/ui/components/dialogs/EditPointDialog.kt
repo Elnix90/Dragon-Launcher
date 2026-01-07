@@ -274,7 +274,7 @@ fun EditPointDialog(
                             .weight(1f)
                             .clip(RoundedCornerShape(12.dp))
                             .background(backgroundSurfaceColor)
-                            .clickable {
+                            .clickable(false) {
                                 showEditIconDialog = true
                             }
                             .padding(12.dp),
@@ -282,14 +282,15 @@ fun EditPointDialog(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Text(
-                            text = stringResource(R.string.edit_icon)
+                            text = stringResource(R.string.edit_icon),
+                            color = MaterialTheme.colorScheme.onSurface.adjustBrightness(0.7f)
                         )
                         Spacer(Modifier.weight(1f))
 
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = stringResource(R.string.edit_action),
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = MaterialTheme.colorScheme.primary.adjustBrightness(0.7f),
                         )
                     }
                 }
