@@ -120,7 +120,7 @@ Releases signing key (SHA-256):
 
 Verify: 
 ```bash 
-pksigner verify --print-certs DragonLauncher-*.apk
+apksigner verify --print-certs DragonLauncher-*.apk
 ```
 
 F-droid signing key (SHA-256):
