@@ -110,6 +110,23 @@
 * Customize gestures and visual settings via the Settings menu.
 * Change background for main screen / drawer, add blur to it
 
+## Signing
+
+Releases signing key (SHA-256):
+
+```text
+63068d94e01eeae50efcb2a0c43dfa8ac503a421cdeaf353d45b69ab933c0a06
+```
+
+Verify: 
+```bash 
+pksigner verify --print-certs DragonLauncher-*.apk
+```
+
+F-droid signing key (SHA-256):
+```text
+Coming soon - not yet approved
+```
 
 ## Credits
 
