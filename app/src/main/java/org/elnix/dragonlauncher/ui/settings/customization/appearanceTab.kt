@@ -254,7 +254,7 @@ fun AppearanceTab(
                         scope.launch {
                             UiSettingsStore.setAppLabelOverlaySize(
                                 ctx,
-                                22
+                                18
                             )
                         }
                     },
@@ -276,7 +276,7 @@ fun AppearanceTab(
                         scope.launch {
                             UiSettingsStore.setAppIconOverlaySize(
                                 ctx,
-                                30
+                                22
                             )
                         }
                     },

@@ -26,6 +26,7 @@ import org.elnix.dragonlauncher.data.helpers.IconType
 import org.elnix.dragonlauncher.data.targetPackage
 import org.elnix.dragonlauncher.ui.theme.LocalExtraColors
 import org.elnix.dragonlauncher.utils.ImageUtils
+import org.elnix.dragonlauncher.utils.PackageManagerCompat
 import org.elnix.dragonlauncher.utils.loadShortcutIcon
 
 @Composable
@@ -47,7 +48,7 @@ fun ActionIcon(
     action: SwipeActionSerializable,
     icons: Map<String, ImageBitmap>,
     modifier: Modifier = Modifier,
-    size: Int = 48,
+    size: Int = 64,
     showLaunchAppVectorGrid: Boolean = false
 ) {
     val ctx = LocalContext.current
@@ -58,11 +59,10 @@ fun ActionIcon(
         action is SwipeActionSerializable.LaunchApp && showLaunchAppVectorGrid ->
             loadDrawableResAsBitmap(ctx, R.drawable.ic_app_grid, size, size)
         else -> {
-            actionIconBitmap(
+            createUntintedBitmap(
                 icons = icons,
                 action = action,
                 ctx = ctx,
-//                tintColor = actionColor(action, extraColors),
                 width = size,
                 height = size
             )
@@ -84,28 +84,6 @@ fun ActionIcon(
         modifier = modifier
     )
 }
-
-
-fun actionIconBitmap(
-    icons: Map<String, ImageBitmap>,
-    action: SwipeActionSerializable,
-    ctx: Context,
-//    tintColor: Color,
-    width: Int = 48,
-    height: Int = 48
-): ImageBitmap {
-    return createUntintedBitmap(action, ctx, icons, width, height)
-//    return if (
-//        action is SwipeActionSerializable.LaunchApp ||
-//        action is SwipeActionSerializable.LaunchShortcut ||
-//        action is SwipeActionSerializable.OpenDragonLauncherSettings
-//    ) {
-//        bitmap
-//    } else {
-//        tintBitmap(bitmap, tintColor)
-//    }
-}
-
 
 fun resolveCustomIconBitmap(
     base: ImageBitmap,
@@ -223,13 +201,16 @@ fun resolveCustomIconBitmap(
 }
 
 
-private fun createUntintedBitmap(
+fun createUntintedBitmap(
     action: SwipeActionSerializable,
     ctx: Context,
     icons: Map<String, ImageBitmap>,
     width: Int,
     height: Int
 ): ImageBitmap {
+    val pm = ctx.packageManager
+    val pmCompat = PackageManagerCompat(pm, ctx)
+
     return when (action) {
         is SwipeActionSerializable.LaunchApp,
         is SwipeActionSerializable.LaunchShortcut -> {
@@ -240,16 +221,9 @@ private fun createUntintedBitmap(
                 if (shortcutIcon != null) return shortcutIcon
             }
 
-            try {
-                icons[pkg] ?: loadDrawableAsBitmap(
-                    ctx.packageManager.getApplicationIcon(pkg),
-                    width,
-                    height
-                )
+            pmCompat.getAppIcon(pkg, 0)
+            icons[pkg] ?: loadDrawableResAsBitmap(ctx, R.drawable.ic_app_default, width, height)
 
-            } catch (_: Exception) { // If the app was uninstalled, it could not reload it
-                loadDrawableResAsBitmap(ctx, R.drawable.ic_app_default, width, height)
-            }
         }
 
         is SwipeActionSerializable.OpenUrl ->
@@ -293,7 +267,7 @@ private fun tintBitmap(original: ImageBitmap, color: Color): ImageBitmap {
 
 
 // Fallback: Create a simple colored square if all else fails
-private fun createDefaultBitmap(
+fun createDefaultBitmap(
     width: Int,
     height: Int
 ): ImageBitmap {

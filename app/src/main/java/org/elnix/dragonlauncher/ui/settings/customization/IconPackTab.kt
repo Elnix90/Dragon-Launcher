@@ -9,10 +9,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.R
 import org.elnix.dragonlauncher.ui.helpers.AppGrid
@@ -22,21 +20,21 @@ import org.elnix.dragonlauncher.utils.models.AppsViewModel
 
 @Composable
 fun IconPackTab(
-    appsViewModel: AppsViewModel = viewModel(),
+    appsViewModel: AppsViewModel,
     onBack: () -> Unit
 ) {
-    val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
     val apps by appsViewModel.userApps.collectAsState(initial = emptyList())
     val icons by appsViewModel.icons.collectAsState()
 
     val selectedPack by appsViewModel.selectedIconPack.collectAsState()
-    val packs = appsViewModel.findIconPacks()
+    val packs by appsViewModel.iconPacksList.collectAsState()
 
     // Load packs
     LaunchedEffect(Unit) {
-        appsViewModel.loadSavedIconPack(ctx)
+        appsViewModel.loadIconsPacks()
+        appsViewModel.loadSavedIconPack()
     }
 
     SettingsLazyHeader(
@@ -68,6 +66,9 @@ fun IconPackTab(
             icons = icons,
             selectedPackPackage = selectedPack?.packageName,
             showClearOption = true,
+            onReloadPacks = {
+                appsViewModel.loadIconsPacks()
+            },
             onPackClick = { pack ->
                 scope.launch {
                     appsViewModel.selectIconPack(pack)

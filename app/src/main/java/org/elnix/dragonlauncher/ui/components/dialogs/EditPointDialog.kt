@@ -57,12 +57,10 @@ import org.elnix.dragonlauncher.utils.actions.actionLabel
 import org.elnix.dragonlauncher.utils.colors.AppObjectsColors
 import org.elnix.dragonlauncher.utils.colors.adjustBrightness
 import org.elnix.dragonlauncher.utils.models.AppsViewModel
-import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 
 @Composable
 fun EditPointDialog(
     appsViewModel: AppsViewModel,
-    workspaceViewModel: WorkspaceViewModel,
     point: SwipePointSerializable,
     onDismiss: () -> Unit,
     onConfirm: (SwipePointSerializable) -> Unit
@@ -92,10 +90,7 @@ fun EditPointDialog(
         editPoint.customIcon,
         editPoint.customActionColor
     ) {
-        appsViewModel.reloadPointIcon(
-            ctx = ctx,
-            point = editPoint,
-        )
+        appsViewModel.reloadPointIcon(editPoint)
     }
 
 
@@ -142,7 +137,6 @@ fun EditPointDialog(
                                 action = editPoint.action,
                                 id = editPoint.id
                             )
-
                         }
                     ) {
                         Icon(
@@ -185,10 +179,9 @@ fun EditPointDialog(
                     ) {
                         val center = size.center
                         val actionSpacing = 240f
-                        val drawScope = this
 
                         // Left action
-                        drawScope.actionsInCircle(
+                        actionsInCircle(
                             selected = false,
                             point = editPoint,
                             nests = emptyList(),
@@ -202,8 +195,7 @@ fun EditPointDialog(
                         )
 
                         // Right action
-                        // Left action
-                        drawScope.actionsInCircle(
+                        actionsInCircle(
                             selected = true,
                             point = editPoint,
                             nests = emptyList(),
@@ -341,7 +333,7 @@ fun EditPointDialog(
 
                     ColorPickerRow(
                         label = stringResource(R.string.border_color),
-                        defaultColor = Color.Unspecified,
+                        defaultColor = extraColors.circle,
                         currentColor = editPoint.borderColor?.let { Color(it) }
                             ?: Color.Unspecified
                     ) { selectedColor ->
@@ -384,7 +376,7 @@ fun EditPointDialog(
 
                     ColorPickerRow(
                         label = stringResource(R.string.border_color_selected),
-                        defaultColor = Color.Unspecified,
+                        defaultColor = extraColors.circle,
                         currentColor = editPoint.borderColorSelected?.let { Color(it) }
                             ?: Color.Unspecified
                     ) { selectedColor ->
@@ -441,15 +433,19 @@ fun EditPointDialog(
             point = editPoint,
             appsViewModel = appsViewModel,
             onDismiss = { showEditIconDialog = false }
-        ) {
+        ) { newIcon ->
+
+            val previewPoint = point.copy(customIcon = newIcon)
+
+            appsViewModel.reloadPointIcon(previewPoint)
+
             showEditIconDialog = false
-            editPoint = editPoint.copy(customIcon = it)
+            editPoint = editPoint.copy(customIcon = newIcon)
         }
     }
     if (showEditActionDialog) {
         AddPointDialog(
             appsViewModel = appsViewModel,
-            workspaceViewModel = workspaceViewModel,
             onDismiss = { showEditActionDialog = false },
         ) { selectedAction ->
             editPoint = editPoint.copy(action = selectedAction)

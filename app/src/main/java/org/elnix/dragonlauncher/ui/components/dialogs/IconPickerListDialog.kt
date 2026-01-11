@@ -1,17 +1,16 @@
 package org.elnix.dragonlauncher.ui.components.dialogs
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -26,35 +25,46 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.R
+import org.elnix.dragonlauncher.ui.drawer.IconPackInfo
+import org.elnix.dragonlauncher.utils.actions.loadDrawableAsBitmap
 import org.elnix.dragonlauncher.utils.colors.AppObjectsColors
 import org.elnix.dragonlauncher.utils.colors.adjustBrightness
+import org.elnix.dragonlauncher.utils.models.AppsViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun IconPickerListDialog(
-    icons: Map<String, ImageBitmap>,
-    showNames: Boolean = true,
+    appsViewModel: AppsViewModel,
+    pack: IconPackInfo,
     onDismiss: () -> Unit,
     onIconSelected: (iconName: String, icon: ImageBitmap) -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
 
-    val filteredIcons = remember(searchQuery, icons) {
-        if (searchQuery.isBlank()) icons
-        else icons.filterKeys {
+    val drawableNames by appsViewModel.packIcons.collectAsState()
+
+    val filteredDrawables = remember(searchQuery, drawableNames) {
+        if (searchQuery.isBlank()) drawableNames
+        else drawableNames.filter {
             it.contains(searchQuery, ignoreCase = true)
         }
     }
@@ -95,7 +105,7 @@ fun IconPickerListDialog(
                                 }
                             )
                         },
-                        placeholder = { Text("Search icons") },
+                        placeholder = { Text("Search drawableNames") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(CircleShape),
@@ -110,7 +120,7 @@ fun IconPickerListDialog(
             }
         },
         text = {
-            if (filteredIcons.isNotEmpty()) {
+            if (filteredDrawables.isNotEmpty()) {
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(72.dp),
                     modifier = Modifier
@@ -118,37 +128,19 @@ fun IconPickerListDialog(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(filteredIcons.entries.toList()) { (name, bitmap) ->
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(12.dp))
-                                .clickable {
-                                    onIconSelected(name, bitmap)
-                                    onDismiss()
-                                }
-                                .padding(6.dp)
-                        ) {
-                            Icon(
-                                painter = BitmapPainter(bitmap),
-                                contentDescription = name,
-                                modifier = Modifier.size(40.dp),
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
-
-                            if (showNames && name.isNotBlank()) {
-                                Spacer(Modifier.height(4.dp))
-                                Text(
-                                    text = name,
-                                    fontSize = 11.sp,
-                                    maxLines = 1,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
+                    items(filteredDrawables) { filteredDrawable ->
+                        IconCell(
+                            appsViewModel = appsViewModel,
+                            pack = pack,
+                            drawableName = filteredDrawable,
+                            onClick = { bitmap ->
+                                onIconSelected(filteredDrawable, bitmap.asImageBitmap())
+                                onDismiss()
                             }
-                        }
+                        )
                     }
                 }
-            } else if (icons.isNotEmpty()) {
+            } else if (drawableNames.isNotEmpty()) {
 
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -171,4 +163,57 @@ fun IconPickerListDialog(
         containerColor = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(12.dp)
     )
+}
+
+
+@Composable
+private fun IconCell(
+    appsViewModel: AppsViewModel,
+    pack: IconPackInfo,
+    drawableName: String,
+    onClick: (Bitmap) -> Unit
+) {
+
+    val bitmap by produceState<ImageBitmap?>(null, drawableName) {
+        value = withContext(Dispatchers.IO) {
+            appsViewModel.loadIconFromPack(pack.packageName, drawableName)
+                ?.let { loadDrawableAsBitmap(it, 96, 96) }
+        }
+    }
+
+    bitmap?.let {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(4.dp)
+        ){
+            Icon(
+                bitmap = it,
+                contentDescription = null,
+                modifier = Modifier.clickable {
+                    onClick(it.asAndroidBitmap())
+                }
+            )
+            Text(
+                text = drawableName,
+                style = MaterialTheme.typography.bodySmall,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(top = 4.dp)
+                    .fillMaxWidth(),
+                maxLines = 1
+            )
+        }
+
+    } ?: run {
+        Box(
+            modifier = Modifier
+                .height(48.dp)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    }
 }

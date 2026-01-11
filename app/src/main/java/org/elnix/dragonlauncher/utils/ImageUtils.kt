@@ -56,7 +56,7 @@ object ImageUtils {
         }
     }
 
-    fun bitmapToBase64(bitmap: Bitmap): String? {
+    private fun bitmapToBase64(bitmap: Bitmap): String? {
         return try {
             val output = ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, output)

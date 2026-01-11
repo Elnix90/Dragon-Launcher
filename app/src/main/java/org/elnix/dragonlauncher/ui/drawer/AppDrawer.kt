@@ -3,19 +3,21 @@ package org.elnix.dragonlauncher.ui.drawer
 import android.content.Intent
 import android.graphics.Bitmap
 import android.provider.Settings
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.KeyboardActions
@@ -53,15 +55,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.R
 import org.elnix.dragonlauncher.data.SwipeActionSerializable
+import org.elnix.dragonlauncher.data.dummySwipePoint
 import org.elnix.dragonlauncher.data.helpers.DrawerActions
 import org.elnix.dragonlauncher.data.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.components.dialogs.AppLongPressDialog
+import org.elnix.dragonlauncher.ui.components.dialogs.IconEditorDialog
 import org.elnix.dragonlauncher.ui.components.dialogs.RenameAppDialog
 import org.elnix.dragonlauncher.ui.helpers.AppGrid
-import org.elnix.dragonlauncher.utils.ImageUtils
 import org.elnix.dragonlauncher.utils.actions.launchSwipeAction
 import org.elnix.dragonlauncher.utils.models.AppsViewModel
-import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 import org.elnix.dragonlauncher.utils.openSearch
 import org.elnix.dragonlauncher.utils.showToast
 
@@ -70,7 +72,6 @@ import org.elnix.dragonlauncher.utils.showToast
 @Composable
 fun AppDrawerScreen(
     appsViewModel: AppsViewModel,
-    workspaceViewModel: WorkspaceViewModel,
     showIcons: Boolean,
     showLabels: Boolean,
     autoShowKeyboard: Boolean,
@@ -87,15 +88,17 @@ fun AppDrawerScreen(
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val workspaceState by workspaceViewModel.enabledState.collectAsState()
+    /* ───────────── Reload all apps asynchronously on entering drawer (icons + apps) ───────────── */
+    LaunchedEffect(Unit) {
+        scope.launch{ appsViewModel.reloadApps() }
+    }
+
+
+    val workspaceState by appsViewModel.enabledState.collectAsState()
     val workspaces = workspaceState.workspaces
     val overrides = workspaceState.appOverrides
 
-    val allApps by appsViewModel.allApps.collectAsState()
-
-
-
-    val selectedWorkspaceId by workspaceViewModel.selectedWorkspaceId.collectAsState()
+    val selectedWorkspaceId by appsViewModel.selectedWorkspaceId.collectAsState()
     val initialIndex = workspaces.indexOfFirst { it.id == selectedWorkspaceId }
     val pagerState = rememberPagerState(
         initialPage = initialIndex.coerceIn(0, (workspaces.size - 1).coerceAtLeast(0)),
@@ -138,33 +141,8 @@ fun AppDrawerScreen(
     var workspaceId by remember { mutableStateOf<String?>(null) }
 
 
-    var iconTargetPackage by remember { mutableStateOf<String?>(null) }
+    var appTarget by remember { mutableStateOf<AppModel?>(null) }
 
-    val pickImageLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.OpenDocument()
-    ) { uri ->
-        val pkg = iconTargetPackage ?: return@rememberLauncherForActivityResult
-        if (uri != null) {
-            scope.launch {
-                try {
-                    val bitmap = ImageUtils.loadBitmap(ctx, uri)
-                    val cropped = ImageUtils.cropCenterSquare(bitmap)
-                    val resized = ImageUtils.resize(cropped, 192)
-
-                    // Save as Base64 now
-                    workspaceViewModel.setAppIcon(
-                        pkg,
-                        resized
-                    )
-                    // Optionally show toast
-                    ctx.showToast(R.string.icon_updated)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    ctx.showToast(R.string.icon_update_failed)
-                }
-            }
-        }
-    }
 
     LaunchedEffect(autoShowKeyboard) {
         if (autoShowKeyboard) {
@@ -175,7 +153,7 @@ fun AppDrawerScreen(
 
     LaunchedEffect(pagerState.currentPage) {
         workspaceId = workspaces.getOrNull(pagerState.currentPage)?.id ?: return@LaunchedEffect
-        workspaceViewModel.selectWorkspace(workspaceId!!)
+        appsViewModel.selectWorkspace(workspaceId!!)
     }
 
 
@@ -246,8 +224,10 @@ fun AppDrawerScreen(
                 enabled = clickEmptySpaceToRaiseKeyboard,
                 indication = null,
                 interactionSource = null
-            ) { toggleKeyboard() }
-            .systemBarsPadding()
+            ) {
+                toggleKeyboard()
+            }
+            .windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.ime))
     ) {
 
         if (!searchBarBottom) {
@@ -293,15 +273,6 @@ fun AppDrawerScreen(
                         }
                     }
 
-                    val iconsMerged = icons.toMutableMap()
-                    apps.forEach { app ->
-                        val base64 = overrides[app.packageName]?.customIconBase64
-                        if (base64 != null) {
-                            val bmp = ImageUtils.base64ToImageBitmap(base64)
-                            if (bmp != null) iconsMerged[app.packageName] = bmp
-                        }
-                    }
-
                     LaunchedEffect(haveToLaunchFirstApp, filteredApps) {
                         if ((autoLaunchSingleMatch && filteredApps.size == 1 && searchQuery.isNotEmpty()) || haveToLaunchFirstApp) {
                             launchApp(filteredApps.first().action)
@@ -311,7 +282,7 @@ fun AppDrawerScreen(
 
                     AppGrid(
                         apps = filteredApps,
-                        icons = iconsMerged,
+                        icons = icons,
                         gridSize = gridSize,
                         txtColor = MaterialTheme.colorScheme.onSurface,
                         showIcons = showIcons,
@@ -340,8 +311,6 @@ fun AppDrawerScreen(
 
     if (dialogApp != null) {
         val app = dialogApp!!
-        val hasCustomIcon =
-            overrides[app.packageName]?.customIconBase64 != null
 
         AppLongPressDialog(
             app = app,
@@ -366,7 +335,7 @@ fun AppDrawerScreen(
             onRemoveFromWorkspace = {
                 workspaceId?.let {
                     scope.launch {
-                        workspaceViewModel.removeAppFromWorkspace(
+                        appsViewModel.removeAppFromWorkspace(
                             it,
                             app.packageName
                         )
@@ -379,17 +348,8 @@ fun AppDrawerScreen(
                 showRenameAppDialog = true
             },
             onChangeAppIcon = {
-                val pkg = app.packageName
-                iconTargetPackage = pkg
-                pickImageLauncher.launch(arrayOf("image/*"))
-            },
-            onResetAppIcon = if (hasCustomIcon) {
-                {
-                    scope.launch {
-                        workspaceViewModel.resetAppIcon(app.packageName)
-                    }
-                }
-            } else null
+                appTarget = app
+            }
         )
     }
 
@@ -402,7 +362,7 @@ fun AppDrawerScreen(
             val pkg = renameTargetPackage ?: return@RenameAppDialog
 
             scope.launch {
-                workspaceViewModel.renameApp(
+                appsViewModel.renameApp(
                     packageName = pkg,
                     name = renameText
                 )
@@ -415,13 +375,55 @@ fun AppDrawerScreen(
             val pkg = renameTargetPackage ?: return@RenameAppDialog
 
             scope.launch {
-                workspaceViewModel.resetAppName(pkg)
+                appsViewModel.resetAppName(pkg)
             }
             showRenameAppDialog = false
             renameTargetPackage = null
         },
         onDismiss = { showRenameAppDialog = false }
     )
+
+    if (appTarget != null) {
+
+        val app = appTarget!!
+        val pkg = app.packageName
+
+        val iconOverride =
+            overrides[pkg]?.customIcon
+
+
+        val tempPoint =
+            dummySwipePoint(SwipeActionSerializable.LaunchApp(pkg), pkg).copy(
+                customIcon = iconOverride
+            )
+
+        if (iconOverride == null) {
+            scope.launch { appsViewModel.reloadPointIcon(tempPoint) }
+        }
+
+        IconEditorDialog(
+            point = tempPoint,
+            appsViewModel = appsViewModel,
+            onReset = {
+                appsViewModel.updateSingleIcon(app, false)
+            },
+            onDismiss = { appTarget = null }
+        ) {
+
+            scope.launch {
+                if (it != null) {
+                    appsViewModel.setAppIcon(
+                        pkg,
+                        it
+                    )
+                } else {
+                    appsViewModel.resetAppIcon(pkg)
+                }
+                appsViewModel.updateSingleIcon(app, true)
+            }
+            appTarget = null
+        }
+    }
 }
 
 

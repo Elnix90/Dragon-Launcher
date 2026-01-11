@@ -27,7 +27,7 @@ data class SwipePointSerializable(
 
     /** Stable unique identifier for persistence, diffing, and migrations. */
     @SerializedName("d")
-    val id: String? = null,
+    val id: String,
 
     /** Optional nesting/group identifier for hierarchical or contextual swipe layouts. */
     @SerializedName("e")

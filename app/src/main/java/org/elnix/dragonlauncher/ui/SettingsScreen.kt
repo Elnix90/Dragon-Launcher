@@ -116,7 +116,6 @@ import org.elnix.dragonlauncher.utils.logs.logD
 import org.elnix.dragonlauncher.utils.logs.logE
 import org.elnix.dragonlauncher.utils.logs.logW
 import org.elnix.dragonlauncher.utils.models.AppsViewModel
-import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 import org.elnix.dragonlauncher.utils.showToast
 import java.math.RoundingMode
 import java.util.UUID
@@ -146,7 +145,6 @@ fun minAngleGapForCircle(circleRadius: Float): Double {
 @Composable
 fun SettingsScreen(
     appsViewModel: AppsViewModel,
-    workspaceViewModel: WorkspaceViewModel,
     onAdvSettings: () -> Unit,
     onBack: () -> Unit
 ) {
@@ -244,11 +242,7 @@ fun SettingsScreen(
 
 
     LaunchedEffect(points, nestId) {
-        appsViewModel.preloadPointIcons(
-            ctx = ctx,
-            points = points.filter { it.nestId == nestId },
-            sizePx = 56
-        )
+        appsViewModel.preloadPointIcons(points.filter { it.nestId == nestId })
     }
 
     /**
@@ -500,7 +494,7 @@ fun SettingsScreen(
                                 val py =
                                     center.y - circle.radius * cos(Math.toRadians(p.angleDeg)).toFloat()
 
-                                    this.actionsInCircle(
+                                    actionsInCircle(
                                         selected = p.id == selectedPoint?.id,
                                         point = p,
                                         nests = nests,
@@ -912,10 +906,7 @@ fun SettingsScreen(
                             nestId = nestId
                         )
 
-                        appsViewModel.reloadPointIcon(
-                            ctx = ctx,
-                            point = newPoint,
-                        )
+                        appsViewModel.reloadPointIcon(newPoint)
 
                         applyChange {
                             points.add(newPoint)
@@ -1074,7 +1065,6 @@ fun SettingsScreen(
     if (showAddDialog) {
         AddPointDialog(
             appsViewModel = appsViewModel,
-            workspaceViewModel = workspaceViewModel,
             onDismiss = {
                 showAddDialog = false
             },
@@ -1102,7 +1092,6 @@ fun SettingsScreen(
                 )
 
                 appsViewModel.reloadPointIcon(
-                    ctx = ctx,
                     point = point,
                 )
 
@@ -1121,7 +1110,6 @@ fun SettingsScreen(
 
         EditPointDialog(
             appsViewModel = appsViewModel,
-            workspaceViewModel = workspaceViewModel,
             point = editPoint,
             onDismiss = {
                 showEditDialog = null

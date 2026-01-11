@@ -37,13 +37,11 @@ import org.elnix.dragonlauncher.utils.colors.AppObjectsColors
 import org.elnix.dragonlauncher.utils.isValidDateFormat
 import org.elnix.dragonlauncher.utils.isValidTimeFormat
 import org.elnix.dragonlauncher.utils.models.AppsViewModel
-import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 import org.elnix.dragonlauncher.utils.openUrl
 
 @Composable
 fun StatusBarTab(
     appsViewModel: AppsViewModel,
-    workspaceViewModel: WorkspaceViewModel,
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
@@ -200,7 +198,6 @@ fun StatusBarTab(
             item {
                 CustomActionSelector(
                     appsViewModel = appsViewModel,
-                    workspaceViewModel = workspaceViewModel,
                     currentAction = clockAction,
                     label = stringResource(R.string.clock_action),
                     nullText = stringResource(R.string.opens_alarmclock_app),
@@ -270,7 +267,6 @@ fun StatusBarTab(
             item {
                 CustomActionSelector(
                     appsViewModel = appsViewModel,
-                    workspaceViewModel = workspaceViewModel,
                     currentAction = dateAction,
                     label = stringResource(R.string.date_action),
                     nullText = stringResource(R.string.opens_calendar_app),

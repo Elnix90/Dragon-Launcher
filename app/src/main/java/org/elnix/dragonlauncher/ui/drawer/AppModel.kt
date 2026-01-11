@@ -2,6 +2,7 @@ package org.elnix.dragonlauncher.ui.drawer
 
 import com.google.gson.annotations.SerializedName
 import org.elnix.dragonlauncher.data.SwipeActionSerializable
+import org.elnix.dragonlauncher.data.helpers.CustomIconSerializable
 
 data class AppModel(
     @SerializedName("a") val name: String,
@@ -38,7 +39,8 @@ data class Workspace(
 data class AppOverride(
     val packageName: String,
     val customLabel: String? = null,
-    val customIconBase64: String? = null)
+    val customIcon: CustomIconSerializable? = null,
+)
 
 
 

@@ -20,7 +20,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import org.elnix.dragonlauncher.MainActivity
 import org.elnix.dragonlauncher.data.SwipeActionSerializable
 import org.elnix.dragonlauncher.data.helpers.FloatingAppObject
-import org.elnix.dragonlauncher.ui.theme.LocalExtraColors
 import org.elnix.dragonlauncher.utils.actions.ActionIcon
 
 
@@ -34,7 +33,6 @@ fun FloatingAppsHostView(
     onLaunchAction: () -> Unit
 ) {
     val ctx = LocalContext.current
-    val extraColors = LocalExtraColors.current
 
 
     if (floatingAppObject.action is SwipeActionSerializable.OpenWidget) {

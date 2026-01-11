@@ -40,13 +40,11 @@ import org.elnix.dragonlauncher.utils.actions.actionColor
 import org.elnix.dragonlauncher.utils.actions.actionLabel
 import org.elnix.dragonlauncher.utils.colors.AppObjectsColors
 import org.elnix.dragonlauncher.utils.models.AppsViewModel
-import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 
 
 @Composable
 fun CustomActionSelector(
     appsViewModel: AppsViewModel,
-    workspaceViewModel: WorkspaceViewModel,
     currentAction: SwipeActionSerializable?,
     nullText: String? = null,
     enabled: Boolean = true,
@@ -165,7 +163,6 @@ fun CustomActionSelector(
     if (showDialog) {
         AddPointDialog(
             appsViewModel = appsViewModel,
-            workspaceViewModel = workspaceViewModel,
             onDismiss = { showDialog = false }
         ) {
             onSelected(it)

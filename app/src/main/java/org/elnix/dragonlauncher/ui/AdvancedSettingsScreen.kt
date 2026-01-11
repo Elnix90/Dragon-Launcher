@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.system.Os.kill
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
@@ -77,7 +78,6 @@ import org.elnix.dragonlauncher.utils.showToast
 fun AdvancedSettingsScreen(
     appViewModel: AppsViewModel,
     navController: NavController,
-    onReset: () -> Unit,
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
@@ -105,6 +105,8 @@ fun AdvancedSettingsScreen(
         title = stringResource(R.string.settings),
         onBack = onBack,
         helpText = stringResource(R.string.settings),
+        resetTitle = stringResource(R.string.reset_all_settings),
+        resetText = stringResource(R.string.every_setting_will_return_to_its_default_state_this_cannot_be_undone_the_app_will_kill_itself),
         onReset = {
             scope.launch {
                 // Reset all stores, one by one, using their defined resetAll functions
@@ -115,7 +117,9 @@ fun AdvancedSettingsScreen(
                 // Small delay to allow the default apps to load before initializing
                 delay(200)
                 PrivateSettingsStore.resetAll(ctx)
-                onReset()
+
+                /* Kill App to also reset viewModels and caches */
+                kill(9,9)
             }
         },
     ) {

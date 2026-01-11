@@ -32,18 +32,18 @@ import org.elnix.dragonlauncher.ui.components.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.drawer.Workspace
 import org.elnix.dragonlauncher.ui.drawer.WorkspaceType
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
-import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
+import org.elnix.dragonlauncher.utils.models.AppsViewModel
 import org.elnix.dragonlauncher.utils.workspace.WorkspaceAction
 
 
 @Composable
 fun WorkspaceListScreen(
-    workspaceViewModel: WorkspaceViewModel,
+    appsViewModel: AppsViewModel,
     onOpenWorkspace: (String) -> Unit,
     onBack: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    val state by workspaceViewModel.state.collectAsState()
+    val state by appsViewModel.state.collectAsState()
 
     var showCreateDialog by remember { mutableStateOf(false) }
     var renameTarget by remember { mutableStateOf<Workspace?>(null) }
@@ -72,7 +72,7 @@ fun WorkspaceListScreen(
         },
         onDragEnd = { _, _ ->
             // Commit changes to ViewModel
-            scope.launch { workspaceViewModel.setWorkspaceOrder(uiList) }
+            scope.launch { appsViewModel.setWorkspaceOrder(uiList) }
         }
     )
 
@@ -82,7 +82,7 @@ fun WorkspaceListScreen(
             onBack = onBack,
             helpText = stringResource(R.string.workspace_help),
             onReset = {
-                scope.launch { workspaceViewModel.resetWorkspacesAndOverrides() }
+                scope.launch { appsViewModel.resetWorkspacesAndOverrides() }
             },
             reorderState = reorderState
         ) {
@@ -93,7 +93,7 @@ fun WorkspaceListScreen(
                         reorderState = reorderState,
                         isDragging = isDragging,
                         onClick = { onOpenWorkspace(ws.id) },
-                        onCheck = { scope.launch { workspaceViewModel.setWorkspaceEnabled(ws.id, it) } },
+                        onCheck = { scope.launch { appsViewModel.setWorkspaceEnabled(ws.id, it) } },
                         onAction = { action ->
                             when (action) {
                                 WorkspaceAction.Rename -> {
@@ -128,7 +128,7 @@ fun WorkspaceListScreen(
         type = WorkspaceType.CUSTOM,
         onNameChange = { nameBuffer = it },
         onConfirm = { selectedType ->
-            scope.launch { workspaceViewModel.createWorkspace(nameBuffer.trim(), selectedType) }
+            scope.launch { appsViewModel.createWorkspace(nameBuffer.trim(), selectedType) }
             showCreateDialog = false
         },
         onDismiss = { showCreateDialog = false }
@@ -144,7 +144,7 @@ fun WorkspaceListScreen(
             val targetId = renameTarget
             if (targetId != null && nameBuffer.isNotBlank()) {
                 scope.launch {
-                    workspaceViewModel.editWorkspace(
+                    appsViewModel.editWorkspace(
                         targetId.id,
                         nameBuffer.trim(),
                         selectedType
@@ -164,7 +164,7 @@ fun WorkspaceListScreen(
             onCancel = { showDeleteConfirm = null }
         ) {
             scope.launch {
-                workspaceViewModel.deleteWorkspace(workSpaceToDelete.id)
+                appsViewModel.deleteWorkspace(workSpaceToDelete.id)
                 showDeleteConfirm = null
             }
         }

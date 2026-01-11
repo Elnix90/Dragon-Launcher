@@ -36,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -46,33 +45,30 @@ import org.elnix.dragonlauncher.ui.helpers.AppGrid
 import org.elnix.dragonlauncher.utils.colors.AppObjectsColors
 import org.elnix.dragonlauncher.utils.colors.adjustBrightness
 import org.elnix.dragonlauncher.utils.models.AppsViewModel
-import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AppPickerDialog(
     appsViewModel: AppsViewModel,
-    workspaceViewModel: WorkspaceViewModel,
     gridSize: Int,
     showIcons: Boolean,
     showLabels: Boolean,
     onDismiss: () -> Unit,
     onAppSelected: (AppModel) -> Unit
 ) {
-    val workspaceState by workspaceViewModel.enabledState.collectAsState()
+    val workspaceState by appsViewModel.enabledState.collectAsState()
     val workspaces = workspaceState.workspaces
     val overrides = workspaceState.appOverrides
 
     val icons by appsViewModel.icons.collectAsState()
 
-    val selectedWorkspaceId by workspaceViewModel.selectedWorkspaceId.collectAsState()
+    val selectedWorkspaceId by appsViewModel.selectedWorkspaceId.collectAsState()
     val initialIndex = workspaces.indexOfFirst { it.id == selectedWorkspaceId }
     val pagerState = rememberPagerState(
         initialPage = initialIndex.coerceIn(0, (workspaces.size - 1).coerceAtLeast(0)),
         pageCount = { workspaces.size }
     )
 
-    val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
 
@@ -81,7 +77,7 @@ fun AppPickerDialog(
 
     LaunchedEffect(pagerState.currentPage) {
         val workspaceId = workspaces.getOrNull(pagerState.currentPage)?.id ?: return@LaunchedEffect
-        workspaceViewModel.selectWorkspace(workspaceId)
+        appsViewModel.selectWorkspace(workspaceId)
     }
 
     CustomAlertDialog(
@@ -115,7 +111,7 @@ fun AppPickerDialog(
                         }
 
                         IconButton(
-                            onClick = { scope.launch { appsViewModel.reloadApps(ctx) } },
+                            onClick = { scope.launch { appsViewModel.reloadApps() } },
                             colors = AppObjectsColors.iconButtonColors()
                         ) {
                             Icon(

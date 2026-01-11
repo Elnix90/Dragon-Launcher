@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
@@ -63,7 +62,6 @@ fun AppLongPressDialog(
     onAddToWorkspace: (() -> Unit)? = null,
     onRenameApp: (() -> Unit)? = null,
     onChangeAppIcon: (() -> Unit)? = null,
-    onResetAppIcon: (() -> Unit)? = null,
     onDismiss: () -> Unit
 ) {
 
@@ -123,18 +121,6 @@ fun AppLongPressDialog(
                 DialogEntry(
                     label = stringResource(R.string.change_app_icon),
                     icon = Icons.Default.Image,
-                    backgroundColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.1f),
-                    iconTint = MaterialTheme.colorScheme.primary,
-                    onClick = { onDismiss(); it() }
-                )
-            )
-        }
-
-        onResetAppIcon?.let {
-            add(
-                DialogEntry(
-                    label = stringResource(R.string.reset_app_icon),
-                    icon = Icons.Default.Restore,
                     backgroundColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.1f),
                     iconTint = MaterialTheme.colorScheme.primary,
                     onClick = { onDismiss(); it() }

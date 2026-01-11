@@ -37,6 +37,13 @@ fun DrawScope.actionsInCircle(
         point.borderColor?.let { Color(it) }
     } ?: circleColor
 
+    val borderStroke = if (selected) {
+        point.borderStrokeSelected ?: 8f
+    } else {
+        point.borderStroke ?: 4f
+    }
+
+
     val backgroundColor = if (selected) {
         point.backgroundColorSelected?.let { Color(it) }
     } else {
@@ -62,18 +69,17 @@ fun DrawScope.actionsInCircle(
                 center = Offset(px, py)
             )
 
+            if (borderColor != Color.Transparent && borderStroke > 0f) {
+                drawCircle(
+                    color =  borderColor,
+                    radius = 44f,
+                    center = Offset(px, py),
+                    style = Stroke(borderStroke)
+                )
+            }
 
-        drawCircle(
-            color =  borderColor,
-            radius = 44f,
-            center = Offset(px, py),
-            style = Stroke(
-                if (selected) point.borderStrokeSelected ?: 8f else point.borderStroke ?: 4f
-            )
-        )
 
-
-        val icon = point.id?.let { pointIcons[it] }
+        val icon = point.id.let { pointIcons[it] }
 
         if (icon != null) {
             drawImage(

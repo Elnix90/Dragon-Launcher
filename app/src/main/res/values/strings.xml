@@ -285,4 +285,6 @@
     <string name="default_text">Default</string>
     <string name="app_icon_size">App Icon Size</string>
     <string name="app_label_size">App Label Size</string>
+    <string name="every_setting_will_return_to_its_default_state_this_cannot_be_undone_the_app_will_kill_itself">EVERY setting will return to its default state, this cannot be undone, the app will kill itself</string>
+    <string name="reset_all_settings">Reset ALL settings ?!</string>
 </resources>

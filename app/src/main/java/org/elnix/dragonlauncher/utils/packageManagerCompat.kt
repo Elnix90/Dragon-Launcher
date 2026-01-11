@@ -233,12 +233,12 @@ fun launchShortcut(ctx: Context, pkg: String, id: String) {
 
 
 fun loadShortcutIcon(
-    context: Context,
+    ctx: Context,
     packageName: String,
     shortcutId: String
 ): ImageBitmap? {
     try {
-        val launcherApps = context.getSystemService(LauncherApps::class.java) ?: return null
+        val launcherApps = ctx.getSystemService(LauncherApps::class.java) ?: return null
         val user = android.os.Process.myUserHandle()
 
         val query = LauncherApps.ShortcutQuery()

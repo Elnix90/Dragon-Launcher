@@ -7,10 +7,9 @@ import android.content.pm.PackageManager
 import android.content.res.XmlResourceParser
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,53 +19,66 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
+import org.elnix.dragonlauncher.data.SwipeActionSerializable
+import org.elnix.dragonlauncher.data.dummySwipePoint
+import org.elnix.dragonlauncher.data.helpers.CustomIconSerializable
 import org.elnix.dragonlauncher.data.helpers.SwipePointSerializable
 import org.elnix.dragonlauncher.data.stores.AppsSettingsStore
 import org.elnix.dragonlauncher.data.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.data.stores.UiSettingsStore
+import org.elnix.dragonlauncher.data.stores.WorkspaceSettingsStore
 import org.elnix.dragonlauncher.ui.drawer.AppModel
 import org.elnix.dragonlauncher.ui.drawer.AppOverride
 import org.elnix.dragonlauncher.ui.drawer.IconMapping
 import org.elnix.dragonlauncher.ui.drawer.IconPackInfo
 import org.elnix.dragonlauncher.ui.drawer.Workspace
+import org.elnix.dragonlauncher.ui.drawer.WorkspaceState
 import org.elnix.dragonlauncher.ui.drawer.WorkspaceType
+import org.elnix.dragonlauncher.ui.drawer.defaultWorkspaces
 import org.elnix.dragonlauncher.ui.drawer.resolveApp
 import org.elnix.dragonlauncher.utils.APPS_TAG
 import org.elnix.dragonlauncher.utils.ICONS_TAG
 import org.elnix.dragonlauncher.utils.PackageManagerCompat
 import org.elnix.dragonlauncher.utils.TAG
-import org.elnix.dragonlauncher.utils.actions.actionIconBitmap
+import org.elnix.dragonlauncher.utils.actions.createUntintedBitmap
 import org.elnix.dragonlauncher.utils.actions.loadDrawableAsBitmap
 import org.elnix.dragonlauncher.utils.actions.resolveCustomIconBitmap
 import org.elnix.dragonlauncher.utils.logs.logD
 import org.elnix.dragonlauncher.utils.logs.logE
-import org.elnix.dragonlauncher.utils.logs.logI
+import org.json.JSONObject
 import org.xmlpull.v1.XmlPullParser
 
 
-class AppsViewModel(application: Application) : AndroidViewModel(application) {
+class AppsViewModel(
+    application: Application,
+    coroutineScope: CoroutineScope
+) {
+    private val scope = coroutineScope
 
     private val _apps = MutableStateFlow<List<AppModel>>(emptyList())
     val allApps: StateFlow<List<AppModel>> = _apps.asStateFlow()
 
-    private val _packIcons = MutableStateFlow<Map<String, ImageBitmap>>(emptyMap())
-    val packIcons: StateFlow<Map<String, ImageBitmap>> = _packIcons.asStateFlow()
+    private val _iconPacksList = MutableStateFlow<List<IconPackInfo>>(emptyList())
+    val iconPacksList = _iconPacksList.asStateFlow()
+
+
+    private val _packIcons = MutableStateFlow<List<String>>(emptyList())
+    val packIcons: StateFlow<List<String>> = _packIcons.asStateFlow()
 
     private val _icons = MutableStateFlow<Map<String, ImageBitmap>>(emptyMap())
-    val icons: StateFlow<Map<String, ImageBitmap>> = _icons
+    val icons = _icons.asStateFlow()
 
     private val _pointIcons = MutableStateFlow<Map<String, ImageBitmap>>(emptyMap())
-    val pointIcons: StateFlow<Map<String, ImageBitmap>> = _pointIcons
-
+    val pointIcons = _pointIcons.asStateFlow()
 
 
     // Only used for preview, the real user apps getter are using the appsForWorkspace function
     val userApps: StateFlow<List<AppModel>> = _apps.map { list ->
         list.filter { it.isLaunchable == true }
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-
+    }.stateIn(scope, SharingStarted.Eagerly, emptyList())
 
 
     private val _selectedIconPack = MutableStateFlow<IconPackInfo?>(null)
@@ -82,19 +94,56 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
     private val pmCompat = PackageManagerCompat(pm, ctx)
     private val resourceIdCache = mutableMapOf<String, Int>()
 
+    /**
+     * Used to correctly dispatch the heavy background load, as long as I understand
+     */
+    private val iconSemaphore = Semaphore(4)
+
 
     private val gson = Gson()
+
+
+    /* ───────────── Workspace things ───────────── */
+    private val _workspacesState = MutableStateFlow(
+        WorkspaceState(
+            workspaces = defaultWorkspaces,
+            appOverrides = emptyMap()
+        )
+    )
+    val state: StateFlow<WorkspaceState> = _workspacesState.asStateFlow()
+
+    /** Get enabled workspaces only */
+    val enabledState: StateFlow<WorkspaceState> = _workspacesState
+        .map { state ->
+            state.copy(
+                workspaces = state.workspaces.filter { it.enabled }
+            )
+        }
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = WorkspaceState(
+                workspaces = emptyList(),
+                appOverrides = emptyMap()
+            )
+        )
+
+
+    private val _selectedWorkspaceId = MutableStateFlow("user")
+    val selectedWorkspaceId: StateFlow<String> = _selectedWorkspaceId.asStateFlow()
+
+
     init {
+        loadWorkspaces()
         loadApps()
-        viewModelScope.launch {
+        scope.launch {
             val savedPackName = UiSettingsStore.getIconPack(ctx)
             savedPackName?.let { pkg ->
-                val packs = findIconPacks()
-                _selectedIconPack.value = packs.find { it.packageName == pkg }
+                loadIconsPacks()
+                _selectedIconPack.value = _iconPacksList.value.find { it.packageName == pkg }
             }
         }
     }
-
 
 
     /**
@@ -148,20 +197,16 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
         }.stateIn(
-            viewModelScope,
+            scope,
             SharingStarted.Eagerly,
             emptyList()
         )
     }
 
 
-
-
     private fun loadApps() {
-        viewModelScope.launch(Dispatchers.IO) {
+        scope.launch(Dispatchers.IO) {
             val cachedJson = AppsSettingsStore.getCachedApps(ctx)
-
-            logD(APPS_TAG, "Loading Apps...")
 
             if (!cachedJson.isNullOrEmpty()) {
                 try {
@@ -174,7 +219,7 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
 
-            viewModelScope.launch { reloadApps(ctx) }
+            scope.launch { reloadApps() }
         }
     }
 
@@ -184,8 +229,8 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
      * Saves updated list into DataStore.
      * This is used by the BroadcastReceiver.
      */
-    suspend fun reloadApps(ctx: Context) {
-        try{
+    suspend fun reloadApps() {
+        try {
 
             val apps = withContext(Dispatchers.IO) {
                 pmCompat.getAllApps()
@@ -199,9 +244,7 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
             val points = SwipeSettingsStore.getPoints(ctx)
 
             preloadPointIcons(
-                ctx = ctx,
                 points = points,
-                sizePx = 48,
                 reloadAll = true
             )
 
@@ -210,7 +253,10 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
                 AppsSettingsStore.saveCachedApps(ctx, gson.toJson(apps))
             }
 
-            logE(APPS_TAG, "Reloaded packages, ${apps.filter { it.isLaunchable == true }.size} total apps")
+            logE(
+                APPS_TAG,
+                "Reloaded packages, ${apps.filter { it.isLaunchable == true }.size} total apps, (${apps.size} user apps)"
+            )
 
         } catch (e: Exception) {
             logE(APPS_TAG, e.toString())
@@ -219,15 +265,12 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
 
 
     fun renderPointIcon(
-        ctx: Context,
         point: SwipePointSerializable,
         sizePx: Int
     ): ImageBitmap {
 
-        logD(ICONS_TAG, "Rendering ${point.id}")
-        val startTime = System.currentTimeMillis()
-        val base = actionIconBitmap(
-            icons = icons.value,
+        val base = createUntintedBitmap(
+            icons = _icons.value,
             action = point.action,
             ctx = ctx,
             width = sizePx,
@@ -244,7 +287,6 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
             base
         }
 
-        logD(ICONS_TAG, "Rendered in ${point.id}, took ${System.currentTimeMillis() - startTime}ms")
         return final
     }
 
@@ -253,21 +295,19 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun preloadPointIcons(
-        ctx: Context,
         points: List<SwipePointSerializable>,
-        sizePx: Int,
+        sizePx: Int = 64,
         reloadAll: Boolean = false
     ) {
-        viewModelScope.launch(Dispatchers.Default) {
+        scope.launch(Dispatchers.Default) {
             val newIcons = buildMap {
                 points.forEach { p ->
-                    val id = p.id ?: return@forEach
+                    val id = p.id
                     if (_pointIcons.value.containsKey(id) && !reloadAll) return@forEach
 
                     put(
                         id,
                         renderPointIcon(
-                            ctx = ctx,
                             point = p,
                             sizePx = sizePx
                         )
@@ -283,41 +323,81 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
 
 
     fun reloadPointIcon(
-        ctx: Context,
         point: SwipePointSerializable,
-        sizePx: Int = 48
+        sizePx: Int = 64
     ) {
-        logI(ICONS_TAG, "Ensuring point icon: ${point.id}")
+        val id = point.id
 
-        val id = point.id ?: return
-
-        viewModelScope.launch(Dispatchers.IO) {
+        scope.launch(Dispatchers.IO) {
             val bmp = renderPointIcon(
-                ctx = ctx,
                 point = point,
                 sizePx = sizePx
             )
 
             _pointIcons.update { it + (id to bmp) }
-
-            logD(ICONS_TAG, "Updated _pointIcons")
-
         }
     }
 
 
-    private fun loadIcons(apps: List<AppModel>): Map<String, ImageBitmap> =
-        runBlocking(Dispatchers.IO) {
-            apps.associate { app ->
-                val packIconName = getCachedIconMapping(app.packageName)
-                val drawable = packIconName?.let { loadIconFromPack(selectedIconPack.value?.packageName, it) }
-                val finalDrawable = drawable ?: pmCompat.getAppIcon(app.packageName, app.userId ?: 0)
-                app.packageName to loadDrawableAsBitmap(finalDrawable, 128, 128)
+    private suspend fun loadIcons(
+        apps: List<AppModel>
+    ): Map<String, ImageBitmap> =
+        withContext(Dispatchers.IO) {
+            apps.mapNotNull { app ->
+                runCatching {
+                    iconSemaphore.withPermit {
+                        loadSingleIcon(app, true)
+                    }
+                }.getOrNull()
+            }.toMap()
+        }
+
+
+    fun updateSingleIcon(
+        app: AppModel,
+        useOverride: Boolean
+    ) {
+        _icons.update { it + loadSingleIcon(app, useOverride) }
+    }
+
+    fun loadSingleIcon(
+        app: AppModel,
+        useOverrides: Boolean
+    ): Pair<String, ImageBitmap> {
+        // blocking I/O & bitmap decoding
+
+        val packIconName = getCachedIconMapping(app.packageName)
+        val drawable =
+            packIconName?.let {
+                loadIconFromPack(
+                    selectedIconPack.value?.packageName,
+                    it
+                )
+            } ?: pmCompat.getAppIcon(app.packageName, app.userId ?: 0)
+
+
+        val base = loadDrawableAsBitmap(
+            drawable, 128, 128
+        )
+
+        if (useOverrides) {
+            _workspacesState.value.appOverrides[app.packageName]?.customIcon?.let { customIcon ->
+
+                return app.packageName to resolveCustomIconBitmap(
+                    base = base,
+                    icon = customIcon,
+                    sizePx = 128
+                )
             }
         }
 
+
+        return app.packageName to base
+    }
+
+
     @SuppressLint("DiscouragedApi")
-    private fun loadIconFromPack(packPkg: String?, iconName: String): android.graphics.drawable.Drawable? {
+    fun loadIconFromPack(packPkg: String?, iconName: String): android.graphics.drawable.Drawable? {
         if (packPkg == null || iconName.isEmpty()) return null
 
         return try {
@@ -334,43 +414,34 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
 
     fun loadAllIconsFromPack(pack: IconPackInfo) {
 
-        viewModelScope.launch(Dispatchers.IO) {
+        scope.launch(Dispatchers.IO) {
             val mappings = iconPackCache.getOrPut(pack.packageName) {
-                loadIconPackMappings(ctx, pack.packageName)
+                loadIconPackMappings(pack.packageName)
             }
 
             if (mappings.isEmpty()) {
-                _packIcons.value = emptyMap()
+                _packIcons.value = emptyList()
                 return@launch
             }
 
-            val result = LinkedHashMap<String, ImageBitmap>(mappings.size)
-
-            mappings.values.distinct().forEach { drawableName ->
-                val drawable = loadIconFromPack(pack.packageName, drawableName) ?: return@forEach
-                result[drawableName] = loadDrawableAsBitmap(drawable, 128, 128)
-            }
-
-            _packIcons.value = result
+            _packIcons.value = mappings.values.distinct()
         }
     }
-
 
 
     private fun getCachedIconMapping(pkgName: String): String? {
         return selectedIconPack.value?.let { pack ->
             iconPackCache.getOrPut(pack.packageName) {
-                loadIconPackMappings(ctx, pack.packageName)
+                loadIconPackMappings(pack.packageName)
             }[pkgName]
         }
     }
 
-    fun loadSavedIconPack(ctx: Context) {
-        viewModelScope.launch {
+    fun loadSavedIconPack() {
+        scope.launch {
             val savedPackName = UiSettingsStore.getIconPack(ctx)
             savedPackName?.let { pkg ->
-                val packs = findIconPacks()
-                packs.find { it.packageName == pkg }?.let { pack ->
+                _iconPacksList.value.find { it.packageName == pkg }?.let { pack ->
                     _selectedIconPack.value = pack
                 }
             }
@@ -379,24 +450,24 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
 
     fun selectIconPack(pack: IconPackInfo) {
         _selectedIconPack.value = pack
-        viewModelScope.launch(Dispatchers.IO) {
+        scope.launch(Dispatchers.IO) {
             UiSettingsStore.setIconPack(ctx, pack.packageName)
-            iconPackCache[pack.packageName] = loadIconPackMappings(ctx, pack.packageName)
-            reloadApps(ctx)
+            iconPackCache[pack.packageName] = loadIconPackMappings(pack.packageName)
+            reloadApps()
         }
     }
 
 
     fun clearIconPack() {
         _selectedIconPack.value = null
-        viewModelScope.launch(Dispatchers.IO) {
+        scope.launch(Dispatchers.IO) {
             UiSettingsStore.setIconPack(ctx, null)
-            reloadApps(ctx)
+            reloadApps()
         }
     }
 
 
-    fun findIconPacks(): List<IconPackInfo> {
+    fun loadIconsPacks() {
         val packs = mutableListOf<IconPackInfo>()
         val allPackages = pmCompat.getInstalledPackages()
 
@@ -412,18 +483,21 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
                     logD(ICONS_TAG, "FOUND icon pack: $label (${pkgInfo.packageName})")
                     packs.add(IconPackInfo(pkgInfo.packageName, label))
                 }
-            } catch (_: Exception) { }
+            } catch (_: Exception) {
+            }
         }
 
         val uniquePacks = packs.distinctBy { it.packageName }
         logD(ICONS_TAG, "Total icon packs found: ${uniquePacks.size}")
-        return uniquePacks
+        _iconPacksList.value = uniquePacks
     }
 
 
-
     @SuppressLint("DiscouragedApi")
-    private fun hasAppfilterResource(resources: android.content.res.Resources, pkgName: String): Boolean {
+    private fun hasAppfilterResource(
+        resources: android.content.res.Resources,
+        pkgName: String
+    ): Boolean {
         val locations = listOf("appfilter", "theme_appfilter", "icon_appfilter")
         return locations.any { name ->
             val cacheKey = "$pkgName:$name"
@@ -434,7 +508,7 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun loadIconPackMappings(ctx: Context, packPkg: String): Map<String, String> {
+    fun loadIconPackMappings(packPkg: String): Map<String, String> {
         return try {
             parseAppFilterXml(ctx, packPkg)?.associate {
                 val pkg = it.component.substringAfter('{').substringBefore('/')
@@ -444,6 +518,239 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
             logE(ICONS_TAG, "Failed to load mappings for $packPkg: ${e.message}")
             emptyMap()
         }
+    }
+
+
+    /** Load the user's workspaces into the _state var, enforced safety due to some crash at start */
+    private fun loadWorkspaces() = scope.launch(Dispatchers.IO) {
+        try {
+            val json = WorkspaceSettingsStore.getAll(ctx).toString()
+
+            // Correct generic type: WorkspaceState with List<Workspace>
+            val type = object : TypeToken<WorkspaceState>() {}.type
+            val loadedState: WorkspaceState? = gson.fromJson(json, type)
+
+            _workspacesState.value = loadedState?.copy(
+                workspaces = loadedState.workspaces,
+                appOverrides = loadedState.appOverrides
+            ) ?: WorkspaceState(
+                workspaces = defaultWorkspaces,
+                appOverrides = emptyMap()
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            _workspacesState.value = WorkspaceState(
+                workspaces = defaultWorkspaces,
+                appOverrides = emptyMap()
+            )
+        }
+
+        // Load the appOverrides in the pointsIcons too
+        _workspacesState.value.appOverrides.forEach { (packageName, override) ->
+            override.customIcon?.let { customIcon ->
+                reloadPointIcon(
+                    point = dummySwipePoint(SwipeActionSerializable.LaunchApp(packageName)).copy(
+                        customIcon = customIcon,
+                        id = packageName
+                    )
+                )
+            }
+        }
+    }
+
+
+    private fun persist() = scope.launch(Dispatchers.IO) {
+        WorkspaceSettingsStore.setAll(
+            ctx,
+            JSONObject(gson.toJson(_workspacesState.value))
+        )
+    }
+
+    fun selectWorkspace(id: String) {
+        _selectedWorkspaceId.value = id
+    }
+
+
+    /** Enable/disable a workspace */
+    fun setWorkspaceEnabled(id: String, enabled: Boolean) {
+        _workspacesState.value = _workspacesState.value.copy(
+            workspaces = _workspacesState.value.workspaces.map { workspace ->
+                if (workspace.id == id) {
+                    workspace.copy(enabled = enabled)
+                } else {
+                    workspace
+                }
+            }
+        )
+        persist()
+    }
+
+    fun createWorkspace(name: String, type: WorkspaceType) {
+        _workspacesState.value = _workspacesState.value.copy(
+            workspaces = _workspacesState.value.workspaces +
+                    Workspace(
+                        id = System.currentTimeMillis().toString(),
+                        name = name,
+                        type = type,
+                        enabled = true,
+                        removedAppIds = emptyList(),
+                        appIds = emptyList()
+                    )
+        )
+        persist()
+    }
+
+    fun editWorkspace(id: String, name: String, type: WorkspaceType) {
+        _workspacesState.value = _workspacesState.value.copy(
+            workspaces = _workspacesState.value.workspaces.map {
+                if (it.id == id) it.copy(name = name, type = type) else it
+            }
+        )
+        persist()
+    }
+
+    fun deleteWorkspace(id: String) {
+        _workspacesState.value = _workspacesState.value.copy(
+            workspaces = _workspacesState.value.workspaces.filterNot { it.id == id }
+        )
+        persist()
+    }
+
+    fun setWorkspaceOrder(newOrder: List<Workspace>) {
+        _workspacesState.value = _workspacesState.value.copy(workspaces = newOrder)
+        persist()
+    }
+
+
+    fun resetWorkspace(id: String) {
+        _workspacesState.value = _workspacesState.value.copy(
+            workspaces = _workspacesState.value.workspaces.map {
+                if (it.id == id) it.copy(removedAppIds = emptyList(), appIds = emptyList()) else it
+            }
+        )
+        persist()
+    }
+
+
+    // Apps operations
+    fun addAppToWorkspace(workspaceId: String, packageName: String) {
+        _workspacesState.value = _workspacesState.value.copy(
+            workspaces = _workspacesState.value.workspaces.map { ws ->
+                if (ws.id != workspaceId) return@map ws
+
+                val removed = ws.removedAppIds ?: emptySet()
+
+                ws.copy(
+                    appIds = ws.appIds + packageName,
+                    removedAppIds = if (packageName in removed)
+                        removed - packageName
+                    else
+                        ws.removedAppIds
+                )
+            }
+        )
+        persist()
+    }
+
+
+    fun removeAppFromWorkspace(workspaceId: String, packageName: String) {
+        _workspacesState.value = _workspacesState.value.copy(
+            workspaces = _workspacesState.value.workspaces.map { ws ->
+                if (ws.id != workspaceId) return@map ws
+
+                // remove the app packageName from appsIds, and add it to removedAppIDs
+                ws.copy(
+                    appIds = ws.appIds - packageName,
+                    removedAppIds = (ws.removedAppIds ?: emptyList()) + packageName
+                )
+            }
+        )
+        persist()
+    }
+
+
+    fun renameApp(packageName: String, name: String) {
+        _workspacesState.value = _workspacesState.value.copy(
+            appOverrides = _workspacesState.value.appOverrides +
+                    (packageName to AppOverride(packageName, name))
+        )
+        persist()
+    }
+
+    fun setAppIcon(packageName: String, customIcon: CustomIconSerializable?) {
+        val prev = _workspacesState.value.appOverrides[packageName]
+        _workspacesState.value = _workspacesState.value.copy(
+            appOverrides = _workspacesState.value.appOverrides +
+                    (packageName to (prev?.copy(customIcon = customIcon)
+                        ?: AppOverride(packageName, customIcon = customIcon)))
+        )
+        persist()
+    }
+
+    fun applyIconToApps(
+        icon: CustomIconSerializable?
+    ) {
+        scope.launch {
+            iconSemaphore.withPermit {
+
+                // Store icon ONCE
+                val sharedIcon = icon?.copy()
+
+                _workspacesState.value = _workspacesState.value.copy(
+                    appOverrides = _apps.value.associate {
+                        (it.packageName to AppOverride(it.packageName, customIcon = sharedIcon))
+                    }
+                )
+            }
+        }
+        persist()
+    }
+
+
+    fun resetAppName(packageName: String) {
+        val prev = _workspacesState.value.appOverrides[packageName] ?: return
+
+        val updated = prev.copy(customLabel = null)
+
+        _workspacesState.value = _workspacesState.value.copy(
+            appOverrides =
+                if (updated.customIcon == null)
+                    _workspacesState.value.appOverrides - packageName
+                else
+                    _workspacesState.value.appOverrides + (packageName to updated)
+        )
+        scope.launch {
+            reloadApps()
+        }
+        persist()
+    }
+
+    fun resetAppIcon(packageName: String) {
+        val prev = _workspacesState.value.appOverrides[packageName] ?: return
+
+        val updated = prev.copy(customIcon = null)
+
+        _workspacesState.value = _workspacesState.value.copy(
+            appOverrides =
+                if (updated.customLabel == null)
+                    _workspacesState.value.appOverrides - packageName
+                else
+                    _workspacesState.value.appOverrides + (packageName to updated)
+        )
+
+        scope.launch {
+            reloadApps()
+        }
+        persist()
+    }
+
+
+    fun resetWorkspacesAndOverrides() {
+        _workspacesState.value = WorkspaceState(
+            workspaces = defaultWorkspaces,
+            appOverrides = emptyMap()
+        )
+        persist()
     }
 }
 

@@ -169,10 +169,7 @@ fun MainScreen(
 
     LaunchedEffect(points, nestId) {
         appsViewModel.preloadPointIcons(
-            ctx = ctx,
-            points = points.filter { it.nestId == nestId },
-//            tintProvider = { p -> actionColor(p.action, extraColors) },
-            sizePx = 56
+            points = points.filter { it.nestId == nestId }
         )
     }
 
@@ -191,7 +188,7 @@ fun MainScreen(
                 action = point?.action,
                 useAccessibilityInsteadOfContextToExpandActionPanel = useAccessibilityInsteadOfContextToExpandActionPanel,
                 onAskWhatMethodToUseToOpenQuickActions = { showMethodDialog = true },
-                onReloadApps = { scope.launch { appsViewModel.reloadApps(ctx) } },
+                onReloadApps = { scope.launch { appsViewModel.reloadApps() } },
                 onReselectFile = { showFilePicker = point },
                 onAppSettings = onLongPress3Sec,
                 onAppDrawer = onAppDrawer,
@@ -343,9 +340,7 @@ fun MainScreen(
                     ),
                 onLaunchAction = {
                     launchAction(
-                        SwipePointSerializable(
-                            circleNumber = 0,
-                            angleDeg = 0.0,
+                        dummySwipePoint(
                             action = floatingAppObject.action
                         )
                     )

@@ -16,14 +16,18 @@ import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.data.helpers.SwipePointSerializable
 import org.elnix.dragonlauncher.utils.logs.logE
 import java.lang.reflect.Type
+import java.util.UUID
 
 
-fun dummySwipePoint(action: SwipeActionSerializable?) =
+fun dummySwipePoint(
+    action: SwipeActionSerializable? = null,
+    id: String? = null
+) =
     SwipePointSerializable(
         circleNumber = 0,
         angleDeg = 0.0,
         action = action ?: SwipeActionSerializable.OpenDragonLauncherSettings,
-        id = null,
+        id = id ?: UUID.randomUUID().toString(),
         nestId = 0
     )
 

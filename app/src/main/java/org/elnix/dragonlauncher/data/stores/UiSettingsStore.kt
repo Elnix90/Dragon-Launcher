@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import org.elnix.dragonlauncher.data.BaseSettingsStore
-import org.elnix.dragonlauncher.data.appDrawerDataStore
 import org.elnix.dragonlauncher.data.behaviorDataStore
 import org.elnix.dragonlauncher.data.getBooleanStrict
 import org.elnix.dragonlauncher.data.getIntStrict
@@ -218,13 +217,13 @@ object UiSettingsStore : BaseSettingsStore<Map<String, Any?>>() {
 
 
     suspend fun getIconPack(ctx: Context): String? {
-        return ctx.appDrawerDataStore.data
+        return ctx.uiDatastore.data
             .map { it[ICON_PACK_KEY] }
             .firstOrNull()
     }
 
     suspend fun setIconPack(ctx: Context, packName: String?) {
-        ctx.appDrawerDataStore.edit { prefs ->
+        ctx.uiDatastore.edit { prefs ->
             if (packName == null) {
                 prefs.remove(ICON_PACK_KEY)
             } else {

@@ -76,7 +76,6 @@ import org.elnix.dragonlauncher.utils.loadChangelogs
 import org.elnix.dragonlauncher.utils.models.AppsViewModel
 import org.elnix.dragonlauncher.utils.models.BackupViewModel
 import org.elnix.dragonlauncher.utils.models.FloatingAppsViewModel
-import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 
 // -------------------- SETTINGS --------------------
 
@@ -113,7 +112,6 @@ object ROUTES {
 fun MainAppUi(
     backupViewModel: BackupViewModel,
     appsViewModel: AppsViewModel,
-    workspaceViewModel: WorkspaceViewModel,
     floatingAppsViewModel: FloatingAppsViewModel,
     navController: NavHostController,
 //    onLaunchWidgetPicker: (Intent) -> Unit,
@@ -320,7 +318,6 @@ fun MainAppUi(
             composable(ROUTES.DRAWER) {
                 AppDrawerScreen(
                     appsViewModel = appsViewModel,
-                    workspaceViewModel = workspaceViewModel,
                     showIcons = showAppIconsInDrawer,
                     showLabels = showAppLabelsInDrawer,
                     autoShowKeyboard = autoShowKeyboardOnDrawer,
@@ -349,29 +346,27 @@ fun MainAppUi(
             composable(SETTINGS.ROOT) {
                 SettingsScreen(
                     appsViewModel = appsViewModel,
-                    workspaceViewModel = workspaceViewModel,
                     onAdvSettings = { goAdvSettingsRoot() },
                     onBack = { goMainScreen() }
                 )
             }
-            composable(SETTINGS.ADVANCED_ROOT) { AdvancedSettingsScreen(appsViewModel, navController, onReset = { goMainScreen() } ) { goSettingsRoot() } }
+            composable(SETTINGS.ADVANCED_ROOT) { AdvancedSettingsScreen(appsViewModel, navController ) { goSettingsRoot() } }
 
             composable(SETTINGS.APPEARANCE)    { AppearanceTab(appsViewModel, navController) { goAdvSettingsRoot() } }
             composable(SETTINGS.WALLPAPER)     { WallpaperTab { goAppearance() } }
             composable(SETTINGS.ICON_PACK)     { IconPackTab(appsViewModel) { goAppearance() } }
-            composable(SETTINGS.STATUS_BAR)    { StatusBarTab(appsViewModel, workspaceViewModel) { goAppearance() } }
+            composable(SETTINGS.STATUS_BAR)    { StatusBarTab(appsViewModel) { goAppearance() } }
             composable(SETTINGS.THEME)         { ThemesTab { goAppearance() } }
             composable(SETTINGS.FLOATING_APPS) {
                 FloatingAppsTab(
                     appsViewModel = appsViewModel,
-                    workspaceViewModel = workspaceViewModel,
                     floatingAppsViewModel = floatingAppsViewModel,
                     onBack = ::goAppearance,
                     onLaunchSystemWidgetPicker = ::launchWidgetsPicker,
                     onResetWidgetSize = onResetWidgetSize
                 )
             }
-            composable(SETTINGS.BEHAVIOR)      { BehaviorTab(appsViewModel, workspaceViewModel) { goAdvSettingsRoot() } }
+            composable(SETTINGS.BEHAVIOR)      { BehaviorTab(appsViewModel) { goAdvSettingsRoot() } }
             composable(SETTINGS.DRAWER)        { DrawerTab(appsViewModel) { goAdvSettingsRoot() } }
             composable(SETTINGS.COLORS)        { ColorSelectorTab { goAppearance() } }
             composable(SETTINGS.DEBUG)         { DebugTab(navController, appsViewModel, onShowWelcome = { goWelcome() } ) { goAdvSettingsRoot() } }
@@ -383,7 +378,7 @@ fun MainAppUi(
 
             composable(SETTINGS.WORKSPACE) {
                 WorkspaceListScreen(
-                    workspaceViewModel = workspaceViewModel,
+                    appsViewModel = appsViewModel,
                     onOpenWorkspace = { id ->
                         navController.navigate(
                             SETTINGS.WORKSPACE_DETAIL.replace("{id}", id)
@@ -400,7 +395,6 @@ fun MainAppUi(
                 WorkspaceDetailScreen(
                     workspaceId = backStack.arguments!!.getString("id")!!,
                     appsViewModel = appsViewModel,
-                    workspaceViewModel = workspaceViewModel,
                     showIcons = showAppIconsInDrawer,
                     showLabels = showAppLabelsInDrawer,
                     gridSize = gridSize,

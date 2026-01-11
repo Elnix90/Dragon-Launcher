@@ -75,12 +75,10 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 import org.elnix.dragonlauncher.utils.models.AppsViewModel
 import org.elnix.dragonlauncher.utils.models.FloatingAppsViewModel
-import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 
 @Composable
 fun FloatingAppsTab(
     appsViewModel: AppsViewModel,
-    workspaceViewModel: WorkspaceViewModel,
     floatingAppsViewModel: FloatingAppsViewModel,
     onBack: () -> Unit,
     onLaunchSystemWidgetPicker: () -> Unit,
@@ -375,7 +373,6 @@ fun FloatingAppsTab(
     if (showAddDialog) {
         AddPointDialog(
             appsViewModel = appsViewModel,
-            workspaceViewModel = workspaceViewModel,
             onDismiss = { showAddDialog = false },
             actions =listOf(
                 SwipeActionSerializable.OpenWidget(0, ComponentName("", "")),

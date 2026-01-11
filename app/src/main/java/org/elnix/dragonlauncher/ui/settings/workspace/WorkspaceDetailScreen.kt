@@ -4,8 +4,6 @@ package org.elnix.dragonlauncher.ui.settings.workspace
 
 import android.content.Intent
 import android.provider.Settings
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,23 +38,23 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.R
+import org.elnix.dragonlauncher.data.SwipeActionSerializable
+import org.elnix.dragonlauncher.data.dummySwipePoint
 import org.elnix.dragonlauncher.data.helpers.WorkspaceViewMode
 import org.elnix.dragonlauncher.data.helpers.WorkspaceViewMode.ADDED
 import org.elnix.dragonlauncher.data.helpers.WorkspaceViewMode.DEFAULTS
 import org.elnix.dragonlauncher.data.helpers.WorkspaceViewMode.REMOVED
 import org.elnix.dragonlauncher.data.helpers.workspaceViewMode
 import org.elnix.dragonlauncher.data.stores.DebugSettingsStore
-import org.elnix.dragonlauncher.ui.components.dialogs.AppPickerDialog
-import org.elnix.dragonlauncher.ui.components.dialogs.RenameAppDialog
 import org.elnix.dragonlauncher.ui.components.dialogs.AppLongPressDialog
+import org.elnix.dragonlauncher.ui.components.dialogs.AppPickerDialog
+import org.elnix.dragonlauncher.ui.components.dialogs.IconEditorDialog
+import org.elnix.dragonlauncher.ui.components.dialogs.RenameAppDialog
 import org.elnix.dragonlauncher.ui.drawer.AppModel
 import org.elnix.dragonlauncher.ui.helpers.AppGrid
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
-import org.elnix.dragonlauncher.utils.ImageUtils
 import org.elnix.dragonlauncher.utils.actions.launchSwipeAction
 import org.elnix.dragonlauncher.utils.models.AppsViewModel
-import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
-import org.elnix.dragonlauncher.utils.showToast
 
 @Composable
 fun WorkspaceDetailScreen(
@@ -65,14 +63,14 @@ fun WorkspaceDetailScreen(
     gridSize: Int,
     workspaceId: String,
     appsViewModel: AppsViewModel,
-    workspaceViewModel: WorkspaceViewModel,
     onBack: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val ctx = LocalContext.current
 
-    val workspaceState by workspaceViewModel.state.collectAsState()
+    val workspaceState by appsViewModel.state.collectAsState()
     val workspace = workspaceState.workspaces.first { it.id == workspaceId }
+    val overrides = workspaceState.appOverrides
 
     val workspaceDebugInfos by DebugSettingsStore.getWorkspacesDebugInfos(ctx)
         .collectAsState(initial = false)
@@ -83,7 +81,7 @@ fun WorkspaceDetailScreen(
     val getOnlyAdded = selectedView == ADDED
 
     val apps by appsViewModel
-        .appsForWorkspace(workspace, workspaceState.appOverrides, getOnlyAdded, getOnlyRemoved)
+        .appsForWorkspace(workspace, overrides, getOnlyAdded, getOnlyRemoved)
         .collectAsState(initial = emptyList())
 
     val icons by appsViewModel.icons.collectAsState()
@@ -98,32 +96,6 @@ fun WorkspaceDetailScreen(
 
     var iconTargetPackage by remember { mutableStateOf<String?>(null) }
 
-    val pickImageLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.OpenDocument()
-    ) { uri ->
-        val pkg = iconTargetPackage ?: return@rememberLauncherForActivityResult
-        if (uri != null) {
-            scope.launch {
-                try {
-                    val bitmap = ImageUtils.loadBitmap(ctx, uri)
-                    val cropped = ImageUtils.cropCenterSquare(bitmap)
-                    val resized = ImageUtils.resize(cropped, 192)
-
-                    // Save as Base64 now
-                    workspaceViewModel.setAppIcon(
-                        pkg,
-                        resized
-                    )
-                    // Optionally show toast
-                    ctx.showToast(R.string.icon_updated)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    ctx.showToast(R.string.icon_update_failed)
-                }
-            }
-        }
-    }
-
 
 
     Box(Modifier.fillMaxSize()) {
@@ -131,7 +103,7 @@ fun WorkspaceDetailScreen(
             title = "${stringResource(R.string.workspace)}: ${workspace.name}",
             onBack = onBack,
             helpText = stringResource(R.string.workspace_detail_help),
-            onReset = { workspaceViewModel.resetWorkspace(workspaceId) },
+            onReset = { appsViewModel.resetWorkspace(workspaceId) },
             resetTitle = stringResource(R.string.reset_workspace),
             resetText = stringResource(R.string.reset_this_workspace_to_default_apps),
             content = {
@@ -196,22 +168,19 @@ fun WorkspaceDetailScreen(
     if (showAppPicker) {
         AppPickerDialog(
             appsViewModel = appsViewModel,
-            workspaceViewModel = workspaceViewModel,
             gridSize = gridSize,
             showIcons = showIcons,
             showLabels = showLabels,
             onDismiss = { showAppPicker = false }
         ) { app ->
             scope.launch {
-                workspaceViewModel.addAppToWorkspace(workspaceId, app.packageName)
+                appsViewModel.addAppToWorkspace(workspaceId, app.packageName)
             }
         }
     }
 
     if (showDetailScreen != null) {
         val app = showDetailScreen!!
-        val hasCustomIcon =
-            workspaceState.appOverrides[app.packageName]?.customIconBase64 != null
 
         AppLongPressDialog(
             app = app,
@@ -236,7 +205,7 @@ fun WorkspaceDetailScreen(
                 {
                     workspaceId.let {
                         scope.launch {
-                            workspaceViewModel.removeAppFromWorkspace(
+                            appsViewModel.removeAppFromWorkspace(
                                 it,
                                 app.packageName
                             )
@@ -248,7 +217,7 @@ fun WorkspaceDetailScreen(
                 {
                     workspaceId.let {
                         scope.launch {
-                            workspaceViewModel.addAppToWorkspace(
+                            appsViewModel.addAppToWorkspace(
                                 it,
                                 app.packageName
                             )
@@ -264,16 +233,7 @@ fun WorkspaceDetailScreen(
             onChangeAppIcon = {
                 val pkg = app.packageName
                 iconTargetPackage = pkg
-                pickImageLauncher.launch(arrayOf("image/*"))
             },
-            onResetAppIcon = if (hasCustomIcon) {
-                {
-                    val pkg = app.packageName
-                    scope.launch {
-                        workspaceViewModel.resetAppIcon(pkg)
-                    }
-                }
-            } else null,
             onDismiss = { showDetailScreen = null }
         )
     }
@@ -287,7 +247,7 @@ fun WorkspaceDetailScreen(
             val pkg = renameTargetPackage ?: return@RenameAppDialog
 
             scope.launch {
-                workspaceViewModel.renameApp(
+                appsViewModel.renameApp(
                     packageName = pkg,
                     name = renameText
                 )
@@ -301,11 +261,51 @@ fun WorkspaceDetailScreen(
             val pkg = renameTargetPackage ?: return@RenameAppDialog
 
             scope.launch {
-                workspaceViewModel.resetAppName(pkg)
+                appsViewModel.resetAppName(pkg)
             }
             showRenameAppDialog = false
             renameTargetPackage = null
         },
         onDismiss = { showRenameAppDialog = false }
     )
+
+    if (iconTargetPackage != null) {
+
+        val pkg = iconTargetPackage!!
+
+        val iconOverride =
+            overrides[iconTargetPackage]?.customIcon
+
+
+        val tempPoint =
+            dummySwipePoint(SwipeActionSerializable.LaunchApp(pkg), pkg).copy(
+                customIcon = iconOverride
+            )
+
+        if (iconOverride == null) {
+            scope.launch {
+                appsViewModel.reloadPointIcon(tempPoint)
+            }
+        }
+
+        IconEditorDialog(
+            point = tempPoint,
+            appsViewModel = appsViewModel,
+            onDismiss = { iconTargetPackage = null }
+        ) {
+            val pkg = iconTargetPackage ?: return@IconEditorDialog
+
+            scope.launch {
+                if (it != null) {
+                    appsViewModel.setAppIcon(
+                        pkg,
+                        it
+                    )
+                } else {
+                    appsViewModel.resetAppIcon(pkg)
+                }
+            }
+            iconTargetPackage = null
+        }
+    }
 }

@@ -24,13 +24,11 @@ import org.elnix.dragonlauncher.ui.helpers.SliderWithLabel
 import org.elnix.dragonlauncher.ui.helpers.SwitchRow
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsLazyHeader
 import org.elnix.dragonlauncher.utils.models.AppsViewModel
-import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 
 
 @Composable
 fun BehaviorTab(
     appsViewModel: AppsViewModel,
-    workspaceViewModel: WorkspaceViewModel,
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
@@ -68,7 +66,6 @@ fun BehaviorTab(
         item {
             CustomActionSelector(
                 appsViewModel = appsViewModel,
-                workspaceViewModel = workspaceViewModel,
                 currentAction = backAction,
                 label = stringResource(R.string.back_action),
                 onToggle = {
@@ -86,7 +83,6 @@ fun BehaviorTab(
         item {
             CustomActionSelector(
                 appsViewModel = appsViewModel,
-                workspaceViewModel = workspaceViewModel,
                 currentAction = doubleClickAction,
                 label = stringResource(R.string.double_click_action),
                 onToggle = {

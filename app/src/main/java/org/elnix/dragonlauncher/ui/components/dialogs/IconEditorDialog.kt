@@ -30,7 +30,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,7 +56,7 @@ import org.elnix.dragonlauncher.ui.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.helpers.SliderWithLabel
 import org.elnix.dragonlauncher.ui.helpers.actionsInCircle
 import org.elnix.dragonlauncher.ui.theme.LocalExtraColors
-import org.elnix.dragonlauncher.utils.ImageUtils.bitmapToBase64
+import org.elnix.dragonlauncher.utils.ImageUtils
 import org.elnix.dragonlauncher.utils.ImageUtils.uriToBase64
 import org.elnix.dragonlauncher.utils.actions.actionColor
 import org.elnix.dragonlauncher.utils.colors.AppObjectsColors
@@ -68,19 +67,18 @@ import org.elnix.dragonlauncher.utils.models.AppsViewModel
 fun IconEditorDialog(
     point: SwipePointSerializable,
     appsViewModel: AppsViewModel,
+    onReset: (() -> Unit)? = null,
     onDismiss: () -> Unit,
     onPicked: (CustomIconSerializable?) -> Unit
 ) {
+
     val ctx = LocalContext.current
     val extraColors = LocalExtraColors.current
     val scope = rememberCoroutineScope()
 
     val circleColor = LocalExtraColors.current.circle
 
-    val pointIcons by appsViewModel.pointIcons.collectAsState()
-
-    val icon = point.customIcon
-    var selectedIcon by remember { mutableStateOf(icon) }
+    var selectedIcon by remember { mutableStateOf(point.customIcon) }
     var textValue by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
@@ -89,16 +87,8 @@ fun IconEditorDialog(
         }
     }
 
-    LaunchedEffect(selectedIcon) {
-        val previewPoint = point.copy(customIcon = selectedIcon)
-
-        appsViewModel.reloadPointIcon(
-            ctx = ctx,
-            point = previewPoint,
-//            tint = actionColor(point.action, extraColors)
-        )
-    }
-
+    val previewPoint = point.copy(customIcon = selectedIcon)
+    val previewIcon = mapOf(point.id to appsViewModel.renderPointIcon(previewPoint, 64))
 
     val source = selectedIcon?.source
 
@@ -140,7 +130,7 @@ fun IconEditorDialog(
     CustomAlertDialog(
         modifier = Modifier
             .padding(24.dp)
-            .height(700.dp),
+            .height(684.dp),
         onDismissRequest = onDismiss,
         imePadding = false,
         alignment = Alignment.Center,
@@ -161,31 +151,30 @@ fun IconEditorDialog(
                 ) {
                     val center = size.center
                     val actionSpacing = 150f
-                    val drawScope = this
 
-                    drawScope.actionsInCircle(
+                    actionsInCircle(
                         selected = false,
-                        point = point,
+                        point = previewPoint,
                         nests = emptyList(),
                         px = center.x - actionSpacing,
                         py = center.y,
                         ctx = ctx,
                         circleColor = circleColor,
                         colorAction = actionColor(point.action, extraColors),
-                        pointIcons = pointIcons,
+                        pointIcons = previewIcon,
                         preventBgErasing = true
                     )
 
-                    drawScope.actionsInCircle(
+                    actionsInCircle(
                         selected = true,
-                        point = point,
+                        point = previewPoint,
                         nests = emptyList(),
                         px = center.x + actionSpacing,
                         py = center.y,
                         ctx = ctx,
                         circleColor = circleColor,
                         colorAction = actionColor(point.action, extraColors),
-                        pointIcons = pointIcons,
+                        pointIcons = previewIcon,
                         preventBgErasing = true
                     )
                 }
@@ -193,6 +182,7 @@ fun IconEditorDialog(
                 IconButton(
                     onClick = {
                         selectedIcon = null
+                        onReset?.invoke()
                         textValue = ""
                     }
                 ) {
@@ -224,6 +214,7 @@ fun IconEditorDialog(
                         selected = selectedIcon?.type == IconType.BITMAP && source != null,
                         onClick = {
                             imagePicker.launch(arrayOf("image/*"))
+                            textValue = ""
                         }
                     ) {
                         Icon(Icons.Default.Image, null)
@@ -286,6 +277,7 @@ fun IconEditorDialog(
                         selected = selectedIcon?.type == IconType.ICON_PACK && source != null,
                         onClick = {
                             showIconPackPicker = true
+                            textValue = ""
                         }
                     ) {
                         Icon(Icons.Default.Palette, null)
@@ -389,8 +381,8 @@ fun IconEditorDialog(
             onDismiss = { showIconPackPicker = false },
             onIconPicked = { iconBitmap ->
                 scope.launch {
-                    val base64 = bitmapToBase64(iconBitmap)
-                    selectedIcon = selectedIcon?.copy(
+                    val base64 = ImageUtils.imageBitmapToBase64(iconBitmap)
+                    selectedIcon = (selectedIcon ?: CustomIconSerializable()).copy(
                         type = IconType.ICON_PACK,
                         source = base64
                     )

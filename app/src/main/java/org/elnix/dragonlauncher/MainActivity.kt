@@ -47,7 +47,6 @@ import org.elnix.dragonlauncher.utils.logs.logW
 import org.elnix.dragonlauncher.utils.models.AppLifecycleViewModel
 import org.elnix.dragonlauncher.utils.models.BackupViewModel
 import org.elnix.dragonlauncher.utils.models.FloatingAppsViewModel
-import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 import org.elnix.dragonlauncher.utils.showToast
 import java.util.UUID
 
@@ -55,7 +54,6 @@ class MainActivity : ComponentActivity() {
 
     private val appLifecycleViewModel : AppLifecycleViewModel by viewModels()
     private val backupViewModel : BackupViewModel by viewModels()
-    private val workspaceViewModel : WorkspaceViewModel by viewModels()
     private val floatingAppsViewModel : FloatingAppsViewModel by viewModels()
 
     private var navControllerHolder = mutableStateOf<NavHostController?>(null)
@@ -321,6 +319,8 @@ class MainActivity : ComponentActivity() {
 
             LaunchedEffect(hasInitialized) {
                 if (!hasInitialized) {
+
+                    /* ───────────── Create the 3 default points (has to be changed ───────────── */
                     SwipeSettingsStore.savePoints(ctx,
                         listOf(
                             SwipePointSerializable(
@@ -343,6 +343,8 @@ class MainActivity : ComponentActivity() {
                             )
                         )
                     )
+
+                    /* ───────────── Finally, initialize ───────────── */
                     PrivateSettingsStore.setHasInitialized(ctx, true)
                 }
             }
@@ -423,7 +425,6 @@ class MainActivity : ComponentActivity() {
                 MainAppUi(
                     backupViewModel = backupViewModel,
                     appsViewModel = appsViewModel,
-                    workspaceViewModel = workspaceViewModel,
                     floatingAppsViewModel = floatingAppsViewModel,
                     navController = navController,
                     onBindCustomWidget = { widgetId, provider ->

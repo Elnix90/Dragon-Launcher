@@ -44,13 +44,11 @@ import org.elnix.dragonlauncher.utils.actions.actionColor
 import org.elnix.dragonlauncher.utils.actions.actionLabel
 import org.elnix.dragonlauncher.utils.defaultChoosableActions
 import org.elnix.dragonlauncher.utils.models.AppsViewModel
-import org.elnix.dragonlauncher.utils.models.WorkspaceViewModel
 
 @Suppress("AssignedValueIsNeverRead")
 @Composable
 fun AddPointDialog(
     appsViewModel: AppsViewModel,
-    workspaceViewModel: WorkspaceViewModel,
     actions: List<SwipeActionSerializable> = defaultChoosableActions,
     onDismiss: () -> Unit,
     onActionSelected: (SwipeActionSerializable) -> Unit
@@ -146,7 +144,6 @@ fun AddPointDialog(
     if (showAppPicker) {
         AppPickerDialog(
             appsViewModel = appsViewModel,
-            workspaceViewModel = workspaceViewModel,
             gridSize = gridSize,
             showIcons = showIcons,
             showLabels = showLabels,
