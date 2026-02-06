@@ -43,6 +43,15 @@ sealed class IconShape {
 
     @Serializable
     object Dragon : IconShape()
+
+    @Serializable
+    object SharpTriangle : IconShape()
+
+    @Serializable
+    object RoundedTriangle : IconShape()
+
+    @Serializable
+    object Rhombus : IconShape()
     @Serializable
     data class Custom(
         val shape: CustomIconShapeSerializable
@@ -56,6 +65,9 @@ val allShapes = listOf(
     IconShape.Square,
     IconShape.RoundedSquare,
     IconShape.Triangle,
+    IconShape.SharpTriangle,
+    IconShape.RoundedTriangle,
+    IconShape.Rhombus,
     IconShape.Squircle,
     IconShape.Hexagon,
     IconShape.Pentagon,

@@ -56,6 +56,10 @@ class IconShapeAdapter :
             IconShape.EasterEgg -> obj.addProperty("type", "EasterEgg")
             IconShape.Random -> obj.addProperty("type", "Random")
             IconShape.Dragon -> obj.addProperty("type", "Dragon")
+            IconShape.Rhombus -> obj.addProperty("type", "Rhombus")
+            IconShape.SharpTriangle -> obj.addProperty("type", "SharpTriangle")
+            IconShape.RoundedTriangle -> obj.addProperty("type", "RoundedTriangle")
+
 
             is IconShape.Custom -> {
                 obj.addProperty("type", "Custom")
@@ -82,6 +86,9 @@ class IconShapeAdapter :
             "Square" -> IconShape.Square
             "RoundedSquare" -> IconShape.RoundedSquare
             "Triangle" -> IconShape.Triangle
+            "RoundedTriangle" -> IconShape.RoundedTriangle
+            "SharpTriangle" -> IconShape.SharpTriangle
+            "Rhombus" -> IconShape.Rhombus
             "Squircle" -> IconShape.Squircle
             "Hexagon" -> IconShape.Hexagon
             "Pentagon" -> IconShape.Pentagon

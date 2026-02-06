@@ -7,8 +7,10 @@ import android.graphics.drawable.AdaptiveIconDrawable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asComposePath
@@ -22,6 +24,7 @@ import kotlin.math.abs
 import kotlin.math.cbrt
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 
 fun resolveShape(shape: IconShape?): Shape =
@@ -32,7 +35,7 @@ fun resolveShape(shape: IconShape?): Shape =
         IconShape.Square -> RectangleShape
         IconShape.RoundedSquare -> RoundedCornerShape(25)
         IconShape.Dragon -> DragonShape
-        IconShape.Triangle -> TriangleShape
+        IconShape.Triangle -> ReuleauxTriangleShape
         IconShape.Squircle -> SquircleShape
         IconShape.Hexagon -> HexagonShape
         IconShape.Pentagon -> PentagonShape
@@ -43,8 +46,109 @@ fun resolveShape(shape: IconShape?): Shape =
         IconShape.Random ->  resolveShape(allShapes.filter { it !is IconShape.Random }.random())
 
         is IconShape.Custom -> customIconShape(s.shape)
+        IconShape.Rhombus -> RhombusShape
+        IconShape.RoundedTriangle -> RoundedTriangleShape
+        IconShape.SharpTriangle -> SharpTriangleShape
     }
 
+
+val SharpTriangleShape: Shape = GenericShape { size, _ ->
+    moveTo(size.width / 2f, 0f)                 // Top
+    lineTo(size.width, size.height)             // Bottom right
+    lineTo(0f, size.height)                     // Bottom left
+    close()
+}
+
+val RoundedTriangleShape: Shape = GenericShape { size, _ ->
+    val radius = size.minDimension * 0.25f
+
+    val top = Offset(size.width / 2f, 0f)
+    val right = Offset(size.width, size.height)
+    val left = Offset(0f, size.height)
+
+    addRoundRect(
+        RoundRect(
+            rect = Rect(0f, 0f, size.width, size.height),
+            topLeft = CornerRadius(radius),
+            topRight = CornerRadius(radius),
+            bottomLeft = CornerRadius(radius),
+            bottomRight = CornerRadius(radius)
+        )
+    )
+}
+
+//val RoundedTriangleShape: Shape
+//    get() = GenericShape { size, _ ->
+//        RoundedPolygon(
+//            numVertices = 3,
+//            radius = size.minDimension / 2,
+//            centerX = size.width / 2,
+//            centerY = size.height / 2,
+//            rounding = CornerRounding(
+//                size.minDimension / 10f,
+//                smoothing = 0.1f
+//            )
+//        )
+//    }
+
+
+val RhombusShape: Shape = GenericShape { size, _ ->
+    moveTo(size.width / 2f, 0f)            // Top
+    lineTo(size.width, size.height / 2f)   // Right
+    lineTo(size.width / 2f, size.height)   // Bottom
+    lineTo(0f, size.height / 2f)           // Left
+    close()
+}
+
+val ReuleauxTriangleShape: Shape = GenericShape { size, _ ->
+
+    val side = size.minDimension
+    val height = side * (sqrt(3f) / 2f)
+
+    // Center vertically
+    val verticalOffset = (size.height - height) / 2f
+
+    val p1 = Offset(size.width / 2f, verticalOffset)               // Top
+    val p2 = Offset(0f, verticalOffset + height)                   // Bottom left
+    val p3 = Offset(size.width, verticalOffset + height)           // Bottom right
+
+    val r = side
+
+    // Arc centered at p2 (from p1 to p3)
+    arcTo(
+        rect = Rect(
+            p2.x - r, p2.y - r,
+            p2.x + r, p2.y + r
+        ),
+        startAngleDegrees = -60f,
+        sweepAngleDegrees = 120f,
+        forceMoveTo = true
+    )
+
+    // Arc centered at p3
+    arcTo(
+        rect = Rect(
+            p3.x - r, p3.y - r,
+            p3.x + r, p3.y + r
+        ),
+        startAngleDegrees = 60f,
+        sweepAngleDegrees = 120f,
+        forceMoveTo = false
+    )
+
+    // Arc centered at p1
+    arcTo(
+        rect = Rect(
+            p1.x - r, p1.y - r,
+            p1.x + r, p1.y + r
+        ),
+        startAngleDegrees = 180f,
+        sweepAngleDegrees = 120f,
+        forceMoveTo = false
+    )
+
+    close()
+}
 
 
 // Shapes from https://github.com/MM2-0/Kvaesitso/blob/main/app/ui/src/main/java/de/mm20/launcher2/ui/component/ShapedLauncherIcon.kt
@@ -80,15 +184,6 @@ private val SquircleShape: Shape
             )
         translate(Offset(size.width / 2f, size.height / 2f))
     }
-
-//private val SquircleShape = GenericShape { _, _ ->
-//    moveTo(0.0f, 100.0f)
-//    cubicTo(0.0f, 33.0f, 33.0f, 0.0f, 100.0f, 0.0f)
-//    cubicTo(167.0f, 0.0f, 200.0f, 33.0f, 200.0f, 100.0f)
-//    cubicTo(200.0f, 167.0f, 167.0f, 200.0f, 100.0f, 200.0f)
-//    cubicTo(33.0f, 200.0f, 0.0f, 167.0f, 0.0f, 100.0f)
-//    close()
-//}
 
 private val HexagonShape: Shape
     get() = GenericShape { size, _ ->
