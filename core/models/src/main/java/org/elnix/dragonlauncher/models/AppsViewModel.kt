@@ -304,6 +304,7 @@ class AppsViewModel(
     private var privateSnapshotBefore: Set<String>? = null
     private var pendingPrivatePackages: Set<String>? = null
     private var pendingPrivateUserId: Int? = null
+    private val pendingPrivateMutex = kotlinx.coroutines.sync.Mutex()
 
     // Loading state for Private Space -> used by UI to show "Please wait" overlay
     private val _isLoadingPrivateSpace = kotlinx.coroutines.flow.MutableStateFlow(false)
@@ -333,46 +334,48 @@ class AppsViewModel(
 
             // Apply differential private-package marking if present
             var finalApps = apps
-            if (!pendingPrivatePackages.isNullOrEmpty()) {
-                val diff = pendingPrivatePackages ?: emptySet()
-                val privateUserId = pendingPrivateUserId
-                logI(APPS_TAG, "Applying differential Private Space detection: ${diff.size} packages (privateUserId=$privateUserId)")
+            pendingPrivateMutex.withLock {
+                if (!pendingPrivatePackages.isNullOrEmpty()) {
+                    val diff = pendingPrivatePackages ?: emptySet()
+                    val privateUserId = pendingPrivateUserId
+                    logI(APPS_TAG, "Applying differential Private Space detection: ${diff.size} packages (privateUserId=$privateUserId)")
 
-                // Persist assignments
-                try {
-                    val existingJson = AppsSettingsStore.privateAssignedPackages.get(ctx)
-                    val existingMap: MutableMap<String, Int?> = if (existingJson.isNullOrEmpty() || existingJson == "{}") mutableMapOf() else gson.fromJson(existingJson, object : com.google.gson.reflect.TypeToken<MutableMap<String, Int?>>() {}.type)
+                    // Persist assignments
+                    try {
+                        val existingJson = AppsSettingsStore.privateAssignedPackages.get(ctx)
+                        val existingMap: MutableMap<String, Int?> = if (existingJson.isNullOrEmpty() || existingJson == "{}") mutableMapOf() else gson.fromJson(existingJson, object : com.google.gson.reflect.TypeToken<MutableMap<String, Int?>>() {}.type)
 
-                    diff.forEach { pkg ->
-                        existingMap[pkg] = privateUserId
-                    }
-
-                    AppsSettingsStore.privateAssignedPackages.set(ctx, gson.toJson(existingMap))
-                    logI(APPS_TAG, "Persisted ${diff.size} private package assignments")
-                } catch (e: Exception) {
-                    logE(APPS_TAG, "Error persisting private package assignments: ${e.message}", e)
-                }
-
-                finalApps = apps.map { app ->
-                    if (app.packageName in diff) {
-                        logI(APPS_TAG, "Marking ${app.packageName} as Private Space (diff), assigning userId=${privateUserId ?: app.userId}")
-                        // Assign userId to the Private profile only if the package is actually visible in that profile.
-                        val assignedUserId = if (privateUserId != null && pmCompat.isPackageVisibleForUser(app.packageName, privateUserId)) {
-                            privateUserId
-                        } else {
-                            app.userId
+                        diff.forEach { pkg ->
+                            existingMap[pkg] = privateUserId
                         }
 
-                        app.copy(
-                            isPrivateProfile = true,
-                            isWorkProfile = false,
-                            userId = assignedUserId
-                        )
-                    } else app
+                        AppsSettingsStore.privateAssignedPackages.set(ctx, gson.toJson(existingMap))
+                        logI(APPS_TAG, "Persisted ${diff.size} private package assignments")
+                    } catch (e: Exception) {
+                        logE(APPS_TAG, "Error persisting private package assignments: ${e.message}", e)
+                    }
+
+                    finalApps = apps.map { app ->
+                        if (app.packageName in diff) {
+                            logI(APPS_TAG, "Marking ${app.packageName} as Private Space (diff), assigning userId=${privateUserId ?: app.userId}")
+                            // Assign userId to the Private profile only if the package is actually visible in that profile.
+                            val assignedUserId = if (privateUserId != null && pmCompat.isPackageVisibleForUser(app.packageName, privateUserId)) {
+                                privateUserId
+                            } else {
+                                app.userId
+                            }
+
+                            app.copy(
+                                isPrivateProfile = true,
+                                isWorkProfile = false,
+                                userId = assignedUserId
+                            )
+                        } else app
+                    }
+                    // Clear pending after consumption
+                    pendingPrivatePackages = null
+                    pendingPrivateUserId = null
                 }
-                // Clear pending after consumption
-                pendingPrivatePackages = null
-                pendingPrivateUserId = null
             }
 
             // Apply persisted private assignments (survives reloads)
@@ -430,22 +433,28 @@ class AppsViewModel(
                 val privateSpaceExists = PrivateSpaceUtils.getPrivateSpaceUserHandle(ctx) != null
                 val privateWorkspace = _workspacesState.value.workspaces.find { it.type == WorkspaceType.PRIVATE }
                 
-                logI(APPS_TAG, "Private Space exists: $privateSpaceExists")
-                logI(APPS_TAG, "Private workspace found: ${privateWorkspace != null}, enabled: ${privateWorkspace?.enabled}")
+                logD(APPS_TAG, "Private Space exists: $privateSpaceExists")
+                logD(APPS_TAG, "Private workspace found: ${privateWorkspace != null}, enabled: ${privateWorkspace?.enabled}")
                 
                 if (privateSpaceExists && privateWorkspace != null && !privateWorkspace.enabled) {
-                    logI(APPS_TAG, "Enabling Private Space workspace (Private Space profile detected)")
+                    logI(APPS_TAG, "Auto-enabling Private Space workspace (Private Space profile detected)")
                     setWorkspaceEnabled("private", true)
                 } else if (!privateSpaceExists && privateWorkspace != null && privateWorkspace.enabled) {
-                    logI(APPS_TAG, "Disabling Private Space workspace (Private Space profile not found)")
-                    setWorkspaceEnabled("private", false)
+                    // Only auto-disable if there are no private apps (i.e., user hasn't customized it)
+                    val hasPrivateApps = finalApps.any { it.isPrivateProfile }
+                    if (!hasPrivateApps) {
+                        logI(APPS_TAG, "Auto-disabling Private Space workspace (Private Space profile not found, no apps)")
+                        setWorkspaceEnabled("private", false)
 
-                    // Clear persisted private assignments since Private Space no longer exists
-                    try {
-                        AppsSettingsStore.privateAssignedPackages.set(ctx, "{}")
-                        logI(APPS_TAG, "Cleared persisted Private Space assignments because Private Space not found")
-                    } catch (e: Exception) {
-                        logE(APPS_TAG, "Error clearing persisted private assignments: ${e.message}", e)
+                        // Clear persisted private assignments since Private Space no longer exists
+                        try {
+                            AppsSettingsStore.privateAssignedPackages.set(ctx, "{}")
+                            logI(APPS_TAG, "Cleared persisted Private Space assignments because Private Space not found")
+                        } catch (e: Exception) {
+                            logE(APPS_TAG, "Error clearing persisted private assignments: ${e.message}", e)
+                        }
+                    } else {
+                        logD(APPS_TAG, "Private Space not found but workspace has apps, keeping enabled")
                     }
                 }
             }
@@ -497,8 +506,10 @@ class AppsViewModel(
                 }
             } else null
 
-            pendingPrivatePackages = diff
-            pendingPrivateUserId = privateUserHandle?.hashCode()
+            pendingPrivateMutex.withLock {
+                pendingPrivatePackages = diff
+                pendingPrivateUserId = privateUserHandle?.hashCode()
+            }
 
             // Remove any of these packages from USER workspaces (they belong to Private)
             try {
@@ -536,7 +547,9 @@ class AppsViewModel(
             }
         } catch (e: Exception) {
             logE(APPS_TAG, "Error during differential private detection: ${e.message}", e)
-            pendingPrivatePackages = null
+            pendingPrivateMutex.withLock {
+                pendingPrivatePackages = null
+            }
             privateSnapshotBefore = null
             _isLoadingPrivateSpace.value = false
             // best-effort fallback: full reload

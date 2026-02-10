@@ -24,7 +24,11 @@
 
     <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS" />
 
-    <!-- Android 15+: Permission to access Private Space and other hidden profiles -->
+    <!-- Android 15+: Permission to access Private Space and other hidden profiles.
+         Note: This is a system-level permission that cannot be granted to third-party apps
+         through normal means. This feature requires the app to be installed as a system app
+         or signed with the platform key. For regular installations, Private Space functionality
+         may not work as expected. -->
     <uses-permission android:name="android.permission.ACCESS_HIDDEN_PROFILES" />
 
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />

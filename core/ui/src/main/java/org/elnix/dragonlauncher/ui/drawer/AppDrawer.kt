@@ -39,7 +39,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -71,6 +70,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.logging.logD
 import org.elnix.dragonlauncher.common.logging.logI
 import org.elnix.dragonlauncher.common.serializables.AppModel
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
@@ -272,16 +272,16 @@ fun AppDrawerScreen(
         val currentWorkspace = workspaces.getOrNull(pagerState.currentPage)
         if (currentWorkspace?.type != WorkspaceType.PRIVATE) {
             // User left Private Space workspace, stop polling
-            logI("AppDrawer", "Left Private Space workspace, stopping authentication polling")
+            logD("AppDrawer", "Left Private Space workspace, stopping authentication polling")
             isAuthenticatingPrivateSpace = false
             return@LaunchedEffect
         }
         
-        logI("AppDrawer", "Starting Private Space unlock polling...")
+        logD("AppDrawer", "Starting Private Space unlock polling")
         
-        // Poll every 300ms to detect unlock
+        // Poll every 500ms to detect unlock (reduced from 300ms for better battery life)
         while (isAuthenticatingPrivateSpace) {
-            kotlinx.coroutines.delay(300)
+            kotlinx.coroutines.delay(500)
             
             val isLocked = withContext(Dispatchers.IO) {
                 PrivateSpaceUtils.isPrivateSpaceLocked(ctx)
@@ -289,26 +289,23 @@ fun AppDrawerScreen(
             
             if (isLocked == false) {
                 // Private Space is now unlocked!
-                logI("AppDrawer", "Private Space unlocked detected via polling!")
+                logD("AppDrawer", "Private Space unlocked detected via polling")
                 privateSpaceUnlocked = true
                 isAuthenticatingPrivateSpace = false
                 
                 // Call differential detection + reload from the ViewModel's scope
-                logI("AppDrawer", "Launching differential private detection + reload from ViewModel scope...")
                 scope.launch {
-                    logI("AppDrawer", "Inside scope.launch, calling detectPrivateAppsDiffAndReload()...")
                     try {
                         appsViewModel.detectPrivateAppsDiffAndReload()
-                        logI("AppDrawer", "detectPrivateAppsDiffAndReload() succeeded from ViewModel scope")
+                        logD("AppDrawer", "detectPrivateAppsDiffAndReload() completed successfully")
                     } catch (e: Exception) {
-                        logI("AppDrawer", "detectPrivateAppsDiffAndReload() failed: ${e.message}\n${e.stackTraceToString()}")
+                        logD("AppDrawer", "detectPrivateAppsDiffAndReload() failed: ${e.message}")
                         // Fallback: try a full reload
                         try {
                             appsViewModel.reloadApps()
                         } catch (_: Exception) { /* ignore */ }
                     }
                 }
-                logI("AppDrawer", "Polling stopped")
                 break
             }
         }
@@ -615,8 +612,6 @@ fun AppDrawerScreen(
             isAuthenticatingPrivateSpace &&
             workspaces.getOrNull(pagerState.currentPage)?.type == WorkspaceType.PRIVATE) {
             
-            logI("AppDrawer", "Rendering Private Space authentication overlay")
-            
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -665,8 +660,6 @@ fun AppDrawerScreen(
         // Private Space loading overlay after unlock
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM &&
             privateSpaceUnlocked && isLoadingPrivate && workspaces.getOrNull(pagerState.currentPage)?.type == WorkspaceType.PRIVATE) {
-
-            logI("AppDrawer", "Rendering Private Space loading overlay")
 
             Box(
                 modifier = Modifier

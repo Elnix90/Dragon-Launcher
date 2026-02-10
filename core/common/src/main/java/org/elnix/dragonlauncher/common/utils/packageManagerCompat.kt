@@ -49,7 +49,7 @@ class PackageManagerCompat(private val pm: PackageManager, private val ctx: Cont
                         val userType = userInfo?.userType
                         
                         isPrivateProfile = userType == "android.os.usertype.profile.PRIVATE"
-                        isWorkProfile = !isPrivateProfile
+                        isWorkProfile = userType == "android.os.usertype.profile.MANAGED"
                     } catch (e: Exception) {
                         isWorkProfile = true
                     }
@@ -202,6 +202,9 @@ class PackageManagerCompat(private val pm: PackageManager, private val ctx: Cont
             if (isPrivateProfile && launcherApps != null) {
                 val activities = launcherApps.getActivityList(packageName, userHandle)
                 if (!activities.isNullOrEmpty()) {
+                    // Use getIcon(0) instead of getBadgedIcon(0) for Private Space apps
+                    // to avoid visual badges for privacy reasons - users may not want
+                    // Private Space apps to be visually distinguished from regular apps
                     return activities[0].getIcon(0)
                 }
                 val appInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
