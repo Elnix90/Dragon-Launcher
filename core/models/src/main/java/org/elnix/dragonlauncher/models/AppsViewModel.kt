@@ -29,6 +29,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.sync.withLock
 import org.elnix.dragonlauncher.common.logging.logD
 import org.elnix.dragonlauncher.common.logging.logE
 import org.elnix.dragonlauncher.common.logging.logI
@@ -302,6 +305,24 @@ class AppsViewModel(
     private var pendingPrivatePackages: Set<String>? = null
     private var pendingPrivateUserId: Int? = null
 
+    // Loading state for Private Space -> used by UI to show "Please wait" overlay
+    private val _isLoadingPrivateSpace = kotlinx.coroutines.flow.MutableStateFlow(false)
+    val isLoadingPrivateSpace = _isLoadingPrivateSpace.asStateFlow()
+
+    // Debounce / coalesce reloads
+    private var scheduledReloadJob: kotlinx.coroutines.Job? = null
+    private val reloadMutex = kotlinx.coroutines.sync.Mutex()
+
+
+
+    private fun scheduleReload(delayMs: Long = 0L) {
+        scheduledReloadJob?.cancel()
+        scheduledReloadJob = scope.launch {
+            if (delayMs > 0) kotlinx.coroutines.delay(delayMs)
+            reloadApps()
+        }
+    }
+
     suspend fun reloadApps() {
         try {
             logD(APPS_TAG, "========== Starting reloadApps() ==========")
@@ -497,14 +518,31 @@ class AppsViewModel(
             // Clear the before snapshot
             privateSnapshotBefore = null
 
-            // Reload apps; reloadApps() consumes pendingPrivatePackages and pendingPrivateUserId
-            reloadApps()
+            // Start Private Space loading state and schedule a debounced reload
+            _isLoadingPrivateSpace.value = true
+
+            try {
+                // Schedule reload (debounced) and wait for it to complete
+                scheduledReloadJob?.cancel()
+                scheduledReloadJob = scope.launch {
+                    delay(300) // short debounce to coalesce multiple triggers
+                    reloadMutex.withLock {
+                        reloadApps()
+                    }
+                }
+                scheduledReloadJob?.join()
+            } finally {
+                _isLoadingPrivateSpace.value = false
+            }
         } catch (e: Exception) {
             logE(APPS_TAG, "Error during differential private detection: ${e.message}", e)
             pendingPrivatePackages = null
             privateSnapshotBefore = null
+            _isLoadingPrivateSpace.value = false
             // best-effort fallback: full reload
-            reloadApps()
+            try {
+                reloadApps()
+            } catch (_: Exception) { /* ignore */ }
         }
     }
 
