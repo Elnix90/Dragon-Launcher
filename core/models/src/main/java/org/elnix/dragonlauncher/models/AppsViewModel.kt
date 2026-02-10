@@ -231,7 +231,14 @@ class AppsViewModel(
                     val filtered = when (workspace.type) {
                         WorkspaceType.USER -> {
                             // Exclude manually-added apps that are Work or Private profile apps
-                            added.filter { !it.isWorkProfile && !it.isPrivateProfile }
+                            val userAdded = added.filter { !it.isWorkProfile && !it.isPrivateProfile }
+                            if (added.size != userAdded.size) {
+                                logI(APPS_TAG, "USER workspace: filtering out ${added.size - userAdded.size} non-user apps from manually-added")
+                                added.filter { it.isWorkProfile || it.isPrivateProfile }.forEach {
+                                    logI(APPS_TAG, "  Excluded: ${it.name} (work=${it.isWorkProfile}, private=${it.isPrivateProfile})")
+                                }
+                            }
+                            userAdded
                         }
                         WorkspaceType.WORK -> {
                             // Exclude manually-added apps that are not Work profile apps
@@ -239,7 +246,14 @@ class AppsViewModel(
                         }
                         WorkspaceType.PRIVATE -> {
                             // Exclude manually-added apps that are not Private profile apps
-                            added.filter { it.isPrivateProfile }
+                            val privateAdded = added.filter { it.isPrivateProfile }
+                            if (added.size != privateAdded.size) {
+                                logI(APPS_TAG, "PRIVATE workspace: added apps = ${added.size}, actual private = ${privateAdded.size}")
+                                added.forEach {
+                                    logI(APPS_TAG, "  - ${it.name}: isPrivate=${it.isPrivateProfile}, userId=${it.userId}")
+                                }
+                            }
+                            privateAdded
                         }
                         else -> added  // For ALL and CUSTOM, allow any manually-added apps
                     }
@@ -283,6 +297,11 @@ class AppsViewModel(
      * Saves updated list into DataStore.
      * This is used by the BroadcastReceiver.
      */
+    // Snapshot / differential fields for Private Space detection
+    private var privateSnapshotBefore: Set<String>? = null
+    private var pendingPrivatePackages: Set<String>? = null
+    private var pendingPrivateUserId: Int? = null
+
     suspend fun reloadApps() {
         try {
             logD(APPS_TAG, "========== Starting reloadApps() ==========")
@@ -291,24 +310,87 @@ class AppsViewModel(
                 pmCompat.getAllApps()
             }
 
-            logD(APPS_TAG, "Total apps loaded: ${apps.size}")
-            logD(APPS_TAG, "Private apps: ${apps.count { it.isPrivateProfile }}")
-            logD(APPS_TAG, "Work apps: ${apps.count { it.isWorkProfile }}")
-            logD(APPS_TAG, "User apps: ${apps.count { !it.isWorkProfile && !it.isPrivateProfile }}")
+            // Apply differential private-package marking if present
+            var finalApps = apps
+            if (!pendingPrivatePackages.isNullOrEmpty()) {
+                val diff = pendingPrivatePackages ?: emptySet()
+                val privateUserId = pendingPrivateUserId
+                logI(APPS_TAG, "Applying differential Private Space detection: ${diff.size} packages (privateUserId=$privateUserId)")
+
+                // Persist assignments
+                try {
+                    val existingJson = AppsSettingsStore.privateAssignedPackages.get(ctx)
+                    val existingMap: MutableMap<String, Int?> = if (existingJson.isNullOrEmpty() || existingJson == "{}") mutableMapOf() else gson.fromJson(existingJson, object : com.google.gson.reflect.TypeToken<MutableMap<String, Int?>>() {}.type)
+
+                    diff.forEach { pkg ->
+                        existingMap[pkg] = privateUserId
+                    }
+
+                    AppsSettingsStore.privateAssignedPackages.set(ctx, gson.toJson(existingMap))
+                    logI(APPS_TAG, "Persisted ${diff.size} private package assignments")
+                } catch (e: Exception) {
+                    logE(APPS_TAG, "Error persisting private package assignments: ${e.message}", e)
+                }
+
+                finalApps = apps.map { app ->
+                    if (app.packageName in diff) {
+                        logI(APPS_TAG, "Marking ${app.packageName} as Private Space (diff), assigning userId=${privateUserId ?: app.userId}")
+                        // Assign userId to the Private profile only if the package is actually visible in that profile.
+                        val assignedUserId = if (privateUserId != null && pmCompat.isPackageVisibleForUser(app.packageName, privateUserId)) {
+                            privateUserId
+                        } else {
+                            app.userId
+                        }
+
+                        app.copy(
+                            isPrivateProfile = true,
+                            isWorkProfile = false,
+                            userId = assignedUserId
+                        )
+                    } else app
+                }
+                // Clear pending after consumption
+                pendingPrivatePackages = null
+                pendingPrivateUserId = null
+            }
+
+            // Apply persisted private assignments (survives reloads)
+            try {
+                val persistedJson = AppsSettingsStore.privateAssignedPackages.get(ctx)
+                if (!persistedJson.isNullOrEmpty() && persistedJson != "{}") {
+                    val persistedMap: Map<String, Int?> = gson.fromJson(persistedJson, object : com.google.gson.reflect.TypeToken<Map<String, Int?>>() {}.type)
+                    if (persistedMap.isNotEmpty()) {
+                        logI(APPS_TAG, "Applying persisted private assignments: ${persistedMap.size} entries")
+                        finalApps = finalApps.map { app ->
+                            if (persistedMap.containsKey(app.packageName)) {
+                                val assigned = persistedMap[app.packageName]
+                                val newUserId = if (assigned != null && pmCompat.isPackageVisibleForUser(app.packageName, assigned)) assigned else app.userId
+                                app.copy(isPrivateProfile = true, isWorkProfile = false, userId = newUserId)
+                            } else app
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                logE(APPS_TAG, "Error applying persisted private assignments: ${e.message}", e)
+            }
+
+            logD(APPS_TAG, "Total apps loaded: ${finalApps.size}")
+            logD(APPS_TAG, "Private apps: ${finalApps.count { it.isPrivateProfile }}")
+            logD(APPS_TAG, "Work apps: ${finalApps.count { it.isWorkProfile }}")
+            logD(APPS_TAG, "User apps: ${finalApps.count { !it.isWorkProfile && !it.isPrivateProfile }}")
             
-            if (apps.count { it.isPrivateProfile } > 0) {
+            if (finalApps.count { it.isPrivateProfile } > 0) {
                 logD(APPS_TAG, "Private apps list:")
-                apps.filter { it.isPrivateProfile }.forEach {
+                finalApps.filter { it.isPrivateProfile }.forEach {
                     logD(APPS_TAG, "  - ${it.name} (${it.packageName}, userId=${it.userId})")
                 }
             }
 
             // Sort and create new list to ensure StateFlow emission
-            _apps.value = apps.sortedBy { it.name.lowercase() }.toList()
-            _icons.value = loadIcons(apps)
+            _apps.value = finalApps.sortedBy { it.name.lowercase() }.toList()
+            _icons.value = loadIcons(finalApps)
 
             invalidateAllPointIcons()
-
             val points = SwipeSettingsStore.getPoints(ctx)
 
             preloadPointIcons(
@@ -336,6 +418,14 @@ class AppsViewModel(
                 } else if (!privateSpaceExists && privateWorkspace != null && privateWorkspace.enabled) {
                     logI(APPS_TAG, "Disabling Private Space workspace (Private Space profile not found)")
                     setWorkspaceEnabled("private", false)
+
+                    // Clear persisted private assignments since Private Space no longer exists
+                    try {
+                        AppsSettingsStore.privateAssignedPackages.set(ctx, "{}")
+                        logI(APPS_TAG, "Cleared persisted Private Space assignments because Private Space not found")
+                    } catch (e: Exception) {
+                        logE(APPS_TAG, "Error clearing persisted private assignments: ${e.message}", e)
+                    }
                 }
             }
 
@@ -347,6 +437,74 @@ class AppsViewModel(
 
         } catch (e: Exception) {
             logE(APPS_TAG, "Error in reloadApps: ${e.message}", e)
+        }
+    }
+
+    /**
+     * Differential Private Space detection helpers
+     */
+    suspend fun captureMainProfileSnapshotBeforeUnlock() {
+        try {
+            logD(APPS_TAG, "Capturing main profile snapshot before Private Space unlock...")
+            privateSnapshotBefore = withContext(Dispatchers.IO) {
+                pmCompat.snapshotMainProfilePackageNames()
+            }
+            logD(APPS_TAG, "Snapshot captured: ${privateSnapshotBefore?.size ?: 0} packages")
+        } catch (e: Exception) {
+            logE(APPS_TAG, "Error capturing main profile snapshot: ${e.message}", e)
+            privateSnapshotBefore = null
+        }
+    }
+
+    suspend fun detectPrivateAppsDiffAndReload() {
+        try {
+            logD(APPS_TAG, "Detecting Private Space apps via differential snapshot...")
+            val before = privateSnapshotBefore ?: emptySet()
+            val after = withContext(Dispatchers.IO) {
+                pmCompat.snapshotMainProfilePackageNames()
+            }
+
+            val diff = after.subtract(before)
+            logI(APPS_TAG, "Differential detection: found ${diff.size} candidate private packages: ${diff.joinToString(", ")}")
+
+            // Determine Private Space user handle (if exists as a separate profile)
+            val privateUserHandle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                try {
+                    PrivateSpaceUtils.getPrivateSpaceUserHandle(ctx)
+                } catch (e: Exception) {
+                    null
+                }
+            } else null
+
+            pendingPrivatePackages = diff
+            pendingPrivateUserId = privateUserHandle?.hashCode()
+
+            // Remove any of these packages from USER workspaces (they belong to Private)
+            try {
+                val userWorkspaces = _workspacesState.value.workspaces.filter { it.type == WorkspaceType.USER }
+                diff.forEach { pkg ->
+                    userWorkspaces.forEach { ws ->
+                        if (pkg in ws.appIds) {
+                            logI(APPS_TAG, "Removing $pkg from USER workspace (${ws.id}) because it's Private")
+                            removeAppFromWorkspace(ws.id, pkg)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                logE(APPS_TAG, "Error removing packages from USER workspaces: ${e.message}")
+            }
+
+            // Clear the before snapshot
+            privateSnapshotBefore = null
+
+            // Reload apps; reloadApps() consumes pendingPrivatePackages and pendingPrivateUserId
+            reloadApps()
+        } catch (e: Exception) {
+            logE(APPS_TAG, "Error during differential private detection: ${e.message}", e)
+            pendingPrivatePackages = null
+            privateSnapshotBefore = null
+            // best-effort fallback: full reload
+            reloadApps()
         }
     }
 
@@ -446,7 +604,8 @@ class AppsViewModel(
     private fun loadSingleIcon(
         packageName: String,
         userId: Int?,
-        useOverrides: Boolean
+        useOverrides: Boolean,
+        isPrivateProfile: Boolean = false
     ): Pair<String, ImageBitmap> {
 
         var isIconPack = false
@@ -458,7 +617,7 @@ class AppsViewModel(
                     selectedIconPack.value?.packageName,
                     it
                 )
-            } ?: pmCompat.getAppIcon(packageName, userId ?: 0)
+            } ?: pmCompat.getAppIcon(packageName, userId ?: 0, isPrivateProfile)
 
 
         val orig = loadDrawableAsBitmap(
@@ -534,7 +693,7 @@ class AppsViewModel(
             apps.mapNotNull { app ->
                 runCatching {
                     iconSemaphore.withPermit {
-                        loadSingleIcon(app.packageName, app.userId, true)
+                        loadSingleIcon(app.packageName, app.userId, true, app.isPrivateProfile)
                     }
                 }.getOrNull()
             }.toMap()
@@ -545,7 +704,7 @@ class AppsViewModel(
         app: AppModel,
         useOverride: Boolean
     ) {
-        _icons.update { it + loadSingleIcon(app.packageName, app.userId, useOverride) }
+        _icons.update { it + loadSingleIcon(app.packageName, app.userId, useOverride, app.isPrivateProfile) }
     }
 
 

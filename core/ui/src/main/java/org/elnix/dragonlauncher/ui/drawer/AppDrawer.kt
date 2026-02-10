@@ -291,15 +291,19 @@ fun AppDrawerScreen(
                 privateSpaceUnlocked = true
                 isAuthenticatingPrivateSpace = false
                 
-                // Call reloadApps from the ViewModel's scope, not this LaunchedEffect scope
-                logI("AppDrawer", "Launching reloadApps() from ViewModel scope...")
+                // Call differential detection + reload from the ViewModel's scope
+                logI("AppDrawer", "Launching differential private detection + reload from ViewModel scope...")
                 scope.launch {
-                    logI("AppDrawer", "Inside scope.launch, calling reloadApps()...")
+                    logI("AppDrawer", "Inside scope.launch, calling detectPrivateAppsDiffAndReload()...")
                     try {
-                        appsViewModel.reloadApps()
-                        logI("AppDrawer", "reloadApps() succeeded from ViewModel scope")
+                        appsViewModel.detectPrivateAppsDiffAndReload()
+                        logI("AppDrawer", "detectPrivateAppsDiffAndReload() succeeded from ViewModel scope")
                     } catch (e: Exception) {
-                        logI("AppDrawer", "reloadApps() failed: ${e.message}\n${e.stackTraceToString()}")
+                        logI("AppDrawer", "detectPrivateAppsDiffAndReload() failed: ${e.message}\n${e.stackTraceToString()}")
+                        // Fallback: try a full reload
+                        try {
+                            appsViewModel.reloadApps()
+                        } catch (_: Exception) { /* ignore */ }
                     }
                 }
                 logI("AppDrawer", "Polling stopped")
@@ -336,6 +340,15 @@ fun AppDrawerScreen(
                 isAuthenticatingPrivateSpace = true
                 privateSpaceUnlocked = false
                 
+                // Capture snapshot of main profile before attempting unlock (for differential detection)
+                withContext(Dispatchers.IO) {
+                    try {
+                        appsViewModel.captureMainProfileSnapshotBeforeUnlock()
+                    } catch (e: Exception) {
+                        logI("AppDrawer", "Failed to capture snapshot before unlock: ${e.message}")
+                    }
+                }
+
                 // Attempt to request unlock programmatically
                 withContext(Dispatchers.IO) {
                     val requestSuccess = PrivateSpaceUtils.requestUnlockPrivateSpace(ctx)

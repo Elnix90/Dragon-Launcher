@@ -11,13 +11,24 @@ object AppsSettingsStore : JsonSettingsStore() {
 
     override val ALL: List<BaseSettingObject<*,*>>
         get() = listOf(
-            cachedApps
+            cachedApps,
+            privateAssignedPackages
         )
 
     val cachedApps = Settings.string(
         key = "cached_apps_json",
         dataStoreName = dataStoreName,
         default = ""
+    )
+
+    /**
+     * JSON map of packageName -> userId (nullable). Stores packages detected as Private Space.
+     * Example: { "com.grindrapp.android": 10, "com.example.private": null }
+     */
+    val privateAssignedPackages = Settings.string(
+        key = "private_assigned_packages_json",
+        dataStoreName = dataStoreName,
+        default = "{}"
     )
 
     override val jsonSetting = cachedApps
