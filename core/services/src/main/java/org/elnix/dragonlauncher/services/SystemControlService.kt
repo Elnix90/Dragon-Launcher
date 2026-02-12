@@ -159,6 +159,7 @@ class SystemControlService : AccessibilityService() {
 //    }
 
     fun openRecentApps() {
+        logD(ACCESSIBILITY_TAG, "Performing global action 'GLOBAL_ACTION_RECENTS' ($GLOBAL_ACTION_RECENTS)")
         performGlobalAction(GLOBAL_ACTION_RECENTS)
     }
 

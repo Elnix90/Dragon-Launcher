@@ -109,6 +109,8 @@ object SystemControl {
             openServiceSettings(ctx)
             return
         }
+
+        logD(ACCESSIBILITY_TAG, "Got order to open recents")
         SystemControlService.INSTANCE?.openRecentApps()
     }
 
