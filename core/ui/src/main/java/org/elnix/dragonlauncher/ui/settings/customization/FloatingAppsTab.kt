@@ -2,6 +2,8 @@
 
 package org.elnix.dragonlauncher.ui.settings.customization
 
+import android.R.attr.x
+import android.R.attr.y
 import android.annotation.SuppressLint
 import android.content.ComponentName
 import androidx.compose.animation.AnimatedVisibility
@@ -87,6 +89,8 @@ import org.elnix.dragonlauncher.ui.remembers.LocalFloatingAppsViewModel
 import org.elnix.dragonlauncher.ui.remembers.LocalShowStatusBar
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 @Composable
 fun FloatingAppsTab(
@@ -137,13 +141,12 @@ fun FloatingAppsTab(
     val isRealFullscreen = systemInsets.calculateTopPadding() == 0.dp
 
 
-
     /** ───────────────────────────────────────────────────────────────── */
 
 
     Column {
 
-        AnimatedVisibility (showStatusBar && isRealFullscreen) {
+        AnimatedVisibility(showStatusBar && isRealFullscreen) {
             StatusBar(null)
         }
 
@@ -210,7 +213,6 @@ fun FloatingAppsTab(
         }
 
 
-
         /* ---------------- Widget canvas ---------------- */
 
         floatingApps
@@ -218,34 +220,31 @@ fun FloatingAppsTab(
             .sortedBy { it.id == selected?.id } // Selected is always displayed first for easier click access
             .forEach { floatingApp ->
                 key(floatingApp.id, nestId) {
-                DraggableFloatingApp(
-                    floatingAppsViewModel = floatingAppsViewModel,
-                    app = floatingApp,
-                    selected = floatingApp.id == selected?.id,
-                    widgetHostProvider = widgetHostProvider,
-                    onSelect = { selected = floatingApp },
-                    onMove = { dx, dy ->
-                        floatingAppsViewModel.moveFloatingApp(floatingApp.id, dx, dy, false)
-                    },
-                    onRotateEnd = {
-                        floatingAppsViewModel.rotateFloatingApp(floatingApp.id, it, true)
-                    },
-                    onMoveEnd = {
-                        floatingAppsViewModel.moveFloatingApp(floatingApp.id, 0f, 0f, snapMove)
-                    },
-                    onResize = { corner, dx, dy ->
-                        floatingAppsViewModel.resizeFloatingApp(floatingApp.id, corner, dx, dy, false)
-                    },
-                    onResizeEnd = { corner ->
-                        floatingAppsViewModel.resizeFloatingApp(floatingApp.id, corner, 0f, 0f, snapResize)
-                    },
-                    onRemove = { removeWidget(floatingApp) },
-                    onEdit = {
-                        floatingAppsViewModel.editFloatingApp(it)
-                    }
-                )
+                    DraggableFloatingApp(
+                        floatingAppsViewModel = floatingAppsViewModel,
+                        app = floatingApp,
+                        selected = floatingApp.id == selected?.id,
+                        widgetHostProvider = widgetHostProvider,
+                        onSelect = { selected = floatingApp },
+                        onRotateEnd = {
+                            floatingAppsViewModel.rotateFloatingApp(floatingApp.id, it, true)
+                        },
+                        onMoveEnd = { x,y ->
+                            floatingAppsViewModel.moveFloatingApp(floatingApp.id, x, y, snapMove)
+                        },
+                        onResize = { corner, dx, dy ->
+                            floatingAppsViewModel.resizeFloatingApp(floatingApp.id, corner, dx, dy, false)
+                        },
+                        onResizeEnd = { corner ->
+                            floatingAppsViewModel.resizeFloatingApp(floatingApp.id, corner, 0f, 0f, snapResize)
+                        },
+                        onRemove = { removeWidget(floatingApp) },
+                        onEdit = {
+                            floatingAppsViewModel.editFloatingApp(it)
+                        }
+                    )
+                }
             }
-        }
 
 
         /* ───────────── Bottom controls ───────────── */
@@ -311,7 +310,8 @@ fun FloatingAppsTab(
                 onClickDown = {
                     if (floatingApps.isNotEmpty()) {
                         val idx = floatingApps.indexOfFirst { it == selected }
-                        val next = if (idx == -1 || idx == floatingApps.lastIndex) floatingApps.first() else floatingApps[idx + 1]
+                        val next =
+                            if (idx == -1 || idx == floatingApps.lastIndex) floatingApps.first() else floatingApps[idx + 1]
                         selected = next
                     }
                 }
@@ -425,10 +425,6 @@ fun FloatingAppsTab(
 }
 
 
-
-
-
-
 /**
  * Handles all widget interactions: drag to move, resize handles, tap/long-press.
  * Resize handles provide visual-only resize feedback by compensating position changes internally.
@@ -449,9 +445,8 @@ private fun DraggableFloatingApp(
     selected: Boolean,
     widgetHostProvider: WidgetHostProvider,
     onSelect: () -> Unit,
-    onMove: (Float, Float) -> Unit,
     onRotateEnd: (Float) -> Unit,
-    onMoveEnd: () -> Unit,
+    onMoveEnd: (Float, Float) -> Unit,
     onResize: (FloatingAppsViewModel.ResizeCorner, Float, Float) -> Unit,
     onResizeEnd: (FloatingAppsViewModel.ResizeCorner) -> Unit,
     onRemove: () -> Unit,
@@ -467,10 +462,10 @@ private fun DraggableFloatingApp(
     val widthPixels = dm.widthPixels
     val heightPixels = dm.heightPixels
 
-    val x = (app.x * widthPixels).toInt()
-    val y = (app.y * heightPixels).toInt()
+    var x by remember { mutableFloatStateOf(app.x) }
+    var y by remember { mutableFloatStateOf(app.y) }
 
-    val width =  app.spanX * cellSizePx
+    val width = app.spanX * cellSizePx
     val height = app.spanY * cellSizePx
 
 
@@ -482,8 +477,8 @@ private fun DraggableFloatingApp(
         modifier = Modifier
             .offset {
                 IntOffset(
-                    x = x,
-                    y = y
+                    x = (x * widthPixels).toInt(),
+                    y = (y * heightPixels).toInt()
                 )
             }
             .size(
@@ -535,16 +530,15 @@ private fun DraggableFloatingApp(
 
                             val angleRad = Math.toRadians(app.angle.toDouble())
 
-                            val cos = kotlin.math.cos(angleRad)
-                            val sin = kotlin.math.sin(angleRad)
+                            val cos = cos(angleRad)
+                            val sin = sin(angleRad)
 
-                            val worldDx = (dragAmount.x * cos - dragAmount.y * sin).toFloat()
-                            val worldDy = (dragAmount.x * sin + dragAmount.y * cos).toFloat()
+                            x = (dragAmount.x * cos - dragAmount.y * sin).toInt()
+                            y = (dragAmount.x * sin + dragAmount.y * cos).toInt()
 
                             change.consume()
-                            onMove(worldDx, worldDy)
                         },
-                        onDragEnd = { onMoveEnd() }
+                        onDragEnd = { onMoveEnd(x, y) }
                     )
                 }
         )
@@ -621,7 +615,6 @@ private fun DraggableFloatingApp(
                         }
                     }
             )
-
 
 
             // ------------------------------------------
