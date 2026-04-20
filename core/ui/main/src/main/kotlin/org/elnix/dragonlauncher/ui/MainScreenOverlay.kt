@@ -287,17 +287,17 @@ fun MainScreenOverlay(
         if (isDragging) {
             Box(Modifier.fillMaxSize()) {
                 liveNestControllersStack.forEachIndexed { idx, controller ->
-                    val isRoot = idx == 0
+//                    val isRoot = idx == 0
 
                     val liveNestOpacity = liveNestLayersAlphas.getOrNull(idx) ?: return@forEachIndexed
 
                     if (controller.isActive) {
+                        val isDeepestController = idx == activeLevelIndex
 
                         val nestedNestForDraw = controller.nestedNest!!
                         val liveNestCenterForDraw = controller.liveNestCenter!!
-                        val outerSelectedPoint = controller.nestedHit?.selectedPoint
                         val hitResult = controller.nestedHit
-
+                        val outerSelectedPoint = hitResult?.selectedPoint
 
                         val sweepAngle = controller.sweepAngleState.sweepAngle()
                         val angle360 = controller.sweepAngleState.angle360()
@@ -314,6 +314,11 @@ fun MainScreenOverlay(
                                         radius = radius,
                                         center = liveNestCenterForDraw
                                     )
+                                }
+
+                                // Means that the live HAS to snap to action, because otherwise it would move around under the top activated live nest
+                                !isDeepestController -> {
+                                    liveNestControllersStack[idx + 1].liveNestCenter!!
                                 }
 
                                 else -> current
@@ -360,10 +365,10 @@ fun MainScreenOverlay(
                                 val bounds = Rect(0f, 0f, size.width, size.height)
                                 canvas.saveLayer(bounds, Paint())
 
-                                val effectiveDrawParams = when {
-                                    isRoot -> drawParams
-                                    else -> drawParams.copy(showAllActionsOnCurrentNest = true)
-                                }
+//                                val effectiveDrawParams = when {
+//                                    isRoot -> drawParams
+//                                    else -> drawParams.copy(showAllActionsOnCurrentNest = true)
+//                                }
 
 
 //                                val effectiveTargetCircle: Int? = when {
@@ -374,7 +379,7 @@ fun MainScreenOverlay(
 
 
                                 circlesSettingsOverlay(
-                                    drawParams = effectiveDrawParams,
+                                    drawParams = drawParams,
                                     center = liveNestCenterForDraw,
                                     depth = 1,
                                     currentCircle = effectiveTargetCircle,
