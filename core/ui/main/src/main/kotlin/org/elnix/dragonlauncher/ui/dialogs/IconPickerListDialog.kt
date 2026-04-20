@@ -39,7 +39,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.IconPackInfo
+import org.elnix.dragonlauncher.common.utils.Constants.Logging.ICONS_TAG
 import org.elnix.dragonlauncher.common.utils.ImageUtils.loadDrawableAsBitmap
+import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
@@ -151,43 +153,45 @@ private fun IconCell(
     val bitmap by produceState<ImageBitmap?>(null, drawableName) {
         value = withContext(Dispatchers.IO) {
             appsViewModel.loadIconFromPack(pack.packageName, drawableName, "")
-                ?.let { loadDrawableAsBitmap(it, 96, 96, packTint) }
+                ?.let {
+                    logW(ICONS_TAG) { " Failed to load icon pack.packageName = ${pack.packageName}, drawableName = $drawableName the normal way, trying to resolve it via loadDrawableAsBitmap" }
+                    loadDrawableAsBitmap(it, 96, 96, packTint)
+                }
         }
     }
 
-    bitmap?.let {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .clip(DragonShape)
-                .clickable(onClick = onClick)
-                .padding(4.dp)
-        ){
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .clip(DragonShape)
+            .clickable(onClick = onClick)
+            .padding(4.dp)
+    ) {
+        bitmap?.let {
             Icon(
                 bitmap = it,
                 contentDescription = null,
                 tint = Color.Unspecified
             )
-            Text(
-                text = drawableName,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.outline,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
+        } ?: run {
+            // Empty box, as the loading is fast and don't need to display an indicator everytime
+            Box(
                 modifier = Modifier
-                    .padding(top = 4.dp)
-                    .fillMaxWidth(),
-                maxLines = 1
+                    .height(48.dp)
+                    .fillMaxWidth()
             )
         }
 
-    } ?: run {
-
-        // Empty box, as the loading is fast and don't need to display an indicator everytime
-        Box(
+        Text(
+            text = drawableName,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.outline,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
             modifier = Modifier
-                .height(48.dp)
-                .fillMaxWidth()
+                .padding(top = 4.dp)
+                .fillMaxWidth(),
+            maxLines = 1
         )
     }
 }
