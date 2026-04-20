@@ -912,7 +912,7 @@ class AppsViewModel(
         val packResources = try {
             ctx.packageManager.getResourcesForApplication(packPkg)
         } catch (e: Exception) {
-            logE(APPS_TAG, e) { "Error fetching pack ressources: app is likely not installed" }
+            logE(ICONS_TAG, e) { "Error fetching pack ressources: app is likely not installed" }
             null
         }
 
@@ -924,8 +924,10 @@ class AppsViewModel(
                 if (drawableId != 0) {
                     return ResourcesCompat.getDrawable(packResources, drawableId, null)
                 }
+                logW(ICONS_TAG) { "drawableId is 0, wtf?"}
+
             } catch (e: Exception) {
-                logE(APPS_TAG, e) { "Error fetching pack drawable ressources" }
+                logE(ICONS_TAG, e) { "Error fetching pack drawable ressources" }
             }
         }
 
