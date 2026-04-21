@@ -81,7 +81,7 @@ fun DrawScope.circlesSettingsOverlay(
      */
     circles.forEach { circle ->
 
-        val showCircle = when (currentCircle) {
+        val showCircle = showAllActionsOnCurrentNest || when (currentCircle) {
             null -> true
             circle.id if showAppCirclePreview -> true
             else -> false
