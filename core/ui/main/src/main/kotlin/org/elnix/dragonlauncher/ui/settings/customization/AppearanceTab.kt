@@ -302,6 +302,12 @@ fun AppearanceTab(
                     title = stringResource(R.string.line_preview_snap_to_action),
                     description = stringResource(R.string.line_preview_snap_to_action_description)
                 )
+
+                SettingsSwitchRow(
+                    setting = UiSettingsStore.multiplyOrSubtractOpacityInLiveNests,
+                    title = stringResource(R.string.multiply_or_subtract_opacity_in_live_nests),
+                    description = stringResource(R.string.multiply_or_subtract_opacity_in_live_nests_desc)
+                )
             }
         }
 

@@ -245,6 +245,7 @@ fun MainScreenOverlay(
             ?: (0..360).random()
     }
 
+    val multiplyOrSubtractOpacityInLiveNests by UiSettingsStore.multiplyOrSubtractOpacityInLiveNests.asState()
 
     /**
      * Alpha value for each layer: main nest, then each active Live Nest overlay (from deepest to shallowest).
@@ -257,7 +258,11 @@ fun MainScreenOverlay(
             add(alpha)
 
             val percent = (controller.hostPoint?.liveNestMainNestOpacityPercent ?: defaultPoint.liveNestMainNestOpacityPercent).takeIf { it != -1 } ?: defaultSwipePointsValues.liveNestMainNestOpacityPercent!!
-            alpha *= percent.coerceIn(0, 100) / 100f
+            if (multiplyOrSubtractOpacityInLiveNests) {
+                alpha -= percent.coerceIn(0, 100) / 100f
+            } else {
+                alpha *= percent.coerceIn(0, 100) / 100f
+            }
         }
     }.reversed()
 
