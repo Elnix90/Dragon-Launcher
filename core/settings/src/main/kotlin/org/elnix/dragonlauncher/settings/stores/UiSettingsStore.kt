@@ -208,6 +208,11 @@ object UiSettingsStore : MapSettingsStore() {
         default = emptySet()
     )
 
+    val multiplyOrSubtractOpacityInLiveNests = Settings.boolean(
+        key = "multiplyOrSubtractOpacityInLiveNests",
+        dataStoreName = dataStoreName,
+        default = true
+    )
     // unsing explicit this to avoid other stores that have the same name keys to be imported by mistake
     override val ALL: List<BaseSettingObject<*, *>> = listOf(
         this.rgbLoading,
@@ -238,6 +243,7 @@ object UiSettingsStore : MapSettingsStore() {
         this.mainScreenLayers,
         this.cellSizeDp,
         this.showTooltipsOnAddPointDialog,
-        this.userThemes
+        this.userThemes,
+        this.multiplyOrSubtractOpacityInLiveNests
     )
 }
