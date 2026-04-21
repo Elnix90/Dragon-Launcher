@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +30,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -37,26 +42,26 @@ import org.elnix.dragonlauncher.base.ktx.px
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.CircleNest
 import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedbackSerializable
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.HAPTIC_TAG
 import org.elnix.dragonlauncher.common.utils.UiCircle
 import org.elnix.dragonlauncher.common.utils.showToast
 import org.elnix.dragonlauncher.enumsui.NestEditMode
-import org.elnix.dragonlauncher.enumsui.NestEditMode.DRAG
-import org.elnix.dragonlauncher.enumsui.NestEditMode.HAPTIC
-import org.elnix.dragonlauncher.enumsui.NestEditMode.MIN_ANGLE
-import org.elnix.dragonlauncher.enumsui.NestEditMode.RADIUS
-import org.elnix.dragonlauncher.logging.logD
+import org.elnix.dragonlauncher.enumsui.NestEditMode.Drag
+import org.elnix.dragonlauncher.enumsui.NestEditMode.Haptic
+import org.elnix.dragonlauncher.enumsui.NestEditMode.MinAngle
+import org.elnix.dragonlauncher.enumsui.NestEditMode.Other
+import org.elnix.dragonlauncher.enumsui.NestEditMode.Radius
 import org.elnix.dragonlauncher.settings.stores.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.composition.LocalNests
 import org.elnix.dragonlauncher.ui.defaultDragDistance
+import org.elnix.dragonlauncher.ui.defaultHapticFeedback
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedBackEditorButtonWithPlayTest
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedbackEditor
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
-import org.elnix.dragonlauncher.ui.dragon.generic.ActionRow
+import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.helpers.nests.circlesSettingsOverlay
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
@@ -127,7 +132,7 @@ fun NestEditingScreen(
     }
 
     var showSmallPreview by remember { mutableStateOf(false) }
-    var currentEditMode by remember { mutableStateOf(DRAG) }
+    var currentEditMode by remember { mutableStateOf(Drag) }
     var pendingNestUpdate by remember { mutableStateOf<List<CircleNest>?>(null) }
 
     /**
@@ -142,33 +147,53 @@ fun NestEditingScreen(
     }
 
 
-    fun commitDragDistances(state: Map<Int, Int>) {
+    fun updateNest(block: () -> CircleNest) {
         pendingNestUpdate = nests.map { nest ->
             if (nest.id == nestId) {
-                nest.copy(dragDistances = state.toMap())
+                block()
             } else nest
+        }
+    }
+
+    fun commitDragDistances(state: Map<Int, Int>) {
+        updateNest {
+            currentNest.copy(dragDistances = state.toMap())
         }
     }
 
     fun commitHaptic(state: Map<Int, CustomHapticFeedbackSerializable>) {
-        logD(HAPTIC_TAG) { "Commiting state: $state" }
-
-        pendingNestUpdate = nests.map { nest ->
-            if (nest.id == nestId) {
-                nest.copy(haptic = state.toMap())
-            } else nest
+        updateNest {
+            currentNest.copy(haptic = state.toMap())
         }
     }
 
     fun commitAngle(state: Map<Int, Int>) {
-        pendingNestUpdate = nests.map { nest ->
-            if (nest.id == nestId) {
-                nest.copy(minAngleActivation = state.toMap())
-            } else nest
+        updateNest {
+            currentNest.copy(minAngleActivation = state.toMap())
         }
     }
 
 
+    var dummyEnd by remember { mutableStateOf(Offset.Infinite) }
+    var hasAlreadyBeenPlaced by remember { mutableStateOf(false) }
+
+
+    var canvaCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
+
+
+    LaunchedEffect(showSmallPreview) {
+        if (!hasAlreadyBeenPlaced) {
+            val rect = canvaCoordinates?.boundsInRoot() ?: return@LaunchedEffect
+
+            dummyEnd = Offset(
+                rect.width / 2,
+                rect.height / 2
+            )
+
+            // Prevent the thing to move after first placement
+            hasAlreadyBeenPlaced = true
+        }
+    }
 
 
     SettingsScaffold(
@@ -190,24 +215,15 @@ fun NestEditingScreen(
                 Modifier
                     .fillMaxSize()
                     .weight(1f)
+                    .onGloballyPositioned { coordinates ->
+                        canvaCoordinates = coordinates
+                    }
+                    .pointerInput(Unit) {
+                        detectDragGestures { change, _ ->
+                            dummyEnd = change.position
+                        }
+                    }
             ) {
-
-                // Preview real size of the nest (shitty, TODO)
-                // Drawn into another layer to avoid it being erased by the other overlay
-                if (showSmallPreview) {
-                    circlesSettingsOverlay(
-                        drawParams = drawParams,
-                        center = Offset(
-                            x = 5.dp.toPx(),
-                            y = 25.dp.toPx()
-                        ),
-                        depth = 1,
-                        circles = circlesPreview,
-                        selectedPoint = null,
-                        nestId = nestId,
-                        preventBgErasing = true
-                    )
-                }
 
 
                 circlesSettingsOverlay(
@@ -219,7 +235,6 @@ fun NestEditingScreen(
                     nestId = nestId,
                     preventBgErasing = true
                 )
-
 
                 // Show the min angle to activate
                 circlesRealSize.forEach { circle ->
@@ -242,16 +257,30 @@ fun NestEditingScreen(
                         style = Stroke(width = 3f)
                     )
                 }
+
+                /**
+                 * Preview real size of the nest
+                 */
+                if (showSmallPreview) {
+
+                    circlesSettingsOverlay(
+                        drawParams = drawParams.copy(maxDepth = 1),
+                        center = dummyEnd,
+                        depth = 1,
+                        circles = circlesPreview,
+                        selectedPoint = null,
+                        nestId = nestId,
+                        preventBgErasing = true,
+                        preventDrawingSubNests = true
+                    )
+                }
             }
 
 
-            ActionRow(
-                actions = NestEditMode.entries,
-                selectedView = currentEditMode,
-                actionIcon = { it.icon }
-            ) {
-                currentEditMode = it
-            }
+            MultiSelectConnectedButtonRow(
+                entries = NestEditMode.entries,
+                isChecked = { currentEditMode == it }
+            ) { currentEditMode = it }
 
             Column(
                 Modifier
@@ -265,7 +294,7 @@ fun NestEditingScreen(
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
                 when (currentEditMode) {
-                    DRAG -> {
+                    Drag -> {
                         dragDistancesState.toSortedMap().forEach { (index, distance) ->
                             SliderWithLabel(
                                 label = if (index == -1) "${stringResource(R.string.cancel_zone)} ->"
@@ -289,20 +318,20 @@ fun NestEditingScreen(
                         }
                     }
 
-                    HAPTIC -> {
+                    Haptic -> {
                         // Keep drag distance state here cause haptic may be empty dues to how it is handled
                         dragDistancesState.toSortedMap().filter { it.key != -1 }
-                            .forEach { (index, _) ->
+                            .forEach { (idx, _) ->
 
                                 HapticFeedBackEditorButtonWithPlayTest(
-                                    customHapticFeedbackSerializable = currentNest.haptic[index],
-                                    titleExt = ": $index ->",
-                                    onClick = { showHapticFeedbackEditor = index },
+                                    customHapticFeedbackSerializable = currentNest.haptic[idx] ?: defaultHapticFeedback(idx),
+                                    titleExt = ": $idx ->",
+                                    onClick = { showHapticFeedbackEditor = idx },
                                 )
                             }
                     }
 
-                    MIN_ANGLE -> {
+                    MinAngle -> {
                         dragDistancesState.toSortedMap().filter { it.key != -1 }
                             .forEach { (index, _) ->
                                 val angle = minAngleState[index] ?: 0
@@ -327,17 +356,14 @@ fun NestEditingScreen(
                     }
 
                     // Well in this tab I'll just put whatever settings I can put
-                    RADIUS -> {
+                    Radius -> {
                         SliderWithLabel(
                             label = stringResource(R.string.nest_radius),
                             value = tempRadius ?: subNestDefaultRadius,
                             valueRange = 0..50,
                             backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
                             onReset = {
-                                pendingNestUpdate = nests.map {
-                                    if (it.id == nestId) it.copy(nestRadius = null)
-                                    else it
-                                }
+                                updateNest { currentNest.copy(nestRadius = null) }
                                 tempRadius = subNestDefaultRadius
                             },
                             onDragStateChange = { isDragging ->
@@ -353,20 +379,56 @@ fun NestEditingScreen(
                         // Used to control whether the nest displays its circle individually or not
                         SwitchRow(
                             state = currentNest.showCircle ?: drawParams.showAppCirclePreview,
-                            title = stringResource(R.string.show_circle)
+                            title = stringResource(R.string.show_circle),
+                            onReset = {
+                                updateNest {
+                                    currentNest.copy(showCircle = null)
+                                }
+                            }
                         ) { showCircle ->
-
-                            pendingNestUpdate = nests.map {
-                                if (it.id == nestId) it.copy(showCircle = showCircle)
-                                else it
+                            updateNest {
+                                currentNest.copy(showCircle = showCircle)
                             }
                         }
 
                         // Quick toggle to display the preview of the nest top left
                         SwitchRow(
                             state = showSmallPreview,
-                            title = stringResource(R.string.show_nest_preview)
+                            title = stringResource(R.string.show_nest_preview),
+                            description = stringResource(R.string.it_is_using_max_depth_equals_one)
                         ) { showPreview -> showSmallPreview = showPreview }
+                    }
+
+                    Other -> {
+                        SwitchRow(
+                            state = currentNest.showAllActionsOnCurrentCircle ?: drawParams.showAllActionsOnCurrentCircle,
+                            title = stringResource(R.string.show_all_actions_on_current_circle),
+                            description = stringResource(R.string.show_all_actions_on_current_circle_description),
+                            onReset = {
+                                updateNest {
+                                    currentNest.copy(showAllActionsOnCurrentCircle = null)
+                                }
+                            }
+                        ) { showAllActionsOnCurrentCircle ->
+                            updateNest {
+                                currentNest.copy(showAllActionsOnCurrentCircle = showAllActionsOnCurrentCircle)
+                            }
+                        }
+
+                        SwitchRow(
+                            state = currentNest.showAllActionsOnCurrentNest ?: drawParams.showAllActionsOnCurrentNest,
+                            title = stringResource(R.string.show_all_actions_on_current_nest),
+                            description = stringResource(R.string.show_all_actions_on_current_nest_desc),
+                            onReset = {
+                                updateNest {
+                                    currentNest.copy(showAllActionsOnCurrentNest = null)
+                                }
+                            }
+                        ) { showAllActionsOnCurrentNest ->
+                            updateNest {
+                                currentNest.copy(showAllActionsOnCurrentNest = showAllActionsOnCurrentNest)
+                            }
+                        }
                     }
                 }
             }

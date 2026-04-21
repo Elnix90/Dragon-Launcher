@@ -63,6 +63,7 @@ import org.elnix.dragonlauncher.ui.components.PointPreviewCanvas
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.composition.LocalNests
+import org.elnix.dragonlauncher.ui.defaultHapticFeedback
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
@@ -570,7 +571,7 @@ fun EditPointDialog(
                                                     }
 
                                                     HapticFeedBackEditorButtonWithPlayTest(
-                                                        customHapticFeedbackSerializable = stage.hapticFeedback,
+                                                        customHapticFeedbackSerializable = stage.hapticFeedback ?: defaultHapticFeedback(point.circleNumber),
                                                         titleExt = " (Stage ${index + 1})",
                                                         onClick = { editingCycleStageHapticIndex = index }
                                                     )
@@ -1008,7 +1009,7 @@ fun EditPointDialog(
                 if (!isDefaultEditing) {
                     DragonColumnGroup {
                         HapticFeedBackEditorButtonWithPlayTest(
-                            customHapticFeedbackSerializable = editPoint.hapticFeedback,
+                            customHapticFeedbackSerializable = editPoint.hapticFeedback ?: defaultHapticFeedback(point.circleNumber),
                             onClick = { showHapticFeedbackEditor = true },
                         )
                     }

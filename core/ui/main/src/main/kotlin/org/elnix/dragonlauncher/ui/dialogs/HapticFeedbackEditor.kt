@@ -53,25 +53,25 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedbackSerializable
 import org.elnix.dragonlauncher.common.serializables.hapticFeedbackSerializablePresets
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.HAPTIC_TAG
-import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.common.utils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.pasteClipboard
 import org.elnix.dragonlauncher.common.utils.performCustomHaptic
 import org.elnix.dragonlauncher.common.utils.showToast
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.dragon.text.TextDivider
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
+import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
-import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
+import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
+import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
+import org.elnix.dragonlauncher.ui.dragon.text.TextDivider
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -469,7 +469,7 @@ private fun AddStepButton(
 
 @Composable
 fun HapticFeedBackEditorButtonWithPlayTest(
-    customHapticFeedbackSerializable: CustomHapticFeedbackSerializable?,
+    customHapticFeedbackSerializable: CustomHapticFeedbackSerializable,
     titleExt: String = "",
     onClick: () -> Unit
 ) {
@@ -493,7 +493,7 @@ fun HapticFeedBackEditorButtonWithPlayTest(
         }
 
         RotatingPlayIcon(
-            enabled = customHapticFeedbackSerializable != null
+            enabled = true
         ) {
             scope.launch {
                 performCustomHaptic(ctx, customHapticFeedbackSerializable)

@@ -30,30 +30,31 @@ fun DrawScope.circlesSettingsOverlay(
 
     selectedAll: Boolean = false,
     preventBgErasing: Boolean = false,
+    preventDrawingSubNests: Boolean = false,
 ) {
+    val currentNest = drawParams.nests.find { it.id == nestId } ?: return
 
     val points = drawParams.points
     val surfaceColorDraw = drawParams.surfaceColorDraw
     val extraColors = drawParams.extraColors
     val showAppCirclePreview = drawParams.showAppCirclePreview
     val showAppLaunchPreview = drawParams.showAppLaunchPreview
-    val showAllActionsOnCurrentCircle = drawParams.showAllActionsOnCurrentCircle
-    val showAllActionsOnCurrentNest = drawParams.showAllActionsOnCurrentNest
+    val showAllActionsOnCurrentCircle = currentNest.showAllActionsOnCurrentCircle ?: drawParams.showAllActionsOnCurrentCircle
+    val showAllActionsOnCurrentNest = currentNest.showAllActionsOnCurrentNest ?: drawParams.showAllActionsOnCurrentNest
     val showAppPreviewIconCenterStartPosition = drawParams.showAppPreviewIconCenterStartPosition
 
 //    logW(SWIPE_TAG) {"Displaying ${circles.size} circles: $circles"}
 
 
-    /* ───────────── Erases the circle in the point ───────────── */
-
-    // if no background color provided, erases the background
     val eraseBg = surfaceColorDraw == Color.Transparent && !preventBgErasing
     val maxCircleSize: UiCircle = circles.maxByOrNull { it.radius } ?: return
 
-//    val currentNest = drawParams.nests.find { it.id == nestId } ?: return
-
-    // Erases the color, instead of putting it, that lets the wallpaper pass through
-    // Always to it to remove the remaining circle line behind previous points (nests for instance that have their inner circle empty)
+    /**
+     * ## 1.
+     * If no background color provided, erases the background.
+     * The background is always erased to prevent artifacts from below to appear in the actions center / bg,
+     * or to remove the remaining circle line behind previous points (nests for instance that have their inner circle empty)
+     */
     drawCircle(
         color = Color.Transparent,
         radius = maxCircleSize.radius,
@@ -61,7 +62,10 @@ fun DrawScope.circlesSettingsOverlay(
         blendMode = BlendMode.Clear
     )
 
-    // If requested to not erase the bg, draw it (this avoids the more tinted bg when using a half transparent bg color
+    /**
+     * ## 2.
+     * If requested to not erase the bg, draw it (this avoids the more tinted bg when using a half transparent bg color
+     */
     if (!eraseBg) {
         drawCircle(
             color = surfaceColorDraw,
@@ -70,7 +74,11 @@ fun DrawScope.circlesSettingsOverlay(
         )
     }
 
-    // 1. Draw all circles
+    /**
+     * ## 3.
+     * Draw all circles
+     * whether they are shown or not depends on the variable that force them to appear, `showAppCirclePreview`, and the actual [currentCircle]
+     */
     circles.forEach { circle ->
 
         val showCircle = when (currentCircle) {
@@ -90,7 +98,8 @@ fun DrawScope.circlesSettingsOverlay(
     }
 
     /**
-     *  2. Draw all needed points, they are filtered by:
+     *  ## 4.
+     *  Draw all needed points, they are filtered by:
      *   - if all points are drawn in the nest, all of them
      *   - if all points on the circle should be drawn, and that the current circle if the right one
      *   - if the selected points should be drawn, it only picks this one
@@ -104,8 +113,6 @@ fun DrawScope.circlesSettingsOverlay(
         }
     }
 
-//    logW(SWIPE_TAG) {"Displaying ${filteredPoints.size} points"}
-
     filteredPoints
         .sortedBy { it.id == selectedPoint?.id }
         .forEach { p ->
@@ -116,8 +123,10 @@ fun DrawScope.circlesSettingsOverlay(
                 center = center
             )
 
-            // Use the selectedPoint snapshot for the selected point so any staged action
-            // from Cycle Actions is reflected visually (e.g. different nest or app icon).
+            /**
+             * Use the selectedPoint snapshot for the selected point so any staged action
+             * from Cycle Actions is reflected visually (e.g. different nest or app icon).
+             */
             val drawPoint =
                 if (selectedPoint != null && p.id == selectedPoint.id) {
                     selectedPoint
@@ -126,12 +135,13 @@ fun DrawScope.circlesSettingsOverlay(
                 }
 
             actionsInCircle(
-                drawParams = drawParams.copy(showAppPreviewIconCenterStartPosition =  false),
+                drawParams = drawParams.copy(showAppPreviewIconCenterStartPosition = false),
                 center = newCenter,
                 depth = depth,
                 point = drawPoint,
                 selected = selectedAll || (p.id == selectedPoint?.id),
-                preventBgErasing = preventBgErasing
+                preventBgErasing = preventBgErasing,
+                preventDrawingSubNests = preventDrawingSubNests
             )
         }
 
@@ -139,7 +149,7 @@ fun DrawScope.circlesSettingsOverlay(
         actionsInCircle(
             selected = true,
             point = selectedPoint,
-            drawParams = drawParams.copy(showAppPreviewIconCenterStartPosition =  false),
+            drawParams = drawParams.copy(showAppPreviewIconCenterStartPosition = false),
             center = center,
             depth = depth
         )

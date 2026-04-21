@@ -3,6 +3,8 @@ package org.elnix.dragonlauncher.ui.dragon.components
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -11,8 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
+import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
@@ -24,6 +28,7 @@ fun SwitchRow(
     enabled: Boolean = true,
     defaultValue: Boolean = false,
     onToggle: ((Boolean) -> Unit)? = null,
+    onReset: (() -> Unit)? = null,
     onCheck: (Boolean) -> Unit
 ) {
     val checked = state ?: defaultValue
@@ -60,5 +65,13 @@ fun SwitchRow(
             onCheckedChange = { if (onToggle != null) onToggle(it) else onCheck(it) },
             colors = AppObjectsColors.switchColors()
         )
+
+        if (onReset != null) {
+            DragonIconButton(
+                imageVector = Icons.Default.Restore,
+                contentDescription = stringResource(R.string.reset),
+                onClick = onReset
+            )
+        }
     }
 }

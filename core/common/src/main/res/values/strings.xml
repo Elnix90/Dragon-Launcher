@@ -774,6 +774,7 @@
     <string name="move_point_clockwise">Move point clockwise</string>
     <string name="move_point_anticlockwise">Move point anticlockwise</string>
     <string name="show_nest_preview">Show nest preview</string>
+    <string name="it_is_using_max_depth_equals_one">It is using maxDepth = 1</string>
     <string name="general">General</string>
     <string name="action">Action</string>
     <string name="collapse">Collapse</string>
@@ -913,5 +914,6 @@
     <string name="command_output">Command output</string>
     <string name="adb_command_leave_empty_notice">💡 Leave empty to be promted for the command when running it</string>
     <string name="dragon_launcher_headline">A new way to make your interface yours</string>
+    <string name="other">Other</string>
 
 </resources>

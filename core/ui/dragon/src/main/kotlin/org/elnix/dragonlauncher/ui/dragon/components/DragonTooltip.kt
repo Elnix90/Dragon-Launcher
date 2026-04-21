@@ -53,14 +53,17 @@ fun DragonTooltipInternal(
         content = content
     )
 }
+
 @Composable
 fun DragonTooltip(
     resId: Int,
     enabled: Boolean = true,
     content: @Composable (() -> Unit)
 ) {
+    val text = resId.takeIf { it != -1 }?.let { stringResource(resId) } ?: "Unknown ressource"
+
     DragonTooltipInternal(
-        text = stringResource(resId),
+        text = text,
         enabled = enabled,
         content = content
     )

@@ -53,7 +53,15 @@ data class CircleNest(
     /**
      * If this nests displays it's circle, this is a per-nest setting
      */
-    @SerialName("showCircle") val showCircle: Boolean? = null
+    @SerialName("showCircle") val showCircle: Boolean? = null,
+
+    /**
+     * Same settings as in the global Appearance tab, but applied to this specific nest.
+     * Names are self-explanatory
+     */
+    @SerialName("showAllActionsOnCurrentCircle") val showAllActionsOnCurrentCircle: Boolean? = null,
+
+    @SerialName("showAllActionsOnCurrentNest") val showAllActionsOnCurrentNest: Boolean? = null,
 ) {
     override fun toString(): String {
         return "Nest N°$id | contains ${dragDistances.size} circles: "//\n${dragDistances.map { "\n${it.key} to ${it.value}" }}"
