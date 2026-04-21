@@ -908,6 +908,7 @@ fun EditPointDialog(
 
                 MultiSelectConnectedButtonRow(
                     entries = SelectedUnselectedViewMode.entries,
+                    modifier = Modifier.fillMaxWidth(),
                     isChecked = { selectedView == it },
                     showLabels = ShowLabels.Always
                 ) { selectedView = it }
@@ -1019,7 +1020,6 @@ fun EditPointDialog(
             }
 
 
-            // ── Dialogs ─────────────────────────────────────────
 
             if (showEditIconDialog) {
                 IconEditorDialog(

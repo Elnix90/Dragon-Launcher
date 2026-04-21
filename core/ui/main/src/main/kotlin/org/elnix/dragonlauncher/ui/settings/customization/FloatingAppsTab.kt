@@ -330,12 +330,12 @@ fun FloatingAppsTab(
                 )
             ),
             bottomContent = {
-                /* ───────────── Bottom controls ───────────── */
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.horizontalScroll(rememberScrollState())
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
                 ) {
                     MultiSelectConnectedButtonRow(
                         entries = WidgetsToolsSnapping.entries,
@@ -557,8 +557,6 @@ fun FloatingAppsTab(
         )
     }
 
-
-    // ─── Dialogs ───────────────────────────
 
     if (widgetsDebugInfos) {
         Box(
