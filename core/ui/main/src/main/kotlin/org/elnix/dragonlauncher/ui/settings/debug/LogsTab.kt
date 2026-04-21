@@ -364,6 +364,14 @@ fun LogsTab(
 
                                         DragonIconButton(
                                             onClick = {
+                                                ctx.copyToClipboard(dragonLogViewModel.readLogFile(file))
+                                            },
+                                            imageVector = Icons.Default.ContentCopy,
+                                            contentDescription = "Copy"
+                                        )
+
+                                        DragonIconButton(
+                                            onClick = {
                                                 exportLogFile(dragonLogViewModel, ctx, file)
                                             },
                                             imageVector = Icons.Default.Share,

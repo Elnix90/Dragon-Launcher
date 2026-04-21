@@ -9,8 +9,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.common.utils.Constants.Logging.LOGS_TAG
 import org.elnix.dragonlauncher.logging.FileLoggingTree
 import org.elnix.dragonlauncher.logging.LogAlert
+import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import timber.log.Timber
 import java.io.File
@@ -137,6 +139,7 @@ class DragonLogViewModel(
         return try {
             file.readText()
         } catch (e: Exception) {
+            logE(LOGS_TAG, e) { "Failed to read log file: ${file.absolutePath}"}
             "Failed to read log file: $e"
         }
     }

@@ -86,6 +86,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.navigation.runtime)
     implementation(libs.kotlinx.serialization.core)
+    implementation(libs.lazycolumnscrollbar)
 
     api(libs.androidx.activity.compose)
     api(libs.androidx.activity)
