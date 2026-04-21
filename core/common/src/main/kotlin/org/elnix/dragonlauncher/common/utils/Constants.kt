@@ -120,6 +120,13 @@ object Constants {
             // WeChat
             "com.tencent.mm"
         )
+
+        val knownClockPackages = listOf(
+            "com.google.android.deskclock",
+            "com.android.deskclock",
+            "com.samsung.android.clockpackage",
+            "com.htc.android.worldclock"
+        )
     }
 
     object PackageNames {
@@ -216,6 +223,7 @@ object Constants {
         val SHIZUKU_TAG = LogTag("ShizukuDebug")
         val NAVIGATION_TAG = LogTag("NavigationDebug")
         val THEMES_TAG = LogTag("ThemeDebug")
+        val CONTEXT_TAG = LogTag("ContextDebug")
 //        val SPECIAL_TAG = LogTag("SpecialDebug")
     }
 

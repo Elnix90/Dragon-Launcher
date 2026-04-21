@@ -132,7 +132,7 @@ fun launchSwipeAction(
                 SystemControl.expandQuickSettings(
                     ctx
                 )
-            } else expandQuickActionsDrawer(ctx)
+            } else ctx.expandQuickActionsDrawer()
         }
 
         is SwipeActionSerializable.OpenAppDrawer -> {

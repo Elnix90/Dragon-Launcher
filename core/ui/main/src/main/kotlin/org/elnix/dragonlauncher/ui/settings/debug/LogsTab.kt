@@ -4,7 +4,6 @@ package org.elnix.dragonlauncher.ui.settings.debug
 
 import android.app.ActivityManager
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
@@ -49,7 +48,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.contentOrNull
@@ -59,11 +57,13 @@ import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.navigaton.SETTINGS
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.LOGS_TAG
 import org.elnix.dragonlauncher.common.utils.copyToClipboard
+import org.elnix.dragonlauncher.common.utils.createShareableFile
 import org.elnix.dragonlauncher.common.utils.detectSystemLauncher
 import org.elnix.dragonlauncher.common.utils.formatDateTime
 import org.elnix.dragonlauncher.common.utils.getVersionCode
 import org.elnix.dragonlauncher.common.utils.getVersionName
 import org.elnix.dragonlauncher.common.utils.isDefaultLauncher
+import org.elnix.dragonlauncher.common.utils.shareContent
 import org.elnix.dragonlauncher.common.utils.showToast
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
@@ -400,39 +400,29 @@ private fun exportLogFile(
     file: File
 ) {
     try {
-        val cacheDir = ctx.cacheDir
-        val shareFile = File(cacheDir, file.name)
-        file.copyTo(shareFile, overwrite = true)
+        val (shareFile, uri) = ctx.createShareableFile(file) ?: return
 
-        val uri = FileProvider.getUriForFile(
-            ctx,
-            "${ctx.packageName}.fileprovider",
-            shareFile
+        ctx.shareContent(
+            uri = uri,
+            text = "Dragon Launcher logs",
+            subject = "Dragon Logs - ${shareFile.name}",
+            chooserTitle = "Share ${shareFile.name}"
         )
 
-        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_STREAM, uri)
-            putExtra(Intent.EXTRA_SUBJECT, "Dragon Logs - ${file.name}")
-            putExtra(Intent.EXTRA_TEXT, "Dragon Launcher logs")
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-
-
-        ctx.startActivity(Intent.createChooser(shareIntent, "Share ${file.name}"))
-        logD(LOGS_TAG) { " Share opened: ${file.name} (${shareFile.absolutePath})" }
+        logD(LOGS_TAG) { "Share opened: ${shareFile.name}" }
 
     } catch (e: SecurityException) {
-        logE(LOGS_TAG, e) { "FileProvider not configured" }
+        logE(LOGS_TAG, e) { "FileProvider not configured, falling back to text share" }
+
+        // Fallback to text sharing
         val content = dragonLogViewModel.readLogFile(file)
-        val textIntent = Intent().apply {
-            action = Intent.ACTION_SEND
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, content)
-            putExtra(Intent.EXTRA_SUBJECT, "Dragon Logs - ${file.name}")
-        }
-        ctx.startActivity(Intent.createChooser(textIntent, "Share logs (text)"))
+
+        ctx.shareContent(
+            text = content,
+            subject = "Dragon Logs - ${file.name}",
+            chooserTitle = "Share logs (text)"
+        )
     } catch (e: Exception) {
-        logE(LOGS_TAG, e) { "Share failed" }
+        logE(LOGS_TAG, e) { "Failed to share log file" }
     }
 }

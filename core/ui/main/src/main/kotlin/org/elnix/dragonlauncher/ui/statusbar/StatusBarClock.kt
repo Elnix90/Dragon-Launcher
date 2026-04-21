@@ -75,7 +75,7 @@ fun StatusBarDate(
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.conditional(onAction != null) {
                 this.clickable {
-                    element.action?.let { onAction!!(it) } ?: openCalendar(ctx)
+                    element.action?.let { onAction!!(it) } ?: ctx.openCalendar()
                 }
             }
         )
@@ -133,7 +133,7 @@ fun StatusBarTime(
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.conditional(onAction != null) {
                 this.clickable {
-                    action?.let { onAction!!(it) } ?: openAlarmApp(ctx)
+                    action?.let { onAction!!(it) } ?: ctx.openAlarmApp()
                 }
             }
         )
