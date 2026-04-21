@@ -48,6 +48,7 @@ import org.elnix.dragonlauncher.common.utils.PackageManagerCompat
 import org.elnix.dragonlauncher.common.utils.WifiADBCommands
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.actions.ActionIcon
@@ -65,7 +66,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.AutoResizeableText
 @Suppress("AssignedValueIsNeverRead")
 @Composable
 fun AddPointDialog(
-    actions: List<SwipeActionSerializable> = defaultChoosableActions,
+    actions: Set<SwipeActionSerializable> = defaultChoosableActions,
     onNewNest: (() -> Unit)? = null,
     onDismiss: () -> Unit,
     onActionSelected: ((SwipeActionSerializable) -> Unit)? = null,
@@ -90,6 +91,13 @@ fun AddPointDialog(
     var showPinnedShortcutsPicker by remember { mutableStateOf(false) }
     var showSettingsPagePicker by remember { mutableStateOf(false) }
 
+    val showKillLauncherActionInActionPicker by DebugSettingsStore.showKillLauncherActionInActionPicker.asState()
+
+    val actualActions = remember(showKillLauncherActionInActionPicker, actions) {
+        if (showKillLauncherActionInActionPicker) actions.toMutableSet().apply {
+            add(SwipeActionSerializable.KillLauncher)
+        } else actions
+    }
 
     val gridSize by DrawerSettingsStore.gridSize.asState()
     val showIcons by DrawerSettingsStore.showAppIconsInDrawer.asState()
@@ -139,7 +147,7 @@ fun AddPointDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                if (actions.any { it is SwipeActionSerializable.LaunchApp }) {
+                if (actualActions.any { it is SwipeActionSerializable.LaunchApp }) {
 
                     val dummyLaunchAppAction = SwipeActionSerializable.LaunchApp("", false, 0)
                     val color = actionColor(dummyLaunchAppAction, LocalExtraColors.current)
@@ -178,7 +186,7 @@ fun AddPointDialog(
                     horizontalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
                     // Loop through all actions
-                    items(actions.filterNot { it is SwipeActionSerializable.LaunchApp }) { action ->
+                    items(actualActions.filterNot { it is SwipeActionSerializable.LaunchApp }) { action ->
                         AddPointColumn(
                             action = action,
                             showText = { showTooltipsOnAddPointDialog },

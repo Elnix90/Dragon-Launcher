@@ -47,6 +47,13 @@ val defaultSwipePointsValues = dummySwipePoint(null).copy(
 /**
  * Swipe Actions Serializable, the core of the main gesture idea
  * Holds all the different actions the user can do
+ *
+ * Here are all the related settings in which you have to add logic in order to correctly add a new action:
+ *  - `actionLabel`
+ *  - `launchSwipeAction`
+ *  - `actionColor`
+ *  - `actionLabel`
+ *  - [org.elnix.dragonlauncher.common.utils.ImageUtils.createUntintedBitmap]
  */
 @Serializable
 sealed class SwipeActionSerializable {
@@ -130,6 +137,8 @@ sealed class SwipeActionSerializable {
         val toast: Boolean? = false
     ) : SwipeActionSerializable()
 
+    @Serializable
+    data object KillLauncher : SwipeActionSerializable()
     @Serializable
     object None : SwipeActionSerializable()
 }

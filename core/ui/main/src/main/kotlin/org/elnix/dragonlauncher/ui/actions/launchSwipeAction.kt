@@ -6,14 +6,14 @@ import android.content.pm.LauncherApps
 import android.os.Build
 import android.os.Process
 import android.os.UserManager
+import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.net.toUri
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.APP_LAUNCH_TAG
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.TAG
+import org.elnix.dragonlauncher.common.utils.closeApp
 import org.elnix.dragonlauncher.common.utils.expandQuickActionsDrawer
 import org.elnix.dragonlauncher.common.utils.getMobileDataStatus
 import org.elnix.dragonlauncher.common.utils.hasUriReadPermission
@@ -21,6 +21,8 @@ import org.elnix.dragonlauncher.common.utils.isBluetoothEnabled
 import org.elnix.dragonlauncher.common.utils.isWifiEnabled
 import org.elnix.dragonlauncher.common.utils.launchShortcut
 import org.elnix.dragonlauncher.common.utils.showToast
+import org.elnix.dragonlauncher.logging.logD
+import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.services.SystemControl
 import org.elnix.dragonlauncher.ui.wellbeing.DigitalPauseActivity
@@ -236,8 +238,12 @@ fun launchSwipeAction(
             )
         }
 
+        SwipeActionSerializable.KillLauncher -> {
+            closeApp(ctx as ComponentActivity)
+        }
+
         is SwipeActionSerializable.OpenCircleNest, SwipeActionSerializable.GoParentNest -> {} // Handled by the main screen / settings
-        is SwipeActionSerializable.OpenWidget -> {} // The widget action isn't mean to be part of the choosable actions, so nothing on launch
+        is SwipeActionSerializable.OpenWidget -> {} // The widget action isn't meant to be part of the choosable actions, so nothing on launch
 
         SwipeActionSerializable.None -> {}
     }

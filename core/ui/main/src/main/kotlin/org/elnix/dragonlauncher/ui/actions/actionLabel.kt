@@ -98,5 +98,6 @@ fun actionLabel(action: SwipeActionSerializable): String {
         is SwipeActionSerializable.ToggleData -> stringResource(R.string.toggle_mobile_data)
         is SwipeActionSerializable.ToggleWifi -> stringResource(R.string.toggle_wifi)
         SwipeActionSerializable.None -> "None"
+        SwipeActionSerializable.KillLauncher -> stringResource(R.string.kill_launcher)
     }
 }

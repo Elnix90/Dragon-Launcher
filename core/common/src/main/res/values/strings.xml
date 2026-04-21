@@ -915,5 +915,6 @@
     <string name="adb_command_leave_empty_notice">💡 Leave empty to be promted for the command when running it</string>
     <string name="dragon_launcher_headline">A new way to make your interface yours</string>
     <string name="other">Other</string>
+    <string name="kill_launcher">Kill Launcher</string>
 
 </resources>

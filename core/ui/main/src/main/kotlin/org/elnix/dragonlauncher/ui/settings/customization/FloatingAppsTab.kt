@@ -70,7 +70,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import org.elnix.dragonlauncher.base.ktx.toDp
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.common.serializables.FloatingAppObject
 import org.elnix.dragonlauncher.common.serializables.FloatingAppsJson
 import org.elnix.dragonlauncher.common.serializables.IconShape
@@ -83,25 +82,26 @@ import org.elnix.dragonlauncher.enumsui.WidgetsToolsCenterReset
 import org.elnix.dragonlauncher.enumsui.WidgetsToolsMoveUpDown
 import org.elnix.dragonlauncher.enumsui.WidgetsToolsSnapping
 import org.elnix.dragonlauncher.enumsui.WidgetsToolsUpDown
+import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.models.FloatingAppsViewModel
 import org.elnix.dragonlauncher.models.FloatingAppsViewModel.ResizeCorner
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.WidgetsSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
-import org.elnix.dragonlauncher.ui.components.FloatingAppsHostView
-import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
-import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonColumn
-import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
+import org.elnix.dragonlauncher.ui.components.FloatingAppsHostView
+import org.elnix.dragonlauncher.ui.composition.LocalFloatingAppsViewModel
 import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
+import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
+import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
+import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonColumn
+import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.helpers.SmallShapeRow
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
-import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
-import org.elnix.dragonlauncher.ui.composition.LocalFloatingAppsViewModel
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -577,7 +577,7 @@ fun FloatingAppsTab(
     if (showAddDialog) {
         AddPointDialog(
             onDismiss = { showAddDialog = false },
-            actions = listOf(
+            actions = setOf(
                 SwipeActionSerializable.OpenWidget(0, "", ""),
                 SwipeActionSerializable.OpenCircleNest(0),
                 SwipeActionSerializable.GoParentNest,

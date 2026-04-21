@@ -151,7 +151,7 @@ object Constants {
     }
 
     object Actions {
-        val defaultChoosableActions: List<SwipeActionSerializable> = listOf(
+        val defaultChoosableActions: Set<SwipeActionSerializable> = setOf(
             SwipeActionSerializable.OpenCircleNest(0),
             SwipeActionSerializable.GoParentNest,
             SwipeActionSerializable.LaunchApp("", false,0),

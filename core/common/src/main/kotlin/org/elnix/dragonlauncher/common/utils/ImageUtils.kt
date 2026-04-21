@@ -342,9 +342,9 @@ object ImageUtils {
                 is SwipeActionSerializable.ToggleData -> loadDrawableResAsBitmap(R.drawable.cellular_icon, width, height)
 
                 is SwipeActionSerializable.ToggleWifi -> loadDrawableResAsBitmap(R.drawable.wifi_icon, width, height)
+                SwipeActionSerializable.KillLauncher -> loadDrawableResAsBitmap(R.drawable.ic_action_kill, width, height)
 
                 SwipeActionSerializable.None -> null
-
             } ?: loadDrawableResAsBitmap(R.drawable.ic_app_default, width, height)
         }
     }

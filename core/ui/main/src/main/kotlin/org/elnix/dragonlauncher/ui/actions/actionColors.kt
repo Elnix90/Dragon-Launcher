@@ -27,6 +27,7 @@ fun actionColor(
             is SwipeActionSerializable.ToggleBluetooth -> extra.toggleBluetooth
             is SwipeActionSerializable.ToggleData -> extra.toggleData
             is SwipeActionSerializable.ToggleWifi -> extra.toggleWifi
+            SwipeActionSerializable.KillLauncher -> Color.Red
 
             SwipeActionSerializable.None, null -> Color.Unspecified
         }
