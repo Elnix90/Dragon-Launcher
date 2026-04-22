@@ -6,6 +6,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import org.elnix.dragonlauncher.common.serializables.CircleNest
+import org.elnix.dragonlauncher.common.utils.Constants.Logging.NESTS_TAG
+import org.elnix.dragonlauncher.logging.logD
+import org.elnix.dragonlauncher.logging.logW
 
 data class NestNavigationState(
     val currentNest: CircleNest,
@@ -64,10 +67,14 @@ fun rememberNestNavigation(
      *
      * If no matching nest is found, a fallback instance is created.
      */
-    val currentNest by remember {
+    val currentNest by remember(nests) {
+        logD(NESTS_TAG) { "Nest list size: ${nests.size}" }
         derivedStateOf {
             nests.find { it.id == nestId }
-                ?: CircleNest(nestId)
+                ?: run {
+                    logW(NESTS_TAG) { "Current nest (id = $nestId) not found among ${nests.size} nests, in rememberNestNavigation" }
+                    CircleNest(nestId)
+                }
         }
     }
 

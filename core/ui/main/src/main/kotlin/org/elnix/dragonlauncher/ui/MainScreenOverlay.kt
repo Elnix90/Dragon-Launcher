@@ -272,6 +272,7 @@ fun MainScreenOverlay(
             MainScreenOverlayDebugInfos(
                 hoveredPoint = hoveredPoint,
                 selectedPointPerLevel = selectedPointsPerLevel,
+                currentNest = currentNest,
                 activeLevel = activeLevelIndex,
                 isAliveNestActive = isAnyLiveNestActive,
                 start = start,
@@ -422,6 +423,7 @@ fun MainScreenOverlay(
 private fun MainScreenOverlayDebugInfos(
     hoveredPoint: SwipePointSerializable?,
     selectedPointPerLevel: List<SwipePointSerializable?>,
+    currentNest: CircleNest,
     activeLevel: Int,
     isAliveNestActive: Boolean,
     start: Offset?,
@@ -450,6 +452,7 @@ private fun MainScreenOverlayDebugInfos(
             Text("isAliveNestActive = $isAliveNestActive")
             Text("target circle = $targetCircle")
             Text("selectedPointPerLevel = ${selectedPointPerLevel.map { it?.id?.substring(0, 5) }}")
+            Text("current nest = $currentNest")
             Text("current point = $hoveredPoint")
         }
     }
