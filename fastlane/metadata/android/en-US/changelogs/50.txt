@@ -1,0 +1,20 @@
+3.1.0 (Wither)
+2026-04-22
+[NEW]
+* Live nests
+* Cycle action looping
+* Hold & Run
+[FIXED]
+* Missing nest when navigating
+* Icon cache & loading issues
+* Welcome screen dismiss via home
+* Nest drawing endpoint drift
+* Color test mode exit
+[IMPROVED]
+* Settings refactored to data classes + local composition
+* App settings alignment option (1*grid drawer)
+* Nest management dialog (rename/delete)
+* Icon pack picker UI
+* Logging system with filter tags
+* Crash screen safety
+* Charging animation sync
