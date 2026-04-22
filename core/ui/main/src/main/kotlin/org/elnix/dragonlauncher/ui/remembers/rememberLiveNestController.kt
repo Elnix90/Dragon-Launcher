@@ -284,7 +284,7 @@ fun rememberLiveNestControllerStack(
                 level.currentRef.value ?: return@LaunchedEffect
             }
 
-            val nest = nests.firstOrNull { it.id == targetNestId } ?: error("No nest found, wtf")
+            val nest = nests.firstOrNull { it.id == targetNestId } ?: CircleNest(targetNestId)
 
             level.hostPoint = currentPoint
             level.nestedNest = nest
