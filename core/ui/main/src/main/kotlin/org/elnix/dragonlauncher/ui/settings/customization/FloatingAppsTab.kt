@@ -39,7 +39,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -252,31 +251,27 @@ fun FloatingAppsTab(
             }
         }
 
-        /* ──────────────── Widget canvas ──────────────── */
         floatingApps
             .filter { it.nestId == nestId }
             .forEach { floatingApp ->
-                key(floatingApp.id, nestId) {
-                    DraggableFloatingApp(
-                        floatingAppsViewModel = floatingAppsViewModel,
-                        app = floatingApp,
-                        snapRotation = { snapRotation },
-                        snapMove = { snapMove },
-                        snapResize = { snapResize },
-                        selected = floatingApp.id == selected?.id,
-                        onPrecisionModeChange = { isPrecisionModeActive = it },
-                        onSelect = { selected = floatingApp },
-                        onEdit = {
-                            applyChange {
-                                logD(WIDGET_TAG) { "applyChange\nold widget: $floatingApp\new one: $it" }
+                DraggableFloatingApp(
+                    floatingAppsViewModel = floatingAppsViewModel,
+                    app = floatingApp,
+                    snapRotation = { snapRotation },
+                    snapMove = { snapMove },
+                    snapResize = { snapResize },
+                    selected = floatingApp.id == selected?.id,
+                    onPrecisionModeChange = { isPrecisionModeActive = it },
+                    onSelect = { selected = floatingApp },
+                    onEdit = {
+                        applyChange {
+                            logD(WIDGET_TAG) { "applyChange\nold widget: ${floatingApp.shape}\new one: ${it.shape}" }
 
-                                floatingAppsViewModel.editFloatingApp(it)
-                            }
+                            floatingAppsViewModel.editFloatingApp(it)
                         }
-                    )
-                }
+                    }
+                )
             }
-
 
         AnimatedVisibility(
             visible = isPrecisionModeActive,
@@ -527,7 +522,7 @@ fun FloatingAppsTab(
                     AnimatedVisibility(showScaleDropdown) {
                         DragonColumnGroup {
                             Text("${stringResource(R.string.widget_number_total)}: ${floatingApps.size}")
-                            Text("${stringResource(R.string.widget_number_nest)}: ${floatingApps.count { it.nestId == nestId}}")
+                            Text("${stringResource(R.string.widget_number_nest)}: ${floatingApps.count { it.nestId == nestId }}")
                             Text("${stringResource(R.string.current_nest)}: $nestId")
 
                             HorizontalDivider()
@@ -558,16 +553,10 @@ fun FloatingAppsTab(
     }
 
 
-    if (widgetsDebugInfos) {
-        Box(
-            modifier = Modifier
-                .background(Color.DarkGray.copy(0.5f))
-                .padding(5.dp)
-        ) {
-            Column {
-                floatingApps.forEach {
-                    Text(it.toString())
-                }
+    if (widgetsDebugInfos && floatingApps.isNotEmpty()) {
+        DragonColumnGroup {
+            floatingApps.forEach {
+                Text(it.toString())
             }
         }
     }
@@ -695,9 +684,9 @@ private fun DraggableFloatingApp(
     }
 
 
-    fun commitChange() {
+    fun commitChange(newApp: FloatingAppObject? = null) {
         onEdit(
-            app.copy(
+            newApp ?: app.copy(
                 spanX = widgetWidth,
                 spanY = widgetHeight,
                 x = widgetX,
@@ -1092,7 +1081,7 @@ private fun DraggableFloatingApp(
                     Checkbox(
                         checked = app.ghosted == true,
                         onCheckedChange = {
-                            onEdit(app.copy(ghosted = it))
+                            commitChange(app.copy(ghosted = it))
                         }
                     )
 
@@ -1110,7 +1099,7 @@ private fun DraggableFloatingApp(
                     Checkbox(
                         checked = app.foreground == true,
                         onCheckedChange = {
-                            onEdit(app.copy(foreground = it))
+                            commitChange(app.copy(foreground = it))
                         }
                     )
 
@@ -1124,7 +1113,7 @@ private fun DraggableFloatingApp(
                 SmallShapeRow(
                     selected = app.shape ?: IconShape.Square,
                     onReset = {
-                        onEdit(app.copy(shape = null))
+                        commitChange(app.copy(shape = null))
                     }
                 ) { showShapeEditor = true }
             }
@@ -1136,9 +1125,8 @@ private fun DraggableFloatingApp(
             selected = app.shape ?: IconShape.Square,
             onDismiss = { showShapeEditor = false }
         ) {
+            commitChange(app.copy(shape = it))
             showShapeEditor = false
-            onEdit(app.copy(shape = it))
         }
     }
-
 }
