@@ -124,6 +124,10 @@ data class SwipePointSerializable(
     @SerializedName("s")
     val size: Int? = null,
 
+    /** Optional resolution override */
+    val resolution: Int? = null,
+
+
     /**
      * Shape of the border icon, default is a circle
      */
@@ -238,6 +242,7 @@ data class SwipePointSerializable(
             cornerRadius = null,
             innerPadding = 5,
             size = 22,
+//            resolution = 48, // No default resolution, it uses the size instead
             borderShape = IconShape.Circle,
             borderShapeSelected = IconShape.Circle,
             liveNestPreviewDelayMs = 500,

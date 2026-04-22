@@ -928,5 +928,6 @@
     <string name="edit_point_help_desc">edit a specific point,you can edit them all at once by editing the default points settings (More menu on top)</string>
     <string name="rotation_start_angle">Start angle rotation</string>
     <string name="rotation_start_angle_desc">I guess it pretty much self-explanatory</string>
+    <string name="resolution">Resolution</string>
 
 </resources>

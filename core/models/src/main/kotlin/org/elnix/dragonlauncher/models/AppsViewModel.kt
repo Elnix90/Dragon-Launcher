@@ -77,7 +77,6 @@ import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.settings.stores.WorkspaceSettingsStore
 import org.json.JSONObject
 import org.xmlpull.v1.XmlPullParser
-import kotlin.math.max
 
 
 class AppsViewModel(
@@ -690,19 +689,18 @@ class AppsViewModel(
      *
      * @return The fully rendered [ImageBitmap] ready for drawing.
      */
-    fun loadPointIcon(point: SwipePointSerializable): ImageBitmap {
+    private fun loadPointIcon(point: SwipePointSerializable): ImageBitmap {
 
-        // Resolve the effective size in dp:
-        // - Use the larger between default size and point override.
-        val resolvedSizeDp = max(
-            _defaultPoint.value.size ?: SwipePointSerializable.defaultSwipePointsValues.size!!,
-            point.size ?: 0
-        )
+        val resolvedResolutionDp =
+            point.resolution ?:
+            _defaultPoint.value.resolution
+            ?: point.size ?:
+            _defaultPoint.value.size
+            ?: SwipePointSerializable.defaultSwipePointsValues.size!!
 
         // Convert dp to pixels and enforce a minimum touch-safe size.
-        val sizePx = (resolvedSizeDp * _density.density)
+        val sizePx = (resolvedResolutionDp * _density.density)
             .toInt()
-            .coerceAtLeast(48)
 
         // Create the base untinted bitmap from the action.
         val baseBitmap = createUntintedBitmap(

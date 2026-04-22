@@ -61,6 +61,7 @@ import org.elnix.dragonlauncher.ui.components.PointPreviewCanvas
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
+import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
@@ -193,7 +194,7 @@ fun IconEditorDialog(
             ) {
                 TextDivider(stringResource(R.string.source))
 
-                Column {
+                DragonColumnGroup {
                     Row(horizontalArrangement = Arrangement.SpaceEvenly) {
                         Column(
                             verticalArrangement = Arrangement.SpaceBetween,
@@ -261,7 +262,7 @@ fun IconEditorDialog(
                                     value = textValue,
                                     onValueChange = {
                                         textValue = it
-                                        selectedIcon =
+                                        updateSelectedIcon(
                                             if (it.isNotBlank()) {
                                                 (selectedIcon ?: CustomIconSerializable()).copy(
                                                     type = IconType.TEXT,
@@ -270,6 +271,7 @@ fun IconEditorDialog(
                                             } else {
                                                 null
                                             }
+                                        )
                                     },
                                     placeholder = { Text("😀  A  ★") },
                                     singleLine = true,
@@ -343,14 +345,7 @@ fun IconEditorDialog(
                 TextDivider(stringResource(R.string.appearance))
 
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(DragonShape)
-                        .background(MaterialTheme.colorScheme.surface.alphaMultiplier(0.7f))
-                        .padding(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+                DragonColumnGroup {
 
                     // Opacity
                     SliderWithLabel(
@@ -405,14 +400,7 @@ fun IconEditorDialog(
                     }
                 }
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(DragonShape)
-                        .background(MaterialTheme.colorScheme.surface.alphaMultiplier(0.7f))
-                        .padding(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+                DragonColumnGroup {
                     ColorPickerRow(
                         label = stringResource(R.string.tint),
                         currentColor = selectedIcon?.tint?.let { Color(it) } ?: Color.Unspecified
