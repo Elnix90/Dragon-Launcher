@@ -119,7 +119,9 @@ import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.asStateNull
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalAppItemSettings
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
+import org.elnix.dragonlauncher.ui.base.compositionslocals.rememberAppItemSettings
 import org.elnix.dragonlauncher.ui.base.overlays.OverlayHost
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalAppLifecycleViewModel
@@ -256,10 +258,8 @@ fun MainAppUi(
     }
 
 
-    val showAppIconsInDrawer by DrawerSettingsStore.showAppIconsInDrawer.asState()
-    val showAppLabelsInDrawer by DrawerSettingsStore.showAppLabelInDrawer.asState()
+
     val autoShowKeyboardOnDrawer by DrawerSettingsStore.autoShowKeyboardOnDrawer.asState()
-    val gridSize by DrawerSettingsStore.gridSize.asState()
 
     val selectedToolbarItemsStringSet by DrawerSettingsStore.toolbarsOrder.asState()
     val selectedToolbarItems by remember {
@@ -818,7 +818,9 @@ fun MainAppUi(
         LocalMainScreenLayers provides layersOrder,
         LocalShowLabelsInAddPointDialog provides showTooltipsOnAddPointDialog,
 
-        LocalDisableHapticFeedbackGlobally provides disableHapticFeedbackGlobally
+        LocalDisableHapticFeedbackGlobally provides disableHapticFeedbackGlobally,
+
+        LocalAppItemSettings provides rememberAppItemSettings()
     ) {
         OverlayHost(
             modifier = Modifier
@@ -870,10 +872,7 @@ fun MainAppUi(
                         popExitTransition = { if (drawerEnterExitAnimations) collapseDownAnimation() else ExitTransition.None },
                     ) {
                         AppDrawerScreen(
-                            showIcons = showAppIconsInDrawer,
-                            showLabels = showAppLabelsInDrawer,
                             autoShowKeyboard = autoShowKeyboardOnDrawer,
-                            gridSize = gridSize,
                             onRegisterHomeHandler = { handler ->
                                 drawerHomeHandler = handler
                             },
@@ -994,9 +993,6 @@ fun MainAppUi(
                             arguments = listOf(navArgument("id") { type = NavType.StringType }),
                         ) { backStack ->
                             WorkspaceDetailScreen(
-                                showLabels = showAppLabelsInDrawer,
-                                showIcons = showAppIconsInDrawer,
-                                gridSize = gridSize,
                                 workspaceId = backStack.arguments!!.getString("id")!!,
                                 onBack = { navController.popBackStack() },
                                 onLaunchAction = ::launchAction

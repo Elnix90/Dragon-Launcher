@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.helpers
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -22,10 +24,13 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.AppModel
+import org.elnix.dragonlauncher.enumsui.HorizontalAlignment
 import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
+import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
+import org.elnix.dragonlauncher.ui.dragon.generic.ShowLabels
 
 @Composable
 fun GridSizeSlider(apps: List<AppModel>) {
@@ -33,11 +38,7 @@ fun GridSizeSlider(apps: List<AppModel>) {
     val scope = rememberCoroutineScope()
 
     val gridSize by DrawerSettingsStore.gridSize.asState()
-    val showIcons by DrawerSettingsStore.showAppIconsInDrawer.asState()
-    val showLabels by DrawerSettingsStore.showAppLabelInDrawer.asState()
-    val useCategory by DrawerSettingsStore.useCategory.asState()
-
-
+    val horizontalAlignment by DrawerSettingsStore.horizontalAlignment.asState()
 
     var tempGridSize by remember { mutableIntStateOf(gridSize) }
 
@@ -45,7 +46,7 @@ fun GridSizeSlider(apps: List<AppModel>) {
 
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(5.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         SliderWithLabel(
             label = stringResource(R.string.grid_size),
@@ -61,6 +62,19 @@ fun GridSizeSlider(apps: List<AppModel>) {
             tempGridSize = it
         }
 
+        AnimatedVisibility(
+            visible = tempGridSize == 1,
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+        ) {
+            MultiSelectConnectedButtonRow(
+                entries = HorizontalAlignment.entries,
+                showLabels = ShowLabels.Always,
+                isChecked = { horizontalAlignment == it }
+            ) {
+                scope.launch { DrawerSettingsStore.horizontalAlignment.set(ctx, it) }
+            }
+        }
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -70,11 +84,6 @@ fun GridSizeSlider(apps: List<AppModel>) {
         ) {
             AppGrid(
                 apps = apps.shuffled().take(if (tempGridSize == 1) 3 else tempGridSize * 2),
-                gridSize = tempGridSize,
-                txtColor = MaterialTheme.colorScheme.onBackground,
-                showIcons = showIcons,
-                showLabels = showLabels,
-                useCategory = useCategory,
                 longPressPopup = null,
                 onClick = null
             )

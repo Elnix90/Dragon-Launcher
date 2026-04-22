@@ -37,30 +37,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.AppCategory
 import org.elnix.dragonlauncher.common.serializables.AppModel
 import org.elnix.dragonlauncher.common.utils.waitASec
-import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
-import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalAppItemSettings
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.drawer.AppItemGrid
 import org.elnix.dragonlauncher.ui.drawer.AppItemHorizontal
 import kotlin.math.min
 
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppGrid(
     apps: List<AppModel>,
-    gridSize: Int,
-    txtColor: Color,
-    showIcons: Boolean,
-    showLabels: Boolean,
-    useCategory: Boolean = false,
     fillMaxSize: Boolean = true,
 
     gridState: LazyGridState? = null,
@@ -80,15 +74,15 @@ fun AppGrid(
     longPressPopup: @Composable ((AppModel) -> Unit)?,
     onClick: ((AppModel) -> Unit)?
 ) {
-    val maxIconSize by DrawerSettingsStore.maxIconSize.asState()
-    val iconsSpacingVertical by DrawerSettingsStore.iconsSpacingVertical.asState()
-    val iconsSpacingHorizontal by DrawerSettingsStore.iconsSpacingHorizontal.asState()
-
-    val categoryGridSize by DrawerSettingsStore.categoryGridWidth.asState()
-    val categoryGridCells by DrawerSettingsStore.categoryGridCells.asState()
-    val showCategoryName by DrawerSettingsStore.showCategoryName.asState()
-
     var openedCategory by remember { mutableStateOf<AppCategory?>(null) }
+
+    val appItemSettings = LocalAppItemSettings.current
+
+
+    val categorySettings = appItemSettings.categorySettings
+    val useCategory = categorySettings.useCategory
+
+    val gridSize = appItemSettings.gridSize
 
     val visibleApps by remember(apps) {
         derivedStateOf {
@@ -111,7 +105,7 @@ fun AppGrid(
     val isAtTop by remember {
         derivedStateOf {
             when {
-                gridSize == 1 ->
+                appItemSettings.gridSize == 1 ->
                     listState?.firstVisibleItemIndex == 0 &&
                             listState.firstVisibleItemScrollOffset == 0
 
@@ -178,13 +172,15 @@ fun AppGrid(
 
         // Can't use categories with multi-select mode cause it's too annoying to implement
         useCategory && openedCategory == null && !isMultiSelectMode -> {
+
+
             LazyVerticalGrid(
-                columns = GridCells.Fixed(categoryGridSize),
+                columns = GridCells.Fixed(appItemSettings.gridSize),
                 modifier = modifier,
                 state = categoryGridState ?: rememberLazyGridState(),
                 contentPadding = paddingValues,
-                verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical.dp),
-                horizontalArrangement = Arrangement.spacedBy(iconsSpacingHorizontal.dp)
+                verticalArrangement = Arrangement.spacedBy(appItemSettings.iconSpacingVertical),
+                horizontalArrangement = Arrangement.spacedBy(appItemSettings.iconSpacingHorizontal)
             ) {
 
                 AppCategory.entries.forEach { category ->
@@ -197,13 +193,9 @@ fun AppGrid(
                                 CategoryGrid(
                                     category = category,
                                     apps = categoryApps,
-                                    maxIconSize = maxIconSize,
-                                    txtColor = txtColor,
-                                    showIcons = showIcons,
+
                                     longPressPopup = longPressPopup,
                                     onClick = onClick,
-                                    showCategoryName = showCategoryName,
-                                    gridCells = categoryGridCells,
                                 ) {
                                     openedCategory = category
                                 }
@@ -218,7 +210,7 @@ fun AppGrid(
                 modifier = modifier,
                 state = listState ?: rememberLazyListState(),
                 contentPadding = paddingValues,
-                verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical.dp),
+                verticalArrangement = Arrangement.spacedBy(appItemSettings.iconSpacingVertical),
             ) {
                 items(visibleApps, key = { it.iconCacheKey.cacheKey }) { app ->
                     val selected = app.packageName in selectedPackages
@@ -226,9 +218,6 @@ fun AppGrid(
                     AppItemHorizontal(
                         app = app,
                         selected = selected,
-                        showIcons = showIcons,
-                        showLabels = showLabels,
-                        txtColor = txtColor,
                         onLongClick = if (onEnterMultiSelect != null && onToggleSelect != null) { app ->
                             if (!isMultiSelectMode) {
                                 onEnterMultiSelect(app)
@@ -255,20 +244,15 @@ fun AppGrid(
                 state = gridState ?: rememberLazyGridState(),
                 columns = GridCells.Fixed(gridSize),
                 contentPadding = paddingValues,
-                verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical.dp),
-                horizontalArrangement = Arrangement.spacedBy(iconsSpacingHorizontal.dp)
+                verticalArrangement = Arrangement.spacedBy(appItemSettings.iconSpacingVertical),
+                horizontalArrangement = Arrangement.spacedBy(appItemSettings.iconSpacingHorizontal)
             ) {
                 items(visibleApps, key = { it.iconCacheKey.cacheKey }) { app ->
                     val selected = app.packageName in selectedPackages
 
-
                     AppItemGrid(
                         app = app,
                         selected = selected,
-                        showIcons = showIcons,
-                        maxIconSize = maxIconSize,
-                        showLabels = showLabels,
-                        txtColor = txtColor,
                         onLongClick = if (onEnterMultiSelect != null && onToggleSelect != null) { app ->
                             if (!isMultiSelectMode) {
                                 onEnterMultiSelect(app)
@@ -294,18 +278,13 @@ fun AppGrid(
 private fun CategoryGrid(
     category: AppCategory,
     apps: List<AppModel>,
-
-    maxIconSize: Int,
-    txtColor: Color,
-    showIcons: Boolean,
-
-    gridCells: Int,
-    showCategoryName: Boolean,
     modifier: Modifier = Modifier,
     longPressPopup: @Composable ((AppModel) -> Unit)?,
     onClick: ((AppModel) -> Unit)?,
     onOpenCategory: () -> Unit
 ) {
+    val categorySettings = LocalAppItemSettings.current.categorySettings
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -317,16 +296,13 @@ private fun CategoryGrid(
         ) {
             AppDefinedGrid(
                 apps = apps,
-                maxIconSize = maxIconSize,
-                txtColor = txtColor,
-                showIcons = showIcons,
                 longPressPopup = longPressPopup,
                 onClick = onClick,
-                gridCells = gridCells,
+                gridCells = categorySettings.categoryGridCells,
             )
         }
 
-        if (showCategoryName) {
+        if (categorySettings.showCategoryName) {
             Text(
                 text = category.name,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -339,11 +315,6 @@ private fun CategoryGrid(
 @Composable
 private fun AppDefinedGrid(
     apps: List<AppModel>,
-
-    maxIconSize: Int,
-    txtColor: Color,
-    showIcons: Boolean,
-
     gridCells: Int,
     modifier: Modifier = Modifier,
     onLongClick: ((AppModel) -> Unit)? = null,
@@ -373,10 +344,7 @@ private fun AppDefinedGrid(
                         if (appIndex < sanitizedAppNumber) {
                             AppItemGrid(
                                 app = apps[appIndex],
-                                showIcons = showIcons,
-                                maxIconSize = maxIconSize,
-                                showLabels = false,
-                                txtColor = txtColor,
+                                selected = false,
                                 onLongClick = onLongClick,
                                 longPressPopup = longPressPopup,
                                 onClick = onClick

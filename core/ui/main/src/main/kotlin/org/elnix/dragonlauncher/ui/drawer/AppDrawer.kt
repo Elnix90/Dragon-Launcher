@@ -74,9 +74,7 @@ import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.base.ktx.px
 import org.elnix.dragonlauncher.base.ktx.toDp
@@ -84,7 +82,6 @@ import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.navigaton.SETTINGS
 import org.elnix.dragonlauncher.common.serializables.AppModel
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.dummySwipePoint
 import org.elnix.dragonlauncher.common.serializables.WorkspaceType
 import org.elnix.dragonlauncher.common.utils.Constants
 import org.elnix.dragonlauncher.common.utils.PrivateSpaceUtils
@@ -115,8 +112,8 @@ import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.composition.LocalAppLifecycleViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.dialogs.AppAliasesDialog
+import org.elnix.dragonlauncher.ui.dialogs.AppIconEditorDialog
 import org.elnix.dragonlauncher.ui.dialogs.AppLongPressRow
-import org.elnix.dragonlauncher.ui.dialogs.IconEditorDialog
 import org.elnix.dragonlauncher.ui.dialogs.RenameAppDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -131,10 +128,7 @@ import kotlin.math.pow
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppDrawerScreen(
-    showIcons: Boolean,
-    showLabels: Boolean,
     autoShowKeyboard: Boolean,
-    gridSize: Int,
     drawerToolbarsOrder: List<DrawerToolbar>,
     leftAction: DrawerActions,
     leftWeight: Float,
@@ -167,7 +161,6 @@ fun AppDrawerScreen(
 
     val autoLaunchSingleMatch by DrawerSettingsStore.autoOpenSingleMatch.asState()
     val disableAutoLaunchOnSpaceFirstChar by DrawerSettingsStore.disableAutoLaunchOnSpaceFirstChar.asState()
-    val useCategory by DrawerSettingsStore.useCategory.asState()
 
     /* ───────────── Actions ───────────── */
     val tapEmptySpaceToRaiseKeyboard by DrawerSettingsStore.tapEmptySpaceAction.asState()
@@ -683,11 +676,6 @@ fun AppDrawerScreen(
 
                             AppGrid(
                                 apps = filteredApps,
-                                gridSize = gridSize,
-                                txtColor = MaterialTheme.colorScheme.onBackground,
-                                showIcons = showIcons,
-                                showLabels = showLabels,
-                                useCategory = useCategory,
                                 gridState = gridState,
                                 paddingValues = appsContentPadding,
                                 categoryGridState = categoryGridState,
@@ -748,10 +736,6 @@ fun AppDrawerScreen(
                             ) {
                                 AppGrid(
                                     apps = recentApps,
-                                    gridSize = gridSize,
-                                    txtColor = MaterialTheme.colorScheme.onBackground,
-                                    showIcons = showIcons,
-                                    showLabels = showLabels,
                                     fillMaxSize = false,
                                     longPressPopup = { app -> AppLongPressRow(app) }
                                 ) {
@@ -853,34 +837,14 @@ fun AppDrawerScreen(
     if (appTarget != null) {
 
         val app = appTarget!!
-        val pkg = app.packageName
         val cacheKey = app.iconCacheKey
 
-        val iconOverride =
-            overrides[cacheKey]?.customIcon
-
-
-        val tempPoint =
-            dummySwipePoint(
-                SwipeActionSerializable.LaunchApp(
-                    pkg,
-                    app.isPrivateProfile,
-                    app.userId
-                ), pkg
-            ).copy(
-                customIcon = iconOverride
-            )
-
-
-        IconEditorDialog(
-            point = tempPoint,
-            onReset = {
-                appsViewModel.reloadAppIcon(app, false)
-            },
+        AppIconEditorDialog(
+            app = app,
+            onReset = { appsViewModel.reloadAppIcon(app) },
             onDismiss = { appTarget = null }
         ) { customIcon ->
 
-            /* ───────────── Reload icon once firstly ───────────── */
             scope.launch {
                 if (customIcon != null) {
                     appsViewModel.setAppIcon(
@@ -890,15 +854,9 @@ fun AppDrawerScreen(
                 } else {
                     appsViewModel.resetAppIcon(cacheKey)
                 }
-                appsViewModel.reloadAppIcon(app, true)
-
-                /* ───────────── Reload all points upon icon change to synchronize with points ───────────── */
-                withContext(Dispatchers.IO) {
-                    appsViewModel.reloadApps()
-                }
+                appsViewModel.reloadAppIcon(app)
+                appTarget = null
             }
-
-            appTarget = null
         }
     }
 

@@ -929,5 +929,8 @@
     <string name="rotation_start_angle">Start angle rotation</string>
     <string name="rotation_start_angle_desc">I guess it pretty much self-explanatory</string>
     <string name="resolution">Resolution</string>
+    <string name="align_start">Start</string>
+    <string name="align_center">Center</string>
+    <string name="align_end">End</string>
 
 </resources>

@@ -5,9 +5,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
+import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.helpers.nests.actionsInCircle
 import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
 
@@ -16,39 +20,49 @@ fun PointPreviewCanvas(
     editPoint: SwipePointSerializable,
     defaultPoint: SwipePointSerializable,
     backgroundSurfaceColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val drawParams = rememberSwipeDefaultParams(
         defaultPointSerializable = defaultPoint,
         backgroundColor = backgroundSurfaceColor
     )
 
-    Canvas(
-        modifier = modifier
-            .height(40.dp)
-    ) {
-        val centerY = size.height / 2f
-        val leftX = size.width * 0.25f
-        val rightX = size.width * 0.75f
+    val defaultPoint = LocalDefaultPoint.current
+    val height = (editPoint.size ?: defaultPoint.size ?: SwipePointSerializable.defaultSwipePointsValues.size!!) +
+            (editPoint.innerPadding ?: defaultPoint.innerPadding ?: SwipePointSerializable.defaultSwipePointsValues.innerPadding!!) * 2
 
-        // Left action
-        actionsInCircle(
-            selected = false,
-            point = editPoint,
-            center = Offset(leftX, centerY),
-            depth = 1,
-            drawParams = drawParams,
-            preventBgErasing = true
-        )
 
-        // Right action
-        actionsInCircle(
-            selected = true,
-            point = editPoint,
-            center = Offset(rightX, centerY),
-            depth = 1,
-            drawParams = drawParams,
-            preventBgErasing = true
-        )
+    Canvas(modifier = modifier.height(height.dp)) {
+        drawIntoCanvas { canvas ->
+
+            val bounds = Rect(0f, 0f, size.width, size.height)
+            canvas.saveLayer(bounds, Paint())
+
+            val centerY = size.height / 2f
+            val leftX = size.width * 0.25f
+            val rightX = size.width * 0.75f
+
+            // Left action
+            actionsInCircle(
+                selected = false,
+                point = editPoint,
+                center = Offset(leftX, centerY),
+                depth = 1,
+                drawParams = drawParams,
+                preventBgErasing = true
+            )
+
+            // Right action
+            actionsInCircle(
+                selected = true,
+                point = editPoint,
+                center = Offset(rightX, centerY),
+                depth = 1,
+                drawParams = drawParams,
+                preventBgErasing = true
+            )
+
+            canvas.restore()
+        }
     }
 }

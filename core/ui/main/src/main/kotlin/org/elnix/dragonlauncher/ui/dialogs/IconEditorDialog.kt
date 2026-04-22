@@ -50,15 +50,17 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.base.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.serializables.AppModel
 import org.elnix.dragonlauncher.common.serializables.CustomIconSerializable
 import org.elnix.dragonlauncher.common.serializables.IconType
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.common.utils.ImageUtils.uriToBase64
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.components.PointPreviewCanvas
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
+import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
@@ -69,31 +71,97 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.dragon.text.TextDivider
 import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
+
 @Composable
-fun IconEditorDialog(
+fun PointIconEditorDialog(
     point: SwipePointSerializable,
     onReset: (() -> Unit)? = null,
     onDismiss: () -> Unit,
     onPicked: (CustomIconSerializable?) -> Unit
 ) {
-    val ctx = LocalContext.current
-    val iconShapes = LocalIconShape.current
+    val defaultPoint = LocalDefaultPoint.current
     val appsViewModel = LocalAppsViewModel.current
 
-    val scope = rememberCoroutineScope()
-
-
-    val backgroundColor = MaterialTheme.colorScheme.surface
-
-    val defaultPoint by appsViewModel.defaultPoint.collectAsState(defaultSwipePointsValues)
-
     var selectedIcon by remember { mutableStateOf(point.customIcon) }
-    var textValue by remember { mutableStateOf("") }
 
 
     val previewPoint = point.copy(customIcon = selectedIcon)
 
 
+    IconEditorDialog(
+        customIcon = point.customIcon,
+        onDismiss = onDismiss,
+        onReset = onReset,
+        preview = {
+                PointPreviewCanvas(
+                    editPoint = previewPoint,
+                    defaultPoint = defaultPoint,
+                    backgroundSurfaceColor = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.weight(1f)
+                )
+        },
+        onUpdate = {
+            selectedIcon = it
+            appsViewModel.reloadPointIcon(point.copy(customIcon = selectedIcon))
+        },
+        onPicked = onPicked
+    )
+}
+
+@Composable
+fun AppIconEditorDialog(
+    app: AppModel,
+    onReset: (() -> Unit)? = null,
+    onDismiss: () -> Unit,
+    onPicked: (CustomIconSerializable?) -> Unit
+) {
+    val appsViewModel = LocalAppsViewModel.current
+
+    val workspaceState by appsViewModel.state.collectAsState()
+    val appOverrides = workspaceState.appOverrides
+
+    val customIcon = appOverrides[app.iconCacheKey]?.customIcon
+
+    var selectedIcon by remember { mutableStateOf(customIcon) }
+
+
+    IconEditorDialog(
+        customIcon = customIcon,
+        onDismiss = onDismiss,
+        onReset = onReset,
+        preview = {
+            AppIcon(app, 50.dp)
+        },
+        onUpdate = {
+            selectedIcon = it
+            appsViewModel.reloadAppIcon(app, selectedIcon)
+        },
+        onPicked = onPicked
+    )
+}
+
+@Composable
+private fun IconEditorDialog(
+    customIcon: CustomIconSerializable?,
+    onReset: (() -> Unit)? = null,
+    onDismiss: () -> Unit,
+    preview: @Composable RowScope.() -> Unit,
+    onUpdate: (CustomIconSerializable?) -> Unit,
+    onPicked: (CustomIconSerializable?) -> Unit
+) {
+    val ctx = LocalContext.current
+    val iconShapes = LocalIconShape.current
+    val scope = rememberCoroutineScope()
+
+    var selectedIcon by remember { mutableStateOf(customIcon) }
+
+
+    fun updateSelectedIcon(newIcon: CustomIconSerializable?) {
+        onUpdate(newIcon)
+        selectedIcon = newIcon
+    }
+
+    var textValue by remember { mutableStateOf("") }
     val source = selectedIcon?.source
 
     LaunchedEffect(Unit) {
@@ -102,10 +170,6 @@ fun IconEditorDialog(
         }
     }
 
-    fun updateSelectedIcon(newIcon: CustomIconSerializable?) {
-        appsViewModel.reloadPointIcon(previewPoint)
-        selectedIcon = newIcon
-    }
 
     var showIconPackPicker by remember { mutableStateOf(false) }
     var showShapePickerDialog by remember { mutableStateOf(false) }
@@ -164,12 +228,8 @@ fun IconEditorDialog(
                     style = MaterialTheme.typography.titleLarge
                 )
 
-                PointPreviewCanvas(
-                    editPoint = previewPoint,
-                    defaultPoint = defaultPoint,
-                    backgroundSurfaceColor = backgroundColor,
-                    modifier = Modifier.weight(1f)
-                )
+                preview()
+
 
                 DragonIconButton(
                     onClick = {

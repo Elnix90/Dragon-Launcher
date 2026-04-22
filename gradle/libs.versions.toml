@@ -40,6 +40,7 @@ shizuku = "13.1.0"
 uiText = "1.11.0-rc01"
 uiUnit = "1.11.0-rc01"
 uiUtil = "1.11.0-rc01"
+material3Version = "1.4.0"
 
 [libraries]
 android-image-cropper = { module = "com.vanniktech:android-image-cropper", version.ref = "androidImageCropper" }
@@ -95,6 +96,7 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 shizuku-api = { group = "dev.rikka.shizuku", name = "api", version.ref = "shizuku" }
 shizuku-provider = { group = "dev.rikka.shizuku", name = "provider", version.ref = "shizuku" }
 shapeindicators = { group = "io.github.dp-hridayan", name = "shapeindicators", version.ref = "shapeindicators" }
+androidx-compose-material3-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3Version" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.settings.stores
 import org.elnix.dragonlauncher.common.serializables.IconShape
 import org.elnix.dragonlauncher.enumsui.DrawerActions
 import org.elnix.dragonlauncher.enumsui.DrawerToolbar
+import org.elnix.dragonlauncher.enumsui.HorizontalAlignment
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.MapSettingsStore
@@ -61,6 +62,13 @@ object DrawerSettingsStore : MapSettingsStore() {
         dataStoreName = dataStoreName,
         default = 6,
         allowedRange = 1..15
+    )
+
+    val horizontalAlignment = enum(
+        key = "horizontalAlignment",
+        dataStoreName = dataStoreName,
+        default = HorizontalAlignment.Start,
+        enumClass = HorizontalAlignment::class.java
     )
 
     val lastWorkspaceUsed = string(
@@ -270,6 +278,7 @@ object DrawerSettingsStore : MapSettingsStore() {
             this.autoShowKeyboardOnDrawer,
             this.tapEmptySpaceAction,
             this.gridSize,
+            this.horizontalAlignment,
             this.lastWorkspaceUsed,
             this.leftDrawerAction,
             this.rightDrawerAction,

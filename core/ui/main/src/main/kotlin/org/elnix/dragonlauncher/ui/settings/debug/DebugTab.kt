@@ -48,7 +48,7 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalNavController
-import org.elnix.dragonlauncher.ui.dialogs.IconEditorDialog
+import org.elnix.dragonlauncher.ui.dialogs.PointIconEditorDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
@@ -475,7 +475,7 @@ fun DebugTab(
         }
     }
     if (showEditAppOverrides) {
-        IconEditorDialog(
+        PointIconEditorDialog(
             point = dummySwipePoint(),
             onDismiss = { showEditAppOverrides = false }
         ) { newIcon ->

@@ -77,9 +77,6 @@ import org.elnix.dragonlauncher.ui.helpers.AppGrid
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppPickerDialog(
-    gridSize: Int,
-    showIcons: Boolean,
-    showLabels: Boolean,
     multiSelectEnabled: Boolean = false,
     onDismiss: () -> Unit,
     onAppSelected: (AppModel) -> Unit,
@@ -342,10 +339,6 @@ fun AppPickerDialog(
                     } else {
                         AppGrid(
                             apps = filteredApps,
-                            gridSize = gridSize,
-                            txtColor = MaterialTheme.colorScheme.onSurface,
-                            showIcons = showIcons,
-                            showLabels = showLabels,
                             selectedPackages = selectedApps,
                             isMultiSelectMode = isMultiSelectMode,
                             onReload = {

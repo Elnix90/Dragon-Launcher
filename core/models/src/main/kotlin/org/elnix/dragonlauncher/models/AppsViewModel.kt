@@ -403,7 +403,7 @@ class AppsViewModel(
             val points = SwipeSettingsStore.getPoints(ctx)
 
             _pointsIconsCache.updateMaxCacheSize(points.size)
-            logI(ICONS_TAG) { "Updated point-icons size; now = ${points.size}"}
+            logI(ICONS_TAG) { "Updated point-icons size; now = ${points.size}" }
 
 
             preloadPointIcons(
@@ -692,10 +692,8 @@ class AppsViewModel(
     private fun loadPointIcon(point: SwipePointSerializable): ImageBitmap {
 
         val resolvedResolutionDp =
-            point.resolution ?:
-            _defaultPoint.value.resolution
-            ?: point.size ?:
-            _defaultPoint.value.size
+            point.resolution ?: _defaultPoint.value.resolution
+            ?: point.size ?: _defaultPoint.value.size
             ?: SwipePointSerializable.defaultSwipePointsValues.size!!
 
         // Convert dp to pixels and enforce a minimum touch-safe size.
@@ -737,7 +735,7 @@ class AppsViewModel(
 
     private fun loadSingleIcon(
         app: AppModel,
-        useOverrides: Boolean,
+        customIcon: CustomIconSerializable?,
         sizePx: Int
     ): ImageBitmap {
         val packageName = app.packageName
@@ -774,17 +772,17 @@ class AppsViewModel(
             tint = _packTint.value.takeIf { isIconPack }
         )
 
-        logD(ICONS_TAG) { "Icon loaded for ${app.iconCacheKey}: $orig" }
+        logD(ICONS_TAG) { "Icon loaded for $cacheKey: $orig" }
 
-        if (useOverrides) {
-            _workspacesState.value.appOverrides[cacheKey]?.customIcon?.let { customIcon ->
-                return renderCustomIcon(
-                    orig = orig,
-                    customIcon = customIcon,
-                    sizePx = sizePx
-                ).also {
-                    logD(ICONS_TAG) { "Custom Icon rendered for ${app.iconCacheKey}: $it" }
-                }
+        val customIcon = customIcon ?: _workspacesState.value.appOverrides[cacheKey]?.customIcon
+
+        if (customIcon != null) {
+            return renderCustomIcon(
+                orig = orig,
+                customIcon = customIcon,
+                sizePx = sizePx
+            ).also {
+                logD(ICONS_TAG) { "Custom Icon rendered for $cacheKey: $it" }
             }
         }
 
@@ -810,17 +808,16 @@ class AppsViewModel(
      * Basically the same thing as [reloadPointIcon] but for an AppModel instead of the [SwipePointSerializable] you input an [AppModel]
      *
      * @param app
-     * @param useOverride
      */
     fun reloadAppIcon(
         app: AppModel,
-        useOverride: Boolean,
+        customIcon: CustomIconSerializable? = null,
         sizePx: Int = 128
     ) {
         _drawerIconsCache.compute(app.iconCacheKey) {
             loadSingleIcon(
                 app = app,
-                useOverrides = useOverride,
+                customIcon = customIcon,
                 sizePx = sizePx
             )
         }
@@ -846,7 +843,7 @@ class AppsViewModel(
             points.forEach { p ->
                 @Suppress("USELESS_ELVIS")
                 val id = p.id ?: return@forEach // Cause it crashed someone's app after corrupted loading
-                if (_pointsIconsCache.get(id) != null && !overwrite) return@forEach
+                if (_pointsIconsCache[id] != null && !overwrite) return@forEach
 
                 iconSemaphore.withPermit {
                     reloadPointIcon(p)
@@ -869,7 +866,11 @@ class AppsViewModel(
 
         apps.forEach { app ->
             iconSemaphore.withPermit {
-                reloadAppIcon(app, true, sizePx)
+                reloadAppIcon(
+                    app = app,
+                    customIcon = null,
+                    sizePx = sizePx
+                )
             }
         }
     }
@@ -920,7 +921,7 @@ class AppsViewModel(
                 if (drawableId != 0) {
                     return ResourcesCompat.getDrawable(packResources, drawableId, null)
                 }
-                logW(ICONS_TAG) { "drawableId is 0, wtf?"}
+                logW(ICONS_TAG) { "drawableId is 0, wtf?" }
 
             } catch (e: Exception) {
                 logE(ICONS_TAG, e) { "Error fetching pack drawable ressources" }

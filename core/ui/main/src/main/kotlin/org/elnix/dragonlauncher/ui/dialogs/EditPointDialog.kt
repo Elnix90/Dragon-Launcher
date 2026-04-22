@@ -1010,7 +1010,7 @@ fun EditPointDialog(
 
 
             if (showEditIconDialog) {
-                IconEditorDialog(
+                PointIconEditorDialog(
                     point = editPoint,
                     onDismiss = { showEditIconDialog = false }
                 ) { newIcon ->

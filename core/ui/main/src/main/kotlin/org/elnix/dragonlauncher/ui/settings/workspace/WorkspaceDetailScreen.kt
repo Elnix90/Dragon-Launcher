@@ -16,7 +16,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,15 +33,14 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.AppModel
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.dummySwipePoint
 import org.elnix.dragonlauncher.enumsui.WorkspaceViewMode
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.dialogs.AppAliasesDialog
+import org.elnix.dragonlauncher.ui.dialogs.AppIconEditorDialog
 import org.elnix.dragonlauncher.ui.dialogs.AppLongPressRow
 import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
-import org.elnix.dragonlauncher.ui.dialogs.IconEditorDialog
 import org.elnix.dragonlauncher.ui.dialogs.RenameAppDialog
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.generic.ShowLabels
@@ -51,9 +49,6 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
 fun WorkspaceDetailScreen(
-    showLabels: Boolean,
-    showIcons: Boolean,
-    gridSize: Int,
     workspaceId: String,
     onBack: () -> Unit,
     onLaunchAction: (SwipeActionSerializable) -> Unit
@@ -175,10 +170,6 @@ fun WorkspaceDetailScreen(
 
                 AppGrid(
                     apps = apps.sortedBy { it.name },
-                    gridSize = gridSize,
-                    txtColor = Color.White,
-                    showIcons = showIcons,
-                    showLabels = showLabels,
                     longPressPopup = { app -> AppLongPressRow(app) },
                     onClick = null
                 )
@@ -206,9 +197,6 @@ fun WorkspaceDetailScreen(
 
     if (showAppPicker) {
         AppPickerDialog(
-            gridSize = gridSize,
-            showIcons = showIcons,
-            showLabels = showLabels,
             onDismiss = { showAppPicker = false },
             onAppSelected = { app ->
                 scope.launch {
@@ -252,34 +240,10 @@ fun WorkspaceDetailScreen(
     if (iconTargetApp != null) {
 
         val app = iconTargetApp!!
-        val pkg = app.packageName
         val cacheKey = app.iconCacheKey
 
-        val iconOverride =
-            overrides[cacheKey]?.customIcon
-
-
-        val tempPoint =
-            dummySwipePoint(
-                action = SwipeActionSerializable.LaunchApp(
-                    packageName = pkg,
-                    isPrivateSpace = app.isPrivateProfile,
-                    userId = app.userId
-                ), id = pkg
-            ).copy(
-                customIcon = iconOverride
-            )
-
-        LaunchedEffect(iconOverride) {
-            if (iconOverride == null) {
-                scope.launch {
-                    appsViewModel.reloadPointIcon(tempPoint)
-                }
-            }
-        }
-
-        IconEditorDialog(
-            point = tempPoint,
+        AppIconEditorDialog(
+            app = app,
             onDismiss = { iconTargetApp = null }
         ) {
             scope.launch {
@@ -291,8 +255,8 @@ fun WorkspaceDetailScreen(
                 } else {
                     appsViewModel.resetAppIcon(cacheKey)
                 }
+                iconTargetApp = null
             }
-            iconTargetApp = null
         }
     }
 

@@ -38,28 +38,28 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.DRAWER_TAG
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.SHAPES_TAG
-import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.enumsui.DrawerActions
 import org.elnix.dragonlauncher.enumsui.drawerActionIcon
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
+import org.elnix.dragonlauncher.ui.dialogs.DrawerToolbarsOrderDialog
+import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
-import org.elnix.dragonlauncher.ui.dragon.text.TextDivider
+import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.settings.DrawerActionSelector
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
-import org.elnix.dragonlauncher.ui.dialogs.DrawerToolbarsOrderDialog
-import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
+import org.elnix.dragonlauncher.ui.dragon.text.TextDivider
 import org.elnix.dragonlauncher.ui.helpers.GridSizeSlider
 import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
-import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 
 
 @Composable
@@ -122,7 +122,6 @@ fun DrawerTab(
             }
         }
     ) {
-
 
         item {
             ExpandableSection(drawerBehaviorSettingsState) {

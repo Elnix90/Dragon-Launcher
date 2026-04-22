@@ -49,7 +49,6 @@ import org.elnix.dragonlauncher.common.utils.WifiADBCommands
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
-import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.actions.ActionIcon
 import org.elnix.dragonlauncher.ui.actions.actionColor
@@ -99,9 +98,6 @@ fun AddPointDialog(
         } else actions
     }
 
-    val gridSize by DrawerSettingsStore.gridSize.asState()
-    val showIcons by DrawerSettingsStore.showAppIconsInDrawer.asState()
-    val showLabels by DrawerSettingsStore.showAppLabelInDrawer.asState()
     val promptForShortcuts by BehaviorSettingsStore.promptForShortcutsWhenAddingApp.asState()
     val showTooltipsOnAddPointDialog = LocalShowLabelsInAddPointDialog.current
 
@@ -245,9 +241,6 @@ fun AddPointDialog(
 
     if (showAppPicker) {
         AppPickerDialog(
-            gridSize = gridSize,
-            showIcons = showIcons,
-            showLabels = showLabels,
             multiSelectEnabled = onMultipleActionsSelected != null,
             onDismiss = { showAppPicker = false },
             onAppSelected = { app ->

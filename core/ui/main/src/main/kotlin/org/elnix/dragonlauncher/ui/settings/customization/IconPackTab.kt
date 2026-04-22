@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.ui.settings.customization
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -68,10 +67,6 @@ fun IconPackTab(
                 Box(Modifier.height(80.dp)) {
                     AppGrid(
                         apps = apps.shuffled().take(6),
-                        txtColor = MaterialTheme.colorScheme.onBackground,
-                        gridSize = 6,
-                        showIcons = true,
-                        showLabels = false,
                         longPressPopup = null,
                         onClick = null
                     )

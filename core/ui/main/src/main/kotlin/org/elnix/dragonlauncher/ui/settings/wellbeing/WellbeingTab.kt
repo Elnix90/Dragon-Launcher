@@ -69,20 +69,19 @@ import org.elnix.dragonlauncher.common.serializables.AppModel
 import org.elnix.dragonlauncher.common.utils.Constants.PackageNameLists.knownSocialMediaApps
 import org.elnix.dragonlauncher.common.utils.hasUsageStatsPermission
 import org.elnix.dragonlauncher.common.utils.resolveShape
-import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.WellbeingSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.appIcon
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
+import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
+import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
@@ -98,9 +97,6 @@ fun WellbeingTab(onBack: () -> Unit) {
     val pauseDuration by WellbeingSettingsStore.pauseDurationSeconds.asState()
     val pausedApps by WellbeingSettingsStore.pausedApps.asState()
 
-    val gridSize by DrawerSettingsStore.gridSize.asState()
-    val showIcons by DrawerSettingsStore.showAppIconsInDrawer.asState()
-    val showLabels by DrawerSettingsStore.showAppLabelInDrawer.asState()
     val allApps by appsViewModel.allApps.collectAsState()
 
     var showAppPicker by remember { mutableStateOf(false) }
@@ -456,9 +452,6 @@ fun WellbeingTab(onBack: () -> Unit) {
 
     if (showAppPicker) {
         AppPickerDialog(
-            gridSize = gridSize,
-            showIcons = showIcons,
-            showLabels = showLabels,
             onDismiss = { showAppPicker = false },
             onAppSelected = { app ->
                 scope.launch {
