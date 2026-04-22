@@ -139,7 +139,7 @@ fun MainScreen(onLaunchAction: (SwipePointSerializable) -> Unit) {
         lastClickTime = 0
 
 
-        // Handle nest related actions here, and let the rest pass trough
+        // Handle nest related actions here, and let the rest pass through
         when (val action = point.action) {
             SwipeActionSerializable.GoParentNest -> nestNavigation.goBack()
             is SwipeActionSerializable.OpenCircleNest -> nestNavigation.goToNest(action.nestId)
