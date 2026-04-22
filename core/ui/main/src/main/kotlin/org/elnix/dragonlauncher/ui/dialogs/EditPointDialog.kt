@@ -1118,16 +1118,13 @@ fun EditPointDialog(
                         editPoint = editPoint.copy(
                             liveNestTargetNestId = selectedNest.id,
                             liveNestPreviewDelayMs = editPoint.liveNestPreviewDelayMs
-                                ?: defaultPoint.liveNestPreviewDelayMs
-                                ?: 500,
+                                ?: defaultLiveNestDelay,
                             liveNestScale = editPoint.liveNestScale
-                                ?: defaultPoint.liveNestScale
-                                ?: 0.65f,
+                                ?: defaultLiveNestScale,
                             liveNestGraceDistancePx = editPoint.liveNestGraceDistancePx
-                                ?: defaultPoint.liveNestGraceDistancePx,
+                                ?: defaultLiveNestGraceDistance,
                             liveNestMainNestOpacityPercent = editPoint.liveNestMainNestOpacityPercent
-                                ?: defaultPoint.liveNestMainNestOpacityPercent
-                                ?: 50
+                                ?: defaultLiveNestMainNestOpacityPercent
                         )
                         showLiveNestNestPicker = false
                     }
@@ -1137,3 +1134,4 @@ fun EditPointDialog(
     )
 }
 
+//change settings home by default
