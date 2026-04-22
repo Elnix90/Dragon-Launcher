@@ -109,7 +109,7 @@ fun MainScreen(onLaunchAction: (SwipePointSerializable) -> Unit) {
 
     var showCustomDim by remember { mutableStateOf(false) }
 
-    var tempStartPos by remember { mutableStateOf(start) }
+    var holdOffset by remember { mutableStateOf<Offset?>(null) }
     var showDropDownMenuSettings by remember { mutableStateOf(false) }
 
 
@@ -160,14 +160,14 @@ fun MainScreen(onLaunchAction: (SwipePointSerializable) -> Unit) {
     }
 
     val hold = rememberHoldToOpenSettings(
-        onSettings = {
+        onSettings = { offset ->
 
             // When the list only has 1 element, directly go to that screen, otherwise, open the menu
             // If the list is empty, do nothing
             if (holdMenuEntriesString.size > 1) {
 
                 showDropDownMenuSettings = true
-                tempStartPos = start
+                holdOffset = offset
 
             } else if (holdMenuEntriesString.size == 1) {
                 val routeToGo = when (val route = holdMenuEntriesString.first()) {
@@ -335,20 +335,20 @@ fun MainScreen(onLaunchAction: (SwipePointSerializable) -> Unit) {
                             } else null
                         )
 
-                        if (tempStartPos != null) {
+                        if (holdOffset != null) {
                             DropdownMenu(
                                 expanded = showDropDownMenuSettings,
                                 onDismissRequest = {
                                     showDropDownMenuSettings = false
-                                    tempStartPos = null
+                                    holdOffset = null
                                 },
                                 containerColor = Color.Transparent,
                                 shadowElevation = 0.dp,
                                 tonalElevation = 0.dp,
                                 offset = with(density) {
                                     DpOffset(
-                                        x = tempStartPos!!.x.toDp(),
-                                        y = tempStartPos!!.y.toDp()
+                                        x = holdOffset!!.x.toDp(),
+                                        y = holdOffset!!.y.toDp()
                                     )
                                 }
                             ) {

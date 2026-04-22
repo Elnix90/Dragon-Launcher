@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun rememberHoldToOpenSettings(
-    onSettings: () -> Unit,
+    onSettings: (Offset) -> Unit,
     holdDelay: Long,     // ms before arc appears
     loadDuration: Long, // ms to fill arc
     tolerance: Float     // max movement allowed
@@ -77,7 +77,7 @@ fun rememberHoldToOpenSettings(
                             )
                         )
 
-                        onSettings()
+                        onSettings(down.position)
                         reset()
                     }
 
