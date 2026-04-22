@@ -126,8 +126,9 @@ The reason is likely that Dragon asks for _sensitive permissions_ - normal, that
 ## Screenshots
 
 <p align="center">
-    <img src="assets/images/demo1.gif" alt="App demo animation 1" width="40%">
-    <img src="assets/images/demo2.gif" alt="App demo animation 2" width="40%">
+    <img src="assets/images/demo1.gif" alt="App demo animation 1" width="30%">
+    <img src="assets/images/demo2.gif" alt="App demo animation 2" width="30%">
+    <img src="assets/images/demo3.gif" alt="App demo animation 3" width="30%">
 </p>
 
 <p align="center">
