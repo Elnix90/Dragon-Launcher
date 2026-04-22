@@ -54,31 +54,23 @@ jobs:
           } >> $GITHUB_ENV
 
       - name: Build Release APK
-        run: ./gradlew assembleStableRelease assembleBetaDebuggableRelease --parallel --no-daemon --no-build-cache -x lint
+        run: ./gradlew assembleStableRelease --parallel --no-daemon --no-build-cache -x lint
 
       - name: Rename APK
         run: |
           NAME="DragonLauncher-${{ env.VERSION }}.apk"
           mv app/build/outputs/apk/stable/release/app-stable-release.apk "$NAME"
 
-          DEBUG="DragonLauncher-${{ env.VERSION }}-debuggable.apk"
-          mv app/build/outputs/apk/beta/debuggableRelease/app-beta-debuggableRelease.apk "$DEBUG"
-          
           MAPPINGS_MIN="Mappings-${{ env.VERSION }}.txt"
-          MAPPINGS_DEBUG="Mappings-${{ env.VERSION }}-debuggable.txt"
           
           [ -f "app/build/outputs/mapping/stableRelease/mapping.txt" ] && cp app/build/outputs/mapping/stableRelease/mapping.txt "$MAPPINGS_MIN"
-          [ -f "app/build/outputs/mapping/debuggableRelease/mapping.txt" ] && cp app/build/outputs/mapping/debuggableRelease/mapping.txt "$MAPPINGS_DEBUG"
           
-          echo "Debug file: $DEBUG"
           echo "Release file: $NAME"
-          echo "Mappings files: $MAPPINGS_MIN, $MAPPINGS_DEBUG"
-        
+          echo "Mappings file: $MAPPINGS_MIN"
+          
           {
-            echo "APK_DEBUG=$DEBUG"
             echo "APK=$NAME"
             echo "$MAPPINGS_MIN=$MAPPINGS_MIN"
-            echo "$MAPPINGS_DEBUG=$MAPPINGS_DEBUG"
           } >> $GITHUB_ENV
 
       - name: Create GitHub Release
@@ -88,15 +80,10 @@ jobs:
           name: ${{ env.VERSION }}
           files: |
             ${{ env.APK }}
-            ${{ env.APK_DEBUG }}
             ${{ env.MAPPINGS_MIN }}
-            ${{ env.MAPPINGS_DEBUG }}
           body: |
             ${{ steps.changelog.outputs.changelog }}
-
-            ### Debuggable version
-            If you encounter bugs or crash, you can install the debuggable version of the app, and check for logs using your computer via ***adb***
-            Here's some [help](https://developer.android.com/tools/logcat)
+            ${{ steps.changelog.outputs.changelog }}
 
             ## ⚠️ Play Protect Warning
             Due to Android restrictions, disable Play Protect during installation to avoid Dragon being blocked.
