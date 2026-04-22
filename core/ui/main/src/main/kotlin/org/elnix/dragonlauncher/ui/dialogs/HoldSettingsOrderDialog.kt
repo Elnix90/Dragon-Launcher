@@ -30,7 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.logging.logD
+import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.navigaton.routeResId
 import org.elnix.dragonlauncher.common.navigaton.settingsRoutes
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.HOLD_TAG
@@ -38,12 +38,13 @@ import org.elnix.dragonlauncher.enumsui.BackupSelectStoresButtons
 import org.elnix.dragonlauncher.enumsui.BackupSelectStoresButtons.DESELECT_ALL
 import org.elnix.dragonlauncher.enumsui.BackupSelectStoresButtons.INVERT
 import org.elnix.dragonlauncher.enumsui.BackupSelectStoresButtons.SELECT_ALL
+import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.settings.stores.HoldToActivateArcSettingsStore
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
-import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
-import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
+import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
+import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -64,8 +65,6 @@ fun HoldSettingsOrderDialog(
     val menuItems: SnapshotStateList<MenuItem> = remember { mutableStateListOf() }
 
     LaunchedEffect(holdMenuEntriesString) {
-        logD(HOLD_TAG) { "Launched effect launched: $holdMenuEntriesString" }
-
         menuItems.clear()
         settingsRoutes.forEach { route ->
             menuItems.add(
@@ -105,9 +104,8 @@ fun HoldSettingsOrderDialog(
         },
         modifier = Modifier.padding(16.dp),
         scroll = false,
-        title = { Text("Select settings to export") },
+        title = { Text(stringResource(R.string.edit_hold_to_activate_elements)) },
         text = {
-
             Column(
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {

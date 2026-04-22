@@ -918,5 +918,15 @@
     <string name="kill_launcher">Kill Launcher</string>
     <string name="multiply_or_subtract_opacity_in_live_nests">Multiply or subtract opacity in live nests</string>
     <string name="multiply_or_subtract_opacity_in_live_nests_desc">When off, it multiplies opacity to give clean ui, and when on, it subtract it, to reach faster the 0 opacity and hide lower nests to avoid ui cluttering</string>
+    <string name="icon">icon</string>
+    <string name="shapes">shapes</string>
+    <string name="reset_default_point">Reset default point</string>
+    <string name="reset_point">Reset point</string>
+    <string name="reset_default_point_desc">This will reset all default points settings, and will affect every points that haven\'t custom paramèters</string>
+    <string name="reset_point_desc">This will reset this point</string>
+    <string name="default_point_help_text">Edit the value for every points by default, you can manually override for each point</string>
+    <string name="edit_point_help_desc">edit a specific point,you can edit them all at once by editing the default points settings (More menu on top)</string>
+    <string name="rotation_start_angle">Start angle rotation</string>
+    <string name="rotation_start_angle_desc">I guess it pretty much self-explanatory</string>
 
 </resources>
