@@ -2,9 +2,9 @@ package org.elnix.dragonlauncher.settings.stores
 
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.Settings
 import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.MapSettingsStore
+import org.elnix.dragonlauncher.settings.bases.Settings
 
 object BehaviorSettingsStore : MapSettingsStore() {
 
@@ -30,7 +30,8 @@ object BehaviorSettingsStore : MapSettingsStore() {
             this.metalPipesSound,
             this.alarmSound,
             this.vibrateOnError,
-            this.offScreenTimeout
+            this.offScreenTimeout,
+            this.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint
         )
 
     val backAction = Settings.swipeAction(
@@ -155,5 +156,12 @@ object BehaviorSettingsStore : MapSettingsStore() {
         dataStoreName = dataStoreName,
         default = 10,
         allowedRange = -1..60
+    )
+
+
+    val createLiveNestByDefaultWhenCreatingOpenCircleNestPoint = Settings.boolean(
+        key = "createLiveNestByDefaultWhenCreatingOpenCircleNestPoint",
+        dataStoreName = UiSettingsStore.dataStoreName,
+        default = true
     )
 }

@@ -114,6 +114,7 @@ import org.elnix.dragonlauncher.enumsui.SelectedPointEditTools
 import org.elnix.dragonlauncher.enumsui.UndRedoEditTools
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
+import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
@@ -182,6 +183,7 @@ fun SettingsScreen(
     val appLabelOverlaySize by UiSettingsStore.appLabelOverlaySize.asState()
     val appIconOverlaySize by UiSettingsStore.appIconOverlaySize.asState()
 
+    val createLiveNestByDefaultWhenCreatingOpenCircleNestPoint by BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint.asState()
     val settingsDebugInfos by DebugSettingsStore.settingsDebugInfo.asState()
 
     var center by remember { mutableStateOf(Offset.Zero) }
@@ -1161,12 +1163,18 @@ fun SettingsScreen(
                                         }
                                         val circleId = closestCircle?.id ?: targetCircle
 
+                                        val newLiveNest =
+                                            if (action is SwipeActionSerializable.OpenCircleNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
+                                                action.nestId
+                                            } else null
+
                                         val point = SwipePointSerializable(
                                             id = UUID.randomUUID().toString(),
                                             angleDeg = finalAngle,
                                             action = action,
                                             circleNumber = circleId,
-                                            nestId = nestId
+                                            nestId = nestId,
+                                            liveNestTargetNestId = newLiveNest
                                         )
 
                                         appsViewModel.reloadPointIcon(point)
@@ -1613,12 +1621,18 @@ fun SettingsScreen(
                         for (action in actions) {
                             val newAngle = randomFreeAngle(circle, points) ?: continue
 
+                            val newLiveNest =
+                                if (action is SwipeActionSerializable.OpenCircleNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
+                                    action.nestId
+                                } else null
+
                             val newPoint = SwipePointSerializable(
                                 id = UUID.randomUUID().toString(),
                                 angleDeg = newAngle,
                                 action = action,
                                 circleNumber = targetCircle,
-                                nestId = nestId
+                                nestId = nestId,
+                                liveNestTargetNestId = newLiveNest
                             )
 
                             appsViewModel.reloadPointIcon(newPoint)

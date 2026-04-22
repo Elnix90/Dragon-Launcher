@@ -932,5 +932,7 @@
     <string name="align_start">Start</string>
     <string name="align_center">Center</string>
     <string name="align_end">End</string>
+    <string name="create_live_nest_by_default_desc">When creating a new point, if you choose OpenCircleNest, it\'ll create the according live nest automatically</string>
+    <string name="create_live_nest_by_default">Create live nest by default</string>
 
 </resources>

@@ -37,14 +37,14 @@ import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateAppsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.composition.LocalAppLifecycleViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalNavController
 import org.elnix.dragonlauncher.ui.dialogs.LockMethodDialog
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
+import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
+import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.helpers.CustomActionSelector
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -150,6 +150,12 @@ fun BehaviorTab(onBack: () -> Unit) {
                     setting = BehaviorSettingsStore.promptForShortcutsWhenAddingApp,
                     title = stringResource(R.string.prompt_shortcuts_when_adding_app),
                     description = stringResource(R.string.prompt_shortcuts_when_adding_app_desc)
+                )
+
+                SettingsSwitchRow(
+                    setting = BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint,
+                    title = stringResource(R.string.create_live_nest_by_default),
+                    description = stringResource(R.string.create_live_nest_by_default_desc)
                 )
 
                 SettingsSwitchRow(

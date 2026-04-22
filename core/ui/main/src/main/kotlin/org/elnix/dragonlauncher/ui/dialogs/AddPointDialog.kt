@@ -71,7 +71,7 @@ fun AddPointDialog(
     onActionSelected: ((SwipeActionSerializable) -> Unit)? = null,
     onMultipleActionsSelected: ((List<SwipeActionSerializable>, Boolean) -> Unit)? = null
 ) {
-    require((onActionSelected != null).xor(onMultipleActionsSelected != null))
+    require((onActionSelected != null) xor (onMultipleActionsSelected != null))
 
     val ctx = LocalContext.current
     val pm = ctx.packageManager

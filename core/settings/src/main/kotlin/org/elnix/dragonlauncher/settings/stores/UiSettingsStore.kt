@@ -213,6 +213,7 @@ object UiSettingsStore : MapSettingsStore() {
         dataStoreName = dataStoreName,
         default = true
     )
+
     // unsing explicit this to avoid other stores that have the same name keys to be imported by mistake
     override val ALL: List<BaseSettingObject<*, *>> = listOf(
         this.rgbLoading,
