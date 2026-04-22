@@ -239,8 +239,7 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
         }
     )
 
-    if (showHoldSettingsOrderDialog) {
-        HoldSettingsOrderDialog { showHoldSettingsOrderDialog = false }
-    }
+
+    HoldSettingsOrderDialog({ showHoldSettingsOrderDialog }) { showHoldSettingsOrderDialog = false }
 }
 

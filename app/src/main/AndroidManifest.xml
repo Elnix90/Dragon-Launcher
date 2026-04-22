@@ -1,28 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+    <uses-permission
+        android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="PackageVisibilityPolicy,QueryAllPackagesPermission" />
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"
+    <uses-permission
+        android:name="android.permission.REQUEST_INSTALL_PACKAGES"
         tools:ignore="RequestInstallPackagesPolicy" />
 
 
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
 
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"
+    <uses-permission
+        android:name="android.permission.SCHEDULE_EXACT_ALARM"
         tools:ignore="ScheduleExactAlarm" />
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-    <uses-permission android:name="android.permission.BIND_APPWIDGET"
+    <uses-permission
+        android:name="android.permission.BIND_APPWIDGET"
         tools:ignore="ProtectedPermissions" />
 
-    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS"
+    <uses-permission
+        android:name="android.permission.INTERACT_ACROSS_USERS"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL"
+    <uses-permission
+        android:name="android.permission.INTERACT_ACROSS_USERS_FULL"
         tools:ignore="ProtectedPermissions" />
 
     <!-- Android 15+: Permission to access Private Space and other hidden profiles -->
@@ -32,11 +38,13 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <!-- Optional: For digital wellbeing usage stats -->
-    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
 
     <!-- Wellbeing: Timer service + Overlay reminders -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE"
         tools:ignore="ForegroundServicesPolicy" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -68,27 +76,29 @@
 
     <application
         android:name=".DragonLauncherApplication"
-        android:localeConfig="@xml/locales_config"
+        android:appCategory="productivity"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:localeConfig="@xml/locales_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/DragonLauncherTheme"
-        tools:targetApi="33"
-        android:appCategory="productivity">
+        tools:targetApi="33">
 
         <activity
             android:name=".MainActivity"
-            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:enableOnBackInvokedCallback="true"
             android:exported="true"
             android:launchMode="singleTask"
+            android:resumeWhilePausing="true"
+            android:stateNotNeeded="true"
             android:taskAffinity=""
             android:theme="@style/DragonLauncherTheme"
-            android:stateNotNeeded="true"
-            android:resumeWhilePausing="true">
+            android:windowSoftInputMode="stateHidden|adjustResize">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -100,10 +110,11 @@
         <!-- Pinned Shortcuts: Receives pin shortcut requests from other apps -->
         <activity
             android:name=".PinnedShortcutActivity"
-            android:exported="true"
+            android:enableOnBackInvokedCallback="true"
             android:excludeFromRecents="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:launchMode="singleTask">
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
                 <action android:name="android.content.pm.action.CONFIRM_PIN_SHORTCUT" />
             </intent-filter>
@@ -116,17 +127,18 @@
 
         <activity
             android:name="org.elnix.dragonlauncher.ui.wellbeing.DigitalPauseActivity"
-            android:exported="false"
-            android:theme="@style/DragonLauncherTheme"
+            android:enableOnBackInvokedCallback="true"
             android:excludeFromRecents="true"
-            android:launchMode="singleTop" />
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:theme="@style/DragonLauncherTheme" />
 
         <activity
             android:name="org.elnix.dragonlauncher.ui.wellbeing.TimeLimitExceededActivity"
-            android:exported="false"
-            android:theme="@style/DragonLauncherTheme"
             android:excludeFromRecents="true"
-            android:launchMode="singleTop" />
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:theme="@style/DragonLauncherTheme" />
 
 
         <activity
@@ -135,13 +147,11 @@
             android:theme="@style/DragonLauncherTheme" />
 
 
-
-
         <service
             android:name="org.elnix.dragonlauncher.services.DragonNotificationListenerService"
             android:exported="false"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
@@ -157,12 +167,10 @@
             android:foregroundServiceType="specialUse" />
 
 
-
-
         <service
             android:name=".services.SystemControlService"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:exported="false"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             tools:ignore="AccessibilityPolicy">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
@@ -187,9 +195,9 @@
         <provider
             android:name="rikka.shizuku.ShizukuProvider"
             android:authorities="${applicationId}.shizuku"
-            android:multiprocess="false"
             android:enabled="true"
             android:exported="true"
+            android:multiprocess="false"
             android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
 
 
@@ -204,8 +212,8 @@
 
         <receiver
             android:name=".PackageReceiver"
-            android:exported="true"
-            android:enabled="true">
+            android:enabled="true"
+            android:exported="true">
             <intent-filter android:priority="1000">
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
@@ -213,6 +221,7 @@
                 <action android:name="android.intent.action.PACKAGES_SUSPENDED" />
                 <action android:name="android.intent.action.PACKAGES_UNSUSPENDED" />
                 <action android:name="android.intent.action.PACKAGE_CHANGED" />
+
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
@@ -220,8 +229,8 @@
         <!-- Private Space receiver for Android 15+ -->
         <receiver
             android:name=".PrivateSpaceReceiver"
-            android:exported="false"
             android:enabled="true"
+            android:exported="false"
             tools:targetApi="35">
             <intent-filter>
                 <action android:name="android.intent.action.PROFILE_AVAILABLE" />

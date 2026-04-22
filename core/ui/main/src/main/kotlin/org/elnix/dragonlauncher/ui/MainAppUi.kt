@@ -11,6 +11,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -39,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -118,6 +120,7 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.asStateNull
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
+import org.elnix.dragonlauncher.ui.base.overlays.OverlayHost
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalAppLifecycleViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
@@ -817,181 +820,188 @@ fun MainAppUi(
 
         LocalDisableHapticFeedbackGlobally provides disableHapticFeedbackGlobally
     ) {
-        Scaffold(
-            floatingActionButton = {
-                if (colorTestMode) {
-                    FloatingActionButton(
-                        onClick = { navController.navigate(SETTINGS.COLORS) },
-                        containerColor = MaterialTheme.colorScheme.primary
+        OverlayHost(
+            modifier = Modifier
+                .background(Color.Transparent)
+                .fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            Scaffold(
+                floatingActionButton = {
+                    if (colorTestMode) {
+                        FloatingActionButton(
+                            onClick = { navController.navigate(SETTINGS.COLORS) },
+                            containerColor = MaterialTheme.colorScheme.primary
+                        ) {
+                            Icon(
+                                Icons.Filled.Edit,
+                                contentDescription = stringResource(R.string.back_to_colors_settings)
+                            )
+                        }
+                    }
+                },
+                snackbarHost = {
+                    LauncherSnackbarHost()
+                },
+                contentWindowInsets = WindowInsets(),
+                containerColor = containerColor,
+            ) { paddingValues ->
+                NavHost(
+                    navController = navController,
+                    startDestination = ROUTES.MAIN,
+                    modifier = Modifier.padding(paddingValues)
+                ) {
+                    // Main App (LauncherScreen)
+                    composable(
+                        route = ROUTES.MAIN,
+                        enterTransition = { if (drawerEnterExitAnimations) raiseUpAnimation() else EnterTransition.None },
+                        exitTransition = { if (drawerEnterExitAnimations) collapseDownAnimation() else ExitTransition.None },
+                        popEnterTransition = { if (drawerEnterExitAnimations) raiseUpAnimation() else EnterTransition.None },
+                        popExitTransition = { if (drawerEnterExitAnimations) collapseDownAnimation() else ExitTransition.None },
                     ) {
-                        Icon(
-                            Icons.Filled.Edit,
-                            contentDescription = stringResource(R.string.back_to_colors_settings)
-                        )
-                    }
-                }
-            },
-            snackbarHost = {
-                LauncherSnackbarHost()
-            },
-            contentWindowInsets = WindowInsets(),
-            containerColor = containerColor,
-        ) { paddingValues ->
-            NavHost(
-                navController = navController,
-                startDestination = ROUTES.MAIN,
-                modifier = Modifier.padding(paddingValues)
-            ) {
-                // Main App (LauncherScreen)
-                composable(
-                    route = ROUTES.MAIN,
-                    enterTransition = { if (drawerEnterExitAnimations) raiseUpAnimation() else EnterTransition.None },
-                    exitTransition = { if (drawerEnterExitAnimations) collapseDownAnimation() else ExitTransition.None },
-                    popEnterTransition = { if (drawerEnterExitAnimations) raiseUpAnimation() else EnterTransition.None },
-                    popExitTransition = { if (drawerEnterExitAnimations) collapseDownAnimation() else ExitTransition.None },
-                ) {
-                    MainScreen(::launchAction)
-                }
-
-                composable(
-                    route = ROUTES.DRAWER,
-                    enterTransition = { if (drawerEnterExitAnimations) raiseUpAnimation() else EnterTransition.None },
-                    exitTransition = { if (drawerEnterExitAnimations) collapseDownAnimation() else ExitTransition.None },
-                    popEnterTransition = { if (drawerEnterExitAnimations) raiseUpAnimation() else EnterTransition.None },
-                    popExitTransition = { if (drawerEnterExitAnimations) collapseDownAnimation() else ExitTransition.None },
-                ) {
-                    AppDrawerScreen(
-                        showIcons = showAppIconsInDrawer,
-                        showLabels = showAppLabelsInDrawer,
-                        autoShowKeyboard = autoShowKeyboardOnDrawer,
-                        gridSize = gridSize,
-                        onRegisterHomeHandler = { handler ->
-                            drawerHomeHandler = handler
-                        },
-                        drawerToolbarsOrder = selectedToolbarItems,
-                        leftAction = leftDrawerAction,
-                        leftWeight = leftDrawerWidth,
-                        rightAction = rightDrawerAction,
-                        rightWeight = rightDrawerWidth,
-                        onLaunchAction = {
-                            popBackMainScreen()
-                            launchAction(it)
-                        },
-                        onClose = ::popBackMainScreen
-                    )
-                }
-
-                // Welcome screen
-                settingComposable(ROUTES.WELCOME) {
-                    WelcomeScreen(
-                        onEnterSettings = ::popBackToSettingsRoot,
-                        onEnterApp = ::popBackMainScreen
-                    )
-                }
-
-
-                /* ───────────── Settings navigation ───────────── */
-                navigation(
-                    startDestination = startDestination,
-                    route = "settings_graph"
-                ) {
-                    settingComposable(SETTINGS.ROOT) {
-                        SettingsScreen(
-                            onAdvSettings = {
-                                goSettings(SETTINGS.ADVANCED_ROOT, false)
-                            },
-                            onNestEdit = {
-                                goSettings(EDIT_SCREENS.NESTS_EDIT.replace("{id}", it.toString()), false)
-                            },
-                            onBack = ::popBackMainScreen
-                        )
+                        MainScreen(::launchAction)
                     }
 
-                    settingComposable(SETTINGS.ADVANCED_ROOT) { AdvancedSettingsScreen { popBackToSettingsRoot() } }
-
-                    // All the nested settings screens
-                    settingComposable(SETTINGS.APPEARANCE) { AppearanceTab(::popBackToAdvSettingsRoot) }
-                    settingComposable(SETTINGS.PERMISSIONS) { PermissionsTab { popBackToAdvSettingsRoot() } }
-                    settingComposable(SETTINGS.BEHAVIOR) { BehaviorTab(::popBackToAdvSettingsRoot) }
-                    settingComposable(SETTINGS.DRAWER) { DrawerTab(::popBackToAdvSettingsRoot) }
-                    settingComposable(SETTINGS.LANGUAGE) { LanguageTab(::popBackToAdvSettingsRoot) }
-                    settingComposable(SETTINGS.BACKUP) { BackupTab(::popBackToAdvSettingsRoot) }
-                    settingComposable(SETTINGS.CHANGELOGS) { ChangelogsScreen(::popBackToAdvSettingsRoot) }
-                    settingComposable(SETTINGS.EXTENSIONS) { ExtensionsTab(::popBackToAdvSettingsRoot) }
-                    settingComposable(SETTINGS.WELLBEING) { WellbeingTab(::popBackToAdvSettingsRoot) }
-                    settingComposable(SETTINGS.DEBUG) { DebugTab(::popBackToAdvSettingsRoot) }
-                    settingComposable(SETTINGS.LOGS) { LogsTab(::popBackToDebug) }
-                    settingComposable(SETTINGS.SETTINGS_JSON) { SettingsDebugTab(::popBackToDebug) }
-
-                    // All the appearance sub-settings
-                    settingComposable(SETTINGS.COLORS) { ColorSelectorTab(::popBackToAppearance) }
-                    settingComposable(SETTINGS.THEME) { ThemesTab(::popBackToAppearance) }
-                    settingComposable(SETTINGS.WALLPAPER) { WallpaperTab(::popBackToAppearance) }
-                    settingComposable(SETTINGS.ICON_PACK) { IconPackTab(::popBackToAppearance) }
-                    settingComposable(SETTINGS.STATUS_BAR) { StatusBarTab(::popBackToAppearance) }
-                    settingComposable(SETTINGS.FONTS) { FontTab(::popBackToAppearance) }
-                    settingComposable(SETTINGS.ANGLE_LINE_EDIT) { AngleLineTab(::popBackToAppearance) }
-                    settingComposable(SETTINGS.HOLD_TO_ACTIVATE_ARC) { HoldToActivateArcTab(::popBackToAppearance) }
-                    settingComposable(SETTINGS.MAINS_SCREEN_LAYERS) { MainScreeLayersTab(::popBackToAppearance) }
-
-                    settingComposable(
-                        route = SETTINGS.LOGS_VIEWER_SCREEN,
-                        arguments = listOf(navArgument("filename") { type = NavType.StringType }),
-                    ) { backStack ->
-                        LogsViewerScreen(
-                            filename = backStack.arguments!!.getString("filename")!!,
-                            onBack = {
-                                goSettings(SETTINGS.LOGS)
-                            }
-                        )
-                    }
-
-                    settingComposable(
-                        route = EDIT_SCREENS.NESTS_EDIT,
-                        arguments = listOf(navArgument("id") { type = NavType.StringType }),
-                    ) { backStack ->
-                        NestEditingScreen(
-                            nestId = backStack.arguments!!.getString("id")!!.toInt(),
-                            onBack = ::popBackToSettingsRoot
-                        )
-                    }
-
-                    settingComposable(
-                        route = SETTINGS.WIDGETS_FLOATING_APPS,
-                        arguments = listOf(navArgument("id") { type = NavType.StringType })
-                    ) { backStack ->
-                        FloatingAppsTab(
-                            onBack = ::popBackToAppearance,
-                            onLaunchSystemWidgetPicker = ::launchWidgetsPicker,
-                            onResetWidgetSize = onResetWidgetSize,
-                            onRemoveWidget = onRemoveFloatingApp,
-                            initialNestId = backStack.arguments!!.getString("id").takeIf { it != "{id}" }?.toInt() ?: 0
-                        )
-                    }
-
-                    settingComposable(SETTINGS.WORKSPACE) {
-                        WorkspaceListScreen(
-                            onOpenWorkspace = { id ->
-                                navController.navigate(
-                                    EDIT_SCREENS.WORKSPACE_DETAIL.replace("{id}", id)
-                                )
-                            },
-                            onBack = ::popBackToAdvSettingsRoot
-                        )
-                    }
-
-                    settingComposable(
-                        route = EDIT_SCREENS.WORKSPACE_DETAIL,
-                        arguments = listOf(navArgument("id") { type = NavType.StringType }),
-                    ) { backStack ->
-                        WorkspaceDetailScreen(
-                            showLabels = showAppLabelsInDrawer,
+                    composable(
+                        route = ROUTES.DRAWER,
+                        enterTransition = { if (drawerEnterExitAnimations) raiseUpAnimation() else EnterTransition.None },
+                        exitTransition = { if (drawerEnterExitAnimations) collapseDownAnimation() else ExitTransition.None },
+                        popEnterTransition = { if (drawerEnterExitAnimations) raiseUpAnimation() else EnterTransition.None },
+                        popExitTransition = { if (drawerEnterExitAnimations) collapseDownAnimation() else ExitTransition.None },
+                    ) {
+                        AppDrawerScreen(
                             showIcons = showAppIconsInDrawer,
+                            showLabels = showAppLabelsInDrawer,
+                            autoShowKeyboard = autoShowKeyboardOnDrawer,
                             gridSize = gridSize,
-                            workspaceId = backStack.arguments!!.getString("id")!!,
-                            onBack = { navController.popBackStack() },
-                            onLaunchAction = ::launchAction
+                            onRegisterHomeHandler = { handler ->
+                                drawerHomeHandler = handler
+                            },
+                            drawerToolbarsOrder = selectedToolbarItems,
+                            leftAction = leftDrawerAction,
+                            leftWeight = leftDrawerWidth,
+                            rightAction = rightDrawerAction,
+                            rightWeight = rightDrawerWidth,
+                            onLaunchAction = {
+                                popBackMainScreen()
+                                launchAction(it)
+                            },
+                            onClose = ::popBackMainScreen
                         )
+                    }
+
+                    // Welcome screen
+                    settingComposable(ROUTES.WELCOME) {
+                        WelcomeScreen(
+                            onEnterSettings = ::popBackToSettingsRoot,
+                            onEnterApp = ::popBackMainScreen
+                        )
+                    }
+
+
+                    /* ───────────── Settings navigation ───────────── */
+                    navigation(
+                        startDestination = startDestination,
+                        route = "settings_graph"
+                    ) {
+                        settingComposable(SETTINGS.ROOT) {
+                            SettingsScreen(
+                                onAdvSettings = {
+                                    goSettings(SETTINGS.ADVANCED_ROOT, false)
+                                },
+                                onNestEdit = {
+                                    goSettings(EDIT_SCREENS.NESTS_EDIT.replace("{id}", it.toString()), false)
+                                },
+                                onBack = ::popBackMainScreen
+                            )
+                        }
+
+                        settingComposable(SETTINGS.ADVANCED_ROOT) { AdvancedSettingsScreen { popBackToSettingsRoot() } }
+
+                        // All the nested settings screens
+                        settingComposable(SETTINGS.APPEARANCE) { AppearanceTab(::popBackToAdvSettingsRoot) }
+                        settingComposable(SETTINGS.PERMISSIONS) { PermissionsTab { popBackToAdvSettingsRoot() } }
+                        settingComposable(SETTINGS.BEHAVIOR) { BehaviorTab(::popBackToAdvSettingsRoot) }
+                        settingComposable(SETTINGS.DRAWER) { DrawerTab(::popBackToAdvSettingsRoot) }
+                        settingComposable(SETTINGS.LANGUAGE) { LanguageTab(::popBackToAdvSettingsRoot) }
+                        settingComposable(SETTINGS.BACKUP) { BackupTab(::popBackToAdvSettingsRoot) }
+                        settingComposable(SETTINGS.CHANGELOGS) { ChangelogsScreen(::popBackToAdvSettingsRoot) }
+                        settingComposable(SETTINGS.EXTENSIONS) { ExtensionsTab(::popBackToAdvSettingsRoot) }
+                        settingComposable(SETTINGS.WELLBEING) { WellbeingTab(::popBackToAdvSettingsRoot) }
+                        settingComposable(SETTINGS.DEBUG) { DebugTab(::popBackToAdvSettingsRoot) }
+                        settingComposable(SETTINGS.LOGS) { LogsTab(::popBackToDebug) }
+                        settingComposable(SETTINGS.SETTINGS_JSON) { SettingsDebugTab(::popBackToDebug) }
+
+                        // All the appearance sub-settings
+                        settingComposable(SETTINGS.COLORS) { ColorSelectorTab(::popBackToAppearance) }
+                        settingComposable(SETTINGS.THEME) { ThemesTab(::popBackToAppearance) }
+                        settingComposable(SETTINGS.WALLPAPER) { WallpaperTab(::popBackToAppearance) }
+                        settingComposable(SETTINGS.ICON_PACK) { IconPackTab(::popBackToAppearance) }
+                        settingComposable(SETTINGS.STATUS_BAR) { StatusBarTab(::popBackToAppearance) }
+                        settingComposable(SETTINGS.FONTS) { FontTab(::popBackToAppearance) }
+                        settingComposable(SETTINGS.ANGLE_LINE_EDIT) { AngleLineTab(::popBackToAppearance) }
+                        settingComposable(SETTINGS.HOLD_TO_ACTIVATE_ARC) { HoldToActivateArcTab(::popBackToAppearance) }
+                        settingComposable(SETTINGS.MAINS_SCREEN_LAYERS) { MainScreeLayersTab(::popBackToAppearance) }
+
+                        settingComposable(
+                            route = SETTINGS.LOGS_VIEWER_SCREEN,
+                            arguments = listOf(navArgument("filename") { type = NavType.StringType }),
+                        ) { backStack ->
+                            LogsViewerScreen(
+                                filename = backStack.arguments!!.getString("filename")!!,
+                                onBack = {
+                                    goSettings(SETTINGS.LOGS)
+                                }
+                            )
+                        }
+
+                        settingComposable(
+                            route = EDIT_SCREENS.NESTS_EDIT,
+                            arguments = listOf(navArgument("id") { type = NavType.StringType }),
+                        ) { backStack ->
+                            NestEditingScreen(
+                                nestId = backStack.arguments!!.getString("id")!!.toInt(),
+                                onBack = ::popBackToSettingsRoot
+                            )
+                        }
+
+                        settingComposable(
+                            route = SETTINGS.WIDGETS_FLOATING_APPS,
+                            arguments = listOf(navArgument("id") { type = NavType.StringType })
+                        ) { backStack ->
+                            FloatingAppsTab(
+                                onBack = ::popBackToAppearance,
+                                onLaunchSystemWidgetPicker = ::launchWidgetsPicker,
+                                onResetWidgetSize = onResetWidgetSize,
+                                onRemoveWidget = onRemoveFloatingApp,
+                                initialNestId = backStack.arguments!!.getString("id").takeIf { it != "{id}" }?.toInt() ?: 0
+                            )
+                        }
+
+                        settingComposable(SETTINGS.WORKSPACE) {
+                            WorkspaceListScreen(
+                                onOpenWorkspace = { id ->
+                                    navController.navigate(
+                                        EDIT_SCREENS.WORKSPACE_DETAIL.replace("{id}", id)
+                                    )
+                                },
+                                onBack = ::popBackToAdvSettingsRoot
+                            )
+                        }
+
+                        settingComposable(
+                            route = EDIT_SCREENS.WORKSPACE_DETAIL,
+                            arguments = listOf(navArgument("id") { type = NavType.StringType }),
+                        ) { backStack ->
+                            WorkspaceDetailScreen(
+                                showLabels = showAppLabelsInDrawer,
+                                showIcons = showAppIconsInDrawer,
+                                gridSize = gridSize,
+                                workspaceId = backStack.arguments!!.getString("id")!!,
+                                onBack = { navController.popBackStack() },
+                                onLaunchAction = ::launchAction
+                            )
+                        }
                     }
                 }
             }

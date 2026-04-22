@@ -67,6 +67,8 @@ dependencies {
     implementation(libs.androidx.compose.runtime.retain)
     implementation(libs.androidx.compose.ui.unit)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.activity.compose)
 
     runtimeOnly(libs.androidx.lifecycle.process)
 
