@@ -10,6 +10,7 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
@@ -21,7 +22,8 @@ import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 fun DragonTooltipInternal(
     text: String,
     enabled: Boolean,
-    content: @Composable (() -> Unit)
+    modifier: Modifier,
+    content: @Composable ((Modifier) -> Unit)
 ) {
     val tooltipState = rememberTooltipState(isPersistent = true)
     val haptic = LocalHapticFeedback.current
@@ -49,21 +51,24 @@ fun DragonTooltipInternal(
             }
         },
         enableUserInput = enabled,
-        state = tooltipState,
-        content = content
-    )
+        state = tooltipState
+    ) {
+        content(modifier)
+    }
 }
 
 @Composable
 fun DragonTooltip(
     resId: Int,
+    modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    content: @Composable (() -> Unit)
+    content: @Composable ((Modifier) -> Unit)
 ) {
     val text = resId.takeIf { it != -1 }?.let { stringResource(resId) } ?: "Unknown ressource"
 
     DragonTooltipInternal(
         text = text,
+        modifier = modifier,
         enabled = enabled,
         content = content
     )
@@ -73,11 +78,13 @@ fun DragonTooltip(
 @Composable
 fun DragonTooltip(
     description: String,
+    modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    content: @Composable (() -> Unit)
+    content: @Composable ((Modifier) -> Unit)
 ) {
     DragonTooltipInternal(
         text = description,
+        modifier = modifier,
         enabled = enabled,
         content = content
     )
