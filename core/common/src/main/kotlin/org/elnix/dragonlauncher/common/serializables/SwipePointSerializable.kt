@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.OpenDragonLauncherSettings
+import java.util.UUID
 
 /*  ─────────────  Cycle Actions model  ─────────────  */
 
@@ -216,8 +217,41 @@ data class SwipePointSerializable(
     val holdAndRunAction: SwipeActionSerializable? = null,
 
 ) {
-}
 
+    companion object {
+        fun dummySwipePoint(
+            action: SwipeActionSerializable? = null,
+            id: String? = null
+        ) =
+            SwipePointSerializable(
+                circleNumber = 0,
+                angleDeg = 0.0,
+                action = action ?: OpenDragonLauncherSettings(),
+                id = id ?: UUID.randomUUID().toString(),
+                nestId = 0
+            )
+
+        val defaultSwipePointsValues = dummySwipePoint(null).copy(
+            borderStroke = 4f,
+            borderStrokeSelected = 8f,
+            opacity = 1f,
+            cornerRadius = null,
+            innerPadding = 5,
+            size = 22,
+            borderShape = IconShape.Circle,
+            borderShapeSelected = IconShape.Circle,
+            liveNestPreviewDelayMs = 500,
+            liveNestScale = 0.65f,
+            liveNestGraceDistancePx = 50,
+            liveNestSnapsToFingerPosition = true,
+            holdAndRunDelayMs = 500,
+            cycleActionsLoopDelayMs = 500, // -1 = No loop
+            cycleActionStageDefaultDelay = 500,
+            liveNestMainNestOpacityPercent = 50
+        )
+    }
+
+}
 
 fun SwipePointSerializable.applyColorAction(): Boolean = (
             action !is SwipeActionSerializable.LaunchApp &&

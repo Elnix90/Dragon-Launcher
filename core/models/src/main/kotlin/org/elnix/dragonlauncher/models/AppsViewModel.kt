@@ -49,9 +49,7 @@ import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
 import org.elnix.dragonlauncher.common.serializables.Workspace
 import org.elnix.dragonlauncher.common.serializables.WorkspaceState
 import org.elnix.dragonlauncher.common.serializables.WorkspaceType
-import org.elnix.dragonlauncher.common.serializables.defaultSwipePointsValues
 import org.elnix.dragonlauncher.common.serializables.defaultWorkspaces
-import org.elnix.dragonlauncher.common.serializables.dummySwipePoint
 import org.elnix.dragonlauncher.common.serializables.resolveApp
 import org.elnix.dragonlauncher.common.serializables.splitCacheKey
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.APPS_TAG
@@ -118,7 +116,7 @@ class AppsViewModel(
     val pointsIconsCache = _pointsIconsCache
 
 
-    private val _defaultPoint = MutableStateFlow(defaultSwipePointsValues)
+    private val _defaultPoint = MutableStateFlow(SwipePointSerializable.defaultSwipePointsValues)
     val defaultPoint = _defaultPoint.asStateFlow()
 
     // Only used for preview, the real user apps getter are using the appsForWorkspace function
@@ -697,7 +695,7 @@ class AppsViewModel(
         // Resolve the effective size in dp:
         // - Use the larger between default size and point override.
         val resolvedSizeDp = max(
-            _defaultPoint.value.size ?: defaultSwipePointsValues.size!!,
+            _defaultPoint.value.size ?: SwipePointSerializable.defaultSwipePointsValues.size!!,
             point.size ?: 0
         )
 
@@ -1131,7 +1129,7 @@ class AppsViewModel(
                     val (packageName, userId) = iconCacheKey.splitCacheKey()
                     override.customIcon?.let { customIcon ->
                         reloadPointIcon(
-                            point = dummySwipePoint(
+                            point = SwipePointSerializable.dummySwipePoint(
                                 SwipeActionSerializable.LaunchApp(packageName, false, userId)
                             ).copy(customIcon = customIcon, id = packageName)
                         )
