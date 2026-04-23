@@ -717,8 +717,11 @@ fun MainAppUi(
     val defaultPoint by SwipeSettingsStore.getDefaultPointFlow(ctx)
         .collectAsState(defaultSwipePointsValues)
 
-
     val pointsIconCache = appsViewModel.pointsIconsCache
+    LaunchedEffect(points.size) {
+        pointsIconCache.updateMaxCacheSize(points.size)
+    }
+
     val drawerIconCache = appsViewModel.drawerIconCache
 
     val colorTestMode by ColorModesSettingsStore.colorTestMode.asState()
