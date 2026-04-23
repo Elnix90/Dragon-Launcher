@@ -52,9 +52,9 @@ fun PermissionsTab(onBack: () -> Unit) {
             Manifest.permission.BIND_APPWIDGET,
         ).let { list ->
             var updatedList = list
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                updatedList = updatedList + Manifest.permission.POST_NOTIFICATIONS
-            }
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//                updatedList = updatedList + Manifest.permission.POST_NOTIFICATIONS
+//            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 updatedList = updatedList + Manifest.permission.SCHEDULE_EXACT_ALARM
             }
@@ -192,11 +192,11 @@ fun PermissionsTab(onBack: () -> Unit) {
             val androidPermissions = listOf(
                 Manifest.permission.QUERY_ALL_PACKAGES,
                 Manifest.permission.BIND_APPWIDGET,
-            ).let { list ->
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    list + Manifest.permission.POST_NOTIFICATIONS
-                } else list
-            }
+//            ).let { list ->
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//                    list + Manifest.permission.POST_NOTIFICATIONS
+//                } else list
+//            }
 
             androidPermissions.forEach { permission ->
                 item {
