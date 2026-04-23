@@ -27,7 +27,6 @@ import org.elnix.dragonlauncher.ui.composition.LocalPoints
 @Composable
 fun rememberSwipeDefaultParams(
     backgroundColor: Color? = null,
-    points: List<SwipePointSerializable>? = null,
     nests: List<CircleNest>? = null,
     defaultPointSerializable: SwipePointSerializable? = null,
     forceShowAllActionsInCurrentNest: Boolean? = null,
@@ -36,7 +35,7 @@ fun rememberSwipeDefaultParams(
     val ctx = LocalContext.current
     val density = LocalDensity.current
 
-    val points = points ?: LocalPoints.current
+    val points = LocalPoints.current
     val defaultPointSettings = LocalDefaultPoint.current
     val nests = nests ?: LocalNests.current
     val icons = LocalPointIconsCache.current
