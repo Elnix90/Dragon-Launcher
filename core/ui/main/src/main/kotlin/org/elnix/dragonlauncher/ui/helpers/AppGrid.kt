@@ -172,10 +172,8 @@ fun AppGrid(
 
         // Can't use categories with multi-select mode cause it's too annoying to implement
         useCategory && openedCategory == null && !isMultiSelectMode -> {
-
-
             LazyVerticalGrid(
-                columns = GridCells.Fixed(appItemSettings.gridSize),
+                columns = GridCells.Fixed(appItemSettings.categorySettings.categoryGridCells),
                 modifier = modifier,
                 state = categoryGridState ?: rememberLazyGridState(),
                 contentPadding = paddingValues,
