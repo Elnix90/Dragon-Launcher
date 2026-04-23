@@ -1,0 +1,11 @@
+3.1.1 (Wither)
+2026-04-23
+[NEW]
+* Preview in points settings of cycle actions and hold and run
+[FIXED]
+* Points icon cache now should update its size when points change size
+* Use proper category call size instead of drawer one in drawer
+* Removed permissions tab, because it is useless
+* Remove post notifications permission (idk why it was here)
+[IMPROVED]
+* Updated java version to 21
