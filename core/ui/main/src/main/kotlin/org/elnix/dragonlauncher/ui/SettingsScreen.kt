@@ -836,7 +836,8 @@ fun SettingsScreen(
                             circles = circles,
                             selectedPoint = selectedPoint,
                             nestId = nestId,
-                            preventBgErasing = true
+                            preventBgErasing = true,
+                            showConfiguratorDecorations = true,
                         )
 
                         /*  Live Nest: semi-transparent target nest preview at the selected point (nest editor only).  */
@@ -863,7 +864,8 @@ fun SettingsScreen(
                                     circles = scaledCircles,
                                     selectedPoint = null,
                                     nestId = nestedNest.id,
-                                    preventBgErasing = true
+                                    preventBgErasing = true,
+                                    showConfiguratorDecorations = true
                                 )
                                 canvas.restore()
                             }
@@ -876,7 +878,8 @@ fun SettingsScreen(
                                 depth = 1,
                                 point = selectedPoint!!,
                                 selected = true,
-                                preventBgErasing = true
+                                preventBgErasing = true,
+                                showConfiguratorDecorations = true
                             )
                         }
 

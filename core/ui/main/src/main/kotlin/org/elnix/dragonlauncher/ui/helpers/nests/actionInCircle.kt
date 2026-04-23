@@ -19,6 +19,7 @@ import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Comp
 import org.elnix.dragonlauncher.common.serializables.applyColorAction
 import org.elnix.dragonlauncher.common.utils.ImageUtils.loadDrawableResAsBitmap
 import org.elnix.dragonlauncher.common.utils.UiCircle
+import org.elnix.dragonlauncher.common.utils.cycleLayerIconCacheKey
 import org.elnix.dragonlauncher.common.utils.resolveShape
 import org.elnix.dragonlauncher.ui.actions.actionColor
 import org.elnix.dragonlauncher.ui.base.cache.SwipeDrawParams
@@ -33,7 +34,9 @@ fun DrawScope.actionsInCircle(
     point: SwipePointSerializable,
     selected: Boolean,
     preventBgErasing: Boolean = false,
-    preventDrawingSubNests: Boolean = false
+    preventDrawingSubNests: Boolean = false,
+    /** Cycle stack + Hold & Run bolt — only in settings / edit previews, not on the home overlay. */
+    showConfiguratorDecorations: Boolean = false,
 ) {
     val ctx = drawParams.ctx
     val nests = drawParams.nests
@@ -171,17 +174,121 @@ fun DrawScope.actionsInCircle(
 
             drawContext.canvas.restore()
 
+//            val colorAction = actionColor(point.action, extraColors)
+//
+//            val icon = icons[point.id]
+//            if (icon != null) {
+//                drawImage(
+//                    image = icon,
+//                    dstOffset = dstOffset,
+//                    dstSize = intSize,
+//                    colorFilter =
+//                        if (point.applyColorAction()) ColorFilter.tint(colorAction)
+//                        else null
+//                )
+//            }
+
             val colorAction = actionColor(point.action, extraColors)
 
-            val icon = icons[point.id]
-            if (icon != null) {
+            val persisted = drawParams.points.find { it.id == point.id } ?: point
+            // Edit dialog passes live [point] state; nest list can lag until save.
+            val modelForCycle = if (showConfiguratorDecorations) point else persisted
+            val cycleStages = modelForCycle.cycleActions
+
+            // 4. Icon — home overlay: single bitmap only. Settings / edit: optional cycle stack + bolt.
+            if (showConfiguratorDecorations && !cycleStages.isNullOrEmpty()) {
+                val n = cycleStages.size
+                val stepPx = (intSize.width * 0.08f).toInt().coerceIn(4, 14)
+                val cacheId = point.id
+                val shadowAlpha = 0.45f
+                val shadowShift = (stepPx / 5).coerceAtLeast(1)
+
+                for (i in n downTo 1) {
+                    val bmp = icons[cycleLayerIconCacheKey(cacheId, i)] ?: continue
+                    val layerAction = cycleStages[i - 1].action
+                    val layerPoint = modelForCycle.copy(action = layerAction)
+                    val layerOffset = dstOffset + IntOffset(i * stepPx * 4, i * stepPx * 2)
+
+                    // 1. Layer shadow
+                    drawImage(
+                        image = bmp,
+                        dstOffset = layerOffset + IntOffset(shadowShift, shadowShift),
+                        dstSize = intSize,
+                        colorFilter = ColorFilter.tint(Color.Black.copy(alpha = shadowAlpha))
+                    )
+
+                    // 2. Layer icon
+                    drawImage(
+                        image = bmp,
+                        dstOffset = layerOffset,
+                        dstSize = intSize,
+                        colorFilter =
+                            if (layerPoint.applyColorAction()) ColorFilter.tint(
+                                actionColor(layerAction, extraColors)
+                            )
+                            else null
+                    )
+                }
+
+                val baseBmp = icons[cycleLayerIconCacheKey(cacheId, 0)] ?: icons[point.id]
+                if (baseBmp != null) {
+                    // 1. Base shadow
+                    drawImage(
+                        image = baseBmp,
+                        dstOffset = dstOffset + IntOffset(shadowShift, shadowShift),
+                        dstSize = intSize,
+                        colorFilter = ColorFilter.tint(Color.Black.copy(alpha = shadowAlpha))
+                    )
+
+                    // 2. Base icon
+                    drawImage(
+                        image = baseBmp,
+                        dstOffset = dstOffset,
+                        dstSize = intSize,
+                        colorFilter =
+                            if (modelForCycle.applyColorAction()) ColorFilter.tint(
+                                actionColor(modelForCycle.action, extraColors)
+                            )
+                            else null
+                    )
+                }
+            } else {
+                val icon = point.id.let { icons[it] }
+                if (icon != null) {
+                    drawImage(
+                        image = icon,
+                        dstOffset = dstOffset,
+                        dstSize = intSize,
+                        colorFilter =
+                            if (point.applyColorAction()) ColorFilter.tint(colorAction)
+                            else null
+                    )
+                }
+            }
+
+            if (showConfiguratorDecorations && point.holdAndRunDelayMs != null) {
+                val iconPx = intSize.width
+                val badgeSize = (iconPx / 3f).toInt().coerceIn(14, 36)
+                val bolt = ctx.loadDrawableResAsBitmap(
+                    R.drawable.ic_hold_and_run_bolt,
+                    badgeSize,
+                    badgeSize
+                )
+                val leftI = px.toInt() - iconPx / 2
+                val topI = py.toInt() - iconPx / 2
+                val boltLeft = leftI + iconPx - badgeSize
+                val boltTop = topI - (badgeSize / 4).coerceAtLeast(1)
+                val shadowDy = (badgeSize / 6).coerceAtLeast(2)
                 drawImage(
-                    image = icon,
-                    dstOffset = dstOffset,
-                    dstSize = intSize,
-                    colorFilter =
-                        if (point.applyColorAction()) ColorFilter.tint(colorAction)
-                        else null
+                    image = bolt,
+                    dstOffset = IntOffset(boltLeft, boltTop + shadowDy),
+                    dstSize = IntSize(badgeSize, badgeSize),
+                    colorFilter = ColorFilter.tint(Color.Black.copy(alpha = 0.42f)),
+                )
+                drawImage(
+                    image = bolt,
+                    dstOffset = IntOffset(boltLeft, boltTop),
+                    dstSize = IntSize(badgeSize, badgeSize)
                 )
             }
 
@@ -215,7 +322,8 @@ fun DrawScope.actionsInCircle(
                         selectedPoint = point,
                         nestId = nest.id,
                         selectedAll = selected,
-                        preventBgErasing = preventBgErasing
+                        preventBgErasing = preventBgErasing,
+                        showConfiguratorDecorations = showConfiguratorDecorations
                     )
                 } ?: drawImage(
                 /**

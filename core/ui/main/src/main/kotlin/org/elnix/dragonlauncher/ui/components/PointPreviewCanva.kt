@@ -56,7 +56,8 @@ fun PointPreviewCanvas(
                 center = Offset(leftX, centerY),
                 depth = 1,
                 drawParams = drawParams,
-                preventBgErasing = true
+                preventBgErasing = true,
+                showConfiguratorDecorations = true,
             )
 
             // Right action
@@ -66,7 +67,8 @@ fun PointPreviewCanvas(
                 center = Offset(rightX, centerY),
                 depth = 1,
                 drawParams = drawParams,
-                preventBgErasing = true
+                preventBgErasing = true,
+                showConfiguratorDecorations = true,
             )
 
             canvas.restore()

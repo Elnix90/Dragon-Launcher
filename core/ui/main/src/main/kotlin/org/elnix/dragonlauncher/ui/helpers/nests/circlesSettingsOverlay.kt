@@ -31,6 +31,8 @@ fun DrawScope.circlesSettingsOverlay(
     selectedAll: Boolean = false,
     preventBgErasing: Boolean = false,
     preventDrawingSubNests: Boolean = false,
+    /** Cycle stack + Hold & Run bolt — only in settings / edit previews, not on the home overlay. */
+    showConfiguratorDecorations: Boolean = false,
 ) {
     val currentNest = drawParams.nests.find { it.id == nestId } ?: return
 
@@ -141,7 +143,8 @@ fun DrawScope.circlesSettingsOverlay(
                 point = drawPoint,
                 selected = selectedAll || (p.id == selectedPoint?.id),
                 preventBgErasing = preventBgErasing,
-                preventDrawingSubNests = preventDrawingSubNests
+                preventDrawingSubNests = preventDrawingSubNests,
+                showConfiguratorDecorations = showConfiguratorDecorations
             )
         }
 
@@ -151,7 +154,8 @@ fun DrawScope.circlesSettingsOverlay(
             point = selectedPoint,
             drawParams = drawParams.copy(showAppPreviewIconCenterStartPosition = false),
             center = center,
-            depth = depth
+            depth = depth,
+            showConfiguratorDecorations = showConfiguratorDecorations
         )
     }
 }
