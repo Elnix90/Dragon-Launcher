@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.ReportProblem
 import androidx.compose.material.icons.filled.Restore
-import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.SelfImprovement
 import androidx.compose.material.icons.filled.SettingsSuggest
 import androidx.compose.material.icons.filled.Update
@@ -187,15 +186,15 @@ fun AdvancedSettingsScreen(
         }
 
         item { TextDivider(stringResource(R.string.advanced)) }
-
-        item {
-            SettingsItem(
-                title = stringResource(R.string.permissions),
-                icon = Icons.Default.Security
-            ) {
-                navController.navigate(SETTINGS.PERMISSIONS)
-            }
-        }
+//
+//        item {
+//            SettingsItem(
+//                title = stringResource(R.string.permissions),
+//                icon = Icons.Default.Security
+//            ) {
+//                navController.navigate(SETTINGS.PERMISSIONS)
+//            }
+//        }
 
         item {
             SettingItemWithExternalOpen(

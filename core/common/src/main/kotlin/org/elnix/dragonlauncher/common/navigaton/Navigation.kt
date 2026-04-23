@@ -12,7 +12,7 @@ object SETTINGS {
     const val STATUS_BAR = "settings/advanced/appearance/status_bar"
     const val THEME = "settings/advanced/appearance/theme"
     const val FONTS = "settings/advanced/appearance/fonts"
-    const val PERMISSIONS = "settings/advanced/permissions"
+//    const val PERMISSIONS = "settings/advanced/permissions"
     const val BEHAVIOR = "settings/advanced/behavior"
     const val COLORS = "settings/advanced/appearance/colors"
     const val DRAWER = "settings/advanced/drawer"

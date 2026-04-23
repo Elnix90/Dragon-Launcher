@@ -184,7 +184,6 @@ import org.elnix.dragonlauncher.ui.settings.debug.LogsViewerScreen
 import org.elnix.dragonlauncher.ui.settings.debug.SettingsDebugTab
 import org.elnix.dragonlauncher.ui.settings.extensions.ExtensionsTab
 import org.elnix.dragonlauncher.ui.settings.language.LanguageTab
-import org.elnix.dragonlauncher.ui.settings.permissions.PermissionsTab
 import org.elnix.dragonlauncher.ui.settings.wellbeing.WellbeingTab
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceDetailScreen
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceListScreen
@@ -919,7 +918,7 @@ fun MainAppUi(
 
                         // All the nested settings screens
                         settingComposable(SETTINGS.APPEARANCE) { AppearanceTab(::popBackToAdvSettingsRoot) }
-                        settingComposable(SETTINGS.PERMISSIONS) { PermissionsTab { popBackToAdvSettingsRoot() } }
+//                        settingComposable(SETTINGS.PERMISSIONS) { PermissionsTab { popBackToAdvSettingsRoot() } }
                         settingComposable(SETTINGS.BEHAVIOR) { BehaviorTab(::popBackToAdvSettingsRoot) }
                         settingComposable(SETTINGS.DRAWER) { DrawerTab(::popBackToAdvSettingsRoot) }
                         settingComposable(SETTINGS.LANGUAGE) { LanguageTab(::popBackToAdvSettingsRoot) }
