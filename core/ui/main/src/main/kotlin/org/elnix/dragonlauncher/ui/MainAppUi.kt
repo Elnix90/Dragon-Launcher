@@ -80,6 +80,7 @@ import org.elnix.dragonlauncher.common.serializables.allShapesWithoutRandom
 import org.elnix.dragonlauncher.common.utils.Constants
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.ANGLE_LINE_TAG
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.APP_LAUNCH_TAG
+import org.elnix.dragonlauncher.common.utils.Constants.Logging.ICONS_TAG
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.NAVIGATION_TAG
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.SHIZUKU_TAG
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.STATUS_BAR_TAG
@@ -719,6 +720,7 @@ fun MainAppUi(
 
     val pointsIconCache = appsViewModel.pointsIconsCache
     LaunchedEffect(points.size) {
+        logD(ICONS_TAG) { "Updating icons cache size to ${points.size}"}
         pointsIconCache.updateMaxCacheSize(points.size)
     }
 

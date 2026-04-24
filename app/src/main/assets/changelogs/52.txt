@@ -1,0 +1,5 @@
+3.1.2 (Wither)
+2026-04-23
+[FIXED]
+* Added logs to points icon cache size
+
