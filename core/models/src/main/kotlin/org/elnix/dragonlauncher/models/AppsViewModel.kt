@@ -15,9 +15,14 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Density
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -77,13 +82,13 @@ import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.settings.stores.WorkspaceSettingsStore
 import org.json.JSONObject
 import org.xmlpull.v1.XmlPullParser
+import javax.inject.Inject
 
 
-class AppsViewModel(
+@HiltViewModel
+class AppsViewModel @Inject constructor(
     application: Application,
-    coroutineScope: CoroutineScope
-) {
-    private val scope = coroutineScope
+) : AndroidViewModel(application) {
 
     private val _apps = MutableStateFlow<List<AppModel>>(emptyList())
     val allApps: StateFlow<List<AppModel>> = _apps.asStateFlow()
@@ -121,7 +126,7 @@ class AppsViewModel(
     // Only used for preview, the real user apps getter are using the appsForWorkspace function
     val userApps: StateFlow<List<AppModel>> = _apps.map { list ->
         list.filter { it.isLaunchable == true && !it.isWorkProfile && !it.isSystem }
-    }.stateIn(scope, SharingStarted.Eagerly, emptyList())
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
 
     private val _selectedIconPack = MutableStateFlow<IconPackInfo?>(null)
@@ -155,7 +160,7 @@ class AppsViewModel(
             )
         }
         .stateIn(
-            scope = scope,
+            scope = viewModelScope,
             started = SharingStarted.Eagerly,
             initialValue = WorkspaceState()
         )
@@ -168,7 +173,7 @@ class AppsViewModel(
     private val _recentlyUsedPackages = MutableStateFlow<List<String>>(emptyList())
 
     init {
-        scope.launch {
+        viewModelScope.launch {
             _selectedWorkspaceId.value = DrawerSettingsStore.lastWorkspaceUsed.get(ctx)
         }
     }
@@ -266,7 +271,7 @@ class AppsViewModel(
                 }
             }
         }.stateIn(
-            scope,
+            viewModelScope,
             SharingStarted.Eagerly,
             emptyList()
         )
@@ -490,7 +495,7 @@ class AppsViewModel(
 
             // Schedule reload (debounced) and wait for it to complete
             scheduledReloadJob?.cancel()
-            scheduledReloadJob = scope.launch {
+            scheduledReloadJob = viewModelScope.launch {
                 delay(300) // short debounce to coalesce multiple triggers
                 reloadMutex.withLock {
                     reloadApps()
@@ -832,7 +837,7 @@ class AppsViewModel(
     fun preloadPointIcons(points: List<SwipePointSerializable>) {
         logI(ICONS_TAG) { "Loading ${points.size} points icons" }
 
-        scope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             points.forEach { p ->
                 iconSemaphore.withPermit {
                     reloadPointIcon(p)
@@ -926,13 +931,13 @@ class AppsViewModel(
      * a certain icon from the pack
      *
      * Doesn't load the actual icons, but their names which is cheaper and faster
-     * the rendering is handled by the UI level IconPickerListDialog  (not accessible in this scope)
+     * the rendering is handled by the UI level IconPickerListDialog  (not accessible in this viewModelScope)
      *
      * @param pack the icon pack from where to load
      */
     fun loadAllIconsMappingsFromPack(pack: IconPackInfo) {
 
-        scope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val cache = iconPackCache.getOrPut(pack.packageName) {
                 loadIconPackMappings(pack.packageName)
             }
@@ -995,7 +1000,7 @@ class AppsViewModel(
 
     fun selectIconPack(pack: IconPackInfo) {
         _selectedIconPack.value = pack
-        scope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             UiSettingsStore.selectedIconPack.set(ctx, pack.packageName)
             reloadApps()
         }
@@ -1011,7 +1016,7 @@ class AppsViewModel(
 
     fun clearIconPack() {
         _selectedIconPack.value = null
-        scope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             UiSettingsStore.selectedIconPack.reset(ctx)
             reloadApps()
         }
@@ -1131,7 +1136,7 @@ class AppsViewModel(
     }
 
 
-    private fun persistWorkspaces() = scope.launch(Dispatchers.IO) {
+    private fun persistWorkspaces() = viewModelScope.launch(Dispatchers.IO) {
 
         logW(WORKSPACES_TAG) { "Persisting the state: ${_workspacesState.value}" }
 
@@ -1144,7 +1149,7 @@ class AppsViewModel(
     fun selectWorkspace(id: String) {
         _selectedWorkspaceId.value = id
 
-        scope.launch {
+        viewModelScope.launch {
             DrawerSettingsStore.lastWorkspaceUsed.set(ctx, id)
         }
     }
@@ -1173,7 +1178,7 @@ class AppsViewModel(
         current.add(0, packageName)
         val trimmed = current.take(maxStored)
         _recentlyUsedPackages.value = trimmed
-        scope.launch {
+        viewModelScope.launch {
             DrawerSettingsStore.recentlyUsedPackages.set(ctx, trimmed.toSet())
         }
     }
@@ -1189,7 +1194,7 @@ class AppsViewModel(
             packages
                 .take(count)
                 .mapNotNull { pkg -> allApps[pkg] }
-        }.stateIn(scope, SharingStarted.Eagerly, emptyList())
+        }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
     }
 
 
@@ -1366,7 +1371,7 @@ class AppsViewModel(
     fun applyIconToApps(
         icon: CustomIconSerializable?
     ) {
-        scope.launch {
+        viewModelScope.launch {
             iconSemaphore.withPermit {
 
                 // Store icon ONCE
@@ -1395,7 +1400,7 @@ class AppsViewModel(
                 else
                     _workspacesState.value.appOverrides + (cacheKey to updated)
         )
-        scope.launch {
+        viewModelScope.launch {
             reloadApps()
         }
         persistWorkspaces()
@@ -1414,7 +1419,7 @@ class AppsViewModel(
                     _workspacesState.value.appOverrides + (cacheKey to updated)
         )
 
-        scope.launch {
+        viewModelScope.launch {
             reloadApps()
         }
         persistWorkspaces()
@@ -1426,7 +1431,7 @@ class AppsViewModel(
             workspaces = defaultWorkspaces
         )
 
-        scope.launch {
+        viewModelScope.launch {
             WorkspaceSettingsStore.resetAll(ctx)
         }
     }

@@ -11,14 +11,10 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.settings.stores.LanguageSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 
 class DragonLauncherApplication : Application() {
-
-    lateinit var appsViewModel: AppsViewModel
-
     val appScope = CoroutineScope(
         SupervisorJob() + Dispatchers.Default
     )
@@ -38,12 +34,6 @@ class DragonLauncherApplication : Application() {
 
             defaultHandler?.uncaughtException(thread, throwable)
         }
-
-
-        appsViewModel = AppsViewModel(
-            application = this,
-            coroutineScope = appScope
-        )
 
         CoroutineScope(Dispatchers.Default).launch {
 

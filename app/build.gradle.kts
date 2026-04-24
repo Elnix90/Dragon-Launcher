@@ -8,6 +8,8 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
 }
 
 
@@ -184,6 +186,9 @@ dependencies {
     implementation(libs.androidx.navigation.runtime)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.compose.runtime)
+    implementation(libs.hilt.android)
+
+    ksp(libs.hilt.compiler)
 
     runtimeOnly(libs.android.image.cropper)
 

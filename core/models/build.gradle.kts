@@ -3,6 +3,8 @@ import com.android.build.api.dsl.LibraryExtension
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
 }
 
 kotlin {
@@ -56,6 +58,8 @@ dependencies {
     implementation(libs.androidx.compose.ui.unit)
     implementation(libs.androidx.core)
     implementation(libs.kotlinx.serialization.core)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
     api(libs.kotlinx.coroutines.core)
 

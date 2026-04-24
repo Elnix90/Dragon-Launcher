@@ -1,8 +1,9 @@
-package org.elnix.dragonlauncher
+package org.elnix.dragonlauncher.reveiver
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import org.elnix.dragonlauncher.activity.MainActivity
 
 
 /**

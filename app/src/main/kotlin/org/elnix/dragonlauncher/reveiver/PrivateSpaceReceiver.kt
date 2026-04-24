@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher
+package org.elnix.dragonlauncher.reveiver
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -7,11 +7,13 @@ import android.os.Build
 import android.os.UserHandle
 import androidx.annotation.RequiresApi
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.DragonLauncherApplication
+import org.elnix.dragonlauncher.common.utils.Constants.Logging.PRIVATE_SPACE_TAG
+import org.elnix.dragonlauncher.common.utils.PrivateSpaceUtils
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logI
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.PRIVATE_SPACE_TAG
-import org.elnix.dragonlauncher.common.utils.PrivateSpaceUtils
+import org.elnix.dragonlauncher.models.AppsViewModel
 
 /**
  * BroadcastReceiver to listen for Private Space lock/unlock events (Android 15+).
@@ -21,7 +23,9 @@ import org.elnix.dragonlauncher.common.utils.PrivateSpaceUtils
  * - ACTION_PROFILE_UNAVAILABLE: Private Space is locked
  */
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
-class PrivateSpaceReceiver : BroadcastReceiver() {
+class PrivateSpaceReceiver(
+    private val appsViewModel: AppsViewModel
+) : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context == null || intent == null) return
@@ -52,7 +56,7 @@ class PrivateSpaceReceiver : BroadcastReceiver() {
                 }
 
                 logI(PRIVATE_SPACE_TAG) { "Private Space action=$action, reloading apps" }
-                app.appsViewModel.unlockAndReloadPrivateSpace()
+                appsViewModel.unlockAndReloadPrivateSpace()
             } catch (e: Exception) {
                 logE(PRIVATE_SPACE_TAG, e) { "Failed to process Private Space broadcast" }
             } finally {

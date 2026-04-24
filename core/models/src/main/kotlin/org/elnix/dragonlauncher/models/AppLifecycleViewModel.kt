@@ -2,13 +2,18 @@ package org.elnix.dragonlauncher.models
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import javax.inject.Inject
 
-class AppLifecycleViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class AppLifecycleViewModel @Inject constructor(
+    application: Application
+) : AndroidViewModel(application) {
 
 
     /** ───────────── Tracks the home events ─────────────*/

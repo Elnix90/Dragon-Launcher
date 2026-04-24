@@ -8,10 +8,6 @@ import org.elnix.dragonlauncher.common.utils.Constants.Logging.SWIPE_TAG
 import org.elnix.dragonlauncher.common.utils.DataADBCommands
 import org.elnix.dragonlauncher.common.utils.WifiADBCommands
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.logging.logV
-import java.util.UUID
-
-
 
 
 /**
@@ -140,10 +136,6 @@ object SwipeJson {
             jsonConfig
                 .decodeFromString<List<SwipePointSerializable>>(json)
                 .takeIf { it.isNotEmpty() }
-                .also {
-                    logV(SWIPE_TAG) { "Decoded points value:\n$it" }
-                }
-
                 // If empty, but no errors reported, try the old method anyway
                 ?: LegacySwipeJson.decodePoints(json)
 

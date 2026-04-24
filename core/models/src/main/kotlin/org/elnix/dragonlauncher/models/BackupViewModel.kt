@@ -1,10 +1,13 @@
 package org.elnix.dragonlauncher.models
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
-class BackupViewModel : ViewModel() {
+@HiltViewModel
+class BackupViewModel @Inject constructor() : ViewModel() {
     private val _result = MutableStateFlow<BackupResult?>(null)
     val result = _result.asStateFlow()
 

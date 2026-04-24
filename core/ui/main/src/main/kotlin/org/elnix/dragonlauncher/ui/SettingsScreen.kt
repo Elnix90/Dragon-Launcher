@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -532,41 +533,10 @@ fun SettingsScreen(
     }
 
     // Load points & nests
-    LaunchedEffect(Unit, showResetPointsAndNestsDialog) {
-        val savedPoints = SwipeSettingsStore.getPoints(ctx)
-        points.clear()
-        try {
-            points.addAll(savedPoints)
-        } catch (e: NullPointerException) {
-            logE(SWIPE_TAG, e) { "NullPointerException loading swipe points" }
-            ctx.showToast("NullPointerException loading swipe points: $e")
-
-            // Fallback load them the old way
-            try {
-                savedPoints.forEach {
-                    @Suppress("USELESS_ELVIS")
-                    points.add(
-                        it.copy(
-                            action = it.action
-                                ?: SwipeActionSerializable.OpenDragonLauncherSettings()
-                        )
-                    )
-                }
-            } catch (e: Exception) {
-                logE(SWIPE_TAG, e) { "Fallback loading also failed, clearing all points: $e" }
-            }
-        } catch (e: Exception) {
-            logE(SWIPE_TAG, e) { "Error loading swipe points: $e" }
-            ctx.showToast("Error loading swipe points: $e")
-        }
-
-        val savedNests = SwipeSettingsStore.getNests(ctx)
-        nests.clear()
-        try {
-            nests.addAll(savedNests)
-        } catch (e: Exception) {
-            logE(SWIPE_TAG, e) { "Error loading nests: $e" }
-            ctx.showToast("Error loading swipe points: $e")
+    LaunchedEffect(showResetPointsAndNestsDialog) {
+        if (!showResetPointsAndNestsDialog) {
+            loadLivePointsList(ctx, points)
+            loadNestsList(ctx, nests)
         }
     }
 
@@ -1802,6 +1772,52 @@ fun SettingsScreen(
 
             selectedPoint?.let { Text(it.toString()) }
         }
+    }
+}
+
+private suspend fun loadNestsList(
+    ctx: Context,
+    nests: SnapshotStateList<CircleNest>
+) {
+    val savedNests = SwipeSettingsStore.getNests(ctx)
+    nests.clear()
+    try {
+        nests.addAll(savedNests)
+    } catch (e: Exception) {
+        logE(SWIPE_TAG, e) { "Error loading nests: $e" }
+        ctx.showToast("Error loading swipe points: $e")
+    }
+}
+
+private suspend fun loadLivePointsList(
+    ctx: Context,
+    points: SnapshotStateList<SwipePointSerializable>
+) {
+    val savedPoints = SwipeSettingsStore.getPoints(ctx)
+    points.clear()
+    try {
+        points.addAll(savedPoints)
+    } catch (e: NullPointerException) {
+        logE(SWIPE_TAG, e) { "NullPointerException loading swipe points" }
+        ctx.showToast("NullPointerException loading swipe points: $e")
+
+        // Fallback load them the old way
+        try {
+            savedPoints.forEach {
+                @Suppress("USELESS_ELVIS")
+                points.add(
+                    it.copy(
+                        action = it.action
+                            ?: SwipeActionSerializable.OpenDragonLauncherSettings()
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            logE(SWIPE_TAG, e) { "Fallback loading also failed, clearing all points: $e" }
+        }
+    } catch (e: Exception) {
+        logE(SWIPE_TAG, e) { "Error loading swipe points: $e" }
+        ctx.showToast("Error loading swipe points: $e")
     }
 }
 

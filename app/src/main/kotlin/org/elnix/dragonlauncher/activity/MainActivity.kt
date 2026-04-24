@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher
+package org.elnix.dragonlauncher.activity
 
 import android.annotation.SuppressLint
 import android.appwidget.AppWidgetHost
@@ -23,7 +23,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
@@ -60,18 +59,19 @@ import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel
+import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.models.DragonLogViewModel
 import org.elnix.dragonlauncher.models.FloatingAppsViewModel
 import org.elnix.dragonlauncher.models.ShizukuViewModel
+import org.elnix.dragonlauncher.reveiver.BootReceiver
+import org.elnix.dragonlauncher.reveiver.FontReceiver
 import org.elnix.dragonlauncher.settings.SettingsBackupManager
 import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
-import org.elnix.dragonlauncher.shizuku.ShellCommandExecutor
-import org.elnix.dragonlauncher.shizuku.ShizukuPermissionHandler
 import org.elnix.dragonlauncher.theme.DragonLauncherTheme
 import org.elnix.dragonlauncher.ui.MainAppUi
 import org.elnix.dragonlauncher.ui.base.asState
@@ -93,6 +93,10 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
     private val backupViewModel: BackupViewModel by viewModels()
     private val floatingAppsViewModel: FloatingAppsViewModel by viewModels()
     private val dragonLogViewModel: DragonLogViewModel by viewModels()
+
+    private val shizukuViewModel: ShizukuViewModel by viewModels()
+
+    private val appsViewModel: AppsViewModel by viewModels()
 
     private var navControllerHolder = mutableStateOf<NavHostController?>(null)
 
@@ -290,7 +294,9 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
         widgetHolder.deleteAppWidgetId(widgetId)
     }
 
-    private val packageReceiver = PackageReceiver()
+    private val packageReceiver: PackageReceiver by lazy {
+        PackageReceiver(appsViewModel)
+    }
     private val fontsReceiver = FontReceiver()
     private val bootReceiver = BootReceiver()
     private val filter = IntentFilter().apply {
@@ -340,12 +346,13 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
 
         // Force launch of full viewmodel after first frame for performance
         // This avoids layout & loading overlap
-        lifecycleScope.launch(Dispatchers.Main) {
+        lifecycleScope.launch(Dispatchers.Default) {
             yield() // Wait for first frame
             logI(STARTUP_TAG) {
                 "First frame rendered in ${System.currentTimeMillis() - startTime}ms. Starting AppsViewModel.loadAll()."
             }
-            (applicationContext as DragonLauncherApplication).appsViewModel.loadAll()
+            appsViewModel.loadAll()
+//            (applicationContext as DragonLauncherApplication).appsViewModel.loadAll()
             logI(STARTUP_TAG) {
                 "AppsViewModel.loadAll() finished at ${System.currentTimeMillis() - startTime}ms total."
             }
@@ -390,17 +397,6 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
 
                     val lifecycleOwner = LocalLifecycleOwner.current
 
-                    val appsViewModel = remember(ctx) {
-                        (ctx.applicationContext as DragonLauncherApplication).appsViewModel
-                    }
-
-                    val shizukuViewModel = remember(ctx) {
-                        ShizukuViewModel(
-                            shellCommandExecutor = ShellCommandExecutor(),
-                            shizukuPermissionHandler = ShizukuPermissionHandler(),
-                            coroutineScope = scope
-                        )
-                    }
 
                     // May be used in the future for some quit action / operation
                     // DoubleBackToExit()

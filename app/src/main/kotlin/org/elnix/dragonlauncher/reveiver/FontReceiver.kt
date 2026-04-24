@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher
+package org.elnix.dragonlauncher.reveiver
 
 import android.content.BroadcastReceiver
 import android.content.Context

@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher
+package org.elnix.dragonlauncher.activity
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -10,13 +10,17 @@ import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.BROADCAST_TAG
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.TAG
+import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 
-class PackageReceiver : BroadcastReceiver() {
+class PackageReceiver(
+    private val appsViewModel: AppsViewModel
+) : BroadcastReceiver() {
 
     companion object {
         const val CHANNEL_IPS = "ips_regeneration"
@@ -42,9 +46,8 @@ class PackageReceiver : BroadcastReceiver() {
             logI(BROADCAST_TAG) { "Got intent: $intent, action! $action, pkg: $packageName" }
             if (packageName != context.packageName) {
                 try {
-                    val app = context.applicationContext as DragonLauncherApplication
                     scope.launch {
-                        app.appsViewModel.reloadApps()
+                        appsViewModel.reloadApps()
 
                         // If a new app is added and the user uses an IPS exported icon pack,
                         // suggest regenerating the pack in Icon Pack Studio.
@@ -89,14 +92,14 @@ class PackageReceiver : BroadcastReceiver() {
                 )
 
                 val notification = NotificationCompat.Builder(ctx, CHANNEL_IPS)
-                    .setSmallIcon(org.elnix.dragonlauncher.common.R.mipmap.ic_launcher_foreground)
+                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setContentTitle("New app installed")
                     .setContentText("Refresh your Icon Pack Studio icons to include this app.")
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setAutoCancel(true)
                     .setContentIntent(pendingIntent)
                     .addAction(
-                        org.elnix.dragonlauncher.common.R.mipmap.ic_launcher_foreground,
+                        R.mipmap.ic_launcher_foreground,
                         "Open Icon Pack Studio",
                         pendingIntent
                     )

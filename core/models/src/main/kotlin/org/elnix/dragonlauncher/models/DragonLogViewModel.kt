@@ -5,6 +5,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,8 +18,10 @@ import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.ConcurrentLinkedQueue
+import javax.inject.Inject
 
-class DragonLogViewModel(
+@HiltViewModel
+class DragonLogViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 

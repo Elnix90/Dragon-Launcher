@@ -1,6 +1,9 @@
 package org.elnix.dragonlauncher.models
 
-import kotlinx.coroutines.CoroutineScope
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -8,13 +11,16 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.shizuku.OutputLine
 import org.elnix.dragonlauncher.shizuku.ShellCommandExecutor
 import org.elnix.dragonlauncher.shizuku.ShizukuPermissionHandler
+import javax.inject.Inject
 
-class ShizukuViewModel(
-    private val shellCommandExecutor: ShellCommandExecutor,
-    private val shizukuPermissionHandler: ShizukuPermissionHandler,
-    private val coroutineScope: CoroutineScope
 
-) {
+@HiltViewModel
+class ShizukuViewModel @Inject constructor(
+    application: Application
+) : AndroidViewModel(application) {
+    private val shellCommandExecutor = ShellCommandExecutor()
+    private val shizukuPermissionHandler = ShizukuPermissionHandler()
+
 
     private val _output = MutableStateFlow<OutputLine?>(null)
     val outputValue = _output.asStateFlow()
@@ -40,7 +46,7 @@ class ShizukuViewModel(
     }
 
     fun executeShizukuCommand(command: String) {
-        coroutineScope.launch {
+        viewModelScope.launch {
             shellCommandExecutor.runShizuku(command)
                 .collect { outputLine ->
                     _output.value = outputLine

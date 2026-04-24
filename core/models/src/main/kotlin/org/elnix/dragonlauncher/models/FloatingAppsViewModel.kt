@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProviderInfo
 import android.util.DisplayMetrics
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -19,9 +20,11 @@ import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.settings.stores.LegacyFloatingAppsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.settings.stores.WidgetsSettingsStore
+import javax.inject.Inject
 import kotlin.random.Random
 
-class FloatingAppsViewModel(
+@HiltViewModel
+class FloatingAppsViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 

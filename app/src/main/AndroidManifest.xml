@@ -86,7 +86,7 @@
         tools:targetApi="33">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:enableOnBackInvokedCallback="true"
             android:exported="true"
             android:launchMode="singleTask"
@@ -109,7 +109,7 @@
 
         <!-- Pinned Shortcuts: Receives pin shortcut requests from other apps -->
         <activity
-            android:name=".PinnedShortcutActivity"
+            android:name=".activity.PinnedShortcutActivity"
             android:enableOnBackInvokedCallback="true"
             android:excludeFromRecents="true"
             android:exported="true"
@@ -142,7 +142,7 @@
 
 
         <activity
-            android:name="org.elnix.dragonlauncher.PrivateSpaceUnlockActivity"
+            android:name="org.elnix.dragonlauncher.activity.PrivateSpaceUnlockActivity"
             android:exported="false"
             android:theme="@style/DragonLauncherTheme" />
 
@@ -202,7 +202,7 @@
 
 
         <receiver
-            android:name=".BootReceiver"
+            android:name=".reveiver.BootReceiver"
             android:exported="true">
             <intent-filter android:priority="999">
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -211,7 +211,7 @@
         </receiver>
 
         <receiver
-            android:name=".PackageReceiver"
+            android:name=".activity.PackageReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter android:priority="1000">
@@ -228,7 +228,7 @@
 
         <!-- Private Space receiver for Android 15+ -->
         <receiver
-            android:name=".PrivateSpaceReceiver"
+            android:name=".reveiver.PrivateSpaceReceiver"
             android:enabled="true"
             android:exported="false"
             tools:targetApi="35">

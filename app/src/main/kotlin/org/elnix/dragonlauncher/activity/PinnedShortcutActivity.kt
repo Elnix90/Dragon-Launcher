@@ -1,10 +1,11 @@
-package org.elnix.dragonlauncher
+package org.elnix.dragonlauncher.activity
 
 import android.content.pm.LauncherApps
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logW
@@ -63,7 +64,7 @@ class PinnedShortcutActivity : ComponentActivity() {
         val accepted = request.accept()
         if (!accepted) {
             logW(PINNED_SHORTCUTS) { "Failed to accept pin request for $packageName / $shortcutId" }
-            showToast(getString(org.elnix.dragonlauncher.common.R.string.pinned_shortcut_failed))
+            showToast(getString(R.string.pinned_shortcut_failed))
             finish()
             return
         }
@@ -86,7 +87,7 @@ class PinnedShortcutActivity : ComponentActivity() {
                 if (alreadyExists) {
                     showToast(
                         getString(
-                            org.elnix.dragonlauncher.common.R.string.pinned_shortcut_already_exists,
+                            R.string.pinned_shortcut_already_exists,
                             shortLabel
                         )
                     )
@@ -112,13 +113,13 @@ class PinnedShortcutActivity : ComponentActivity() {
                 logD(PINNED_SHORTCUTS) { "Shortcut added as point: $shortLabel at $angle°" }
                 showToast(
                     getString(
-                        org.elnix.dragonlauncher.common.R.string.pinned_shortcut_added,
+                        R.string.pinned_shortcut_added,
                         shortLabel
                     )
                 )
             } catch (e: Exception) {
                 logE(PINNED_SHORTCUTS, e) { "Failed to save pinned shortcut" }
-                showToast(getString(org.elnix.dragonlauncher.common.R.string.pinned_shortcut_failed))
+                showToast(getString(R.string.pinned_shortcut_failed))
             }
 
             finish()
