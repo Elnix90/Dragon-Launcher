@@ -60,7 +60,7 @@ class IconsCache<T>(initialMaxSize: Int) {
             logD(ICONS_TAG) { "Successfully retrieved icon for $id, cacheUUID: $cacheUUID without computing!" }
         } else {
             compute()
-            logW(ICONS_TAG) { "Failed to get icon for $id. Computing it lazily\ncacheUUID: $cacheUUID; type: ${icons.keys.firstOrNull()?.let { it::class.simpleName}}\nmaxSize: $maxSize, size: $size\n Cached keys: ${icons.keys.toList()}" }
+            logW(ICONS_TAG) { "Failed to get icon for $id. Computing it lazily\ncacheUUID: $cacheUUID\nmaxSize: $maxSize, size: $size" }
         }
         return result
     }
