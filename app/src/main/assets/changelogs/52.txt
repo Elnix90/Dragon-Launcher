@@ -1,5 +1,8 @@
 3.1.2 (Wither)
-2026-04-23
+2026-04-24
 [FIXED]
 * Added logs to points icon cache size
-
+* Removed cache access while loading to avoid concurrency errors
+* Replaced some usages of get by a getOrLazy compute point, to make that recomputed when missing
+* Relocate all viewModels into mainActivity, and migrated them to hilt
+* Updated all dependencies, hopefully it doesn't break anything
