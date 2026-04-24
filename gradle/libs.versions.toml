@@ -1,8 +1,7 @@
 [versions]
-agp = "9.1.0"
+agp = "9.1.1"
 androidImageCropper = "4.7.0"
-animation = "1.11.0-rc01"
-animationCore = "1.11.0-rc01"
+animation = "1.11.0"
 annotation = "1.10.0"
 collection = "1.6.0"
 datastorePreferencesCore = "1.2.1"
@@ -16,31 +15,31 @@ kotlinxSerializationCore = "1.11.0"
 lazycolumnscrollbar = "2.2.0"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
-composeBom = "2026.03.01"
+composeBom = "2026.04.01"
 material = "1.13.0"
-material3 = "1.5.0-alpha17"
+material3 = "1.5.0-alpha18"
 materialIconsCore = "1.7.8"
-navigationCompose = "2.9.7"
-reorderable = "3.0.0"
-runtimeAnnotation = "1.11.0-rc01"
-runtimeRetain = "1.11.0-rc01"
-runtimeSaveable = "1.11.0-rc01"
+navigationCompose = "2.9.8"
+reorderable = "3.1.0"
+runtimeAnnotation = "1.11.0"
+runtimeRetain = "1.11.0"
+runtimeSaveable = "1.11.0"
 transition = "1.7.0"
-ui = "1.10.6"
-uiGraphics = "1.10.6"
-foundationLayout = "1.10.6"
+ui = "1.11.0"
+uiGraphics = "1.11.0"
+foundationLayout = "1.11.0"
 datastore = "1.2.1"
 appcompat = "1.7.1"
 biometric = "1.1.0"
 timber = "5.0.1"
-runtime = "1.10.6"
+runtime = "1.11.0"
 kotlinx-serialization = "1.11.0"
 shapeindicators = "2.1.0"
-#noinspection NewerVersionAvailable
+#noinspection NewerVersionAvailable - Don't touch that working version, the next one is a mess to configure
 shizuku = "13.1.0"
-uiText = "1.11.0-rc01"
-uiUnit = "1.11.0-rc01"
-uiUtil = "1.11.0-rc01"
+uiText = "1.11.0"
+uiUnit = "1.11.0"
+uiUtil = "1.11.0"
 ksp = "2.3.4"
 
 [libraries]
@@ -49,7 +48,7 @@ androidx-activity = { module = "androidx.activity:activity", version.ref = "acti
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
 androidx-collection = { module = "androidx.collection:collection", version.ref = "collection" }
 androidx-compose-animation = { module = "androidx.compose.animation:animation", version.ref = "animation" }
-androidx-compose-animation-core = { module = "androidx.compose.animation:animation-core", version.ref = "animationCore" }
+androidx-compose-animation-core = { module = "androidx.compose.animation:animation-core", version.ref = "animation" }
 androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "materialIconsCore" }
 androidx-compose-runtime-annotation = { module = "androidx.compose.runtime:runtime-annotation", version.ref = "runtimeAnnotation" }
 androidx-compose-runtime-retain = { module = "androidx.compose.runtime:runtime-retain", version.ref = "runtimeRetain" }
