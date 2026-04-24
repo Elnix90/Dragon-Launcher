@@ -64,7 +64,7 @@ fun StatusBarNotifications(
     if (packageNames.isEmpty()) return
 
     val notificationsIcons = packageNames.take(maxIcons).map {
-        it to icons.get(dummyAppModel(it).iconCacheKey)
+        it to icons[dummyAppModel(it).iconCacheKey]
     }
 
     val showMoreNotificationsIcon = packageNames.size > maxIcons

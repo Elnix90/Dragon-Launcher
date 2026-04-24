@@ -266,10 +266,7 @@ fun SettingsScreen(
 
 
     fun reloadIcons() {
-        appsViewModel.preloadPointIcons(
-            points = points,
-            overwrite = true
-        )
+        appsViewModel.preloadPointIcons(points)
     }
 
     val undoRedo = remember { UndoRedoManager() }
@@ -734,10 +731,7 @@ fun SettingsScreen(
                                 BurgerAction(
                                     onClick = {
                                         showBurgerMenu = false
-                                        appsViewModel.preloadPointIcons(
-                                            points = points,
-                                            overwrite = true
-                                        )
+                                        appsViewModel.preloadPointIcons(points)
                                     }
                                 ) {
                                     Icon(

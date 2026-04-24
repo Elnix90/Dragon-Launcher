@@ -17,6 +17,7 @@ import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.cache.DrawPathCache
 import org.elnix.dragonlauncher.ui.base.cache.SwipeDrawParams
+import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.composition.LocalNests
@@ -34,6 +35,8 @@ fun rememberSwipeDefaultParams(
 ): SwipeDrawParams {
     val ctx = LocalContext.current
     val density = LocalDensity.current
+
+    val appsViewModel = LocalAppsViewModel.current
 
     val points = LocalPoints.current
     val defaultPointSettings = LocalDefaultPoint.current
@@ -106,7 +109,10 @@ fun rememberSwipeDefaultParams(
             showAppLaunchPreview = showAppLaunchPreview,
             showAllActionsOnCurrentCircle = showAllActionsOnCurrentCircle,
             showAllActionsOnCurrentNest  = showAllActionsInCurrentNest,
-            showAppPreviewIconCenterStartPosition = effectiveShowAppPreviewIconCenterStartPosition
+            showAppPreviewIconCenterStartPosition = effectiveShowAppPreviewIconCenterStartPosition,
+            computeIcon = {
+                appsViewModel.reloadPointIcon(it)
+            }
         )
     }
 }

@@ -406,10 +406,7 @@ class AppsViewModel(
             logI(ICONS_TAG) { "Updated point-icons size; now = ${points.size}" }
 
 
-            preloadPointIcons(
-                points = points,
-                overwrite = true,
-            )
+            preloadPointIcons(points)
 
             logI(APPS_TAG) {
                 "Reloaded packages, ${apps.filter { it.isLaunchable == true }.size} launchable apps, ${apps.size} total apps"
@@ -831,20 +828,12 @@ class AppsViewModel(
      * Preload a given list of point icons asynchronously and per icon updates the icons list
      *
      * @param points which points to load
-     * @param overwrite whether to override the existing already loaded or skip them
      */
-    fun preloadPointIcons(
-        points: List<SwipePointSerializable>,
-        overwrite: Boolean = false
-    ) {
-        logI(ICONS_TAG) { "Loading ${points.size} points icons, using overwrite: $overwrite" }
+    fun preloadPointIcons(points: List<SwipePointSerializable>) {
+        logI(ICONS_TAG) { "Loading ${points.size} points icons" }
 
         scope.launch(Dispatchers.IO) {
             points.forEach { p ->
-                @Suppress("USELESS_ELVIS")
-                val id = p.id ?: return@forEach // Cause it crashed someone's app after corrupted loading
-                if (_pointsIconsCache[id] != null && !overwrite) return@forEach
-
                 iconSemaphore.withPermit {
                     reloadPointIcon(p)
                 }

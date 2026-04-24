@@ -218,7 +218,9 @@ fun DrawScope.actionsInCircle(
 
 
             // The actual app icon
-            val icon = icons[point.id]
+            val icon = icons.getOrLazyCompute(point.id) {
+                drawParams.computeIcon(point)
+            }
             if (icon != null) {
                 val colorAction = actionColor(point.action, extraColors)
                 drawImage(

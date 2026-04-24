@@ -101,7 +101,7 @@ fun LazyListScope.iconPackListContent(
             val packPkg = pack.packageName
             val packCacheKey = dummyAppModel(packPkg).iconCacheKey
 
-            val packIcon = icons.get(packCacheKey)
+            val packIcon = icons[packCacheKey]
 
             Box(
                 Modifier.size(40.dp),

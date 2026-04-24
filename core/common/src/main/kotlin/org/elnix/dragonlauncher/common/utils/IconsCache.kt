@@ -40,6 +40,14 @@ class IconsCache<T>(initialMaxSize: Int) {
         }
     )
 
+    /**
+     * Get or compute, used in the [ImageUtils] object, to directly compute the icon when it is not in the cache.
+     * It's the most direct method, as if the icon isn't found in the list, it is updated real time
+     *
+     * @param id the icon it of type [T]
+     * @param compute the function block used to compute the icon, it returns [ImageBitmap]
+     * @return [ImageBitmap] the actual icon, not null
+     */
     fun getOrCompute(
         id: T,
         compute: () -> ImageBitmap
@@ -51,6 +59,14 @@ class IconsCache<T>(initialMaxSize: Int) {
             }
         }
 
+    /**
+     * Get or lazy compute, used in the `AppPreviewTitle` Composable, to delegate computing to the viewmodel,
+     * when it can't directly load the icon, with the scope it has
+     *
+     * @param id the icon it of type [T]
+     * @param compute the function block used to compute the icon, it returns [ImageBitmap]
+     * @return [ImageBitmap] the actual icon, not null
+     */
     fun getOrLazyCompute(
         id: T,
         compute: () -> Unit
@@ -66,7 +82,7 @@ class IconsCache<T>(initialMaxSize: Int) {
     }
 
 
-
+    /*** Compute simply a new icon, don't return it */
     fun compute(id: T, compute:  () -> ImageBitmap) {
         _iconsTrigger.update { it + 1 }
 

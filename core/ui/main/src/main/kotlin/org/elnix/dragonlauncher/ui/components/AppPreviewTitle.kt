@@ -34,6 +34,7 @@ import org.elnix.dragonlauncher.common.serializables.applyColorAction
 import org.elnix.dragonlauncher.common.utils.resolveShape
 import org.elnix.dragonlauncher.ui.actions.actionColor
 import org.elnix.dragonlauncher.ui.actions.actionLabel
+import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.composition.LocalPointIconsCache
 
@@ -49,6 +50,7 @@ fun AppPreviewTitle(
 ) {
     if (point == null) return
 
+    val appsViewModel = LocalAppsViewModel.current
     val extraColors = LocalExtraColors.current
     val icons = LocalPointIconsCache.current
     val iconShape = LocalIconShape.current
@@ -97,9 +99,11 @@ fun AppPreviewTitle(
 
                 if (showIcon) {
 
-                    icons[point.id]?.let {
+                    icons.getOrLazyCompute(point.id) {
+                        appsViewModel.reloadPointIcon(point)
+                    }?.let { icon ->
                         Image(
-                            bitmap = it,
+                            bitmap = icon,
                             contentDescription = null,
                             colorFilter =
                                 if (point.applyColorAction()) ColorFilter.tint(colorAction)
