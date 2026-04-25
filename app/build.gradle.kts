@@ -39,8 +39,8 @@ extensions.configure<ApplicationExtension> {
         applicationId = "org.elnix.dragonlauncher"
         minSdk = 26
         targetSdk = 36
-        versionName = "3.1.2 (Wither)"
-        versionCode = 52
+        versionName = "3.1.3 (Wither)"
+        versionCode = 53
     }
 
     lint {
