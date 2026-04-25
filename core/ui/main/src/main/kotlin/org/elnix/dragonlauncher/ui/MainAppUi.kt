@@ -212,20 +212,6 @@ fun MainAppUi(
     val shizukuViewModel = LocalShizukuViewModel.current
     val shizukuOutput by shizukuViewModel.outputValue.collectAsState()
 
-    val notificationLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (!isGranted) {
-            logW(TAG) { "Notification permission denied" }
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }
-    }
-
     val result by backupViewModel.result.collectAsState()
 
     val privateSpaceState = appsViewModel.privateSpaceState
