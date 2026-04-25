@@ -94,10 +94,9 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
     private val backupViewModel: BackupViewModel by viewModels()
     private val floatingAppsViewModel: FloatingAppsViewModel by viewModels()
     private val dragonLogViewModel: DragonLogViewModel by viewModels()
-
     private val shizukuViewModel: ShizukuViewModel by viewModels()
-
     private val appsViewModel: AppsViewModel by viewModels()
+
 
     private var navControllerHolder = mutableStateOf<NavHostController?>(null)
 
@@ -344,32 +343,6 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
 
         appWidgetHost.startListening()
 
-        // Force launch of full viewmodel after first frame for performance
-        // This avoids layout & loading overlap
-        lifecycleScope.launch(Dispatchers.Default) {
-            yield() // Wait for first frame
-            logI(STARTUP_TAG) {
-                "First frame rendered in ${System.currentTimeMillis() - startTime}ms. Starting AppsViewModel.loadAll()."
-            }
-            appsViewModel.loadAll()
-//            (applicationContext as DragonLauncherApplication).appsViewModel.loadAll()
-            logI(STARTUP_TAG) {
-                "AppsViewModel.loadAll() finished at ${System.currentTimeMillis() - startTime}ms total."
-            }
-
-
-            // All stores excepted the non-backupable ones, cause they trigger updates constantly (e.g., last backup time)
-            backupableStores.forEach { (_, store) ->
-                store.onAnySettingChanged = {
-                    // Schedule backup using the Settings backup manager
-                    lifecycleScope.launch {
-                        SettingsBackupManager.triggerBackup(this@MainActivity)
-                    }
-                }
-            }
-        }
-
-
         var lastStackTrace by mutableStateOf(runBlocking {
             PrivateSettingsStore.lastCrashStackTrace.getOrNull(this@MainActivity)
         })
@@ -390,7 +363,37 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
 
             if (lastStackTrace.isNullOrBlank()) {
 
+//                val appsViewModel: AppsViewModel = hiltViewModel()
+////                appLifecycleViewModel = hiltViewModel()
+////                appLifecycleViewModel = hiltViewModel()
+
                 DragonLauncherTheme {
+
+                    // Force launch of full viewmodel after first frame for performance
+                    // This avoids layout & loading overlap
+                    LaunchedEffect(Unit) {
+                        lifecycleScope.launch(Dispatchers.Default) {
+                            yield() // Wait for first frame
+                            logI(STARTUP_TAG) {
+                                "First frame rendered in ${System.currentTimeMillis() - startTime}ms. Starting AppsViewModel.loadAll()."
+                            }
+                            appsViewModel.loadAll()
+                            logI(STARTUP_TAG) {
+                                "AppsViewModel.loadAll() finished at ${System.currentTimeMillis() - startTime}ms total."
+                            }
+
+
+                            // All stores excepted the non-backupable ones, cause they trigger updates constantly (e.g., last backup time)
+                            backupableStores.forEach { (_, store) ->
+                                store.onAnySettingChanged = {
+                                    // Schedule backup using the Settings backup manager
+                                    lifecycleScope.launch {
+                                        SettingsBackupManager.triggerBackup(this@MainActivity)
+                                    }
+                                }
+                            }
+                        }
+                    }
 
                     val navController = rememberNavController()
                     navControllerHolder.value = navController
