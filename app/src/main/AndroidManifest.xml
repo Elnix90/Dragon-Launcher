@@ -211,7 +211,7 @@
         </receiver>
 
         <receiver
-            android:name=".activity.PackageReceiver"
+            android:name=".reveiver.PackageReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter android:priority="1000">

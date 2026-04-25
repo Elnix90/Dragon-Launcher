@@ -66,6 +66,7 @@ import org.elnix.dragonlauncher.models.FloatingAppsViewModel
 import org.elnix.dragonlauncher.models.ShizukuViewModel
 import org.elnix.dragonlauncher.reveiver.BootReceiver
 import org.elnix.dragonlauncher.reveiver.FontReceiver
+import org.elnix.dragonlauncher.reveiver.PackageReceiver
 import org.elnix.dragonlauncher.settings.SettingsBackupManager
 import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
@@ -294,11 +295,10 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
         widgetHolder.deleteAppWidgetId(widgetId)
     }
 
-    private val packageReceiver: PackageReceiver by lazy {
-        PackageReceiver(appsViewModel)
-    }
+    private val packageReceiver = PackageReceiver()
     private val fontsReceiver = FontReceiver()
     private val bootReceiver = BootReceiver()
+
     private val filter = IntentFilter().apply {
         addAction(Intent.ACTION_PACKAGE_ADDED)
         addAction(Intent.ACTION_PACKAGE_REMOVED)

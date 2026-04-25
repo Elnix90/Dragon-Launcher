@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.activity
+package org.elnix.dragonlauncher.reveiver
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -7,6 +7,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,11 +19,13 @@ import org.elnix.dragonlauncher.common.utils.Constants.Logging.BROADCAST_TAG
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.TAG
 import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import javax.inject.Inject
 
-class PackageReceiver(
-    private val appsViewModel: AppsViewModel
-) : BroadcastReceiver() {
+@AndroidEntryPoint
+class PackageReceiver : BroadcastReceiver() {
 
+    @Inject
+    lateinit var appsViewModel: AppsViewModel
     companion object {
         const val CHANNEL_IPS = "ips_regeneration"
         const val NOTIF_ID_IPS = 1001
