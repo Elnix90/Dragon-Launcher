@@ -70,7 +70,7 @@ jobs:
           
           {
             echo "APK=$NAME"
-            echo "$MAPPINGS_MIN=$MAPPINGS_MIN"
+            echo "MAPPINGS=$MAPPINGS_MIN"
           } >> $GITHUB_ENV
 
       - name: Create GitHub Release
@@ -80,7 +80,7 @@ jobs:
           name: ${{ env.VERSION }}
           files: |
             ${{ env.APK }}
-            ${{ env.MAPPINGS_MIN }}
+            ${{ env.MAPPINGS }}
           body: |
             ${{ steps.changelog.outputs.changelog }}
             ${{ steps.changelog.outputs.changelog }}
