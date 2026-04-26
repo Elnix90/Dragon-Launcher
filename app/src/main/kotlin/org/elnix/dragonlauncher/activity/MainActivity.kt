@@ -617,18 +617,22 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
         val offScreenUserTimeout = offScreenTimeout?.takeIf { it != -1 }
 
         if (offScreenUserTimeout != null) {
-            val currentRoute = navControllerHolder.value
-                ?.currentBackStackEntry
-                ?.destination
-                ?.route
+            val navController = navControllerHolder.value
+
+            if (navController != null && navController.currentBackStackEntry != null) {
+                val currentRoute = navController
+                    .currentBackStackEntry
+                    ?.destination
+                    ?.route
 
 
-            val isInIgnoredRoutes = currentRoute in ignoredReturnRoutes
-            val userHasExceededTimeout = appLifecycleViewModel.isTimeoutExceeded(offScreenUserTimeout)
+                val isInIgnoredRoutes = currentRoute in ignoredReturnRoutes
+                val userHasExceededTimeout = appLifecycleViewModel.isTimeoutExceeded(offScreenUserTimeout)
 
-            if (!isInIgnoredRoutes && userHasExceededTimeout) {
-                navControllerHolder.value?.navigate(ROUTES.MAIN) {
-                    popUpTo(0) { inclusive = true }
+                if (!isInIgnoredRoutes && userHasExceededTimeout) {
+                    navController.navigate(ROUTES.MAIN) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             }
         }
