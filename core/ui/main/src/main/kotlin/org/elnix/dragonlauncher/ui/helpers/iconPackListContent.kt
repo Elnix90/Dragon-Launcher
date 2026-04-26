@@ -38,6 +38,7 @@ import org.elnix.dragonlauncher.common.serializables.IconPackInfo
 import org.elnix.dragonlauncher.common.serializables.dummyAppModel
 import org.elnix.dragonlauncher.common.utils.resolveShape
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalDrawerIconsCache
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -93,6 +94,7 @@ fun LazyListScope.iconPackListContent(
     }
 
     items(packs) { pack ->
+        val appsViewModel = LocalAppsViewModel.current
         val icons = LocalDrawerIconsCache.current
 
         DragonRow(
@@ -101,7 +103,9 @@ fun LazyListScope.iconPackListContent(
             val packPkg = pack.packageName
             val packCacheKey = dummyAppModel(packPkg).iconCacheKey
 
-            val packIcon = icons[packCacheKey]
+            val packIcon = icons.getOrLazyCompute(packCacheKey) {
+                appsViewModel.reloadAppIcon(dummyAppModel(packPkg))
+            }
 
             Box(
                 Modifier.size(40.dp),

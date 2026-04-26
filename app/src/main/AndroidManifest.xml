@@ -5,12 +5,14 @@
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="PackageVisibilityPolicy,QueryAllPackagesPermission" />
+
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
+
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
+
     <uses-permission
         android:name="android.permission.REQUEST_INSTALL_PACKAGES"
         tools:ignore="RequestInstallPackagesPolicy" />
-
 
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
 
@@ -24,9 +26,11 @@
         android:name="android.permission.BIND_APPWIDGET"
         tools:ignore="ProtectedPermissions" />
 
+    <!-- Work profile and private space -->
     <uses-permission
         android:name="android.permission.INTERACT_ACROSS_USERS"
         tools:ignore="ProtectedPermissions" />
+
     <uses-permission
         android:name="android.permission.INTERACT_ACROSS_USERS_FULL"
         tools:ignore="ProtectedPermissions" />
@@ -35,6 +39,7 @@
     <uses-permission android:name="android.permission.ACCESS_HIDDEN_PROFILES" />
 
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <!-- Optional: For digital wellbeing usage stats -->
@@ -47,30 +52,33 @@
         android:name="android.permission.FOREGROUND_SERVICE"
         tools:ignore="ForegroundServicesPolicy" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
-<!--    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />-->
+
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <!-- Extension Security: Launcher defines the permissions -->
     <permission
         android:name="org.elnix.dragonlauncher.permission.READ_SETTINGS"
         android:protectionLevel="normal" />
+
     <permission
         android:name="org.elnix.dragonlauncher.permission.WRITE_SETTINGS"
         android:protectionLevel="normal" />
 
     <uses-permission android:name="org.elnix.dragonlauncher.permission.READ_SETTINGS" />
+
     <uses-permission android:name="org.elnix.dragonlauncher.permission.WRITE_SETTINGS" />
 
     <permission
         android:name="org.elnix.dragonlauncher.permission.ACCESS_FONTS"
         android:protectionLevel="normal" />
+
     <uses-permission android:name="org.elnix.dragonlauncher.permission.ACCESS_FONTS" />
 
 
     <queries>
-        <!-- Pour que le Launcher puisse trouver le provider de polices de l'extension -->
+        <!-- To allow Dragon Launcher to find the font extensions provider -->
         <provider android:authorities="org.elnix.dragonlauncher.fonts.provider" />
-        <!-- Pour que le Launcher puisse trouver l'extension de polices par son package -->
+        <!-- To allow Dragon Launcher to find the font extensions by its package -->
         <package android:name="org.elnix.dragonlauncher.fonts" />
     </queries>
 
@@ -202,7 +210,7 @@
 
 
         <receiver
-            android:name=".reveiver.BootReceiver"
+            android:name=".receiver.BootReceiver"
             android:exported="true">
             <intent-filter android:priority="999">
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -211,7 +219,7 @@
         </receiver>
 
         <receiver
-            android:name=".reveiver.PackageReceiver"
+            android:name=".receiver.PackageReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter android:priority="1000">
@@ -223,18 +231,6 @@
                 <action android:name="android.intent.action.PACKAGE_CHANGED" />
 
                 <data android:scheme="package" />
-            </intent-filter>
-        </receiver>
-
-        <!-- Private Space receiver for Android 15+ -->
-        <receiver
-            android:name=".reveiver.PrivateSpaceReceiver"
-            android:enabled="true"
-            android:exported="false"
-            tools:targetApi="35">
-            <intent-filter>
-                <action android:name="android.intent.action.PROFILE_AVAILABLE" />
-                <action android:name="android.intent.action.PROFILE_UNAVAILABLE" />
             </intent-filter>
         </receiver>
 

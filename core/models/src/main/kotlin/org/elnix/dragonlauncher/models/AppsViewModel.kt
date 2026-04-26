@@ -16,13 +16,10 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Density
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -58,6 +55,7 @@ import org.elnix.dragonlauncher.common.serializables.defaultWorkspaces
 import org.elnix.dragonlauncher.common.serializables.resolveApp
 import org.elnix.dragonlauncher.common.serializables.splitCacheKey
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.APPS_TAG
+import org.elnix.dragonlauncher.common.utils.Constants.Logging.BROADCAST_TAG
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.ICONS_TAG
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.WORKSPACES_TAG
 import org.elnix.dragonlauncher.common.utils.IconsCache
@@ -74,6 +72,7 @@ import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.logging.logW
+import org.elnix.dragonlauncher.models.sinleton.AppsRepository
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateAppsSettingsStore
@@ -175,6 +174,14 @@ class AppsViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _selectedWorkspaceId.value = DrawerSettingsStore.lastWorkspaceUsed.get(ctx)
+        }
+
+        // Receive package receiver events to trigger a app reload (app installed, etc..)
+        viewModelScope.launch {
+            AppsRepository.reloadTrigger.collect { event ->
+                logI(BROADCAST_TAG) { "Received $event from AppsRepository, reloading apps!" }
+                reloadApps()
+            }
         }
     }
 
@@ -318,11 +325,14 @@ class AppsViewModel @Inject constructor(
 
     suspend fun reloadApps() {
         try {
-            logD(APPS_TAG) { "========== Starting reloadApps() ==========" }
+            val reloadAppsStartTime = System.currentTimeMillis()
+            logD(APPS_TAG) { "───────────── Starting reloadApps() ───────────── " }
 
             val apps = withContext(Dispatchers.IO) {
                 pmCompat.getAllApps()
             }
+
+            logD(APPS_TAG) { "Got allApps list in ${System.currentTimeMillis() - reloadAppsStartTime} ms, now handling them" }
 
             val useDifferentialLoadingForPrivateSpace =
                 BehaviorSettingsStore.useDifferentialLoadingForPrivateSpace.get(ctx)
@@ -382,41 +392,43 @@ class AppsViewModel @Inject constructor(
             }
 
             logD(APPS_TAG) { "Total apps loaded: ${finalApps.size}" }
-            logD(APPS_TAG) { "Private apps: ${finalApps.count { it.isPrivateProfile }}" }
-            logD(APPS_TAG) { "Work apps: ${finalApps.count { it.isWorkProfile }}" }
-            logD(APPS_TAG) {
-                "User apps: ${finalApps.count { !it.isWorkProfile && !it.isPrivateProfile }}"
+            finalApps.count { it.isPrivateProfile }.takeIf { it > 0 }?.let {
+                logD(APPS_TAG) { "Private apps: $it" }
             }
+            finalApps.count { it.isWorkProfile }.takeIf { it > 0 }?.let {
+                logD(APPS_TAG) { "Work apps: $it" }
+            }
+            logD(APPS_TAG) { "User apps: ${finalApps.count { !it.isWorkProfile && !it.isPrivateProfile }}" }
 
-            if (finalApps.count { it.isPrivateProfile } > 0) {
-                logD(APPS_TAG) { "Private apps list:" }
-                finalApps.filter { it.isPrivateProfile }.forEach {
-                    logD(APPS_TAG) { "  - ${it.name} (${it.packageName}, userId=${it.userId})" }
-                }
-            }
 
             // Create new list to ensure StateFlow emission
             _apps.value = finalApps.toList()
             val appsSize = finalApps.size
 
+            /*  ─────────────  Apps Icons reloading  ─────────────  */
+            val appIconsReloadStartTime = System.currentTimeMillis()
             _drawerIconsCache.updateMaxCacheSize(appsSize)
+
             logI(ICONS_TAG) { "Updated apps-icons size; now = $appsSize" }
-            logI(ICONS_TAG) { "Loading $appsSize app icons..." }
+            preloadAppIcons(finalApps, 128)
 
-            preloadAppIcons(_apps.value, 128)
+            logD(APPS_TAG) { "Reloaded $appsSize app icons in ${System.currentTimeMillis() - appIconsReloadStartTime} ms" }
 
+
+            /*  ─────────────  Points Icons reloading  ─────────────  */
+            val pointsIconsReloadStartTime = System.currentTimeMillis()
             val points = SwipeSettingsStore.getPoints(ctx)
+            val pointsSize = points.size
 
-            _pointsIconsCache.updateMaxCacheSize(points.size)
-            logI(ICONS_TAG) { "Updated point-icons size; now = ${points.size}" }
-
+            _pointsIconsCache.updateMaxCacheSize(pointsSize)
+            logI(ICONS_TAG) { "Updated point-icons size; now = $pointsSize" }
 
             preloadPointIcons(points)
+            logD(APPS_TAG) { "Reloaded $pointsSize point icons in ${System.currentTimeMillis() - pointsIconsReloadStartTime} ms" }
 
-            logI(APPS_TAG) {
-                "Reloaded packages, ${apps.filter { it.isLaunchable == true }.size} launchable apps, ${apps.size} total apps"
-            }
-            logI(APPS_TAG) { "========== Finished reloadApps(\uD83E\uDD0E) ==========" }
+
+            val reloadAppsTotalTime = System.currentTimeMillis() - reloadAppsStartTime
+            logI(APPS_TAG) { "─────────────  Finished reloadApps(\uD83E\uDD0E) ($reloadAppsTotalTime ms) ─────────────\nReloaded ${apps.filter { it.isLaunchable == true }.size} launchable apps, ${apps.size} total apps" }
 
         } catch (e: Exception) {
             logE(APPS_TAG, e) { "Error in reloadApps" }

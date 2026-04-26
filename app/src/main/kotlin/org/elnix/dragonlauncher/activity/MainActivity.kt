@@ -64,9 +64,9 @@ import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.models.DragonLogViewModel
 import org.elnix.dragonlauncher.models.FloatingAppsViewModel
 import org.elnix.dragonlauncher.models.ShizukuViewModel
-import org.elnix.dragonlauncher.reveiver.BootReceiver
-import org.elnix.dragonlauncher.reveiver.FontReceiver
-import org.elnix.dragonlauncher.reveiver.PackageReceiver
+import org.elnix.dragonlauncher.receiver.BootReceiver
+import org.elnix.dragonlauncher.receiver.FontReceiver
+import org.elnix.dragonlauncher.receiver.PackageReceiver
 import org.elnix.dragonlauncher.settings.SettingsBackupManager
 import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore

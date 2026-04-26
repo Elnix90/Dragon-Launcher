@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.ICONS_TAG
 import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logW
 import java.util.Collections
 import java.util.UUID
 
@@ -54,9 +53,7 @@ class IconsCache<T>(initialMaxSize: Int) {
     ): ImageBitmap =
         icons.getOrPut(id) {
             _iconsTrigger.update { it + 1 }
-            compute().also {
-                logD(ICONS_TAG) { "Put $id into cache, cacheUUID: $cacheUUID" }
-            }
+            compute()
         }
 
     /**
@@ -72,34 +69,18 @@ class IconsCache<T>(initialMaxSize: Int) {
         compute: () -> Unit
     ): ImageBitmap? {
         val result = icons[id]
-        if (result != null) {
-            logD(ICONS_TAG) { "Successfully retrieved icon for $id, cacheUUID: $cacheUUID without computing!" }
-        } else {
+        if (result == null) {
             compute()
-            logW(ICONS_TAG) { "Failed to get icon for $id. Computing it lazily\ncacheUUID: $cacheUUID\nmaxSize: $maxSize, size: $size" }
+            logD(ICONS_TAG) { "Failed to get icon for $id. Computing it lazily\ncacheUUID: $cacheUUID\nmaxSize: $maxSize, size: $size" }
         }
         return result
     }
-
 
     /*** Compute simply a new icon, don't return it */
-    fun compute(id: T, compute:  () -> ImageBitmap) {
+    fun compute(id: T, compute: () -> ImageBitmap) {
         _iconsTrigger.update { it + 1 }
-
-        logD(ICONS_TAG) { "Put $id into cache, cacheUUID: $cacheUUID" }
         icons[id] = compute()
     }
-
-    operator fun get(id: T): ImageBitmap? {
-        val result = icons[id]
-        if (result != null) {
-            logD(ICONS_TAG) { "Successfully retrieved icon for $id, cacheUUID: $cacheUUID" }
-        } else {
-            logW(ICONS_TAG) { "Failed to get icon for $id.\ncacheUUID: $cacheUUID\nmaxSize: $maxSize, size: $size" }
-        }
-        return result
-    }
-
 
     fun getRandom(): T? = if (icons.isNotEmpty()) {
         icons.keys.random()
