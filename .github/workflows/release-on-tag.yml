@@ -83,7 +83,6 @@ jobs:
             ${{ env.MAPPINGS }}
           body: |
             ${{ steps.changelog.outputs.changelog }}
-            ${{ steps.changelog.outputs.changelog }}
 
             ## ⚠️ Play Protect Warning
             Due to Android restrictions, disable Play Protect during installation to avoid Dragon being blocked.
