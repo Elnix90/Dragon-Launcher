@@ -93,12 +93,12 @@ fun PointIconEditorDialog(
         onDismiss = onDismiss,
         onReset = onReset,
         preview = {
-                PointPreviewCanvas(
-                    editPoint = previewPoint,
-                    defaultPoint = defaultPoint,
-                    backgroundSurfaceColor = MaterialTheme.colorScheme.surface,
-                    modifier = Modifier.weight(1f)
-                )
+            PointPreviewCanvas(
+                editPoint = previewPoint,
+                defaultPoint = defaultPoint,
+                backgroundSurfaceColor = MaterialTheme.colorScheme.surface,
+                modifier = Modifier.weight(1f)
+            )
         },
         onUpdate = {
             selectedIcon = it
@@ -506,19 +506,16 @@ private fun IconEditorDialog(
         )
     }
 
-    if (showShapePickerDialog) {
-        ShapePickerDialog(
-            selected = selectedIcon?.shape ?: iconShapes,
-            onDismiss = { showShapePickerDialog = false }
-        ) {
-            updateSelectedIcon(
-                (selectedIcon ?: CustomIconSerializable()).copy(
-                    shape = it
-                )
+    ShapePickerDialog(
+        expanded = { showShapePickerDialog },
+        selected = selectedIcon?.shape ?: iconShapes,
+        onDismiss = { showShapePickerDialog = false }
+    ) {
+        updateSelectedIcon(
+            (selectedIcon ?: CustomIconSerializable()).copy(
+                shape = it
             )
-
-            showShapePickerDialog = false
-        }
+        )
     }
 }
 

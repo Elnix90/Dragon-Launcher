@@ -327,80 +327,78 @@ fun DrawerTab(
         }
 
         item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .onGloballyPositioned {
-                        totalWidthPx = it.size.width.toFloat()
-                    },
-                horizontalArrangement = Arrangement.Center
-            ) {
+            val showThisThingJustBelow: Boolean = leftActionNotNone || rightActionNotNone
 
-                if (leftActionNotDisabled) {
-                    // LEFT PANEL ───────────────────────────────────────────────────────────
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .weight(leftWeight.coerceIn(0.001f, 1f))
-                            .background(MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(leftActionNotNone)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if (leftActionNotNone) {
-                            Icon(
-                                imageVector = drawerActionIcon(leftDrawerAction),
-                                contentDescription = stringResource(R.string.left_drawer_action),
-                                tint = MaterialTheme.colorScheme.outline
-                            )
+            AnimatedVisibility(showThisThingJustBelow) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .onGloballyPositioned {
+                            totalWidthPx = it.size.width.toFloat()
+                        },
+                    horizontalArrangement = Arrangement.Center
+                ) {
+
+                    if (leftActionNotDisabled) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .weight(leftWeight.coerceIn(0.001f, 1f))
+                                .background(MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(leftActionNotNone)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (leftActionNotNone) {
+                                Icon(
+                                    imageVector = drawerActionIcon(leftDrawerAction),
+                                    contentDescription = stringResource(R.string.left_drawer_action),
+                                    tint = MaterialTheme.colorScheme.outline
+                                )
+                            }
                         }
+                        DragHandle(
+                            onDrag = { dx ->
+                                if (totalWidthPx > 0f) {
+                                    leftWeight = (leftWeight + dx / totalWidthPx).coerceIn(0.001f, 1f)
+                                }
+                            },
+                            onDragEnd = {
+                                scope.launch {
+                                    DrawerSettingsStore.leftDrawerWidth.set(ctx, leftWeight)
+                                }
+                            }
+                        )
                     }
 
-                    DragHandle(
-                        onDrag = { dx ->
-                            if (totalWidthPx > 0f) {
-                                leftWeight = (leftWeight + dx / totalWidthPx).coerceIn(0.001f, 1f)
-                            }
-                        },
-                        onDragEnd = {
-                            scope.launch {
-                                DrawerSettingsStore.leftDrawerWidth.set(ctx, leftWeight)
-                            }
-                        }
-                    )
-                }
+                    Spacer(Modifier.weight(1f))
 
-                Spacer(Modifier.weight(1f))
-
-                if (rightActionNotDisabled) {
-
-                    // DRAG HANDLE RIGHT ────────────────────────────────────────────────────
-                    DragHandle(
-                        onDrag = { dx ->
-                            if (totalWidthPx > 0f) {
-                                rightWeight = (rightWeight - dx / totalWidthPx).coerceIn(0.001f, 1f)
+                    if (rightActionNotDisabled) {
+                        DragHandle(
+                            onDrag = { dx ->
+                                if (totalWidthPx > 0f) {
+                                    rightWeight = (rightWeight - dx / totalWidthPx).coerceIn(0.001f, 1f)
+                                }
+                            },
+                            onDragEnd = {
+                                scope.launch {
+                                    DrawerSettingsStore.rightDrawerWidth.set(ctx, rightWeight)
+                                }
                             }
-                        },
-                        onDragEnd = {
-                            scope.launch {
-                                DrawerSettingsStore.rightDrawerWidth.set(ctx, rightWeight)
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .weight(rightWeight.coerceIn(0.001f, 1f))
+                                .background(MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(rightActionNotNone)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (rightActionNotNone) {
+                                Icon(
+                                    imageVector = drawerActionIcon(rightDrawerAction),
+                                    contentDescription = stringResource(R.string.right_drawer_action),
+                                    tint = MaterialTheme.colorScheme.outline
+                                )
                             }
-                        }
-                    )
-
-                    // RIGHT PANEL ──────────────────────────────────────────────────────────
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .weight(rightWeight.coerceIn(0.001f, 1f))
-                            .background(MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(rightActionNotNone)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if (rightActionNotNone) {
-                            Icon(
-                                imageVector = drawerActionIcon(rightDrawerAction),
-                                contentDescription = stringResource(R.string.right_drawer_action),
-                                tint = MaterialTheme.colorScheme.outline
-                            )
                         }
                     }
                 }
@@ -456,16 +454,14 @@ fun DrawerTab(
         }
     }
 
-    if (showShapePickerDialog) {
-        ShapePickerDialog(
-            selected = iconsShape,
-            onDismiss = { showShapePickerDialog = false }
-        ) {
-            logD(SHAPES_TAG) { "Picked: $it" }
-            scope.launch {
-                DrawerSettingsStore.iconsShape.set(ctx, it)
-                showShapePickerDialog = false
-            }
+    ShapePickerDialog(
+        expanded = { showShapePickerDialog },
+        selected = iconsShape,
+        onDismiss = { showShapePickerDialog = false }
+    ) {
+        logD(SHAPES_TAG) { "Picked: $it" }
+        scope.launch {
+            DrawerSettingsStore.iconsShape.set(ctx, it)
         }
     }
 

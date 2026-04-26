@@ -19,11 +19,11 @@ import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.CustomGlow
 import org.elnix.dragonlauncher.common.serializables.CustomObjectBlockProperties
 import org.elnix.dragonlauncher.common.serializables.CustomObjectSerializable
-import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
-import org.elnix.dragonlauncher.ui.helpers.ShapeRow
+import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
+import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 @Composable
 fun EditCustomObjectBlock(
@@ -49,16 +49,18 @@ fun EditCustomObjectBlock(
      * then another and resting one, only the modified is being edited, the others would be discarded otherwise
      */
     fun triggerEdit() {
-        onEdit(editObject.copy(
-            size = tempSize,
-            stroke = tempStroke,
-            rotation = tempRotation,
-            color = tempColor,
-            glow = editObject.glow?.copy(
-                color = tempGlowColor,
-                radius = tempGlowRadius
+        onEdit(
+            editObject.copy(
+                size = tempSize,
+                stroke = tempStroke,
+                rotation = tempRotation,
+                color = tempColor,
+                glow = editObject.glow?.copy(
+                    color = tempGlowColor,
+                    radius = tempGlowRadius
+                )
             )
-        ))
+        )
     }
 
 
@@ -192,13 +194,11 @@ fun EditCustomObjectBlock(
         }
     }
 
-    if (showSelectedShapePickerDialog) {
-        ShapePickerDialog(
-            selected = editObject.shape ?: default.shape!!,
-            onDismiss = { showSelectedShapePickerDialog = false }
-        ) {
-            onEdit(editObject.copy(shape = it))
-            showSelectedShapePickerDialog = false
-        }
+    ShapePickerDialog(
+        expanded = { showSelectedShapePickerDialog },
+        selected = editObject.shape ?: default.shape!!,
+        onDismiss = { showSelectedShapePickerDialog = false }
+    ) {
+        onEdit(editObject.copy(shape = it))
     }
 }

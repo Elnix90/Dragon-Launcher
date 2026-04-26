@@ -21,8 +21,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.IconShape
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 
 
@@ -51,7 +51,7 @@ fun ShapeRow(
         ) {
 
             ShapePreview(
-                selected,
+                iconShape = selected,
                 modifier = Modifier.size(60.dp)
             )
 

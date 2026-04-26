@@ -1120,13 +1120,12 @@ private fun DraggableFloatingApp(
         }
     }
 
-    if (showShapeEditor) {
-        ShapePickerDialog(
-            selected = app.shape ?: IconShape.Square,
-            onDismiss = { showShapeEditor = false }
-        ) {
-            commitChange(app.copy(shape = it))
-            showShapeEditor = false
-        }
+    ShapePickerDialog(
+        expanded = { showShapeEditor },
+        selected = app.shape ?: IconShape.Square,
+        onDismiss = { showShapeEditor = false }
+    ) {
+        commitChange(app.copy(shape = it))
+        showShapeEditor = false
     }
 }

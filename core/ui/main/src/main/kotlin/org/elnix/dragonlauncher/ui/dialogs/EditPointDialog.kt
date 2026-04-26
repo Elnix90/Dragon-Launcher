@@ -1043,25 +1043,21 @@ fun EditPointDialog(
                 )
             }
 
-            if (showShapePickerDialog) {
                 ShapePickerDialog(
+                    expanded = { showShapePickerDialog },
                     selected = editPoint.borderShape ?: defaultSwipePointsValues.borderShape!!,
                     onDismiss = { showShapePickerDialog = false }
                 ) {
                     editPoint = editPoint.copy(borderShape = it)
-                    showShapePickerDialog = false
                 }
-            }
 
-            if (showSelectedShapePickerDialog) {
                 ShapePickerDialog(
+                    expanded = { showSelectedShapePickerDialog },
                     selected = editPoint.borderShapeSelected ?: defaultSwipePointsValues.borderShapeSelected!!,
                     onDismiss = { showSelectedShapePickerDialog = false }
                 ) {
                     editPoint = editPoint.copy(borderShapeSelected = it)
-                    showSelectedShapePickerDialog = false
                 }
-            }
 
 
             if (showHapticFeedbackEditor) {
