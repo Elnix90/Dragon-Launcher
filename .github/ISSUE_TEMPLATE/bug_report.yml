@@ -10,6 +10,25 @@ body:
       options:
         - label: I checked for duplicate issues in both opened and closed
           required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Requirements
+      options:
+        - label: I updated the app to the latest version
+          required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Requirements
+      options:
+        - label: I updated the app to the latest beta version to test (check both if you did so)
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Requirements
+      options:
+        - label: I haven't read those requirements
   - type: textarea
     id: description
     attributes:
@@ -46,7 +65,7 @@ body:
     id: device_and_version
     attributes:
       label: Device and version
-      description: What device are you using, and what android version?
+      description: What device are you using, and what android version? You can get those infos in [Debug](https://github.com/Elnix90/Dragon-Launcher/blob/af493797dc7b54747d5ce035333a288d40c98137/wiki/Access-Debug-mode.md) -> Logs
       placeholder: e.g., Google Pixel 10, Android16
   - type: textarea
     id: logs
