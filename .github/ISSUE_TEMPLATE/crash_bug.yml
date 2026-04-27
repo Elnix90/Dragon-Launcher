@@ -1,7 +1,7 @@
 name: Crash Bug Report
 description: Report crash bug
 title: "[CRASH] "
-labels: ["crash"]
+labels: [ "crash" ]
 body:
   - type: checkboxes
     id: terms
@@ -10,25 +10,10 @@ body:
       options:
         - label: I checked for duplicate issues in both opened and closed
           required: true
-  - type: checkboxes
-    id: terms
-    attributes:
-      label: Requirements
-      options:
         - label: I updated the app to the latest version
           required: true
-  - type: checkboxes
-    id: terms
-    attributes:
-      label: Requirements
-      options:
         - label: I updated the app to the latest beta version to test (check both if you did so)
           required: false
-  - type: checkboxes
-    id: terms
-    attributes:
-      label: Requirements
-      options:
         - label: I haven't read those requirements
           required: false
   - type: textarea
