@@ -38,7 +38,7 @@ inline fun Modifier.conditional(
  * Order is preserved:
  * `this then selectedModifier`
  */
-fun Modifier.conditional(
+inline fun Modifier.conditional(
     condition: Boolean,
     fallback: Modifier.() -> Modifier,
     block: Modifier.() -> Modifier
