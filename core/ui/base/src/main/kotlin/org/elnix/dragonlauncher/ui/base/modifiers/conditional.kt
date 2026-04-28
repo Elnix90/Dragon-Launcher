@@ -44,3 +44,25 @@ inline fun Modifier.conditional(
     block: Modifier.() -> Modifier
 ): Modifier =
    if (condition) this.block() else this.fallback()
+
+
+/**
+ * Conditionally transforms this [Modifier] if [value] is not null.
+ *
+ * If [value] is null, this modifier is returned unchanged.
+ * Inside [block], [value] is smart-cast to non-null.
+ *
+ * Example:
+ * ```
+ * Modifier
+ *     .fillMaxWidth()
+ *     .conditional(onClick) {
+ *         clickable(onClick = it)
+ *     }
+ * ```
+ */
+inline fun <T> Modifier.conditional(
+    value: T?,
+    block: Modifier.(T) -> Modifier
+): Modifier =
+    value?.let { this.block(it) } ?: this

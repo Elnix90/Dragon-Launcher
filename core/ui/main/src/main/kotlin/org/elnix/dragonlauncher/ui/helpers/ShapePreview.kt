@@ -45,8 +45,8 @@ fun ShapePreview(
             .then(modifier)
             .aspectRatio(1f, true)
             .clip(DragonShape)
-            .conditional(onClick != null) {
-                shapedClickable { onClick?.invoke() }
+            .conditional(onClick) {
+                shapedClickable(onClick = it)
             },
         contentAlignment = Alignment.Center
     ) {

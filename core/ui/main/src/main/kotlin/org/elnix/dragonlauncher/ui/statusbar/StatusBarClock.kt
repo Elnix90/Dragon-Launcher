@@ -14,12 +14,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.delay
-import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.common.serializables.StatusBarSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.utils.Constants.Logging.STATUS_BAR_TAG
 import org.elnix.dragonlauncher.common.utils.openAlarmApp
 import org.elnix.dragonlauncher.common.utils.openCalendar
+import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import java.time.LocalDate
 import java.time.LocalTime
@@ -73,9 +73,9 @@ fun StatusBarDate(
         Text(
             text = dateText,
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.conditional(onAction != null) {
-                this.clickable {
-                    element.action?.let { onAction!!(it) } ?: ctx.openCalendar()
+            modifier = Modifier.conditional(onAction) { onAction ->
+                clickable {
+                    element.action?.let { onAction(it) } ?: ctx.openCalendar()
                 }
             }
         )
@@ -131,9 +131,9 @@ fun StatusBarTime(
         Text(
             text = timeText,
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.conditional(onAction != null) {
-                this.clickable {
-                    action?.let { onAction!!(it) } ?: ctx.openAlarmApp()
+            modifier = Modifier.conditional(onAction) { onAction ->
+                clickable {
+                    action?.let { onAction(it) } ?: ctx.openAlarmApp()
                 }
             }
         )
