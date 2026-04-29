@@ -657,3 +657,9 @@ val String?.isNotBlankJson: Boolean
 //        add(to, removeAt(from))
 //    }
 //}
+
+fun <E> MutableSet<E>.addOrRemove(element: E) {
+    if (contains(element)) {
+        remove(element)
+    } else add(element)
+}
