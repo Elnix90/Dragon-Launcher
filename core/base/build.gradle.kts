@@ -17,21 +17,7 @@ extensions.configure<LibraryExtension> {
 
     defaultConfig {
         minSdk = 26
-
         consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        debug {}
-        release {}
-
-        create("unminifiedRelease") {
-            initWith(getByName("release"))
-        }
-
-        create("debuggableRelease") {
-            initWith(getByName("release"))
-        }
     }
 
     compileOptions {

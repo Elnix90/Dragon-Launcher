@@ -17,41 +17,9 @@ extensions.configure<LibraryExtension> {
 
     defaultConfig {
         minSdk = 26
-
         consumerProguardFiles("consumer-rules.pro")
     }
 
-    flavorDimensions += "channel"
-
-    productFlavors {
-        create("stable") { dimension = "channel" }
-        create("beta")   { dimension = "channel" }
-        create("fdroid") { dimension = "channel" }
-    }
-
-    buildTypes {
-        debug {}
-        release {}
-
-        create("unminifiedRelease") {
-            initWith(getByName("release"))
-        }
-
-        create("debuggableRelease") {
-            initWith(getByName("release"))
-        }
-    }
-
-    buildTypes {
-        debug {}
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21

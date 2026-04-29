@@ -68,40 +68,25 @@ jobs:
         with:
           timeout_minutes: 15
           max_attempts: 3
-          command: ./gradlew assembleBetaRelease assembleBetaUnminifiedRelease assembleBetaDebuggableRelease assembleBetaDebug --parallel --no-daemon ${{ inputs.disable_gradle_cache && '--no-build-cache' || '--build-cache' }} -x lint
+          command: ./gradlew assembleDebug --parallel --no-daemon ${{ inputs.disable_gradle_cache && '--no-build-cache' || '--build-cache' }} -x lint
 
       - name: Prepare release artifacts
         run: |
           VER="${{ steps.version.outputs.versionName }}"
           RUN="${{ github.run_number }}"
           
-          # APKs
           MIN="DragonLauncher-v${VER}-beta-${RUN}.apk"
-          UNMIN="DragonLauncher-v${VER}-beta-${RUN}-unminified.apk"
-          DEBUG="DragonLauncher-v${VER}-beta-${RUN}-debuggable.apk"
-          
-          # Mappings
-          MAPPINGS_MIN="Mappings-v${VER}-beta-${RUN}.txt"
-          MAPPINGS_UNMIN="Mappings-v${VER}-beta-${RUN}-unminified.txt"
-          MAPPINGS_DEBUG="Mappings-v${VER}-beta-${RUN}-debuggable.txt"
-          
+          MAPPINGS="Mappings-v${VER}-beta-${RUN}.txt"
+
           # Rename APKs
           mv app/build/outputs/apk/beta/release/app-beta-release.apk "$MIN"
-          mv app/build/outputs/apk/beta/unminifiedRelease/app-beta-unminifiedRelease.apk "$UNMIN"
-          mv app/build/outputs/apk/beta/debuggableRelease/app-beta-debuggableRelease.apk "$DEBUG"
-          
+
           # Extract mappings
-          [ -f "app/build/outputs/mapping/betaRelease/mapping.txt" ] && cp app/build/outputs/mapping/betaRelease/mapping.txt "$MAPPINGS_MIN"
-          [ -f "app/build/outputs/mapping/betaUnminifiedRelease/mapping.txt" ] && cp app/build/outputs/mapping/betaUnminifiedRelease/mapping.txt "$MAPPINGS_UNMIN"
-          [ -f "app/build/outputs/mapping/betaDebuggeableRelease/mapping.txt" ] && cp app/build/outputs/mapping/betaDebuggeableRelease/mapping.txt "$MAPPINGS_DEBUG"
-          
+          [ -f "app/build/outputs/mapping/betaRelease/mapping.txt" ] && cp app/build/outputs/mapping/betaRelease/mapping.txt "$MAPPINGS"
+
           {
             echo "APK_MIN=$MIN"
-            echo "APK_UNMIN=$UNMIN"
-            echo "APK_DEBUG=$DEBUG"
-            echo "MAPPINGS_MIN=$MAPPINGS_MIN"
-            echo "MAPPINGS_UNMIN=$MAPPINGS_UNMIN"
-            echo "MAPPINGS_DEBUG=$MAPPINGS_DEBUG"
+            echo "MAPPINGS=$MAPPINGS"
             echo "TAG_NAME=v${VER}-beta-${RUN}"
           } >> $GITHUB_ENV
 
@@ -118,10 +103,6 @@ jobs:
           prerelease: true
           files: |
             ${{ env.APK_MIN }}
-            ${{ env.APK_UNMIN }}
-            ${{ env.APK_DEBUG }}
-            ${{ env.MAPPINGS_MIN }}
-            ${{ env.MAPPINGS_UNMIN }}
-            ${{ env.MAPPINGS_DEBUG }}
+            ${{ env.MAPPINGS }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

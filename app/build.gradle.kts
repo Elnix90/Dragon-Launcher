@@ -48,23 +48,6 @@ extensions.configure<ApplicationExtension> {
         abortOnError = false
     }
 
-
-    flavorDimensions += "channel"
-    productFlavors {
-        create("stable") {
-            dimension = "channel"
-            versionNameSuffix = ""
-        }
-        create("beta") {
-            dimension = "channel"
-            versionNameSuffix = "-beta"
-        }
-        create("fdroid") {
-            dimension = "channel"
-            versionNameSuffix = ""
-        }
-    }
-
     signingConfigs {
         create("release") {
             val keystore = env("KEYSTORE_FILE")
@@ -84,7 +67,7 @@ extensions.configure<ApplicationExtension> {
                 keyPassword = keyPass
 
             } else {
-                println("WARNING: Release signingConfig not fully configured.")
+                println("No keystore found, APK will be unsigned")
             }
         }
     }
@@ -93,53 +76,18 @@ extensions.configure<ApplicationExtension> {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-
-            val isFdroidBuild = System.getenv("FDROID_BUILD") == "true"
-
-            signingConfig = if (!isFdroidBuild) {
-
-                val hasSigning =
-                    env("KEYSTORE_FILE") != null &&
-                            env("KEYSTORE_PASSWORD") != null &&
-                            env("KEY_ALIAS") != null &&
-                            env("KEY_PASSWORD") != null
-
-                 if (hasSigning) {
-                     println("Signing release using release signing")
-                     signingConfigs.getByName("release")
-                } else {
-                     println("No signing config found, apk will be unsigned!")
-                    null
-                 }
-
-            } else {
-                println("FDroid build - not using release signing config")
-                null
-            }
-
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
 
-
-        create("unminifiedRelease") {
-            initWith(getByName("release"))
-            isMinifyEnabled = false
-            isShrinkResources = false
-        }
-        create("debuggableRelease") {
-            initWith(getByName("release"))
-            isMinifyEnabled = true
-            isShrinkResources = true
-            isDebuggable = true
-        }
-
         debug {
             isDebuggable = true
             isMinifyEnabled = false
-            isShrinkResources = false
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-beta"
         }
     }
 
