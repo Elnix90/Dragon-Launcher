@@ -56,6 +56,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.base.ColorUtils.definedOrNull
@@ -943,6 +944,9 @@ fun ColorSelectorTab(
             message = stringResource(R.string.exit_test_mode_message),
             validateText = stringResource(R.string.test_mode_validate),
             cancelText = stringResource(R.string.test_mode_cancel),
+            properties = DialogProperties(
+                dismissOnClickOutside = false
+            ),
             onDismiss = {
                 scope.launch {
                     ColorSettingsStore.restoreColors(ctx)
