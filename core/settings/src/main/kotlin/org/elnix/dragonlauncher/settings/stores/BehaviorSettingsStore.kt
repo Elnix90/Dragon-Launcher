@@ -43,13 +43,13 @@ object BehaviorSettingsStore : MapSettingsStore() {
     val doubleClickAction = Settings.swipeAction(
         key = "doubleClickAction",
         dataStoreName = dataStoreName,
-        default = SwipeActionSerializable.None
+        default = SwipeActionSerializable.OpenAppDrawer()
     )
 
     val homeAction = Settings.swipeAction(
         key = "homeAction",
         dataStoreName = dataStoreName,
-        default = SwipeActionSerializable.None
+        default = SwipeActionSerializable.OpenDragonLauncherSettings()
     )
 
     val keepScreenOn = Settings.boolean(
