@@ -40,7 +40,7 @@ object UiSettingsStore : MapSettingsStore() {
     val appLabelIconOverlayTopPadding = Settings.int(
         key = "appLabelIconOverlayTopPadding",
         dataStoreName = dataStoreName,
-        default = 30,
+        default = 20,
         allowedRange = 0..1000
     )
 
