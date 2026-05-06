@@ -78,7 +78,7 @@ jobs:
           MIN="DragonLauncher-v${VER}-beta-${RUN}.apk"
 
           # Rename APKs
-          mv app/build/outputs/apk/debug/app_debug.apk "$MIN"
+          mv app/build/outputs/apk/debug/app-debug.apk "$MIN"
           
           {
             echo "APK_MIN=$MIN"
