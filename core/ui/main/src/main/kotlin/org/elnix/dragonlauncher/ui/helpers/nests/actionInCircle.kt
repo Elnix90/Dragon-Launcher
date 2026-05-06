@@ -18,8 +18,8 @@ import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.common.serializables.applyColorAction
 import org.elnix.dragonlauncher.common.utils.ImageUtils.loadDrawableResAsBitmap
-import org.elnix.dragonlauncher.common.utils.UiCircle
-import org.elnix.dragonlauncher.common.utils.resolveShape
+import org.elnix.dragonlauncher.common.messyfolder.UiCircle
+import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.ui.actions.actionColor
 import org.elnix.dragonlauncher.ui.base.cache.SwipeDrawParams
 import org.elnix.dragonlauncher.ui.helpers.customobjects.shapeToPath

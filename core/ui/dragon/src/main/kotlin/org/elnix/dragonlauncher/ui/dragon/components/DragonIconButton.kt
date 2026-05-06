@@ -1,13 +1,13 @@
 package org.elnix.dragonlauncher.ui.dragon.components
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants
 
@@ -36,8 +36,8 @@ fun DragonIconButton(
     modifier: Modifier = Modifier,
     enabled: () -> Boolean = { true },
     colors: IconButtonColors = AppObjectsColors.iconButtonColors(),
-    imageVector: ImageVector,
-    contentDescription: String,
+    icon: Int,
+    contentDescription: Int,
     onClick: () -> Unit
 ) {
 
@@ -49,24 +49,21 @@ fun DragonIconButton(
             colors = colors
         ) {
             Icon(
-                imageVector = imageVector,
-                contentDescription = contentDescription
+                painter = painterResource(icon),
+                contentDescription = stringResource(contentDescription)
             )
         }
     }
 }
 
-
 @Composable
-fun ToggleableDragonIconButton(
-    onClick: () -> Unit,
-    toggled: () -> Boolean,
+fun DragonIconButton(
+    icon: Int,
+    contentDescription: String,
     modifier: Modifier = Modifier,
     enabled: () -> Boolean = { true },
     colors: IconButtonColors = AppObjectsColors.iconButtonColors(),
-    imageVectorEnabled: ImageVector,
-    imageVectorDisabled: ImageVector,
-    contentDescription: String
+    onClick: () -> Unit
 ) {
 
     DragonTooltip(contentDescription) {
@@ -76,19 +73,10 @@ fun ToggleableDragonIconButton(
             enabled = enabled(),
             colors = colors
         ) {
-            Crossfade(toggled()) {
-                if (it) {
-                    Icon(
-                        imageVector = imageVectorEnabled,
-                        contentDescription = contentDescription
-                    )
-                } else {
-                    Icon(
-                        imageVector = imageVectorDisabled,
-                        contentDescription = contentDescription
-                    )
-                }
-            }
+            Icon(
+                painter = painterResource(icon),
+                contentDescription = contentDescription
+            )
         }
     }
 }

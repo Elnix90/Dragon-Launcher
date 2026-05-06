@@ -24,8 +24,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.utils.showToast
-import org.elnix.dragonlauncher.enumsui.LockMethod
+import org.elnix.dragonlauncher.common.messyfolder.showToast
+import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.asState
@@ -138,7 +138,7 @@ fun LockMethodDialog(
 
     // ── PIN setup dialog ──
     if (showPinSetupDialog) {
-        PinSetupDialog(
+        PinSetup(
             onDismiss = {
                 showPinSetupDialog = false
                 pendingLockMethod = null

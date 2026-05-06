@@ -5,14 +5,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.theme.DragonLauncherTheme
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.helpers.PrivateSpaceStateDebugScreen
+import org.elnix.dragonlauncher.ui.helpers.PrivateSpaceStateDebugDialog
 import org.elnix.dragonlauncher.ui.helpers.PrivateSpaceUnlockScreen
 
 class PrivateSpaceUnlockActivity : AppCompatActivity() {
@@ -35,11 +34,10 @@ class PrivateSpaceUnlockActivity : AppCompatActivity() {
                     }
                 )
 
-                val privateSpaceState by appsViewModel.privateSpaceState.collectAsState()
 
                 val privateSpaceDebugInfo by DebugSettingsStore.privateSpaceDebugInfo.asState()
                 AnimatedVisibility(privateSpaceDebugInfo) {
-                    PrivateSpaceStateDebugScreen(privateSpaceState)
+                    PrivateSpaceStateDebugDialog()
                 }
             }
         }

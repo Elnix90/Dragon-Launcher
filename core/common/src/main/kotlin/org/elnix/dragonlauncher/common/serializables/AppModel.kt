@@ -2,23 +2,21 @@ package org.elnix.dragonlauncher.common.serializables
 
 import android.content.pm.ApplicationInfo
 import androidx.compose.runtime.Immutable
-import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.WORKSPACES_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.WORKSPACES_TAG
 import org.elnix.dragonlauncher.logging.logE
 
 @Immutable
 data class AppModel(
-    @SerializedName("a") val name: String,
-    @SerializedName("b") val packageName: String,
-    @SerializedName("c") val isEnabled: Boolean,
-    @SerializedName("d") val isSystem: Boolean,
-    @SerializedName("e") val isWorkProfile: Boolean,
-    @SerializedName("f") val isLaunchable: Boolean?,
-    @SerializedName("g") val settings: Map<String, Any> = emptyMap(),
-    @SerializedName("h") val userId: Int? = 0,
-    @SerializedName("category") val category: AppCategory,
-    @SerializedName("isPrivateProfile") val isPrivateProfile: Boolean = false // Android 15+ Private Space
+    val name: String,
+    val packageName: String,
+    val isEnabled: Boolean,
+    val isSystem: Boolean,
+    val isWorkProfile: Boolean,
+    val isLaunchable: Boolean?,
+    val userId: Int? = 0,
+    val category: AppCategory,
+    val isPrivateProfile: Boolean = false // Android 15+ Private Space
 ) {
     val action = SwipeActionSerializable.LaunchApp(packageName,isPrivateProfile , userId ?: 0)
 

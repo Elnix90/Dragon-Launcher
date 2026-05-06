@@ -7,7 +7,7 @@ import org.elnix.dragonlauncher.base.theme.ExtraColors
 import org.elnix.dragonlauncher.common.serializables.CircleNest
 import org.elnix.dragonlauncher.common.serializables.IconShape
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.common.utils.IconsCache
+import org.elnix.dragonlauncher.common.messyfolder.IconsCache
 
 @Stable
 data class SwipeDrawParams(

@@ -83,7 +83,6 @@
     <string name="set_default_launcher">डिफ़ॉल्ट लॉन्चर के रूप में सेट करें</string>
     <string name="close">बंद करना</string>
     <string name="dragging_distance_selection">ड्रैगिंग दूरी चयन</string>
-    <string name="swipe_points_selection">स्वाइप प्वाइंट चयन</string>
     <string name="circle">सर्कल ड्रैग दूरी</string>
     <string name="cancel_zone">ज़ोन ड्रैग रद्द करें</string>
     <string name="android_settings">Android सेटिंग्स</string>
@@ -611,8 +610,6 @@
     <string name="pull_down_wallpaper_dim_desc">जब दराज को नीचे खींचा जाए तो वॉलपेपर को हल्का कर दें</string>
     <string name="pull_down_scale_in">पुल-डाउन स्केल इन</string>
     <string name="pull_down_scale_in_desc">जब दराज को नीचे खींचा जाता है तो स्केल आइकन</string>
-    <string name="drawer_enter_exit_animations">दराज में प्रवेश/निकास एनिमेशन</string>
-    <string name="drawer_enter_exit_animations_desc">यदि गलत पर सेट है तो ड्रॉअर में प्रवेश/बाहर निकलते समय एनिमेशन चलाएं, यह तत्काल है</string>
     <string name="action_settings">क्रिया सेटिंग्स</string>
     <string name="drawer_settings">दराज सेटिंग्स</string>
     <string name="more">अधिक</string>

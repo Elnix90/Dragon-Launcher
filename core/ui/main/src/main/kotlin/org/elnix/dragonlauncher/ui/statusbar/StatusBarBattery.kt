@@ -17,7 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import org.elnix.dragonlauncher.common.serializables.StatusBarSerializable
-import org.elnix.dragonlauncher.common.utils.showToast
+import org.elnix.dragonlauncher.common.messyfolder.showToast
 
 @Composable
 fun StatusBarBattery(

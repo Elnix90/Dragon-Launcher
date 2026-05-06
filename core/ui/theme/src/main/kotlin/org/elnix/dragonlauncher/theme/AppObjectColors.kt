@@ -216,10 +216,10 @@ object AppObjectsColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 IconButtonDefaults.iconButtonColors(
-                    contentColor = onError,
-                    containerColor = error,
-                    disabledContentColor = onError.alphaMultiplier(0.5f),
-                    disabledContainerColor = error.alphaMultiplier(0.5f)
+                    contentColor = error,
+                    containerColor = errorContainer,
+                    disabledContentColor = error.alphaMultiplier(0.5f),
+                    disabledContainerColor = errorContainer.alphaMultiplier(0.5f)
                 )
             }
         } else IconButtonDefaults.iconButtonColors()

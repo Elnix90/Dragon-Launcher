@@ -31,14 +31,11 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -79,43 +76,42 @@ import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.base.ktx.px
 import org.elnix.dragonlauncher.base.ktx.toDp
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.navigaton.SETTINGS
+import org.elnix.dragonlauncher.common.messyfolder.Constants
+import org.elnix.dragonlauncher.common.messyfolder.openSearch
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.common.serializables.AppModel
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.serializables.WorkspaceType
-import org.elnix.dragonlauncher.common.utils.Constants
 import org.elnix.dragonlauncher.common.utils.PrivateSpaceUtils
-import org.elnix.dragonlauncher.common.utils.openSearch
-import org.elnix.dragonlauncher.enumsui.DrawerActions
-import org.elnix.dragonlauncher.enumsui.DrawerActions.CLEAR
-import org.elnix.dragonlauncher.enumsui.DrawerActions.CLOSE
-import org.elnix.dragonlauncher.enumsui.DrawerActions.CLOSE_KB
-import org.elnix.dragonlauncher.enumsui.DrawerActions.DISABLED
-import org.elnix.dragonlauncher.enumsui.DrawerActions.NONE
-import org.elnix.dragonlauncher.enumsui.DrawerActions.OPEN_FIRST_APP
-import org.elnix.dragonlauncher.enumsui.DrawerActions.OPEN_KB
-import org.elnix.dragonlauncher.enumsui.DrawerActions.SEARCH_WEB
-import org.elnix.dragonlauncher.enumsui.DrawerActions.TOGGLE_KB
-import org.elnix.dragonlauncher.enumsui.DrawerToolbar
-import org.elnix.dragonlauncher.enumsui.DrawerToolbar.RecentlyUsed
-import org.elnix.dragonlauncher.enumsui.DrawerToolbar.SearchBar
-import org.elnix.dragonlauncher.enumsui.DrawerToolbar.Spacer
-import org.elnix.dragonlauncher.enumsui.isUsed
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.CLEAR
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.CLOSE
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.CLOSE_KB
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.DISABLED
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.NONE
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.OPEN_FIRST_APP
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.OPEN_KB
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.SEARCH_WEB
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.TOGGLE_KB
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar.RecentlyUsed
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar.SearchBar
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar.Spacer
+import org.elnix.dragonlauncher.enumsui.toggle.isUsed
 import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
-import org.elnix.dragonlauncher.ui.components.burger.BurgerAction
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
-import org.elnix.dragonlauncher.ui.composition.LocalAppLifecycleViewModel
+import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
+import org.elnix.dragonlauncher.ui.composition.LocalPrivateSpaceViewModel
 import org.elnix.dragonlauncher.ui.dialogs.AppAliasesDialog
-import org.elnix.dragonlauncher.ui.dialogs.AppIconEditorDialog
+import org.elnix.dragonlauncher.ui.dialogs.AppIconEditor
 import org.elnix.dragonlauncher.ui.dialogs.AppLongPressRow
-import org.elnix.dragonlauncher.ui.dialogs.RenameAppDialog
-import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
+import org.elnix.dragonlauncher.ui.dialogs.TextEditorDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.helpers.AppDrawerSearch
 import org.elnix.dragonlauncher.ui.helpers.AppGrid
@@ -135,6 +131,7 @@ fun AppDrawerScreen(
     rightAction: DrawerActions,
     rightWeight: Float,
     onRegisterHomeHandler: ((() -> Unit)?) -> Unit,
+    onNavigate: (NavigationRoute) -> Unit,
     onLaunchAction: (SwipeActionSerializable) -> Unit,
     onClose: () -> Unit
 ) {
@@ -142,7 +139,7 @@ fun AppDrawerScreen(
     val scope = rememberCoroutineScope()
 
     val appsViewModel = LocalAppsViewModel.current
-    val appLifecycleViewModel = LocalAppLifecycleViewModel.current
+    val privateSpaceViewModel = LocalPrivateSpaceViewModel.current
 
     val privateSpaceState by appsViewModel.privateSpaceState.collectAsState()
 
@@ -190,9 +187,7 @@ fun AppDrawerScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     var isSearchFocused by remember { mutableStateOf(false) }
 
-    var renameTarget by remember { mutableStateOf<AppModel?>(null) }
-    var renameText by remember { mutableStateOf("") }
-
+    var renameAppTarget by remember { mutableStateOf<AppModel?>(null) }
     var showAliasDialog by remember { mutableStateOf<AppModel?>(null) }
 
     var workspaceId by remember { mutableStateOf<String?>(null) }
@@ -244,7 +239,7 @@ fun AppDrawerScreen(
             newWorkspace.type == WorkspaceType.PRIVATE &&
             privateSpaceState.isLocked
         ) {
-            appLifecycleViewModel.onUnlockPrivateSpace()
+            privateSpaceViewModel.onUnlockPrivateSpace()
         }
 
         workspaceId = newWorkspaceId
@@ -520,10 +515,7 @@ fun AppDrawerScreen(
                     }
                 }
             } else null,
-            onRenameApp = {
-                renameText = app.name
-                renameTarget = app
-            },
+            onRenameApp = { renameAppTarget = app },
             onChangeAppIcon = { appTarget = app },
             onAliases = { showAliasDialog = app }
         )
@@ -664,10 +656,9 @@ fun AppDrawerScreen(
                                         it.isAuthenticating -> LoadingIndicator(color = Color.Yellow)
                                         it.isLocked -> {
                                             DragonIconButton(
-                                                onClick = { appLifecycleViewModel.onUnlockPrivateSpace() },
-                                                imageVector = Icons.Default.Lock,
+                                                icon = R.drawable.lock,
                                                 contentDescription = stringResource(R.string.private_space_locked)
-                                            )
+                                            ) { privateSpaceViewModel.onUnlockPrivateSpace() }
                                         }
                                     }
                                 }
@@ -763,31 +754,17 @@ fun AppDrawerScreen(
                                             modifier = Modifier.shapedClickable { showMoreMenu = true }
                                         )
 
-                                        DragonDropDownMenu(
-                                            expanded = showMoreMenu,
-                                            onDismissRequest = { showMoreMenu = false }
-                                        ) {
-                                            BurgerListAction(
-                                                listOf(
-                                                    BurgerAction(
-                                                        onClick = {
-                                                            onLaunchAction(
-                                                                SwipeActionSerializable.OpenDragonLauncherSettings(
-                                                                    SETTINGS.DRAWER
-                                                                )
-                                                            )
-                                                        },
-                                                        content = {
-                                                            Icon(
-                                                                imageVector = Icons.Default.Settings,
-                                                                contentDescription = null
-                                                            )
-                                                            Text(stringResource(R.string.drawer_settings))
-                                                        }
-                                                    )
+                                        BurgerListAction(
+                                            actions = listOf(
+                                                MoreOptions(
+                                                    onClick = { onNavigate(NavigationRoute.DrawerSettings) },
+                                                    icon = R.drawable.ic_action_drawer,
+                                                    text = { stringResource(R.string.drawer_settings) }
                                                 )
-                                            )
-                                        }
+                                            ),
+                                            isExpanded = showMoreMenu,
+                                            onDismissRequest = { showMoreMenu = false }
+                                        )
                                     }
                                 },
                                 onSearchChanged = { searchQuery = it },
@@ -804,34 +781,26 @@ fun AppDrawerScreen(
 
 
 
-    if (renameTarget != null) {
-        val app = renameTarget!!
+    if (renameAppTarget != null) {
+        val app = renameAppTarget!!
         val cacheKey = app.iconCacheKey
 
-        RenameAppDialog(
-            title = stringResource(R.string.rename),
-            name = { renameText },
-            onNameChange = { renameText = it },
-            onConfirm = {
-
-                scope.launch {
-                    appsViewModel.renameApp(
-                        cacheKey = cacheKey,
-                        customName = renameText
-                    )
-                }
-
-                renameTarget = null
-            },
-            onReset = {
-
-                scope.launch {
-                    appsViewModel.resetAppName(cacheKey)
-                }
-                renameTarget = null
-            },
-            onDismiss = { renameTarget = null }
-        )
+        TextEditorDialog(
+            title = { stringResource(R.string.rename) },
+            placeHolder = { app.name },
+            onDismiss = { renameAppTarget = null },
+            initialText = app.name
+        ) {
+            if (it != "") {
+                appsViewModel.renameApp(
+                    cacheKey = cacheKey,
+                    customName = it
+                )
+            } else {
+                appsViewModel.resetAppName(cacheKey)
+            }
+            renameAppTarget = null
+        }
     }
 
     if (appTarget != null) {
@@ -839,7 +808,7 @@ fun AppDrawerScreen(
         val app = appTarget!!
         val cacheKey = app.iconCacheKey
 
-        AppIconEditorDialog(
+        AppIconEditor(
             app = app,
             onReset = { appsViewModel.reloadAppIcon(app) },
             onDismiss = { appTarget = null }

@@ -1,8 +1,9 @@
 package org.elnix.dragonlauncher.settings.stores
 
-import org.elnix.dragonlauncher.enumsui.ColorPickerButtonAction
-import org.elnix.dragonlauncher.enumsui.ColorPickerMode
-import org.elnix.dragonlauncher.enumsui.DefaultThemes
+import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction
+import kotlin.jvm.java
+import org.elnix.dragonlauncher.enumsui.select.ColorPickerMode
+import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.MapSettingsStore

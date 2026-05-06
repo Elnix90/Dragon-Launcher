@@ -20,13 +20,13 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.Restore
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,22 +46,22 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.base.ColorUtils.toHexWithAlpha
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.utils.copyToClipboard
-import org.elnix.dragonlauncher.common.utils.pasteClipboard
-import org.elnix.dragonlauncher.common.utils.showToast
-import org.elnix.dragonlauncher.enumsui.ColorPickerMode
+import org.elnix.dragonlauncher.common.messyfolder.showToast
+import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.pasteClipboard
+import org.elnix.dragonlauncher.enumsui.select.ColorPickerMode
 import org.elnix.dragonlauncher.settings.stores.ColorModesSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
+import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
-import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
-import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
-import org.elnix.dragonlauncher.ui.dragon.generic.ShowLabels
+import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ColorPickerRow(
     label: String,
@@ -126,47 +126,42 @@ fun ColorPickerRow(
     }
 
     if (showPicker) {
-        CustomAlertDialog(
-            imePadding = false,
-            modifier = modifier.padding(15.dp),
-            onDismissRequest = { showPicker = false },
-            title = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ){
-                    Text(
-                        text = label,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-
-                    Icon(
-                        imageVector = Icons.Default.Restore,
-                        contentDescription = "Reset Color",
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier
-                            .shapedClickable { onColorPicked(null) }
-                            .padding(8.dp)
-                    )
-                }
-            },
-            text = {
-                ColorPicker(
-                    color = actualColor,
-                    initialPage = initialPage,
-                    onColorSelected = { actualColor = it }
+        DragonModalBottomSheet(
+            sheetState = rememberModalBottomSheetState(true),
+            onDismissRequest = { showPicker = false }
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = label,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
-            },
-            confirmButton = {
-                ValidateCancelButtons(
-                    onCancel = { showPicker = false }
-                ) {
-                    onColorPicked(actualColor)
-                    showPicker = false
-                }
-            },
-            alignment = Alignment.Center
-        )
+
+                Icon(
+                    imageVector = Icons.Default.Restore,
+                    contentDescription = "Reset Color",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .shapedClickable { onColorPicked(null) }
+                        .padding(8.dp)
+                )
+            }
+
+            ColorPicker(
+                color = actualColor,
+                initialPage = initialPage,
+                onColorSelected = { actualColor = it }
+            )
+
+            ValidateCancelButtons(
+                onCancel = { showPicker = false }
+            ) {
+                onColorPicked(actualColor)
+                showPicker = false
+            }
+        }
     }
 }
 
@@ -198,14 +193,10 @@ private fun ColorPicker(
 
     Column(modifier = Modifier.fillMaxWidth()) {
 
-        MultiSelectConnectedButtonRow(
+        SingleSelectConnectedButtonRow(
             entries = pickerModes,
-            showLabels = ShowLabels.Always,
-            isChecked = {
-                currentMode == it
-            },
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
+            checked = { currentMode == it },
+            modifier = Modifier.fillMaxWidth()
         ) {
             scope.launch { pagerState.animateScrollToPage(it.ordinal) }
         }
@@ -258,7 +249,7 @@ private fun ColorPicker(
                         ctx.copyToClipboard(hexText)
                     },
                     colors = AppObjectsColors.iconButtonColors(color, textBoxColor),
-                    imageVector = Icons.Default.ContentCopy,
+                    icon = R.drawable.copy,
                     contentDescription = "Copy HEX"
                 )
 
@@ -271,7 +262,7 @@ private fun ColorPicker(
                         }
                     },
                     colors = AppObjectsColors.iconButtonColors(color, textBoxColor),
-                    imageVector = Icons.Default.ContentPaste,
+                    icon = R.drawable.paste,
                     contentDescription = "Paste HEX"
                 )
             }

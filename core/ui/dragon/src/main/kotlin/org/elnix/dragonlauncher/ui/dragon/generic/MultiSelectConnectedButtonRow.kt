@@ -1,34 +1,23 @@
 package org.elnix.dragonlauncher.ui.dragon.generic
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.painterResource
 import org.elnix.dragonlauncher.enumsui.ToggleButtonOption
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.withHapticParam
+import org.elnix.dragonlauncher.ui.base.UiConstants
+import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
+import org.elnix.dragonlauncher.ui.base.withHaptic
 import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
-
-
-enum class ShowLabels {
-    Always,
-    Selected,
-    Never
-}
 
 /**
  * A horizontally connected multi-select toggle button group built on Material3 Expressive's
@@ -46,67 +35,46 @@ enum class ShowLabels {
  * @param entries The ordered list of options to display as toggle buttons.
  * @param isChecked Predicate returning the current checked state for a given entry.
  * @param onCheck Called when the user taps a button, both on check and uncheck.
- * @param showLabels Whether to show the text label alongside the icon. Defaults to `true`.
  *   regardless of the resulting checked state. Defaults to `true`.
  */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
     entries: List<T>,
-    modifier: Modifier = Modifier,
-    showLabels: ShowLabels = ShowLabels.Never,
     isEnabled: (T) -> Boolean = { true },
     isChecked: (T) -> Boolean = { true },
     onCheck: (T) -> Unit
 ) {
+    val interactionSources = List(entries.size) { rememberInteractionSource() }
 
-    Row(
-        modifier = modifier.padding(horizontal = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
-    ) {
-        entries.forEachIndexed { index, entry ->
+    @Suppress("DEPRECATION")
+    ButtonGroup(horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)) {
+        entries.forEachIndexed { idx, entry ->
 
-            // No idea why, but using a `not` here feels more natural for the displayed entries
-            val checked = !isChecked(entry)
+            val checked = isChecked(entry)
 
-            val showLabel = (showLabels == ShowLabels.Always) || (showLabels == ShowLabels.Selected && !checked)
-
-            @OptIn(ExperimentalMaterial3Api::class)
-            DragonTooltip(
-                resId = entry.resId ?: -1,
-                enabled = !showLabel
+            IconButton(
+                onClick = withHaptic { onCheck(entry) },
+                interactionSource = interactionSources[idx],
+                modifier = Modifier
+                    .size(IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
+                    .animateWidth(interactionSources[idx]),
+                enabled = isEnabled(entry),
+                shapes = UiConstants.dragonIconButtonShapes(),
+                colors = AppObjectsColors.iconButtonColors()
+//                shapes = when (idx) {
+//                    0 -> ButtonGroupDefaults.
+//                    entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+//                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+//                }
             ) {
-                ToggleButton(
-                    checked = checked,
-                    onCheckedChange = withHapticParam {
-                        onCheck(entry)
-                    },
-                    enabled = isEnabled(entry),
-                    colors = AppObjectsColors.toggleButtonColors(),
-                    // Custom shapes
-                    shapes = when (index) {
-                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                        entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                    }
-                ) {
-                    entry.iconEnabled?.let { iconEnabled ->
+
+                entry.iconEnabled?.let { iconEnabled ->
+                    DragonTooltip(entry.resId ?: -1) {
                         Crossfade(!checked) { notChecked ->
                             Icon(
-                                entry.iconDisabled.takeIf { notChecked && it != null } ?: iconEnabled,
+                                painter = painterResource(entry.iconDisabled.takeIf { notChecked && it != null } ?: iconEnabled),
                                 contentDescription = null
-                            )
-                        }
-                    }
-
-                    AnimatedVisibility(showLabel) {
-                        entry.resId?.let{
-                            Spacer(Modifier.width(5.dp))
-                            Text(
-                                stringResource(it),
-                                maxLines = 1,
-                                softWrap = false,
-                                style = MaterialTheme.typography.labelSmall
                             )
                         }
                     }

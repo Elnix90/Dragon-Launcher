@@ -13,7 +13,7 @@ import org.elnix.dragonlauncher.common.serializables.IconShape
 import org.elnix.dragonlauncher.common.serializables.IconShapeGson
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipeJson
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.BACKUP_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
 import org.elnix.dragonlauncher.logging.logI
 
 /**

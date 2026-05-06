@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.ui.remembers
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
-import org.elnix.dragonlauncher.common.utils.isNotBlankJson
+import org.elnix.dragonlauncher.common.messyfolder.isNotBlankJson
 
 @Composable
 inline fun <reified T> rememberDecodedObject(

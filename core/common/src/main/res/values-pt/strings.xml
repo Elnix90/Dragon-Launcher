@@ -87,7 +87,6 @@
     <string name="set_default_launcher">Definir como launcher padrão</string>
     <string name="close">Fechar</string>
     <string name="dragging_distance_selection">Seleção de Distância de Arrasto</string>
-    <string name="swipe_points_selection">Seleção de Pontos de Deslizamento</string>
     <string name="circle">Distância de arrasto do círculo</string>
     <string name="cancel_zone">Cancelar arrasto na zona</string>
     <string name="android_settings">Configurações do Android</string>

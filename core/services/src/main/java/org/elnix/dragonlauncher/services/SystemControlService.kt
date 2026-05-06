@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.ACCESSIBILITY_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ACCESSIBILITY_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore

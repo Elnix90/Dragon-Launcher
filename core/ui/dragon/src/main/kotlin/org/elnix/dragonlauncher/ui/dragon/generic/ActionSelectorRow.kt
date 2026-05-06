@@ -5,7 +5,7 @@ package org.elnix.dragonlauncher.ui.dragon.generic
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
@@ -32,8 +33,9 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
+import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
+import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
-import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 
@@ -44,39 +46,27 @@ fun <T> ActionSelectorRow(
     enabled: Boolean = true,
     switchEnabled: Boolean = true,
     label: String,
-    optionLabel: (T) -> String = { it.toString() },
+    optionLabel: @Composable (T) -> String = { it.toString() },
     toggled: Boolean? = null,
     onSelected: (T?) -> Unit
 ) {
-    var showDialog by remember { mutableStateOf(false) }
+    var showSheet by remember { mutableStateOf(false) }
 
     val switchInteractionSource = remember { MutableInteractionSource() }
     val globalInteractionSource = remember { MutableInteractionSource() }
 
 
     DragonRow(
-        onClick = { showDialog = true },
-        enabled = enabled
+        onClick = { showSheet = true},
+        interactionSource = if (toggled != null) globalInteractionSource else switchInteractionSource,
+        modifier = Modifier
+            .height(IntrinsicSize.Min)
+            .fillMaxWidth()
     ) {
-        Column(
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .conditional(enabled && toggled == true) {
-                    clickable(
-                        interactionSource = globalInteractionSource
-                    ) { showDialog = true }
-                }
-                .padding(horizontal = 16.dp, vertical = 14.dp)
-        ) {
-            TextWithDescription(
-                text = label,
-                description = optionLabel(selected),
-            )
-        }
-
+        TextWithDescription(
+            text = label,
+            description = optionLabel(selected),
+        )
 
         // Right side toggle + divider wrapped in a clickable container
         if (toggled != null) {
@@ -114,77 +104,73 @@ fun <T> ActionSelectorRow(
     }
 
     // Options dialog
-    ActionSelector(
-        visible = showDialog,
-        label = label,
-        options = options,
-        optionLabel = optionLabel,
-        selected = selected,
-        onSelected = onSelected,
-        onDismiss = { showDialog = false }
-    )
+    if (showSheet) {
+        ActionSelector(
+            label = label,
+            options = options,
+            optionLabel = optionLabel,
+            selected = selected,
+            onSelected = onSelected,
+            onDismiss = { showSheet = false }
+        )
+    }
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> ActionSelector(
-    visible: Boolean,
     label: String?,
     options: List<T>,
-    optionLabel: (T) -> String = { it.toString() },
+    optionLabel: @Composable (T) -> String = { it.toString() },
     selected: T?,
     onSelected: (T) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val textColor = MaterialTheme.colorScheme.onSurface
 
-    if (visible) {
-        CustomAlertDialog(
-            onDismissRequest = onDismiss,
-            title = {
-                if (label != null) {
-                    Text(
-                        text = label,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = textColor,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            },
-            text = {
-                Column {
-                    options.forEach { option ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(DragonShape)
-                                .clickable {
-                                    onSelected(option)
-                                    onDismiss()
-                                }
-                                .padding(15.dp)
-                        ) {
-                            Text(
-                                text = optionLabel(option),
-                                color = textColor,
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.weight(1f)
-                            )
+    DragonModalBottomSheet(
+        onDismissRequest = onDismiss
+    ) {
 
-                            RadioButton(
-                                selected = (selected == option),
-                                onClick = {
-                                    onSelected(option)
-                                    onDismiss()
-                                },
-                                colors = AppObjectsColors.radioButtonColors(),
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
+        if (label != null) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.titleMedium,
+                color = textColor,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally)
+            )
+        }
+        options.forEach { option ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(DragonShape)
+                    .shapedClickable {
+                        onSelected(option)
+                        onDismiss()
                     }
-                }
+                    .padding(15.dp)
+            ) {
+                Text(
+                    text = optionLabel(option),
+                    color = textColor,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                RadioButton(
+                    selected = (selected == option),
+                    onClick = {
+                        onSelected(option)
+                        onDismiss()
+                    },
+                    colors = AppObjectsColors.radioButtonColors(),
+                    modifier = Modifier.size(20.dp)
+                )
             }
-        )
+        }
     }
 }

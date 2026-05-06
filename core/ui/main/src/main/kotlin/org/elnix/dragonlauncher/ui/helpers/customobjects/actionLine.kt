@@ -13,11 +13,11 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.common.serializables.CustomObjectSerializable
 import org.elnix.dragonlauncher.ui.base.UiConstants
-import org.elnix.dragonlauncher.enumsui.AngleLineObjects
-import org.elnix.dragonlauncher.enumsui.AngleLineObjects.Angle
-import org.elnix.dragonlauncher.enumsui.AngleLineObjects.End
-import org.elnix.dragonlauncher.enumsui.AngleLineObjects.Line
-import org.elnix.dragonlauncher.enumsui.AngleLineObjects.Start
+import org.elnix.dragonlauncher.enumsui.other.AngleLineObjects
+import org.elnix.dragonlauncher.enumsui.other.AngleLineObjects.Angle
+import org.elnix.dragonlauncher.enumsui.other.AngleLineObjects.End
+import org.elnix.dragonlauncher.enumsui.other.AngleLineObjects.Line
+import org.elnix.dragonlauncher.enumsui.other.AngleLineObjects.Start
 import kotlin.math.abs
 
 fun DrawScope.actionLine(

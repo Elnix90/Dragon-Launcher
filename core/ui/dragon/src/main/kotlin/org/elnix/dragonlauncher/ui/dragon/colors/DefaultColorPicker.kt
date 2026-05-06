@@ -1,22 +1,19 @@
 package org.elnix.dragonlauncher.ui.dragon.colors
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -27,8 +24,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 
 @Composable
@@ -80,7 +80,7 @@ fun DefaultColorPicker(
             defaultColors.chunked(4).forEach { rowColors ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     rowColors.forEach { color ->
@@ -93,20 +93,24 @@ fun DefaultColorPicker(
                             }
                         )
 
-                        Row(
+                        val scale by animateFloatAsState(
+                            targetValue = if (isSelected) 1f else 0f,
+                            animationSpec = tween(durationMillis = 300),
+                            label = "Check Scale Animation"
+                        )
+
+
+                        Box(
+                            contentAlignment = Alignment.Center,
                             modifier = Modifier
                                 .weight(1f)
-                                .shapedClickable {
-                                    selectedColor = color
-                                    onColorSelected(color)
-                                }
-                                .background(backgroundColor)
-                                .padding(3.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
                         ) {
                             Box(
                                 modifier = Modifier
+                                    .shapedClickable(hapticFeedback = true) {
+                                        selectedColor = color
+                                        onColorSelected(color)
+                                    }
                                     .size(44.dp)
                                     .clip(CircleShape)
                                     .background(color)
@@ -117,15 +121,24 @@ fun DefaultColorPicker(
                                         else
                                             MaterialTheme.colorScheme.outline,
                                         shape = CircleShape
-                                    ),
+                                    )
                             )
 
-                            AnimatedVisibility(isSelected) {
-                                Spacer(Modifier.width(3.dp))
+
+                            Box(
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .scale(scale)
+                                    .clip(CircleShape)
+                                    .background(color = MaterialTheme.colorScheme.primaryContainer)
+                            ) {
                                 Icon(
-                                    imageVector = Icons.Default.Check,
+                                    modifier = Modifier
+                                        .size(16.dp)
+                                        .align(Alignment.Center),
+                                    painter = painterResource(R.drawable.check),
                                     contentDescription = null,
-                                    tint = Color.White
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
                                 )
                             }
                         }

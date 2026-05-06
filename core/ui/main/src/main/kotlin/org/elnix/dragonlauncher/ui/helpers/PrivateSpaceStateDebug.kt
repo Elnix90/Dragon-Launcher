@@ -1,11 +1,14 @@
 package org.elnix.dragonlauncher.ui.helpers
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -14,23 +17,28 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.enumsui.PrivateSpaceLoadingState
+import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 
 
 @Composable
-fun PrivateSpaceStateDebugScreen(
-    state: PrivateSpaceLoadingState
-) {
-    Column(
-        modifier = Modifier
-            .clip(DragonShape)
-            .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
-    ) {
-        DebugBooleanRow("isLocked", state.isLocked)
-        DebugBooleanRow("isLoading", state.isLoading)
-        DebugBooleanRow("isAuthenticating", state.isAuthenticating)
+fun PrivateSpaceStateDebugDialog() {
+    val state by LocalAppsViewModel.current.privateSpaceState.collectAsState()
+    val privateSpaceDebugInfo by DebugSettingsStore.privateSpaceDebugInfo.asState()
+
+    AnimatedVisibility(privateSpaceDebugInfo) {
+        Column(
+            modifier = Modifier
+                .clip(DragonShape)
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp),
+        ) {
+            DebugBooleanRow("isLocked", state.isLocked)
+            DebugBooleanRow("isLoading", state.isLoading)
+            DebugBooleanRow("isAuthenticating", state.isAuthenticating)
+        }
     }
 }
 

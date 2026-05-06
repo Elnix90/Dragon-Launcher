@@ -7,11 +7,8 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.FolderOpen
-import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
@@ -34,11 +31,11 @@ import androidx.core.net.toUri
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.BACKUP_TAG
-import org.elnix.dragonlauncher.common.utils.formatDateTime
-import org.elnix.dragonlauncher.common.utils.getFilePathFromUri
-import org.elnix.dragonlauncher.common.utils.showToast
-import org.elnix.dragonlauncher.common.utils.today
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
+import org.elnix.dragonlauncher.common.messyfolder.getFilePathFromUri
+import org.elnix.dragonlauncher.common.messyfolder.showToast
+import org.elnix.dragonlauncher.common.utils.DateUtils.formatDateTime
+import org.elnix.dragonlauncher.common.utils.DateUtils.today
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.BackupResult
@@ -48,12 +45,12 @@ import org.elnix.dragonlauncher.settings.bases.DatastoreProvider
 import org.elnix.dragonlauncher.settings.stores.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.composition.LocalBackupViewModel
 import org.elnix.dragonlauncher.ui.dialogs.ExportSettingsDialog
 import org.elnix.dragonlauncher.ui.dialogs.ImportSettingsDialog
 import org.elnix.dragonlauncher.ui.dialogs.SelectedActionRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
+import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.dragon.text.TextDivider
 import org.elnix.dragonlauncher.ui.helpers.GradientBigButton
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingItemWithExternalOpen
@@ -125,7 +122,6 @@ fun BackupTab(onBack: () -> Unit) {
     )
 
 
-
     // ──────── UI ───────────────────────────────────────
     SettingsScaffold(
         title = ctx.getString(R.string.backup_restore),
@@ -137,106 +133,100 @@ fun BackupTab(onBack: () -> Unit) {
             }
         }
     ) {
-        item {
-            BackupButtons(
-                onExport = { showExportDialog = true },
-                onImport = {
-                    settingsImportLauncher.launch(
-                        arrayOf(
-                            "application/json",
-                            "text/plain",
-                            "application/octet-stream",
-                            "*/*"
-                        )
+        BackupButtons(
+            onExport = { showExportDialog = true },
+            onImport = {
+                settingsImportLauncher.launch(
+                    arrayOf(
+                        "application/json",
+                        "text/plain",
+                        "application/octet-stream",
+                        "*/*"
                     )
-                }
-            )
-        }
+                )
+            }
+        )
 
-        item { TextDivider(ctx.getString(R.string.automatic_backups)) }
 
-        item {
-            SettingsSwitchRow(
-                setting = BackupSettingsStore.autoBackupEnabled,
-                title = stringResource(R.string.automatic_backups),
-                description = stringResource(R.string.auto_backup_desc)
-            ) {
-                // If the user disabled the backup, also remove the uri
-                if (!it) {
-                    scope.launch {
-                        BackupSettingsStore.autoBackupUri.reset(ctx)
-                    }
+        TextDivider(ctx.getString(R.string.automatic_backups))
+
+        SettingsSwitchRow(
+            setting = BackupSettingsStore.autoBackupEnabled,
+            title = stringResource(R.string.automatic_backups),
+            description = stringResource(R.string.auto_backup_desc)
+        ) {
+            // If the user disabled the backup, also remove the uri
+            if (!it) {
+                scope.launch {
+                    BackupSettingsStore.autoBackupUri.reset(ctx)
                 }
             }
         }
+
 
         if (autoBackupEnabled) {
-            item {
-                AnimatedContent(backupPath == null) { state ->
-                    if (state) {
-                        SettingsItem(
-                            title = stringResource(R.string.backup_location),
-                            description = stringResource(R.string.backup_location_desc),
-                            icon = Icons.Default.FolderOpen,
-                            onClick = { autoBackupLauncher.launch("dragonlauncher-auto-backup.json") }
-                        )
-                    } else {
-                        SettingItemWithExternalOpen(
-                            title = stringResource(R.string.backup_location),
-                            description = backupPath
-                                ?: stringResource(R.string.backup_location_desc),
-                            icon = Icons.Default.FolderOpen,
-                            onClick = {
-                                autoBackupLauncher.launch("dragonlauncher-auto-backup.json")
-                            },
-                            onExtClick = {
-                                autoBackupUri.let { uri ->
-                                    val intent = Intent(Intent.ACTION_VIEW).apply {
-                                        setDataAndType(uri, "application/json")
-                                        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                                    }
-                                    ctx.startActivity(
-                                        Intent.createChooser(
-                                            intent,
-                                            "Open backup file"
-                                        )
-                                    )
-                                }
-                            }
-                        )
-                    }
-                }
-            }
-
-            if (backupPath != null) {
-                item {
+            AnimatedContent(backupPath == null) { state ->
+                if (state) {
                     SettingsItem(
-                        title = stringResource(R.string.last_backup),
-                        description = lastBackupTime.formatDateTime(),
-                        icon = Icons.Default.Restore,
-                        enabled = !hasTriggeredManualAutoBackup,
+                        title = stringResource(R.string.backup_location),
+                        description = stringResource(R.string.backup_location_desc),
+                        icon = R.drawable.folder_open,
+                        onClick = { autoBackupLauncher.launch("dragonlauncher-auto-backup.json") }
+                    )
+                } else {
+                    SettingItemWithExternalOpen(
+                        title = stringResource(R.string.backup_location),
+                        description = backupPath
+                            ?: stringResource(R.string.backup_location_desc),
+                        icon = R.drawable.folder_open,
                         onClick = {
-                            hasTriggeredManualAutoBackup = true
-                            scope.launch {
-                                SettingsBackupManager.triggerBackup(ctx)
-                                ctx.showToast(ctx.getString(R.string.backup_triggered))
-                                delay(1000)
-                                hasTriggeredManualAutoBackup = false
+                            autoBackupLauncher.launch("dragonlauncher-auto-backup.json")
+                        },
+                        onExtClick = {
+                            autoBackupUri.let { uri ->
+                                val intent = Intent(Intent.ACTION_VIEW).apply {
+                                    setDataAndType(uri, "application/json")
+                                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                }
+                                ctx.startActivity(
+                                    Intent.createChooser(
+                                        intent,
+                                        "Open backup file"
+                                    )
+                                )
                             }
                         }
                     )
                 }
             }
+
+
+            if (backupPath != null) {
+                SettingsItem(
+                    title = stringResource(R.string.last_backup),
+                    description = lastBackupTime.formatDateTime(),
+                    icon = R.drawable.reset,
+                    enabled = !hasTriggeredManualAutoBackup,
+                    onClick = {
+                        hasTriggeredManualAutoBackup = true
+                        scope.launch {
+                            SettingsBackupManager.triggerBackup(ctx)
+                            ctx.showToast(ctx.getString(R.string.backup_triggered))
+                            delay(1000)
+                            hasTriggeredManualAutoBackup = false
+                        }
+                    }
+                )
+            }
         }
 
+
         if (autoBackupEnabled) {
-            item { TextDivider(ctx.getString(R.string.auto_backup_stores)) }
+            TextDivider(ctx.getString(R.string.auto_backup_stores))
 
-            item {
-                SelectedActionRow(selectedStores, backupableStores.size) { save() }
-            }
+            SelectedActionRow(selectedStores, backupableStores.size) { save() }
 
-            items(selectedStores.entries.toList()) { (datastoreName, isSelected) ->
+            selectedStores.entries.forEach { (datastoreName, isSelected) ->
 
                 DragonRow(
                     onClick = {
@@ -256,7 +246,7 @@ fun BackupTab(onBack: () -> Unit) {
         }
     }
 
-    // Export Dialog
+
     if (showExportDialog) {
         ExportSettingsDialog(
             onDismiss = { showExportDialog = false },
@@ -268,7 +258,6 @@ fun BackupTab(onBack: () -> Unit) {
         )
     }
 
-    // Import Dialog (shows after file is picked)
     importJson?.let { json ->
         if (showImportDialog) {
             ImportSettingsDialog(

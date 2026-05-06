@@ -25,10 +25,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
 import androidx.compose.material.icons.automirrored.filled.PlaylistAddCheck
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Deselect
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.RestartAlt
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -58,17 +54,17 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.PRIVATE_SPACE_TAG
 import org.elnix.dragonlauncher.common.serializables.AppModel
 import org.elnix.dragonlauncher.common.serializables.WorkspaceType
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.PRIVATE_SPACE_TAG
 import org.elnix.dragonlauncher.common.utils.PrivateSpaceUtils
 import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
-import org.elnix.dragonlauncher.ui.composition.LocalAppLifecycleViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
+import org.elnix.dragonlauncher.ui.composition.LocalPrivateSpaceViewModel
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.helpers.AppDrawerSearch
@@ -84,7 +80,7 @@ fun AppPickerDialog(
 ) {
 
     val appsViewModel = LocalAppsViewModel.current
-    val appLifecycleViewModel = LocalAppLifecycleViewModel.current
+    val privateSpaceViewModel = LocalPrivateSpaceViewModel.current
 
     val privateSpaceState by appsViewModel.privateSpaceState.collectAsState()
 
@@ -132,7 +128,7 @@ fun AppPickerDialog(
             privateSpaceState.isLocked
         ) {
             logW(PRIVATE_SPACE_TAG) { "Picker launch!" }
-            appLifecycleViewModel.onUnlockPrivateSpace()
+            privateSpaceViewModel.onUnlockPrivateSpace()
         }
 
         appsViewModel.selectWorkspace(newWorkspaceId)
@@ -176,29 +172,26 @@ fun AppPickerDialog(
 
                             AnimatedVisibility(isMultiSelectMode) {
                                 DragonIconButton(
-                                    onClick = {
-                                        isMultiSelectMode = false
-                                        selectedApps.clear()
-                                    },
                                     colors = AppObjectsColors.iconButtonColors(),
-                                    imageVector = Icons.Default.Deselect,
-                                    contentDescription = stringResource(R.string.deselect_all)
-                                )
+                                    icon = R.drawable.deselect,
+                                    contentDescription = stringResource(R.string.deselect_all),
+                                ) {
+                                    isMultiSelectMode = false
+                                    selectedApps.clear()
+                                }
                             }
 
                             DragonIconButton(
-                                onClick = { isSearchBarEnabled = true },
                                 colors = AppObjectsColors.iconButtonColors(),
-                                imageVector = Icons.Default.Search,
+                                icon = R.drawable.search,
                                 contentDescription = stringResource(R.string.search_apps)
-                            )
+                            ) { isSearchBarEnabled = true }
 
                             DragonIconButton(
-                                onClick = { scope.launch { appsViewModel.reloadApps() } },
                                 colors = AppObjectsColors.iconButtonColors(),
-                                imageVector = Icons.Default.RestartAlt,
+                                icon = R.drawable.reload,
                                 contentDescription = stringResource(R.string.reload_apps)
-                            )
+                            ){ scope.launch { appsViewModel.reloadApps() } }
                         }
                     } else {
                         AppDrawerSearch(
@@ -325,13 +318,12 @@ fun AppPickerDialog(
                                     it.isAuthenticating -> LoadingIndicator(color = Color.Yellow)
                                     it.isLocked -> {
                                         DragonIconButton(
-                                            onClick = {
-                                                logW(PRIVATE_SPACE_TAG) { "Drawer reload button launch!" }
-                                                appLifecycleViewModel.onUnlockPrivateSpace()
-                                            },
-                                            imageVector = Icons.Default.Lock,
+                                            icon = R.drawable.lock,
                                             contentDescription = "Private Space Locked"
-                                        )
+                                        ) {
+                                            logW(PRIVATE_SPACE_TAG) { "Drawer reload button launch!" }
+                                            privateSpaceViewModel.onUnlockPrivateSpace()
+                                        }
                                     }
                                 }
                             }

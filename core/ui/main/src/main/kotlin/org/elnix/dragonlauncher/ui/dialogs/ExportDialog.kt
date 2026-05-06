@@ -22,10 +22,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.enumsui.BackupSelectStoresButtons
-import org.elnix.dragonlauncher.enumsui.BackupSelectStoresButtons.DESELECT_ALL
-import org.elnix.dragonlauncher.enumsui.BackupSelectStoresButtons.INVERT
-import org.elnix.dragonlauncher.enumsui.BackupSelectStoresButtons.SELECT_ALL
+import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons
+import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons.DeselectAll
+import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons.Invert
+import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons.SelectAll
 import org.elnix.dragonlauncher.settings.bases.DatastoreProvider
 import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.settings.bases.BaseSettingsStore
@@ -87,28 +87,28 @@ fun <T> SelectedActionRow(
         isEnabled = { entry ->
             val selectedCount = selected.map { it.value }.count { it }
             when (entry) {
-                DESELECT_ALL -> selectedCount > 0
-                SELECT_ALL -> selectedCount < totalNumber
-                INVERT -> true
+                DeselectAll -> selectedCount > 0
+                SelectAll -> selectedCount < totalNumber
+                Invert -> true
             }
         }
     ) {
         when (it) {
-            DESELECT_ALL -> {
+            DeselectAll -> {
                 selected.forEach { (store, _) ->
                     selected[store] = false
                 }
                 onAnyAction()
             }
 
-            SELECT_ALL -> {
+            SelectAll -> {
                 selected.forEach { (store, _) ->
                     selected[store] = true
                 }
                 onAnyAction()
             }
 
-            INVERT -> {
+            Invert -> {
                 selected.forEach { (store, isSelected) ->
                     selected[store] = !isSelected
                 }

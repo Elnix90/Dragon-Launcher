@@ -2,7 +2,7 @@ package org.elnix.dragonlauncher.common.serializables
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.FLOATING_APPS_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.FLOATING_APPS_TAG
 import org.elnix.dragonlauncher.logging.logE
 
 @Serializable

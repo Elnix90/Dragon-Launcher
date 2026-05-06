@@ -41,10 +41,10 @@ fun OverlayHost(
     }
 }
 
-val LocalOverlayManager = compositionLocalOf<OverlayManager> {
+val LocalOverlayManager = compositionLocalOf {
     OverlayManager()
 }
 
-val LocalZIndex = compositionLocalOf<Float> {
+val LocalZIndex = compositionLocalOf {
     0f
 }

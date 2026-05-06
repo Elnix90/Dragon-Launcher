@@ -1,6 +1,6 @@
 package org.elnix.dragonlauncher.settings.stores
 
-import org.elnix.dragonlauncher.enumsui.AngleLineObjects
+import org.elnix.dragonlauncher.enumsui.other.AngleLineObjects
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.Settings
 import org.elnix.dragonlauncher.settings.bases.BaseSettingObject

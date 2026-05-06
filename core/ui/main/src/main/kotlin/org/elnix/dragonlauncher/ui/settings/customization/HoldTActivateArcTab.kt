@@ -5,15 +5,17 @@ package org.elnix.dragonlauncher.ui.settings.customization
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.graphics.res.animatedVectorResource
+import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
+import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Stop
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,7 +31,9 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -43,10 +47,9 @@ import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.withHaptic
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
-import org.elnix.dragonlauncher.ui.dialogs.HoldSettingsOrderDialog
+import org.elnix.dragonlauncher.ui.dialogs.HoldSettingsOrderSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
-import org.elnix.dragonlauncher.ui.dragon.components.ToggleableDragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
@@ -103,7 +106,7 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
                 HoldToActivateArcSettingsStore.resetAll(ctx)
             }
         },
-        titleContent = {
+        topContent = {
             var boxSize by remember { mutableStateOf(IntSize.Zero) }
 
             Row(
@@ -111,13 +114,13 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                ToggleableDragonIconButton(
-                    onClick = withHaptic(HapticFeedbackType.LongPress) { playAnimation = !playAnimation },
-                    toggled = { playAnimation },
-                    imageVectorEnabled = Icons.Default.Stop,
-                    imageVectorDisabled = Icons.Default.PlayArrow,
-                    contentDescription = stringResource(R.string.play)
-                )
+
+                IconButton(
+                    onClick = withHaptic(HapticFeedbackType.LongPress) { playAnimation = !playAnimation }
+                ) {
+                    AnimatedPlayPauseIcon(playAnimation)
+                }
+
 
                 SliderWithLabel(
                     label = null,
@@ -155,91 +158,108 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
                 )
             }
         },
-        scrollableContent = true,
-        content = {
+        scrollableContent = true
+    ) {
+        LaunchedEffect(
+            holdDelayBeforeStartingLongClickSettings,
+            longCLickSettingsDuration,
+            playAnimation
+        ) {
+            while (playAnimation) {
+                progress.snapTo(0f)
 
-            LaunchedEffect(
-                holdDelayBeforeStartingLongClickSettings,
-                longCLickSettingsDuration,
-                playAnimation
-            ) {
-                while (playAnimation) {
-                    progress.snapTo(0f)
+                delay(holdDelayBeforeStartingLongClickSettings.toLong())
 
-                    delay(holdDelayBeforeStartingLongClickSettings.toLong())
-
-                    progress.animateTo(
-                        targetValue = 1f,
-                        animationSpec = tween(
-                            durationMillis = longCLickSettingsDuration,
-                            easing = LinearEasing
-                        )
+                progress.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(
+                        durationMillis = longCLickSettingsDuration,
+                        easing = LinearEasing
                     )
-                }
-            }
-
-
-            DragonColumnGroup {
-                EditCustomObjectBlock(
-                    editObject = mutableHoldObject,
-                    default = UiConstants.defaultAngleCustomObject
-                ) { mutableHoldObject = it }
-            }
-
-            DragonColumnGroup {
-                SettingsSlider(
-                    setting = HoldToActivateArcSettingsStore.longCLickSettingsDuration,
-                    title = stringResource(R.string.long_click_settings_duration),
-                    description = stringResource(R.string.long_click_settings_duration_desc),
-                    valueRange = 0..5000
-                )
-
-                SettingsSlider(
-                    setting = HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings,
-                    title = stringResource(R.string.hold_delay_before_starting_long_click_settings),
-                    description = stringResource(R.string.hold_delay_before_starting_long_click_settings_desc),
-                    valueRange = 0..2000
-                )
-
-                SettingsSlider(
-                    setting = HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance,
-                    title = stringResource(R.string.hold_to_activate_tolerance),
-                    description = stringResource(R.string.hold_to_activate_tolerance_desc),
-                    valueRange = 1f..200f
-                )
-
-
-                SettingsSlider(
-                    setting = HoldToActivateArcSettingsStore.rotationPerSecond,
-                    title = stringResource(R.string.rotation_per_second),
-                    description = stringResource(R.string.rotation_per_second_desc),
-                    valueRange = 0f..5f
-                )
-
-                SettingsItem(
-                    title = stringResource(R.string.edit_hold_to_activate_elements),
-                    description = stringResource(R.string.edit_hold_to_activate_elements_desc),
-                    icon = Icons.Default.Edit
-                ) {
-                    showHoldSettingsOrderDialog = true
-                }
-
-                SettingsSwitchRow(
-                    setting = HoldToActivateArcSettingsStore.showToleranceOnMainScreen,
-                    title = stringResource(R.string.show_tolerance_on_main_screen),
-                    description = stringResource(R.string.show_tolerance_on_main_screen_desc),
-                )
-
-                SettingsSwitchRow(
-                    setting = UiSettingsStore.rgbLoading,
-                    title = stringResource(R.string.rgb_loading_settings),
-                    description = stringResource(R.string.rgb_loading_description)
                 )
             }
         }
-    )
 
 
-    HoldSettingsOrderDialog({ showHoldSettingsOrderDialog }) { showHoldSettingsOrderDialog = false }
+        DragonColumnGroup {
+            EditCustomObjectBlock(
+                editObject = mutableHoldObject,
+                default = UiConstants.defaultAngleCustomObject
+            ) { mutableHoldObject = it }
+        }
+
+        DragonColumnGroup {
+            SettingsSlider(
+                setting = HoldToActivateArcSettingsStore.longCLickSettingsDuration,
+                title = stringResource(R.string.long_click_settings_duration),
+                description = stringResource(R.string.long_click_settings_duration_desc),
+                valueRange = 0..5000
+            )
+
+            SettingsSlider(
+                setting = HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings,
+                title = stringResource(R.string.hold_delay_before_starting_long_click_settings),
+                description = stringResource(R.string.hold_delay_before_starting_long_click_settings_desc),
+                valueRange = 0..2000
+            )
+
+            SettingsSlider(
+                setting = HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance,
+                title = stringResource(R.string.hold_to_activate_tolerance),
+                description = stringResource(R.string.hold_to_activate_tolerance_desc),
+                valueRange = 1f..200f
+            )
+
+
+            SettingsSlider(
+                setting = HoldToActivateArcSettingsStore.rotationPerSecond,
+                title = stringResource(R.string.rotation_per_second),
+                description = stringResource(R.string.rotation_per_second_desc),
+                valueRange = 0f..5f
+            )
+
+            SettingsItem(
+                title = stringResource(R.string.edit_hold_to_activate_elements),
+                description = stringResource(R.string.edit_hold_to_activate_elements_desc),
+                icon = R.drawable.edit_rounded
+            ) {
+                showHoldSettingsOrderDialog = true
+            }
+
+            SettingsSwitchRow(
+                setting = HoldToActivateArcSettingsStore.showToleranceOnMainScreen,
+                title = stringResource(R.string.show_tolerance_on_main_screen),
+                description = stringResource(R.string.show_tolerance_on_main_screen_desc),
+            )
+
+            SettingsSwitchRow(
+                setting = UiSettingsStore.rgbLoading,
+                title = stringResource(R.string.rgb_loading_settings),
+                description = stringResource(R.string.rgb_loading_description)
+            )
+        }
+    }
+
+    if (showHoldSettingsOrderDialog) {
+        HoldSettingsOrderSheet { showHoldSettingsOrderDialog = false }
+    }
 }
 
+
+@Composable
+fun AnimatedPlayPauseIcon(
+    isPlaying: Boolean,
+    modifier: Modifier = Modifier,
+    size: Dp = 24.dp
+) {
+    val playToPause = rememberAnimatedVectorPainter(
+        animatedImageVector = AnimatedImageVector.animatedVectorResource(R.drawable.pause_to_play),
+        atEnd = !isPlaying
+    )
+
+    Icon(
+        painter = playToPause,
+        contentDescription = null,
+        modifier = modifier.size(size)
+    )
+}

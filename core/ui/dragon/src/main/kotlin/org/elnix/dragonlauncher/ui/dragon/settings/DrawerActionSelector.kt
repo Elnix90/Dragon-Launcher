@@ -8,9 +8,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.enumsui.DrawerActions
-import org.elnix.dragonlauncher.enumsui.drawerActionsLabel
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
 import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
@@ -40,7 +40,7 @@ fun DrawerActionSelector(
         options = actions,
         selected = tempState,
         label = label,
-        optionLabel = { drawerActionsLabel(ctx, it) },
+        optionLabel = { stringResource(it.resId) },
         toggled = stateNotDisabled
     ) {
         tempState = it ?: DrawerActions.DISABLED

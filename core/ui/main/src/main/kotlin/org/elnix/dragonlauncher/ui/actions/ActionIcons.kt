@@ -19,13 +19,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ICONS_TAG
+import org.elnix.dragonlauncher.common.messyfolder.PlatformShape
+import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.common.serializables.AppModel
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.ICONS_TAG
 import org.elnix.dragonlauncher.common.utils.ImageUtils.createUntintedBitmap
 import org.elnix.dragonlauncher.common.utils.ImageUtils.loadDrawableResAsBitmap
-import org.elnix.dragonlauncher.common.utils.PlatformShape
-import org.elnix.dragonlauncher.common.utils.resolveShape
 import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalDrawerIconsCache
@@ -59,15 +59,15 @@ fun appIcon(app: AppModel): Painter {
 @Composable
 fun AppIcon(
     app: AppModel,
-    maxIconSize: Dp
+    maxIconSize: Dp,
+    modifier: Modifier = Modifier
 ) {
-
     val iconShape = LocalIconShape.current
 
     Image(
         painter = appIcon(app),
         contentDescription = app.name,
-        modifier = Modifier
+        modifier = modifier
             .sizeIn(maxWidth = maxIconSize)
             .aspectRatio(1f)
             .clip(iconShape.resolveShape()),

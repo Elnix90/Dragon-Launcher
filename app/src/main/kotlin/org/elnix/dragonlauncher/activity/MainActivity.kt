@@ -11,7 +11,6 @@ import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import android.os.SystemClock
 import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -33,27 +32,22 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.navigaton.ROUTES
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.PRIVATE_SPACE_TAG
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.STARTUP_TAG
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.TAG
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.WIDGET_TAG
-import org.elnix.dragonlauncher.common.utils.Constants.Navigation.ignoredReturnRoutes
-import org.elnix.dragonlauncher.common.utils.Constants.Settings.HOME_REENTER_WINDOW_MS
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.PRIVATE_SPACE_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.STARTUP_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.WIDGET_TAG
 import org.elnix.dragonlauncher.common.utils.PrivateSpaceUtils
-import org.elnix.dragonlauncher.common.utils.SamsungWorkspaceIntegration
-import org.elnix.dragonlauncher.common.utils.WidgetHostProvider
-import org.elnix.dragonlauncher.common.utils.showToast
+import org.elnix.dragonlauncher.common.messyfolder.SamsungWorkspaceIntegration
+import org.elnix.dragonlauncher.common.messyfolder.WidgetHostProvider
+import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logI
@@ -63,6 +57,7 @@ import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.models.DragonLogViewModel
 import org.elnix.dragonlauncher.models.FloatingAppsViewModel
+import org.elnix.dragonlauncher.models.PrivateSpaceViewModel
 import org.elnix.dragonlauncher.models.ShizukuViewModel
 import org.elnix.dragonlauncher.receiver.BootReceiver
 import org.elnix.dragonlauncher.receiver.FontReceiver
@@ -82,7 +77,7 @@ import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalBackupViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalDragonLogViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalFloatingAppsViewModel
-import org.elnix.dragonlauncher.ui.composition.LocalNavController
+import org.elnix.dragonlauncher.ui.composition.LocalPrivateSpaceViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalShizukuViewModel
 import org.elnix.dragonlauncher.ui.dialogs.CrashScreen
 import org.elnix.dragonlauncher.ui.widgets.LauncherWidgetHolder
@@ -91,14 +86,12 @@ import java.util.UUID
 class MainActivity : FragmentActivity(), WidgetHostProvider {
 
     private val appLifecycleViewModel: AppLifecycleViewModel by viewModels()
+    private val privateSpaceViewModel: PrivateSpaceViewModel by viewModels()
     private val backupViewModel: BackupViewModel by viewModels()
     private val floatingAppsViewModel: FloatingAppsViewModel by viewModels()
     private val dragonLogViewModel: DragonLogViewModel by viewModels()
     private val shizukuViewModel: ShizukuViewModel by viewModels()
     private val appsViewModel: AppsViewModel by viewModels()
-
-
-    private var navControllerHolder = mutableStateOf<NavHostController?>(null)
 
     companion object {
         private var GLOBAL_APPWIDGET_HOST: AppWidgetHost? = null
@@ -363,10 +356,6 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
 
             if (lastStackTrace.isNullOrBlank()) {
 
-//                val appsViewModel: AppsViewModel = hiltViewModel()
-////                appLifecycleViewModel = hiltViewModel()
-////                appLifecycleViewModel = hiltViewModel()
-
                 DragonLauncherTheme {
 
                     // Force launch of full viewmodel after first frame for performance
@@ -395,8 +384,6 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                         }
                     }
 
-                    val navController = rememberNavController()
-                    navControllerHolder.value = navController
 
                     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -447,7 +434,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
 
 
                     LaunchedEffect(Unit) {
-                        appLifecycleViewModel.privateSpaceUnlockRequestEvents.collect {
+                        privateSpaceViewModel.privateSpaceUnlockRequestEvents.collect {
 
                             val openPrivateSpace = {
                                 logI(PRIVATE_SPACE_TAG) { "Using standard Android Private Space" }
@@ -535,11 +522,10 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                         LocalBackupViewModel provides backupViewModel,
                         LocalAppsViewModel provides appsViewModel,
                         LocalAppLifecycleViewModel provides appLifecycleViewModel,
+                        LocalPrivateSpaceViewModel provides privateSpaceViewModel,
                         LocalFloatingAppsViewModel provides floatingAppsViewModel,
                         LocalDragonLogViewModel provides dragonLogViewModel,
-                        LocalShizukuViewModel provides shizukuViewModel,
-
-                        LocalNavController provides navController,
+                        LocalShizukuViewModel provides shizukuViewModel
                     ) {
                         MainAppUi(
                             onBindCustomWidget = { widgetId, provider, nestId ->
@@ -581,62 +567,36 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
     var isNewHomeIntent: Boolean = false
 
 
-    override fun onPause() {
-        super.onPause()
-
-        /* ────────────────  Home detection actions ──────────────── */
-        pauseTime = SystemClock.uptimeMillis()
-
-
-        /* ──────────────── Returns back to home if outside for too long ─────────────────── */
-        appLifecycleViewModel.onPause()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-
-        /* ────────────────  Home detection actions ──────────────── */
-        val now = SystemClock.uptimeMillis()
-        val delta = now - pauseTime
-
-        if (
-            isNewHomeIntent &&
-            delta in 1..HOME_REENTER_WINDOW_MS
-        ) {
-            // HOME pressed while launcher already visible
-            isNewHomeIntent = false
-            appLifecycleViewModel.launchHomeAction()
-        }
-
-        isNewHomeIntent = false
-
-
-        /* ──────────────── Returns back to home if outside for too long ─────────────────── */
-
-        val offScreenUserTimeout = offScreenTimeout?.takeIf { it != -1 }
-
-        if (offScreenUserTimeout != null) {
-            val navController = navControllerHolder.value
-
-            if (navController != null && navController.currentBackStackEntry != null) {
-                val currentRoute = navController
-                    .currentBackStackEntry
-                    ?.destination
-                    ?.route
-
-
-                val isInIgnoredRoutes = currentRoute in ignoredReturnRoutes
-                val userHasExceededTimeout = appLifecycleViewModel.isTimeoutExceeded(offScreenUserTimeout)
-
-                if (!isInIgnoredRoutes && userHasExceededTimeout) {
-                    navController.navigate(ROUTES.MAIN) {
-                        popUpTo(0) { inclusive = true }
-                    }
-                }
-            }
-        }
-    }
+//    override fun onPause() {
+//        super.onPause()
+//
+//        /* ────────────────  Home detection actions ──────────────── */
+//        pauseTime = SystemClock.uptimeMillis()
+//
+//
+//        /* ──────────────── Returns back to home if outside for too long ─────────────────── */
+//        appLifecycleViewModel.onPause()
+//    }
+//
+//    override fun onResume() {
+//        super.onResume()
+//
+//
+//        /* ────────────────  Home detection actions ──────────────── */
+//        val now = SystemClock.uptimeMillis()
+//        val delta = now - pauseTime
+//
+//        if (
+//            isNewHomeIntent &&
+//            delta in 1..HOME_REENTER_WINDOW_MS
+//        ) {
+//            // HOME pressed while launcher already visible
+//            isNewHomeIntent = false
+//            appLifecycleViewModel.onHomeAction()
+//        }
+//
+//        isNewHomeIntent = false
+//    }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -648,7 +608,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
             intent.action == Intent.ACTION_MAIN &&
             intent.hasCategory(Intent.CATEGORY_HOME)
         ) {
-            isNewHomeIntent = true
+            appLifecycleViewModel.onHomeAction()
             logD(TAG) { "HOME intent received (pending)" }
         }
     }

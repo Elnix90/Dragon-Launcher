@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.BROADCAST_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BROADCAST_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.models.sinleton.AppsRepository

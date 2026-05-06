@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.enumsui.ToggleButtonOption
 import org.elnix.dragonlauncher.theme.AppObjectsColors
@@ -84,7 +85,7 @@ fun <T : ToggleButtonOption> MultiSelectConnectedButtonColumn(
                     entry.iconEnabled?.let { iconEnabled ->
                         Crossfade(!checked) { notChecked ->
                             Icon(
-                                entry.iconDisabled.takeIf { notChecked && it != null } ?: iconEnabled,
+                                painter = painterResource(entry.iconDisabled.takeIf { notChecked && it != null } ?: iconEnabled),
                                 contentDescription = null
                             )
                         }

@@ -14,10 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.utils.Update
+import org.elnix.dragonlauncher.common.messyfolder.Update
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import java.text.SimpleDateFormat
-import java.util.Locale
 import androidx.compose.ui.platform.LocalLocale
 
 @Composable

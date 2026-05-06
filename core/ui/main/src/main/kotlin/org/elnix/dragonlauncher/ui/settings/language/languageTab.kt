@@ -20,8 +20,8 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.settings.stores.LanguageSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 
@@ -52,36 +52,36 @@ fun LanguageTab(onBack: () -> Unit) {
             scope.launch {
                 LanguageSettingsStore.resetAll(ctx)
             }
-        }
-    ) {
-
-        items(availableLanguages) { (tag, name) ->
-            DragonRow(
-                onClick = {
-                    scope.launch {
-                        LanguageSettingsStore.keyLang.set(ctx, tag)
-                        applyLocale(tag)
-                    }
-                }
-            ) {
-                RadioButton(
-                    selected = tag == selectedTag,
+        },
+        lazyContent = {
+            items(availableLanguages) { (tag, name) ->
+                DragonRow(
                     onClick = {
                         scope.launch {
                             LanguageSettingsStore.keyLang.set(ctx, tag)
                             applyLocale(tag)
                         }
-                    },
-                    colors = AppObjectsColors.radioButtonColors()
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = name,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                    }
+                ) {
+                    RadioButton(
+                        selected = tag == selectedTag,
+                        onClick = {
+                            scope.launch {
+                                LanguageSettingsStore.keyLang.set(ctx, tag)
+                                applyLocale(tag)
+                            }
+                        },
+                        colors = AppObjectsColors.radioButtonColors()
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = name,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
             }
         }
-    }
+    )
 }
 
 

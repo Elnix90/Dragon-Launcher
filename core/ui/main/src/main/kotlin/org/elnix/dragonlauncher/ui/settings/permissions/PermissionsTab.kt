@@ -100,122 +100,110 @@ fun PermissionsTab(onBack: () -> Unit) {
             helpText = stringResource(R.string.permission_tab_help),
             onReset = null
         ) {
-            item {
-                BetaVersionWarning(BetaVersionType.Feature)
-            }
-            
-            item {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(15.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.special_system_access),
-                        modifier = Modifier.padding(16.dp),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
 
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = stringResource(R.string.reload),
-                        modifier = Modifier
-                            .clip(DragonShape)
-                            .clickable { checkPermissions() }
-                            .padding(5.dp)
-                    )
-                }
-            }
+            BetaVersionWarning(BetaVersionType.Feature)
 
-            item {
-                SwitchRow(
-                    state = null,
-                    onCheck = {
-                        val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
-                        ctx.startActivity(intent)
-                    },
-                    title = stringResource(R.string.notification_access),
-                    description = stringResource(R.string.notification_access_desc)
-                )
-            }
 
-            item {
-                SwitchRow(
-                    state = ctx.packageManager.canRequestPackageInstalls(),
-                    onCheck = {
-                        val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
-                            data = "package:${ctx.packageName}".toUri()
-                        }
-                        ctx.startActivity(intent)
-                    },
-                    title = stringResource(R.string.install_from_unknown_source_permission),
-                    description = stringResource(R.string.install_from_unknown_source_permission_desc)
-                )
-            }
-
-            item {
-                SwitchRow(
-                    state = null,
-                    onCheck = {
-                        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                        ctx.startActivity(intent)
-                    },
-                    title = stringResource(R.string.accessibility_service),
-                    description = stringResource(R.string.accessibility_service_desc)
-
-                )
-            }
-
-            item {
-                SwitchRow(
-                    state = null,
-                    enabled = false,
-                    onCheck = {
-                        val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
-                        ctx.startActivity(intent)
-                    },
-                    title = stringResource(R.string.usage_access),
-                    description = stringResource(R.string.not_implemented)
-//                    subText = stringResource(R.string.usage_access_desc)
-                )
-            }
-
-            item {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(15.dp)
+            ) {
                 Text(
-                    text = stringResource(R.string.android_permissions),
+                    text = stringResource(R.string.special_system_access),
                     modifier = Modifier.padding(16.dp),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
+
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = stringResource(R.string.reload),
+                    modifier = Modifier
+                        .clip(DragonShape)
+                        .clickable { checkPermissions() }
+                        .padding(5.dp)
+                )
             }
 
-            val androidPermissions = listOf(
-                Manifest.permission.QUERY_ALL_PACKAGES,
-                Manifest.permission.BIND_APPWIDGET,
+
+            SwitchRow(
+                state = null,
+                onCheck = {
+                    val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+                    ctx.startActivity(intent)
+                },
+                title = stringResource(R.string.notification_access),
+                description = stringResource(R.string.notification_access_desc)
             )
+
+            SwitchRow(
+                state = ctx.packageManager.canRequestPackageInstalls(),
+                onCheck = {
+                    val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+                        data = "package:${ctx.packageName}".toUri()
+                    }
+                    ctx.startActivity(intent)
+                },
+                title = stringResource(R.string.install_from_unknown_source_permission),
+                description = stringResource(R.string.install_from_unknown_source_permission_desc)
+            )
+
+            SwitchRow(
+                state = null,
+                onCheck = {
+                    val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                    ctx.startActivity(intent)
+                },
+                title = stringResource(R.string.accessibility_service),
+                description = stringResource(R.string.accessibility_service_desc)
+
+            )
+
+            SwitchRow(
+                state = null,
+                enabled = false,
+                onCheck = {
+                    val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+                    ctx.startActivity(intent)
+                },
+                title = stringResource(R.string.usage_access),
+                description = stringResource(R.string.not_implemented)
+//                    subText = stringResource(R.string.usage_access_desc)
+            )
+
+            Text(
+                text = stringResource(R.string.android_permissions),
+                modifier = Modifier.padding(16.dp),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+
+        val androidPermissions = listOf(
+            Manifest.permission.QUERY_ALL_PACKAGES,
+            Manifest.permission.BIND_APPWIDGET,
+        )
 //            ).let { list ->
 //                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 //                    list + Manifest.permission.POST_NOTIFICATIONS
 //                } else list
 //            }
 
-            androidPermissions.forEach { permission ->
-                item {
-                    val isGranted = permissionStates[permission] ?: false
-                    SwitchRow(
-                        state = isGranted,
-                        onCheck = {
-                            val intent =
-                                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                    data = Uri.fromParts("package", ctx.packageName, null)
-                                }
-                            ctx.startActivity(intent)
-                        },
-                        title = permission.substringAfterLast("."),
-                        description = stringResource(R.string.manage_in_system_settings)
-                    )
-                }
-            }
+        androidPermissions.forEach { permission ->
+            val isGranted = permissionStates[permission] ?: false
+            SwitchRow(
+                state = isGranted,
+                onCheck = {
+                    val intent =
+                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", ctx.packageName, null)
+                        }
+                    ctx.startActivity(intent)
+                },
+                title = permission.substringAfterLast("."),
+                description = stringResource(R.string.manage_in_system_settings)
+            )
+
         }
     }
 }

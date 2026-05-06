@@ -1,21 +1,18 @@
 package org.elnix.dragonlauncher.ui.whatsnew
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,42 +22,36 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.utils.Update
-import org.elnix.dragonlauncher.common.utils.copyToClipboard
-import org.elnix.dragonlauncher.common.utils.getVersionCode
-import org.elnix.dragonlauncher.common.utils.openUrl
-
+import org.elnix.dragonlauncher.common.messyfolder.loadChangelogs
+import org.elnix.dragonlauncher.common.messyfolder.openUrl
+import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.common.utils.rememberVersionCode
+import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
+import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 
 // I hate the behavior of this shitty modal sheet that force showing the system bars, even in fullscreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WhatsNewBottomSheet(
-    updates: List<Update>,
-    onDismiss: () -> Unit
-) {
+fun WhatsNewBottomSheet() {
+
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
 
-    val versionCode = ctx.getVersionCode()
+    val lastSeenVersionCodeWhatsNew by PrivateSettingsStore.lastSeenVersionCodeWhatsNew.asState()
 
-    ModalBottomSheet(
-        containerColor = MaterialTheme.colorScheme.surface,
+    val versionCode = rememberVersionCode()
+    val updates by produceState(initialValue = emptyList()) {
+        value = loadChangelogs(ctx, versionCode)
+    }
+
+    if (lastSeenVersionCodeWhatsNew >= versionCode) return
+
+    DragonModalBottomSheet(
         onDismissRequest = {
             scope.launch {
-                sheetState.hide()
-                onDismiss()
+                PrivateSettingsStore.lastSeenVersionCodeWhatsNew.set(ctx, versionCode)
             }
-        },
-        sheetState = sheetState,
-        dragHandle = {
-            Box(
-                modifier = Modifier
-                    .height(4.dp)
-                    .width(40.dp)
-                    .padding(vertical = 8.dp)
-                    .background(MaterialTheme.colorScheme.outline)
-            )
         }
     ) {
         Column(

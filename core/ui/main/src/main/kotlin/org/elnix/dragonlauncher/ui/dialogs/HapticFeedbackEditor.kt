@@ -23,11 +23,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.ContentPaste
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DragHandle
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.CardDefaults.elevatedCardElevation
@@ -55,13 +51,13 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.HAPTIC_TAG
+import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedbackSerializable
 import org.elnix.dragonlauncher.common.serializables.hapticFeedbackSerializablePresets
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.HAPTIC_TAG
-import org.elnix.dragonlauncher.common.utils.copyToClipboard
-import org.elnix.dragonlauncher.common.utils.pasteClipboard
-import org.elnix.dragonlauncher.common.utils.performCustomHaptic
-import org.elnix.dragonlauncher.common.utils.showToast
+import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.pasteClipboard
+import org.elnix.dragonlauncher.common.utils.HapticUtils.performCustomHaptic
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.theme.AppObjectsColors
@@ -193,13 +189,13 @@ fun HapticFeedbackEditor(
 
                     DragonIconButton(
                         onClick = ::importFromClipboard,
-                        imageVector = Icons.Default.ContentPaste,
+                        icon = R.drawable.paste,
                         contentDescription = stringResource(R.string.paste)
                     )
 
                     DragonIconButton(
                         onClick = ::copyToClipboard,
-                        imageVector = Icons.Default.ContentCopy,
+                        icon = R.drawable.copy,
                         contentDescription = stringResource(R.string.copy)
                     )
                 }
@@ -373,15 +369,15 @@ fun HapticFeedbackEditor(
                                                     entries.add(index + 1, entries[index].copy(id = System.nanoTime()))
                                                 },
                                                 colors = AppObjectsColors.iconButtonColors(),
-                                                imageVector = Icons.Default.ContentCopy,
+                                                icon = R.drawable.copy,
                                                 contentDescription = stringResource(R.string.copy)
                                             )
 
                                             DragonIconButton(
-                                                onClick = { entries.removeAt(index) },
                                                 colors = AppObjectsColors.cancelIconButtonColors(),
-                                                imageVector = Icons.Default.Delete, contentDescription = stringResource(R.string.remove)
-                                            )
+                                                icon = R.drawable.delete_forever,
+                                                contentDescription = stringResource(R.string.remove)
+                                            ) { entries.removeAt(index) }
 
                                             Icon(
                                                 imageVector = Icons.Default.DragHandle,
@@ -429,21 +425,20 @@ private fun RotatingPlayIcon(
     }
 
     DragonIconButton(
-        onClick = {
-            scope.launch {
-                playIconRotation.animateTo(
-                    targetValue = playIconRotation.value + 360f,
-                    animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing)
-                )
-                playIconRotation.snapTo(0f)
-            }
-            onClick()
-        },
         modifier = Modifier.rotate(playIconRotation.value),
         enabled = { enabled },
-        imageVector = Icons.Default.PlayArrow,
+        icon = R.drawable.play_arrow,
         contentDescription = stringResource(R.string.play),
-    )
+    ) {
+        scope.launch {
+            playIconRotation.animateTo(
+                targetValue = playIconRotation.value + 360f,
+                animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing)
+            )
+            playIconRotation.snapTo(0f)
+        }
+        onClick()
+    }
 }
 
 @Composable

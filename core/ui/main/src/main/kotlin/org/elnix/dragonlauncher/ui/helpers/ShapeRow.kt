@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -75,10 +73,10 @@ fun ShapeRow(
         }
 
         DragonIconButton(
-            onClick = onReset,
+            icon = R.drawable.reset,
             colors = AppObjectsColors.iconButtonColors(),
-            imageVector = Icons.Default.Restore,
-            contentDescription = stringResource(R.string.reset)
+            contentDescription = stringResource(R.string.reset),
+            onClick = onReset
         )
     }
 }
@@ -112,9 +110,9 @@ fun SmallShapeRow(
         )
 
         DragonIconButton(
-            onClick = onReset,
-            imageVector = Icons.Default.Restore,
-            contentDescription = stringResource(R.string.reset)
+            icon = R.drawable.reset,
+            contentDescription = stringResource(R.string.reset),
+            onClick = onReset
         )
     }
 }

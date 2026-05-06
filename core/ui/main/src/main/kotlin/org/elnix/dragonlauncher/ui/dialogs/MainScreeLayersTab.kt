@@ -37,13 +37,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.messyfolder.isNotBlankJson
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayerJson
 import org.elnix.dragonlauncher.common.serializables.copyWithEnabled
 import org.elnix.dragonlauncher.common.serializables.defaultMainScreenLayers
 import org.elnix.dragonlauncher.common.serializables.enabled
 import org.elnix.dragonlauncher.common.serializables.label
-import org.elnix.dragonlauncher.common.utils.isNotBlankJson
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.asState
@@ -92,126 +92,126 @@ fun MainScreeLayersTab(
             }
         },
         listState = lazyListState,
-        bottomPadding = 0.dp,
         resetTitle = stringResource(R.string.main_screen_layers_reset_title),
         resetText = stringResource(R.string.main_screen_layers_reset),
-    ) {
+        lazyContent = {
 
-        items(objects, key = { it.toString() }) { item ->
+            items(objects, key = { it.toString() }) { item ->
 
-            ReorderableItem(
-                state = reorderState,
-                key = item.toString()
-            ) { isDragging ->
+                ReorderableItem(
+                    state = reorderState,
+                    key = item.toString()
+                ) { isDragging ->
 
-                val scale by animateFloatAsState(
-                    if (isDragging) 1.03f else 1f
-                )
+                    val scale by animateFloatAsState(
+                        if (isDragging) 1.03f else 1f
+                    )
 
-                val elevation by animateDpAsState(
-                    if (isDragging) 16.dp else 0.dp
-                )
+                    val elevation by animateDpAsState(
+                        if (isDragging) 16.dp else 0.dp
+                    )
 
-                ElevatedCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .scale(scale)
-                        .longPressDraggableHandle(
-                            onDragStopped = ::save
-                        ),
-                    elevation = elevatedCardElevation(elevation),
-                    colors = AppObjectsColors.cardColors(),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(5.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ElevatedCard(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(
-                                horizontal = 12.dp,
-                                vertical = 10.dp
-                            )
+                            .scale(scale)
+                            .longPressDraggableHandle(
+                                onDragStopped = ::save
+                            ),
+                        elevation = elevatedCardElevation(elevation),
+                        colors = AppObjectsColors.cardColors(),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
 
-                            Checkbox(
-                                onCheckedChange = {
-                                    objects = objects.map {
-                                        if (it == item) it.copyWithEnabled(!it.enabled) else it
-                                    }
-                                    save()
-                                },
-                                checked = item.enabled
-                            )
-
-                            Text(
-                                text = item.label,
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.weight(1f)
-                            )
-
-                            Icon(
-                                imageVector = Icons.Default.DragHandle,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.outline,
-                                modifier = Modifier.draggableHandle(
-                                    onDragStopped = ::save
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(5.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    horizontal = 12.dp,
+                                    vertical = 10.dp
                                 )
-                            )
-                        }
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
 
-                        if (item is MainScreenLayer.CustomDim) {
-                            AnimatedVisibility(item.enabled) {
-                                var tempShowAfter by remember { mutableIntStateOf(item.showAfter) }
-                                var tempDimAmount by remember { mutableFloatStateOf(item.dimAmount) }
+                                Checkbox(
+                                    onCheckedChange = {
+                                        objects = objects.map {
+                                            if (it == item) it.copyWithEnabled(!it.enabled) else it
+                                        }
+                                        save()
+                                    },
+                                    checked = item.enabled
+                                )
 
-                                DragonColumnGroup {
-                                    SliderWithLabel(
-                                        value = tempShowAfter,
-                                        valueRange = 0..5000,
-                                        label = stringResource(R.string.show_after),
-                                        description = stringResource(R.string.show_after_help),
-                                        onReset = {
-                                            objects = objects.map {
-                                                if (it is MainScreenLayer.CustomDim) it.copy(showAfter = 1000) else it
-                                            }
-                                            save()
-                                        },
-                                        onDragStateChange = { isDragging ->
-                                            if (!isDragging) {
+                                Text(
+                                    text = item.label,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier.weight(1f)
+                                )
+
+                                Icon(
+                                    imageVector = Icons.Default.DragHandle,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.outline,
+                                    modifier = Modifier.draggableHandle(
+                                        onDragStopped = ::save
+                                    )
+                                )
+                            }
+
+                            if (item is MainScreenLayer.CustomDim) {
+                                AnimatedVisibility(item.enabled) {
+                                    var tempShowAfter by remember { mutableIntStateOf(item.showAfter) }
+                                    var tempDimAmount by remember { mutableFloatStateOf(item.dimAmount) }
+
+                                    DragonColumnGroup {
+                                        SliderWithLabel(
+                                            value = tempShowAfter,
+                                            valueRange = 0..5000,
+                                            label = stringResource(R.string.show_after),
+                                            description = stringResource(R.string.show_after_help),
+                                            onReset = {
                                                 objects = objects.map {
-                                                    if (it is MainScreenLayer.CustomDim) it.copy(showAfter = tempShowAfter) else it
+                                                    if (it is MainScreenLayer.CustomDim) it.copy(showAfter = 1000) else it
                                                 }
                                                 save()
+                                            },
+                                            onDragStateChange = { isDragging ->
+                                                if (!isDragging) {
+                                                    objects = objects.map {
+                                                        if (it is MainScreenLayer.CustomDim) it.copy(showAfter = tempShowAfter) else it
+                                                    }
+                                                    save()
+                                                }
                                             }
+                                        ) { newValue ->
+                                            tempShowAfter = newValue
                                         }
-                                    ) { newValue ->
-                                        tempShowAfter = newValue
-                                    }
 
-                                    SliderWithLabel(
-                                        value = tempDimAmount,
-                                        valueRange = 0f..1f,
-                                        label = stringResource(R.string.dim_amount),
-                                        description = stringResource(R.string.dim_amount_help),
-                                        onReset = {
-                                            objects = objects.map {
-                                                if (it is MainScreenLayer.CustomDim) it.copy(dimAmount = 0.5f) else it
-                                            }
-                                            save()
-                                        },
-                                        onDragStateChange = { isDragging ->
-                                            if (!isDragging) {
+                                        SliderWithLabel(
+                                            value = tempDimAmount,
+                                            valueRange = 0f..1f,
+                                            label = stringResource(R.string.dim_amount),
+                                            description = stringResource(R.string.dim_amount_help),
+                                            onReset = {
                                                 objects = objects.map {
-                                                    if (it is MainScreenLayer.CustomDim) it.copy(dimAmount = tempDimAmount) else it
+                                                    if (it is MainScreenLayer.CustomDim) it.copy(dimAmount = 0.5f) else it
                                                 }
                                                 save()
+                                            },
+                                            onDragStateChange = { isDragging ->
+                                                if (!isDragging) {
+                                                    objects = objects.map {
+                                                        if (it is MainScreenLayer.CustomDim) it.copy(dimAmount = tempDimAmount) else it
+                                                    }
+                                                    save()
+                                                }
                                             }
+                                        ) { newValue ->
+                                            tempDimAmount = newValue
                                         }
-                                    ) { newValue ->
-                                        tempDimAmount = newValue
                                     }
                                 }
                             }
@@ -220,7 +220,7 @@ fun MainScreeLayersTab(
                 }
             }
         }
-    }
+    )
 }
 
 @Composable

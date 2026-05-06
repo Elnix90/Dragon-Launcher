@@ -12,9 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -31,6 +28,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
+import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import kotlin.math.roundToInt
 
@@ -169,7 +167,7 @@ private fun SliderWithLabelInternal(
                         DragonIconButton(
                             onClick = { editValue() },
                             colors = AppObjectsColors.iconButtonColors(backgroundColor),
-                            imageVector = Icons.Default.Check,
+                            icon = R.drawable.check,
                             contentDescription = "Validate"
                         )
                     }
@@ -178,7 +176,7 @@ private fun SliderWithLabelInternal(
                         DragonIconButton(
                             onClick = onReset,
                             enabled = { enabled },
-                            imageVector = Icons.Default.Restore,
+                            icon = R.drawable.reset,
                             contentDescription = "Reset"
                         )
                     }

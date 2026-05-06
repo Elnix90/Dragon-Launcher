@@ -83,7 +83,6 @@
     <string name="set_default_launcher">Als Standard-Launcher eingestellt</string>
     <string name="close">Schließen</string>
     <string name="dragging_distance_selection">Auswahl der Ziehdistanz</string>
-    <string name="swipe_points_selection">Swipe-Punktauswahl</string>
     <string name="circle">Kreis-Dragdistanz</string>
     <string name="cancel_zone">Zonen-Drag abbrechen</string>
     <string name="android_settings">Android-Einstellungen</string>
@@ -614,8 +613,6 @@
     <string name="pull_down_wallpaper_dim_desc">Dimmen Sie die Tapete, wenn die Schublade heruntergezogen wird</string>
     <string name="pull_down_scale_in">Pull-down-Skala In</string>
     <string name="pull_down_scale_in_desc">Skalieren Symbole, wenn die Schublade heruntergezogen wird</string>
-    <string name="drawer_enter_exit_animations">Drawer Entry/Exit-Animationen</string>
-    <string name="drawer_enter_exit_animations_desc">Animationen werden beim Betreten oder Verlassen der Schublade abgespielt, wenn sie auf falsch gesetzt sind, das ist sofort</string>
     <string name="action_settings">Aktionseinstellungen</string>
     <string name="drawer_settings">Schubladeneinstellungen</string>
     <string name="more">Mehr</string>

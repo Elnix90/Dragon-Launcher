@@ -87,7 +87,6 @@
     <string name="set_default_launcher">기본 런처로 설정해</string>
     <string name="close">닫습니다</string>
     <string name="dragging_distance_selection">드래그 거리 선택</string>
-    <string name="swipe_points_selection">스와이프 포인트 선택</string>
     <string name="circle">원형 항력 거리</string>
     <string name="cancel_zone">존 드래그 취소</string>
     <string name="android_settings">안드로이드 설정</string>

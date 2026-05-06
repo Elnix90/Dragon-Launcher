@@ -17,9 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LoadingIndicator
@@ -46,12 +43,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.BACKUP_TAG
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.THEMES_TAG
-import org.elnix.dragonlauncher.common.utils.ThemeObject
-import org.elnix.dragonlauncher.common.utils.loadThemes
-import org.elnix.dragonlauncher.common.utils.today
-import org.elnix.dragonlauncher.enumsui.ExportImportTheme
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.THEMES_TAG
+import org.elnix.dragonlauncher.common.messyfolder.ThemeObject
+import org.elnix.dragonlauncher.common.messyfolder.loadThemes
+import org.elnix.dragonlauncher.common.utils.DateUtils.today
+import org.elnix.dragonlauncher.enumsui.select.ExportImportTheme
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.settings.SettingsBackupManager
@@ -69,8 +66,7 @@ import org.elnix.dragonlauncher.ui.composition.LocalBackupViewModel
 import org.elnix.dragonlauncher.ui.dialogs.ThemeJsonPopup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
-import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
-import org.elnix.dragonlauncher.ui.dragon.generic.ShowLabels
+import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.remembers.rememberSettingsExportLauncher
 import org.elnix.dragonlauncher.ui.remembers.rememberSettingsImportLauncher
@@ -148,122 +144,61 @@ fun ThemesTab(
         onBack = onBack,
         helpText = stringResource(R.string.theme_selector_help),
         onReset = null,
-        scrollableContent = true,
-        content = {
-            BetaVersionWarning(BetaVersionType.Feature)
+        scrollableContent = true
+    ) {
+        BetaVersionWarning(BetaVersionType.Feature)
 
-            MultiSelectConnectedButtonRow(
-                entries = ExportImportTheme.entries,
-                showLabels = ShowLabels.Always
-            ) {
-                when (it){
-                    ExportImportTheme.Export -> {
-                        settingsExportLauncher.launch("dragon_launcher_theme-${today()}.json")
-                    }
-                    ExportImportTheme.Import -> {
-                        settingsImportLauncher.launch(
-                            arrayOf(
-                                "application/json",
-                                "text/plain",
-                                "application/octet-stream",
-                                "*/*"
-                            )
+        SingleSelectConnectedButtonRow(
+            entries = ExportImportTheme.entries,
+            checked = { true }
+        ) {
+            when (it) {
+                ExportImportTheme.Export -> {
+                    settingsExportLauncher.launch("dragon_launcher_theme-${today()}.json")
+                }
+
+                ExportImportTheme.Import -> {
+                    settingsImportLauncher.launch(
+                        arrayOf(
+                            "application/json",
+                            "text/plain",
+                            "application/octet-stream",
+                            "*/*"
                         )
-                    }
+                    )
                 }
             }
+        }
 
-            if (themes == null) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(stringResource(R.string.loading_themes))
-                    androidx.compose.foundation.layout.Spacer(Modifier.height(20.dp))
-                    LoadingIndicator()
-                }
-            } else {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    contentPadding = PaddingValues(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.heightIn(max = 1000.dp)
-                ) {
-
-                    themes?.let {
-                        items(it) { theme ->
-                            ThemeCard(
-                                theme = theme,
-                                onLongClick = { showJson = theme.json },
-                                onClick = {
-                                    scope.launch {
-                                        ColorSettingsStore.backupColors(ctx)
-                                        ColorModesSettingsStore.colorTestMode.set(ctx, true)
-                                        SettingsBackupManager.importTheme(ctx, theme.json)
-                                    }
-                                }
-                            )
-                        }
-                    }
-                }
+        if (themes == null) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(stringResource(R.string.loading_themes))
+                androidx.compose.foundation.layout.Spacer(Modifier.height(20.dp))
+                LoadingIndicator()
             }
-
-            fun addCurrentTheme() {
-
-                scope.launch {
-                    val json = SettingsBackupManager.createJsonToExport(ctx, themeStores)
-
-                    userThemes.add(json.toString())
-                    UiSettingsStore.userThemes.set(ctx, userThemes)
-                }
-            }
-
-            HorizontalDivider()
-
-            LazyColumn(
-                horizontalAlignment = Alignment.CenterHorizontally,
+        } else {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                contentPadding = PaddingValues(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.heightIn(max = 1000.dp)
             ) {
 
-                item {
-                    DragonRow(
-                        onClick = ::addCurrentTheme,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        DragonIconButton(
-                            onClick = ::addCurrentTheme,
-                            imageVector = Icons.Default.Add,
-                            contentDescription = stringResource(R.string.add_current_theme)
-                        )
-                        Text(stringResource(R.string.add_current_theme))
-                    }
-                }
-                userThemes.forEachIndexed { index, string ->
-                    val json = try {
-                        JSONObject(string)
-                    } catch (e: Exception) {
-                        logE(THEMES_TAG, e) { "Error decoding user theme json" }
-                        JSONObject()
-                    }
-
-                    item {
-                        UserThemeCard(
-                            name = stringResource(R.string.user_theme, index),
-                            onRemove = {
-                                userThemes.remove(string)
-                                scope.launch {
-                                    UiSettingsStore.userThemes.set(ctx, userThemes)
-                                }
-                            },
-                            onLongClick = { showJson = json },
+                themes?.let {
+                    items(it) { theme ->
+                        ThemeCard(
+                            theme = theme,
+                            onLongClick = { showJson = theme.json },
                             onClick = {
                                 scope.launch {
                                     ColorSettingsStore.backupColors(ctx)
                                     ColorModesSettingsStore.colorTestMode.set(ctx, true)
-                                    SettingsBackupManager.importTheme(ctx, json)
+                                    SettingsBackupManager.importTheme(ctx, theme.json)
                                 }
                             }
                         )
@@ -271,7 +206,68 @@ fun ThemesTab(
                 }
             }
         }
-    )
+
+        fun addCurrentTheme() {
+
+            scope.launch {
+                val json = SettingsBackupManager.createJsonToExport(ctx, themeStores)
+
+                userThemes.add(json.toString())
+                UiSettingsStore.userThemes.set(ctx, userThemes)
+            }
+        }
+
+        HorizontalDivider()
+
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.heightIn(max = 1000.dp)
+        ) {
+
+            item {
+                DragonRow(
+                    onClick = ::addCurrentTheme,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    DragonIconButton(
+                        onClick = ::addCurrentTheme,
+                        icon = R.drawable.add,
+                        contentDescription = stringResource(R.string.add_current_theme)
+                    )
+                    Text(stringResource(R.string.add_current_theme))
+                }
+            }
+            userThemes.forEachIndexed { index, string ->
+                val json = try {
+                    JSONObject(string)
+                } catch (e: Exception) {
+                    logE(THEMES_TAG, e) { "Error decoding user theme json" }
+                    JSONObject()
+                }
+
+                item {
+                    UserThemeCard(
+                        name = stringResource(R.string.user_theme, index),
+                        onRemove = {
+                            userThemes.remove(string)
+                            scope.launch {
+                                UiSettingsStore.userThemes.set(ctx, userThemes)
+                            }
+                        },
+                        onLongClick = { showJson = json },
+                        onClick = {
+                            scope.launch {
+                                ColorSettingsStore.backupColors(ctx)
+                                ColorModesSettingsStore.colorTestMode.set(ctx, true)
+                                SettingsBackupManager.importTheme(ctx, json)
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
 
     if (showJson != null) {
         ThemeJsonPopup(showJson!!) { showJson = null }
@@ -346,7 +342,7 @@ private fun UserThemeCard(
 
         DragonIconButton(
             onClick = onRemove,
-            imageVector = Icons.Default.Remove,
+            icon = R.drawable.remove_circle,
             contentDescription = stringResource(R.string.remove),
             colors = AppObjectsColors.cancelIconButtonColors()
         )

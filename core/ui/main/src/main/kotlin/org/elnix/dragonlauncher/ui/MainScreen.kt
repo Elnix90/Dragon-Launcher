@@ -8,11 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -38,30 +33,31 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.ktx.toDp
-import org.elnix.dragonlauncher.common.navigaton.SETTINGS
-import org.elnix.dragonlauncher.common.navigaton.routeResId
+import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.messyfolder.circles.rememberNestNavigation
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.AdvancedSettings.routeResId
 import org.elnix.dragonlauncher.common.serializables.FloatingAppObject
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.dummySwipePoint
 import org.elnix.dragonlauncher.common.serializables.enabled
-import org.elnix.dragonlauncher.common.utils.circles.rememberNestNavigation
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.asStateNull
 import org.elnix.dragonlauncher.ui.components.FloatingAppsHostView
-import org.elnix.dragonlauncher.ui.components.burger.BurgerAction
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
+import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.composition.LocalFloatingAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.composition.LocalNests
+import org.elnix.dragonlauncher.ui.dialogs.rememberHoldMenuEntries
 import org.elnix.dragonlauncher.ui.helpers.ChargingAnimation
 import org.elnix.dragonlauncher.ui.helpers.CustomDim
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
@@ -72,7 +68,10 @@ import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 
 @SuppressLint("LocalContextResourcesRead")
 @Composable
-fun MainScreen(onLaunchAction: (SwipePointSerializable) -> Unit) {
+fun MainScreen(
+    onNavigate: (NavigationRoute) -> Unit,
+    onLaunchAction: (SwipePointSerializable) -> Unit
+) {
     val ctx = LocalContext.current
     val nests = LocalNests.current
     val holdCustomObject = LocalHoldCustomObject.current
@@ -82,7 +81,6 @@ fun MainScreen(onLaunchAction: (SwipePointSerializable) -> Unit) {
     var lastClickTime by remember { mutableLongStateOf(0L) }
 
     val floatingAppObjects by floatingAppsViewModel.floatingApps.collectAsState()
-    val holdMenuEntriesString by HoldToActivateArcSettingsStore.holdMenuEntries.asState()
 
     /* ───────────── Custom Actions ─────────────*/
     val doubleClickAction by BehaviorSettingsStore.doubleClickAction.asStateNull()
@@ -111,7 +109,6 @@ fun MainScreen(onLaunchAction: (SwipePointSerializable) -> Unit) {
 
     var holdOffset by remember { mutableStateOf<Offset?>(null) }
     var showDropDownMenuSettings by remember { mutableStateOf(false) }
-
 
 
     /* ───────────── status bar things ───────────── */
@@ -151,34 +148,29 @@ fun MainScreen(onLaunchAction: (SwipePointSerializable) -> Unit) {
     }
 
 
-    fun onSettings(route: String) {
-        launchAction(
-            dummySwipePoint(
-                SwipeActionSerializable.OpenDragonLauncherSettings(route)
-            )
-        )
-    }
+    val holdMenuEntries = rememberHoldMenuEntries()
 
     val hold = rememberHoldToOpenSettings(
         onSettings = { offset ->
 
             // When the list only has 1 element, directly go to that screen, otherwise, open the menu
             // If the list is empty, do nothing
-            if (holdMenuEntriesString.size > 1) {
+            when {
+                holdMenuEntries.size > 1 -> {
+                    showDropDownMenuSettings = true
+                    holdOffset = offset
 
-                showDropDownMenuSettings = true
-                holdOffset = offset
-
-            } else if (holdMenuEntriesString.size == 1) {
-                val routeToGo = when (val route = holdMenuEntriesString.first()) {
-                    SETTINGS.WIDGETS_FLOATING_APPS -> route.replace("{id}", nestId.toString())
-                    else -> route
                 }
 
-                onSettings(routeToGo)
-            } else {
-                // If list if empty, directly navigate to settings root. Never block the user out of settings
-                onSettings(SETTINGS.ROOT)
+                holdMenuEntries.size == 1 -> {
+                    val routeToGo = holdMenuEntries.first()
+                    onNavigate(routeToGo)
+                }
+
+                else -> {
+                    // If list is empty, directly navigate to settings root. Never block the user out of settings
+                    onNavigate(NavigationRoute.PointsSettings)
+                }
             }
 
             start = null
@@ -188,7 +180,6 @@ fun MainScreen(onLaunchAction: (SwipePointSerializable) -> Unit) {
         loadDuration = longCLickSettingsDuration.toLong(),
         tolerance = holdToActivateSettingsTolerance
     )
-
 
 
     /**
@@ -336,44 +327,32 @@ fun MainScreen(onLaunchAction: (SwipePointSerializable) -> Unit) {
                         )
 
                         if (holdOffset != null) {
-                            DropdownMenu(
-                                expanded = showDropDownMenuSettings,
-                                onDismissRequest = {
-                                    showDropDownMenuSettings = false
-                                    holdOffset = null
-                                },
-                                containerColor = Color.Transparent,
-                                shadowElevation = 0.dp,
-                                tonalElevation = 0.dp,
+
+                            val actions = holdMenuEntries.map {
+                                MoreOptions(
+                                    onClick = {
+                                        showDropDownMenuSettings = false
+                                        onNavigate(it)
+                                    },
+                                    icon =  R.drawable.settings,
+                                    text = { stringResource(routeResId(it)) }
+                                )
+                            }
+
+                            BurgerListAction(
+                                actions = actions,
+                                isExpanded = showDropDownMenuSettings,
                                 offset = with(density) {
                                     DpOffset(
                                         x = holdOffset!!.x.toDp(),
                                         y = holdOffset!!.y.toDp()
                                     )
+                                },
+                                onDismissRequest = {
+                                    showDropDownMenuSettings = false
+                                    holdOffset = null
                                 }
-                            ) {
-                                val actions = holdMenuEntriesString.map {
-                                    BurgerAction(
-                                        onClick = {
-                                            showDropDownMenuSettings = false
-
-                                            val routeToGo = when (it) {
-                                                SETTINGS.WIDGETS_FLOATING_APPS -> it.replace("{id}", nestId.toString())
-                                                else -> it
-                                            }
-                                            onSettings(routeToGo)
-                                        }
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Settings,
-                                            contentDescription = null
-                                        )
-                                        Text(stringResource(routeResId(it)))
-                                    }
-                                }
-
-                                BurgerListAction(actions)
-                            }
+                            )
                         }
                     }
 

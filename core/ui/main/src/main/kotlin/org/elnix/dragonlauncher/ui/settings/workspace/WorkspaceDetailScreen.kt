@@ -33,17 +33,16 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.AppModel
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.enumsui.WorkspaceViewMode
+import org.elnix.dragonlauncher.enumsui.select.WorkspaceViewMode
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.dialogs.AppAliasesDialog
-import org.elnix.dragonlauncher.ui.dialogs.AppIconEditorDialog
+import org.elnix.dragonlauncher.ui.dialogs.AppIconEditor
 import org.elnix.dragonlauncher.ui.dialogs.AppLongPressRow
 import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
-import org.elnix.dragonlauncher.ui.dialogs.RenameAppDialog
-import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
-import org.elnix.dragonlauncher.ui.dragon.generic.ShowLabels
+import org.elnix.dragonlauncher.ui.dialogs.TextEditorDialog
+import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.helpers.AppGrid
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
@@ -65,10 +64,10 @@ fun WorkspaceDetailScreen(
     val workspaceDebugInfos by DebugSettingsStore.workspacesDebugInfo.asState()
 
 
-    var selectedView by remember { mutableStateOf(WorkspaceViewMode.DEFAULTS) }
+    var selectedView by remember { mutableStateOf(WorkspaceViewMode.Default) }
 
-    val getOnlyRemoved = selectedView == WorkspaceViewMode.REMOVED
-    val getOnlyAdded = selectedView == WorkspaceViewMode.ADDED
+    val getOnlyRemoved = selectedView == WorkspaceViewMode.Removed
+    val getOnlyAdded = selectedView == WorkspaceViewMode.Added
 
     val apps by appsViewModel
         .appsForWorkspace(workspace, overrides, getOnlyAdded, getOnlyRemoved)
@@ -77,8 +76,7 @@ fun WorkspaceDetailScreen(
 
     var showAppPicker by remember { mutableStateOf(false) }
 
-    var renameTarget by remember { mutableStateOf<AppModel?>(null) }
-    var renameText by remember { mutableStateOf("") }
+    var renameAppTarget by remember { mutableStateOf<AppModel?>(null) }
 
     var showAliasDialog by remember { mutableStateOf<AppModel?>(null) }
 
@@ -139,8 +137,8 @@ fun WorkspaceDetailScreen(
                 }
             } else null,
             onRenameApp = {
-                renameText = overrides[cacheKey]?.customName ?: app.name
-                renameTarget = app
+//                renameText = overrides[cacheKey]?.customName ?: app.name
+                renameAppTarget = app
             },
             onChangeAppIcon = {
                 iconTargetApp = app
@@ -157,24 +155,19 @@ fun WorkspaceDetailScreen(
             helpText = stringResource(R.string.workspace_detail_help),
             onReset = { appsViewModel.resetWorkspace(workspaceId) },
             resetTitle = stringResource(R.string.reset_workspace),
-            resetText = stringResource(R.string.reset_this_workspace_to_default_apps),
-            content = {
+            resetText = stringResource(R.string.reset_this_workspace_to_default_apps)
+        ) {
+            SingleSelectConnectedButtonRow(
+                entries = WorkspaceViewMode.entries,
+                checked = { it == selectedView }
+            ) { selectedView = it }
 
-                MultiSelectConnectedButtonRow(
-                    entries = WorkspaceViewMode.entries,
-                    showLabels = ShowLabels.Selected,
-                    isChecked = { it == selectedView }
-                ) {
-                    selectedView = it
-                }
-
-                AppGrid(
-                    apps = apps.sortedBy { it.name },
-                    longPressPopup = { app -> AppLongPressRow(app) },
-                    onClick = null
-                )
-            }
-        )
+            AppGrid(
+                apps = apps.sortedBy { it.name },
+                longPressPopup = { app -> AppLongPressRow(app) },
+                onClick = null
+            )
+        }
 
         FloatingActionButton(
             onClick = { showAppPicker = true },
@@ -207,34 +200,26 @@ fun WorkspaceDetailScreen(
     }
 
 
-
-    if (renameTarget != null) {
-        val app = renameTarget!!
+    if (renameAppTarget != null) {
+        val app = renameAppTarget!!
         val cacheKey = app.iconCacheKey
-        RenameAppDialog(
-            title = stringResource(R.string.rename),
-            name = { renameText },
-            onNameChange = { renameText = it },
-            onConfirm = {
 
-                scope.launch {
-                    appsViewModel.renameApp(
-                        cacheKey = cacheKey,
-                        customName = renameText
-                    )
-                }
-
-                renameTarget = null
-            },
-            onReset = {
-
-                scope.launch {
-                    appsViewModel.resetAppName(cacheKey)
-                }
-                renameTarget = null
-            },
-            onDismiss = { renameTarget = null }
-        )
+        TextEditorDialog(
+            title = { stringResource(R.string.rename) },
+            placeHolder = { app.name },
+            onDismiss = { renameAppTarget = null },
+            initialText = app.name
+        ) {
+            if (it != "") {
+                appsViewModel.renameApp(
+                    cacheKey = cacheKey,
+                    customName = it
+                )
+            } else {
+                appsViewModel.resetAppName(cacheKey)
+            }
+            renameAppTarget = null
+        }
     }
 
     if (iconTargetApp != null) {
@@ -242,7 +227,7 @@ fun WorkspaceDetailScreen(
         val app = iconTargetApp!!
         val cacheKey = app.iconCacheKey
 
-        AppIconEditorDialog(
+        AppIconEditor(
             app = app,
             onDismiss = { iconTargetApp = null }
         ) {

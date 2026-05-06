@@ -18,15 +18,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.navigaton.routeResId
-import org.elnix.dragonlauncher.common.navigaton.settingsRoutes
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.AdvancedSettings.routeResId
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Companion.settingsRoutes
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 
 @Composable
 fun SettingsPagePicker(
     onDismissRequest: () -> Unit,
-    onSelect: (String) -> Unit
+    onSelect: (NavigationRoute) -> Unit
 ) {
     val routes = settingsRoutes
 

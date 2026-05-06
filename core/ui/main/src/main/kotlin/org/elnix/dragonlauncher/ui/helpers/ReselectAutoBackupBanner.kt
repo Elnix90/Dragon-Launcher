@@ -1,7 +1,5 @@
 package org.elnix.dragonlauncher.ui.helpers
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,9 +31,8 @@ fun ReselectAutoBackupBanner() {
          )
 
         DragonIconButton(
-            onClick = { autoBackupLauncher.launch("dragonlauncher-auto-backup.json") },
-            imageVector = Icons.AutoMirrored.Filled.OpenInNew,
+            icon = R.drawable.open_in_new,
             contentDescription = stringResource(R.string.open)
-        )
+        ) { autoBackupLauncher.launch("dragonlauncher-auto-backup.json") }
      }
 }

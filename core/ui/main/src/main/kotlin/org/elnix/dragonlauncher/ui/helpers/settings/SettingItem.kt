@@ -8,16 +8,15 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
+import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
@@ -28,8 +27,8 @@ fun SettingsItem(
     modifier: Modifier = Modifier,
     description: String? = null,
     enabled: Boolean = true,
-    icon: ImageVector? = null,
-    leadIcon: ImageVector? = null,
+    icon: Int? = null,
+    trailingIcon: Int? = R.drawable.open_in_new,
     onLongClick: (() -> Unit)? = null,
     onClick: () -> Unit
 ) {
@@ -48,7 +47,7 @@ fun SettingsItem(
 
             if (icon != null) {
                 Icon(
-                    imageVector = icon,
+                    painter = painterResource(icon),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(enabled)
                 )
@@ -63,9 +62,9 @@ fun SettingsItem(
                     description = description
                 )
             }
-            if (leadIcon != null) {
+            if (trailingIcon != null) {
                 Icon(
-                    imageVector = leadIcon,
+                    painter = painterResource(trailingIcon),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(enabled),
                     modifier = Modifier.sizeIn(maxHeight = 25.dp)
@@ -82,9 +81,9 @@ fun SettingItemWithExternalOpen(
     modifier: Modifier = Modifier,
     description: String? = null,
     enabled: Boolean = true,
-    icon: ImageVector? = null,
-    leadIcon: ImageVector? = null,
-    extIcon: ImageVector = Icons.AutoMirrored.Filled.OpenInNew,
+    icon: Int? = null,
+    leadIcon: Int? = null,
+    extIcon: Int = R.drawable.open_in_new,
     onLongClick: (() -> Unit)? = null,
     onExtClick: () -> Unit,
     onClick: () -> Unit
@@ -100,7 +99,7 @@ fun SettingItemWithExternalOpen(
             description = description,
             enabled = enabled,
             icon = icon,
-            leadIcon = leadIcon,
+            trailingIcon = leadIcon,
             onLongClick = onLongClick,
             onClick = onClick
         )
@@ -108,7 +107,7 @@ fun SettingItemWithExternalOpen(
         DragonIconButton(
             onClick = onExtClick,
             contentDescription = title,
-            imageVector = extIcon,
+            icon = extIcon,
             modifier = Modifier
                 .fillMaxHeight()
                 .widthIn(max = 56.dp),

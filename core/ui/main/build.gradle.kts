@@ -32,6 +32,7 @@ extensions.configure<LibraryExtension> {
 }
 
 dependencies {
+    implementation(libs.androidx.compose.animation.graphics)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.process)
     implementation(platform(libs.androidx.compose.bom))
@@ -65,6 +66,9 @@ dependencies {
     implementation(libs.androidx.navigation.runtime)
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.lazycolumnscrollbar)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
     api(libs.androidx.activity.compose)
     api(libs.androidx.activity)

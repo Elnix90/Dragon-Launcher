@@ -4,7 +4,8 @@ package org.elnix.dragonlauncher.theme
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialExpressiveTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
@@ -15,12 +16,12 @@ import org.elnix.dragonlauncher.base.theme.AmoledDragonColorScheme
 import org.elnix.dragonlauncher.base.theme.DarkDragonColorScheme
 import org.elnix.dragonlauncher.base.theme.LightDragonColorScheme
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.enumsui.DefaultThemes
-import org.elnix.dragonlauncher.enumsui.DefaultThemes.AMOLED
-import org.elnix.dragonlauncher.enumsui.DefaultThemes.CUSTOM
-import org.elnix.dragonlauncher.enumsui.DefaultThemes.DARK
-import org.elnix.dragonlauncher.enumsui.DefaultThemes.LIGHT
-import org.elnix.dragonlauncher.enumsui.DefaultThemes.SYSTEM
+import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes
+import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.AMOLED
+import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.CUSTOM
+import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.DARK
+import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.LIGHT
+import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.SYSTEM
 import org.elnix.dragonlauncher.settings.stores.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
@@ -35,8 +36,8 @@ fun getSystemColorScheme(
     val darkTheme = isSystemInDarkTheme()
     return when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            val ctx = LocalContext.current
+            if (darkTheme) dynamicDarkColorScheme(ctx) else dynamicLightColorScheme(ctx)
         }
 
         darkTheme -> {
@@ -78,9 +79,9 @@ fun DragonLauncherTheme(
 
     val colorScheme = getDefaultColorScheme(defaultTheme, dynamicColor)
     val extraColors = rememberExtraColors()
-    val context = LocalContext.current
+    val ctx = LocalContext.current
 
-    val fontFamily = fontNameToFont(globalFontName, context)
+    val fontFamily = fontNameToFont(globalFontName, ctx)
 
     val themeTypography = Typography.copy(
         displayLarge = Typography.displayLarge.copy(fontFamily = fontFamily),
@@ -104,8 +105,9 @@ fun DragonLauncherTheme(
         LocalExtraColors provides extraColors,
         LocalUseCustomColorChannels provides useCustomColorChannels,
     ) {
-        MaterialTheme(
+        MaterialExpressiveTheme(
             colorScheme = colorScheme,
+            motionScheme = MotionScheme.expressive(),
             typography = themeTypography,
             content = content
         )

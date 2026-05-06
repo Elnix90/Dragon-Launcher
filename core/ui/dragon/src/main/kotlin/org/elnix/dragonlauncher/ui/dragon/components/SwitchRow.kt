@@ -3,8 +3,6 @@ package org.elnix.dragonlauncher.ui.dragon.components
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -68,7 +66,7 @@ fun SwitchRow(
 
         if (onReset != null) {
             DragonIconButton(
-                imageVector = Icons.Default.Restore,
+                icon = R.drawable.reset,
                 contentDescription = stringResource(R.string.reset),
                 onClick = onReset
             )

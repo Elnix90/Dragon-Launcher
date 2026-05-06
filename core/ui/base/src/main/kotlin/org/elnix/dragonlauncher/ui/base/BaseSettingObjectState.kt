@@ -2,8 +2,8 @@ package org.elnix.dragonlauncher.ui.base
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
 
 /**
@@ -18,7 +18,7 @@ import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
 @Composable
 fun <T, R> BaseSettingObject<T, R>.asState(default: T? = null): State<T> {
     val ctx = LocalContext.current
-    return flow(ctx).collectAsState(initial = default ?: this.default)
+    return flow(ctx).collectAsStateWithLifecycle(initialValue = default ?: this.default)
 }
 
 /**
@@ -32,5 +32,5 @@ fun <T, R> BaseSettingObject<T, R>.asState(default: T? = null): State<T> {
 @Composable
 fun <T, R> BaseSettingObject<T, R>.asStateNull(): State<T?> {
     val ctx = LocalContext.current
-    return flow(ctx).collectAsState(initial = null)
+    return flow(ctx).collectAsStateWithLifecycle(initialValue = null)
 }

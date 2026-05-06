@@ -5,11 +5,11 @@ import android.net.Uri
 import androidx.core.net.toUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.BACKUP_TAG
-import org.elnix.dragonlauncher.common.utils.getFilePathFromUri
-import org.elnix.dragonlauncher.common.utils.getVersionNameAndCode
-import org.elnix.dragonlauncher.common.utils.hasUriReadWritePermission
-import org.elnix.dragonlauncher.common.utils.showToast
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
+import org.elnix.dragonlauncher.common.utils.PermissionsUtils.hasUriReadWritePermission
+import org.elnix.dragonlauncher.common.utils.VersionsUtils.getVersionNameAndCode
+import org.elnix.dragonlauncher.common.messyfolder.getFilePathFromUri
+import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logI

@@ -15,8 +15,8 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.utils.formatDuration
-import org.elnix.dragonlauncher.common.utils.hasUsageStatsPermission
+import org.elnix.dragonlauncher.common.utils.DateUtils.formatDuration
+import org.elnix.dragonlauncher.common.utils.PermissionsUtils.hasUsageStatsPermission
 import java.util.Calendar
 
 /**

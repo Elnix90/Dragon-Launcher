@@ -1,9 +1,9 @@
 package org.elnix.dragonlauncher.settings.stores
 
 import org.elnix.dragonlauncher.common.serializables.IconShape
-import org.elnix.dragonlauncher.enumsui.DrawerActions
-import org.elnix.dragonlauncher.enumsui.DrawerToolbar
-import org.elnix.dragonlauncher.enumsui.HorizontalAlignment
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar
+import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.MapSettingsStore
@@ -252,13 +252,6 @@ object DrawerSettingsStore : MapSettingsStore() {
         default = true
     )
 
-    val drawerEnterExitAnimations = boolean(
-        key = "drawerEnterExitAnimations",
-        dataStoreName = dataStoreName,
-        default = true
-    )
-
-
     /**
      * The order of the search bar / recently used in drawer
      */
@@ -305,7 +298,6 @@ object DrawerSettingsStore : MapSettingsStore() {
             this.pullDownWallPaperDimFade,
             this.pullDownIconFade,
             this.pullDownScaleIn,
-            this.drawerEnterExitAnimations,
             this.toolbarsOrder
         )
 }

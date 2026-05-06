@@ -11,10 +11,10 @@ import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.common.serializables.ExtensionModel
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.EXTENSION_MANAGER_TAG
-import org.elnix.dragonlauncher.common.utils.PackageManagerCompat
-import org.elnix.dragonlauncher.common.utils.openUrl
-import org.elnix.dragonlauncher.common.utils.showToast
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.EXTENSION_MANAGER_TAG
+import org.elnix.dragonlauncher.common.messyfolder.PackageManagerCompat
+import org.elnix.dragonlauncher.common.messyfolder.openUrl
+import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 
 object ExtensionManager {

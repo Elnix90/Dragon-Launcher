@@ -16,9 +16,9 @@ import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.common.serializables.StatusBarSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.STATUS_BAR_TAG
-import org.elnix.dragonlauncher.common.utils.openAlarmApp
-import org.elnix.dragonlauncher.common.utils.openCalendar
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.STATUS_BAR_TAG
+import org.elnix.dragonlauncher.common.utils.DateUtils.openAlarmApp
+import org.elnix.dragonlauncher.common.utils.DateUtils.openCalendar
 import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import java.time.LocalDate

@@ -7,10 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.Loop
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,10 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.utils.copyToClipboard
+import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.settings.SettingsBackupManager
 import org.elnix.dragonlauncher.settings.allStores
 import org.elnix.dragonlauncher.ui.dialogs.ExportSettingsDialog
+import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.helpers.MonospaceScrollableText
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -67,14 +65,15 @@ fun SettingsDebugTab(
         helpText = "settings json",
         onReset = null,
         resetText = null,
+        scrollableContent = false,
         listState = listState,
-        titleContent = {
+        topContent = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(5.dp)
             ) {
 
-                Button(
+                DragonButton(
                     onClick = { showStoresDialog = true }
                 ) {
                     Text("Select visibles stores")
@@ -83,21 +82,21 @@ fun SettingsDebugTab(
                 Spacer(Modifier.weight(1f))
                 DragonIconButton(
                     onClick = { settingsJson?.let { ctx.copyToClipboard(it.toString(2)) } },
-                    imageVector = Icons.Default.ContentCopy,
+                    icon = R.drawable.copy,
                     contentDescription = "Copy"
                 )
 
                 DragonIconButton(
-                    onClick = { loadSettings() },
-                    imageVector = Icons.Default.Loop,
+                    onClick = ::loadSettings,
+                    icon = R.drawable.refresh,
                     contentDescription = "Load settings"
                 )
             }
-        },
-        content = {
-            MonospaceScrollableText(jsonLines)
         }
-    )
+    ) {
+        MonospaceScrollableText(jsonLines)
+    }
+
     if (showStoresDialog) {
         ExportSettingsDialog(
             onDismiss = { showStoresDialog = false },

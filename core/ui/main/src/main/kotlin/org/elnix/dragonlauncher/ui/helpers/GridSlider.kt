@@ -24,13 +24,12 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.AppModel
-import org.elnix.dragonlauncher.enumsui.HorizontalAlignment
+import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
-import org.elnix.dragonlauncher.ui.dragon.generic.ShowLabels
 
 @Composable
 fun GridSizeSlider(apps: List<AppModel>) {
@@ -68,7 +67,6 @@ fun GridSizeSlider(apps: List<AppModel>) {
         ) {
             MultiSelectConnectedButtonRow(
                 entries = HorizontalAlignment.entries,
-                showLabels = ShowLabels.Always,
                 isChecked = { horizontalAlignment == it }
             ) {
                 scope.launch { DrawerSettingsStore.horizontalAlignment.set(ctx, it) }

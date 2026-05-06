@@ -2,11 +2,11 @@ package org.elnix.dragonlauncher.common.serializables
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import org.elnix.dragonlauncher.common.navigaton.SETTINGS
-import org.elnix.dragonlauncher.common.utils.BluetoothADBCommands
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.SWIPE_TAG
-import org.elnix.dragonlauncher.common.utils.DataADBCommands
-import org.elnix.dragonlauncher.common.utils.WifiADBCommands
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.common.messyfolder.BluetoothADBCommands
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SWIPE_TAG
+import org.elnix.dragonlauncher.common.messyfolder.DataADBCommands
+import org.elnix.dragonlauncher.common.messyfolder.WifiADBCommands
 import org.elnix.dragonlauncher.logging.logE
 
 
@@ -55,7 +55,7 @@ sealed class SwipeActionSerializable {
     data class OpenAppDrawer(val workspaceId: String? = null) : SwipeActionSerializable()
 
     @Serializable
-    data class OpenDragonLauncherSettings(val route: String = SETTINGS.ROOT) : SwipeActionSerializable()
+    data class OpenDragonLauncherSettings(val route: NavigationRoute = NavigationRoute.PointsSettings) : SwipeActionSerializable()
 
     @Serializable
     object Lock : SwipeActionSerializable()

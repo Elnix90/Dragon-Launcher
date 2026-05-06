@@ -28,12 +28,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.common.serializables.StatusBarSerializable
-import org.elnix.dragonlauncher.common.utils.getMobileDataStatus
-import org.elnix.dragonlauncher.common.utils.isAirplaneMode
-import org.elnix.dragonlauncher.common.utils.isBluetoothEnabled
-import org.elnix.dragonlauncher.common.utils.isHotspotEnabled
-import org.elnix.dragonlauncher.common.utils.isVpnEnabled
-import org.elnix.dragonlauncher.common.utils.isWifiEnabled
+import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.getMobileDataStatus
+import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isAirplaneMode
+import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isBluetoothEnabled
+import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isHotspotEnabled
+import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isVpnEnabled
+import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isWifiEnabled
 
 @Composable
 fun StatusBarConnectivity(

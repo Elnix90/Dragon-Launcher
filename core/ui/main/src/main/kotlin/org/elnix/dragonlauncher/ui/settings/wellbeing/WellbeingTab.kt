@@ -22,15 +22,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Apps
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.AccessTime
 import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material.icons.outlined.Notifications
@@ -65,10 +60,10 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.messyfolder.Constants.PackageNameLists.knownSocialMediaApps
+import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.common.serializables.AppModel
-import org.elnix.dragonlauncher.common.utils.Constants.PackageNameLists.knownSocialMediaApps
-import org.elnix.dragonlauncher.common.utils.hasUsageStatsPermission
-import org.elnix.dragonlauncher.common.utils.resolveShape
+import org.elnix.dragonlauncher.common.utils.PermissionsUtils.hasUsageStatsPermission
 import org.elnix.dragonlauncher.settings.stores.WellbeingSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.appIcon
@@ -128,171 +123,150 @@ fun WellbeingTab(onBack: () -> Unit) {
         }
     ) {
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // Hero Card
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        item {
-            WellbeingHeroCard(
-                pauseEnabled = socialMediaPauseEnabled,
-                reminderEnabled = reminderEnabled,
-                appCount = pausedApps.size
+        WellbeingHeroCard(
+            pauseEnabled = socialMediaPauseEnabled,
+            reminderEnabled = reminderEnabled,
+            appCount = pausedApps.size
+        )
+
+        SectionHeader(
+            icon = Icons.Outlined.SelfImprovement,
+            title = stringResource(R.string.social_media_pause)
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .settingsGroup(),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            SettingsSwitchRow(
+                setting = WellbeingSettingsStore.socialMediaPauseEnabled,
+                title = stringResource(R.string.social_media_pause),
+                description = stringResource(R.string.social_media_pause_description)
             )
+
+            AnimatedVisibility(visible = socialMediaPauseEnabled) {
+                Column {
+                    SwitchRow(
+                        state = guiltModeEnabled,
+                        title = stringResource(R.string.guilt_mode),
+                        description = stringResource(R.string.guilt_mode_description),
+                        enabled = true,
+                    ) { newValue ->
+                        if (newValue && !hasUsageStatsPermission(ctx)) {
+                            showPermissionDialog = true
+                        } else {
+                            scope.launch {
+                                WellbeingSettingsStore.guiltModeEnabled.set(ctx, newValue)
+                            }
+                        }
+                    }
+
+                    SettingsSlider(
+                        setting = WellbeingSettingsStore.pauseDurationSeconds,
+                        title = stringResource(R.string.pause_duration),
+                        description = stringResource(
+                            R.string.pause_duration_description,
+                            pauseDuration
+                        ),
+                        valueRange = 3..60,
+                        allowTextEditValue = false,
+                        showValue = false,
+                        enabled = true
+                    )
+                }
+            }
         }
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // Section 1 — Pause & Mindfulness
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        item {
-            SectionHeader(
-                icon = Icons.Outlined.SelfImprovement,
-                title = stringResource(R.string.social_media_pause)
-            )
-        }
 
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .settingsGroup(),
-                verticalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                SettingsSwitchRow(
-                    setting = WellbeingSettingsStore.socialMediaPauseEnabled,
-                    title = stringResource(R.string.social_media_pause),
-                    description = stringResource(R.string.social_media_pause_description)
-                )
 
-                AnimatedVisibility(visible = socialMediaPauseEnabled) {
-                    Column {
-                        SwitchRow(
-                            state = guiltModeEnabled,
-                            title = stringResource(R.string.guilt_mode),
-                            description = stringResource(R.string.guilt_mode_description),
-                            enabled = true,
-                        ) { newValue ->
-                            if (newValue && !hasUsageStatsPermission(ctx)) {
-                                showPermissionDialog = true
+        SectionHeader(
+            icon = Icons.Outlined.Timer,
+            title = stringResource(R.string.reminder_mode_title)
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .settingsGroup(),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            SwitchRow(
+                state = reminderEnabled,
+                title = stringResource(R.string.reminder_mode_title),
+                description = stringResource(R.string.reminder_mode_description),
+                enabled = socialMediaPauseEnabled,
+            ) { newValue ->
+                if (newValue && reminderMode == "overlay" && !Settings.canDrawOverlays(ctx)) {
+                    showOverlayPermissionDialog = true
+                } else {
+                    scope.launch {
+                        WellbeingSettingsStore.reminderEnabled.set(ctx, newValue)
+                    }
+                }
+            }
+
+            AnimatedVisibility(visible = socialMediaPauseEnabled && reminderEnabled) {
+                Column {
+                    SettingsSlider(
+                        setting = WellbeingSettingsStore.reminderIntervalMinutes,
+                        title = stringResource(R.string.reminder_interval),
+                        description = stringResource(
+                            R.string.reminder_interval_description,
+                            reminderInterval
+                        ),
+                        valueRange = 1..30,
+                        allowTextEditValue = false,
+                        showValue = false,
+                        enabled = true
+                    )
+
+                    // Delivery mode picker
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        ModeChip(
+                            label = stringResource(R.string.reminder_mode_notification),
+                            icon = Icons.Outlined.Notifications,
+                            selected = reminderMode == "notification",
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            scope.launch {
+                                WellbeingSettingsStore.reminderMode.set(ctx, "notification")
+                            }
+                        }
+
+                        ModeChip(
+                            label = stringResource(R.string.reminder_mode_overlay),
+                            icon = Icons.Outlined.Layers,
+                            selected = reminderMode == "overlay",
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            if (!Settings.canDrawOverlays(ctx)) {
+                                showOverlayPermissionDialog = true
                             } else {
                                 scope.launch {
-                                    WellbeingSettingsStore.guiltModeEnabled.set(ctx, newValue)
+                                    WellbeingSettingsStore.reminderMode.set(ctx, "overlay")
                                 }
                             }
                         }
-
-                        SettingsSlider(
-                            setting = WellbeingSettingsStore.pauseDurationSeconds,
-                            title = stringResource(R.string.pause_duration),
-                            description = stringResource(
-                                R.string.pause_duration_description,
-                                pauseDuration
-                            ),
-                            valueRange = 3..60,
-                            allowTextEditValue = false,
-                            showValue = false,
-                            enabled = true
-                        )
                     }
+
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // Section 2 — Usage Reminders
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        item {
+        AnimatedVisibility(reminderMode == "overlay" && socialMediaPauseEnabled && reminderEnabled) {
+
             SectionHeader(
-                icon = Icons.Outlined.Timer,
-                title = stringResource(R.string.reminder_mode_title)
+                icon = Icons.Outlined.Visibility,
+                title = stringResource(R.string.popup_display_title)
             )
-        }
-
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .settingsGroup(),
-                verticalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                SwitchRow(
-                    state = reminderEnabled,
-                    title = stringResource(R.string.reminder_mode_title),
-                    description = stringResource(R.string.reminder_mode_description),
-                    enabled = socialMediaPauseEnabled,
-                ) { newValue ->
-                    if (newValue && reminderMode == "overlay" && !Settings.canDrawOverlays(ctx)) {
-                        showOverlayPermissionDialog = true
-                    } else {
-                        scope.launch {
-                            WellbeingSettingsStore.reminderEnabled.set(ctx, newValue)
-                        }
-                    }
-                }
-
-                AnimatedVisibility(visible = socialMediaPauseEnabled && reminderEnabled) {
-                    Column {
-                        SettingsSlider(
-                            setting = WellbeingSettingsStore.reminderIntervalMinutes,
-                            title = stringResource(R.string.reminder_interval),
-                            description = stringResource(
-                                R.string.reminder_interval_description,
-                                reminderInterval
-                            ),
-                            valueRange = 1..30,
-                            allowTextEditValue = false,
-                            showValue = false,
-                            enabled = true
-                        )
-
-                        // Delivery mode picker
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            ModeChip(
-                                label = stringResource(R.string.reminder_mode_notification),
-                                icon = Icons.Outlined.Notifications,
-                                selected = reminderMode == "notification",
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                scope.launch {
-                                    WellbeingSettingsStore.reminderMode.set(ctx, "notification")
-                                }
-                            }
-
-                            ModeChip(
-                                label = stringResource(R.string.reminder_mode_overlay),
-                                icon = Icons.Outlined.Layers,
-                                selected = reminderMode == "overlay",
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                if (!Settings.canDrawOverlays(ctx)) {
-                                    showOverlayPermissionDialog = true
-                                } else {
-                                    scope.launch {
-                                        WellbeingSettingsStore.reminderMode.set(ctx, "overlay")
-                                    }
-                                }
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
-                }
-            }
-        }
-
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // Section 2b — Popup content options (only if overlay mode)
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        item {
-            AnimatedVisibility(reminderMode == "overlay" && socialMediaPauseEnabled && reminderEnabled) {
-
-                SectionHeader(
-                    icon = Icons.Outlined.Visibility,
-                    title = stringResource(R.string.popup_display_title)
-                )
 
             Column(
                 modifier = Modifier
@@ -316,93 +290,76 @@ fun WellbeingTab(onBack: () -> Unit) {
                     description = stringResource(R.string.popup_show_remaining_time_desc)
                 )
             }
-                }
         }
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // Section 3 — Auto Return to Launcher
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        item {
-            SectionHeader(
-                icon = Icons.AutoMirrored.Outlined.ExitToApp,
-                title = stringResource(R.string.return_to_launcher_title)
-            )
-        }
 
-        item {
-            SwitchRow(
-                state = returnToLauncherEnabled,
-                title = stringResource(R.string.return_to_launcher_title),
-                description = stringResource(R.string.return_to_launcher_description),
-                enabled = socialMediaPauseEnabled,
-            ) { newValue ->
-                scope.launch {
-                    WellbeingSettingsStore.returnToLauncherEnabled.set(ctx, newValue)
-                }
+        SectionHeader(
+            icon = Icons.AutoMirrored.Outlined.ExitToApp,
+            title = stringResource(R.string.return_to_launcher_title)
+        )
+
+        SwitchRow(
+            state = returnToLauncherEnabled,
+            title = stringResource(R.string.return_to_launcher_title),
+            description = stringResource(R.string.return_to_launcher_description),
+            enabled = socialMediaPauseEnabled,
+        ) { newValue ->
+            scope.launch {
+                WellbeingSettingsStore.returnToLauncherEnabled.set(ctx, newValue)
             }
         }
 
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // Section 4 — Paused Apps
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        item {
-            SectionHeader(
-                icon = Icons.Outlined.AccessTime,
-                title = if (pausedApps.isNotEmpty())
-                    "${stringResource(R.string.paused_apps)} (${pausedApps.size})"
-                else
-                    stringResource(R.string.paused_apps)
-            )
-        }
+        SectionHeader(
+            icon = Icons.Outlined.AccessTime,
+            title = if (pausedApps.isNotEmpty())
+                "${stringResource(R.string.paused_apps)} (${pausedApps.size})"
+            else
+                stringResource(R.string.paused_apps)
+        )
 
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            SettingsItem(
+                title = stringResource(R.string.add_app),
+                icon = R.drawable.add,
+                modifier = Modifier.weight(1f),
+                enabled = socialMediaPauseEnabled
+            ) { showAppPicker = true }
+
+            SettingsItem(
+                title = stringResource(R.string.add_social_media),
+                icon = R.drawable.ic_app_grid,
+                modifier = Modifier.weight(1f),
+                enabled = socialMediaPauseEnabled
             ) {
-                SettingsItem(
-                    title = stringResource(R.string.add_app),
-                    icon = Icons.Default.Add,
-                    modifier = Modifier.weight(1f),
-                    enabled = socialMediaPauseEnabled
-                ) {
-                    showAppPicker = true
-                }
-
-                SettingsItem(
-                    title = stringResource(R.string.add_social_media),
-                    icon = Icons.Default.Apps,
-                    modifier = Modifier.weight(1f),
-                    enabled = socialMediaPauseEnabled
-                ) {
-                    scope.launch {
-                        val installedPackages = allApps.map { it.packageName }.toSet()
-                        val socialApps = knownSocialMediaApps.filter {
-                            it in installedPackages
-                        }
-                        WellbeingSettingsStore.pausedApps.set(ctx, pausedApps + socialApps)
+                scope.launch {
+                    val installedPackages = allApps.map { it.packageName }.toSet()
+                    val socialApps = knownSocialMediaApps.filter {
+                        it in installedPackages
                     }
+                    WellbeingSettingsStore.pausedApps.set(ctx, pausedApps + socialApps)
                 }
             }
         }
 
-        item {
-            AnimatedVisibility(visible = pausedApps.isNotEmpty()) {
-                SettingsItem(
-                    title = stringResource(R.string.clear_all),
-                    icon = Icons.Default.Clear,
-                    enabled = socialMediaPauseEnabled
-                ) {
-                    scope.launch {
-                        WellbeingSettingsStore.pausedApps.reset(ctx)
-                    }
+        AnimatedVisibility(visible = pausedApps.isNotEmpty()) {
+            SettingsItem(
+                title = stringResource(R.string.clear_all),
+                icon = R.drawable.backspace,
+                enabled = socialMediaPauseEnabled
+            ) {
+                scope.launch {
+                    WellbeingSettingsStore.pausedApps.reset(ctx)
                 }
             }
         }
+
 
         if (pausedApps.isNotEmpty()) {
 
-            items(pausedApps.toList()) { packageName ->
+            pausedApps.forEach { packageName ->
                 val app = allApps.find { it.packageName == packageName }
 
                 app?.let {
@@ -417,38 +374,35 @@ fun WellbeingTab(onBack: () -> Unit) {
                 }
             }
         } else {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(DragonShape)
-                        .background(MaterialTheme.colorScheme.surface)
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, DragonShape)
-                        .padding(vertical = 32.dp),
-                    contentAlignment = Alignment.Center
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(DragonShape)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, DragonShape)
+                    .padding(vertical = 32.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = "🐉",
-                            fontSize = 28.sp
-                        )
-                        Text(
-                            text = stringResource(R.string.no_paused_apps),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(horizontal = 32.dp)
-                        )
-                    }
+                    Text(
+                        text = "🐉",
+                        fontSize = 28.sp
+                    )
+                    Text(
+                        text = stringResource(R.string.no_paused_apps),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 32.dp)
+                    )
                 }
             }
         }
     }
 
-    // ───────────── Dialogs ─────────────
 
     if (showAppPicker) {
         AppPickerDialog(
@@ -753,7 +707,7 @@ private fun PausedAppItem(
 
         DragonIconButton(
             onClick = onRemove,
-            imageVector = Icons.Default.Close,
+            icon = R.drawable.close,
             contentDescription = stringResource(R.string.remove),
             colors = AppObjectsColors.cancelIconButtonColors()
         )

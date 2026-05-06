@@ -1,14 +1,15 @@
 [versions]
-agp = "9.1.1"
+agp = "9.2.0"
 androidImageCropper = "4.7.0"
 animation = "1.11.0"
 annotation = "1.10.0"
 collection = "1.6.0"
 datastorePreferencesCore = "1.2.1"
 fragment = "1.8.9"
+#noinspection NewerVersionAvailable - DO not update, it's only there for legacy support
 gson = "2.13.2"
 hiltAndroid = "2.59.2"
-kotlin = "2.3.20"
+kotlin = "2.3.21"
 coreKtx = "1.18.0"
 kotlinxCoroutinesCore = "1.10.2"
 kotlinxSerializationCore = "1.11.0"
@@ -40,7 +41,12 @@ shizuku = "13.1.0"
 uiText = "1.11.0"
 uiUnit = "1.11.0"
 uiUtil = "1.11.0"
-ksp = "2.3.4"
+ksp = "2.3.7"
+nav3Core = "1.1.1"
+lifecycleViewmodelNav3 = "2.10.0"
+animationGraphics = "1.11.0"
+
+
 
 [libraries]
 android-image-cropper = { module = "com.vanniktech:android-image-cropper", version.ref = "androidImageCropper" }
@@ -98,6 +104,10 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 shizuku-api = { group = "dev.rikka.shizuku", name = "api", version.ref = "shizuku" }
 shizuku-provider = { group = "dev.rikka.shizuku", name = "provider", version.ref = "shizuku" }
 shapeindicators = { group = "io.github.dp-hridayan", name = "shapeindicators", version.ref = "shapeindicators" }
+androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
+androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
+androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
+androidx-compose-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics", version.ref = "animationGraphics" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

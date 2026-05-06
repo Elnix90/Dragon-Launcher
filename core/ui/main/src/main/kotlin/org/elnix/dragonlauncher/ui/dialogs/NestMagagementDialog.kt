@@ -17,8 +17,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,7 +41,7 @@ import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.CircleNest
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.common.utils.copyToClipboard
+import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -203,7 +202,7 @@ private fun NestManagementItem(
                 )
 
                 Icon(
-                    imageVector = Icons.Default.ContentCopy,
+                    painter = painterResource(R.drawable.copy),
                     contentDescription = stringResource(R.string.copy_id),
                     modifier = Modifier.size(10.dp)
                 )
@@ -244,11 +243,10 @@ private fun NestManagementItem(
 
         if (onDelete != null) {
             DragonIconButton(
-                onClick = { onDelete(nest.id) },
-                imageVector = Icons.Default.Close,
+                icon = R.drawable.close,
                 contentDescription = stringResource(R.string.delete_circle_nest),
                 colors = AppObjectsColors.cancelIconButtonColors()
-            )
+            ) { onDelete(nest.id) }
         }
     }
 }

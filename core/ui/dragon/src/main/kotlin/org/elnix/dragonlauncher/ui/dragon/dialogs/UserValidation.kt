@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
@@ -31,9 +30,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.utils.copyToClipboard
+import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 
 
@@ -125,14 +125,12 @@ fun UserValidation(
                             Spacer(Modifier.weight(1f))
 
                             if (copy) {
-                                Icon(
-                                    imageVector = Icons.Default.ContentCopy,
+                                DragonIconButton(
+                                    icon = R.drawable.copy,
                                     contentDescription = "Copy",
                                     modifier = Modifier
                                         .padding(8.dp)
-                                        .clickable { ctx.copyToClipboard(message) },
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
+                                ) { ctx.copyToClipboard(message) }
                             }
                         }
                     }

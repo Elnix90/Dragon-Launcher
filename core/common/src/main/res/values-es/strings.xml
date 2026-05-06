@@ -83,7 +83,6 @@
     <string name="set_default_launcher">Configurar como lanzador predeterminado</string>
     <string name="close">Cierre</string>
     <string name="dragging_distance_selection">Selección de distancia de arrastre</string>
-    <string name="swipe_points_selection">Selección de puntos de deslizamiento</string>
     <string name="circle">Distancia de arrastre del círculo</string>
     <string name="cancel_zone">Cancelar la resistencia de la zona</string>
     <string name="android_settings">Configuración de Android</string>
@@ -613,8 +612,6 @@
     <string name="pull_down_wallpaper_dim_desc">Atenúa el fondo cuando emerje el cajón</string>
     <string name="pull_down_scale_in">Escala Descendente</string>
     <string name="pull_down_scale_in_desc">Escala iconos cuando el cajón se baja</string>
-    <string name="drawer_enter_exit_animations">Animaciones de entrada/salida en cajones</string>
-    <string name="drawer_enter_exit_animations_desc">Reproduce animaciones al entrar o salir del cajón si está configurado en falso, esto es instantáneo</string>
     <string name="action_settings">Configuración de acción</string>
     <string name="drawer_settings">Configuración de cajones</string>
     <string name="more">Más</string>
@@ -770,8 +767,6 @@
     <string name="import_text">Importar</string>
     <string name="user_theme">Tema del usuario %1$d</string>
     <string name="add_current_theme">Añadir tema aplicado</string>
-    <string name="test_mode_validate">Mantener los colores aplicados</string>
-    <string name="test_mode_cancel">Restaurar tema anterior</string>
     <string name="haptic_preset_buzz_roll">Vibrar repetidamente</string>
     <string name="haptic_preset_long_press">Mantener pulsado para confirmar</string>
     <string name="presets">Preajustes</string>

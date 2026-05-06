@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.settings.stores
 
-import org.elnix.dragonlauncher.common.navigaton.SETTINGS
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.MapSettingsStore
@@ -64,9 +63,9 @@ object HoldToActivateArcSettingsStore : MapSettingsStore() {
         allowedRange = 0f..5f
     )
 
-    val holdMenuEntries = Settings.stringList(
-        key = "holdMenuEntries",
+    val holdMenuEntries = Settings.string(
+        key = "holdMenuEntries2",
         dataStoreName = dataStoreName,
-        default = listOf(SETTINGS.ROOT, SETTINGS.WALLPAPER, SETTINGS.WIDGETS_FLOATING_APPS)
+        default = ""
     )
 }

@@ -6,8 +6,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.common.utils.UiCircle
-import org.elnix.dragonlauncher.common.utils.circles.computePointPosition
+import org.elnix.dragonlauncher.common.messyfolder.UiCircle
+import org.elnix.dragonlauncher.common.messyfolder.circles.computePointPosition
 import org.elnix.dragonlauncher.ui.base.cache.SwipeDrawParams
 
 fun DrawScope.circlesSettingsOverlay(

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.LOGS_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.LOGS_TAG
 import org.elnix.dragonlauncher.logging.FileLoggingTree
 import org.elnix.dragonlauncher.logging.LogAlert
 import org.elnix.dragonlauncher.logging.logE

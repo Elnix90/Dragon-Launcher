@@ -5,7 +5,7 @@ import androidx.compose.ui.res.stringResource
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.MAIN_SCREEN_LAYERS_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.MAIN_SCREEN_LAYERS_TAG
 import org.elnix.dragonlauncher.logging.logE
 
 

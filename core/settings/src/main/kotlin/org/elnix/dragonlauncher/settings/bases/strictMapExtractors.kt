@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.settings.bases
 import androidx.compose.ui.graphics.Color
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipeJson
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.ANGLE_LINE_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ANGLE_LINE_TAG
 import org.elnix.dragonlauncher.logging.logE
 
 

@@ -22,7 +22,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreHoriz
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -42,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.AppCategory
 import org.elnix.dragonlauncher.common.serializables.AppModel
-import org.elnix.dragonlauncher.common.utils.waitASec
+import org.elnix.dragonlauncher.common.utils.LifecycleUtils.waitASec
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalAppItemSettings
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -156,12 +155,12 @@ fun AppGrid(
                                     }
                                 } else {
                                     DragonIconButton(
-                                        onClick = {
-                                            onReload()
-                                            isLoading = true
-                                        }, imageVector = Icons.Default.Refresh,
+                                        icon = R.drawable.refresh,
                                         contentDescription = stringResource(R.string.reload_apps)
-                                    )
+                                    ) {
+                                        onReload()
+                                        isLoading = true
+                                    }
                                 }
                             }
                         }

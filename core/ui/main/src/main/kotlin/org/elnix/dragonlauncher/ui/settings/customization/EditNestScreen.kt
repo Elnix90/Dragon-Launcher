@@ -3,68 +3,87 @@
 package org.elnix.dragonlauncher.ui.settings.customization
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.boundsInRoot
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.ktx.px
 import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.messyfolder.UiCircle
+import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.serializables.CircleNest
 import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedbackSerializable
-import org.elnix.dragonlauncher.common.utils.UiCircle
-import org.elnix.dragonlauncher.common.utils.showToast
-import org.elnix.dragonlauncher.enumsui.NestEditMode
-import org.elnix.dragonlauncher.enumsui.NestEditMode.Drag
-import org.elnix.dragonlauncher.enumsui.NestEditMode.Haptic
-import org.elnix.dragonlauncher.enumsui.NestEditMode.MinAngle
-import org.elnix.dragonlauncher.enumsui.NestEditMode.Other
-import org.elnix.dragonlauncher.enumsui.NestEditMode.Radius
+import org.elnix.dragonlauncher.enumsui.select.NestEditMode
+import org.elnix.dragonlauncher.enumsui.select.NestEditMode.Drag
+import org.elnix.dragonlauncher.enumsui.select.NestEditMode.Haptic
+import org.elnix.dragonlauncher.enumsui.select.NestEditMode.MinAngle
+import org.elnix.dragonlauncher.enumsui.select.NestEditMode.Other
+import org.elnix.dragonlauncher.enumsui.select.NestEditMode.Radius
 import org.elnix.dragonlauncher.settings.stores.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.composition.LocalNests
 import org.elnix.dragonlauncher.ui.defaultDragDistance
 import org.elnix.dragonlauncher.ui.defaultHapticFeedback
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedBackEditorButtonWithPlayTest
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedbackEditor
+import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
-import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
+import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.helpers.nests.circlesSettingsOverlay
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
+
+
+/**
+ * Rotates the given offset around the origin by the given angle in degrees.
+ *
+ * A positive angle indicates a counterclockwise rotation around the right-handed 2D Cartesian
+ * coordinate system.
+ *
+ * See: [Rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix)
+ */
+fun Offset.rotateBy(angle: Float): Offset {
+    val angleInRadians = angle * (PI / 180)
+    val cos = cos(angleInRadians)
+    val sin = sin(angleInRadians)
+    return Offset((x * cos - y * sin).toFloat(), (x * sin + y * cos).toFloat())
+}
+
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
@@ -124,15 +143,6 @@ fun NestEditingScreen(
         )
     }
 
-    val circlesPreview = dragDistancesState.map { (id, _) ->
-        UiCircle(
-            id = id,
-            radius = (tempRadius ?: subNestDefaultRadius).dp.px
-        )
-    }
-
-    var showSmallPreview by remember { mutableStateOf(false) }
-    var currentEditMode by remember { mutableStateOf(Drag) }
     var pendingNestUpdate by remember { mutableStateOf<List<CircleNest>?>(null) }
 
     /**
@@ -174,30 +184,13 @@ fun NestEditingScreen(
     }
 
 
-    var dummyEnd by remember { mutableStateOf(Offset.Infinite) }
-    var hasAlreadyBeenPlaced by remember { mutableStateOf(false) }
-
-
-    var canvaCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
-
-
-    LaunchedEffect(showSmallPreview) {
-        if (!hasAlreadyBeenPlaced) {
-            val rect = canvaCoordinates?.boundsInRoot() ?: return@LaunchedEffect
-
-            dummyEnd = Offset(
-                rect.width / 2,
-                rect.height / 2
-            )
-
-            // Prevent the thing to move after first placement
-            hasAlreadyBeenPlaced = true
-        }
-    }
+    var offset by remember { mutableStateOf(Offset.Zero) }
+    var zoom by remember { mutableFloatStateOf(1f) }
+    var angle by remember { mutableFloatStateOf(0f) }
 
 
     SettingsScaffold(
-        title = stringResource(R.string.dragging_distance_selection),
+        title = stringResource(R.string.edit_nest),
         onBack = onBack,
         helpText = stringResource(R.string.edit_nest_help),
         resetText = stringResource(R.string.reset_nest_text),
@@ -207,234 +200,239 @@ fun NestEditingScreen(
                 if (it.id == nestId) CircleNest(id = nestId)
                 else it
             }
-        },
+        }
+    ) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .weight(1f)
+                .pointerInput(Unit) {
+                    detectTransformGestures { centroid, pan, gestureZoom, gestureRotate ->
+                        val oldScale = zoom
+                        val newScale = zoom * gestureZoom
 
-        content = {
-
-            Canvas(
-                Modifier
-                    .fillMaxSize()
-                    .weight(1f)
-                    .onGloballyPositioned { coordinates ->
-                        canvaCoordinates = coordinates
+                        // For natural zooming and rotating, the centroid of the gesture should
+                        // be the fixed point where zooming and rotating occurs.
+                        // We compute where the centroid was (in the pre-transformed coordinate
+                        // space), and then compute where it will be after this delta.
+                        // We then compute what the new offset should be to keep the centroid
+                        // visually stationary for rotating and zooming, and also apply the pan.
+                        offset =
+                            (offset + centroid / oldScale).rotateBy(gestureRotate) -
+                                    (centroid / newScale + pan / oldScale)
+                        zoom = newScale
+                        angle += gestureRotate
                     }
-                    .pointerInput(Unit) {
-                        detectDragGestures { change, _ ->
-                            dummyEnd = change.position
+                }
+                .graphicsLayer {
+                    translationX = -offset.x * zoom
+                    translationY = -offset.y * zoom
+                    scaleX = zoom
+                    scaleY = zoom
+                    rotationZ = angle
+                    transformOrigin = TransformOrigin(0f, 0f)
+                }
+                .drawWithCache {
+                    onDrawBehind {
+                        circlesSettingsOverlay(
+                            drawParams = drawParams,
+                            center = center,
+                            depth = 1,
+                            circles = circlesRealSize,
+                            selectedPoint = null,
+                            nestId = nestId,
+                            preventBgErasing = true
+                        )
+
+                        // Show the min angle to activate
+                        circlesRealSize.forEach { circle ->
+                            val arcRadius = circle.radius + 10
+
+                            val rect = Rect(
+                                center.x - arcRadius,
+                                center.y - arcRadius,
+                                center.x + arcRadius,
+                                center.y + arcRadius
+                            )
+
+                            drawArc(
+                                color = angleColor,
+                                startAngle = -90f,
+                                sweepAngle = minAngleState[circle.id]?.toFloat() ?: 0f,
+                                useCenter = false,
+                                topLeft = rect.topLeft,
+                                size = Size(rect.width, rect.height),
+                                style = Stroke(width = 3f)
+                            )
                         }
                     }
-            ) {
-
-
-                circlesSettingsOverlay(
-                    drawParams = drawParams,
-                    center = center,
-                    depth = 1,
-                    circles = circlesRealSize,
-                    selectedPoint = null,
-                    nestId = nestId,
-                    preventBgErasing = true
-                )
-
-                // Show the min angle to activate
-                circlesRealSize.forEach { circle ->
-                    val arcRadius = circle.radius + 10
-
-                    val rect = Rect(
-                        center.x - arcRadius,
-                        center.y - arcRadius,
-                        center.x + arcRadius,
-                        center.y + arcRadius
-                    )
-
-                    drawArc(
-                        color = angleColor,
-                        startAngle = -90f,
-                        sweepAngle = minAngleState[circle.id]?.toFloat() ?: 0f,
-                        useCenter = false,
-                        topLeft = rect.topLeft,
-                        size = Size(rect.width, rect.height),
-                        style = Stroke(width = 3f)
-                    )
                 }
+        )
 
-                /**
-                 * Preview real size of the nest
-                 */
-                if (showSmallPreview) {
 
-                    circlesSettingsOverlay(
-                        drawParams = drawParams.copy(maxDepth = 1),
-                        center = dummyEnd,
-                        depth = 1,
-                        circles = circlesPreview,
-                        selectedPoint = null,
-                        nestId = nestId,
-                        preventBgErasing = true,
-                        preventDrawingSubNests = true
-                    )
+        val pagerState = rememberPagerState { 5 }
+
+        DragonColumnGroup {
+            SingleSelectConnectedButtonRow(
+                entries = NestEditMode.entries,
+                checked = { pagerState.currentPage == it.ordinal }
+            ) {
+                scope.launch {
+                    pagerState.animateScrollToPage(it.ordinal)
                 }
             }
 
-
-            MultiSelectConnectedButtonRow(
-                entries = NestEditMode.entries,
-                isChecked = { currentEditMode == it }
-            ) { currentEditMode = it }
-
-            Column(
-                Modifier
-                    .fillMaxWidth()
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
                     .height(300.dp)
-                    .clip(DragonShape)
-                    .background(MaterialTheme.colorScheme.surface)
-                    .border(1.dp, MaterialTheme.colorScheme.primary, DragonShape)
-                    .verticalScroll(rememberScrollState())
-                    .padding(20.dp),
-                verticalArrangement = Arrangement.spacedBy(15.dp)
-            ) {
-                when (currentEditMode) {
-                    Drag -> {
-                        dragDistancesState.toSortedMap().forEach { (index, distance) ->
-                            SliderWithLabel(
-                                label = if (index == -1) "${stringResource(R.string.cancel_zone)} ->"
-                                else "${stringResource(R.string.circle)}: $index ->",
-                                value = distance,
-                                valueRange = 0..1000,
-                                showValue = true,
-                                backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
-                                onReset = {
-                                    dragDistancesState[index] = defaultDragDistance(index)
-                                    commitDragDistances(dragDistancesState)
-                                },
-                                onDragStateChange = { isDragging ->
-                                    if (!isDragging) {
-                                        commitDragDistances(dragDistancesState)
-                                    }
-                                }
-                            ) { newValue ->
-                                dragDistancesState[index] = newValue
-                            }
-                        }
-                    }
+                    .fillMaxWidth()
+            ) { page ->
+                val currentPage = NestEditMode.entries[page]
 
-                    Haptic -> {
-                        // Keep drag distance state here cause haptic may be empty dues to how it is handled
-                        dragDistancesState.toSortedMap().filter { it.key != -1 }
-                            .forEach { (idx, _) ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(5.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    when (currentPage) {
 
-                                HapticFeedBackEditorButtonWithPlayTest(
-                                    customHapticFeedbackSerializable = currentNest.haptic[idx] ?: defaultHapticFeedback(idx),
-                                    titleExt = ": $idx ->",
-                                    onClick = { showHapticFeedbackEditor = idx },
-                                )
-                            }
-                    }
-
-                    MinAngle -> {
-                        dragDistancesState.toSortedMap().filter { it.key != -1 }
-                            .forEach { (index, _) ->
-                                val angle = minAngleState[index] ?: 0
+                        Drag -> {
+                            dragDistancesState.toSortedMap().forEach { (index, distance) ->
                                 SliderWithLabel(
-                                    label = "${stringResource(R.string.min_angle_to_activate)}: $index ->",
-                                    value = angle,
-                                    valueRange = 0..360,
+                                    label = if (index == -1) "${stringResource(R.string.cancel_zone)} ->"
+                                    else "${stringResource(R.string.circle)}: $index ->",
+                                    value = distance,
+                                    valueRange = 0..1000,
+                                    showValue = true,
                                     backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
                                     onReset = {
-                                        minAngleState[index] = 0
-                                        commitAngle(minAngleState)
+                                        dragDistancesState[index] = defaultDragDistance(index)
+                                        commitDragDistances(dragDistancesState)
                                     },
                                     onDragStateChange = { isDragging ->
                                         if (!isDragging) {
-                                            commitAngle(minAngleState)
+                                            commitDragDistances(dragDistancesState)
                                         }
                                     }
                                 ) { newValue ->
-                                    minAngleState[index] = newValue
+                                    dragDistancesState[index] = newValue
                                 }
                             }
-                    }
+                        }
 
-                    // Well in this tab I'll just put whatever settings I can put
-                    Radius -> {
-                        SliderWithLabel(
-                            label = stringResource(R.string.nest_radius),
-                            value = tempRadius ?: subNestDefaultRadius,
-                            valueRange = 0..50,
-                            backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
-                            onReset = {
-                                updateNest { currentNest.copy(nestRadius = null) }
-                                tempRadius = subNestDefaultRadius
-                            },
-                            onDragStateChange = { isDragging ->
-                                if (!isDragging) {
-                                    pendingNestUpdate = nests.map {
-                                        if (it.id == nestId) it.copy(nestRadius = tempRadius)
-                                        else it
+                        Haptic -> {
+                            // Keep drag distance state here cause haptic may be empty dues to how it is handled
+                            dragDistancesState.toSortedMap().filter { it.key != -1 }
+                                .forEach { (idx, _) ->
+
+                                    HapticFeedBackEditorButtonWithPlayTest(
+                                        customHapticFeedbackSerializable = currentNest.haptic[idx] ?: defaultHapticFeedback(idx),
+                                        titleExt = ": $idx ->",
+                                        onClick = { showHapticFeedbackEditor = idx },
+                                    )
+                                }
+                        }
+
+                        MinAngle -> {
+                            dragDistancesState.toSortedMap().filter { it.key != -1 }
+                                .forEach { (index, _) ->
+                                    val angle = minAngleState[index] ?: 0
+                                    SliderWithLabel(
+                                        label = "${stringResource(R.string.min_angle_to_activate)}: $index ->",
+                                        value = angle,
+                                        valueRange = 0..360,
+                                        backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
+                                        onReset = {
+                                            minAngleState[index] = 0
+                                            commitAngle(minAngleState)
+                                        },
+                                        onDragStateChange = { isDragging ->
+                                            if (!isDragging) {
+                                                commitAngle(minAngleState)
+                                            }
+                                        }
+                                    ) { newValue ->
+                                        minAngleState[index] = newValue
                                     }
                                 }
-                            }
-                        ) { newValue -> tempRadius = newValue }
+                        }
 
-                        // Used to control whether the nest displays its circle individually or not
-                        SwitchRow(
-                            state = currentNest.showCircle ?: drawParams.showAppCirclePreview,
-                            title = stringResource(R.string.show_circle),
-                            onReset = {
-                                updateNest {
-                                    currentNest.copy(showCircle = null)
+                        // Well in this tab I'll just put whatever settings I can put
+                        Radius -> {
+                            SliderWithLabel(
+                                label = stringResource(R.string.nest_radius),
+                                value = tempRadius ?: subNestDefaultRadius,
+                                valueRange = 0..50,
+                                backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
+                                onReset = {
+                                    updateNest { currentNest.copy(nestRadius = null) }
+                                    tempRadius = subNestDefaultRadius
+                                },
+                                onDragStateChange = { isDragging ->
+                                    if (!isDragging) {
+                                        pendingNestUpdate = nests.map {
+                                            if (it.id == nestId) it.copy(nestRadius = tempRadius)
+                                            else it
+                                        }
+                                    }
                                 }
-                            }
-                        ) { showCircle ->
-                            updateNest {
-                                currentNest.copy(showCircle = showCircle)
+                            ) { newValue -> tempRadius = newValue }
+
+                            // Used to control whether the nest displays its circle individually or not
+                            SwitchRow(
+                                state = currentNest.showCircle ?: drawParams.showAppCirclePreview,
+                                title = stringResource(R.string.show_circle),
+                                onReset = {
+                                    updateNest {
+                                        currentNest.copy(showCircle = null)
+                                    }
+                                }
+                            ) { showCircle ->
+                                updateNest {
+                                    currentNest.copy(showCircle = showCircle)
+                                }
                             }
                         }
 
-                        // Quick toggle to display the preview of the nest top left
-                        SwitchRow(
-                            state = showSmallPreview,
-                            title = stringResource(R.string.show_nest_preview),
-                            description = stringResource(R.string.it_is_using_max_depth_equals_one)
-                        ) { showPreview -> showSmallPreview = showPreview }
-                    }
-
-                    Other -> {
-                        SwitchRow(
-                            state = currentNest.showAllActionsOnCurrentCircle ?: drawParams.showAllActionsOnCurrentCircle,
-                            title = stringResource(R.string.show_all_actions_on_current_circle),
-                            description = stringResource(R.string.show_all_actions_on_current_circle_description),
-                            onReset = {
+                        Other -> {
+                            SwitchRow(
+                                state = currentNest.showAllActionsOnCurrentCircle ?: drawParams.showAllActionsOnCurrentCircle,
+                                title = stringResource(R.string.show_all_actions_on_current_circle),
+                                description = stringResource(R.string.show_all_actions_on_current_circle_description),
+                                onReset = {
+                                    updateNest {
+                                        currentNest.copy(showAllActionsOnCurrentCircle = null)
+                                    }
+                                }
+                            ) { showAllActionsOnCurrentCircle ->
                                 updateNest {
-                                    currentNest.copy(showAllActionsOnCurrentCircle = null)
+                                    currentNest.copy(showAllActionsOnCurrentCircle = showAllActionsOnCurrentCircle)
                                 }
                             }
-                        ) { showAllActionsOnCurrentCircle ->
-                            updateNest {
-                                currentNest.copy(showAllActionsOnCurrentCircle = showAllActionsOnCurrentCircle)
-                            }
-                        }
 
-                        SwitchRow(
-                            state = currentNest.showAllActionsOnCurrentNest ?: drawParams.showAllActionsOnCurrentNest,
-                            title = stringResource(R.string.show_all_actions_on_current_nest),
-                            description = stringResource(R.string.show_all_actions_on_current_nest_desc),
-                            onReset = {
-                                updateNest {
-                                    currentNest.copy(showAllActionsOnCurrentNest = null)
+                            SwitchRow(
+                                state = currentNest.showAllActionsOnCurrentNest ?: drawParams.showAllActionsOnCurrentNest,
+                                title = stringResource(R.string.show_all_actions_on_current_nest),
+                                description = stringResource(R.string.show_all_actions_on_current_nest_desc),
+                                onReset = {
+                                    updateNest {
+                                        currentNest.copy(showAllActionsOnCurrentNest = null)
+                                    }
                                 }
-                            }
-                        ) { showAllActionsOnCurrentNest ->
-                            updateNest {
-                                currentNest.copy(showAllActionsOnCurrentNest = showAllActionsOnCurrentNest)
+                            ) { showAllActionsOnCurrentNest ->
+                                updateNest {
+                                    currentNest.copy(showAllActionsOnCurrentNest = showAllActionsOnCurrentNest)
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    )
-
+    }
 
     if (showHapticFeedbackEditor != null) {
         val circleIdToEdit = showHapticFeedbackEditor!!

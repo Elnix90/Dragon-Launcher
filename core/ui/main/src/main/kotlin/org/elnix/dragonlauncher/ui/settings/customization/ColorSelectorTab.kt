@@ -5,9 +5,7 @@ package org.elnix.dragonlauncher.ui.settings.customization
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Ease
 import androidx.compose.animation.core.animateIntAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,21 +21,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Colorize
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Restore
-import androidx.compose.material.icons.filled.SelectAll
-import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -62,14 +50,13 @@ import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.base.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.base.theme.DefaultExtraColors
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.enumsui.ColorSelectorModes
-import org.elnix.dragonlauncher.enumsui.DefaultThemes
-import org.elnix.dragonlauncher.enumsui.DefaultThemes.AMOLED
-import org.elnix.dragonlauncher.enumsui.DefaultThemes.CUSTOM
-import org.elnix.dragonlauncher.enumsui.DefaultThemes.DARK
-import org.elnix.dragonlauncher.enumsui.DefaultThemes.LIGHT
-import org.elnix.dragonlauncher.enumsui.DefaultThemes.SYSTEM
-import org.elnix.dragonlauncher.enumsui.defaultThemeName
+import org.elnix.dragonlauncher.enumsui.select.ColorSelectorModes
+import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes
+import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.AMOLED
+import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.CUSTOM
+import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.DARK
+import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.LIGHT
+import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.SYSTEM
 import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
 import org.elnix.dragonlauncher.settings.stores.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.ColorSettingsStore
@@ -77,24 +64,24 @@ import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.theme.getSystemColorScheme
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.asStateNull
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
-import org.elnix.dragonlauncher.ui.components.burger.BurgerAction
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
+import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
+import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSectionState
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
-import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
-import org.elnix.dragonlauncher.ui.dragon.generic.ShowLabels
+import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsColorPicker
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
-import org.elnix.dragonlauncher.ui.dragon.text.AutoResizeableText
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -437,445 +424,376 @@ fun ColorSelectorTab(
                 ColorSettingsStore.resetAll(ctx)
                 ColorModesSettingsStore.resetAll(ctx)
             }
-        },
-        content = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Max)
-                    .background(
-                        color = MaterialTheme.colorScheme.surface,
-                        shape = DragonShape
-                    )
-                    .padding(12.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                DefaultThemes.entries.filter { it != AMOLED }.forEach {
-                    val selected = it == defaultTheme || (it == DARK && defaultTheme == AMOLED)
-
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .clip(DragonShape)
-                            .conditional(selected) {
-                                background(MaterialTheme.colorScheme.surfaceDim)
-                            }
-                            .clickable {
-                                scope.launch {
-                                    ColorModesSettingsStore.defaultTheme.set(ctx, it)
-                                }
-                            }
-                            .padding(5.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-
-                        val background = when (it) {
-                            AMOLED -> null
-
-                            DARK -> Color.DarkGray
-                            LIGHT -> Color.White
-                            SYSTEM -> Brush.horizontalGradient(
-                                colors = listOf(
-                                    Color.White,
-                                    Color.Black
-                                )
-                            )
-
-                            CUSTOM -> Brush.linearGradient(
-                                colors = listOf(
-                                    Color.Red,
-                                    Color.Yellow,
-                                    Color.Green,
-                                    Color.Cyan,
-                                    Color.Blue,
-                                    Color.Magenta
-                                )
-                            )
-                        }
-
-
-                        // I like this simple animation I made, I think I've changed my mind about animations
-                        val shapeCorners by animateIntAsState(
-                            targetValue = if (selected) 12 else 50,
-                            animationSpec = tween(durationMillis = 300, easing = Ease),
-                            label = "box_shape"
-                        )
-
-                        val boxShape = RoundedCornerShape(shapeCorners)
-
-                        if (background != null) {
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(boxShape)
-                                    .then(
-                                        when (background) {
-                                            is Color -> Modifier.background(background)
-                                            is Brush -> Modifier.background(background)
-                                            else -> Modifier
-                                        }
-                                    )
-                                    .border(
-                                        1.dp,
-                                        MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                                        boxShape
-                                    )
-                            )
-                        }
-
-
-                        Spacer(Modifier.height(5.dp))
-
-                        Text(
-                            text = defaultThemeName(it),
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.labelSmall,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            }
-
-            HorizontalDivider()
-
-            SettingsSwitchRow(
-                setting = UiSettingsStore.useCustomColorChannels,
-                title = stringResource(R.string.use_custom_color_channels),
-                description = stringResource(R.string.use_custom_color_channels_desc)
-            )
-
-            AnimatedVisibility(selectedDefaultTheme == DARK || selectedDefaultTheme == AMOLED) {
-                SwitchRow(
-                    state = selectedDefaultTheme == AMOLED,
-                    title = stringResource(R.string.amoled_theme),
-                    description = stringResource(R.string.use_pure_black_background)
-                ) {
-                    val theme = if (it) {
-                        AMOLED
-                    } else DARK
-
-                    scope.launch {
-                        ColorModesSettingsStore.defaultTheme.set(ctx, theme)
-                    }
-                }
-            }
-
-            // Only show the dynamic colors switch when in SYSTEM view
-            AnimatedVisibility(selectedDefaultTheme == SYSTEM) {
-                SettingsSwitchRow(
-                    setting = ColorModesSettingsStore.dynamicColor,
-                    title = stringResource(R.string.dynamic_colors),
-                    description = stringResource(R.string.dynamic_colors_desc)
+        }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Max)
+                .background(
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = DragonShape
                 )
-            }
+                .padding(12.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            DefaultThemes.entries.filter { it != AMOLED }.forEach {
+                val selected = it == defaultTheme || (it == DARK && defaultTheme == AMOLED)
 
-            AnimatedVisibility(colorTestMode) {
-                DragonButton(
-                    onClick = { showExitTestValidation = true },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(stringResource(R.string.exit_test_mode))
-                }
-            }
-
-
-            AnimatedVisibility(defaultTheme == CUSTOM) {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .clip(DragonShape)
+                        .conditional(selected) {
+                            background(MaterialTheme.colorScheme.surfaceDim)
+                        }
+                        .clickable {
+                            scope.launch {
+                                ColorModesSettingsStore.defaultTheme.set(ctx, it)
+                            }
+                        }
+                        .padding(5.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    @Suppress("DEPRECATION")
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        DragonButton(
-                            onClick = { showResetValidation = true },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Restore,
-                                contentDescription = stringResource(R.string.reset),
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .padding(5.dp)
+
+                    val background = when (it) {
+                        AMOLED -> null
+
+                        DARK -> Color.DarkGray
+                        LIGHT -> Color.White
+                        SYSTEM -> Brush.horizontalGradient(
+                            colors = listOf(
+                                Color.White,
+                                Color.Black
                             )
+                        )
 
-                            AutoResizeableText(stringResource(R.string.reset_to_default_colors))
-                        }
-
-                        Box {
-                            DragonIconButton(
-                                onClick = { showBurgerMenu = true },
-                                colors = AppObjectsColors.iconButtonColors(
-                                    backgroundColor = MaterialTheme.colorScheme.primary.copy(0.5f)
-                                ),
-                                imageVector = Icons.Default.MoreVert,
-                                contentDescription = stringResource(R.string.open_burger_menu)
+                        CUSTOM -> Brush.linearGradient(
+                            colors = listOf(
+                                Color.Red,
+                                Color.Yellow,
+                                Color.Green,
+                                Color.Cyan,
+                                Color.Blue,
+                                Color.Magenta
                             )
-
-                            DropdownMenu(
-                                expanded = showBurgerMenu,
-                                onDismissRequest = { showBurgerMenu = false },
-                                containerColor = Color.Transparent,
-                                shadowElevation = 0.dp,
-                                tonalElevation = 0.dp
-                            ) {
-                                BurgerListAction(
-                                    actions = listOf(
-                                        BurgerAction(
-                                            onClick = {
-                                                showRandomColorsValidation = true
-                                                showBurgerMenu = false
-                                            }
-                                        ) {
-                                            Icon(Icons.Default.Shuffle, null)
-                                            Text(stringResource(R.string.make_every_colors_random))
-                                        },
-                                        BurgerAction(
-                                            onClick = {
-                                                showAllColorsValidation = true
-                                                showBurgerMenu = false
-                                            }
-                                        ) {
-                                            Icon(Icons.Default.SelectAll, null)
-                                            Text(stringResource(R.string.make_all_colors_identical))
-                                        },
-                                        BurgerAction(
-                                            onClick = {
-                                                scope.launch {
-                                                    ColorSettingsStore.backupColors(ctx)
-                                                    ColorModesSettingsStore.colorTestMode.set(ctx, true)
-                                                    onBack() // Go back to main screen
-                                                }
-                                            }
-                                        ) {
-                                            Icon(Icons.Default.Colorize, null)
-                                            Text(stringResource(R.string.test_colors))
-                                        }
-                                    )
-                                )
-                            }
-                        }
+                        )
                     }
 
-                    MultiSelectConnectedButtonRow(
-                        entries = ColorSelectorModes.entries,
-                        showLabels = ShowLabels.Always,
-                        isChecked = { it == selectedCustomView }
-                    ) { selectedCustomView = it }
+
+                    // I like this simple animation I made, I think I've changed my mind about animations
+                    val shapeCorners by animateIntAsState(
+                        targetValue = if (selected) 12 else 50,
+                        animationSpec = bouncySpec(),
+                        label = "box_shape"
+                    )
+
+                    val boxShape = RoundedCornerShape(shapeCorners)
+
+                    if (background != null) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(boxShape)
+                                .then(
+                                    when (background) {
+                                        is Color -> Modifier.background(background)
+                                        is Brush -> Modifier.background(background)
+                                        else -> Modifier
+                                    }
+                                )
+                                .border(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                                    boxShape
+                                )
+                        )
+                    }
 
 
-                    AnimatedContent(selectedCustomView) {
+                    Spacer(Modifier.height(5.dp))
+
+                    Text(
+                        text = stringResource(it.resId),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.labelSmall,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+
+        HorizontalDivider()
+
+        SettingsSwitchRow(
+            setting = UiSettingsStore.useCustomColorChannels,
+            title = stringResource(R.string.use_custom_color_channels),
+            description = stringResource(R.string.use_custom_color_channels_desc)
+        )
+
+        AnimatedVisibility(selectedDefaultTheme == DARK || selectedDefaultTheme == AMOLED) {
+            SwitchRow(
+                state = selectedDefaultTheme == AMOLED,
+                title = stringResource(R.string.amoled_theme),
+                description = stringResource(R.string.use_pure_black_background)
+            ) {
+                scope.launch {
+                    ColorModesSettingsStore.defaultTheme.set(ctx, if (it) AMOLED else DARK)
+                }
+            }
+        }
+
+        // Only show the dynamic colors switch when in SYSTEM view
+        AnimatedVisibility(selectedDefaultTheme == SYSTEM) {
+            SettingsSwitchRow(
+                setting = ColorModesSettingsStore.dynamicColor,
+                title = stringResource(R.string.dynamic_colors),
+                description = stringResource(R.string.dynamic_colors_desc)
+            )
+        }
+
+        AnimatedVisibility(colorTestMode) {
+            DragonButton(
+                onClick = { showExitTestValidation = true },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.exit_test_mode))
+            }
+        }
+
+
+        AnimatedVisibility(defaultTheme == CUSTOM) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                @Suppress("DEPRECATION")
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+
+                    Box {
+                        DragonIconButton(
+                            colors = AppObjectsColors.iconButtonColors(
+                                backgroundColor = MaterialTheme.colorScheme.primary.copy(0.5f)
+                            ),
+                            icon = R.drawable.more_vert,
+                            contentDescription = stringResource(R.string.open_burger_menu)
+                        ) { showBurgerMenu = true }
+
+
+                        BurgerListAction(
+                            actions = listOf(
+                                MoreOptions(
+                                    onClick = {
+                                        showRandomColorsValidation = true
+                                        showBurgerMenu = false
+                                    },
+                                    icon = R.drawable.shuffle,
+                                    text = { stringResource(R.string.make_every_colors_random) }
+                                ),
+                                MoreOptions(
+                                    onClick = {
+                                        showAllColorsValidation = true
+                                        showBurgerMenu = false
+                                    },
+                                    icon = R.drawable.select_all,
+                                    text = { stringResource(R.string.make_all_colors_identical) }
+                                ),
+                                MoreOptions(
+                                    onClick = {
+                                        scope.launch {
+                                            ColorSettingsStore.backupColors(ctx)
+                                            ColorModesSettingsStore.colorTestMode.set(ctx, true)
+                                            onBack() // Go back to main screen
+                                        }
+                                    },
+                                    icon = R.drawable.colorize,
+                                    text = { stringResource(R.string.test_colors) }
+                                )
+                            ),
+                            isExpanded = showBurgerMenu,
+                            onDismissRequest = { showBurgerMenu = false }
+                        )
+                    }
+                }
+
+                SingleSelectConnectedButtonRow(
+                    entries = ColorSelectorModes.entries,
+                    checked = { it == selectedCustomView }
+                ) { selectedCustomView = it }
+
+
+                AnimatedContent(selectedCustomView) {
+                    DragonColumnGroup {
                         when (it) {
                             ColorSelectorModes.NORMAL -> {
-                                LazyColumn(
-                                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                ) {
-                                    colorsGroup(
-                                        expandableSectionState = primarySectionState,
-                                        colors = primaryColors
-                                    )
 
-                                    colorsGroup(
-                                        expandableSectionState = secondarySectionState,
-                                        colors = secondaryColors
-                                    )
+                                ColorsGroup(
+                                    expandableSectionState = primarySectionState,
+                                    colors = primaryColors
+                                )
 
-                                    colorsGroup(
-                                        expandableSectionState = tertiarySectionState,
-                                        colors = tertiaryColors
-                                    )
+                                ColorsGroup(
+                                    expandableSectionState = secondarySectionState,
+                                    colors = secondaryColors
+                                )
 
-                                    colorsGroup(
-                                        expandableSectionState = backgroundSectionState,
-                                        colors = backgroundColors
-                                    )
+                                ColorsGroup(
+                                    expandableSectionState = tertiarySectionState,
+                                    colors = tertiaryColors
+                                )
 
-                                    colorsGroup(
-                                        expandableSectionState = errorSectionState,
-                                        colors = errorColors
-                                    )
+                                ColorsGroup(
+                                    expandableSectionState = backgroundSectionState,
+                                    colors = backgroundColors
+                                )
 
-                                    colorsGroup(
-                                        expandableSectionState = outlineSectionState,
-                                        colors = outlineColors
-                                    )
+                                ColorsGroup(
+                                    expandableSectionState = errorSectionState,
+                                    colors = errorColors
+                                )
 
-                                    colorsGroup(
-                                        expandableSectionState = surfaceContainerSectionState,
-                                        colors = surfaceContainerColors
-                                    )
+                                ColorsGroup(
+                                    expandableSectionState = outlineSectionState,
+                                    colors = outlineColors
+                                )
 
-                                    colorsGroup(
-                                        expandableSectionState = fixedSectionState,
-                                        colors = fixedColors
-                                    )
-                                }
+                                ColorsGroup(
+                                    expandableSectionState = surfaceContainerSectionState,
+                                    colors = surfaceContainerColors
+                                )
+
+                                ColorsGroup(
+                                    expandableSectionState = fixedSectionState,
+                                    colors = fixedColors
+                                )
                             }
 
 
                             ColorSelectorModes.CUSTOM -> {
-                                LazyColumn(
-                                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                ) {
-                                    item {
-                                        SettingsColorPicker(
-                                            settingObject = ColorSettingsStore.angleLineColor,
-                                            defaultColor = angleLineColor.definedOrNull() ?: DefaultExtraColors.angleLine,
-                                            label = stringResource(R.string.angle_line_color)
-                                        )
-                                    }
-
-                                    item {
-                                        SettingsColorPicker(
-                                            settingObject = ColorSettingsStore.circleColor,
-                                            defaultColor = circleColor.definedOrNull() ?: DefaultExtraColors.circle,
-                                            label = stringResource(R.string.circle_color)
-                                        )
-                                    }
-
-                                    item {
-                                        SettingsColorPicker(
-                                            settingObject = ColorSettingsStore.launchAppColor,
-                                            defaultColor = launchAppColor.definedOrNull() ?: DefaultExtraColors.launchApp,
-                                            label = stringResource(R.string.launch_app_color)
-                                        )
-                                    }
-
-                                    item {
-                                        SettingsColorPicker(
-                                            settingObject = ColorSettingsStore.openUrlColor,
-                                            defaultColor = openUrlColor.definedOrNull() ?: DefaultExtraColors.openUrl,
-                                            label = stringResource(R.string.open_url_color)
-                                        )
-                                    }
-
-                                    item {
-                                        SettingsColorPicker(
-                                            settingObject = ColorSettingsStore.notificationShadeColor,
-                                            defaultColor = notificationShadeColor.definedOrNull() ?: DefaultExtraColors.notificationShade,
-                                            label = stringResource(R.string.notification_shade_color)
-                                        )
-                                    }
-
-                                    item {
-                                        SettingsColorPicker(
-                                            settingObject = ColorSettingsStore.controlPanelColor,
-                                            defaultColor = controlPanelColor.definedOrNull() ?: DefaultExtraColors.controlPanel,
-                                            label = stringResource(R.string.control_panel_color)
-                                        )
-                                    }
-
-                                    item {
-                                        SettingsColorPicker(
-                                            settingObject = ColorSettingsStore.openAppDrawerColor,
-                                            defaultColor = openAppDrawerColor.definedOrNull() ?: DefaultExtraColors.openAppDrawer,
-                                            label = stringResource(R.string.open_app_drawer_color)
-                                        )
-                                    }
-
-                                    item {
-                                        SettingsColorPicker(
-                                            settingObject = ColorSettingsStore.launcherSettingsColor,
-                                            defaultColor = launcherSettingsColor.definedOrNull() ?: DefaultExtraColors.launcherSettings,
-                                            label = stringResource(R.string.launcher_settings_color)
-                                        )
-                                    }
-
-                                    item {
-                                        SettingsColorPicker(
-                                            settingObject = ColorSettingsStore.lockColor,
-                                            defaultColor = lockColor.definedOrNull() ?: DefaultExtraColors.lock,
-                                            label = stringResource(R.string.lock_color)
-                                        )
-                                    }
-
-                                    item {
-                                        SettingsColorPicker(
-                                            settingObject = ColorSettingsStore.openFileColor,
-                                            defaultColor = openFileColor.definedOrNull() ?: DefaultExtraColors.openFile,
-                                            label = stringResource(R.string.open_file_color)
-                                        )
-                                    }
-
-                                    item {
-                                        SettingsColorPicker(
-                                            settingObject = ColorSettingsStore.reloadColor,
-                                            defaultColor = reloadColor.definedOrNull() ?: DefaultExtraColors.reload,
-                                            label = stringResource(R.string.reload_color)
-                                        )
-                                    }
-
-                                    item {
-                                        SettingsColorPicker(
-                                            settingObject = ColorSettingsStore.openRecentAppsColor,
-                                            defaultColor = openRecentAppsColor.definedOrNull() ?: DefaultExtraColors.openRecentApps,
-                                            label = stringResource(R.string.open_recent_apps_color)
-                                        )
-                                    }
-
-                                    item {
-                                        SettingsColorPicker(
-                                            settingObject = ColorSettingsStore.openCircleNestColor,
-                                            defaultColor = openCircleNest.definedOrNull() ?: DefaultExtraColors.openCircleNest,
-                                            label = stringResource(R.string.open_circle_nest_color)
-                                        )
-                                    }
-
-                                    item {
-                                        SettingsColorPicker(
-                                            settingObject = ColorSettingsStore.goParentNestColor,
-                                            defaultColor = goParentCircle.definedOrNull() ?: DefaultExtraColors.goParentNest,
-                                            label = stringResource(R.string.go_parent_nest_color)
-                                        )
-                                    }
-
-                                    item {
-                                        SettingsColorPicker(
-                                            settingObject = ColorSettingsStore.toggleWifi,
-                                            defaultColor = toggleWifi.definedOrNull() ?: DefaultExtraColors.toggleWifi,
-                                            label = stringResource(R.string.toggle_wifi)
-                                        )
-                                    }
-
-                                    item {
-                                        SettingsColorPicker(
-                                            settingObject = ColorSettingsStore.toggleBluetooth,
-                                            defaultColor = toggleBluetooth.definedOrNull() ?: DefaultExtraColors.toggleBluetooth,
-                                            label = stringResource(R.string.toggle_bluetooth)
-                                        )
-                                    }
 
 
-                                    item {
-                                        SettingsColorPicker(
-                                            settingObject = ColorSettingsStore.toggleData,
-                                            defaultColor = toggleData.definedOrNull() ?: DefaultExtraColors.toggleData,
-                                            label = stringResource(R.string.toggle_mobile_data)
-                                        )
-                                    }
+                                SettingsColorPicker(
+                                    settingObject = ColorSettingsStore.angleLineColor,
+                                    defaultColor = angleLineColor.definedOrNull() ?: DefaultExtraColors.angleLine,
+                                    label = stringResource(R.string.angle_line_color)
+                                )
+
+                                SettingsColorPicker(
+                                    settingObject = ColorSettingsStore.circleColor,
+                                    defaultColor = circleColor.definedOrNull() ?: DefaultExtraColors.circle,
+                                    label = stringResource(R.string.circle_color)
+                                )
+
+                                SettingsColorPicker(
+                                    settingObject = ColorSettingsStore.launchAppColor,
+                                    defaultColor = launchAppColor.definedOrNull() ?: DefaultExtraColors.launchApp,
+                                    label = stringResource(R.string.launch_app_color)
+                                )
+
+                                SettingsColorPicker(
+                                    settingObject = ColorSettingsStore.openUrlColor,
+                                    defaultColor = openUrlColor.definedOrNull() ?: DefaultExtraColors.openUrl,
+                                    label = stringResource(R.string.open_url_color)
+                                )
+
+                                SettingsColorPicker(
+                                    settingObject = ColorSettingsStore.notificationShadeColor,
+                                    defaultColor = notificationShadeColor.definedOrNull() ?: DefaultExtraColors.notificationShade,
+                                    label = stringResource(R.string.notification_shade_color)
+                                )
+
+                                SettingsColorPicker(
+                                    settingObject = ColorSettingsStore.controlPanelColor,
+                                    defaultColor = controlPanelColor.definedOrNull() ?: DefaultExtraColors.controlPanel,
+                                    label = stringResource(R.string.control_panel_color)
+                                )
+
+                                SettingsColorPicker(
+                                    settingObject = ColorSettingsStore.openAppDrawerColor,
+                                    defaultColor = openAppDrawerColor.definedOrNull() ?: DefaultExtraColors.openAppDrawer,
+                                    label = stringResource(R.string.open_app_drawer_color)
+                                )
+
+                                SettingsColorPicker(
+                                    settingObject = ColorSettingsStore.launcherSettingsColor,
+                                    defaultColor = launcherSettingsColor.definedOrNull() ?: DefaultExtraColors.launcherSettings,
+                                    label = stringResource(R.string.launcher_settings_color)
+                                )
+
+                                SettingsColorPicker(
+                                    settingObject = ColorSettingsStore.lockColor,
+                                    defaultColor = lockColor.definedOrNull() ?: DefaultExtraColors.lock,
+                                    label = stringResource(R.string.lock_color)
+                                )
+
+                                SettingsColorPicker(
+                                    settingObject = ColorSettingsStore.openFileColor,
+                                    defaultColor = openFileColor.definedOrNull() ?: DefaultExtraColors.openFile,
+                                    label = stringResource(R.string.open_file_color)
+                                )
+
+                                SettingsColorPicker(
+                                    settingObject = ColorSettingsStore.reloadColor,
+                                    defaultColor = reloadColor.definedOrNull() ?: DefaultExtraColors.reload,
+                                    label = stringResource(R.string.reload_color)
+                                )
+
+                                SettingsColorPicker(
+                                    settingObject = ColorSettingsStore.openRecentAppsColor,
+                                    defaultColor = openRecentAppsColor.definedOrNull() ?: DefaultExtraColors.openRecentApps,
+                                    label = stringResource(R.string.open_recent_apps_color)
+                                )
+
+                                SettingsColorPicker(
+                                    settingObject = ColorSettingsStore.openCircleNestColor,
+                                    defaultColor = openCircleNest.definedOrNull() ?: DefaultExtraColors.openCircleNest,
+                                    label = stringResource(R.string.open_circle_nest_color)
+                                )
+
+                                SettingsColorPicker(
+                                    settingObject = ColorSettingsStore.goParentNestColor,
+                                    defaultColor = goParentCircle.definedOrNull() ?: DefaultExtraColors.goParentNest,
+                                    label = stringResource(R.string.go_parent_nest_color)
+                                )
+
+                                SettingsColorPicker(
+                                    settingObject = ColorSettingsStore.toggleWifi,
+                                    defaultColor = toggleWifi.definedOrNull() ?: DefaultExtraColors.toggleWifi,
+                                    label = stringResource(R.string.toggle_wifi)
+                                )
+
+                                SettingsColorPicker(
+                                    settingObject = ColorSettingsStore.toggleBluetooth,
+                                    defaultColor = toggleBluetooth.definedOrNull() ?: DefaultExtraColors.toggleBluetooth,
+                                    label = stringResource(R.string.toggle_bluetooth)
+                                )
 
 
-                                    item {
-                                        SettingsColorPicker(
-                                            settingObject = ColorSettingsStore.runAdbCommand,
-                                            defaultColor = runAdbCommand.definedOrNull() ?: DefaultExtraColors.runAdbCommand,
-                                            label = stringResource(R.string.run_adb_command)
-                                        )
-                                    }
-                                }
+                                SettingsColorPicker(
+                                    settingObject = ColorSettingsStore.toggleData,
+                                    defaultColor = toggleData.definedOrNull() ?: DefaultExtraColors.toggleData,
+                                    label = stringResource(R.string.toggle_mobile_data)
+                                )
+
+
+                                SettingsColorPicker(
+                                    settingObject = ColorSettingsStore.runAdbCommand,
+                                    defaultColor = runAdbCommand.definedOrNull() ?: DefaultExtraColors.runAdbCommand,
+                                    label = stringResource(R.string.run_adb_command)
+                                )
                             }
                         }
                     }
                 }
             }
         }
-    )
+    }
+
 
     if (showResetValidation) {
         UserValidation(
@@ -971,24 +889,20 @@ private data class ColorEdit(
 )
 
 
-private fun LazyListScope.colorsGroup(
+@Composable
+private fun ColorsGroup(
     expandableSectionState: ExpandableSectionState,
     colors: List<ColorEdit>,
     examples: @Composable (ColumnScope.() -> Unit)? = null
 ) {
-    item {
-
-        ExpandableSection(expandableSectionState) {
-
-            examples?.let { it() }
-
-            colors.forEach {
-                SettingsColorPicker(
-                    settingObject = it.setting,
-                    defaultColor = it.defaultColor,
-                    label = it.label
-                )
-            }
+    ExpandableSection(expandableSectionState) {
+        examples?.let { it() }
+        colors.forEach {
+            SettingsColorPicker(
+                settingObject = it.setting,
+                defaultColor = it.defaultColor,
+                label = it.label
+            )
         }
     }
 }

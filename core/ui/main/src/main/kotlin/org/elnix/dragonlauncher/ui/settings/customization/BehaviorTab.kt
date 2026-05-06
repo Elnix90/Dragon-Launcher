@@ -11,9 +11,6 @@ import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,19 +26,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.navigaton.SETTINGS
-import org.elnix.dragonlauncher.common.utils.showToast
-import org.elnix.dragonlauncher.enumsui.LockMethod
+import org.elnix.dragonlauncher.common.messyfolder.showToast
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateAppsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.composition.LocalAppLifecycleViewModel
-import org.elnix.dragonlauncher.ui.composition.LocalNavController
+import org.elnix.dragonlauncher.ui.composition.LocalPrivateSpaceViewModel
 import org.elnix.dragonlauncher.ui.dialogs.LockMethodDialog
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
+import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSectionMode
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
@@ -52,10 +49,12 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-fun BehaviorTab(onBack: () -> Unit) {
+fun BehaviorTab(
+    onNavigate: (NavigationRoute) -> Unit,
+    onBack: () -> Unit
+) {
     val ctx = LocalContext.current
-    val navController = LocalNavController.current
-    val appLifecycleViewModel = LocalAppLifecycleViewModel.current
+    val privateSpaceViewModel = LocalPrivateSpaceViewModel.current
 
     val scope = rememberCoroutineScope()
 
@@ -70,7 +69,7 @@ fun BehaviorTab(onBack: () -> Unit) {
     val lockMethod by PrivateSettingsStore.lockMethod.asState()
     val superWarningModeEnabled = lockMethod != LockMethod.NONE
 
-    val paddingState = rememberExpandableSection(stringResource(R.string.drag_zone_padding))
+    val paddingState = rememberExpandableSection(stringResource(R.string.drag_zone_padding), mode = ExpandableSectionMode.Expandable)
     val commonSettingsState = rememberExpandableSection(stringResource(R.string.common_settings))
     val actionState = rememberExpandableSection(stringResource(R.string.action_settings))
 
@@ -80,7 +79,8 @@ fun BehaviorTab(onBack: () -> Unit) {
     // Lock settings state
     var showLockMethodPicker by remember { mutableStateOf(false) }
 
-    val superWarningState = rememberExpandableSection(stringResource(R.string.super_warning_mode)
+    val superWarningState = rememberExpandableSection(
+        stringResource(R.string.super_warning_mode)
     ) { superWarningModeEnabled }
 
     val forceAppLanguageSelector by DebugSettingsStore.forceAppLanguageSelector.asState()
@@ -101,252 +101,238 @@ fun BehaviorTab(onBack: () -> Unit) {
             }
         }
     ) {
+        SettingsItem(
+            title = stringResource(R.string.settings_language_title),
+            icon = R.drawable.web,
+            onClick = {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !forceAppLanguageSelector) {
+                    openSystemLanguageSettings(ctx)
+                } else {
+                    onNavigate(NavigationRoute.Language)
+                }
+            }
+        )
 
-        item {
-            SettingsItem(
-                title = stringResource(R.string.settings_language_title),
-                icon = Icons.Default.Language,
-                onClick = {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !forceAppLanguageSelector) {
-                        openSystemLanguageSettings(ctx)
-                    } else {
-                        navController.navigate(SETTINGS.LANGUAGE)
+        SettingsItem(
+            title = stringResource(R.string.lock_method),
+            description = lockDescription,
+            icon = R.drawable.lock
+        ) {
+            showLockMethodPicker = true
+        }
+
+        ExpandableSection(commonSettingsState) {
+            SettingsSwitchRow(
+                setting = BehaviorSettingsStore.keepScreenOn,
+                title = stringResource(R.string.keep_screen_on),
+                description = stringResource(R.string.keep_screen_on_desc)
+            )
+
+            SettingsSwitchRow(
+                setting = BehaviorSettingsStore.disableHapticFeedbackGlobally,
+                title = stringResource(R.string.disable_haptic_globally),
+                description = stringResource(R.string.disable_haptic_globally_desc)
+            )
+
+            SettingsSwitchRow(
+                setting = BehaviorSettingsStore.pointsActionSnapsToOuterCircle,
+                title = stringResource(R.string.point_action_snaps_to_outer_circle),
+                description = stringResource(R.string.point_action_snaps_to_outer_circle_desc)
+            )
+
+            SettingsSwitchRow(
+                setting = BehaviorSettingsStore.promptForShortcutsWhenAddingApp,
+                title = stringResource(R.string.prompt_shortcuts_when_adding_app),
+                description = stringResource(R.string.prompt_shortcuts_when_adding_app_desc)
+            )
+
+            SettingsSwitchRow(
+                setting = BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint,
+                title = stringResource(R.string.create_live_nest_by_default),
+                description = stringResource(R.string.create_live_nest_by_default_desc)
+            )
+
+            SettingsSwitchRow(
+                setting = BehaviorSettingsStore.useDifferentialLoadingForPrivateSpace,
+                title = stringResource(R.string.use_differential_loading_private_space),
+                description = stringResource(R.string.use_differential_loading_private_space_desc)
+            ) {
+                if (it) {
+                    scope.launch {
+                        ctx.showToast("Reloading apps")
+                        privateSpaceViewModel.onUnlockPrivateSpace()
+                    }
+                } else {
+                    scope.launch {
+                        ctx.showToast("Removing cache")
+                        PrivateAppsSettingsStore.resetAll(ctx)
+                    }
+                }
+            }
+
+            SettingsSlider(
+                setting = BehaviorSettingsStore.offScreenTimeout,
+                title = stringResource(R.string.off_screen_timeout),
+                description = stringResource(R.string.off_screen_timeout_desc),
+                valueRange = -1..60
+            )
+        }
+
+        ExpandableSection(actionState) {
+            CustomActionSelector(
+                currentAction = backAction,
+                label = stringResource(R.string.back_action),
+                onToggle = {
+                    scope.launch {
+                        BehaviorSettingsStore.backAction.reset(ctx)
+                    }
+                }
+            ) {
+                scope.launch {
+                    BehaviorSettingsStore.backAction.set(ctx, it)
+                }
+            }
+
+            CustomActionSelector(
+                currentAction = doubleClickAction,
+                label = stringResource(R.string.double_click_action),
+                onToggle = {
+                    scope.launch {
+                        BehaviorSettingsStore.doubleClickAction.reset(ctx)
+                    }
+                }
+            ) {
+                scope.launch {
+                    BehaviorSettingsStore.doubleClickAction.set(ctx, it)
+                }
+            }
+            CustomActionSelector(
+                currentAction = homeAction,
+                label = stringResource(R.string.home_action),
+                onToggle = {
+                    scope.launch {
+                        BehaviorSettingsStore.homeAction.reset(ctx)
+                    }
+                }
+            ) {
+                scope.launch {
+                    BehaviorSettingsStore.homeAction.set(ctx, it)
+                }
+            }
+        }
+
+        ExpandableSection(paddingState) {
+            SliderWithLabel(
+                label = stringResource(R.string.left_padding),
+                value = leftPadding,
+                valueRange = 0..300,
+                color = MaterialTheme.colorScheme.primary,
+                showValue = true,
+                onReset = {
+                    scope.launch {
+                        BehaviorSettingsStore.leftPadding.reset(ctx)
+                    }
+                },
+                onChange = {
+                    scope.launch {
+                        BehaviorSettingsStore.leftPadding.set(ctx, it)
+                    }
+                }
+            )
+
+            SliderWithLabel(
+                label = stringResource(R.string.right_padding),
+                value = rightPadding,
+                valueRange = 0..300,
+                color = MaterialTheme.colorScheme.primary,
+                showValue = true,
+                onReset = {
+                    scope.launch {
+                        BehaviorSettingsStore.rightPadding.reset(ctx)
+                    }
+                },
+                onChange = {
+                    scope.launch {
+                        BehaviorSettingsStore.rightPadding.set(ctx, it)
+                    }
+                }
+            )
+
+            SliderWithLabel(
+                label = stringResource(R.string.top_padding),
+                value = topPadding,
+                valueRange = 0..300,
+                color = MaterialTheme.colorScheme.primary,
+                showValue = true,
+                onReset = {
+                    scope.launch {
+                        BehaviorSettingsStore.topPadding.reset(ctx)
+                    }
+                },
+                onChange = {
+                    scope.launch {
+                        BehaviorSettingsStore.topPadding.set(ctx, it)
+                    }
+                }
+            )
+
+            SliderWithLabel(
+                label = stringResource(R.string.bottom_padding),
+                value = bottomPadding,
+                valueRange = 0..300,
+                color = MaterialTheme.colorScheme.primary,
+                showValue = true,
+                onReset = {
+                    scope.launch {
+                        BehaviorSettingsStore.bottomPadding.reset(ctx)
+                    }
+                },
+                onChange = {
+                    scope.launch {
+                        BehaviorSettingsStore.bottomPadding.set(ctx, it)
                     }
                 }
             )
         }
 
-        item {
-            SettingsItem(
-                title = stringResource(R.string.lock_method),
-                description = lockDescription,
-                icon = Icons.Default.Lock
-            ) {
-                showLockMethodPicker = true
-            }
-        }
+        ExpandableSection(superWarningState) {
+            SettingsSwitchRow(
+                setting = BehaviorSettingsStore.superWarningMode,
+                enabled = superWarningModeEnabled,
+                title = stringResource(R.string.super_warning_mode),
+                description = stringResource(R.string.super_warning_mode_desc),
+            )
 
-        item {
-            ExpandableSection(commonSettingsState) {
-                SettingsSwitchRow(
-                    setting = BehaviorSettingsStore.keepScreenOn,
-                    title = stringResource(R.string.keep_screen_on),
-                    description = stringResource(R.string.keep_screen_on_desc)
-                )
+            SettingsSwitchRow(
+                setting = BehaviorSettingsStore.vibrateOnError,
+                enabled = superWarningModeEnabled,
+                title = stringResource(R.string.vibrate_on_error),
+                description = stringResource(R.string.vibrate_on_error_desc),
+            )
 
-                SettingsSwitchRow(
-                    setting = BehaviorSettingsStore.disableHapticFeedbackGlobally,
-                    title = stringResource(R.string.disable_haptic_globally),
-                    description = stringResource(R.string.disable_haptic_globally_desc)
-                )
+            SettingsSwitchRow(
+                setting = BehaviorSettingsStore.alarmSound,
+                enabled = superWarningModeEnabled,
+                title = stringResource(R.string.alarm_sound),
+                description = stringResource(R.string.super_warning_mode_desc),
+            )
 
-                SettingsSwitchRow(
-                    setting = BehaviorSettingsStore.pointsActionSnapsToOuterCircle,
-                    title = stringResource(R.string.point_action_snaps_to_outer_circle),
-                    description = stringResource(R.string.point_action_snaps_to_outer_circle_desc)
-                )
+            SettingsSwitchRow(
+                setting = BehaviorSettingsStore.metalPipesSound,
+                enabled = superWarningModeEnabled,
+                title = stringResource(R.string.metal_pipes_sound),
+                description = stringResource(R.string.metal_pipes_sound_desc),
+            )
 
-                SettingsSwitchRow(
-                    setting = BehaviorSettingsStore.promptForShortcutsWhenAddingApp,
-                    title = stringResource(R.string.prompt_shortcuts_when_adding_app),
-                    description = stringResource(R.string.prompt_shortcuts_when_adding_app_desc)
-                )
-
-                SettingsSwitchRow(
-                    setting = BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint,
-                    title = stringResource(R.string.create_live_nest_by_default),
-                    description = stringResource(R.string.create_live_nest_by_default_desc)
-                )
-
-                SettingsSwitchRow(
-                    setting = BehaviorSettingsStore.useDifferentialLoadingForPrivateSpace,
-                    title = stringResource(R.string.use_differential_loading_private_space),
-                    description = stringResource(R.string.use_differential_loading_private_space_desc)
-                ) {
-                    if (it) {
-                        scope.launch {
-                            ctx.showToast("Reloading apps")
-                            appLifecycleViewModel.onUnlockPrivateSpace()
-                        }
-                    } else {
-                        scope.launch {
-                            ctx.showToast("Removing cache")
-                            PrivateAppsSettingsStore.resetAll(ctx)
-                        }
-                    }
-                }
-
-                SettingsSlider(
-                    setting = BehaviorSettingsStore.offScreenTimeout,
-                    title = stringResource(R.string.off_screen_timeout),
-                    description = stringResource(R.string.off_screen_timeout_desc),
-                    valueRange = -1..60
-                )
-            }
-        }
-
-        item {
-            ExpandableSection(actionState) {
-                CustomActionSelector(
-                    currentAction = backAction,
-                    label = stringResource(R.string.back_action),
-                    onToggle = {
-                        scope.launch {
-                            BehaviorSettingsStore.backAction.reset(ctx)
-                        }
-                    }
-                ) {
-                    scope.launch {
-                        BehaviorSettingsStore.backAction.set(ctx, it)
-                    }
-                }
-
-                CustomActionSelector(
-                    currentAction = doubleClickAction,
-                    label = stringResource(R.string.double_click_action),
-                    onToggle = {
-                        scope.launch {
-                            BehaviorSettingsStore.doubleClickAction.reset(ctx)
-                        }
-                    }
-                ) {
-                    scope.launch {
-                        BehaviorSettingsStore.doubleClickAction.set(ctx, it)
-                    }
-                }
-                CustomActionSelector(
-                    currentAction = homeAction,
-                    label = stringResource(R.string.home_action),
-                    onToggle = {
-                        scope.launch {
-                            BehaviorSettingsStore.homeAction.reset(ctx)
-                        }
-                    }
-                ) {
-                    scope.launch {
-                        BehaviorSettingsStore.homeAction.set(ctx, it)
-                    }
-                }
-            }
-        }
-
-        item {
-            ExpandableSection(paddingState) {
-                SliderWithLabel(
-                    label = stringResource(R.string.left_padding),
-                    value = leftPadding,
-                    valueRange = 0..300,
-                    color = MaterialTheme.colorScheme.primary,
-                    showValue = true,
-                    onReset = {
-                        scope.launch {
-                            BehaviorSettingsStore.leftPadding.reset(ctx)
-                        }
-                    },
-                    onChange = {
-                        scope.launch {
-                            BehaviorSettingsStore.leftPadding.set(ctx, it)
-                        }
-                    }
-                )
-
-                SliderWithLabel(
-                    label = stringResource(R.string.right_padding),
-                    value = rightPadding,
-                    valueRange = 0..300,
-                    color = MaterialTheme.colorScheme.primary,
-                    showValue = true,
-                    onReset = {
-                        scope.launch {
-                            BehaviorSettingsStore.rightPadding.reset(ctx)
-                        }
-                    },
-                    onChange = {
-                        scope.launch {
-                            BehaviorSettingsStore.rightPadding.set(ctx, it)
-                        }
-                    }
-                )
-
-                SliderWithLabel(
-                    label = stringResource(R.string.top_padding),
-                    value = topPadding,
-                    valueRange = 0..300,
-                    color = MaterialTheme.colorScheme.primary,
-                    showValue = true,
-                    onReset = {
-                        scope.launch {
-                            BehaviorSettingsStore.topPadding.reset(ctx)
-                        }
-                    },
-                    onChange = {
-                        scope.launch {
-                            BehaviorSettingsStore.topPadding.set(ctx, it)
-                        }
-                    }
-                )
-
-                SliderWithLabel(
-                    label = stringResource(R.string.bottom_padding),
-                    value = bottomPadding,
-                    valueRange = 0..300,
-                    color = MaterialTheme.colorScheme.primary,
-                    showValue = true,
-                    onReset = {
-                        scope.launch {
-                            BehaviorSettingsStore.bottomPadding.reset(ctx)
-                        }
-                    },
-                    onChange = {
-                        scope.launch {
-                            BehaviorSettingsStore.bottomPadding.set(ctx, it)
-                        }
-                    }
-                )
-            }
-        }
-
-        item {
-            ExpandableSection(superWarningState) {
-                SettingsSwitchRow(
-                    setting = BehaviorSettingsStore.superWarningMode,
-                    enabled = superWarningModeEnabled,
-                    title = stringResource(R.string.super_warning_mode),
-                    description = stringResource(R.string.super_warning_mode_desc),
-                )
-
-                SettingsSwitchRow(
-                    setting = BehaviorSettingsStore.vibrateOnError,
-                    enabled = superWarningModeEnabled,
-                    title = stringResource(R.string.vibrate_on_error),
-                    description = stringResource(R.string.vibrate_on_error_desc),
-                )
-
-                SettingsSwitchRow(
-                    setting = BehaviorSettingsStore.alarmSound,
-                    enabled = superWarningModeEnabled,
-                    title = stringResource(R.string.alarm_sound),
-                    description = stringResource(R.string.super_warning_mode_desc),
-                )
-
-                SettingsSwitchRow(
-                    setting = BehaviorSettingsStore.metalPipesSound,
-                    enabled = superWarningModeEnabled,
-                    title = stringResource(R.string.metal_pipes_sound),
-                    description = stringResource(R.string.metal_pipes_sound_desc),
-                )
-
-                SettingsSlider(
-                    setting = BehaviorSettingsStore.superWarningModeSound,
-                    enabled = superWarningModeEnabled,
-                    title = stringResource(R.string.super_warning_mode_sound),
-                    description = stringResource(R.string.super_warning_mode_sound_desc),
-                    valueRange = 0..100
-                )
-            }
+            SettingsSlider(
+                setting = BehaviorSettingsStore.superWarningModeSound,
+                enabled = superWarningModeEnabled,
+                title = stringResource(R.string.super_warning_mode_sound),
+                description = stringResource(R.string.super_warning_mode_sound_desc),
+                valueRange = 0..100
+            )
         }
     }
-
 
     if (showAppPreviewOverlay) {
         Canvas(Modifier.fillMaxSize()) {

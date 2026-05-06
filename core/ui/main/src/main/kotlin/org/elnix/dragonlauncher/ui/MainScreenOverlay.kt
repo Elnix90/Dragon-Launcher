@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.LocalContentColor
@@ -13,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
@@ -26,16 +26,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SWIPE_TAG
+import org.elnix.dragonlauncher.common.messyfolder.circles.computePointPosition
+import org.elnix.dragonlauncher.common.messyfolder.circles.scaleDragDistances
+import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.common.serializables.CircleNest
 import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedbackSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.defaultSwipePointsValues
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.SWIPE_TAG
-import org.elnix.dragonlauncher.common.utils.circles.computePointPosition
-import org.elnix.dragonlauncher.common.utils.circles.scaleDragDistances
-import org.elnix.dragonlauncher.common.utils.performCustomHaptic
-import org.elnix.dragonlauncher.common.utils.resolveShape
+import org.elnix.dragonlauncher.common.utils.HapticUtils.performCustomHaptic
 import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.settings.stores.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
@@ -91,8 +91,8 @@ fun MainScreenOverlay(
     val linePreviewSnapToAction by UiSettingsStore.linePreviewSnapToAction.asState()
 
     val isDragging = start != null && current != null
-    val order by rememberLineObjectsOrder()
 
+    val order by rememberLineObjectsOrder()
 
     val liveNestControllersStack: List<LiveNestState> = rememberLiveNestControllerStack(
         isDragging = isDragging,
@@ -257,7 +257,8 @@ fun MainScreenOverlay(
         liveNestControllersStack.filter { it.isActive }.forEach { controller ->
             add(alpha)
 
-            val percent = (controller.hostPoint?.liveNestMainNestOpacityPercent ?: defaultPoint.liveNestMainNestOpacityPercent).takeIf { it != -1 } ?: defaultSwipePointsValues.liveNestMainNestOpacityPercent!!
+            val percent = (controller.hostPoint?.liveNestMainNestOpacityPercent ?: defaultPoint.liveNestMainNestOpacityPercent).takeIf { it != -1 }
+                ?: defaultSwipePointsValues.liveNestMainNestOpacityPercent!!
             if (multiplyOrSubtractOpacityInLiveNests) {
                 alpha -= percent.coerceIn(0, 100) / 100f
             } else {
@@ -331,72 +332,63 @@ fun MainScreenOverlay(
                             }
                         }
 
-
-                        Canvas(
+                        // Main canva, uses drawWithCache to improve drawing performances
+                        Box(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .graphicsLayer {
                                     alpha = liveNestOpacity
                                     compositingStrategy = CompositingStrategy.Offscreen
                                 }
-                        ) {
+                                .drawWithCache {
+                                    onDrawBehind {
 
-                            val lineColor: Color =
-                                if (rgbLine) Color.hsv(angle360, 1f, 1f)
-                                else extraColors.angleLine
+                                        val lineColor: Color =
+                                            if (rgbLine) Color.hsv(angle360, 1f, 1f)
+                                            else extraColors.angleLine
 
-                            actionLine(
-                                start = liveNestCenterForDraw,
-                                end = effectiveCurrentPos,
-                                sweepAngle = sweepAngle,
-                                lineColor = lineColor,
-                                order = order,
-                                showLineObjectPreview = showLineObjectPreview,
-                                showAngleLineObjectPreview = showAngleLineObjectPreview,
-                                showStartObjectPreview = showStartObjectPreview,
-                                showEndObjectPreview = showEndObjectPreview,
-                                pickedRememberShapeAngle = pickedRememberShapeAngle,
-                                pickedRememberRotationAngle = pickedRememberRotationAngle,
-                                pickedRememberRotationStart = pickedRememberRotationStart,
-                                pickedRememberShapeStart = pickedRememberShapeStart,
-                                pickedRememberRotationEnd = pickedRememberRotationEnd,
-                                pickedRememberShapeEnd = pickedRememberShapeEnd,
-                                lineCustomObject = lineObject,
-                                angleLineCustomObject = angleLineObject,
-                                startCustomObject = startObject,
-                                endCustomObject = endObject
-                            )
+                                        actionLine(
+                                            start = liveNestCenterForDraw,
+                                            end = effectiveCurrentPos,
+                                            sweepAngle = sweepAngle,
+                                            lineColor = lineColor,
+                                            order = order,
+                                            showLineObjectPreview = showLineObjectPreview,
+                                            showAngleLineObjectPreview = showAngleLineObjectPreview,
+                                            showStartObjectPreview = showStartObjectPreview,
+                                            showEndObjectPreview = showEndObjectPreview,
+                                            pickedRememberShapeAngle = pickedRememberShapeAngle,
+                                            pickedRememberRotationAngle = pickedRememberRotationAngle,
+                                            pickedRememberRotationStart = pickedRememberRotationStart,
+                                            pickedRememberShapeStart = pickedRememberShapeStart,
+                                            pickedRememberRotationEnd = pickedRememberRotationEnd,
+                                            pickedRememberShapeEnd = pickedRememberShapeEnd,
+                                            lineCustomObject = lineObject,
+                                            angleLineCustomObject = angleLineObject,
+                                            startCustomObject = startObject,
+                                            endCustomObject = endObject
+                                        )
 
-                            drawIntoCanvas { canvas ->
-                                val bounds = Rect(0f, 0f, size.width, size.height)
-                                canvas.saveLayer(bounds, Paint())
+                                        drawIntoCanvas { canvas ->
+                                            val bounds = Rect(0f, 0f, size.width, size.height)
+                                            canvas.saveLayer(bounds, Paint())
 
-//                                val effectiveDrawParams = when {
-//                                    isRoot -> drawParams
-//                                    else -> drawParams.copy(showAllActionsOnCurrentNest = true)
-//                                }
+                                            val effectiveTargetCircle: Int = controller.nestedHit?.targetCircle ?: -1
+                                            circlesSettingsOverlay(
+                                                drawParams = drawParams,
+                                                center = liveNestCenterForDraw,
+                                                depth = 1,
+                                                currentCircle = effectiveTargetCircle,
+                                                circles = controller.scaledUiCircles,
+                                                selectedPoint = outerSelectedPoint,
+                                                nestId = nestedNestForDraw.id,
+                                            )
 
-
-//                                val effectiveTargetCircle: Int? = when {
-//                                    isRoot -> controller.nestedHit?.targetCircle ?: -1
-//                                    else -> null
-//                                }
-                                val effectiveTargetCircle: Int =  controller.nestedHit?.targetCircle ?: -1
-
-
-                                circlesSettingsOverlay(
-                                    drawParams = drawParams,
-                                    center = liveNestCenterForDraw,
-                                    depth = 1,
-                                    currentCircle = effectiveTargetCircle,
-                                    circles = controller.scaledUiCircles,
-                                    selectedPoint = outerSelectedPoint,
-                                    nestId = nestedNestForDraw.id,
-                                )
-
-                                canvas.restore()
-                            }
-                        }
+                                            canvas.restore()
+                                        }
+                                    }
+                                }
+                        )
                     }
                 }
             }

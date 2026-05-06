@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -121,7 +122,7 @@ fun GradientColorPicker(
                 modifier = Modifier
                     .width(25.dp)
                     .fillMaxHeight()
-                    .clip(DragonShape)
+                    .clip(RoundedCornerShape(5.dp))
                     .background(
                         Brush.verticalGradient(
                             colors = (360 downTo 0 step 30).map { Color.hsv(it.toFloat(), 1f, 1f) }

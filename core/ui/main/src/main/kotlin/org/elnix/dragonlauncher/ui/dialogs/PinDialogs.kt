@@ -57,41 +57,66 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.IconShape
 import org.elnix.dragonlauncher.common.serializables.allShapesWithoutRandom
-import org.elnix.dragonlauncher.common.utils.resolveShape
-import org.elnix.dragonlauncher.common.utils.vibrate
+import org.elnix.dragonlauncher.common.utils.HapticUtils.vibrate
+import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
+import org.elnix.dragonlauncher.ui.helpers.SecurityHelper
 
 /**
  * Dialog for entering a PIN to unlock settings.
  */
 @Composable
-fun PinUnlockDialog(
+fun PinUnlock(
     onDismiss: () -> Unit,
-    pin: () -> String,
-    pinShapes: () -> List<IconShape>,
-    failedTries: () -> Int,
-    onPinChanged: (String) -> Unit,
     onValidate: () -> Unit,
-    errorMessage: String? = null
 ) {
-    FullScreenPinPrompt(
+    val pinHash by PrivateSettingsStore.lockPinHash.asState()
+
+    var pin by remember { mutableStateOf("") }
+    val pinShapes = remember { mutableStateListOf<IconShape>() }
+    var failedTries by remember { mutableIntStateOf(0) }
+    var pinError by remember { mutableStateOf<String?>(null) }
+
+    val wrongPinText = stringResource(R.string.wrong_pin)
+
+    PinPrompt(
         title = stringResource(R.string.unlock_settings),
         subtitle = stringResource(R.string.enter_pin),
-        pinValue = pin(),
-        pinShapes = pinShapes(),
-        onPinChanged = onPinChanged,
-        onPrimaryAction = onValidate,
+        pinValue = pin,
+        pinShapes = pinShapes,
+        onPinChanged = { newValue ->
+            pinError = null
+            pin = newValue
+            if (pinShapes.size < newValue.length) {
+                repeat(newValue.length - pinShapes.size) {
+                    pinShapes.add(allShapesWithoutRandom.random())
+                }
+            } else {
+                repeat(pinShapes.size - newValue.length) {
+                    pinShapes.removeAt(pinShapes.lastIndex)
+                }
+            }
+        },
+        onPrimaryAction = {
+            if (SecurityHelper.verifyPin(pin, pinHash)) {
+                onValidate()
+            } else {
+                pinError = wrongPinText
+                failedTries++
+            }
+            pinShapes.clear()
+            pin = ""
+        },
         onDismiss = onDismiss,
-        errorMessage = errorMessage,
-        failedTries = failedTries()
+        errorMessage = pinError,
+        failedTries = failedTries
     )
 }
 
@@ -100,7 +125,7 @@ fun PinUnlockDialog(
  * Dialog for setting up a new PIN (enter + confirm).
  */
 @Composable
-fun PinSetupDialog(
+fun PinSetup(
     onDismiss: () -> Unit,
     onPinSet: (String) -> Unit
 ) {
@@ -114,7 +139,7 @@ fun PinSetupDialog(
     val pinShapes = remember(isConfirmStep) { mutableStateListOf<IconShape>() }
     val currentPin = if (isConfirmStep) confirmPin else firstPin
 
-    FullScreenPinPrompt(
+    PinPrompt(
         title = stringResource(R.string.set_pin),
         subtitle = if (isConfirmStep) stringResource(R.string.confirm_pin) else stringResource(R.string.enter_pin),
         pinValue = currentPin,
@@ -171,7 +196,7 @@ fun PinSetupDialog(
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
-private fun FullScreenPinPrompt(
+private fun PinPrompt(
     title: String,
     subtitle: String,
     pinValue: String,
@@ -268,83 +293,74 @@ private fun FullScreenPinPrompt(
 
 
 
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false,
-            dismissOnClickOutside = false,
-            dismissOnBackPress = true
-        )
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(backgroundOverlayColor.value)
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(backgroundOverlayColor.value)
-                    .padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                    Icon(
-                        imageVector = Icons.Default.Lock,
-                        contentDescription = null,
-                        tint = lockColor.value,
-                        modifier = Modifier
-                            .offset(x = horizontalOffsetError.value.dp)
-                            .size(34.dp)
-                    )
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = null,
+                    tint = lockColor.value,
+                    modifier = Modifier
+                        .offset(x = horizontalOffsetError.value.dp)
+                        .size(34.dp)
+                )
 
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
 
-                    )
+                )
 
-                    Text(
-                        text = subtitle,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
 
-                    PinIndicator(pinShapes)
+                PinIndicator(pinShapes)
 
-                    AnimatedVisibility(errorMessage != null) {
-                        if (errorMessage != null) {
-                            Text(
-                                text = errorMessage,
-                                color = MaterialTheme.colorScheme.error,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
+                AnimatedVisibility(errorMessage != null) {
+                    if (errorMessage != null) {
+                        Text(
+                            text = errorMessage,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
                     }
                 }
-
-                NumericPinPad(
-                    modifier = Modifier.fillMaxWidth(),
-                    onDigit = { digit ->
-                        if (pinValue.length < maxDigits) {
-                            onPinChanged(pinValue + digit)
-                        }
-                    },
-                    validateEnabled = pinValue.length >= minDigits,
-                    onValidate = onPrimaryAction,
-                    backSpaceOrClose = pinValue.isNotEmpty(),
-                    onClear = {
-                        if (pinValue.isEmpty()) onSecondaryAction()
-                        else onPinChanged("")
-                    }
-                )
             }
+
+            NumericPinPad(
+                modifier = Modifier.fillMaxWidth(),
+                onDigit = { digit ->
+                    if (pinValue.length < maxDigits) {
+                        onPinChanged(pinValue + digit)
+                    }
+                },
+                validateEnabled = pinValue.length >= minDigits,
+                onValidate = onPrimaryAction,
+                backSpaceOrClose = pinValue.isNotEmpty(),
+                onClear = {
+                    if (pinValue.isEmpty()) onSecondaryAction()
+                    else onPinChanged("")
+                }
+            )
         }
     }
 }
@@ -512,9 +528,9 @@ private fun Modifier.keyPadModifier(
         .then(
             onClick?.let { click ->
                 Modifier.shapedClickable(
-                enabled = enabled,
-                onClick = click
-            )
+                    enabled = enabled,
+                    onClick = click
+                )
             } ?: Modifier
         )
         .background(MaterialTheme.colorScheme.surface.semiTransparentIfDisabled(enabled))

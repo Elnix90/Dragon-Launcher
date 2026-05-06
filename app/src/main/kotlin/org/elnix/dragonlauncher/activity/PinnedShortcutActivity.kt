@@ -11,8 +11,8 @@ import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.PINNED_SHORTCUTS
-import org.elnix.dragonlauncher.common.utils.showToast
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.PINNED_SHORTCUTS
+import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
 import java.util.UUID
 

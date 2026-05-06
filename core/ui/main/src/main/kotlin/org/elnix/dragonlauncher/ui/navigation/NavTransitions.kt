@@ -12,6 +12,9 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
+import androidx.navigation3.ui.NavDisplay
+import org.elnix.dragonlauncher.ui.base.animation.navigationBouncySpec
 
 fun slideFadeInFromRight(): EnterTransition {
     return slideInHorizontally(
@@ -68,3 +71,12 @@ fun collapseDownAnimation() =
         targetOffsetY = { it / 2 },
         animationSpec = tween(50, easing = LinearOutSlowInEasing)
     )
+
+
+val verticalMetadata = NavDisplay.transitionSpec {
+    slideInVertically(navigationBouncySpec) { it } + fadeIn() togetherWith fadeOut()
+}
+
+val horizontalMetadata = NavDisplay.transitionSpec {
+    slideInHorizontally(navigationBouncySpec) { it } + fadeIn() togetherWith fadeOut()
+}

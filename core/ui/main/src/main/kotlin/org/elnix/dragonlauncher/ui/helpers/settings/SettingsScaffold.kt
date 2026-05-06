@@ -6,15 +6,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsIgnoringVisibility
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
@@ -24,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -47,17 +47,18 @@ fun SettingsScaffold(
     onBack: () -> Unit,
     helpText: String,
     onReset: (() -> Unit)?,
-    vararg otherIcons: Triple<(() -> Unit), ImageVector, String>,
+    vararg otherIcons: Triple<(() -> Unit), Int, String>,
     modifier: Modifier = Modifier,
+    horizontalPadding: Dp = 16.dp,
     resetTitle: String = stringResource(R.string.reset_default_settings),
     resetText: String? = stringResource(R.string.reset_settings_in_this_tab),
     listState: LazyListState? = null,
-    titleContent: @Composable (ColumnScope.() -> Unit)? = null,
+    topContent: @Composable (ColumnScope.() -> Unit)? = null,
     bottomContent: @Composable (ColumnScope.() -> Unit)? = null,
-    bottomPadding: Dp = 400.dp,
-    scrollableContent: Boolean = false,
-    content: @Composable (ColumnScope.() -> Unit)? = null,
-    lazyContent: (LazyListScope.() -> Unit)? = null
+    specialSettingsTitle: @Composable (() -> Unit)? = null,
+    scrollableContent: Boolean = true,
+    lazyContent: (LazyListScope.() -> Unit)? = null,
+    content: @Composable (ColumnScope.() -> Unit)? = null
 ) {
 
     var showHelpDialog by remember { mutableStateOf(false) }
@@ -72,57 +73,67 @@ fun SettingsScaffold(
         onBack()
     }
 
-    Box(
-        modifier = Modifier
-            .fullScreenStatusBarsPaddings()
-            .padding(horizontal = 16.dp)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            SettingsTitle(
-                title = title,
-                otherIcons = otherIcons,
-                helpIcon = { showHelpDialog = true },
-                resetIcon = if (onReset != null) {
-                    { showResetDialog = true }
-                } else null,
-            ) { onBack() }
 
+    Scaffold(
+        containerColor = Color.Transparent,
+        modifier = modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets.statusBarsIgnoringVisibility.add(WindowInsets(left = horizontalPadding, right = horizontalPadding)),
+        bottomBar = {
             Spacer(Modifier.height(5.dp))
 
-            if (titleContent != null) titleContent()
-
-            Spacer(Modifier.height(16.dp))
-
-            if (lazyContent != null) {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    contentPadding = PaddingValues(bottom = if (bottomContent != null) 0.dp else bottomPadding),
-                    state = listState ?: rememberLazyListState()
-                ) { lazyContent() }
-
+            if (specialSettingsTitle != null) {
+                specialSettingsTitle()
             } else {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = modifier
-                        .conditional(scrollableContent) {
-                            verticalScroll(rememberScrollState())
-                        }
-                ) { content!!() }
+                SettingsTitle(
+                    title = title,
+                    otherIcons = otherIcons,
+                    helpIcon = { showHelpDialog = true },
+                    resetIcon = if (onReset != null) {
+                        { showResetDialog = true }
+                    } else null,
+                ) { onBack() }
             }
         }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                if (topContent != null) {
+                    topContent()
+                    Spacer(Modifier.height(16.dp))
+                }
 
-        if (bottomContent != null) {
-            Column(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-            ) {
-                Spacer(Modifier.weight(1f))
-                bottomContent()
+                if (lazyContent != null) {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxSize(),
+                        state = listState ?: rememberLazyListState()
+                    ) { lazyContent() }
+
+                } else {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .conditional(scrollableContent) {
+                                verticalScroll(rememberScrollState())
+                            }
+                    ) { content!!() }
+                }
+            }
+            if (bottomContent != null) {
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                ) {
+                    bottomContent()
+                }
             }
         }
     }
@@ -131,9 +142,9 @@ fun SettingsScaffold(
         UserValidation(
             title = "$title ${stringResource(R.string.help)}",
             message = helpText,
-            onDismiss = { showHelpDialog = false },
+            validateText = stringResource(R.string.close),
             titleIcon = Icons.AutoMirrored.Filled.Help,
-            titleColor = MaterialTheme.colorScheme.onSurface
+            titleColor = MaterialTheme.colorScheme.onSurface,
         ) {
             showHelpDialog = false
         }
@@ -149,11 +160,3 @@ fun SettingsScaffold(
         }
     }
 }
-
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun Modifier.fullScreenStatusBarsPaddings(): Modifier =
-    this
-        .fillMaxSize()
-        .windowInsetsPadding(WindowInsets.statusBarsIgnoringVisibility)

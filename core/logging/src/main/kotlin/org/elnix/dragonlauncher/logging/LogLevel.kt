@@ -25,23 +25,23 @@ val Int.logLevelChar: Char
 
 
 
-val Char.logLevel: Int
+val Char.logLevel: Int?
     get() = when (this.uppercaseChar()) {
         'V' -> Log.VERBOSE
         'D' -> Log.DEBUG
         'I' -> Log.INFO
         'W' -> Log.WARN
         'E' -> Log.ERROR
-        else -> 7
+        else -> null
     }
 
 
-val Int.logLevelColor: Color
+val Int.logLevelColor: Color?
     get() = when (this.coerceIn(2..7)) {
         Log.VERBOSE -> Color.LightGray
         Log.DEBUG -> Color.Cyan
         Log.INFO -> Color.Green
         Log.WARN -> Color.Yellow
         Log.ERROR -> Color.Red
-        else -> Color.DarkGray
+        else -> null
     }

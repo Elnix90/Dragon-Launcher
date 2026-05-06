@@ -5,13 +5,9 @@ package org.elnix.dragonlauncher.ui.settings.customization
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,26 +31,25 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.logging.logE
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ANGLE_LINE_TAG
+import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.common.serializables.ColorSerializer
 import org.elnix.dragonlauncher.common.serializables.CustomObjectBlockProperties
 import org.elnix.dragonlauncher.common.serializables.CustomObjectSerializable
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.ANGLE_LINE_TAG
-import org.elnix.dragonlauncher.common.utils.resolveShape
+import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.settings.stores.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants
-import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dialogs.AngleLineObjectsOrderDialog
 import org.elnix.dragonlauncher.ui.dialogs.rememberLineObjectsOrder
+import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
+import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
+import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
-import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.remembers.rememberDecodedObject
-import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.remembers.rememberSweepAngle
 import kotlin.math.atan2
 
@@ -206,18 +201,27 @@ fun AngleLineTab(onBack: () -> Unit) {
                 AngleLineSettingsStore.resetAll(ctx)
             }
         },
-        Triple({ showOrderDialog = true }, Icons.Default.MoreVert, stringResource(R.string.more)),
+        otherIcons = arrayOf(
+            Triple({ showOrderDialog = true }, R.drawable.more_vert, stringResource(R.string.more))
+        ),
         scrollableContent = true,
-        titleContent = {
-
-            /**
-             * Preview of the line
-             */
-            Box(
+        topContent = {
+            Canvas(
                 modifier = Modifier
-                    .settingsGroup()
+                    .graphicsLayer {
+                        compositingStrategy = CompositingStrategy.Offscreen
+                    }
                     .aspectRatio(1f)
                     .fillMaxWidth()
+                    .pointerInput(Unit) {
+                        // Allow the user to move the end for cleaner preview
+                        detectDragGestures { change, _ ->
+                            dummyEnd = change.position
+                        }
+                        detectTapGestures { position ->
+                            dummyEnd = position
+                        }
+                    }
                     .onGloballyPositioned { coordinates ->
                         if (!hasAlreadyBeenPlaced) {
                             val rect = coordinates.boundsInRoot()
@@ -231,128 +235,110 @@ fun AngleLineTab(onBack: () -> Unit) {
                             hasAlreadyBeenPlaced = true
                         }
                     }
-                    .pointerInput(Unit) {
-                        detectDragGestures { change, _ ->
-                            // Allow the user to move the end for cleaner preview
-                            dummyEnd = change.position
-                        }
-                    }
             ) {
 
-                Text(sweep.toInt().toString())
+                start = Offset(size.width / 2f, size.height / 2f)
 
-                Canvas(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            compositingStrategy = CompositingStrategy.Offscreen
-                        }
-                ) {
+                val lineColor =
+                    if (rgbLine) Color.hsv(sweepState.angle360(), 1f, 1f)
+                    else extraColors.angleLine
 
-                    start = Offset(size.width / 2f, size.height / 2f)
+                actionLine(
+                    start = start,
+                    end = dummyEnd,
+                    sweepAngle = sweep,
+                    lineColor = lineColor,
+                    order = order,
+                    showLineObjectPreview = showLineObjectPreview,
+                    showAngleLineObjectPreview = showAngleLineObjectPreview,
+                    showStartObjectPreview = showStartObjectPreview,
+                    showEndObjectPreview = showEndObjectPreview,
+                    pickedRememberShapeAngle = pickedRememberShapeAngle,
+                    pickedRememberRotationAngle = pickedRememberRotationAngle,
+                    pickedRememberRotationStart = pickedRememberRotationStart,
+                    pickedRememberShapeStart = pickedRememberShapeStart,
+                    pickedRememberRotationEnd = pickedRememberRotationEnd,
+                    pickedRememberShapeEnd = pickedRememberShapeEnd,
+                    lineCustomObject = mutableLineObject,
+                    angleLineCustomObject = mutableAngleLineObject,
+                    startCustomObject = mutableStartObject,
+                    endCustomObject = mutableEndObject
 
-                    val lineColor =
-                        if (rgbLine) Color.hsv(sweepState.angle360(), 1f, 1f)
-                        else extraColors.angleLine
-
-                    actionLine(
-                        start = start,
-                        end = dummyEnd,
-                        sweepAngle = sweep,
-                        lineColor = lineColor,
-                        order = order,
-                        showLineObjectPreview = showLineObjectPreview,
-                        showAngleLineObjectPreview = showAngleLineObjectPreview,
-                        showStartObjectPreview = showStartObjectPreview,
-                        showEndObjectPreview = showEndObjectPreview,
-                        pickedRememberShapeAngle = pickedRememberShapeAngle,
-                        pickedRememberRotationAngle = pickedRememberRotationAngle,
-                        pickedRememberRotationStart = pickedRememberRotationStart,
-                        pickedRememberShapeStart = pickedRememberShapeStart,
-                        pickedRememberRotationEnd = pickedRememberRotationEnd,
-                        pickedRememberShapeEnd = pickedRememberShapeEnd,
-                        lineCustomObject = mutableLineObject,
-                        angleLineCustomObject = mutableAngleLineObject,
-                        startCustomObject = mutableStartObject,
-                        endCustomObject = mutableEndObject
-
-                    )
-                }
-            }
-        },
-        content = {
-            /** Line object setting */
-            ExpandableSection(lineObjectExpandableSectionState) {
-                SettingsSwitchRow(
-                    setting = AngleLineSettingsStore.showLineObjectPreview,
-                    title = stringResource(R.string.show_app_line_preview),
-                    description = stringResource(R.string.show_app_line_preview_description)
                 )
-                AnimatedVisibility(showLineObjectPreview) {
-                    EditCustomObjectBlock(
-                        editObject = mutableLineObject,
-                        default = UiConstants.defaultLineCustomObject,
-                        properties = CustomObjectBlockProperties(
-                            allowSizeCustomization = false,
-                            allowShapeCustomization = false,
-                            allowRotationCustomization = false
-                        )
-                    ) { mutableLineObject = it }
-                }
-            }
-
-            /** Angle Line object setting */
-            ExpandableSection(angleObjectExpandableSectionState) {
-                SettingsSwitchRow(
-                    setting = AngleLineSettingsStore.showAngleLineObjectPreview,
-                    title = stringResource(
-                        R.string.show_app_angle_preview,
-                        if (!showAngleLineObjectPreview) stringResource(R.string.do_you_hate_it) else ""
-                    ),
-                    description = stringResource(R.string.show_app_angle_preview_description)
-                )
-
-                AnimatedVisibility(showAngleLineObjectPreview) {
-                    EditCustomObjectBlock(
-                        editObject = mutableAngleLineObject,
-                        default = UiConstants.defaultAngleCustomObject
-                    ) { mutableAngleLineObject = it }
-                }
-            }
-
-            /** Start object setting */
-            ExpandableSection(startObjectExpandableSectionState) {
-                SettingsSwitchRow(
-                    setting = AngleLineSettingsStore.showStartObjectPreview,
-                    title = stringResource(R.string.show_start_object_preview),
-                    description = stringResource(R.string.show_start_object_preview_desc)
-                )
-
-                AnimatedVisibility(showStartObjectPreview) {
-                    EditCustomObjectBlock(
-                        editObject = mutableStartObject,
-                        default = UiConstants.defaultStartCustomObject
-                    ) { mutableStartObject = it }
-                }
-            }
-
-            /** End object setting */
-            ExpandableSection(endObjectExpandableSectionState) {
-                SettingsSwitchRow(
-                    setting = AngleLineSettingsStore.showEndObjectPreview,
-                    title = stringResource(R.string.show_end_object_preview),
-                    description = stringResource(R.string.show_end_object_preview_desc)
-                )
-
-                AnimatedVisibility(showEndObjectPreview) {
-                    EditCustomObjectBlock(
-                        editObject = mutableEndObject,
-                        default = UiConstants.defaultEndCustomObject
-                    ) { mutableEndObject = it }
-                }
             }
         }
-    )
+    ) {
+        /** Line object setting */
+        ExpandableSection(lineObjectExpandableSectionState) {
+            SettingsSwitchRow(
+                setting = AngleLineSettingsStore.showLineObjectPreview,
+                title = stringResource(R.string.show_app_line_preview),
+                description = stringResource(R.string.show_app_line_preview_description)
+            )
+            AnimatedVisibility(showLineObjectPreview) {
+                EditCustomObjectBlock(
+                    editObject = mutableLineObject,
+                    default = UiConstants.defaultLineCustomObject,
+                    properties = CustomObjectBlockProperties(
+                        allowSizeCustomization = false,
+                        allowShapeCustomization = false,
+                        allowRotationCustomization = false
+                    )
+                ) { mutableLineObject = it }
+            }
+        }
+
+        /** Angle Line object setting */
+        ExpandableSection(angleObjectExpandableSectionState) {
+            SettingsSwitchRow(
+                setting = AngleLineSettingsStore.showAngleLineObjectPreview,
+                title = stringResource(
+                    R.string.show_app_angle_preview,
+                    if (!showAngleLineObjectPreview) stringResource(R.string.do_you_hate_it) else ""
+                ),
+                description = stringResource(R.string.show_app_angle_preview_description)
+            )
+
+            AnimatedVisibility(showAngleLineObjectPreview) {
+                EditCustomObjectBlock(
+                    editObject = mutableAngleLineObject,
+                    default = UiConstants.defaultAngleCustomObject
+                ) { mutableAngleLineObject = it }
+            }
+        }
+
+        /** Start object setting */
+        ExpandableSection(startObjectExpandableSectionState) {
+            SettingsSwitchRow(
+                setting = AngleLineSettingsStore.showStartObjectPreview,
+                title = stringResource(R.string.show_start_object_preview),
+                description = stringResource(R.string.show_start_object_preview_desc)
+            )
+
+            AnimatedVisibility(showStartObjectPreview) {
+                EditCustomObjectBlock(
+                    editObject = mutableStartObject,
+                    default = UiConstants.defaultStartCustomObject
+                ) { mutableStartObject = it }
+            }
+        }
+
+        /** End object setting */
+        ExpandableSection(endObjectExpandableSectionState) {
+            SettingsSwitchRow(
+                setting = AngleLineSettingsStore.showEndObjectPreview,
+                title = stringResource(R.string.show_end_object_preview),
+                description = stringResource(R.string.show_end_object_preview_desc)
+            )
+
+            AnimatedVisibility(showEndObjectPreview) {
+                EditCustomObjectBlock(
+                    editObject = mutableEndObject,
+                    default = UiConstants.defaultEndCustomObject
+                ) { mutableEndObject = it }
+            }
+        }
+    }
 
     if (showOrderDialog) {
         AngleLineObjectsOrderDialog { showOrderDialog = false }

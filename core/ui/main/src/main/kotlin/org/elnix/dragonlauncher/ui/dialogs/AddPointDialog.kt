@@ -17,9 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,14 +35,14 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.messyfolder.BluetoothADBCommands
+import org.elnix.dragonlauncher.common.messyfolder.Constants
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Actions.defaultChoosableActions
+import org.elnix.dragonlauncher.common.messyfolder.DataADBCommands
+import org.elnix.dragonlauncher.common.messyfolder.PackageManagerCompat
+import org.elnix.dragonlauncher.common.messyfolder.WifiADBCommands
 import org.elnix.dragonlauncher.common.serializables.AppModel
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.utils.BluetoothADBCommands
-import org.elnix.dragonlauncher.common.utils.Constants
-import org.elnix.dragonlauncher.common.utils.Constants.Actions.defaultChoosableActions
-import org.elnix.dragonlauncher.common.utils.DataADBCommands
-import org.elnix.dragonlauncher.common.utils.PackageManagerCompat
-import org.elnix.dragonlauncher.common.utils.WifiADBCommands
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
@@ -132,7 +129,7 @@ fun AddPointDialog(
                             UiSettingsStore.showTooltipsOnAddPointDialog.set(ctx, !showTooltipsOnAddPointDialog)
                         }
                     },
-                    imageVector = if (showTooltipsOnAddPointDialog) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                    icon = if (showTooltipsOnAddPointDialog) R.drawable.arrow_drop_down else R.drawable.arrow_drop_up,
                     contentDescription = stringResource(R.string.show_tooltips)
                 )
             }

@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui.settings.customization
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,11 +18,12 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.asStateNull
+import org.elnix.dragonlauncher.ui.base.components.LazyRowWithScrollButton
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
-import org.elnix.dragonlauncher.ui.helpers.AppGrid
-import org.elnix.dragonlauncher.ui.helpers.iconPackListContent
+import org.elnix.dragonlauncher.ui.helpers.IconPackListContent
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
@@ -62,29 +62,26 @@ fun IconPackTab(
                 appsViewModel.clearIconPack()
             }
         },
-        titleContent = {
+        topContent = {
             if (showPreview) {
-                Box(Modifier.height(80.dp)) {
-                    AppGrid(
-                        apps = apps.shuffled().take(6),
-                        longPressPopup = null,
-                        onClick = null
-                    )
+                LazyRowWithScrollButton(
+                    items = apps,
+                    modifier = Modifier.height(80.dp),
+                ) { app ->
+                    AppIcon(app, 56.dp)
                 }
             }
         }
     ) {
 
-        item {
-            ColorPickerRow(
-                label = stringResource(R.string.icon_pack_tint),
-                currentColor = iconPackTint ?: Color.Unspecified
-            ) {
-                scope.launch { appsViewModel.setIconPackTint(it.definedOrNull()) }
-            }
+        ColorPickerRow(
+            label = stringResource(R.string.icon_pack_tint),
+            currentColor = iconPackTint ?: Color.Unspecified
+        ) {
+            scope.launch { appsViewModel.setIconPackTint(it.definedOrNull()) }
         }
 
-        iconPackListContent(
+        IconPackListContent(
             packs = packs,
             selectedPackPackage = selectedPack?.packageName,
             showClearOption = true,

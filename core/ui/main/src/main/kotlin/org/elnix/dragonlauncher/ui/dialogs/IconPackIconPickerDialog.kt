@@ -4,7 +4,7 @@ package org.elnix.dragonlauncher.ui.dialogs
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -17,8 +17,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.common.serializables.IconPackInfo
-import org.elnix.dragonlauncher.ui.helpers.iconPackListContent
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
+import org.elnix.dragonlauncher.ui.helpers.IconPackListContent
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -40,11 +40,11 @@ fun IconPackPickerDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         text = {
-            LazyColumn(
+            Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                iconPackListContent(
+                IconPackListContent(
                     packs = packs,
                     selectedPackPackage = null,
                     showClearOption = false,

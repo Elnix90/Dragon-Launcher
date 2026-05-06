@@ -22,14 +22,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.utils.isDefaultLauncher
+import org.elnix.dragonlauncher.common.utils.rememberIsDefaultLauncher
 import org.elnix.dragonlauncher.ui.helpers.GradientBigButton
 
 @Composable
 fun WelcomePageLauncher() {
     val ctx = LocalContext.current
-
-    val isDefaultLauncher = ctx.isDefaultLauncher
+    val isDefaultLauncher = rememberIsDefaultLauncher()
 
     Column(
         modifier = Modifier.fillMaxSize(),

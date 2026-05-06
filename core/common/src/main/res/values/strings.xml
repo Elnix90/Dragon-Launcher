@@ -84,7 +84,6 @@
     <string name="set_default_launcher">Set as default launcher</string>
     <string name="close">Close</string>
     <string name="dragging_distance_selection">Dragging Distance Selection</string>
-    <string name="swipe_points_selection">Swipe Point Selection</string>
     <string name="circle">Circle Drag Distance</string>
     <string name="cancel_zone">Cancel Zone Drag</string>
     <string name="android_settings">Android Settings</string>
@@ -683,8 +682,6 @@
 
     <string name="pull_down_scale_in">Pull-down Scale In</string>
     <string name="pull_down_scale_in_desc">Scale icons when the drawer is pulled down</string>
-    <string name="drawer_enter_exit_animations">Drawer Enter/Exit Animations</string>
-    <string name="drawer_enter_exit_animations_desc">Play animations when entering / exiting the drawer if set to false, this is instant</string>
     <string name="action_settings">Action Settings</string>
     <string name="drawer_settings">Drawer Settings</string>
     <string name="more">More</string>
@@ -874,10 +871,11 @@
     <string name="import_text">Import</string>
     <string name="user_theme">User theme %1$d</string>
     <string name="add_current_theme">Add current theme</string>
-    <string name="test_mode_validate">Keep current colors</string>
-    <string name="test_mode_cancel">Restore previous theme</string>
+    <string name="test_mode_validate">Keep</string>
+    <string name="test_mode_cancel">Restore</string>
 
     <string name="disable">Disable</string>
+    <string name="disabled">Disabled</string>
 
     <!--  Live Nest  -->
     <string name="live_nest">Live Nest</string>
@@ -934,5 +932,9 @@
     <string name="align_end">End</string>
     <string name="create_live_nest_by_default_desc">When creating a new point, if you choose OpenCircleNest, it\'ll create the according live nest automatically</string>
     <string name="create_live_nest_by_default">Create live nest by default</string>
-
+    <string name="welcome_screen">Welcome Screen</string>
+    <string name="red">Red</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
+    <string name="move_around_mode">Move Around Mode</string>
 </resources>

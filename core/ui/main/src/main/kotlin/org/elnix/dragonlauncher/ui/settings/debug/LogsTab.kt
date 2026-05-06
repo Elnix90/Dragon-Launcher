@@ -21,10 +21,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -54,17 +52,17 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.navigaton.SETTINGS
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.LOGS_TAG
-import org.elnix.dragonlauncher.common.utils.copyToClipboard
-import org.elnix.dragonlauncher.common.utils.createShareableFile
-import org.elnix.dragonlauncher.common.utils.detectSystemLauncher
-import org.elnix.dragonlauncher.common.utils.formatDateTime
-import org.elnix.dragonlauncher.common.utils.getVersionCode
-import org.elnix.dragonlauncher.common.utils.getVersionName
-import org.elnix.dragonlauncher.common.utils.isDefaultLauncher
-import org.elnix.dragonlauncher.common.utils.shareContent
-import org.elnix.dragonlauncher.common.utils.showToast
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.LOGS_TAG
+import org.elnix.dragonlauncher.common.messyfolder.showToast
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.createShareableFile
+import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.shareContent
+import org.elnix.dragonlauncher.common.utils.DateUtils.formatDateTime
+import org.elnix.dragonlauncher.common.utils.PermissionsUtils.detectSystemLauncher
+import org.elnix.dragonlauncher.common.utils.rememberIsDefaultLauncher
+import org.elnix.dragonlauncher.common.utils.rememberVersionCode
+import org.elnix.dragonlauncher.common.utils.rememberVersionName
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logLevelName
@@ -73,7 +71,6 @@ import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.composition.LocalDragonLogViewModel
-import org.elnix.dragonlauncher.ui.composition.LocalNavController
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
@@ -87,10 +84,10 @@ import java.io.File
 
 @Composable
 fun LogsTab(
+    onNavigate: (NavigationRoute) -> Unit,
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
-    val navController = LocalNavController.current
     val dragonLogViewModel = LocalDragonLogViewModel.current
 
     val enableLogging by dragonLogViewModel.isLoggingEnabled.collectAsState()
@@ -112,9 +109,9 @@ fun LogsTab(
     val memInfo = ActivityManager.MemoryInfo()
     am.getMemoryInfo(memInfo)
     val currentLauncher = detectSystemLauncher(ctx)
-    val isDefault = ctx.isDefaultLauncher
-    val versionName = ctx.getVersionName()
-    val versionCode = ctx.getVersionCode()
+    val isDefault = rememberIsDefaultLauncher()
+    val versionName = rememberVersionName()
+    val versionCode = rememberVersionCode()
 
     // Build extension list by parsing the registry JSON directly (robust to field names)
     var finalExtensionText = "No extensions installed"
@@ -198,186 +195,179 @@ fun LogsTab(
         otherIcons = arrayOf(
             Triple(
                 { refreshTrigger++; ctx.showToast("Refreshing...") },
-                Icons.Default.Refresh,
+                R.drawable.refresh,
                 stringResource(R.string.refresh)
             )
         ),
-        scrollableContent = true,
-        content = {
-            ExpandableSection(rememberExpandableSection("Device info")) {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = AppObjectsColors.cardColors()
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = "Device Information",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            DragonIconButton(
-                                onClick = {
-                                    ctx.copyToClipboard(deviceDetails)
-                                    ctx.showToast("Device info copied")
-                                },
-                                imageVector = Icons.Default.ContentCopy,
-                                contentDescription = "Copy Info"
-                            )
-                        }
-                        Spacer(Modifier.height(8.dp))
-                        SelectionContainer {
-                            Text(
-                                text = deviceDetails,
-                                style = MaterialTheme.typography.bodySmall,
-                                fontFamily = FontFamily.Monospace,
-                                fontSize = 11.sp
-                            )
-                        }
+        scrollableContent = true
+    ) {
+        ExpandableSection(rememberExpandableSection("Device info")) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = AppObjectsColors.cardColors()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Device Information",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        DragonIconButton(
+                            onClick = {
+                                ctx.copyToClipboard(deviceDetails)
+                                ctx.showToast("Device info copied")
+                            },
+                            icon = R.drawable.copy,
+                            contentDescription = "Copy Info"
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    SelectionContainer {
+                        Text(
+                            text = deviceDetails,
+                            style = MaterialTheme.typography.bodySmall,
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 11.sp
+                        )
                     }
                 }
             }
+        }
 
-            SwitchRow(
-                state = enableLogging,
-                title = "Enable logging",
-                description = "Store all logs in app storage, and can be copied or exported",
+        SwitchRow(
+            state = enableLogging,
+            title = "Enable logging",
+            description = "Store all logs in app storage, and can be copied or exported",
+        ) {
+            dragonLogViewModel.updateEnableLogging(it)
+        }
+
+        AnimatedVisibility(enableLogging) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                dragonLogViewModel.updateEnableLogging(it)
-            }
-
-            AnimatedVisibility(enableLogging) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(5.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                SliderWithLabel(
+                    label = "Snackbar log level",
+                    description = snackBarLogLevel.logLevelName,
+                    value = snackBarLogLevel,
+                    showValue = false,
+                    allowTextEditValue = false,
+                    valueRange = 2..7,
+                    onReset = {
+                        dragonLogViewModel.updateSnackBarLogLevel(Log.ERROR)
+                    }
                 ) {
-                    SliderWithLabel(
-                        label = "Snackbar log level",
-                        description = snackBarLogLevel.logLevelName,
-                        value = snackBarLogLevel,
-                        showValue = false,
-                        allowTextEditValue = false,
-                        valueRange = 2..7,
-                        onReset = {
-                            dragonLogViewModel.updateSnackBarLogLevel(Log.ERROR)
-                        }
-                    ) {
-                        dragonLogViewModel.updateSnackBarLogLevel(it)
-                    }
+                    dragonLogViewModel.updateSnackBarLogLevel(it)
+                }
 
-                    SliderWithLabel(
-                        label = "Files log level",
-                        description = filesLogLevel.logLevelName,
-                        value = filesLogLevel,
-                        showValue = false,
-                        allowTextEditValue = false,
-                        valueRange = 2..7,
-                        onReset = {
-                            dragonLogViewModel.updateFilesLogLevel(Log.DEBUG)
-                        }
-                    ) {
-                        dragonLogViewModel.updateFilesLogLevel(it)
+                SliderWithLabel(
+                    label = "Files log level",
+                    description = filesLogLevel.logLevelName,
+                    value = filesLogLevel,
+                    showValue = false,
+                    allowTextEditValue = false,
+                    valueRange = 2..7,
+                    onReset = {
+                        dragonLogViewModel.updateFilesLogLevel(Log.DEBUG)
                     }
+                ) {
+                    dragonLogViewModel.updateFilesLogLevel(it)
+                }
 
-                    TextField(
-                        value = tempFilterTag,
-                        onValueChange = {
-                          tempFilterTag = it
-                            dragonLogViewModel.updateFilterTag(it)
-                        },
-                        label = {
-                            Text("Filter tag")
-                        },
-                        colors = AppObjectsColors.outlinedTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth(1f)
+                TextField(
+                    value = tempFilterTag,
+                    onValueChange = {
+                        tempFilterTag = it
+                        dragonLogViewModel.updateFilterTag(it)
+                    },
+                    label = {
+                        Text("Filter tag")
+                    },
+                    colors = AppObjectsColors.outlinedTextFieldColors(),
+                    modifier = Modifier.fillMaxWidth(1f)
+                )
+
+                DragonButton(
+                    onClick = {
+                        dragonLogViewModel.clearLogs()
+                        refreshTrigger++
+                    },
+                    modifier = Modifier.padding(16.dp),
+                    needConfirm = true,
+                    confirmText = "Are you sure you want to delete all logs files?"
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete"
                     )
-
-                    DragonButton(
-                        onClick = {
-                            dragonLogViewModel.clearLogs()
-                            refreshTrigger++
-                        },
-                        modifier = Modifier.padding(16.dp),
-                        needConfirm = true,
-                        confirmText = "Are you sure you want to delete all logs files?"
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete"
-                        )
-                        Spacer(8.dp)
-                        Text("Clear All Logs")
-                    }
+                    Spacer(8.dp)
+                    Text("Clear All Logs")
+                }
 
 
-                    HorizontalDivider()
+                HorizontalDivider()
 
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(5.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(max = 600.dp)
-                    ) {
-                        items(logFiles) { file ->
-                            Card(
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(5.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 600.dp)
+                ) {
+                    items(logFiles) { file ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    onNavigate(NavigationRoute.LogsViewer(file.name))
+                                },
+                            colors = AppObjectsColors.cardColors()
+                        ) {
+                            Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clickable {
-                                        navController.navigate(SETTINGS.LOGS_VIEWER_SCREEN.replace("{filename}", file.name))
-                                    },
-                                colors = AppObjectsColors.cardColors()
+                                    .padding(5.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
+
+                                Column(modifier = Modifier.weight(1f)) {
+                                    TextWithDescription(
+                                        text = file.name,
+                                        description = "${(file.length() / 1024).toInt()}KB • ${
+                                            file.lastModified().formatDateTime()
+                                        }"
+                                    )
+                                }
+
                                 Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(5.dp),
+                                    modifier = Modifier.padding(5.dp),
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
 
-                                    Column(modifier = Modifier.weight(1f)) {
-                                        TextWithDescription(
-                                            text = file.name,
-                                            description = "${(file.length() / 1024).toInt()}KB • ${
-                                                file.lastModified().formatDateTime()
-                                            }"
-                                        )
-                                    }
+                                    DragonIconButton(
+                                        icon = R.drawable.delete_forever,
+                                        contentDescription = "Delete"
+                                    ) { showDeleteDialog = file }
 
-                                    Row(
-                                        modifier = Modifier.padding(5.dp),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
+                                    DragonIconButton(
+                                        onClick = {
+                                            ctx.copyToClipboard(dragonLogViewModel.readLogFile(file))
+                                        },
+                                        icon = R.drawable.copy,
+                                        contentDescription = "Copy"
+                                    )
 
-                                        DragonIconButton(
-                                            onClick = {
-                                                showDeleteDialog = file
-                                            },
-                                            imageVector = Icons.Default.Delete,
-                                            contentDescription = "Delete"
-                                        )
-
-                                        DragonIconButton(
-                                            onClick = {
-                                                ctx.copyToClipboard(dragonLogViewModel.readLogFile(file))
-                                            },
-                                            imageVector = Icons.Default.ContentCopy,
-                                            contentDescription = "Copy"
-                                        )
-
-                                        DragonIconButton(
-                                            onClick = {
-                                                exportLogFile(dragonLogViewModel, ctx, file)
-                                            },
-                                            imageVector = Icons.Default.Share,
-                                            contentDescription = "Export"
-                                        )
-                                    }
+                                    DragonIconButton(
+                                        icon = R.drawable.share,
+                                        contentDescription = "Export",
+                                    ) { exportLogFile(dragonLogViewModel, ctx, file) }
                                 }
                             }
                         }
@@ -385,7 +375,7 @@ fun LogsTab(
                 }
             }
         }
-    )
+    }
 
     if (showDeleteDialog != null) {
         val fileToDelete = showDeleteDialog!!

@@ -6,7 +6,9 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.ui.unit.IntOffset
 
@@ -36,3 +38,9 @@ val barsContentTransform = ContentTransform(
     sizeTransform = SizeTransform(clip = false) // prevents the content from getting clipped during bounce
 )
 
+
+val slideInHorizontalBouncy = slideInHorizontally(bouncySpec()) { it } + fadeIn()
+val slideOutHorizontalBouncy = slideOutHorizontally(bouncySpec()) { it } + fadeOut()
+
+val slideInVerticalBouncy = slideInVertically(bouncySpec()) { it } + fadeIn()
+val slideOutVerticalBouncy = slideOutVertically(bouncySpec()) { it } + fadeOut()

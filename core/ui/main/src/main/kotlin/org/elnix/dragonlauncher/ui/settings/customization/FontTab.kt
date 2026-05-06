@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,13 +27,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CloudDownload
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -64,6 +63,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -75,17 +75,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.utils.Constants
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.FONT_PROVIDER
-import org.elnix.dragonlauncher.common.utils.showToast
+import org.elnix.dragonlauncher.common.messyfolder.Constants
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.FONT_PROVIDER
+import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.theme.fontNameToFont
+import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import java.io.File
 import java.io.FileOutputStream
@@ -327,306 +329,305 @@ fun FontTab(onBack: () -> Unit) {
         title = stringResource(R.string.font_selector),
         onBack = onBack,
         helpText = stringResource(R.string.font_manage_help),
-        onReset = null,
-        lazyContent = {
-            item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    androidx.compose.foundation.lazy.LazyRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(categories) { cat ->
-                            val catResId = when (cat) {
-                                "ALL" -> R.string.font_cat_all
-                                "SERIF" -> R.string.font_cat_serif
-                                "SANS-SERIF" -> R.string.font_cat_sans_serif
-                                "MONOSPACE" -> R.string.font_cat_monospace
-                                "DISPLAY" -> R.string.font_cat_display
-                                "HANDWRITING" -> R.string.font_cat_handwriting
-                                else -> -1
-                            }
-                            FilterChip(
-                                selected = selectedCategory == cat,
-                                onClick = { selectedCategory = cat },
-                                label = {
-                                    Text(
-                                        if (catResId != -1) stringResource(catResId) else cat,
-                                        fontSize = 11.sp
-                                    )
-                                },
-                                shape = CircleShape,
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = MaterialTheme.colorScheme.primary,
-                                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
-                                        alpha = 0.5f
-                                    ),
-                                    labelColor = MaterialTheme.colorScheme.onSurfaceVariant
-                                ),
-                                border = null
-                            )
-                        }
+        onReset = null
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            androidx.compose.foundation.lazy.LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(categories) { cat ->
+                    val catResId = when (cat) {
+                        "ALL" -> R.string.font_cat_all
+                        "SERIF" -> R.string.font_cat_serif
+                        "SANS-SERIF" -> R.string.font_cat_sans_serif
+                        "MONOSPACE" -> R.string.font_cat_monospace
+                        "DISPLAY" -> R.string.font_cat_display
+                        "HANDWRITING" -> R.string.font_cat_handwriting
+                        else -> -1
                     }
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                            .background(
-                                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-                                DragonShape
-                            )
-                            .padding(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        if (!isDeleteMode) {
-                            Button(
-                                onClick = {
-                                    val intent =
-                                        Intent("org.elnix.dragonlauncher.ACTION_DOWNLOAD_ALL").apply {
-                                            setPackage(Constants.Extensions.FONT_EXTENSION_PKG)
-                                            putExtra("FORCE_FOREGROUND", true)
-                                        }
-                                    try {
-                                        ctx.startForegroundService(intent)
-                                        ctx.showToast(ctx.getString(R.string.font_download_all_started))
-                                    } catch (e: Exception) {
-                                        logE(FONT_PROVIDER, e) { "Unable to start foreground service" }
-                                        ctx.showToast("Unable to start foreground service: ${e.message}")
-                                    }
-                                },
-                                modifier = Modifier.weight(1f),
-                                contentPadding = PaddingValues(
-                                    horizontal = 8.dp,
-                                    vertical = 8.dp
-                                ),
-                                shape = DragonShape
-                            ) {
-                                Icon(
-                                    Icons.Default.CloudDownload,
-                                    null,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(Modifier.width(6.dp))
-                                Text(
-                                    stringResource(R.string.font_catalog),
-                                    fontSize = 12.sp,
-                                    maxLines = 1
-                                )
-                            }
-
-                            OutlinedButton(
-                                onClick = {
-                                    filePickerLauncher.launch(
-                                        arrayOf(
-                                            "font/ttf",
-                                            "font/otf",
-                                            "application/x-font-ttf",
-                                            "application/x-font-otf",
-                                            "application/octet-stream"
-                                        )
-                                    )
-                                },
-                                modifier = Modifier.weight(1f),
-                                contentPadding = PaddingValues(
-                                    horizontal = 8.dp,
-                                    vertical = 8.dp
-                                ),
-                                shape = DragonShape
-                            ) {
-                                Icon(Icons.Default.Add, null, modifier = Modifier.size(16.dp))
-                                Spacer(Modifier.width(6.dp))
-                                Text(
-                                    stringResource(R.string.font_import),
-                                    fontSize = 12.sp,
-                                    maxLines = 1
-                                )
-                            }
-
-                            IconButton(
-                                onClick = { isDeleteMode = true },
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .background(
-                                        MaterialTheme.colorScheme.errorContainer.copy(
-                                            alpha = 0.2f
-                                        ), DragonShape
-                                    ),
-                            ) {
-                                Icon(
-                                    Icons.Default.Delete,
-                                    null,
-                                    modifier = Modifier.size(18.dp),
-                                    tint = MaterialTheme.colorScheme.error
-                                )
-                            }
-                        } else {
-                            Button(
-                                onClick = {
-                                    if (selectedFontsToDelete.isNotEmpty()) {
-                                        scope.launch {
-                                            try {
-                                                val extDir =
-                                                    File(ctx.getExternalFilesDir(null), "fonts")
-                                                selectedFontsToDelete.forEach { font ->
-                                                    File(extDir, "$font.ttf").delete()
-                                                    File(extDir, "$font.otf").delete()
-                                                }
-                                                selectedFontsToDelete.clear()
-                                                isDeleteMode = false
-                                                refreshTrigger = (refreshTrigger + 1) % 1000
-                                                ctx.showToast("Selected fonts deleted")
-                                            } catch (e: Exception) {
-                                                logE(
-                                                    FONT_PROVIDER,
-                                                    e
-                                                ) { "Error deleting fonts" }
-                                                ctx.showToast("Error deleting fonts")
-                                            }
-                                        }
-                                    } else {
-                                        isDeleteMode = false
-                                    }
-                                },
-                                modifier = Modifier.weight(1f),
-                                contentPadding = PaddingValues(
-                                    horizontal = 8.dp,
-                                    vertical = 8.dp
-                                ),
-                                shape = DragonShape,
-                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                            ) {
-                                Icon(Icons.Default.Check, null, modifier = Modifier.size(16.dp))
-                                Spacer(Modifier.width(6.dp))
-                                Text(
-                                    stringResource(
-                                        R.string.font_confirm_delete,
-                                        selectedFontsToDelete.size
-                                    ), fontSize = 12.sp, maxLines = 1
-                                )
-                            }
-
-                            OutlinedButton(
-                                onClick = {
-                                    isDeleteMode = false
-                                    selectedFontsToDelete.clear()
-                                },
-                                modifier = Modifier.weight(0.5f),
-                                contentPadding = PaddingValues(
-                                    horizontal = 8.dp,
-                                    vertical = 8.dp
-                                ),
-                                shape = DragonShape
-                            ) {
-                                Text(stringResource(R.string.cancel), fontSize = 12.sp)
-                            }
-                        }
-                    }
-
-                    if (showProgress && downloadProgress != null) {
-                        val (current, total, name) = downloadProgress!!
-                        val progressBase =
-                            if (total > 0) current.toFloat() / total.toFloat() else 0f
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(
-                                    stringResource(R.string.font_downloading, name),
-                                    fontSize = 10.sp,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                                Text(
-                                    "$current / $total",
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                            Spacer(Modifier.height(4.dp))
-                            LinearProgressIndicator(
-                                progress = { progressBase },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(6.dp)
-                                    .clip(CircleShape),
-                                color = MaterialTheme.colorScheme.primary,
-                                trackColor = MaterialTheme.colorScheme.primaryContainer
-                            )
-                        }
-                    }
-
-                    OutlinedTextField(
-                        value = extensionSearchQuery,
-                        onValueChange = { extensionSearchQuery = it },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
-                        placeholder = {
+                    FilterChip(
+                        selected = selectedCategory == cat,
+                        onClick = { selectedCategory = cat },
+                        label = {
                             Text(
-                                stringResource(R.string.font_search_placeholder),
-                                fontSize = 14.sp
+                                if (catResId != -1) stringResource(catResId) else cat,
+                                fontSize = 11.sp
                             )
                         },
-                        leadingIcon = {
-                            Icon(
-                                Icons.Default.Search,
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        },
-                        trailingIcon = {
-                            if (isFetchingRemote) {
-                                LoadingIndicator(
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            } else if (isExtensionInstalled) {
-                                IconButton(
-                                    onClick = { fetchRemoteFonts(true) }
-                                ) {
-                                    Icon(
-                                        Icons.Default.Refresh,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-                            }
-                        },
-                        singleLine = true,
-                        shape = DragonShape
+                        shape = CircleShape,
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primary,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
+                                alpha = 0.5f
+                            ),
+                            labelColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        ),
+                        border = null
                     )
                 }
             }
 
-            item {
-                val installedFontsSnapshot = remember(refreshTrigger) {
-                    val extDir = File(ctx.getExternalFilesDir(null), "fonts")
-                    if (extDir.exists()) {
-                        extDir.listFiles { file -> file.extension == "ttf" || file.extension == "otf" }
-                            ?.map { it.nameWithoutExtension }
-                            ?.toSet() ?: emptySet()
-                    } else emptySet()
-                }
+            val interactionSources = List(5) { rememberInteractionSource() }
 
-                val filteredLocal = availableFonts.filter {
-                    it.contains(
-                        extensionSearchQuery,
-                        ignoreCase = true
+            AnimatedContent(isDeleteMode) {
+                @Suppress("DEPRECATION")
+                ButtonGroup(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    if (!it) {
+                        Button(
+                            onClick = {
+                                val intent =
+                                    Intent("org.elnix.dragonlauncher.ACTION_DOWNLOAD_ALL").apply {
+                                        setPackage(Constants.Extensions.FONT_EXTENSION_PKG)
+                                        putExtra("FORCE_FOREGROUND", true)
+                                    }
+                                try {
+                                    ctx.startForegroundService(intent)
+                                    ctx.showToast(ctx.getString(R.string.font_download_all_started))
+                                } catch (e: Exception) {
+                                    logE(FONT_PROVIDER, e) { "Unable to start foreground service" }
+                                    ctx.showToast("Unable to start foreground service: ${e.message}")
+                                }
+                            },
+                            interactionSource = interactionSources[0],
+                            modifier = Modifier
+                                .weight(3f)
+                                .animateWidth(interactionSources[0]),
+                            shapes = UiConstants.dragonShapes()
+                        ) {
+                            Icon(
+                                Icons.Default.CloudDownload,
+                                null,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(Modifier.width(6.dp))
+                            Text(
+                                stringResource(R.string.font_catalog),
+                                fontSize = 12.sp,
+                                maxLines = 1
+                            )
+                        }
+
+                        OutlinedButton(
+                            onClick = {
+                                filePickerLauncher.launch(
+                                    arrayOf(
+                                        "font/ttf",
+                                        "font/otf",
+                                        "application/x-font-ttf",
+                                        "application/x-font-otf",
+                                        "application/octet-stream"
+                                    )
+                                )
+                            },
+                            interactionSource = interactionSources[1],
+                            modifier = Modifier
+                                .weight(3f)
+                                .animateWidth(interactionSources[1]),
+                            shapes = UiConstants.dragonShapes()
+                        ) {
+                            Icon(Icons.Default.Add, null, modifier = Modifier.size(16.dp))
+                            Spacer(Modifier.width(6.dp))
+                            Text(
+                                stringResource(R.string.font_import),
+                                fontSize = 12.sp,
+                                maxLines = 1
+                            )
+                        }
+
+                        IconButton(
+                            onClick = { isDeleteMode = true },
+                            interactionSource = interactionSources[2],
+                            modifier = Modifier
+                                .weight(1f)
+                                .animateWidth(interactionSources[2]),
+                            colors = AppObjectsColors.cancelIconButtonColors(),
+                            shapes = UiConstants.dragonIconButtonShapes()
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.delete_forever),
+                                contentDescription = null
+                            )
+                        }
+                    } else {
+                        Button(
+                            onClick = {
+                                if (selectedFontsToDelete.isNotEmpty()) {
+                                    scope.launch {
+                                        try {
+                                            val extDir =
+                                                File(ctx.getExternalFilesDir(null), "fonts")
+                                            selectedFontsToDelete.forEach { font ->
+                                                File(extDir, "$font.ttf").delete()
+                                                File(extDir, "$font.otf").delete()
+                                            }
+                                            selectedFontsToDelete.clear()
+                                            isDeleteMode = false
+                                            refreshTrigger = (refreshTrigger + 1) % 1000
+                                            ctx.showToast("Selected fonts deleted")
+                                        } catch (e: Exception) {
+                                            logE(
+                                                FONT_PROVIDER,
+                                                e
+                                            ) { "Error deleting fonts" }
+                                            ctx.showToast("Error deleting fonts")
+                                        }
+                                    }
+                                } else {
+                                    isDeleteMode = false
+                                }
+                            },
+                            interactionSource = interactionSources[3],
+                            modifier = Modifier
+                                .weight(4f)
+                                .animateWidth(interactionSources[3]),
+                            contentPadding = PaddingValues(
+                                horizontal = 8.dp,
+                                vertical = 8.dp
+                            ),
+                            shapes = UiConstants.dragonShapes(),
+                            colors = AppObjectsColors.cancelButtonColors()
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.check),
+                                contentDescription = null
+                            )
+                            Spacer(Modifier.width(6.dp))
+                            Text(
+                                stringResource(
+                                    R.string.font_confirm_delete,
+                                    selectedFontsToDelete.size
+                                ), fontSize = 12.sp, maxLines = 1
+                            )
+                        }
+
+                        IconButton(
+                            onClick = {
+                                isDeleteMode = false
+                                selectedFontsToDelete.clear()
+                            },
+                            interactionSource = interactionSources[4],
+                            modifier = Modifier
+                                .weight(1f)
+                                .animateWidth(interactionSources[4]),
+                            colors = AppObjectsColors.cancelIconButtonColors(),
+                            shapes = UiConstants.dragonIconButtonShapes()
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.cancel),
+                                contentDescription = null
+                            )
+                        }
+                    }
+                }
+            }
+
+            if (showProgress && downloadProgress != null) {
+                val (current, total, name) = downloadProgress!!
+                val progressBase =
+                    if (total > 0) current.toFloat() / total.toFloat() else 0f
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            stringResource(R.string.font_downloading, name),
+                            fontSize = 10.sp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            "$current / $total",
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(Modifier.height(4.dp))
+                    LinearProgressIndicator(
+                        progress = { progressBase },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(6.dp)
+                            .clip(CircleShape),
+                        color = MaterialTheme.colorScheme.primary,
+                        trackColor = MaterialTheme.colorScheme.primaryContainer
                     )
                 }
-                val filteredRemote = remoteFonts.filter { (name, category) ->
-                    (selectedCategory == "ALL" || category == selectedCategory) &&
-                            name.contains(extensionSearchQuery, ignoreCase = true) &&
-                            !installedFontsSnapshot.contains(name)
-                }
+            }
+
+            OutlinedTextField(
+                value = extensionSearchQuery,
+                onValueChange = { extensionSearchQuery = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                placeholder = {
+                    Text(
+                        stringResource(R.string.font_search_placeholder),
+                        fontSize = 14.sp
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        Icons.Default.Search,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                },
+                trailingIcon = {
+                    if (isFetchingRemote) {
+                        LoadingIndicator(
+                            modifier = Modifier.size(20.dp)
+                        )
+                    } else if (isExtensionInstalled) {
+                        IconButton(
+                            onClick = { fetchRemoteFonts(true) }
+                        ) {
+                            Icon(
+                                Icons.Default.Refresh,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+                },
+                singleLine = true,
+                shape = DragonShape
+            )
+        }
+
+        val installedFontsSnapshot = remember(refreshTrigger) {
+            val extDir = File(ctx.getExternalFilesDir(null), "fonts")
+            if (extDir.exists()) {
+                extDir.listFiles { file -> file.extension == "ttf" || file.extension == "otf" }
+                    ?.map { it.nameWithoutExtension }
+                    ?.toSet() ?: emptySet()
+            } else emptySet()
+        }
+
+        val filteredLocal = availableFonts.filter {
+            it.contains(
+                extensionSearchQuery,
+                ignoreCase = true
+            )
+        }
+        val filteredRemote = remoteFonts.filter { (name, category) ->
+            (selectedCategory == "ALL" || category == selectedCategory) &&
+                    name.contains(extensionSearchQuery, ignoreCase = true) &&
+                    !installedFontsSnapshot.contains(name)
+        }
 
 //                LaunchedEffect(isExtensionInstalled, refreshTrigger) {
 //
@@ -637,81 +638,78 @@ fun FontTab(onBack: () -> Unit) {
 //                    }
 //                }
 
-                Column {
-                    if (filteredLocal.isNotEmpty()) {
-                        Text(
-                            stringResource(R.string.font_installed_fonts),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-                        )
-                        filteredLocal.forEach { font ->
-                            val isDeletable = font !in listOf(
-                                "Default",
-                                "Serif",
-                                "SansSerif",
-                                "Monospace",
-                                "Cursive"
-                            )
-                            FontRow(
-                                font = font,
-                                isSelected = if (isDeleteMode) selectedFontsToDelete.contains(
+        Column {
+            if (filteredLocal.isNotEmpty()) {
+                Text(
+                    stringResource(R.string.font_installed_fonts),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                )
+                filteredLocal.forEach { font ->
+                    val isDeletable = font !in listOf(
+                        "Default",
+                        "Serif",
+                        "SansSerif",
+                        "Monospace",
+                        "Cursive"
+                    )
+                    FontRow(
+                        font = font,
+                        isSelected = if (isDeleteMode) selectedFontsToDelete.contains(
+                            font
+                        ) else globalFontName == font,
+                        isInstalled = true,
+                        showCheckbox = isDeleteMode && isDeletable
+                    ) {
+                        if (isDeleteMode) {
+                            if (isDeletable) {
+                                if (selectedFontsToDelete.contains(font)) selectedFontsToDelete.remove(
                                     font
-                                ) else globalFontName == font,
-                                isInstalled = true,
-                                showCheckbox = isDeleteMode && isDeletable
-                            ) {
-                                if (isDeleteMode) {
-                                    if (isDeletable) {
-                                        if (selectedFontsToDelete.contains(font)) selectedFontsToDelete.remove(
-                                            font
-                                        )
-                                        else selectedFontsToDelete.add(font)
-                                    }
-                                } else {
-                                    scope.launch { UiSettingsStore.globalFont.set(ctx, font) }
-                                }
+                                )
+                                else selectedFontsToDelete.add(font)
                             }
-                        }
-                    }
-
-                    if (filteredRemote.isNotEmpty()) {
-                        HorizontalDivider(
-                            modifier = Modifier.padding(
-                                vertical = 8.dp,
-                                horizontal = 16.dp
-                            ), thickness = 0.5.dp
-                        )
-                        Text(
-                            stringResource(
-                                R.string.font_available_in_extension,
-                                filteredRemote.size
-                            ),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-                        )
-                        filteredRemote.forEach { (name, _) ->
-                            FontRow(
-                                font = name,
-                                isSelected = globalFontName == name,
-                                isInstalled = false
-                            ) {
-                                val i =
-                                    Intent("org.elnix.dragonlauncher.ACTION_GET_FONTS").apply {
-                                        putExtra("FONT_NAME", name)
-                                        setPackage(Constants.Extensions.FONT_EXTENSION_PKG)
-                                    }
-                                ctx.startService(i)
-                                ctx.showToast("Downloading $name...")
-                            }
+                        } else {
+                            scope.launch { UiSettingsStore.globalFont.set(ctx, font) }
                         }
                     }
                 }
             }
-        }
-    )
 
+            if (filteredRemote.isNotEmpty()) {
+                HorizontalDivider(
+                    modifier = Modifier.padding(
+                        vertical = 8.dp,
+                        horizontal = 16.dp
+                    ), thickness = 0.5.dp
+                )
+                Text(
+                    stringResource(
+                        R.string.font_available_in_extension,
+                        filteredRemote.size
+                    ),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                )
+                filteredRemote.forEach { (name, _) ->
+                    FontRow(
+                        font = name,
+                        isSelected = globalFontName == name,
+                        isInstalled = false
+                    ) {
+                        val i =
+                            Intent("org.elnix.dragonlauncher.ACTION_GET_FONTS").apply {
+                                putExtra("FONT_NAME", name)
+                                setPackage(Constants.Extensions.FONT_EXTENSION_PKG)
+                            }
+                        ctx.startService(i)
+                        ctx.showToast("Downloading $name...")
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -785,8 +783,6 @@ fun FontRow(
         }
     }
 }
-
-
 
 
 private suspend fun queryWithRetry(ctx: Context, uri: Uri, retries: Int = 3): Cursor? {

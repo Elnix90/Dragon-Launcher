@@ -11,8 +11,8 @@ import android.util.SparseArray
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.LAUNCHER_WIDGET_HOLDER_TAG
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.WIDGET_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.LAUNCHER_WIDGET_HOLDER_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.WIDGET_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import java.lang.ref.WeakReference

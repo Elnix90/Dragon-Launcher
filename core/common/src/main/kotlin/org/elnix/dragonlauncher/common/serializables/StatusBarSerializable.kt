@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.STATUS_BAR_TAG
-import org.elnix.dragonlauncher.common.utils.isBlankJson
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.STATUS_BAR_TAG
+import org.elnix.dragonlauncher.common.messyfolder.isBlankJson
 
 @Serializable
 sealed class StatusBarSerializable {

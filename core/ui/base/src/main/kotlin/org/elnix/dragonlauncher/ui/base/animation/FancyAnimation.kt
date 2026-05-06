@@ -1,0 +1,97 @@
+package org.elnix.dragonlauncher.ui.base.animation
+
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.tween
+import androidx.compose.material3.MaterialShapes
+import androidx.compose.material3.toPath
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Matrix
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.graphics.shapes.Morph
+
+data class FancyAnimation(
+    val rotation: Float,
+    val outerRotation: Float,
+    val scale: Float,
+    val shape: Shape
+)
+
+@Composable
+fun rememberFancyAnimations(isPressed: Boolean): FancyAnimation {
+
+    val morph = remember {
+        Morph(
+            MaterialShapes.Cookie9Sided,
+            MaterialShapes.Cookie7Sided
+        )
+    }
+
+    val outerRotation by animateFloatAsState(
+        targetValue = if (isPressed) 360f else 0f,
+        label = "infinite rotation",
+        animationSpec = if (isPressed) {
+            infiniteRepeatable(
+                animation = tween(10000, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
+            )
+        } else {
+            tween(300)
+        }
+    )
+
+    val animatedScale by animateFloatAsState(
+        targetValue = if (isPressed) 0.8f else 1f,
+        label = "scale",
+        animationSpec = bouncySpec()
+    )
+
+    val animatedRotation by animateFloatAsState(
+        targetValue = if (isPressed) 180f else 0f,
+        label = "rotation",
+        animationSpec = bouncySpec()
+    )
+
+    val animatedProgress by animateFloatAsState(
+        targetValue = if (isPressed) 1f else 0f,
+        label = "progress",
+        animationSpec = bouncySpec()
+    )
+
+    val shape = remember(morph, animatedProgress) {
+        MorphPolygonShape(morph, animatedProgress)
+    }
+
+    return FancyAnimation(
+        rotation = animatedRotation,
+        outerRotation = outerRotation,
+        scale = animatedScale,
+        shape = shape
+    )
+}
+
+class MorphPolygonShape(
+    private val morph: Morph,
+    private val percentage: Float
+) : Shape {
+
+    private val matrix = Matrix()
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density
+    ): Outline {
+        matrix.scale(size.width, size.height)
+        val path = morph.toPath(progress = percentage)
+        path.transform(matrix)
+        return Outline.Generic(path)
+    }
+}

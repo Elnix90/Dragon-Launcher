@@ -11,8 +11,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import com.google.gson.reflect.TypeToken
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.SWIPE_TAG
-import org.elnix.dragonlauncher.common.navigaton.SETTINGS
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SWIPE_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logW
 import java.lang.reflect.Type
@@ -84,10 +83,10 @@ private class SwipeActionAdapter : JsonSerializer<SwipeActionSerializable>, Json
                 }
             }
 
-            is SwipeActionSerializable.OpenDragonLauncherSettings -> {
-                obj.addProperty("type", "OpenDragonLauncherSettings")
-                obj.addProperty("route", src.route)
-            }
+//            is SwipeActionSerializable.OpenDragonLauncherSettings -> {
+//                obj.addProperty("type", "OpenDragonLauncherSettings")
+//                obj.addProperty("route", src.route)
+//            }
 
             is SwipeActionSerializable.Lock -> {
                 obj.addProperty("type", "Lock")
@@ -138,9 +137,9 @@ private class SwipeActionAdapter : JsonSerializer<SwipeActionSerializable>, Json
                     obj.get("workspaceId")?.asString
                 )
 
-                "OpenDragonLauncherSettings" -> SwipeActionSerializable.OpenDragonLauncherSettings(
-                    obj.get("route")?.asString ?: SETTINGS.ROOT
-                )
+//                "OpenDragonLauncherSettings" -> SwipeActionSerializable.OpenDragonLauncherSettings(
+//                    obj.get("route")?.asString ?: SETTINGS.ROOT
+//                )
 
                 "Lock" -> SwipeActionSerializable.Lock
                 "ReloadApps" -> SwipeActionSerializable.ReloadApps

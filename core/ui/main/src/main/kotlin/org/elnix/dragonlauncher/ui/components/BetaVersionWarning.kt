@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -84,7 +83,7 @@ fun BetaVersionWarning(
                                 PrivateSettingsStore.hideBetaVersionWarning.set(ctx, true)
                             }
                         },
-                        imageVector = Icons.Default.Close,
+                        icon = R.drawable.close,
                         contentDescription = stringResource(R.string.close),
                         colors = AppObjectsColors.cancelIconButtonColors()
                     )

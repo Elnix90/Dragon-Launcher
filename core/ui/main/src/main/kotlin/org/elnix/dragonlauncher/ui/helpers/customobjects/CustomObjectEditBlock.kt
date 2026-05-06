@@ -194,11 +194,12 @@ fun EditCustomObjectBlock(
         }
     }
 
-    ShapePickerDialog(
-        expanded = { showSelectedShapePickerDialog },
-        selected = editObject.shape ?: default.shape!!,
-        onDismiss = { showSelectedShapePickerDialog = false }
-    ) {
-        onEdit(editObject.copy(shape = it))
+    if (properties.allowShapeCustomization && showSelectedShapePickerDialog) {
+        ShapePickerDialog(
+            selected = editObject.shape ?: default.shape!!,
+            onDismiss = { showSelectedShapePickerDialog = false }
+        ) {
+            onEdit(editObject.copy(shape = it))
+        }
     }
 }

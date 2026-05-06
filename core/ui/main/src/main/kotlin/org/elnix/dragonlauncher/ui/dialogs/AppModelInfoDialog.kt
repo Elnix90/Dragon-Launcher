@@ -2,17 +2,20 @@ package org.elnix.dragonlauncher.ui.dialogs
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.AppModel
-import org.elnix.dragonlauncher.common.utils.copyToClipboard
+import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 
 @Composable
@@ -25,21 +28,15 @@ fun AppModelInfoDialog(
     AlertDialog(
         text = {
             Column {
-                Text(
-                    text = stringResource(R.string.app_info_name, app.name),
-                    modifier = Modifier.clickable { ctx.copyToClipboard(app.name) }
-                )
-                Text(
-                    text = stringResource(R.string.app_info_package_name, app.packageName),
-                    modifier = Modifier.clickable { ctx.copyToClipboard(app.packageName) }
-                )
-                Text(text = stringResource(R.string.app_info_is_enabled, app.isEnabled.toString()))
-                Text(text = stringResource(R.string.app_info_is_system, app.isSystem.toString()))
-                Text(text = stringResource(R.string.app_info_is_work_profile, app.isWorkProfile.toString()))
-                Text(text = stringResource(R.string.app_info_is_private_profile, app.isPrivateProfile.toString()))
-                Text(text = stringResource(R.string.app_info_is_launchable, app.isLaunchable.toString()))
-                Text(text = stringResource(R.string.app_info_user_id, app.userId.toString()))
-                Text(text = stringResource(R.string.app_info_cache_key, app.iconCacheKey.cacheKey))
+                Text(stringResource(R.string.app_info_name, app.name)) { ctx.copyToClipboard(app.name) }
+                Text(stringResource(R.string.app_info_package_name, app.packageName)) { ctx.copyToClipboard(app.packageName) }
+                Text(stringResource(R.string.app_info_is_enabled, app.isEnabled.toString()))
+                Text(stringResource(R.string.app_info_is_system, app.isSystem.toString()))
+                Text(stringResource(R.string.app_info_is_work_profile, app.isWorkProfile.toString()))
+                Text(stringResource(R.string.app_info_is_private_profile, app.isPrivateProfile.toString()))
+                Text(stringResource(R.string.app_info_is_launchable, app.isLaunchable.toString()))
+                Text(stringResource(R.string.app_info_user_id, app.userId.toString()))
+                Text(stringResource(R.string.app_info_cache_key, app.iconCacheKey.cacheKey)) { ctx.copyToClipboard(app.iconCacheKey.cacheKey) }
             }
         },
         dismissButton = {},
@@ -48,5 +45,19 @@ fun AppModelInfoDialog(
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 6.dp,
         shape = DragonShape
+    )
+}
+
+@Composable
+private fun Text(
+    text: String,
+    onClick: () -> Unit
+) {
+    Text(
+        text = text,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(4.dp))
+            .clickable(onClick = onClick)
     )
 }

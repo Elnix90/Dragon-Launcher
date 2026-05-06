@@ -42,6 +42,7 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.ui)
+    implementation(libs.androidx.navigation3.runtime)
 
     api(libs.gson)
     api(libs.androidx.activity)

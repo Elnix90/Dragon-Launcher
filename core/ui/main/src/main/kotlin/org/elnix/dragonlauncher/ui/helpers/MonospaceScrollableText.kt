@@ -4,7 +4,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -33,31 +33,38 @@ fun MonospaceScrollableText(
     val lazyListState = rememberLazyListState()
     val horizontalScrollState = rememberScrollState()
 
-    val color = MaterialTheme.colorScheme.primary
+    val thumbColor = MaterialTheme.colorScheme.primary
 
-    val scrollBar = remember(color) {
+    val scrollBar = remember(thumbColor) {
         ScrollbarSettings(
-//        enabled = true,
-//        side = ScrollbarLayoutSide.End,
             alwaysShowScrollbar = true,
-//        scrollbarPadding = TODO(),
-        thumbThickness = 10.dp,
-//        thumbShape = TODO(),
-//        thumbMinLength = TODO(),
-//        thumbMaxLength = TODO(),
-            thumbUnselectedColor = color.alphaMultiplier(0.5f),
-            thumbSelectedColor = color,
-            selectionMode = ScrollbarSelectionMode.Full,
-//        selectionActionable = TODO(),
-//        hideDelayMillis = TODO(),
-//        hideDisplacement = TODO(),
-//        hideEasingAnimation = TODO(),
-//        durationAnimationMillis = TODO()
+            thumbThickness = 10.dp,
+            thumbUnselectedColor = thumbColor.alphaMultiplier(0.5f),
+            thumbSelectedColor = thumbColor,
+            selectionMode = ScrollbarSelectionMode.Full
         )
     }
 
-    Box(modifier = modifier.fillMaxWidth()) {
 
+    fun lineColor(idx: Int): Color? {
+        if (idx !in lines.indices) return null
+
+        for (i in idx downTo 0) {
+            val line = lines[i]
+
+            if (
+                line.length > 27 &&
+                line.startsWith("[") &&
+                line[26] in "VDIWE"
+            ) {
+                return line[26].logLevel!!.logLevelColor
+            }
+        }
+        return null
+    }
+
+
+    Box(modifier = modifier.fillMaxWidth()) {
         SelectionContainer {
             LazyColumnScrollbar(
                 state = lazyListState,
@@ -69,11 +76,10 @@ fun MonospaceScrollableText(
                         .fillMaxWidth()
                         .horizontalScroll(horizontalScrollState)
                 ) {
-                    items(lines) { line ->
+                    itemsIndexed(lines) { idx, line ->
 
-                        val color = if (useDragonLogsColoration && line.length > 27 && line.startsWith("[")) {
-                            val logTag = line[26]
-                            logTag.logLevel.logLevelColor
+                        val color = if (useDragonLogsColoration) {
+                            lineColor(idx)
                         } else null
 
                         Text(

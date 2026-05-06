@@ -1,52 +1,240 @@
 package org.elnix.dragonlauncher.common.navigaton
 
+import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
+import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Backup
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Drawer
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.DrawerSettings
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Main
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Wallpaper
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Welcome
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Widgets
 
-// ──────────────────── SETTINGS ────────────────────
 
-object SETTINGS {
-    const val ROOT = "settings"
-    const val ADVANCED_ROOT = "settings/advanced"
-    const val APPEARANCE = "settings/advanced/appearance"
-    const val WALLPAPER = "settings/advanced/appearance/wallpaper"
-    const val ICON_PACK = "settings/advanced/appearance/icon_pack"
-    const val STATUS_BAR = "settings/advanced/appearance/status_bar"
-    const val THEME = "settings/advanced/appearance/theme"
-    const val FONTS = "settings/advanced/appearance/fonts"
-//    const val PERMISSIONS = "settings/advanced/permissions"
-    const val BEHAVIOR = "settings/advanced/behavior"
-    const val COLORS = "settings/advanced/appearance/colors"
-    const val DRAWER = "settings/advanced/drawer"
-    const val WORKSPACE = "settings/advanced/workspace"
-    const val BACKUP = "settings/advanced/backup"
-    const val WELLBEING = "settings/advanced/wellbeing"
-    const val DEBUG = "settings/advanced/debug"
-    const val LOGS = "settings/advanced/debug/logs"
-    const val SETTINGS_JSON = "settings/advanced/debug/settings_json"
-    const val LANGUAGE = "settings/advanced/language"
-    const val CHANGELOGS = "settings/advanced/changelogs"
-    const val EXTENSIONS = "settings/advanced/extensions"
-    const val ANGLE_LINE_EDIT = "settings/advanced/angleLineEdit"
-    const val HOLD_TO_ACTIVATE_ARC = "settings/advanced/hold_to_activate"
-    const val MAINS_SCREEN_LAYERS = "settings/advanced/main_screen_layers"
-    const val WIDGETS_FLOATING_APPS = "settings/advanced/widgets_floating_apps/{id}"
-    const val LOGS_VIEWER_SCREEN = "settings/advanced/debug/logs/viewer/{filename}"
+@Serializable
+sealed class NavigationRoute : NavKey {
 
+    /*  ─────────────  Main Routes  ─────────────  */
+    @Serializable
+    data object Main : NavigationRoute()
+
+    @Serializable
+    data object Drawer : NavigationRoute()
+
+    @Serializable
+    data object Welcome : NavigationRoute()
+
+
+    /*  ─────────────  Entry Settings  ─────────────  */
+
+    @Serializable
+    data object PointsSettings : NavigationRoute()
+
+    @Serializable
+    data object AdvancedSettings : NavigationRoute()
+
+
+    /*  ─────────────  Appearance Settings  ─────────────  */
+    @Serializable
+    data object Appearance : NavigationRoute()
+
+    @Serializable
+    data object Colors : NavigationRoute()
+
+    @Serializable
+    data object Wallpaper : NavigationRoute()
+
+    @Serializable
+    data class Widgets(
+        val nestId: Int = 0
+    ) : NavigationRoute()
+
+    @Serializable
+    data object IconPack : NavigationRoute()
+
+    @Serializable
+    data object StatusBar : NavigationRoute()
+
+    @Serializable
+    data object Fonts : NavigationRoute()
+
+    @Serializable
+    data object Theme : NavigationRoute()
+
+    @Serializable
+    data object AngleLineEdit : NavigationRoute()
+
+    @Serializable
+    data object HoldToActivateArc : NavigationRoute()
+
+    @Serializable
+    data object MainScreenLayers : NavigationRoute()
+
+
+    /*  ─────────────  Other Settings  ─────────────  */
+
+    @Serializable
+    data object Behavior : NavigationRoute()
+
+    @Serializable
+    data object DrawerSettings : NavigationRoute()
+
+    @Serializable
+    data object Workspace : NavigationRoute()
+
+    @Serializable
+    data object Permissions : NavigationRoute()
+
+    @Serializable
+    data object Backup : NavigationRoute()
+
+    @Serializable
+    data object Wellbeing : NavigationRoute()
+
+    @Serializable
+    data object Language : NavigationRoute()
+
+    @Serializable
+    data object Changelogs : NavigationRoute()
+
+    @Serializable
+    data object Extensions : NavigationRoute()
+
+    /*  ─────────────  Debug Settings  ─────────────  */
+
+    @Serializable
+    data object Debug : NavigationRoute()
+
+
+    @Serializable
+    data object Logs : NavigationRoute()
+
+    @Serializable
+    data class LogsViewer(
+        val filename: String
+    ) : NavigationRoute()
+
+
+    @Serializable
+    data object SettingsJson : NavigationRoute()
+
+
+    /*  ─────────────  Special Edit Screens  ─────────────  */
+
+    @Serializable
+    data class NestEdit(
+        val nestId: Int
+    ) : NavigationRoute()
+
+    @Serializable
+    data class WorkspaceDetail(
+        val workspaceId: String
+    ) : NavigationRoute()
+
+
+    @Serializable
+    data class PinUnlock(
+        val screenToGo: NavigationRoute
+    ) : NavigationRoute()
+
+
+    companion object {
+        val settingsRoutes: List<NavigationRoute> by lazy {
+            listOf(
+                PointsSettings,
+                AdvancedSettings,
+                Appearance,
+                Colors,
+                Wallpaper,
+                IconPack,
+                StatusBar,
+                Fonts,
+                Theme,
+                AngleLineEdit,
+                HoldToActivateArc,
+                MainScreenLayers,
+                Behavior,
+                DrawerSettings,
+                Workspace,
+                Permissions,
+                Backup,
+                Wellbeing,
+                Language,
+                Changelogs,
+                Extensions,
+                Debug,
+                Logs,
+                SettingsJson,
+                NestEdit(0),
+                WorkspaceDetail(""),
+            )
+        }
+
+    }
+
+    fun routeResId(route: NavigationRoute): Int {
+
+        return when (route) {
+            is Main -> R.string.points_settings
+            is Drawer -> R.string.app_drawer
+            is Welcome -> R.string.welcome_screen
+
+            is PointsSettings -> R.string.points_settings
+            is AdvancedSettings -> R.string.settings
+            is Appearance -> R.string.appearance
+            is Colors -> R.string.color_selector
+            is Wallpaper -> R.string.wallpaper
+            is Widgets -> R.string.widgets
+            is IconPack -> R.string.icon_pack
+            is StatusBar -> R.string.status_bar
+            is Fonts -> R.string.font_selector
+            is Theme -> R.string.theme_selector
+            is AngleLineEdit -> R.string.angle_line
+            is HoldToActivateArc -> R.string.hold_settings
+            is MainScreenLayers -> R.string.main_screen_layers
+
+            is Behavior -> R.string.behavior
+            is DrawerSettings -> R.string.app_drawer
+            is Workspace -> R.string.workspaces
+            is Permissions -> R.string.permissions
+            is Backup -> R.string.backup_restore
+            is Wellbeing -> R.string.wellbeing
+            is Language -> R.string.settings_language_title
+            is Changelogs -> R.string.changelogs
+            is Extensions -> R.string.extensions
+
+            is Debug -> R.string.debug
+            is Logs -> R.string.logs
+            is LogsViewer -> R.string.logs
+            is SettingsJson -> R.string.settings_json
+
+            is NestEdit -> R.string.widgets_floating_apps
+            is WorkspaceDetail -> R.string.workspaces
+            is PinUnlock -> R.string.unlock_settings
+        }
+    }
 }
 
-@Suppress("ClassName")
-object EDIT_SCREENS {
-    const val WORKSPACE_DETAIL = "settings/advanced/workspace/{id}"
-    const val NESTS_EDIT = "settings/nest/{id}"
-}
+/** List of routes that the routes killer ignores when the user leave the app for too long, usually files pickers */
+fun NavKey.isInIgnoredReturnScreen(): Boolean =
+    when (this) {
+        Welcome,
+        Backup,
+        Wallpaper,
+        is Widgets -> true
 
-object ROUTES {
-    const val MAIN = "main"
-    const val DRAWER = "drawer"
-    const val WELCOME = "welcome"
-}
+        else -> false
+    }
 
-val homeRoutes = listOf(
-    ROUTES.MAIN,
-    ROUTES.DRAWER,
-    ROUTES.WELCOME
-)
+/** Screen that are transparents for the main scaffold, in order to see the wallpaper behind */
+fun NavKey.isInTransparentScreen(): Boolean =
+    when (this) {
+        Main,
+        Drawer,
+        DrawerSettings,
+        Wallpaper,
+        is Widgets -> true
+
+        else -> false
+    }

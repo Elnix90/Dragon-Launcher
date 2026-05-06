@@ -6,7 +6,7 @@ import android.content.Intent
 import androidx.core.net.toUri
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.FONT_RECEIVER_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.FONT_RECEIVER_TAG
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream

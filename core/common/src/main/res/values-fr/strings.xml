@@ -84,7 +84,6 @@
     <string name="set_default_launcher">Définir comme lanceur par défaut</string>
     <string name="close">Fermer</string>
     <string name="dragging_distance_selection">Sélection de la distance de traînage</string>
-    <string name="swipe_points_selection">Sélection du point de balayage</string>
     <string name="circle">Distance de traînée circulaire</string>
     <string name="cancel_zone">Annuler la traînée de zone</string>
     <string name="android_settings">Paramètres Android</string>
@@ -615,8 +614,6 @@
     <string name="pull_down_wallpaper_dim_desc">Atténuez le papier peint lorsque le tiroir est baissé</string>
     <string name="pull_down_scale_in">Scale In à tirage vers le bas</string>
     <string name="pull_down_scale_in_desc">Écartez les icônes lorsque le tiroir est tiré vers le bas</string>
-    <string name="drawer_enter_exit_animations">Animations d’entrée/sortie dans le tiroir</string>
-    <string name="drawer_enter_exit_animations_desc">Affichez des animations lors de l’entrée ou de la sortie du tiroir si elles sont réglées sur faux, c’est instantané</string>
     <string name="action_settings">Paramètres d’action</string>
     <string name="drawer_settings">Réglages du tiroir</string>
     <string name="more">Plus</string>

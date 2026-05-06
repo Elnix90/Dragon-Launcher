@@ -4,15 +4,13 @@ package org.elnix.dragonlauncher.ui.settings.workspace
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -26,28 +24,29 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SAMSUNG_INTEGRATION_TAG
+import org.elnix.dragonlauncher.common.messyfolder.SamsungWorkspaceIntegration
+import org.elnix.dragonlauncher.common.messyfolder.showToast
+import org.elnix.dragonlauncher.common.serializables.Workspace
+import org.elnix.dragonlauncher.common.serializables.WorkspaceType
+import org.elnix.dragonlauncher.enumsui.toggle.WorkspaceAction
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.logging.logW
-import org.elnix.dragonlauncher.common.serializables.Workspace
-import org.elnix.dragonlauncher.common.serializables.WorkspaceType
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.SAMSUNG_INTEGRATION_TAG
-import org.elnix.dragonlauncher.common.utils.SamsungWorkspaceIntegration
-import org.elnix.dragonlauncher.common.utils.showToast
-import org.elnix.dragonlauncher.enumsui.WorkspaceAction
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
+import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.dialogs.CreateOrEditWorkspaceDialog
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -128,58 +127,61 @@ fun WorkspaceListScreen(
             helpText = stringResource(R.string.workspace_help),
             onReset = {
                 scope.launch { appsViewModel.resetWorkspacesAndOverrides() }
-            }
-        ) {
-            items(uiList, key = { it.id }) { ws ->
-                ReorderableItem(state = reorderState, key = ws.id) { isDragging ->
-                    WorkspaceRow(
-                        workspace = ws,
-                        isDragging = isDragging,
-                        showSamsungSettingsIcon = ws.type == WorkspaceType.PRIVATE && isSamsung && ws.enabled,
-                        onSamsungSettingsClick = {
-                            showSamsungSettingsDialog = true
-                        },
+            },
+            bottomContent = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 16.dp),
+                ) {
+                    Spacer()
+                    AnimatedFab(
                         onClick = {
-                            if (ws.type != WorkspaceType.PRIVATE) {
-                                onOpenWorkspace(ws.id)
-                            }
+                            nameBuffer = ""
+                            showCreateDialog = true
                         },
-                        onCheck = { scope.launch { appsViewModel.setWorkspaceEnabled(ws.id, it) } },
-                        onAction = { action ->
-                            when (action) {
-                                WorkspaceAction.Rename -> {
-                                    renameTarget = ws
-                                    nameBuffer = ws.name
-                                }
-                                WorkspaceAction.Delete -> {
-                                    if (ws.type != WorkspaceType.PRIVATE) {
-                                        showDeleteConfirm = ws
-                                    }
-                                }
-                            }
-                        },
-                        onDragEnd = {
-                            // Commit changes to ViewModel
-                            scope.launch { appsViewModel.setWorkspaceOrder(uiList) }
-                        }
+                        icon = R.drawable.add
                     )
                 }
-            }
-        }
-
-        FloatingActionButton(
-            onClick = {
-                nameBuffer = ""
-                showCreateDialog = true
             },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp),
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
-        ) {
-            Icon(Icons.Default.Add, null)
-        }
+            lazyContent = {
+                items(uiList, key = { it.id }) { ws ->
+                    ReorderableItem(state = reorderState, key = ws.id) { isDragging ->
+                        WorkspaceRow(
+                            workspace = ws,
+                            isDragging = isDragging,
+                            showSamsungSettingsIcon = ws.type == WorkspaceType.PRIVATE && isSamsung && ws.enabled,
+                            onSamsungSettingsClick = {
+                                showSamsungSettingsDialog = true
+                            },
+                            onClick = {
+                                if (ws.type != WorkspaceType.PRIVATE) {
+                                    onOpenWorkspace(ws.id)
+                                }
+                            },
+                            onCheck = { scope.launch { appsViewModel.setWorkspaceEnabled(ws.id, it) } },
+                            onAction = { action ->
+                                when (action) {
+                                    WorkspaceAction.Edit -> {
+                                        renameTarget = ws
+                                        nameBuffer = ws.name
+                                    }
+
+                                    WorkspaceAction.Delete -> {
+                                        if (ws.type != WorkspaceType.PRIVATE) {
+                                            showDeleteConfirm = ws
+                                        }
+                                    }
+                                }
+                            },
+                            onDragEnd = {
+                                scope.launch { appsViewModel.setWorkspaceOrder(uiList) }
+                            }
+                        )
+                    }
+                }
+            }
+        )
     }
 
     CreateOrEditWorkspaceDialog(

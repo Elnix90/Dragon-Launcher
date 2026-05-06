@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DragIndicator
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -28,9 +27,9 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.Workspace
 import org.elnix.dragonlauncher.common.serializables.WorkspaceType
-import org.elnix.dragonlauncher.enumsui.WorkspaceAction
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.enumsui.toggle.WorkspaceAction
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 
@@ -101,7 +100,7 @@ fun ReorderableCollectionItemScope.WorkspaceRow(
                     if (showSamsungSettingsIcon && onSamsungSettingsClick != null) {
                         DragonIconButton(
                             onClick = onSamsungSettingsClick,
-                            imageVector = Icons.Default.Settings,
+                            icon = R.drawable.settings,
                             contentDescription = stringResource(R.string.samsung_secure_folder_settings)
                         )
                     }
@@ -150,14 +149,11 @@ fun ReorderableCollectionItemScope.WorkspaceRow(
                     modifier = Modifier.padding(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    listOf(
-                        WorkspaceAction.Rename,
-                        WorkspaceAction.Delete
-                    ).forEach { action ->
+                    WorkspaceAction.entries.forEach { action ->
                         DragonIconButton(
-                            onClick = { onAction(action) }, imageVector = action.icon,
-                            contentDescription = action.label
-                        )
+                            icon = action.iconEnabled,
+                            contentDescription = action.resId
+                        ) { onAction(action) }
                     }
                 }
 

@@ -62,10 +62,10 @@ import org.elnix.dragonlauncher.common.serializables.StatusBarJson
 import org.elnix.dragonlauncher.common.serializables.StatusBarSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.serializables.allStatusBarSerializable
-import org.elnix.dragonlauncher.common.utils.Constants
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.STATUS_BAR_TAG
-import org.elnix.dragonlauncher.common.utils.isValidDateFormat
-import org.elnix.dragonlauncher.common.utils.isValidTimeFormat
+import org.elnix.dragonlauncher.common.messyfolder.Constants
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.STATUS_BAR_TAG
+import org.elnix.dragonlauncher.common.utils.DateUtils.isValidDateFormat
+import org.elnix.dragonlauncher.common.utils.DateUtils.isValidTimeFormat
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.settings.stores.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.StatusBarSettingsStore
@@ -658,7 +658,7 @@ fun EditStatusBar() {
                             onClick = {
                                 duplicateElement(element)
                             },
-                            imageVector = Icons.Default.ContentCopy,
+                            icon = R.drawable.copy,
                             contentDescription = stringResource(R.string.copy)
                         )
                     }

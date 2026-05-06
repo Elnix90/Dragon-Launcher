@@ -22,18 +22,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.base.ColorUtils.randomColor
 import org.elnix.dragonlauncher.base.ColorUtils.toHexWithAlpha
-import org.elnix.dragonlauncher.common.utils.copyToClipboard
-import org.elnix.dragonlauncher.enumsui.ColorPickerButtonAction
-import org.elnix.dragonlauncher.enumsui.ColorPickerButtonAction.COPY
-import org.elnix.dragonlauncher.enumsui.ColorPickerButtonAction.PASTE
-import org.elnix.dragonlauncher.enumsui.ColorPickerButtonAction.RANDOM
-import org.elnix.dragonlauncher.enumsui.ColorPickerButtonAction.RESET
-import org.elnix.dragonlauncher.enumsui.colorPickerButtonIcon
+import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction
+import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.COPY
+import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.PASTE
+import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.RANDOM
+import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.RESET
 import org.elnix.dragonlauncher.settings.stores.ColorModesSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
 
@@ -54,7 +54,7 @@ private fun ColorPickerButton(
 
     Box {
         Icon(
-            imageVector = colorPickerButtonIcon(button),
+            painter = painterResource(button.iconEnabled),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier
@@ -92,7 +92,7 @@ private fun ColorPickerButton(
             ) {
                 ColorPickerButtonAction.entries.forEach {
                     Icon(
-                        imageVector = colorPickerButtonIcon(it),
+                        painter = painterResource(button.iconEnabled),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier

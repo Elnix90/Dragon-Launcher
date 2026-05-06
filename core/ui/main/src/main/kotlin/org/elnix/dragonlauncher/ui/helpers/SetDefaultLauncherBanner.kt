@@ -34,11 +34,10 @@ fun SetDefaultLauncherBanner() {
         )
 
         DragonIconButton(
-            onClick = {
-                scope.launch { PrivateSettingsStore.showSetDefaultLauncherBanner.set(ctx, false) }
-            },
-            imageVector = Icons.Default.Close,
+            icon = R.drawable.close,
             contentDescription = stringResource(R.string.close)
-        )
+        ) {
+            scope.launch { PrivateSettingsStore.showSetDefaultLauncherBanner.set(ctx, false) }
+        }
     }
 }

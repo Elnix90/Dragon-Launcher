@@ -6,9 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Replay
-import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -20,9 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.base.ColorUtils.randomColor
+import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 
@@ -72,7 +69,7 @@ fun SliderColorPicker(
                 onClick = { popLastColor() },
                 modifier = Modifier.weight(1f),
                 enabled = { canPopLastColor },
-                imageVector = Icons.Default.Replay,
+                icon = R.drawable.undo,
                 contentDescription = stringResource(R.string.undo),
             )
 
@@ -86,13 +83,13 @@ fun SliderColorPicker(
                     onColorSelected(color)
                 },
                 modifier = Modifier.weight(1f),
-                imageVector =  Icons.Default.Shuffle,
+                icon = R.drawable.shuffle,
                 contentDescription = "Random Color",
             )
         }
 
         SliderWithLabel(
-            label = "Red :",
+            label = stringResource(R.string.red),
             value = red,
             color = Color.Red,
             backgroundColor = Color.Red.alphaMultiplier(0.5f),
@@ -103,9 +100,10 @@ fun SliderColorPicker(
             onColorSelected(color)
         }
         SliderWithLabel(
-            label = "Green :",
+            label = stringResource(R.string.green),
             value = green,
-            color = Color.Green.alphaMultiplier(0.5f),
+            color = Color.Green,
+            backgroundColor = Color.Green.alphaMultiplier(0.5f),
             valueRange = 0f..1f
         ) {
             green = it
@@ -113,7 +111,7 @@ fun SliderColorPicker(
             onColorSelected(color)
         }
         SliderWithLabel(
-            label = "Blue :",
+            label = stringResource(R.string.blue),
             value = blue,
             color = Color.Blue,
             backgroundColor = Color.Blue.alphaMultiplier(0.5f),

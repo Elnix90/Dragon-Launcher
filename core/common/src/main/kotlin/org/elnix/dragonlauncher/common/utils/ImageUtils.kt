@@ -37,14 +37,18 @@ import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
 import androidx.core.graphics.withSave
 import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ICONS_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.IMAGE_TAG
+import org.elnix.dragonlauncher.common.messyfolder.IconsCache
+import org.elnix.dragonlauncher.common.messyfolder.PackageManagerCompat
+import org.elnix.dragonlauncher.common.messyfolder.loadShortcutIcon
+import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.common.serializables.CacheKey
 import org.elnix.dragonlauncher.common.serializables.CustomIconSerializable
 import org.elnix.dragonlauncher.common.serializables.IconShape
 import org.elnix.dragonlauncher.common.serializables.IconType
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.serializables.toAppModel
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.ICONS_TAG
-import org.elnix.dragonlauncher.common.utils.Constants.Logging.IMAGE_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logW
@@ -312,7 +316,7 @@ object ImageUtils {
                     )
                 }
 
-                is SwipeActionSerializable.OpenUrl -> loadDrawableResAsBitmap(R.drawable.ic_action_web, width, height)
+                is SwipeActionSerializable.OpenUrl -> loadDrawableResAsBitmap(R.drawable.web, width, height)
 
                 SwipeActionSerializable.NotificationShade -> loadDrawableResAsBitmap(R.drawable.ic_action_notification, width, height)
 
@@ -331,7 +335,7 @@ object ImageUtils {
 
                 is SwipeActionSerializable.OpenCircleNest -> loadDrawableResAsBitmap(R.drawable.ic_action_target, width, height)
 
-                SwipeActionSerializable.GoParentNest -> loadDrawableResAsBitmap(R.drawable.ic_icon_go_parent_nest, width, height)
+                SwipeActionSerializable.GoParentNest -> loadDrawableResAsBitmap(R.drawable.fullscreen_exit, width, height)
 
                 is SwipeActionSerializable.OpenWidget -> loadDrawableResAsBitmap(R.drawable.ic_action_widgets, width, height)
 

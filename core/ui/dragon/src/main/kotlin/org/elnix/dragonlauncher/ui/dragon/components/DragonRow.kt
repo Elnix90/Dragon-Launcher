@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ui.dragon.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -16,12 +17,14 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
+import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 
 
 @Composable
 fun DragonRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    interactionSource: MutableInteractionSource = rememberInteractionSource(),
     enabled: Boolean = true,
     onLongClick: (() -> Unit)? = null,
     content: @Composable RowScope.() -> Unit
@@ -33,6 +36,7 @@ fun DragonRow(
             modifier = modifier
                 .shapedClickable(
                     enabled = enabled,
+                    interactionSource = interactionSource,
                     onLongClick = onLongClick,
                     onClick = onClick
                 )
