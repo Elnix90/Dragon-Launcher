@@ -54,23 +54,22 @@ jobs:
           } >> $GITHUB_ENV
 
       - name: Build Release APK
-        run: ./gradlew assembleRelease --parallel --no-daemon --no-build-cache -x lint
+        run: ./gradlew assembleRelease --parallel --no-daemon --no-build-cache
 
       - name: Rename APK
         run: |
           NAME="DragonLauncher-${{ env.VERSION }}.apk"
-          mv app/build/outputs/apk/stable/release/app-stable-release.apk "$NAME"
+          mv app/build/outputs/apk/release/app-release.apk "$NAME"
 
-          MAPPINGS="Mappings-${{ env.VERSION }}.txt"
-          
-          [ -f "app/build/outputs/mapping/stableRelease/mapping.txt" ] && cp app/build/outputs/mapping/stableRelease/mapping.txt "$MAPPINGS"
+          MAPPING="Mappings-${{ env.VERSION }}.txt"
+          mv app/build/outputs/mapping/release/mapping.txt "$MAPPING"
           
           echo "Release file: $NAME"
-          echo "Mappings file: $MAPPINGS"
+          echo "Mapping file: $MAPPING"
           
           {
             echo "APK=$NAME"
-            echo "MAPPINGS=$MAPPINGS"
+            echo "MAPPING=$MAPPING"
           } >> $GITHUB_ENV
 
       - name: Create GitHub Release
@@ -80,7 +79,7 @@ jobs:
           name: ${{ env.VERSION }}
           files: |
             ${{ env.APK }}
-            ${{ env.MAPPINGS }}
+            ${{ env.MAPPING }}
           body: |
             ${{ steps.changelog.outputs.changelog }}
 

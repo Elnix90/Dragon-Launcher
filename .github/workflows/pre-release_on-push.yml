@@ -76,17 +76,12 @@ jobs:
           RUN="${{ github.run_number }}"
           
           MIN="DragonLauncher-v${VER}-beta-${RUN}.apk"
-          MAPPINGS="Mappings-v${VER}-beta-${RUN}.txt"
 
           # Rename APKs
-          mv app/build/outputs/apk/beta/release/app-beta-release.apk "$MIN"
-
-          # Extract mappings
-          [ -f "app/build/outputs/mapping/betaRelease/mapping.txt" ] && cp app/build/outputs/mapping/betaRelease/mapping.txt "$MAPPINGS"
-
+          mv app/build/outputs/apk/debug/app_debug.apk "$MIN"
+          
           {
             echo "APK_MIN=$MIN"
-            echo "MAPPINGS=$MAPPINGS"
             echo "TAG_NAME=v${VER}-beta-${RUN}"
           } >> $GITHUB_ENV
 
@@ -103,6 +98,5 @@ jobs:
           prerelease: true
           files: |
             ${{ env.APK_MIN }}
-            ${{ env.MAPPINGS }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

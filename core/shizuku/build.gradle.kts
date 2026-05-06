@@ -10,8 +10,14 @@ kotlin {
 
 extensions.configure<LibraryExtension> {
     namespace = "org.elnix.dragonlauncher.shizuku"
+
     compileSdk {
         version = release(36)
+    }
+
+    defaultConfig {
+        minSdk = 26
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     compileOptions {
