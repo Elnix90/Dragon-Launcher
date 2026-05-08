@@ -86,6 +86,11 @@ extensions.configure<ApplicationExtension> {
         debug {
             isDebuggable = true
             isMinifyEnabled = false
+
+            // I use signing config because when I try to install the debug app, and that the release is installed, it won't work.
+            signingConfig = signingConfigs.getByName("release")
+
+
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-beta"
         }
