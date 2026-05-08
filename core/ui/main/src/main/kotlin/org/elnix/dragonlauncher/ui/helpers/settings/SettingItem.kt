@@ -28,7 +28,7 @@ fun SettingsItem(
     description: String? = null,
     enabled: Boolean = true,
     icon: Int? = null,
-    trailingIcon: Int? = R.drawable.open_in_new,
+    trailingIcon: Int? = null,
     onLongClick: (() -> Unit)? = null,
     onClick: () -> Unit
 ) {

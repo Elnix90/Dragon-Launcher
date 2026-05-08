@@ -164,6 +164,7 @@ fun AdvancedSettingsScreen(
         SettingsItem(
             title = stringResource(R.string.android_settings),
             icon = R.drawable.settings_alert,
+            trailingIcon = R.drawable.open_in_new
         ) {
             val packageName = ctx.packageName
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -277,6 +278,7 @@ fun AdvancedSettingsScreen(
         SettingsItem(
             title = stringResource(R.string.source_code),
             icon = R.drawable.code,
+            trailingIcon = R.drawable.open_in_new,
             onLongClick = { ctx.copyToClipboard(GITHUB_REPO_LINK) }
         ) { ctx.openUrl(GITHUB_REPO_LINK) }
 
@@ -284,6 +286,7 @@ fun AdvancedSettingsScreen(
             title = stringResource(R.string.check_for_update),
             description = stringResource(R.string.check_for_updates_github),
             icon = R.drawable.reset,
+            trailingIcon = R.drawable.open_in_new,
             onLongClick = { ctx.copyToClipboard(GITHUB_REPO_RELEASES_LINK) }
         ) {
             ctx.openUrl(GITHUB_REPO_RELEASES_LINK)
@@ -293,6 +296,7 @@ fun AdvancedSettingsScreen(
             title = stringResource(R.string.report_a_bug),
             description = stringResource(R.string.open_an_issue_on_github),
             icon = R.drawable.report,
+            trailingIcon = R.drawable.open_in_new,
             onLongClick = { ctx.copyToClipboard(GITHUB_REPO_ISSUES_LINK) }
         ) { ctx.openUrl(GITHUB_REPO_ISSUES_LINK) }
 
@@ -303,7 +307,6 @@ fun AdvancedSettingsScreen(
 
 
         // Contributors
-
         ContributorItem(
             name = "Elnix90",
             imageRes = R.drawable.elnix90,

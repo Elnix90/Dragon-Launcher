@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Launch
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,8 +22,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.openUrl
+import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 
 @Composable
@@ -79,7 +78,7 @@ fun ContributorItem(
 
 
         Icon(
-            imageVector = Icons.AutoMirrored.Filled.Launch,
+            painter = painterResource(R.drawable.open_in_new),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary.copy(0.8f)
         )
