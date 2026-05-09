@@ -97,11 +97,15 @@ import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
 import org.elnix.dragonlauncher.common.undoredo.UndoRedoManager
 import org.elnix.dragonlauncher.enumsui.toggle.AddRemoveCircleTools
+import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools
+import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.Center
+import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.ResetRotation
+import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.ResetZoom
+import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.ToggleMoveAround
 import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools
 import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.EnterNest
 import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.GoParentNest
 import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.NestManagement
-import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.ToggleMoveAround
 import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools
 import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.AutoSeparate
 import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.FreeMove
@@ -122,6 +126,7 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.HorizontalScrollIndicator
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.AppPreviewTitle
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
@@ -239,8 +244,7 @@ fun SettingsScreen(
     var showResetPointsAndNestsDialog by remember { mutableStateOf(false) }
 
 
-    val firstRowScrollState = rememberScrollState()
-    val secondRowScrollState = rememberScrollState()
+    val rowsScrollStates = List(3) { rememberScrollState() }
 
     /** ──────────────────── NESTS SYSTEM ────────────────────
      * - Collects the nests from the datastore, then initialize the base nest to 0 (always the default)
@@ -649,41 +653,15 @@ fun SettingsScreen(
         }
     }
 
-    var offset by remember { mutableStateOf(Offset.Zero) }
-    var zoom by remember { mutableFloatStateOf(1f) }
-    var angle by remember { mutableFloatStateOf(0f) }
-
-//    // Snap offset to Zero if released close to the threshold
-//    LaunchedEffect(offset, isTransformDragging) {
-//        if (!isTransformDragging && angle in -5f..5f) {
-//            angle = 0f
-//        }
-//    }
-//
-//    // Snap angle to 0f if released close to the threshold
-//    LaunchedEffect(angle, isTransformDragging) {
-//        if (!isTransformDragging && angle in -5f..5f) {
-//            angle = 0f
-//        }
-//    }
-//
-//    // Snap zoom to 1f if released close to the threshold
-//    LaunchedEffect(zoom, isTransformDragging) {
-//        if (!isTransformDragging && zoom in 0.95f..1.05f) {
-//            zoom = 1f
-//        }
-//    }
-
-    var tempClickOffset by remember { mutableStateOf<Offset?>(null) }
-//    var tempTransformedOffset by remember { mutableStateOf<Offset?>(null) }
-
-
+    val offset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
+    val zoom = remember { Animatable(1f) }
+    val angle = remember { Animatable(0f) }
 
     // Helper function to transform pointer coordinates back to original space
     fun Offset.transformPointerCoordinates(): Offset = undoTransformations(
-        angle = { angle },
-        zoom = { zoom },
-        offset = { offset }
+        angle = { angle.value },
+        zoom = { zoom.value },
+        offset = { offset.value }
     )
 
     var isDraggingAroundMode by remember { mutableStateOf(true) }
@@ -715,10 +693,11 @@ fun SettingsScreen(
             // Row with nest toolbar and toggle buttons toolbar
             Box {
                 Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .horizontalScroll(firstRowScrollState)
+                        .horizontalScroll(rowsScrollStates[0])
                 ) {
 
                     // Nests toolbar
@@ -738,7 +717,6 @@ fun SettingsScreen(
                                 NestManagement -> true
                                 GoParentNest -> canGoback
                                 EnterNest -> canGoNest
-                                ToggleMoveAround -> true
                             }
                         },
                         isChecked = {
@@ -746,7 +724,6 @@ fun SettingsScreen(
                                 NestManagement -> true
                                 GoParentNest -> canGoback
                                 EnterNest -> canGoNest
-                                ToggleMoveAround -> isDraggingAroundMode
                             }
                         }
                     ) { entry ->
@@ -767,13 +744,11 @@ fun SettingsScreen(
                                         selectedPoint = null
                                     }
                                 }
-
-                                ToggleMoveAround -> {
-                                    isDraggingAroundMode = !isDraggingAroundMode
-                                }
                             }
                         }
                     }
+
+                    Spacer(12.dp)
 
                     // The 3 points settings tools: Snap points / Auto separate / Lock to circle
                     MultiSelectConnectedButtonRow(
@@ -795,20 +770,18 @@ fun SettingsScreen(
                         }
                     }
                 }
-                HorizontalScrollIndicator(firstRowScrollState.canScrollForward)
+                HorizontalScrollIndicator(rowsScrollStates[0].canScrollForward)
             }
 
             // Undo/Redo and move bars
             Box {
                 Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .horizontalScroll(secondRowScrollState)
+                        .horizontalScroll(rowsScrollStates[1])
                 ) {
-
-
                     // The move left/right and text field entry, that animates on avery selected point
                     Row(
                         modifier = Modifier
@@ -966,8 +939,66 @@ fun SettingsScreen(
                         }
                     }
                 }
-                HorizontalScrollIndicator(secondRowScrollState.canScrollForward)
+                HorizontalScrollIndicator(rowsScrollStates[1].canScrollForward)
             }
+
+            Box {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rowsScrollStates[2])
+                ) {
+                    val canResetOffset = offset.value != Offset.Zero
+                    val canResetZoom = zoom.value != 1f
+                    val canResetRotation = angle.value != 0f
+
+                    MultiSelectConnectedButtonRow(
+                        entries = MoveAroundTools.entries,
+                        isEnabled = {
+                            when (it) {
+                                ToggleMoveAround -> true
+                                Center -> canResetOffset
+                                ResetZoom -> canResetZoom
+                                ResetRotation -> canResetRotation
+                            }
+                        },
+                        isChecked = {
+                            when (it) {
+                                ToggleMoveAround -> true
+                                Center -> canResetOffset
+                                ResetZoom -> canResetZoom
+                                ResetRotation -> canResetRotation
+                            }
+                        }
+                    ) { entry ->
+                        scope.launch {
+                            when (entry) {
+
+                                Center -> scope.launch {
+                                    offset.animateTo(Offset.Zero)
+                                }
+                                ResetZoom -> scope.launch {
+                                    zoom.animateTo(1f)
+                                }
+                                ResetRotation -> scope.launch   {
+                                    angle.animateTo(0f)
+                                }
+
+                                ToggleMoveAround -> {
+                                    isDraggingAroundMode = !isDraggingAroundMode
+                                    if (isDraggingAroundMode) {
+                                        selectedPoint = null
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                HorizontalScrollIndicator(rowsScrollStates[2].canScrollForward)
+            }
+
 
             // Last Buttons Row, containing the Add/Remove/Copy and the Add circle and Remove circle buttons
             Row(
@@ -1081,11 +1112,11 @@ fun SettingsScreen(
                     Modifier
                         .fillMaxSize()
                         .graphicsLayer {
-                            translationX = -offset.x * zoom
-                            translationY = -offset.y * zoom
-                            scaleX = zoom
-                            scaleY = zoom
-                            rotationZ = angle
+                            translationX = -offset.value.x * zoom.value
+                            translationY = -offset.value.y * zoom.value
+                            scaleX = zoom.value
+                            scaleY = zoom.value
+                            rotationZ = angle.value
                             transformOrigin = TransformOrigin(0f, 0f)
                         }
                         .drawWithCache {
@@ -1159,32 +1190,6 @@ fun SettingsScreen(
                 }
             }
 
-            // TODO REMOVE DEBUG FEATURE
-//            if (tempClickOffset!= null && tempTransformedOffset != null) {
-//                Canvas(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .background(Color.Yellow.alphaMultiplier(0.1f))
-//                ) {
-//                    glowOverlay(
-//                        center = tempClickOffset!!,
-//                        color = Color.Red,
-//                        radius = 150f
-//                    )
-//
-//                    glowOverlay(
-//                        center = tempTransformedOffset!!,
-//                        color = Color.Blue,
-//                        radius = 150f
-//                    )
-//                }
-//
-//                DragonColumnGroup {
-//                    Text("tempClickOffset: $tempClickOffset")
-//                    Text("tempTransformeOffset: $tempTransformedOffset")
-//                }
-//            }
-
             Box(
                 Modifier
                     .fillMaxSize()
@@ -1197,10 +1202,9 @@ fun SettingsScreen(
                         if (isDraggingAroundMode) {
                             detectTransformGestures(true) { centroid, pan, gestureZoom, gestureRotate ->
 
-//                                isTransformDragging = pan != Offset.Zero || gestureZoom != 1f || gestureRotate != 0f TODO
 
-                                val oldScale = zoom
-                                val newScale = zoom * gestureZoom
+                                val oldScale = zoom.value
+                                val newScale = zoom.value * gestureZoom
 
                                 // For natural zooming and rotating, the centroid of the gesture should
                                 // be the fixed point where zooming and rotating occurs.
@@ -1208,22 +1212,18 @@ fun SettingsScreen(
                                 // space), and then compute where it will be after this delta.
                                 // We then compute what the new offset should be to keep the centroid
                                 // visually stationary for rotating and zooming, and also apply the pan.
-                                offset =
-                                    (offset + centroid / oldScale).rotateBy(gestureRotate) -
-                                            (centroid / newScale + pan / oldScale)
-                                zoom = newScale
-                                angle += gestureRotate
-
-                                tempClickOffset = centroid
-//                                tempTransformedOffset = centroid.transformPointerCoordinates()
+                                scope.launch {
+                                    offset.snapTo(
+                                        (offset.value + centroid / oldScale).rotateBy(gestureRotate) -
+                                                (centroid / newScale + pan / oldScale))
+                                    zoom.snapTo(newScale)
+                                    angle.snapTo(angle.value + gestureRotate)
+                                }
                             }
                         } else {
                             detectDragGestures(
                                 onDragStart = { tapOffset ->
                                     val transformedOffset = tapOffset.transformPointerCoordinates()
-
-                                    tempClickOffset = tapOffset
-//                                    tempTransformedOffset = transformedOffset
 
                                     var closest: SwipePointSerializable? = null
                                     var best = Float.MAX_VALUE
@@ -1259,11 +1259,7 @@ fun SettingsScreen(
                                 },
                                 onDrag = { change, _ ->
                                     change.consume()
-
                                     val transformedPosition = change.position.transformPointerCoordinates()
-
-                                    tempClickOffset = change.position
-//                                    tempTransformedOffset = transformedPosition
 
                                     // Update the selected point offset in real time (the dragging thing)
                                     selectedPoint?.let { p ->
@@ -1321,8 +1317,6 @@ fun SettingsScreen(
 
                                 },
                                 onDragEnd = {
-                                    tempClickOffset = null
-//                                    tempTransformedOffset = null
                                     selectedPoint?.let { p ->
                                         val position = selectedPointTempOffset.value
 

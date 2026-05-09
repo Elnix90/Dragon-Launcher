@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
@@ -212,8 +211,7 @@ fun WidgetsTab(
     }
     BackHandler(onBack = handleBack)
 
-    val firstRowScrollState = rememberScrollState()
-    val secondRowScrollState = rememberScrollState()
+    val rowsScrollStates = List(2) { rememberScrollState() }
 
     var offset by remember { mutableStateOf(Offset.Zero) }
     var zoom by remember { mutableFloatStateOf(0.8f) }
@@ -244,10 +242,10 @@ fun WidgetsTab(
             Box {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .horizontalScroll(firstRowScrollState)
+                        .horizontalScroll(rowsScrollStates[0])
                 ) {
                     MultiSelectConnectedButtonRow(
                         entries = WidgetsToolsSnapping.entries,
@@ -301,17 +299,16 @@ fun WidgetsTab(
                         }
                     }
                 }
-                HorizontalScrollIndicator(firstRowScrollState.canScrollForward)
+                HorizontalScrollIndicator(rowsScrollStates[0].canScrollForward)
             }
 
             Box {
                 Row(
-                    Modifier
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .horizontalScroll(secondRowScrollState)
-                        .padding(20.dp),
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically
+                        .horizontalScroll(rowsScrollStates[1])
                 ) {
                     MultiSelectConnectedButtonRow(
                         entries = WidgetsToolsAddNestRemove.entries,
@@ -441,7 +438,7 @@ fun WidgetsTab(
                         }
                     }
                 }
-                HorizontalScrollIndicator(secondRowScrollState.canScrollForward)
+                HorizontalScrollIndicator(rowsScrollStates[1].canScrollForward)
             }
         }
     ) {
@@ -449,7 +446,6 @@ fun WidgetsTab(
         Box {
             /**
              * The widgets and the grid, displayed first, to keep access to the buttons
-             *
              * The pointerInput is used to disable any widgets on click outside
              */
             Box(
@@ -473,9 +469,6 @@ fun WidgetsTab(
                                         (centroid / newScale + pan / oldScale)
                             zoom = newScale
                             angle += gestureRotate
-                        }
-                        detectTapGestures {
-                            selected = null
                         }
                     }
                     .graphicsLayer {

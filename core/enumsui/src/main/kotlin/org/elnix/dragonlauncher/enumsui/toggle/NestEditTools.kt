@@ -11,5 +11,4 @@ enum class NestEditTools(
     NestManagement(R.string.edit_nests, R.drawable.edit_nest),
     GoParentNest(R.string.go_parent_nest, R.drawable.fullscreen_exit),
     EnterNest(R.string.open_nest_circle, R.drawable.fullscreen),
-    ToggleMoveAround(R.string.move_around_mode, R.drawable.pan_zoom, R.drawable.pan_tool)
 }
