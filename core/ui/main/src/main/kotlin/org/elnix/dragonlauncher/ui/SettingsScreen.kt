@@ -664,7 +664,7 @@ fun SettingsScreen(
         offset = { offset.value }
     )
 
-    var isDraggingAroundMode by remember { mutableStateOf(true) }
+    var isDraggingAroundMode by remember { mutableStateOf(false) }
 
     val localWindow = LocalWindowInfo.current
     val screenSize = localWindow.containerSize
