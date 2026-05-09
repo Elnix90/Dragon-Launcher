@@ -2,11 +2,9 @@ package org.elnix.dragonlauncher.common.messyfolder.circles
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.geometry.Offset
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SWIPE_TAG
 import org.elnix.dragonlauncher.common.messyfolder.UiCircle
 import org.elnix.dragonlauncher.common.serializables.CircleNest
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.logging.logD
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -185,7 +183,7 @@ fun resolveLiveNestHit(
     val angle360 = angle360FromOffset(center, pointerPos)
 
     /*  ─── Bounds check (Case C / F) ───  */
-    graceDistancePx.takeIf{ it > -1 }?.let {
+    graceDistancePx.takeIf { it > -1 }?.let {
         if (outerRadius > 0f && dist > outerRadius + graceDistancePx) {
             return HitResult(
                 targetCircle = -1,
@@ -235,18 +233,6 @@ fun uiCirclesFromScaledDragDistances(scaledDistances: Map<Int, Float>): List<UiC
         .filter { it.key != -1 }
         .map { (id, radius) -> UiCircle(id = id, radius = radius) }
 
-
-fun createCirclesFromDragDistances(
-    dragDistances: Map<Int, Int>,
-    circles: SnapshotStateList<UiCircle>,
-) {
-    circles.clear()
-
-    uiCirclesFromDragDistances(dragDistances).forEach {
-        circles.add(it)
-    }
-}
-
 fun createCirclesFromDragDistancesWithCustomIncrement(
     dragDistances: Map<Int, Int>,
     circles: SnapshotStateList<UiCircle>,
@@ -263,27 +249,45 @@ fun createCirclesFromDragDistancesWithCustomIncrement(
 }
 
 
+/**
+ * Reverses a rotation transformation by applying the inverse rotation matrix.
+ *
+ * When the canvas is rotated by angle θ, pointer coordinates are in the rotated space.
+ * This function rotates them back by -θ to return them to the original coordinate space.
+ *
+ * Uses the inverse rotation matrix:
+ * ```
+ * [cos(θ)   sin(θ)]
+ * [-sin(θ)  cos(θ)]
+ * ```
+ *
+ * @return The offset in the un-rotated coordinate space
+ */
 inline fun Offset.undoRotation(
     angle: () -> Float
 ): Offset {
-    val angleRad = Math.toRadians(angle().toDouble())
-    val cos = cos(angleRad).toFloat()
-    val sin = sin(angleRad).toFloat()
+    val angleRad = Math.toRadians(angle().toDouble()).toFloat()
+    val cos = cos(angleRad)
+    val sin = sin(angleRad)
 
-    logD(SWIPE_TAG) { "TRANSFORM:\nangleRad: $angleRad\ncosA: $cos | sinA: $sin"}
-
-//    val unrotatedX = this.x * cos + this.y * sin
-//    val unrotatedY = this.x * sin - this.y * cos
-
-    val unrotatedX = this.x * cos - this.y * sin
-    val unrotatedY = this.x * sin + this.y * cos
+    // AHAHAHAH FUCK IT, IT WORKS I SPEND TOO MUCH TIME ON THAT SHIT, THANKS MR ROUX
 
     return Offset(
-        unrotatedX,
-        unrotatedY
+        this.x * cos + this.y * sin,
+        -this.x * sin + this.y * cos
     )
 }
 
+/**
+ * Reverses a scale transformation by dividing by the zoom factor.
+ *
+ * When the canvas is scaled by zoom factor (e.g., 1.5x), pointer coordinates are proportionally
+ * larger. Dividing by zoom returns them to the original size.
+ *
+ * Example: If zoom = 2.0, a pointer at (200, 200) was originally at (100, 100).
+ *
+ * @return The offset in the un-scaled coordinate space
+ */
 inline fun Offset.undoScale(
     zoom: () -> Float
 ): Offset {
@@ -294,6 +298,19 @@ inline fun Offset.undoScale(
     )
 }
 
+
+/**
+ * Reverses a translation transformation by adding the offset.
+ *
+ * When the canvas is translated by offset vector, pointer coordinates are shifted by that amount.
+ * Adding the offset back returns them to the original position.
+ *
+ * Note: This adds (not subtracts) because the canvas translation works inversely:
+ * if you move the canvas left by 100px (-offset.x in graphicsLayer),
+ * a pointer at screen position X was actually at position X + offset.x in canvas space.
+ *
+ * @return The offset in the un-translated coordinate space
+ */
 inline fun Offset.undoTranslation(
     translation: () -> Offset
 ): Offset {
@@ -303,3 +320,15 @@ inline fun Offset.undoTranslation(
         this.y + translation.y
     )
 }
+
+/**
+ * Undo all three previous transformations at once
+ *
+ * Note: ORDER MATTERS!!
+ * If you put undo rotation first, it'll break the whole chain for some reason.
+ */
+inline fun Offset.undoTransformations(
+    angle: () -> Float,
+    zoom: () -> Float,
+    offset: () -> Offset
+): Offset = undoScale(zoom).undoTranslation(offset).undoRotation(angle)

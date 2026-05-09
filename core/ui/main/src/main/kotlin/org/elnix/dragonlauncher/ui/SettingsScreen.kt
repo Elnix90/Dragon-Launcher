@@ -73,7 +73,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants
@@ -91,9 +90,7 @@ import org.elnix.dragonlauncher.common.messyfolder.circles.randomFreeAngle
 import org.elnix.dragonlauncher.common.messyfolder.circles.rememberNestNavigation
 import org.elnix.dragonlauncher.common.messyfolder.circles.scaleDragDistances
 import org.elnix.dragonlauncher.common.messyfolder.circles.uiCirclesFromScaledDragDistances
-import org.elnix.dragonlauncher.common.messyfolder.circles.undoRotation
-import org.elnix.dragonlauncher.common.messyfolder.circles.undoScale
-import org.elnix.dragonlauncher.common.messyfolder.circles.undoTranslation
+import org.elnix.dragonlauncher.common.messyfolder.circles.undoTransformations
 import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.serializables.CircleNest
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
@@ -678,19 +675,16 @@ fun SettingsScreen(
 //    }
 
     var tempClickOffset by remember { mutableStateOf<Offset?>(null) }
-    var tempTransformedOffset by remember { mutableStateOf<Offset?>(null) }
+//    var tempTransformedOffset by remember { mutableStateOf<Offset?>(null) }
 
 
 
     // Helper function to transform pointer coordinates back to original space
-    fun Offset.transformPointerCoordinates(): Offset {
-
-        val unZoomed = this.undoScale { zoom }
-        val unTranslated = unZoomed.undoTranslation { offset }
-        val unRotated = unTranslated.undoRotation { angle }
-
-        return unRotated
-    }
+    fun Offset.transformPointerCoordinates(): Offset = undoTransformations(
+        angle = { angle },
+        zoom = { zoom },
+        offset = { offset }
+    )
 
     var isDraggingAroundMode by remember { mutableStateOf(true) }
 
@@ -1166,30 +1160,30 @@ fun SettingsScreen(
             }
 
             // TODO REMOVE DEBUG FEATURE
-            if (tempClickOffset!= null && tempTransformedOffset != null) {
-                Canvas(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Yellow.alphaMultiplier(0.1f))
-                ) {
-                    glowOverlay(
-                        center = tempClickOffset!!,
-                        color = Color.Red,
-                        radius = 150f
-                    )
-
-                    glowOverlay(
-                        center = tempTransformedOffset!!,
-                        color = Color.Blue,
-                        radius = 150f
-                    )
-                }
-
-                DragonColumnGroup {
-                    Text("tempClickOffset: $tempClickOffset")
-                    Text("tempTransformeOffset: $tempTransformedOffset")
-                }
-            }
+//            if (tempClickOffset!= null && tempTransformedOffset != null) {
+//                Canvas(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .background(Color.Yellow.alphaMultiplier(0.1f))
+//                ) {
+//                    glowOverlay(
+//                        center = tempClickOffset!!,
+//                        color = Color.Red,
+//                        radius = 150f
+//                    )
+//
+//                    glowOverlay(
+//                        center = tempTransformedOffset!!,
+//                        color = Color.Blue,
+//                        radius = 150f
+//                    )
+//                }
+//
+//                DragonColumnGroup {
+//                    Text("tempClickOffset: $tempClickOffset")
+//                    Text("tempTransformeOffset: $tempTransformedOffset")
+//                }
+//            }
 
             Box(
                 Modifier
@@ -1221,99 +1215,29 @@ fun SettingsScreen(
                                 angle += gestureRotate
 
                                 tempClickOffset = centroid
-                                tempTransformedOffset = centroid.transformPointerCoordinates()
+//                                tempTransformedOffset = centroid.transformPointerCoordinates()
                             }
                         } else {
-                        detectDragGestures(
-                            onDragStart = { tapOffset ->
-                                val transformedOffset = tapOffset.transformPointerCoordinates()
+                            detectDragGestures(
+                                onDragStart = { tapOffset ->
+                                    val transformedOffset = tapOffset.transformPointerCoordinates()
 
-                                tempClickOffset = tapOffset
-                                tempTransformedOffset = transformedOffset
+                                    tempClickOffset = tapOffset
+//                                    tempTransformedOffset = transformedOffset
 
-                                var closest: SwipePointSerializable? = null
-                                var best = Float.MAX_VALUE
+                                    var closest: SwipePointSerializable? = null
+                                    var best = Float.MAX_VALUE
 
-                                // Can only select points on the same nest
-                                filteredPoints.forEach { p ->
-                                    val pointOffset = computePointPosition(
-                                        point = p,
-                                        circles = circles,
-                                        center = center
-                                    )
-                                    val dist = hypot(
-                                        transformedOffset.x - pointOffset.x,
-                                        transformedOffset.y - pointOffset.y
-                                    )
-
-                                    if (dist < best) {
-                                        best = dist
-                                        closest = p
-                                    }
-                                }
-
-                                selectedPoint =
-                                    if (best <= TOUCH_THRESHOLD_PX) closest else null
-
-                                selectedPoint?.let {
-                                    lastSelectedCircle = it.circleNumber
-                                    isDragging = true
-                                    scope.launch {
-                                        selectedPointTempOffset.snapTo(transformedOffset)
-                                    }
-                                }
-                            },
-                            onDrag = { change, _ ->
-                                change.consume()
-
-                                val transformedPosition = change.position.transformPointerCoordinates()
-
-                                tempClickOffset = change.position
-                                tempTransformedOffset = transformedPosition
-
-                                // Update the selected point offset in real time (the dragging thing)
-                                selectedPoint?.let { p ->
-
-                                    val newPosition: Offset = if (freeMoveDraggedPoint) {
-                                        transformedPosition
-                                    } else {
-                                        val newPointValues = computePointMoved(
-                                            point = p,
-                                            circles = circles,
-                                            pos = transformedPosition
-                                        )
-
-                                        computePointPosition(
-                                            point = p.copy(
-                                                angleDeg = newPointValues?.first ?: p.angleDeg,
-                                                circleNumber = newPointValues?.second ?: p.circleNumber
-                                            ),
-                                            circles = circles,
-                                            center = center
-                                        )
-                                    }
-
-                                    scope.launch {
-                                        selectedPointTempOffset.snapTo(newPosition)
-                                    }
-                                }
-
-
-                                var closest: SwipePointSerializable? = null
-                                var best = Float.MAX_VALUE
-
-                                // Can only see points on the same nest
-                                filteredPoints.filter { it.id != selectedPoint?.id }
-                                    .forEach { p ->
-
+                                    // Can only select points on the same nest
+                                    filteredPoints.forEach { p ->
                                         val pointOffset = computePointPosition(
                                             point = p,
                                             circles = circles,
                                             center = center
                                         )
                                         val dist = hypot(
-                                            transformedPosition.x - pointOffset.x,
-                                            transformedPosition.y - pointOffset.y
+                                            transformedOffset.x - pointOffset.x,
+                                            transformedOffset.y - pointOffset.y
                                         )
 
                                         if (dist < best) {
@@ -1322,139 +1246,209 @@ fun SettingsScreen(
                                         }
                                     }
 
-                                closestHoveredPoint =
-                                    if (best <= TOUCH_THRESHOLD_PX) closest else null
+                                    selectedPoint =
+                                        if (best <= TOUCH_THRESHOLD_PX) closest else null
 
-                            },
-                            onDragEnd = {
-                                tempClickOffset = null
-                                tempTransformedOffset = null
-                                selectedPoint?.let { p ->
-                                    val position = selectedPointTempOffset.value
-
-
-                                    // 1) On finger release; if the user has hovered another point for long enough, (the glow overlay)
-                                    //    do the computation to merge the 2 points
-                                    if (ableToLaunchHoverAction && closestHoveredPoint != null) {
-
-                                        // The hovered point
-                                        val closest = closestHoveredPoint!!
-
-                                        if (closest.action is SwipeActionSerializable.OpenCircleNest) {
-                                            // Put the hovered point in the hovered nest
-
-                                            val targetNestId =
-                                                (closest.action as SwipeActionSerializable.OpenCircleNest).nestId
-
-                                            // Adjust the merged nest circle size if the point belongs to higher circles and the nest has less
-                                            nests.find { it.id == targetNestId }
-                                                ?.let { targetNest ->
-
-                                                    // I remove 1 because the dragDistances counts the cancel zone
-                                                    val targetNestCircleNumbers =
-                                                        targetNest.dragDistances.size - 1
-
-                                                    // Add 1 because the circle number starts at 0
-                                                    val selectedPointCircleNumber =
-                                                        p.circleNumber + 1
-
-                                                    if (selectedPointCircleNumber > targetNestCircleNumbers) {
-                                                        repeat(selectedPointCircleNumber - targetNestCircleNumbers) {
-                                                            logD(NESTS_TAG) {
-                                                                "Adding a circle to nest n°$targetNestId "
-                                                            }
-                                                            addCircle(targetNestId)
-                                                        }
-                                                    }
-                                                }
-
-                                            applyChange {
-                                                p.nestId = targetNestId
-                                            }
-
-                                        } else {
-                                            // Create new nest and put both points in it at 90° and 270° (left and right)
-                                            // Tee new nest has only one circle and a Go parent nest in the top, for easier access
-                                            applyChange {
-                                                val newNestId = addNewNest(1)
-
-                                                val newNestPoint = SwipePointSerializable(
-                                                    circleNumber = closest.circleNumber,
-                                                    angleDeg = closest.angleDeg,
-                                                    nestId = closest.nestId,
-                                                    action = SwipeActionSerializable.OpenCircleNest(
-                                                        newNestId
-                                                    ),
-                                                    id = UUID.randomUUID().toString()
-                                                )
-
-                                                // Creates a new go parent nest that'll be put on top of the nest, to easily exit this nest
-                                                val newGoParentNestPoint =
-                                                    SwipePointSerializable(
-                                                        circleNumber = 0,
-                                                        angleDeg = 0.0,
-                                                        nestId = newNestId,
-                                                        action = SwipeActionSerializable.GoParentNest,
-                                                        id = UUID.randomUUID().toString(),
-                                                        liveNestTargetNestId = if (createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) newNestId else null
-                                                    )
-
-                                                points.add(newGoParentNestPoint)
-
-                                                appsViewModel.reloadPointIcon(
-                                                    newGoParentNestPoint
-                                                )
-
-                                                points.add(newNestPoint)
-
-
-                                                // Move the 2 points to the new nest and change their position
-                                                p.nestId = newNestId
-                                                p.circleNumber = 0
-                                                p.angleDeg = 270.0
-
-
-                                                closest.nestId = newNestId
-                                                closest.circleNumber = 0
-                                                closest.angleDeg = 90.0
-                                            }
+                                    selectedPoint?.let {
+                                        lastSelectedCircle = it.circleNumber
+                                        isDragging = true
+                                        scope.launch {
+                                            selectedPointTempOffset.snapTo(transformedOffset)
                                         }
-                                    } else {
-                                        // 2) No merging, just normal dragging and dropping
+                                    }
+                                },
+                                onDrag = { change, _ ->
+                                    change.consume()
 
-                                        updatePointPosition(
-                                            point = p,
-                                            circles = circles,
-                                            pos = position
-                                        )
+                                    val transformedPosition = change.position.transformPointerCoordinates()
 
-                                        if (autoSeparatePoints) autoSeparate(
-                                            points,
-                                            nestId,
-                                            circles.find { it.id == p.circleNumber },
-                                            p
-                                        )
+                                    tempClickOffset = change.position
+//                                    tempTransformedOffset = transformedPosition
 
+                                    // Update the selected point offset in real time (the dragging thing)
+                                    selectedPoint?.let { p ->
 
-                                        // Compute final snapped position
-                                        val finalOffset = computePointPosition(
-                                            p,
-                                            circles,
-                                            center
-                                        )
+                                        val newPosition: Offset = if (freeMoveDraggedPoint) {
+                                            transformedPosition
+                                        } else {
+                                            val newPointValues = computePointMoved(
+                                                point = p,
+                                                circles = circles,
+                                                pos = transformedPosition
+                                            )
 
-                                        if (freeMoveDraggedPoint) {
-                                            animateHomingTempOffset(finalOffset)
+                                            computePointPosition(
+                                                point = p.copy(
+                                                    angleDeg = newPointValues?.first ?: p.angleDeg,
+                                                    circleNumber = newPointValues?.second ?: p.circleNumber
+                                                ),
+                                                circles = circles,
+                                                center = center
+                                            )
+                                        }
+
+                                        scope.launch {
+                                            selectedPointTempOffset.snapTo(newPosition)
                                         }
                                     }
 
-                                    // Clear dragging state and other points residues
-                                    isDragging = false
-                                    closestHoveredPoint = null
-                                    ableToLaunchHoverAction = false
+
+                                    var closest: SwipePointSerializable? = null
+                                    var best = Float.MAX_VALUE
+
+                                    // Can only see points on the same nest
+                                    filteredPoints.filter { it.id != selectedPoint?.id }
+                                        .forEach { p ->
+
+                                            val pointOffset = computePointPosition(
+                                                point = p,
+                                                circles = circles,
+                                                center = center
+                                            )
+                                            val dist = hypot(
+                                                transformedPosition.x - pointOffset.x,
+                                                transformedPosition.y - pointOffset.y
+                                            )
+
+                                            if (dist < best) {
+                                                best = dist
+                                                closest = p
+                                            }
+                                        }
+
+                                    closestHoveredPoint =
+                                        if (best <= TOUCH_THRESHOLD_PX) closest else null
+
+                                },
+                                onDragEnd = {
+                                    tempClickOffset = null
+//                                    tempTransformedOffset = null
+                                    selectedPoint?.let { p ->
+                                        val position = selectedPointTempOffset.value
+
+
+                                        // 1) On finger release; if the user has hovered another point for long enough, (the glow overlay)
+                                        //    do the computation to merge the 2 points
+                                        if (ableToLaunchHoverAction && closestHoveredPoint != null) {
+
+                                            // The hovered point
+                                            val closest = closestHoveredPoint!!
+
+                                            if (closest.action is SwipeActionSerializable.OpenCircleNest) {
+                                                // Put the hovered point in the hovered nest
+
+                                                val targetNestId =
+                                                    (closest.action as SwipeActionSerializable.OpenCircleNest).nestId
+
+                                                // Adjust the merged nest circle size if the point belongs to higher circles and the nest has less
+                                                nests.find { it.id == targetNestId }
+                                                    ?.let { targetNest ->
+
+                                                        // I remove 1 because the dragDistances counts the cancel zone
+                                                        val targetNestCircleNumbers =
+                                                            targetNest.dragDistances.size - 1
+
+                                                        // Add 1 because the circle number starts at 0
+                                                        val selectedPointCircleNumber =
+                                                            p.circleNumber + 1
+
+                                                        if (selectedPointCircleNumber > targetNestCircleNumbers) {
+                                                            repeat(selectedPointCircleNumber - targetNestCircleNumbers) {
+                                                                logD(NESTS_TAG) {
+                                                                    "Adding a circle to nest n°$targetNestId "
+                                                                }
+                                                                addCircle(targetNestId)
+                                                            }
+                                                        }
+                                                    }
+
+                                                applyChange {
+                                                    p.nestId = targetNestId
+                                                }
+
+                                            } else {
+                                                // Create new nest and put both points in it at 90° and 270° (left and right)
+                                                // Tee new nest has only one circle and a Go parent nest in the top, for easier access
+                                                applyChange {
+                                                    val newNestId = addNewNest(1)
+
+                                                    val newNestPoint = SwipePointSerializable(
+                                                        circleNumber = closest.circleNumber,
+                                                        angleDeg = closest.angleDeg,
+                                                        nestId = closest.nestId,
+                                                        action = SwipeActionSerializable.OpenCircleNest(
+                                                            newNestId
+                                                        ),
+                                                        id = UUID.randomUUID().toString()
+                                                    )
+
+                                                    // Creates a new go parent nest that'll be put on top of the nest, to easily exit this nest
+                                                    val newGoParentNestPoint =
+                                                        SwipePointSerializable(
+                                                            circleNumber = 0,
+                                                            angleDeg = 0.0,
+                                                            nestId = newNestId,
+                                                            action = SwipeActionSerializable.GoParentNest,
+                                                            id = UUID.randomUUID().toString(),
+                                                            liveNestTargetNestId = if (createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) newNestId else null
+                                                        )
+
+                                                    points.add(newGoParentNestPoint)
+
+                                                    appsViewModel.reloadPointIcon(
+                                                        newGoParentNestPoint
+                                                    )
+
+                                                    points.add(newNestPoint)
+
+
+                                                    // Move the 2 points to the new nest and change their position
+                                                    p.nestId = newNestId
+                                                    p.circleNumber = 0
+                                                    p.angleDeg = 270.0
+
+
+                                                    closest.nestId = newNestId
+                                                    closest.circleNumber = 0
+                                                    closest.angleDeg = 90.0
+                                                }
+                                            }
+                                        } else {
+                                            // 2) No merging, just normal dragging and dropping
+
+                                            updatePointPosition(
+                                                point = p,
+                                                circles = circles,
+                                                pos = position
+                                            )
+
+                                            if (autoSeparatePoints) autoSeparate(
+                                                points,
+                                                nestId,
+                                                circles.find { it.id == p.circleNumber },
+                                                p
+                                            )
+
+
+                                            // Compute final snapped position
+                                            val finalOffset = computePointPosition(
+                                                p,
+                                                circles,
+                                                center
+                                            )
+
+                                            if (freeMoveDraggedPoint) {
+                                                animateHomingTempOffset(finalOffset)
+                                            }
+                                        }
+
+                                        // Clear dragging state and other points residues
+                                        isDragging = false
+                                        closestHoveredPoint = null
+                                        ableToLaunchHoverAction = false
+                                    }
                                 }
-                            }
-                        )
+                            )
                         }
                     }
                     .pointerInput(isInManualPlacementMode, isDraggingAroundMode, nestId, filteredPoints) {
