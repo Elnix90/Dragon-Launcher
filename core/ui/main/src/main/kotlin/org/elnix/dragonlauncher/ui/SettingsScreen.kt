@@ -138,7 +138,6 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
 import org.elnix.dragonlauncher.ui.dragon.components.EditValueTextField
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
-import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonColumn
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
 import org.elnix.dragonlauncher.ui.helpers.customobjects.glowOverlay
@@ -995,6 +994,18 @@ fun SettingsScreen(
                             }
                         }
                     }
+
+                    MultiSelectConnectedButtonRow(
+                        entries = AddRemoveCircleTools.entries,
+                        isChecked = { true }
+                    ) { entry ->
+                        scope.launch {
+                            when (entry) {
+                                AddRemoveCircleTools.Add -> addCircle()
+                                AddRemoveCircleTools.Remove -> removeLastCircle()
+                            }
+                        }
+                    }
                 }
                 HorizontalScrollIndicator(rowsScrollStates[2].canScrollForward)
             }
@@ -1057,19 +1068,6 @@ fun SettingsScreen(
                                     selectedPoint = newPoint
                                 }
                             }
-                        }
-                    }
-                }
-
-                MultiSelectConnectedButtonColumn(
-                    entries = AddRemoveCircleTools.entries,
-                    showLabel = false,
-                    isChecked = { true }
-                ) { entry ->
-                    scope.launch {
-                        when (entry) {
-                            AddRemoveCircleTools.Add -> addCircle()
-                            AddRemoveCircleTools.Remove -> removeLastCircle()
                         }
                     }
                 }
