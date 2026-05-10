@@ -69,6 +69,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
@@ -110,6 +111,7 @@ import org.elnix.dragonlauncher.enumsui.toggle.SelectedPointEditTools
 import org.elnix.dragonlauncher.enumsui.toggle.UndRedoEditTools
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
+import org.elnix.dragonlauncher.models.PointSettingsViewModel
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.SwipeMapSettingsStore
@@ -158,7 +160,7 @@ import kotlin.math.sin
 @Suppress("AssignedValueIsNeverRead")
 @Composable
 fun SettingsScreen(
-//    pointSettingsViewModel: PointSettingsViewModel = viewModel(),
+    pointSettingsViewModel: PointSettingsViewModel = hiltViewModel(),
     onAdvSettings: () -> Unit,
     onNestEdit: (nest: Int) -> Unit,
     onBack: () -> Unit
@@ -171,7 +173,9 @@ fun SettingsScreen(
     val scope = rememberCoroutineScope()
 
     val pointsIconsTrigger by appsViewModel.pointsIconsCache.iconsTrigger.collectAsState()
-//    val showAdvancedEditTools by pointSettingsViewModel.showAdvancedPointTools.collectAsState()
+    val showAdvancedEditTools by pointSettingsViewModel.showAdvancedPointTools.collectAsState()
+    val showSubNestSlider by pointSettingsViewModel.showSubNestSlider.collectAsState()
+    val isInDragAroundMode by pointSettingsViewModel.isInDragAroundMode.collectAsState()
 
     val backgroundColor = MaterialTheme.colorScheme.background
     val primaryColor = MaterialTheme.colorScheme.primary
@@ -212,8 +216,6 @@ fun SettingsScreen(
 
     var isDragging by remember { mutableStateOf(false) }
     var isTransformDragging by remember { mutableStateOf(false) }
-
-    var showSubNestSizeSlider by remember { mutableStateOf(false) }
 
 
     var closestHoveredPoint by remember { mutableStateOf<SwipePointSerializable?>(null) }
@@ -657,8 +659,6 @@ fun SettingsScreen(
         offset = { offset.value }
     )
 
-    var isDraggingAroundMode by remember { mutableStateOf(false) }
-
     val localWindow = LocalWindowInfo.current
     val screenSize = localWindow.containerSize
 
@@ -672,10 +672,8 @@ fun SettingsScreen(
         scrollableContent = false,
         specialSettingsTitle = {
             SpecialSettingsTitle(
-                showSubNestSizeSlider = showSubNestSizeSlider,
                 onSettings = onAdvSettings,
                 onEditDefaultPoint = { showEditDefaultPoint = true },
-                onToggleSubNestsSlider = { showSubNestSizeSlider = !showSubNestSizeSlider },
                 onReloadPoints = { appsViewModel.preloadPointIcons(points) },
                 onEditNest = { onNestEdit(currentNest.id) },
                 onResetPoints = { showResetPointsAndNestsDialog = true },
@@ -683,97 +681,139 @@ fun SettingsScreen(
             )
         },
         bottomContent = {
-            // Row with nest toolbar and toggle buttons toolbar
-            RowWithScrollIndicator(rowsScrollStates[0]) {
-                // Nests toolbar
-                val nestToGo =
-                    if (selectedPoint?.action is SwipeActionSerializable.OpenCircleNest) {
-                        (selectedPoint!!.action as SwipeActionSerializable.OpenCircleNest).nestId
-                    } else null
+            if (showAdvancedEditTools) { // Row with nest toolbar and toggle buttons toolbar
+                RowWithScrollIndicator(rowsScrollStates[0]) {
+                    // Nests toolbar
+                    val nestToGo =
+                        if (selectedPoint?.action is SwipeActionSerializable.OpenCircleNest) {
+                            (selectedPoint!!.action as SwipeActionSerializable.OpenCircleNest).nestId
+                        } else null
 
-                val canGoNest = nestToGo != null
+                    val canGoNest = nestToGo != null
 
-                val canGoback = currentNest.id != 0
+                    val canGoback = currentNest.id != 0
 
-                MultiSelectConnectedButtonRow(
-                    entries = NestEditTools.entries,
-                    isEnabled = {
-                        when (it) {
-                            NestManagement -> true
-                            GoParentNest -> canGoback
-                            EnterNest -> canGoNest
-                        }
-                    },
-                    isChecked = {
-                        when (it) {
-                            NestManagement -> true
-                            GoParentNest -> canGoback
-                            EnterNest -> canGoNest
-                        }
-                    }
-                ) { entry ->
-                    scope.launch {
-                        when (entry) {
-                            NestManagement -> {
-                                showNestManagementDialog = true
+                    MultiSelectConnectedButtonRow(
+                        entries = NestEditTools.entries,
+                        isEnabled = {
+                            when (it) {
+                                NestManagement -> true
+                                GoParentNest -> canGoback
+                                EnterNest -> canGoNest
                             }
-
-                            GoParentNest -> {
-                                nestNavigation.goBack()
-                                selectedPoint = null
+                        },
+                        isChecked = {
+                            when (it) {
+                                NestManagement -> true
+                                GoParentNest -> canGoback
+                                EnterNest -> canGoNest
                             }
+                        }
+                    ) { entry ->
+                        scope.launch {
+                            when (entry) {
+                                NestManagement -> {
+                                    showNestManagementDialog = true
+                                }
 
-                            EnterNest -> {
-                                nestToGo?.let {
-                                    nestNavigation.goToNest(it)
+                                GoParentNest -> {
+                                    nestNavigation.goBack()
                                     selectedPoint = null
                                 }
+
+                                EnterNest -> {
+                                    nestToGo?.let {
+                                        nestNavigation.goToNest(it)
+                                        selectedPoint = null
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(12.dp)
+
+                    // The 3 points settings tools: Snap points / Auto separate / Lock to circle
+                    MultiSelectConnectedButtonRow(
+                        entries = PointsEditTools.entries,
+                        isChecked = {
+                            when (it) {
+                                SnapPoints -> snapPoints
+                                AutoSeparate -> autoSeparatePoints
+                                FreeMove -> freeMoveDraggedPoint
+                            }
+                        }
+                    ) {
+                        scope.launch {
+                            when (it) {
+                                SnapPoints -> UiSettingsStore.snapPoints.set(ctx, !snapPoints)
+                                AutoSeparate -> UiSettingsStore.autoSeparatePoints.set(ctx, !autoSeparatePoints)
+                                FreeMove -> UiSettingsStore.freeMoveDraggedPoint.set(ctx, !freeMoveDraggedPoint)
                             }
                         }
                     }
                 }
 
-                Spacer(12.dp)
 
-                // The 3 points settings tools: Snap points / Auto separate / Lock to circle
-                MultiSelectConnectedButtonRow(
-                    entries = PointsEditTools.entries,
-                    isChecked = {
-                        when (it) {
-                            SnapPoints -> snapPoints
-                            AutoSeparate -> autoSeparatePoints
-                            FreeMove -> freeMoveDraggedPoint
+                // Undo/Redo and move bars
+                RowWithScrollIndicator(rowsScrollStates[1]) {
+                    // The move left/right and text field entry, that animates on avery selected point
+                    Row(
+                        modifier = Modifier
+                            .height(70.dp)
+                            .padding(5.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        DragonTooltip(R.string.move_point_clockwise) {
+                            ToggleButton(
+                                checked = false, // For the shape to be always the right one, and not a circle
+                                onCheckedChange = {
+                                    selectedPoint?.let { point ->
+                                        applyChange {
+                                            point.angleDeg = normalizeAngle(point.angleDeg + 1)
+                                            if (snapPoints) point.angleDeg = point.angleDeg
+                                                .toInt()
+                                                .toDouble()
+                                            if (autoSeparatePoints) autoSeparate(
+                                                points,
+                                                nestId,
+                                                circles.find { it.id == point.circleNumber },
+                                                point
+                                            )
+                                        }
+                                    }
+                                },
+                                enabled = aPointIsSelected,
+                                shapes = ButtonGroupDefaults.connectedLeadingButtonShapes(),
+                                colors = AppObjectsColors.toggleButtonColors(),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ChevronLeft,
+                                    contentDescription = stringResource(R.string.move_point_clockwise)
+                                )
+                            }
                         }
-                    }
-                ) {
-                    scope.launch {
-                        when (it) {
-                            SnapPoints -> UiSettingsStore.snapPoints.set(ctx, !snapPoints)
-                            AutoSeparate -> UiSettingsStore.autoSeparatePoints.set(ctx, !autoSeparatePoints)
-                            FreeMove -> UiSettingsStore.freeMoveDraggedPoint.set(ctx, !freeMoveDraggedPoint)
-                        }
-                    }
-                }
-            }
 
 
-            // Undo/Redo and move bars
-            RowWithScrollIndicator(rowsScrollStates[1]) {
-                // The move left/right and text field entry, that animates on avery selected point
-                Row(
-                    modifier = Modifier
-                        .height(70.dp)
-                        .padding(5.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    DragonTooltip(R.string.move_point_clockwise) {
-                        ToggleButton(
-                            checked = false, // For the shape to be always the right one, and not a circle
-                            onCheckedChange = {
+                        val angleTextValue = selectedPoint
+                            ?.angleDeg
+                            ?.toBigDecimal()
+                            ?.setScale(1, RoundingMode.UP)
+                            ?.toDouble()
+                            ?.toString()
+                            ?: ""
+
+
+                        var angleText by remember { mutableStateOf(angleTextValue) }
+                        LaunchedEffect(angleTextValue) { angleText = angleTextValue }
+
+
+                        fun commitEditTExt() {
+                            try {
                                 selectedPoint?.let { point ->
                                     applyChange {
-                                        point.angleDeg = normalizeAngle(point.angleDeg + 1)
+                                        point.angleDeg = normalizeAngle(angleText.toDouble())
                                         if (snapPoints) point.angleDeg = point.angleDeg
                                             .toInt()
                                             .toDouble()
@@ -785,192 +825,151 @@ fun SettingsScreen(
                                         )
                                     }
                                 }
-                            },
-                            enabled = aPointIsSelected,
-                            shapes = ButtonGroupDefaults.connectedLeadingButtonShapes(),
-                            colors = AppObjectsColors.toggleButtonColors(),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ChevronLeft,
-                                contentDescription = stringResource(R.string.move_point_clockwise)
+                            } catch (e: Exception) {
+                                ctx.showToast("Failed to set value: $e")
+                                logE(SWIPE_TAG, e) { "Failed to set value for point via text field" }
+                            }
+                            isEditing = false
+                        }
+
+                        Spacer(Modifier.width(ButtonGroupDefaults.ConnectedSpaceBetween))
+                        AnimatedVisibility(aPointIsSelected) {
+                            EditValueTextField(
+                                value = angleText,
+                                onValueChange = { angleText = it },
+                                enabled = aPointIsSelected,
+                                textColor = MaterialTheme.colorScheme.onPrimary,
+                                backgroundColor = MaterialTheme.colorScheme.primary,
+                                onFocusChange = { isEditing = it },
+                                onDone = ::commitEditTExt
                             )
                         }
-                    }
 
-
-                    val angleTextValue = selectedPoint
-                        ?.angleDeg
-                        ?.toBigDecimal()
-                        ?.setScale(1, RoundingMode.UP)
-                        ?.toDouble()
-                        ?.toString()
-                        ?: ""
-
-
-                    var angleText by remember { mutableStateOf(angleTextValue) }
-                    LaunchedEffect(angleTextValue) { angleText = angleTextValue }
-
-
-                    fun commitEditTExt() {
-                        try {
-                            selectedPoint?.let { point ->
-                                applyChange {
-                                    point.angleDeg = normalizeAngle(angleText.toDouble())
-                                    if (snapPoints) point.angleDeg = point.angleDeg
-                                        .toInt()
-                                        .toDouble()
-                                    if (autoSeparatePoints) autoSeparate(
-                                        points,
-                                        nestId,
-                                        circles.find { it.id == point.circleNumber },
-                                        point
-                                    )
-                                }
-                            }
-                        } catch (e: Exception) {
-                            ctx.showToast("Failed to set value: $e")
-                            logE(SWIPE_TAG, e) { "Failed to set value for point via text field" }
+                        AnimatedVisibility(isEditing) {
+                            DragonIconButton(
+                                onClick = ::commitEditTExt,
+                                colors = AppObjectsColors.iconButtonColors(
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.onPrimary
+                                ),
+                                icon = R.drawable.check,
+                                contentDescription = "Validate"
+                            )
                         }
-                        isEditing = false
-                    }
 
-                    Spacer(Modifier.width(ButtonGroupDefaults.ConnectedSpaceBetween))
-                    AnimatedVisibility(aPointIsSelected) {
-                        EditValueTextField(
-                            value = angleText,
-                            onValueChange = { angleText = it },
-                            enabled = aPointIsSelected,
-                            textColor = MaterialTheme.colorScheme.onPrimary,
-                            backgroundColor = MaterialTheme.colorScheme.primary,
-                            onFocusChange = { isEditing = it },
-                            onDone = ::commitEditTExt
-                        )
-                    }
+                        Spacer(ButtonGroupDefaults.ConnectedSpaceBetween)
 
-                    AnimatedVisibility(isEditing) {
-                        DragonIconButton(
-                            onClick = ::commitEditTExt,
-                            colors = AppObjectsColors.iconButtonColors(
-                                MaterialTheme.colorScheme.primary,
-                                MaterialTheme.colorScheme.onPrimary
-                            ),
-                            icon = R.drawable.check,
-                            contentDescription = "Validate"
-                        )
-                    }
-
-                    Spacer(ButtonGroupDefaults.ConnectedSpaceBetween)
-
-                    DragonTooltip(R.string.move_point_anticlockwise) {
-                        ToggleButton(
-                            checked = false,
-                            onCheckedChange = {
-                                selectedPoint?.let { point ->
-                                    applyChange {
-                                        point.angleDeg = normalizeAngle(point.angleDeg - 1)
-                                        if (snapPoints) point.angleDeg = point.angleDeg
-                                            .toInt()
-                                            .toDouble()
-                                        if (autoSeparatePoints) autoSeparate(
-                                            points,
-                                            nestId,
-                                            circles.find { it.id == point.circleNumber },
-                                            point
-                                        )
+                        DragonTooltip(R.string.move_point_anticlockwise) {
+                            ToggleButton(
+                                checked = false,
+                                onCheckedChange = {
+                                    selectedPoint?.let { point ->
+                                        applyChange {
+                                            point.angleDeg = normalizeAngle(point.angleDeg - 1)
+                                            if (snapPoints) point.angleDeg = point.angleDeg
+                                                .toInt()
+                                                .toDouble()
+                                            if (autoSeparatePoints) autoSeparate(
+                                                points,
+                                                nestId,
+                                                circles.find { it.id == point.circleNumber },
+                                                point
+                                            )
+                                        }
                                     }
+                                },
+                                enabled = aPointIsSelected,
+                                shapes = ButtonGroupDefaults.connectedTrailingButtonShapes(),
+                                colors = AppObjectsColors.toggleButtonColors(),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ChevronRight,
+                                    contentDescription = stringResource(R.string.move_point_anticlockwise),
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(12.dp)
+
+                    // Undo/Redo bar
+                    val undoButtonEnabled = undoRedo.canUndo
+                    val redoButtonEnabled = undoRedo.canRedo
+                    MultiSelectConnectedButtonRow(
+                        entries = UndRedoEditTools.entries,
+                        isEnabled = {
+                            when (it) {
+                                UndRedoEditTools.UndoAll -> undoButtonEnabled
+                                UndRedoEditTools.Undo -> undoButtonEnabled
+                                UndRedoEditTools.Redo -> redoButtonEnabled
+                                UndRedoEditTools.RedoAll -> redoButtonEnabled
+                            }
+                        }
+                    ) { entry ->
+                        scope.launch {
+                            when (entry) {
+                                UndRedoEditTools.UndoAll -> undoAll()
+                                UndRedoEditTools.Undo -> undo()
+                                UndRedoEditTools.Redo -> redo()
+                                UndRedoEditTools.RedoAll -> redoAll()
+                            }
+                        }
+                    }
+                }
+
+
+                // 3. Reset offset/zoom/rotation - add/remove circle
+                RowWithScrollIndicator(rowsScrollStates[2]) {
+                    val canResetOffset = offset.value != Offset.Zero
+                    val canResetZoom = zoom.value != 1f
+                    val canResetRotation = angle.value != 0f
+
+                    MultiSelectConnectedButtonRow(
+                        entries = MoveAroundTools.entries,
+                        isEnabled = {
+                            when (it) {
+                                Center -> canResetOffset
+                                ResetZoom -> canResetZoom
+                                ResetRotation -> canResetRotation
+                            }
+                        },
+                        isChecked = {
+                            when (it) {
+                                Center -> canResetOffset
+                                ResetZoom -> canResetZoom
+                                ResetRotation -> canResetRotation
+                            }
+                        }
+                    ) { entry ->
+                        scope.launch {
+                            when (entry) {
+
+                                Center -> scope.launch {
+                                    offset.animateTo(Offset.Zero)
                                 }
-                            },
-                            enabled = aPointIsSelected,
-                            shapes = ButtonGroupDefaults.connectedTrailingButtonShapes(),
-                            colors = AppObjectsColors.toggleButtonColors(),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ChevronRight,
-                                contentDescription = stringResource(R.string.move_point_anticlockwise),
-                            )
-                        }
-                    }
-                }
 
-                Spacer(12.dp)
+                                ResetZoom -> scope.launch {
+                                    zoom.animateTo(1f)
+                                }
 
-                // Undo/Redo bar
-                val undoButtonEnabled = undoRedo.canUndo
-                val redoButtonEnabled = undoRedo.canRedo
-                MultiSelectConnectedButtonRow(
-                    entries = UndRedoEditTools.entries,
-                    isEnabled = {
-                        when (it) {
-                            UndRedoEditTools.UndoAll -> undoButtonEnabled
-                            UndRedoEditTools.Undo -> undoButtonEnabled
-                            UndRedoEditTools.Redo -> redoButtonEnabled
-                            UndRedoEditTools.RedoAll -> redoButtonEnabled
-                        }
-                    }
-                ) { entry ->
-                    scope.launch {
-                        when (entry) {
-                            UndRedoEditTools.UndoAll -> undoAll()
-                            UndRedoEditTools.Undo -> undo()
-                            UndRedoEditTools.Redo -> redo()
-                            UndRedoEditTools.RedoAll -> redoAll()
-                        }
-                    }
-                }
-            }
-
-
-
-            RowWithScrollIndicator(rowsScrollStates[2]) {
-                val canResetOffset = offset.value != Offset.Zero
-                val canResetZoom = zoom.value != 1f
-                val canResetRotation = angle.value != 0f
-
-                MultiSelectConnectedButtonRow(
-                    entries = MoveAroundTools.entries,
-                    isEnabled = {
-                        when (it) {
-                            Center -> canResetOffset
-                            ResetZoom -> canResetZoom
-                            ResetRotation -> canResetRotation
-                        }
-                    },
-                    isChecked = {
-                        when (it) {
-                            Center -> canResetOffset
-                            ResetZoom -> canResetZoom
-                            ResetRotation -> canResetRotation
-                        }
-                    }
-                ) { entry ->
-                    scope.launch {
-                        when (entry) {
-
-                            Center -> scope.launch {
-                                offset.animateTo(Offset.Zero)
-                            }
-
-                            ResetZoom -> scope.launch {
-                                zoom.animateTo(1f)
-                            }
-
-                            ResetRotation -> scope.launch {
-                                angle.animateTo(0f)
+                                ResetRotation -> scope.launch {
+                                    angle.animateTo(0f)
+                                }
                             }
                         }
                     }
-                }
 
-                Spacer(12.dp)
+                    Spacer(12.dp)
 
-                MultiSelectConnectedButtonRow(
-                    entries = AddRemoveCircleTools.entries,
-                    isChecked = { true }
-                ) { entry ->
-                    scope.launch {
-                        when (entry) {
-                            AddRemoveCircleTools.Add -> addCircle()
-                            AddRemoveCircleTools.Remove -> removeLastCircle()
+                    MultiSelectConnectedButtonRow(
+                        entries = AddRemoveCircleTools.entries,
+                        isChecked = { true }
+                    ) { entry ->
+                        scope.launch {
+                            when (entry) {
+                                AddRemoveCircleTools.Add -> addCircle()
+                                AddRemoveCircleTools.Remove -> removeLastCircle()
+                            }
                         }
                     }
                 }
@@ -993,10 +992,10 @@ fun SettingsScreen(
                 )
 
                 ToggleAnimatedFab(
-                    checked = isDraggingAroundMode,
+                    checked = isInDragAroundMode,
                     onCheckedChange = {
-                        isDraggingAroundMode = !isDraggingAroundMode
-                        if (isDraggingAroundMode) {
+                        pointSettingsViewModel.toggleIsInDragAroundMode()
+                        if (isInDragAroundMode) {
                             selectedPoint = null
                         }
                     },
@@ -1179,8 +1178,8 @@ fun SettingsScreen(
                             Modifier.background(Color.DarkGray.copy(0.3f))
                         } else Modifier
                     )
-                    .pointerInput(Unit, isDraggingAroundMode, nestId, filteredPoints) {
-                        if (isDraggingAroundMode) {
+                    .pointerInput(Unit, isInDragAroundMode, nestId, filteredPoints) {
+                        if (isInDragAroundMode) {
                             detectTransformGestures(true) { centroid, pan, gestureZoom, gestureRotate ->
 
 
@@ -1427,8 +1426,8 @@ fun SettingsScreen(
                             )
                         }
                     }
-                    .pointerInput(isInManualPlacementMode, isDraggingAroundMode, nestId, filteredPoints) {
-                        if (!isDraggingAroundMode) {
+                    .pointerInput(isInManualPlacementMode, isInDragAroundMode, nestId, filteredPoints) {
+                        if (!isInDragAroundMode) {
                             detectTapGestures(
                                 onTap = { tapOffset ->
                                     val transformedOffset = tapOffset.transformPointerCoordinates()
@@ -1532,8 +1531,7 @@ fun SettingsScreen(
         }
     }
 
-    // Only show the toggler if user has a point that opens a nest, otherwise it may be confusing
-    AnimatedVisibility(showSubNestSizeSlider) {
+    AnimatedVisibility(showSubNestSlider) {
         SettingsSlider(
             setting = SwipeMapSettingsStore.subNestDefaultRadius,
             title = "",

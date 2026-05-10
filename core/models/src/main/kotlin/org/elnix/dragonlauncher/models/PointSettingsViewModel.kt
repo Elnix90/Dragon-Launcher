@@ -7,8 +7,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import org.elnix.dragonlauncher.settings.stores.SwipeMapSettingsStore
 import javax.inject.Inject
 
 /**
@@ -19,29 +20,56 @@ import javax.inject.Inject
 class PointSettingsViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
-    private val _showAdvancedPointTools = MutableStateFlow(false)
-    val showAdvancedPointTools = _showAdvancedPointTools.asStateFlow()
-
 
     @SuppressLint("StaticFieldLeak")
     private val ctx = application.applicationContext
 
 
+    private val _showSubNestSlider = MutableStateFlow(false)
+    val showSubNestSlider = _showSubNestSlider.asStateFlow()
+    suspend fun loadShowSubNestSlider() {
+        _showSubNestSlider.value = SwipeMapSettingsStore.showSubNestsSlider.get(ctx)
+    }
+    fun toggleShowSubNestSlider() {
+        val newValue = _showAdvancedPointTools.updateAndGet { !it }
+        viewModelScope.launch {
+            SwipeMapSettingsStore.showSubNestsSlider.set(ctx, newValue)
+        }
+    }
+
+
+
+
+    private val _showAdvancedPointTools = MutableStateFlow(false)
+    val showAdvancedPointTools = _showAdvancedPointTools.asStateFlow()
+    suspend fun loadAdvancedPointsTools() {
+        _showAdvancedPointTools.value = SwipeMapSettingsStore.showAdvancedPointTools.get(ctx)
+    }
+    fun toggleAdvancedPointsTools() {
+        val newValue = _showAdvancedPointTools.updateAndGet { !it }
+        viewModelScope.launch {
+            SwipeMapSettingsStore.showAdvancedPointTools.set(ctx, newValue)
+        }
+    }
+
+
+    private val _isInDragAroundMode = MutableStateFlow(false)
+    val isInDragAroundMode = _isInDragAroundMode.asStateFlow()
+    suspend fun loadIsInDragAroundMode() {
+        _isInDragAroundMode.value = SwipeMapSettingsStore.isInDragAroundMode.get(ctx)
+    }
+    fun toggleIsInDragAroundMode() {
+        val newValue = _isInDragAroundMode.updateAndGet { !it }
+        viewModelScope.launch {
+            SwipeMapSettingsStore.isInDragAroundMode.set(ctx, newValue)
+        }
+    }
 
     init {
         viewModelScope.launch {
             loadAdvancedPointsTools()
-        }
-    }
-
-    suspend fun loadAdvancedPointsTools() {
-        _showAdvancedPointTools.value = UiSettingsStore.showAdvancedPointTools.get(ctx)
-    }
-
-    fun toggleAdvancedPointsTools(enabled: Boolean) {
-        _showAdvancedPointTools.value = enabled
-        viewModelScope.launch {
-            UiSettingsStore.showAdvancedPointTools.set(ctx, enabled)
+            loadShowSubNestSlider()
+            loadIsInDragAroundMode()
         }
     }
 }

@@ -32,22 +32,23 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.PRIVATE_SPACE_TAG
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.STARTUP_TAG
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.WIDGET_TAG
-import org.elnix.dragonlauncher.common.utils.PrivateSpaceUtils
 import org.elnix.dragonlauncher.common.messyfolder.SamsungWorkspaceIntegration
 import org.elnix.dragonlauncher.common.messyfolder.WidgetHostProvider
 import org.elnix.dragonlauncher.common.messyfolder.showToast
+import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
+import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
+import org.elnix.dragonlauncher.common.utils.PrivateSpaceUtils
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logI
@@ -83,6 +84,7 @@ import org.elnix.dragonlauncher.ui.dialogs.CrashScreen
 import org.elnix.dragonlauncher.ui.widgets.LauncherWidgetHolder
 import java.util.UUID
 
+@AndroidEntryPoint
 class MainActivity : FragmentActivity(), WidgetHostProvider {
 
     private val appLifecycleViewModel: AppLifecycleViewModel by viewModels()

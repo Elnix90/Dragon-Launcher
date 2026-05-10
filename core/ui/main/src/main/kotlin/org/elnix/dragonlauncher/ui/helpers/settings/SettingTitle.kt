@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,7 +20,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.models.PointSettingsViewModel
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
@@ -108,10 +111,9 @@ fun SettingsTitle(
 
 @Composable
 fun SpecialSettingsTitle(
-    showSubNestSizeSlider: Boolean,
+    pointSettingsViewModel: PointSettingsViewModel = hiltViewModel(),
     onSettings: () -> Unit,
     onEditDefaultPoint: () -> Unit,
-    onToggleSubNestsSlider: () -> Unit,
     onReloadPoints: () -> Unit,
     onEditNest: () -> Unit,
     onResetPoints: () -> Unit,
@@ -121,6 +123,9 @@ fun SpecialSettingsTitle(
 
     var showBurgerMenu by remember { mutableStateOf(false) }
     val dismiss = { showBurgerMenu = false }
+
+    val showSubNestSlider by pointSettingsViewModel.showSubNestSlider.collectAsState()
+    val showAdvancedPointTools by pointSettingsViewModel.showAdvancedPointTools.collectAsState()
 
     SettingsTitleInternal(
         title = stringResource(R.string.points_settings),
@@ -162,10 +167,19 @@ fun SpecialSettingsTitle(
                     ),
                     MoreOptions(
                         text = { stringResource(R.string.show_sub_nest_size_slider) },
-                        icon = if (showSubNestSizeSlider) R.drawable.toggle_on else R.drawable.toggle_off,
+                        icon = if (showSubNestSlider) R.drawable.toggle_on else R.drawable.toggle_off,
                         onClick = {
+                            pointSettingsViewModel.toggleShowSubNestSlider()
                             dismiss()
-                            onToggleSubNestsSlider()
+
+                        }
+                    ),
+                    MoreOptions(
+                        text = { stringResource(R.string.show_advanced_edit_tools) },
+                        icon = if (showAdvancedPointTools) R.drawable.toggle_on else R.drawable.toggle_off,
+                        onClick = {
+                            pointSettingsViewModel.toggleAdvancedPointsTools()
+                            dismiss()
                         }
                     ),
                     MoreOptions(

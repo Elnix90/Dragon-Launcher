@@ -939,4 +939,5 @@
     <string name="reset_rotation">Reset rotation</string>
     <string name="reset_zoom">Reset zoom</string>
     <string name="edit_workspace">Edit Workspace</string>
+    <string name="show_advanced_edit_tools">Show Advanced Edit Tools</string>
 </resources>

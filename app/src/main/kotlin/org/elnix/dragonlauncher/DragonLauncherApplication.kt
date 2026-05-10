@@ -15,6 +15,7 @@ import kotlinx.coroutines.runBlocking
 import org.elnix.dragonlauncher.settings.stores.LanguageSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 
+@HiltAndroidApp
 class DragonLauncherApplication : Application() {
     val appScope = CoroutineScope(
         SupervisorJob() + Dispatchers.Default
