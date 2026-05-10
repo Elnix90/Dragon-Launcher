@@ -233,17 +233,13 @@ fun uiCirclesFromScaledDragDistances(scaledDistances: Map<Int, Float>): List<UiC
         .filter { it.key != -1 }
         .map { (id, radius) -> UiCircle(id = id, radius = radius) }
 
-fun createCirclesFromDragDistancesWithCustomIncrement(
+fun createCirclesFromDragDistances(
     dragDistances: Map<Int, Int>,
     circles: SnapshotStateList<UiCircle>,
-    baseRadius: Float,
-    circlesWidthIncrement: Float
 ) {
     circles.clear()
 
-    uiCirclesFromDragDistances(dragDistances).forEach { (circleNumber, _) ->
-        val radius = circlesWidthIncrement * (circleNumber + 1) * baseRadius
-
+    uiCirclesFromDragDistances(dragDistances).forEach { (circleNumber, radius) ->
         circles.add(UiCircle(circleNumber, radius))
     }
 }

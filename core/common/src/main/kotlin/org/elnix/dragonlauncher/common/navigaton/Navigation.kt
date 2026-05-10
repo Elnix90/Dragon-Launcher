@@ -147,6 +147,7 @@ sealed class NavigationRoute : NavKey {
                 Appearance,
                 Colors,
                 Wallpaper,
+                Widgets(),
                 IconPack,
                 StatusBar,
                 Fonts,
@@ -165,9 +166,10 @@ sealed class NavigationRoute : NavKey {
                 Extensions,
                 Debug,
                 Logs,
+//                LogsViewer -> Don't use this as it's stupid to display a random log file
                 SettingsJson,
                 NestEdit(0),
-                WorkspaceDetail(""),
+                WorkspaceDetail("")
             )
         }
 

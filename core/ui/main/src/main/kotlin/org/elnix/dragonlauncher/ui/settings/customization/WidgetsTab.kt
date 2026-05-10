@@ -4,6 +4,8 @@ package org.elnix.dragonlauncher.ui.settings.customization
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -13,14 +15,11 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -76,6 +75,10 @@ import org.elnix.dragonlauncher.common.serializables.FloatingAppsJson
 import org.elnix.dragonlauncher.common.serializables.IconShape
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.undoredo.UndoRedoManager
+import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools
+import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.Center
+import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.ResetRotation
+import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.ResetZoom
 import org.elnix.dragonlauncher.enumsui.toggle.UndRedoEditTools
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsAddNestRemove
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsCenterReset
@@ -89,7 +92,9 @@ import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.WidgetsSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.components.HorizontalScrollIndicator
+import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
+import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.components.FloatingAppsHostView
 import org.elnix.dragonlauncher.ui.composition.LocalFloatingAppsViewModel
@@ -104,7 +109,6 @@ import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonColu
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.helpers.SmallShapeRow
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
-import org.elnix.dragonlauncher.ui.remembers.rememberAspectRatio
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -144,7 +148,6 @@ fun WidgetsTab(
     var nestId by remember { mutableIntStateOf(initialNestId) }
     var isPrecisionModeActive by remember { mutableStateOf(false) }
 
-    val aspectRatio = rememberAspectRatio()
 
 
     /* ───────────────────────────────────────────────────────────────── */
@@ -213,9 +216,9 @@ fun WidgetsTab(
 
     val rowsScrollStates = List(2) { rememberScrollState() }
 
-    var offset by remember { mutableStateOf(Offset.Zero) }
-    var zoom by remember { mutableFloatStateOf(0.8f) }
-    var angle by remember { mutableFloatStateOf(0f) }
+    val offset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
+    val zoom = remember { Animatable(1f) }
+    val angle = remember { Animatable(0f) }
 
     SettingsScaffold(
         title = stringResource(R.string.widgets),
@@ -228,7 +231,8 @@ fun WidgetsTab(
                 }
             }
         },
-        horizontalPadding = 0.dp,
+        applyPadding = false,
+//        horizontalPadding = 0.dp,
         scrollableContent = false,
         otherIcons = arrayOf(
             Triple(
@@ -239,106 +243,130 @@ fun WidgetsTab(
             )
         ),
         bottomContent = {
-            Box {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rowsScrollStates[0])
-                ) {
-                    MultiSelectConnectedButtonRow(
-                        entries = WidgetsToolsSnapping.entries,
-                        isChecked = {
-                            when (it) {
-                                WidgetsToolsSnapping.SnapGrid -> snapMove
-                                WidgetsToolsSnapping.SnapResize -> snapResize
-                                WidgetsToolsSnapping.SnapRotation -> snapRotation
-                            }
-                        }
-                    ) { entry ->
-                        scope.launch {
-                            when (entry) {
-                                WidgetsToolsSnapping.SnapGrid -> {
-                                    snapMove = !snapMove
-                                }
-
-                                WidgetsToolsSnapping.SnapResize -> {
-                                    snapResize = !snapResize
-                                }
-
-                                WidgetsToolsSnapping.SnapRotation -> {
-                                    snapRotation = !snapRotation
-                                }
-                            }
+            RowWithScrollIndicator(rowsScrollStates[0]) {
+                MultiSelectConnectedButtonRow(
+                    entries = WidgetsToolsSnapping.entries,
+                    isChecked = {
+                        when (it) {
+                            WidgetsToolsSnapping.SnapGrid -> snapMove
+                            WidgetsToolsSnapping.SnapResize -> snapResize
+                            WidgetsToolsSnapping.SnapRotation -> snapRotation
                         }
                     }
-
-                    // Undo/Redo bar
-                    val undoButtonEnabled = undoRedo.canUndo
-                    val redoButtonEnabled = undoRedo.canRedo
-
-                    MultiSelectConnectedButtonRow(
-                        entries = UndRedoEditTools.entries,
-                        isEnabled = {
-                            when (it) {
-                                UndRedoEditTools.UndoAll -> undoButtonEnabled
-                                UndRedoEditTools.Undo -> undoButtonEnabled
-                                UndRedoEditTools.Redo -> redoButtonEnabled
-                                UndRedoEditTools.RedoAll -> redoButtonEnabled
+                ) { entry ->
+                    scope.launch {
+                        when (entry) {
+                            WidgetsToolsSnapping.SnapGrid -> {
+                                snapMove = !snapMove
                             }
-                        }
-                    ) { entry ->
-                        scope.launch {
-                            when (entry) {
-                                UndRedoEditTools.UndoAll -> undoAll()
-                                UndRedoEditTools.Undo -> undo()
-                                UndRedoEditTools.Redo -> redo()
-                                UndRedoEditTools.RedoAll -> redoAll()
+
+                            WidgetsToolsSnapping.SnapResize -> {
+                                snapResize = !snapResize
+                            }
+
+                            WidgetsToolsSnapping.SnapRotation -> {
+                                snapRotation = !snapRotation
                             }
                         }
                     }
                 }
-                HorizontalScrollIndicator(rowsScrollStates[0].canScrollForward)
+
+                Spacer(12.dp)
+
+                // Undo/Redo bar
+                val undoButtonEnabled = undoRedo.canUndo
+                val redoButtonEnabled = undoRedo.canRedo
+
+                MultiSelectConnectedButtonRow(
+                    entries = UndRedoEditTools.entries,
+                    isEnabled = {
+                        when (it) {
+                            UndRedoEditTools.UndoAll -> undoButtonEnabled
+                            UndRedoEditTools.Undo -> undoButtonEnabled
+                            UndRedoEditTools.Redo -> redoButtonEnabled
+                            UndRedoEditTools.RedoAll -> redoButtonEnabled
+                        }
+                    }
+                ) { entry ->
+                    scope.launch {
+                        when (entry) {
+                            UndRedoEditTools.UndoAll -> undoAll()
+                            UndRedoEditTools.Undo -> undo()
+                            UndRedoEditTools.Redo -> redo()
+                            UndRedoEditTools.RedoAll -> redoAll()
+                        }
+                    }
+                }
             }
 
-            Box {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rowsScrollStates[1])
-                ) {
-                    MultiSelectConnectedButtonRow(
-                        entries = WidgetsToolsAddNestRemove.entries,
-                        isChecked = {
-                            when (it) {
-                                WidgetsToolsAddNestRemove.Add, WidgetsToolsAddNestRemove.Nests -> true
-                                WidgetsToolsAddNestRemove.Remove -> aWidgetIsSelected
+
+            RowWithScrollIndicator(rowsScrollStates[1]) {
+                MultiSelectConnectedButtonRow(
+                    entries = WidgetsToolsAddNestRemove.entries,
+                    isChecked = {
+                        when (it) {
+                            WidgetsToolsAddNestRemove.Add, WidgetsToolsAddNestRemove.Nests -> true
+                            WidgetsToolsAddNestRemove.Remove -> aWidgetIsSelected
+                        }
+                    },
+                    isEnabled = {
+                        when (it) {
+                            WidgetsToolsAddNestRemove.Add, WidgetsToolsAddNestRemove.Nests -> true
+                            WidgetsToolsAddNestRemove.Remove -> aWidgetIsSelected
+                        }
+                    }
+                ) { entry ->
+                    scope.launch {
+                        when (entry) {
+                            WidgetsToolsAddNestRemove.Add -> {
+                                showAddDialog = true
                             }
-                        },
-                        isEnabled = {
-                            when (it) {
-                                WidgetsToolsAddNestRemove.Add, WidgetsToolsAddNestRemove.Nests -> true
-                                WidgetsToolsAddNestRemove.Remove -> aWidgetIsSelected
+
+                            WidgetsToolsAddNestRemove.Nests -> {
+                                showNestPickerDialog = true
+                            }
+
+                            WidgetsToolsAddNestRemove.Remove -> {
+                                selected?.let {
+                                    applyChange {
+                                        removeWidget(it)
+                                    }
+                                }
                             }
                         }
+                    }
+                }
+
+                Spacer(12.dp)
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    MultiSelectConnectedButtonColumn(
+                        entries = WidgetsToolsCenterReset.entries,
+                        showLabel = false,
+                        isChecked = { true },
+                        isEnabled = { aWidgetIsSelected }
                     ) { entry ->
                         scope.launch {
                             when (entry) {
-                                WidgetsToolsAddNestRemove.Add -> {
-                                    showAddDialog = true
-                                }
-
-                                WidgetsToolsAddNestRemove.Nests -> {
-                                    showNestPickerDialog = true
-                                }
-
-                                WidgetsToolsAddNestRemove.Remove -> {
+                                WidgetsToolsCenterReset.Center -> {
                                     selected?.let {
                                         applyChange {
-                                            removeWidget(it)
+                                            floatingAppsViewModel.centerFloatingApp(it.id)
+                                        }
+                                    }
+                                }
+
+                                WidgetsToolsCenterReset.Reset -> {
+                                    selected?.let {
+                                        applyChange {
+                                            if (it.action is SwipeActionSerializable.OpenWidget) {
+                                                onResetWidgetSize(it.id, (it.action as SwipeActionSerializable.OpenWidget).widgetId)
+                                            } else {
+                                                floatingAppsViewModel.resetFloatingAppSize(it.id)
+                                            }
                                         }
                                     }
                                 }
@@ -346,91 +374,54 @@ fun WidgetsTab(
                         }
                     }
 
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(5.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        MultiSelectConnectedButtonColumn(
-                            entries = WidgetsToolsCenterReset.entries,
-                            showLabel = false,
-                            isChecked = { true },
-                            isEnabled = { aWidgetIsSelected }
-                        ) { entry ->
-                            scope.launch {
-                                when (entry) {
-                                    WidgetsToolsCenterReset.Center -> {
-                                        selected?.let {
-                                            applyChange {
-                                                floatingAppsViewModel.centerFloatingApp(it.id)
-                                            }
-                                        }
+                    MultiSelectConnectedButtonColumn(
+                        entries = WidgetsToolsUpDown.entries,
+                        showLabel = false,
+                        isChecked = { true }
+                    ) { entry ->
+                        scope.launch {
+                            when (entry) {
+                                WidgetsToolsUpDown.Up -> {
+                                    if (floatingApps.isNotEmpty()) {
+                                        val idx = floatingApps.indexOfFirst { it == selected }
+                                        val next = if (idx <= 0) floatingApps.last() else floatingApps[idx - 1]
+                                        selected = next
                                     }
+                                }
 
-                                    WidgetsToolsCenterReset.Reset -> {
-                                        selected?.let {
-                                            applyChange {
-                                                if (it.action is SwipeActionSerializable.OpenWidget) {
-                                                    onResetWidgetSize(it.id, (it.action as SwipeActionSerializable.OpenWidget).widgetId)
-                                                } else {
-                                                    floatingAppsViewModel.resetFloatingAppSize(it.id)
-                                                }
-                                            }
-                                        }
+                                WidgetsToolsUpDown.Down -> {
+                                    if (floatingApps.isNotEmpty()) {
+                                        val idx = floatingApps.indexOfFirst { it == selected }
+                                        val next = if (idx == -1 || idx == floatingApps.lastIndex) floatingApps.first() else floatingApps[idx + 1]
+                                        selected = next
                                     }
                                 }
                             }
                         }
+                    }
 
-                        MultiSelectConnectedButtonColumn(
-                            entries = WidgetsToolsUpDown.entries,
-                            showLabel = false,
-                            isChecked = { true }
-                        ) { entry ->
-                            scope.launch {
-                                when (entry) {
-                                    WidgetsToolsUpDown.Up -> {
-                                        if (floatingApps.isNotEmpty()) {
-                                            val idx = floatingApps.indexOfFirst { it == selected }
-                                            val next = if (idx <= 0) floatingApps.last() else floatingApps[idx - 1]
-                                            selected = next
-                                        }
-                                    }
+                    val upDownEnabled = aWidgetIsSelected && floatingApps.size > 1
 
-                                    WidgetsToolsUpDown.Down -> {
-                                        if (floatingApps.isNotEmpty()) {
-                                            val idx = floatingApps.indexOfFirst { it == selected }
-                                            val next = if (idx == -1 || idx == floatingApps.lastIndex) floatingApps.first() else floatingApps[idx + 1]
-                                            selected = next
+                    MultiSelectConnectedButtonColumn(
+                        entries = WidgetsToolsMoveUpDown.entries,
+                        showLabel = false,
+                        isEnabled = { upDownEnabled },
+                        isChecked = { upDownEnabled }
+                    ) { entry ->
+                        scope.launch {
+                            when (entry) {
+                                WidgetsToolsMoveUpDown.MoveUp -> {
+                                    selected?.let {
+                                        applyChange {
+                                            floatingAppsViewModel.moveFloatingAppDown(it.id)
                                         }
                                     }
                                 }
-                            }
-                        }
 
-                        val upDownEnabled = aWidgetIsSelected && floatingApps.size > 1
-
-                        MultiSelectConnectedButtonColumn(
-                            entries = WidgetsToolsMoveUpDown.entries,
-                            showLabel = false,
-                            isEnabled = { upDownEnabled },
-                            isChecked = { upDownEnabled }
-                        ) { entry ->
-                            scope.launch {
-                                when (entry) {
-                                    WidgetsToolsMoveUpDown.MoveUp -> {
-                                        selected?.let {
-                                            applyChange {
-                                                floatingAppsViewModel.moveFloatingAppDown(it.id)
-                                            }
-                                        }
-                                    }
-
-                                    WidgetsToolsMoveUpDown.MoveDown -> {
-                                        selected?.let {
-                                            applyChange {
-                                                floatingAppsViewModel.moveFloatingAppUp(it.id)
-                                            }
+                                WidgetsToolsMoveUpDown.MoveDown -> {
+                                    selected?.let {
+                                        applyChange {
+                                            floatingAppsViewModel.moveFloatingAppUp(it.id)
                                         }
                                     }
                                 }
@@ -438,25 +429,23 @@ fun WidgetsTab(
                         }
                     }
                 }
-                HorizontalScrollIndicator(rowsScrollStates[1].canScrollForward)
             }
         }
     ) {
 
-        Box {
+        Box(modifier = Modifier.fillMaxSize()) {
             /**
              * The widgets and the grid, displayed first, to keep access to the buttons
              * The pointerInput is used to disable any widgets on click outside
              */
             Box(
                 Modifier
-                    .aspectRatio(aspectRatio)
                     .fillMaxSize()
                     .align(Alignment.Center)
                     .pointerInput(Unit) {
                         detectTransformGestures(true) { centroid, pan, gestureZoom, gestureRotate ->
-                            val oldScale = zoom
-                            val newScale = zoom * gestureZoom
+                            val oldScale = zoom.value
+                            val newScale = zoom.value * gestureZoom
 
                             // For natural zooming and rotating, the centroid of the gesture should
                             // be the fixed point where zooming and rotating occurs.
@@ -464,32 +453,42 @@ fun WidgetsTab(
                             // space), and then compute where it will be after this delta.
                             // We then compute what the new offset should be to keep the centroid
                             // visually stationary for rotating and zooming, and also apply the pan.
-                            offset =
-                                (offset + centroid / oldScale).rotateBy(gestureRotate) -
-                                        (centroid / newScale + pan / oldScale)
-                            zoom = newScale
-                            angle += gestureRotate
+                            scope.launch {
+                                offset.snapTo(
+                                    (offset.value + centroid / oldScale).rotateBy(gestureRotate) -
+                                            (centroid / newScale + pan / oldScale)
+                                )
+                                zoom.snapTo(newScale)
+                                angle.snapTo(angle.value + gestureRotate)
+                            }
                         }
                     }
                     .graphicsLayer {
-                        translationX = -offset.x * zoom
-                        translationY = -offset.y * zoom
-                        scaleX = zoom
-                        scaleY = zoom
-                        rotationZ = angle
+                        translationX = -offset.value.x * zoom.value
+                        translationY = -offset.value.y * zoom.value
+                        scaleX = zoom.value
+                        scaleY = zoom.value
+                        rotationZ = angle.value
                         transformOrigin = TransformOrigin(0f, 0f)
                     }
-                    .border(1.dp, MaterialTheme.colorScheme.primary, DragonShape)
             ) {
+
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .background(Color.Red)
+                        .size(50.dp)
+                )
 
                 /**
                  * Draw the grid of snapping that fills the entire screen
                  */
-                if (snapMove) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .drawWithCache {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .border(1.dp, MaterialTheme.colorScheme.primary, DragonShape)
+                        .conditional(snapMove) {
+                            drawWithCache {
                                 onDrawBehind {
                                     val lineWidth = 1f
                                     val color = Color.White.copy(alpha = 0.25f)
@@ -519,8 +518,8 @@ fun WidgetsTab(
                                     }
                                 }
                             }
-                    )
-                }
+                        }
+                )
 
                 floatingApps
                     .filter { it.nestId == nestId }
@@ -617,6 +616,45 @@ fun WidgetsTab(
             Text("${stringResource(R.string.current_nest)}: $nestId")
 
             HorizontalDivider()
+
+            val canResetOffset = offset.value != Offset.Zero
+            val canResetZoom = zoom.value != 1f
+            val canResetRotation = angle.value != 0f
+
+            MultiSelectConnectedButtonRow(
+                entries = MoveAroundTools.entries,
+                isEnabled = {
+                    when (it) {
+                        Center -> canResetOffset
+                        ResetZoom -> canResetZoom
+                        ResetRotation -> canResetRotation
+                    }
+                },
+                isChecked = {
+                    when (it) {
+                        Center -> canResetOffset
+                        ResetZoom -> canResetZoom
+                        ResetRotation -> canResetRotation
+                    }
+                }
+            ) { entry ->
+                scope.launch {
+                    when (entry) {
+
+                        Center -> scope.launch {
+                            offset.animateTo(Offset.Zero)
+                        }
+
+                        ResetZoom -> scope.launch {
+                            zoom.animateTo(1f)
+                        }
+
+                        ResetRotation -> scope.launch {
+                            angle.animateTo(0f)
+                        }
+                    }
+                }
+            }
 
             SliderWithLabel(
                 label = stringResource(R.string.cell_size),

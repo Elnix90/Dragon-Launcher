@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,7 +29,7 @@ import org.elnix.dragonlauncher.ui.base.animation.slideOutVerticalBouncy
  * @param content Composable lambda to render each item
  */
 @Composable
-fun <T> LazyColumnWithScrollButton(
+fun <T> LazyColumnWithScrollIndicator(
     items: List<T>,
     modifier: Modifier = Modifier,
     content: @Composable (T) -> Unit
@@ -69,7 +70,8 @@ fun BoxScope.VerticalScrollIndicator(visible: Boolean) {
     ) {
         Icon(
             painter = painterResource(R.drawable.arrow_down),
-            contentDescription = null
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.outline
         )
     }
 }

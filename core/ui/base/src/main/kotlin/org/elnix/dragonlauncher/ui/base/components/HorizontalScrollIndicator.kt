@@ -1,13 +1,20 @@
 package org.elnix.dragonlauncher.ui.base.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +37,7 @@ import org.elnix.dragonlauncher.ui.base.animation.slideOutHorizontalBouncy
  * @param content Composable lambda to render each item
  */
 @Composable
-fun <T> LazyRowWithScrollButton(
+fun <T> LazyRowWithScrollIndicator(
     items: List<T>,
     modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(5.dp),
@@ -55,6 +62,27 @@ fun <T> LazyRowWithScrollButton(
     }
 }
 
+
+@Composable
+fun RowWithScrollIndicator(
+    scrollState: ScrollState = rememberScrollState(),
+    content: @Composable RowScope.() -> Unit
+) {
+
+    Box {
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(scrollState)
+        ) {
+            content()
+        }
+        HorizontalScrollIndicator(scrollState.canScrollForward)
+    }
+}
+
 /**
  * A scroll indicator icon that appears at the right when content can be scrolled.
  *
@@ -73,7 +101,8 @@ fun BoxScope.HorizontalScrollIndicator(visible: Boolean) {
     ) {
         Icon(
             painter = painterResource(R.drawable.arrow_right),
-            contentDescription = null
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.outline
         )
     }
 }

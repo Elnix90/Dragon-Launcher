@@ -50,6 +50,7 @@ fun SettingsScaffold(
     vararg otherIcons: Triple<(() -> Unit), Int, String>,
     modifier: Modifier = Modifier,
     horizontalPadding: Dp = 16.dp,
+    applyPadding: Boolean = true,
     resetTitle: String = stringResource(R.string.reset_default_settings),
     resetText: String? = stringResource(R.string.reset_settings_in_this_tab),
     listState: LazyListState? = null,
@@ -73,67 +74,72 @@ fun SettingsScaffold(
         onBack()
     }
 
-
     Scaffold(
         containerColor = Color.Transparent,
         modifier = modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets.statusBarsIgnoringVisibility.add(WindowInsets(left = horizontalPadding, right = horizontalPadding)),
         bottomBar = {
-            Spacer(Modifier.height(5.dp))
 
-            if (specialSettingsTitle != null) {
-                specialSettingsTitle()
-            } else {
-                SettingsTitle(
-                    title = title,
-                    otherIcons = otherIcons,
-                    helpIcon = { showHelpDialog = true },
-                    resetIcon = if (onReset != null) {
-                        { showResetDialog = true }
-                    } else null,
-                ) { onBack() }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                if (bottomContent != null) {
+                    bottomContent()
+                    Spacer(Modifier.height(5.dp))
+                }
+
+                if (specialSettingsTitle != null) {
+                    specialSettingsTitle()
+                } else {
+                    SettingsTitle(
+                        title = title,
+                        otherIcons = otherIcons,
+                        helpIcon = { showHelpDialog = true },
+                        resetIcon = if (onReset != null) {
+                            { showResetDialog = true }
+                        } else null,
+                    ) { onBack() }
+                }
+            }
+        },
+        topBar = {
+            if (topContent != null) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    topContent()
+                }
             }
         }
     ) { paddingValues ->
+
         Box(
             modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
+                .conditional(applyPadding) {
+                    padding(paddingValues)
+                        .fillMaxSize()
+                }
         ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                if (topContent != null) {
-                    topContent()
-                    Spacer(Modifier.height(16.dp))
-                }
+            if (lazyContent != null) {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize(),
+                    state = listState ?: rememberLazyListState()
+                ) { lazyContent() }
 
-                if (lazyContent != null) {
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxSize(),
-                        state = listState ?: rememberLazyListState()
-                    ) { lazyContent() }
-
-                } else {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .conditional(scrollableContent) {
-                                verticalScroll(rememberScrollState())
-                            }
-                    ) { content!!() }
-                }
-            }
-            if (bottomContent != null) {
+            } else {
                 Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
-                ) {
-                    bottomContent()
-                }
+                        .fillMaxSize()
+                        .conditional(scrollableContent) {
+                            verticalScroll(rememberScrollState())
+                        }
+                ) { content!!() }
             }
         }
     }

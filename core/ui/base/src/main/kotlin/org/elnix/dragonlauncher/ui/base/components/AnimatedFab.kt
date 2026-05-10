@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.ui.base.components
 
 import androidx.annotation.DrawableRes
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -18,13 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.base.animation.rememberFancyAnimations
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.base.withHaptic
@@ -73,19 +70,22 @@ fun ToggleAnimatedFab(
     modifier: Modifier = Modifier,
     minSize: Dp = 56.dp,
     containerColor: Color = FloatingActionButtonDefaults.containerColor,
-    icon: (checkedProgress: Float) -> Int
+    icon: (isPressed: Boolean) -> Int
 ) {
 
-    val checkedProgress by
-        animateFloatAsState(
-            targetValue = if (checked) 1f else 0f,
-            animationSpec = bouncySpec(),
-        )
-    val fabAnimation = rememberFancyAnimations(checkedProgress > .5f)
+    val interactionSource = rememberInteractionSource()
+    val buttonPressed by interactionSource.collectIsPressedAsState()
+
+    val isActivated = buttonPressed || checked
+    val fabAnimation = rememberFancyAnimations(isActivated)
 
     Box(
         modifier = modifier
-            .scale(fabAnimation.scale)
+            .graphicsLayer {
+                scaleX = fabAnimation.scale
+                scaleY = fabAnimation.scale
+//                rotationZ = fabAnimation.outerRotation
+            }
             .defaultMinSize(minWidth = minSize, minHeight = minSize)
             .clip(fabAnimation.shape)
             .background(containerColor)
@@ -97,12 +97,12 @@ fun ToggleAnimatedFab(
             )
     ) {
         Icon(
-            painter = painterResource(icon(checkedProgress)),
+            painter = painterResource(icon(isActivated)),
             contentDescription = null,
             tint = contentColorFor(containerColor),
             modifier = Modifier
                 .align(Alignment.Center)
-                .rotate(fabAnimation.rotation)
+//                .rotate(fabAnimation.rotation - fabAnimation.outerRotation)
         )
     }
 }

@@ -9,7 +9,7 @@ enum class NestEditMode(
 ) : SelectButtonOption {
     Drag(R.drawable.drag_handle),
     Haptic(R.drawable.haptic),
-    MinAngle(R.drawable.trhee_d_rotation),
+    MinAngle(R.drawable.polyline),
     Radius(R.drawable.radar),
     Other(R.drawable.more_horiz)
 }

@@ -20,7 +20,7 @@ import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.asStateNull
-import org.elnix.dragonlauncher.ui.base.components.LazyRowWithScrollButton
+import org.elnix.dragonlauncher.ui.base.components.LazyRowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.helpers.IconPackListContent
@@ -64,7 +64,7 @@ fun IconPackTab(
         },
         topContent = {
             if (showPreview) {
-                LazyRowWithScrollButton(
+                LazyRowWithScrollIndicator(
                     items = apps,
                     modifier = Modifier.height(80.dp),
                 ) { app ->
