@@ -101,7 +101,6 @@
     <string name="workspaces">Arbeitsbereiche</string>
     <string name="workspace_help">Hier kannst du die Arbeitsbereiche der verschiedenen Apps anpassen, sie hinzufügen, bearbeiten oder entfernen und Apps daran binden.</string>
     <string name="create_workspace">Arbeitsbereich erstellen</string>
-    <string name="rename_workspace">Arbeitsbereich umbenennen</string>
     <string name="delete_workspace">Arbeitsbereich löschen</string>
     <string name="are_you_sure_to_delete_workspace">Bist du sicher, dass du den Arbeitsbereich löschst\?</string>
     <string name="search_apps">Such-Apps</string>

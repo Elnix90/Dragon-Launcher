@@ -101,7 +101,6 @@
     <string name="workspaces">कार्यक्षेत्र</string>
     <string name="workspace_help">यहां आप विभिन्न ऐप्स वर्कस्पेस को कस्टमाइज़ कर सकते हैं, आप उन्हें जोड़/संपादित/हटा सकते हैं और उनमें ऐप्स को बाइंड कर सकते हैं</string>
     <string name="create_workspace">कार्यक्षेत्र बनाएँ</string>
-    <string name="rename_workspace">कार्यस्थान का नाम बदलें</string>
     <string name="delete_workspace">कार्यस्थान हटाएँ</string>
     <string name="are_you_sure_to_delete_workspace">क्या आप कार्यस्थान को हटाना सुनिश्चित करते हैं</string>
     <string name="search_apps">ऐप्स खोजें</string>

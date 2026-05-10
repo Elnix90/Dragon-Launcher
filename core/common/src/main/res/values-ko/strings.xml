@@ -103,7 +103,6 @@
     <string name="workspaces">작업 공간</string>
     <string name="workspace_help">여기서는 다양한 앱 작업 공간을 커스터마이즈할 수 있고, 추가/편집/삭제 및 앱 바인딩도 할 수 있습니다</string>
     <string name="create_workspace">작업 공간 생성</string>
-    <string name="rename_workspace">작업 공간 이름 변경</string>
     <string name="delete_workspace">작업 공간 삭제</string>
     <string name="are_you_sure_to_delete_workspace">작업 공간을 삭제하는 게 확실한가요\?</string>
     <string name="search_apps">검색 앱</string>

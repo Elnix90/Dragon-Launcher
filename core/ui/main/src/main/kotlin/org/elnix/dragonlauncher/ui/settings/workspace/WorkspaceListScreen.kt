@@ -199,7 +199,7 @@ fun WorkspaceListScreen(
 
     CreateOrEditWorkspaceDialog(
         visible = renameTarget != null,
-        title = stringResource(R.string.rename_workspace),
+        title = stringResource(R.string.edit_workspace),
         name = nameBuffer,
         type = renameTarget?.type,
         onNameChange = { nameBuffer = it },

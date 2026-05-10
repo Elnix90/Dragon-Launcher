@@ -103,7 +103,6 @@
     <string name="workspaces">Espaços de trabalho</string>
     <string name="workspace_help">Aqui você pode personalizar os diferentes espaços de trabalho dos apps, adicionar/editar/remover e vincular apps a eles</string>
     <string name="create_workspace">Criar espaço de trabalho</string>
-    <string name="rename_workspace">Renomear o Workspace</string>
     <string name="delete_workspace">Excluir Workspace</string>
     <string name="are_you_sure_to_delete_workspace">Você tem certeza de que vai deletar o workspace</string>
     <string name="search_apps">Aplicativos de Busca</string>

@@ -8,6 +8,6 @@ enum class WorkspaceAction(
     override val iconDisabled: Int? = null
     ) : ToggleButtonOption {
 
-    Edit(R.drawable.edit_rounded, R.string.rename),
+    Edit(R.drawable.edit_rounded, R.drawable.edit_rounded),
     Delete(R.string.delete_workspace, R.drawable.delete_forever)
 }

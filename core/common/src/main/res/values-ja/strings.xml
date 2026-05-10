@@ -103,7 +103,6 @@
     <string name="workspaces">ワークスペース</string>
     <string name="workspace_help">ここでは異なるアプリのワークスペースをカスタマイズでき、追加・編集・削除やアプリのバインドも可能です</string>
     <string name="create_workspace">ワークスペースを作成する</string>
-    <string name="rename_workspace">ワークスペースの名称変更</string>
     <string name="delete_workspace">ワークスペースを削除</string>
     <string name="are_you_sure_to_delete_workspace">ワークスペースは必ず削除しますか\?</string>
     <string name="search_apps">検索アプリ</string>
