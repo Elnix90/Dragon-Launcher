@@ -78,6 +78,16 @@ fun SettingsScaffold(
         containerColor = Color.Transparent,
         modifier = modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets.statusBarsIgnoringVisibility.add(WindowInsets(left = horizontalPadding, right = horizontalPadding)),
+        topBar = {
+            if (topContent != null) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    topContent()
+                }
+            }
+        },
         bottomBar = {
 
             Column(
@@ -100,16 +110,6 @@ fun SettingsScaffold(
                             { showResetDialog = true }
                         } else null,
                     ) { onBack() }
-                }
-            }
-        },
-        topBar = {
-            if (topContent != null) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    topContent()
                 }
             }
         }

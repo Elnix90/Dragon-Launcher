@@ -50,7 +50,7 @@ import org.elnix.dragonlauncher.settings.stores.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.asStateNull
-import org.elnix.dragonlauncher.ui.components.FloatingAppsHostView
+import org.elnix.dragonlauncher.ui.components.WidgetHostView
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.composition.LocalFloatingAppsViewModel
@@ -365,7 +365,7 @@ fun MainScreen(
                     is MainScreenLayer.Widgets -> {
                         filteredFloatingAppObjects.forEach { floatingAppObject ->
                             key(floatingAppObject.id, nestId) {
-                                FloatingAppsHostView(
+                                WidgetHostView(
                                     floatingAppObject = floatingAppObject,
                                     cellSizePx = cellSizePx,
                                     modifier = Modifier
