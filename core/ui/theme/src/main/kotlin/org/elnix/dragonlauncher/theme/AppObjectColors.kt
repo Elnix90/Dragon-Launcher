@@ -51,11 +51,11 @@ object AppObjectsColors {
     }
 
     @Composable
-    fun buttonColors(containerColor: Color? = null): ButtonColors {
+    fun buttonColors(): ButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 ButtonDefaults.buttonColors(
-                    containerColor = containerColor ?: primary,
+                    containerColor = primary,
                     contentColor = onPrimary
                 )
             }
@@ -201,8 +201,8 @@ object AppObjectsColors {
                 IconButtonDefaults.iconButtonColors(
                     containerColor = surface,
                     contentColor = primary,
-                    disabledContainerColor = surface.alphaMultiplier(0.5f),
-                    disabledContentColor = onSurface.alphaMultiplier(0.5f)
+                    disabledContainerColor = surfaceVariant,
+                    disabledContentColor = onSurfaceVariant
                 )
             }
         } else IconButtonDefaults.iconButtonColors()
@@ -210,15 +210,14 @@ object AppObjectsColors {
 
 
     @Composable
-    fun iconToggleButtonColors(
-    ): IconToggleButtonColors {
+    fun iconToggleButtonColors(): IconToggleButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 IconButtonDefaults.iconToggleButtonColors(
                     containerColor = surface,
                     contentColor = onSurface,
-                    disabledContainerColor = surface.alphaMultiplier(0.5f),
-                    disabledContentColor = onSurface.alphaMultiplier(0.5f),
+                    disabledContainerColor = surfaceVariant,
+                    disabledContentColor = onSurfaceVariant,
                     checkedContainerColor = primary,
                     checkedContentColor = onPrimary
                 )
