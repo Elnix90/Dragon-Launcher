@@ -208,8 +208,7 @@ sealed class NavigationRoute : NavKey {
             is Logs -> R.string.logs
             is LogsViewer -> R.string.logs
             is SettingsJson -> R.string.settings_json
-
-            is NestEdit -> R.string.widgets_floating_apps
+            is NestEdit -> R.string.edit_nest
             is WorkspaceDetail -> R.string.workspaces
             is PinUnlock -> R.string.unlock_settings
         }
