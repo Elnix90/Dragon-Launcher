@@ -5,18 +5,26 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.ButtonGroupDefaults.connectedButtonCheckedShape
+import androidx.compose.material3.ButtonGroupDefaults.connectedLeadingButtonPressShape
+import androidx.compose.material3.ButtonGroupDefaults.connectedLeadingButtonShape
+import androidx.compose.material3.ButtonGroupDefaults.connectedMiddleButtonPressShape
+import androidx.compose.material3.ButtonGroupDefaults.connectedTrailingButtonPressShape
+import androidx.compose.material3.ButtonGroupDefaults.connectedTrailingButtonShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.IconToggleButtonShapes
+import androidx.compose.material3.ShapeDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import org.elnix.dragonlauncher.enumsui.ToggleButtonOption
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
-import org.elnix.dragonlauncher.ui.base.withHaptic
+import org.elnix.dragonlauncher.ui.base.withHapticParam
 import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
 
 /**
@@ -53,20 +61,20 @@ fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
 
             val checked = isChecked(entry)
 
-            IconButton(
-                onClick = withHaptic { onCheck(entry) },
+            IconToggleButton(
+                checked = checked,
+                onCheckedChange = withHapticParam { onCheck(entry) },
                 interactionSource = interactionSources[idx],
                 modifier = Modifier
                     .size(IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
                     .animateWidth(interactionSources[idx]),
                 enabled = isEnabled(entry),
-                shapes = UiConstants.dragonIconButtonShapes(),
-                colors = AppObjectsColors.iconButtonColors()
-//                shapes = when (idx) {
-//                    0 -> ButtonGroupDefaults.
-//                    entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-//                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-//                }
+                colors = AppObjectsColors.iconToggleButtonColors(),
+                shapes = when (idx) {
+                    0 -> connectedLeadingButtonShapes()
+                    entries.lastIndex -> connectedTrailingButtonShapes()
+                    else -> connectedMiddleButtonShapes()
+                }
             ) {
 
                 entry.iconEnabled?.let { iconEnabled ->
@@ -83,3 +91,32 @@ fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
         }
     }
 }
+
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun connectedLeadingButtonShapes(
+    shape: Shape = connectedLeadingButtonShape,
+    pressedShape: Shape = connectedLeadingButtonPressShape,
+    checkedShape: Shape = connectedButtonCheckedShape,
+): IconToggleButtonShapes =
+    IconToggleButtonShapes(shape = shape, pressedShape = pressedShape, checkedShape = checkedShape)
+
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun connectedMiddleButtonShapes(
+    shape: Shape = ShapeDefaults.Small,
+    pressedShape: Shape = connectedMiddleButtonPressShape,
+    checkedShape: Shape = connectedButtonCheckedShape,
+): IconToggleButtonShapes =
+    IconToggleButtonShapes(shape = shape, pressedShape = pressedShape, checkedShape = checkedShape)
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun connectedTrailingButtonShapes(
+    shape: Shape = connectedTrailingButtonShape,
+    pressedShape: Shape = connectedTrailingButtonPressShape,
+    checkedShape: Shape = connectedButtonCheckedShape,
+): IconToggleButtonShapes =
+    IconToggleButtonShapes(shape = shape, pressedShape = pressedShape, checkedShape = checkedShape)

@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
@@ -848,7 +849,7 @@ fun SettingsScreen(
                         AnimatedVisibility(isEditing) {
                             DragonIconButton(
                                 onClick = ::commitEditTExt,
-                                colors = AppObjectsColors.iconButtonColors(
+                                colors = IconButtonDefaults.iconButtonColors(
                                     MaterialTheme.colorScheme.primary,
                                     MaterialTheme.colorScheme.onPrimary
                                 ),

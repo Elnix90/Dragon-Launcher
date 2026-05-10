@@ -9,6 +9,7 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconToggleButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButtonColors
@@ -194,22 +195,36 @@ object AppObjectsColors {
     }
 
     @Composable
-    fun iconButtonColors(
-        backgroundColor: Color? = null,
-        contentColor: Color? = null
-    ): IconButtonColors {
+    fun iconButtonColors(): IconButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 IconButtonDefaults.iconButtonColors(
-                    containerColor = backgroundColor ?: surface,
-                    contentColor = contentColor ?: primary,
-                    disabledContainerColor = backgroundColor?.alphaMultiplier(0.5f) ?: surface.alphaMultiplier(0.5f),
-                    disabledContentColor = contentColor?.alphaMultiplier(0.5f) ?: onSurface.alphaMultiplier(0.5f)
+                    containerColor = surface,
+                    contentColor = primary,
+                    disabledContainerColor = surface.alphaMultiplier(0.5f),
+                    disabledContentColor = onSurface.alphaMultiplier(0.5f)
                 )
             }
         } else IconButtonDefaults.iconButtonColors()
     }
 
+
+    @Composable
+    fun iconToggleButtonColors(
+    ): IconToggleButtonColors {
+        return if (LocalUseCustomColorChannels.current) {
+            with(MaterialTheme.colorScheme) {
+                IconButtonDefaults.iconToggleButtonColors(
+                    containerColor = surface,
+                    contentColor = onSurface,
+                    disabledContainerColor = surface.alphaMultiplier(0.5f),
+                    disabledContentColor = onSurface.alphaMultiplier(0.5f),
+                    checkedContainerColor = primary,
+                    checkedContentColor = onPrimary
+                )
+            }
+        } else IconButtonDefaults.iconToggleButtonColors()
+    }
 
     @Composable
     fun cancelIconButtonColors(): IconButtonColors {

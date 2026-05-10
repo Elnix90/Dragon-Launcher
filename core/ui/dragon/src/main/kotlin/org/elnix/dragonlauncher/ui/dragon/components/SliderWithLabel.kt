@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -166,7 +167,7 @@ private fun SliderWithLabelInternal(
                     editing -> {
                         DragonIconButton(
                             onClick = { editValue() },
-                            colors = AppObjectsColors.iconButtonColors(backgroundColor),
+                            colors = IconButtonDefaults.iconButtonColors(containerColor = backgroundColor),
                             icon = R.drawable.check,
                             contentDescription = "Validate"
                         )

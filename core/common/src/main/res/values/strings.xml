@@ -940,4 +940,5 @@
     <string name="reset_zoom">Reset zoom</string>
     <string name="edit_workspace">Edit Workspace</string>
     <string name="show_advanced_edit_tools">Show Advanced Edit Tools</string>
+    <string name="random">Random</string>
 </resources>

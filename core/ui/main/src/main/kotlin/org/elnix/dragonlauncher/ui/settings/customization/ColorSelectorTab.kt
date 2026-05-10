@@ -577,9 +577,7 @@ fun ColorSelectorTab(
 
                     Box {
                         DragonIconButton(
-                            colors = AppObjectsColors.iconButtonColors(
-                                backgroundColor = MaterialTheme.colorScheme.primary.copy(0.5f)
-                            ),
+                            colors = AppObjectsColors.iconButtonColors(),
                             icon = R.drawable.more_vert,
                             contentDescription = stringResource(R.string.open_burger_menu)
                         ) { showBurgerMenu = true }

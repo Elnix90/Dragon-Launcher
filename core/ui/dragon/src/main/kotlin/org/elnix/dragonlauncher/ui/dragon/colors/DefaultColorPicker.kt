@@ -36,7 +36,7 @@ fun DefaultColorPicker(
     initialColor: Color,
     onColorSelected: (Color) -> Unit
 ) {
-    var selectedColor by remember { mutableStateOf(initialColor) }
+    var selectedColor by remember(initialColor) { mutableStateOf(initialColor) }
 
 
     val defaultColors = listOf(

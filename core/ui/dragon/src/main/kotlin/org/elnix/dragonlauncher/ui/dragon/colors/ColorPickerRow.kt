@@ -12,17 +12,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -43,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.ColorUtils.randomColor
 import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.base.ColorUtils.toHexWithAlpha
 import org.elnix.dragonlauncher.common.R
@@ -50,15 +47,17 @@ import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.pasteClipboard
 import org.elnix.dragonlauncher.enumsui.select.ColorPickerMode
+import org.elnix.dragonlauncher.enumsui.toggle.ColorActions
 import org.elnix.dragonlauncher.settings.stores.ColorModesSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
+import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,8 +72,6 @@ fun ColorPickerRow(
 ) {
     var showPicker by remember { mutableStateOf(false) }
     var actualColor by remember(currentColor) { mutableStateOf(currentColor) }
-
-    val modifier = if (showLabel) Modifier.fillMaxWidth() else Modifier.wrapContentWidth()
 
     val savedMode by ColorModesSettingsStore.colorPickerMode.asState()
     val initialPage = remember(savedMode) { ColorPickerMode.entries.indexOf(savedMode) }
@@ -136,17 +133,20 @@ fun ColorPickerRow(
             ) {
                 Text(
                     text = label,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleMediumEmphasized
                 )
 
-                Icon(
-                    imageVector = Icons.Default.Restore,
-                    contentDescription = "Reset Color",
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier
-                        .shapedClickable { onColorPicked(null) }
-                        .padding(8.dp)
-                )
+                Spacer()
+
+                MultiSelectConnectedButtonRow(
+                    entries = ColorActions.entries
+                ) {
+                    when(it) {
+                        ColorActions.Reset -> onColorPicked(null)
+                        ColorActions.Random -> actualColor = randomColor()
+                    }
+                }
             }
 
             ColorPicker(
@@ -201,9 +201,8 @@ private fun ColorPicker(
             scope.launch { pagerState.animateScrollToPage(it.ordinal) }
         }
 
-        Spacer(Modifier.height(5.dp))
+        Spacer(5.dp)
 
-        // ───────────── Preview box ─────────────
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -248,7 +247,7 @@ private fun ColorPicker(
                     onClick = {
                         ctx.copyToClipboard(hexText)
                     },
-                    colors = AppObjectsColors.iconButtonColors(color, textBoxColor),
+                    colors = IconButtonDefaults.iconButtonColors(containerColor = color, contentColor = textBoxColor),
                     icon = R.drawable.copy,
                     contentDescription = "Copy HEX"
                 )
@@ -261,7 +260,7 @@ private fun ColorPicker(
                             onColorSelected(pasted)
                         }
                     },
-                    colors = AppObjectsColors.iconButtonColors(color, textBoxColor),
+                    colors = IconButtonDefaults.iconButtonColors(containerColor = color, contentColor = textBoxColor),
                     icon = R.drawable.paste,
                     contentDescription = "Paste HEX"
                 )
@@ -303,6 +302,8 @@ private fun ColorPicker(
             backgroundColor = MaterialTheme.colorScheme.surface,
             valueRange = 0f..1f
         ) { alpha -> onColorSelected(color.copy(alpha = alpha)) }
+
+        Spacer(12.dp)
     }
 }
 

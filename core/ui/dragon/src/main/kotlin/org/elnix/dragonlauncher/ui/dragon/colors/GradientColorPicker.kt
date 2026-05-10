@@ -5,13 +5,10 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,17 +40,17 @@ fun GradientColorPicker(
     initialColor: Color,
     onColorSelected: (Color) -> Unit
 ) {
-    val hsvArray = remember {
+    val hsvArray = remember(initialColor) {
         FloatArray(3).apply {
             AndroidColor.colorToHSV(initialColor.toArgb(), this)
         }
     }
 
-    var hue by remember { mutableFloatStateOf(hsvArray[0]) }
-    var sat by remember { mutableFloatStateOf(hsvArray[1]) }
-    var value by remember { mutableFloatStateOf(hsvArray[2]) }
+    var hue by remember(hsvArray) { mutableFloatStateOf(hsvArray[0]) }
+    var sat by remember(hsvArray) { mutableFloatStateOf(hsvArray[1]) }
+    var value by remember(hsvArray) { mutableFloatStateOf(hsvArray[2]) }
 
-    var selectedColor by remember { mutableStateOf(initialColor) }
+    var selectedColor by remember(initialColor) { mutableStateOf(initialColor) }
 
     val hueColor = remember(hue) { Color.hsv(hue, 1f, 1f) }
 
@@ -63,11 +60,9 @@ fun GradientColorPicker(
             .fillMaxSize()
             .padding(5.dp)
     ) {
-        // ── Gradient + Hue selectors ─────────────────────────────────────────
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Min),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -76,7 +71,6 @@ fun GradientColorPicker(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .aspectRatio(1f)
                     .fillMaxHeight()
                     .clip(DragonShape)
                     .background(Brush.horizontalGradient(listOf(Color.White, hueColor)))
