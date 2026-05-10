@@ -614,9 +614,9 @@ fun SettingsScreen(
     }
 
     // Shows all points, excepted the currently dragged one, if any, to draw them inside the canva
-    val displayedFilteredPoints by remember(points, isDragging, selectedPoint?.id) {
+    val displayedFilteredPoints by remember(points, selectedPoint?.id) {
         derivedStateOf {
-            if (!isDragging) points
+            if (selectedPoint == null) points
             else points.filter { it.id != selectedPoint?.id }
         }
     }
@@ -1064,21 +1064,15 @@ fun SettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .onSizeChanged { size ->
-                    /**
-                     * Updates the center and available width variables, that depends on the phone size and orientation.
-                     * Computes the larger size between width and height to ensure all points belongs to the hittable zone
-                     * The visual points and hitboxes are separated due to the need of a precise pointer input and
-                     * should be synchronized using the clever [computePointPosition] function that relies on common
-                     * center and circles to output the points position on screen
-                     */
+                    // Updates the center and available width variables, that depends on the phone size and orientation.
+                    // Computes the larger size between width and height to ensure all points belongs to the hittable zone
+                    // The visual points and hitboxes are separated due to the need of a precise pointer input and
+                    // should be synchronized using the clever [computePointPosition] function that relies on common
+                    // center and circles to output the points position on screen
+
                     val w = size.width.toFloat()
                     val h = size.height.toFloat()
                     center = Offset(w / 2f, h / 2f)
-
-                    // Use the minimum size between height and width, to prevent the box being untouchable on large displays
-//                    val usedSize = min(w, h)
-
-//                    availableWidth = usedSize - (POINT_HITBOX_RADIUS_PX * 2)  // Safe space for points + padding
                 }
         ) {
             /**
@@ -1148,7 +1142,7 @@ fun SettingsScreen(
                     }
 
                     // Animated Selected point
-                    if (isDragging && selectedPoint != null) {
+                    if (selectedPoint != null) {
                         actionsInCircle(
                             drawParams = drawParams,
                             center = selectedPointTempOffset.value,
