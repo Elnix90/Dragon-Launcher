@@ -21,21 +21,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.viewinterop.AndroidView
+import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.common.serializables.FloatingAppObject
 import org.elnix.dragonlauncher.common.serializables.IconShape
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.ui.actions.ActionIcon
+import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.helpers.nests.actionsInCircle
 import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
-import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.widgets.LauncherWidgetHolder
 import kotlin.math.min
 
 
 @Composable
-fun FloatingAppsHostView(
+fun WidgetHostView(
     floatingAppObject: FloatingAppObject,
     cellSizePx: Float,
     modifier: Modifier = Modifier,

@@ -96,7 +96,7 @@ import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
-import org.elnix.dragonlauncher.ui.components.FloatingAppsHostView
+import org.elnix.dragonlauncher.ui.components.WidgetHostView
 import org.elnix.dragonlauncher.ui.composition.LocalFloatingAppsViewModel
 import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
@@ -859,7 +859,7 @@ private fun DraggableFloatingApp(
     ) {
 
         // Widget / App content (touch blocked during editing)
-        FloatingAppsHostView(
+        WidgetHostView(
             floatingAppObject = app,
             blockTouches = true,
             cellSizePx = cellSizePx
