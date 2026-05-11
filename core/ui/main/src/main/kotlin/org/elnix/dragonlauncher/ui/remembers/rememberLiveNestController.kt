@@ -15,7 +15,7 @@ import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Comp
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SWIPE_TAG
 import org.elnix.dragonlauncher.common.messyfolder.UiCircle
 import org.elnix.dragonlauncher.common.messyfolder.circles.HitResult
-import org.elnix.dragonlauncher.common.messyfolder.circles.computePointPosition
+import org.elnix.dragonlauncher.common.messyfolder.circles.computePosition
 import org.elnix.dragonlauncher.common.messyfolder.circles.resolveLiveNestHit
 import org.elnix.dragonlauncher.common.messyfolder.circles.scaleDragDistances
 import org.elnix.dragonlauncher.common.messyfolder.circles.uiCirclesFromDragDistances
@@ -272,7 +272,7 @@ fun rememberLiveNestControllerStack(
             val previousLiveNestCircles = scaledCircles[idx -1]
             val previousLiveNestCenter = nestStack[idx -1].liveNestCenter ?: return@LaunchedEffect
 
-            val currentPointOffset = computePointPosition(currentPoint, previousLiveNestCircles, previousLiveNestCenter)
+            val currentPointOffset = currentPoint.computePosition(previousLiveNestCircles, previousLiveNestCenter)
 
             delay(delayMs)
 

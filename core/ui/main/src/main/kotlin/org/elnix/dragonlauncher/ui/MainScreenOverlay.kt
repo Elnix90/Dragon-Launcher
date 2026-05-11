@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SWIPE_TAG
-import org.elnix.dragonlauncher.common.messyfolder.circles.computePointPosition
+import org.elnix.dragonlauncher.common.messyfolder.circles.computePosition
 import org.elnix.dragonlauncher.common.messyfolder.circles.scaleDragDistances
 import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.common.serializables.CircleNest
@@ -316,8 +316,7 @@ fun MainScreenOverlay(
                                     val targetCircle = hitResult.targetCircle
                                     val radius = (dragRadii[targetCircle] ?: dragRadii[targetCircle])!!
 
-                                    computePointPosition(
-                                        point = outerSelectedPoint,
+                                    outerSelectedPoint.computePosition(
                                         radius = radius,
                                         center = liveNestCenterForDraw
                                     )

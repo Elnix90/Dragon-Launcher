@@ -80,7 +80,7 @@ import org.elnix.dragonlauncher.common.messyfolder.Constants.Settings.SNAP_STEP_
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Settings.TOUCH_THRESHOLD_PX
 import org.elnix.dragonlauncher.common.messyfolder.UiCircle
 import org.elnix.dragonlauncher.common.messyfolder.circles.autoSeparate
-import org.elnix.dragonlauncher.common.messyfolder.circles.computePointPosition
+import org.elnix.dragonlauncher.common.messyfolder.circles.computePosition
 import org.elnix.dragonlauncher.common.messyfolder.circles.createCirclesFromDragDistances
 import org.elnix.dragonlauncher.common.messyfolder.circles.normalizeAngle
 import org.elnix.dragonlauncher.common.messyfolder.circles.randomFreeAngle
@@ -149,10 +149,8 @@ import java.math.RoundingMode
 import java.util.UUID
 import kotlin.math.abs
 import kotlin.math.atan2
-import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.round
-import kotlin.math.sin
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("LocalContextGetResourceValueCall")
@@ -213,9 +211,7 @@ fun SettingsScreen(
         }
     }
 
-    var isDragging by remember { mutableStateOf(false) }
-    var isTransformDragging by remember { mutableStateOf(false) }
-
+    val isDragging = selectedPointTempOffset.value != Offset.Zero
 
     var closestHoveredPoint by remember { mutableStateOf<SwipePointSerializable?>(null) }
     var closestHoveredTempOffset by remember { mutableStateOf<Offset?>(null) }
@@ -588,8 +584,7 @@ fun SettingsScreen(
         ableToLaunchHoverAction = false
         closestHoveredPoint?.let {
 
-            val finalOffset = computePointPosition(
-                it,
+            val finalOffset = it.computePosition(
                 circles,
                 center
             )
@@ -612,9 +607,9 @@ fun SettingsScreen(
     }
 
     // Shows all points, excepted the currently dragged one, if any, to draw them inside the canva
-    val displayedFilteredPoints by remember(points, selectedPoint?.id) {
+    val displayedFilteredPoints by remember(points, isDragging, selectedPoint?.id) {
         derivedStateOf {
-            if (selectedPoint == null) points
+            if (!isDragging) points
             else points.filter { it.id != selectedPoint?.id }
         }
     }
@@ -1125,7 +1120,7 @@ fun SettingsScreen(
                         val hostCenter = if (isDragging) {
                             selectedPointTempOffset.value
                         } else {
-                            computePointPosition(p, circles, center)
+                            p.computePosition(circles, center)
                         }
                         drawIntoCanvas { canvas ->
                             val bounds = Rect(0f, 0f, screenSize.width.toFloat(), screenSize.height.toFloat())
@@ -1209,8 +1204,7 @@ fun SettingsScreen(
 
                                     // Can only select points on the same nest
                                     filteredPoints.forEach { p ->
-                                        val pointOffset = computePointPosition(
-                                            point = p,
+                                        val pointOffset = p.computePosition(
                                             circles = circles,
                                             center = center
                                         )
@@ -1230,7 +1224,6 @@ fun SettingsScreen(
 
                                     selectedPoint?.let {
                                         lastSelectedCircle = it.circleNumber
-                                        isDragging = true
                                         scope.launch {
                                             selectedPointTempOffset.snapTo(transformedOffset)
                                         }
@@ -1252,11 +1245,10 @@ fun SettingsScreen(
                                                 pos = transformedPosition
                                             )
 
-                                            computePointPosition(
-                                                point = p.copy(
-                                                    angleDeg = newPointValues?.first ?: p.angleDeg,
-                                                    circleNumber = newPointValues?.second ?: p.circleNumber
-                                                ),
+                                            p.copy(
+                                                angleDeg = newPointValues?.first ?: p.angleDeg,
+                                                circleNumber = newPointValues?.second ?: p.circleNumber
+                                            ).computePosition(
                                                 circles = circles,
                                                 center = center
                                             )
@@ -1275,8 +1267,7 @@ fun SettingsScreen(
                                     filteredPoints.filter { it.id != selectedPoint?.id }
                                         .forEach { p ->
 
-                                            val pointOffset = computePointPosition(
-                                                point = p,
+                                            val pointOffset = p.computePosition(
                                                 circles = circles,
                                                 center = center
                                             )
@@ -1404,8 +1395,7 @@ fun SettingsScreen(
 
 
                                             // Compute final snapped position
-                                            val finalOffset = computePointPosition(
-                                                p,
+                                            val finalOffset = p.computePosition(
                                                 circles,
                                                 center
                                             )
@@ -1416,7 +1406,6 @@ fun SettingsScreen(
                                         }
 
                                         // Clear dragging state and other points residues
-                                        isDragging = false
                                         closestHoveredPoint = null
                                         ableToLaunchHoverAction = false
                                     }
@@ -1489,18 +1478,15 @@ fun SettingsScreen(
                                     // Normal tap mode
                                     var tapped: SwipePointSerializable? = null
                                     var best = Float.MAX_VALUE
+                                    var bestPointPos = Offset.Zero
 
                                     filteredPoints.forEach { p ->
-                                        val circle =
-                                            circles.getOrNull(p.circleNumber) ?: return@forEach
-                                        val px =
-                                            center.x + circle.radius * sin(Math.toRadians(p.angleDeg)).toFloat()
-                                        val py =
-                                            center.y - circle.radius * cos(Math.toRadians(p.angleDeg)).toFloat()
-                                        val dist = hypot(transformedOffset.x - px, transformedOffset.y - py)
+                                        val pointPos = p.computePosition(circles, center)
+                                        val dist = hypot(transformedOffset.x - pointPos.x, transformedOffset.y - pointPos.y)
 
                                         if (dist < best) {
                                             best = dist
+                                            bestPointPos = pointPos
                                             tapped = p
                                         }
                                     }
@@ -1520,7 +1506,12 @@ fun SettingsScreen(
                                             } else tapped
                                         else null
 
-                                    selectedPoint?.let { lastSelectedCircle = it.circleNumber }
+                                    selectedPoint?.let {
+                                        lastSelectedCircle = it.circleNumber
+                                        scope.launch {
+                                            selectedPointTempOffset.snapTo(bestPointPos)
+                                        }
+                                    }
                                 }
                             )
                         }
@@ -1730,7 +1721,6 @@ fun SettingsScreen(
     if (settingsDebugInfos) {
         DragonColumnGroup {
             Text("isDragging: $isDragging")
-            Text("isTransformDragging: $isTransformDragging")
             Text("nests id: $nestId")
             Text("current nests id: ${currentNest.id}")
             Text("nests number: ${nests.size}")
