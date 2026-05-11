@@ -5,6 +5,7 @@ import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.toPath
 import androidx.compose.runtime.Composable
@@ -25,6 +26,7 @@ data class FancyAnimation(
     val shape: Shape
 )
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun rememberFancyAnimations(isPressed: Boolean): FancyAnimation {
 
@@ -84,6 +86,7 @@ class MorphPolygonShape(
 ) : Shape {
 
     private val matrix = Matrix()
+    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     override fun createOutline(
         size: Size,
         layoutDirection: LayoutDirection,

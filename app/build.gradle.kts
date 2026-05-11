@@ -32,13 +32,13 @@ kotlin {
 extensions.configure<ApplicationExtension> {
     namespace = "org.elnix.dragonlauncher"
     compileSdk {
-        version = release(36)
+        version = release(37)
     }
 
     defaultConfig {
         applicationId = "org.elnix.dragonlauncher"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         versionName = "3.1.3 (Wither)"
         versionCode = 53
     }
