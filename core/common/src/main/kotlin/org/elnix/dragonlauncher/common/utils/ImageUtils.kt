@@ -318,7 +318,7 @@ object ImageUtils {
 
                 is SwipeActionSerializable.OpenUrl -> loadDrawableResAsBitmap(R.drawable.web, width, height)
 
-                SwipeActionSerializable.NotificationShade -> loadDrawableResAsBitmap(R.drawable.ic_action_notification, width, height)
+                SwipeActionSerializable.NotificationShade -> loadDrawableResAsBitmap(R.drawable.notification, width, height)
 
                 SwipeActionSerializable.ControlPanel -> loadDrawableResAsBitmap(R.drawable.ic_action_grid, width, height)
 
@@ -341,11 +341,11 @@ object ImageUtils {
 
                 is SwipeActionSerializable.RunAdbCommand -> loadDrawableResAsBitmap(R.drawable.adb_icon, width, height)
 
-                is SwipeActionSerializable.ToggleBluetooth -> loadDrawableResAsBitmap(R.drawable.bluetooth_icon, width, height)
+                is SwipeActionSerializable.ToggleBluetooth -> loadDrawableResAsBitmap(R.drawable.bluetooth, width, height)
 
                 is SwipeActionSerializable.ToggleData -> loadDrawableResAsBitmap(R.drawable.cellular_icon, width, height)
 
-                is SwipeActionSerializable.ToggleWifi -> loadDrawableResAsBitmap(R.drawable.wifi_icon, width, height)
+                is SwipeActionSerializable.ToggleWifi -> loadDrawableResAsBitmap(R.drawable.wifi, width, height)
                 SwipeActionSerializable.KillLauncher -> loadDrawableResAsBitmap(R.drawable.ic_action_kill, width, height)
 
                 SwipeActionSerializable.None -> null

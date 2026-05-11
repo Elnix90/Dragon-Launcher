@@ -5,14 +5,8 @@ package org.elnix.dragonlauncher.ui.settings.customization
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Circle
-import androidx.compose.material.icons.filled.Image
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,8 +26,8 @@ import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.WallpaperHelper
 import org.elnix.dragonlauncher.common.messyfolder.showToast
-import org.elnix.dragonlauncher.enumsui.select.WallpaperEditMode
 import org.elnix.dragonlauncher.enumsui.other.WallpaperTarget
+import org.elnix.dragonlauncher.enumsui.select.WallpaperEditMode
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
@@ -105,11 +99,6 @@ fun WallpaperTab(onBack: () -> Unit) {
                 )
             }
         ) {
-            Icon(
-                imageVector = Icons.Default.Image,
-                contentDescription = stringResource(R.string.set_wallpaper)
-            )
-            Spacer(Modifier.width(10.dp))
             Text(
                 text = stringResource(R.string.set_wallpaper),
                 textAlign = TextAlign.Center
@@ -124,11 +113,6 @@ fun WallpaperTab(onBack: () -> Unit) {
                 showTargetDialog = true
             }
         ) {
-            Icon(
-                imageVector = Icons.Default.Circle,
-                contentDescription = stringResource(R.string.set_plain_wallpaper)
-            )
-            Spacer(Modifier.width(10.dp))
             Text(
                 stringResource(R.string.set_plain_wallpaper),
                 textAlign = TextAlign.Center

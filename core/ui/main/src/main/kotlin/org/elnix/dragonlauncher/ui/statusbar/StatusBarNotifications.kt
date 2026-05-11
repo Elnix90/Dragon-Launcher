@@ -6,10 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreHoriz
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,12 +18,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.common.serializables.StatusBarSerializable
 import org.elnix.dragonlauncher.common.serializables.dummyAppModel
-import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.services.DragonNotificationListenerService
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalDrawerIconsCache
@@ -54,7 +52,7 @@ fun StatusBarNotifications(
 
     if (!hasPermission) {
         Icon(
-            imageVector = Icons.Default.NotificationsOff,
+            painter = painterResource(R.drawable.notification_important),
             contentDescription = "Notifications",
             modifier = Modifier
                 .size(18.dp)
@@ -88,7 +86,7 @@ fun StatusBarNotifications(
                 )
             } else {
                 Icon(
-                    imageVector = Icons.Default.Notifications,
+                    painter = painterResource(R.drawable.notification),
                     contentDescription = pkg,
                     modifier = Modifier.size(18.dp)
                 )
@@ -97,7 +95,7 @@ fun StatusBarNotifications(
 
         AnimatedVisibility(showMoreNotificationsIcon) {
             Icon(
-                imageVector = Icons.Default.MoreHoriz,
+                painter = painterResource(R.drawable.more_horiz),
                 contentDescription = "More notifications",
                 modifier = Modifier.size(18.dp)
             )

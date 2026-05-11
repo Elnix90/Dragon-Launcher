@@ -22,9 +22,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -48,6 +45,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -123,7 +121,7 @@ fun WidgetPickerDialog(
                     placeholder = { Text(stringResource(R.string.search_widgets)) },
                     leadingIcon = {
                         Icon(
-                            Icons.Default.Search,
+                            painter = painterResource(R.drawable.search),
                             contentDescription = null,
                             modifier = Modifier.size(20.dp)
                         )
@@ -132,7 +130,7 @@ fun WidgetPickerDialog(
                         if (searchQuery.isNotEmpty()) {
                             IconButton(onClick = { searchQuery = "" }) {
                                 Icon(
-                                    Icons.Default.Close,
+                                    painter = painterResource(R.drawable.close),
                                     contentDescription = "Clear",
                                     modifier = Modifier.size(20.dp)
                                 )

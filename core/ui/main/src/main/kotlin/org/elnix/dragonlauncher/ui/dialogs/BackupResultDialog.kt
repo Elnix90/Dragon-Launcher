@@ -1,9 +1,6 @@
 package org.elnix.dragonlauncher.ui.dialogs
 
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,7 +48,7 @@ fun BackupResultDialog() {
                 isExport -> stringResource(R.string.export_successful)
                 else -> null
             },
-            titleIcon = if (isError) Icons.Default.Warning else Icons.Default.Check,
+            titleIcon = if (isError) R.drawable.warning else R.drawable.check,
             titleColor = if (isError) MaterialTheme.colorScheme.error else Color.Green,
             copy = isError,
             onValidate = { backupViewModel.setResult(null) }

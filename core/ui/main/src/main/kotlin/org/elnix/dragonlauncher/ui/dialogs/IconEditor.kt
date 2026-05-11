@@ -19,10 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -273,7 +269,7 @@ private fun IconEditorImpl(
                                     }
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.Image,
+                                        painter = painterResource(R.drawable.image),
                                         contentDescription = null,
                                         tint = MaterialTheme.colorScheme.onSurface
                                     )
@@ -293,7 +289,7 @@ private fun IconEditorImpl(
                                     }
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.Palette,
+                                        painter = painterResource(R.drawable.palette),
                                         contentDescription = null,
                                         tint = MaterialTheme.colorScheme.onSurface
                                     )
@@ -393,7 +389,7 @@ private fun IconEditorImpl(
                             }
                         ) {
                             Icon(
-                                Icons.Default.Close,
+                                painter = painterResource(R.drawable.close),
                                 null,
                                 tint = MaterialTheme.colorScheme.onSurface
                             )

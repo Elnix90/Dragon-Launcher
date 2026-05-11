@@ -6,14 +6,6 @@ import android.content.IntentFilter
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AirplanemodeActive
-import androidx.compose.material.icons.filled.Bluetooth
-import androidx.compose.material.icons.filled.SignalCellularAlt
-import androidx.compose.material.icons.filled.Usb
-import androidx.compose.material.icons.filled.VpnKey
-import androidx.compose.material.icons.filled.Wifi
-import androidx.compose.material.icons.filled.WifiTethering
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -25,8 +17,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.StatusBarSerializable
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.getMobileDataStatus
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isAirplaneMode
@@ -88,14 +82,14 @@ fun StatusBarConnectivity(
     ) {
         if (connectivityState.isAirplaneMode && element.showAirplaneMode) {
             Icon(
-                imageVector = Icons.Filled.AirplanemodeActive,
+                painter = painterResource(R.drawable.flight),
                 contentDescription = "Airplane",
                 modifier = Modifier.size(14.dp)
             )
         }
         if (connectivityState.isWifiEnabled && element.showWifi) {
             Icon(
-                imageVector = Icons.Filled.Wifi,
+                painter = painterResource(R.drawable.wifi),
                 contentDescription = "WiFi on",
                 modifier = Modifier.size(14.dp)
             )
@@ -103,7 +97,7 @@ fun StatusBarConnectivity(
 
         if (connectivityState.isBluetoothEnabled && element.showBluetooth) {
             Icon(
-                imageVector = Icons.Filled.Bluetooth,
+                painter = painterResource(R.drawable.bluetooth),
                 contentDescription = "Bluetooth",
                 modifier = Modifier.size(14.dp)
             )
@@ -111,7 +105,7 @@ fun StatusBarConnectivity(
 
         if (connectivityState.isUsbConnected && element.showUsb) {
             Icon(
-                imageVector = Icons.Filled.Usb,
+                painter = painterResource(R.drawable.usb),
                 contentDescription = "USB Connected",
                 modifier = Modifier.size(14.dp)
             )
@@ -119,7 +113,7 @@ fun StatusBarConnectivity(
 
         if (connectivityState.isVpnEnabled && element.showVpn) {
             Icon(
-                imageVector = Icons.Filled.VpnKey,
+                painter = painterResource(R.drawable.vpn_key),
                 contentDescription = "VPN",
                 modifier = Modifier.size(14.dp)
             )
@@ -127,7 +121,7 @@ fun StatusBarConnectivity(
 
         if (!connectivityState.isAirplaneMode && connectivityState.isMobileDataEnabled && element.showMobileData) {
             Icon(
-                imageVector = Icons.Filled.SignalCellularAlt,
+                painter = painterResource(R.drawable.cellular_icon),
                 contentDescription = connectivityState.mobileDataStatus,
                 modifier = Modifier.size(14.dp)
             )
@@ -135,7 +129,7 @@ fun StatusBarConnectivity(
 
         if (connectivityState.isHotspotEnabled && element.showHotspot) {
             Icon(
-                imageVector = Icons.Filled.WifiTethering,
+                painter = painterResource(R.drawable.wifi_tethering),
                 contentDescription = "Hotspot",
                 modifier = Modifier.size(14.dp)
             )

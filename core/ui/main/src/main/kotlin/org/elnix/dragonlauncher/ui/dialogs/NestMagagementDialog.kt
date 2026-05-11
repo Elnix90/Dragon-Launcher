@@ -15,9 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -101,7 +98,7 @@ fun NestManagementDialog(
                             }
                         ) {
                             Icon(
-                                imageVector = Icons.Default.AddCircle,
+                                painter = painterResource(R.drawable.add_circle),
                                 contentDescription = stringResource(R.string.create_new_nest),
                             )
                             Spacer(15.dp)
@@ -222,7 +219,7 @@ private fun NestManagementItem(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Edit,
+                                painter = painterResource(R.drawable.edit_rounded),
                                 contentDescription = stringResource(R.string.custom_name)
                             )
                             Text(

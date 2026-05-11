@@ -21,10 +21,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
-import androidx.compose.material.icons.automirrored.filled.PlaylistAddCheck
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -48,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -199,7 +196,7 @@ fun AppPickerDialog(
                             onSearchChanged = { searchQuery = it },
                             leadingIcon = {
                                 Icon(
-                                    imageVector = Icons.Default.Close,
+                                    painter = painterResource(R.drawable.close),
                                     contentDescription = stringResource(R.string.close_kb),
                                     tint = MaterialTheme.colorScheme.error,
                                     modifier = Modifier.clickable {
@@ -392,8 +389,8 @@ fun AppPickerDialog(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Icon(
-                                    Icons.AutoMirrored.Filled.PlaylistAddCheck,
-                                    null,
+                                    painter = painterResource(R.drawable.playlist_add_check),
+                                    contentDescription = null,
                                     modifier = Modifier.size(20.dp)
                                 )
                                 Spacer(Modifier.width(8.dp))
@@ -411,8 +408,8 @@ fun AppPickerDialog(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Icon(
-                                    Icons.AutoMirrored.Filled.PlaylistAdd,
-                                    null,
+                                    painter = painterResource(R.drawable.playlist_add),
+                                    contentDescription = null,
                                     modifier = Modifier.size(20.dp)
                                 )
                                 Spacer(Modifier.width(8.dp))

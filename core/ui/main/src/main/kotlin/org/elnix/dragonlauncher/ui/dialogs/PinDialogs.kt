@@ -29,11 +29,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Backspace
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -52,17 +47,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.common.serializables.IconShape
 import org.elnix.dragonlauncher.common.serializables.allShapesWithoutRandom
 import org.elnix.dragonlauncher.common.utils.HapticUtils.vibrate
-import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
@@ -312,7 +307,7 @@ private fun PinPrompt(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Icon(
-                    imageVector = Icons.Default.Lock,
+                    painter = painterResource(R.drawable.lock),
                     contentDescription = null,
                     tint = lockColor.value,
                     modifier = Modifier
@@ -448,11 +443,9 @@ private fun NumericPinPad(
                 targetState = backSpaceOrClose,
                 modifier = Modifier.weight(1f)
             ) {
-                val icon = if (it) Icons.AutoMirrored.Filled.Backspace
-                else Icons.Default.Close
 
                 KeypadButton(
-                    icon = icon,
+                    icon = if (it) R.drawable.backspace else R.drawable.close,
                     tint = MaterialTheme.colorScheme.error,
                     onClick = onClear
                 )
@@ -465,7 +458,7 @@ private fun NumericPinPad(
             )
 
             KeypadButton(
-                icon = Icons.Default.Check,
+                icon = R.drawable.check,
                 tint = Color.Green,
                 modifier = Modifier.weight(1f),
                 onClick = onValidate,
@@ -478,7 +471,7 @@ private fun NumericPinPad(
 @Composable
 private fun KeypadButton(
     modifier: Modifier = Modifier,
-    icon: ImageVector,
+    icon: Int,
     tint: Color,
     enabled: Boolean = true,
     onClick: (() -> Unit)? = null,
@@ -489,7 +482,7 @@ private fun KeypadButton(
         contentAlignment = Alignment.Center
     ) {
         Icon(
-            imageVector = icon,
+            painterResource(id = icon),
             contentDescription = null,
             tint = tint
         )

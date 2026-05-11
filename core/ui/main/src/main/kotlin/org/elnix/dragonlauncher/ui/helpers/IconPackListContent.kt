@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LoadingIndicator
@@ -27,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
@@ -112,7 +109,7 @@ fun IconPackListContent(
                     )
                 } else {
                     Icon(
-                        Icons.Default.Palette,
+                        painter = painterResource(R.drawable.palette),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurface
                     )
@@ -130,7 +127,7 @@ fun IconPackListContent(
 
             AnimatedVisibility(selectedPackPackage == pack.packageName) {
                 Icon(
-                    Icons.Default.Check,
+                    painter = painterResource(R.drawable.check),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary
                 )
@@ -143,7 +140,7 @@ fun IconPackListContent(
             { onClearClick() }
         ) {
             Icon(
-                Icons.Default.Close,
+                painter = painterResource(R.drawable.close),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(40.dp)
@@ -160,7 +157,7 @@ fun IconPackListContent(
 
             AnimatedVisibility(selectedPackPackage == null) {
                 Icon(
-                    Icons.Default.Check,
+                    painter = painterResource(R.drawable.check),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary
                 )

@@ -27,9 +27,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronLeft
-import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -65,6 +62,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -790,7 +788,7 @@ fun SettingsScreen(
                                 colors = AppObjectsColors.toggleButtonColors(),
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.ChevronLeft,
+                                    painter = painterResource(R.drawable.chevron_left),
                                     contentDescription = stringResource(R.string.move_point_clockwise)
                                 )
                             }
@@ -884,7 +882,7 @@ fun SettingsScreen(
                                 colors = AppObjectsColors.toggleButtonColors(),
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.ChevronRight,
+                                    painter = painterResource(R.drawable.chevron_right),
                                     contentDescription = stringResource(R.string.move_point_anticlockwise),
                                 )
                             }

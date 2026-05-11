@@ -5,10 +5,6 @@ import android.net.TrafficStats
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -21,9 +17,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.StatusBarSerializable
 
 @Composable
@@ -52,7 +50,7 @@ fun StatusBarBandwidth(element: StatusBarSerializable.Bandwidth) {
     ) {
         if (element.merge) {
             Icon(
-                imageVector = Icons.Default.SwapVert,
+                painter = painterResource(R.drawable.swap_vert),
                 contentDescription = null,
                 modifier = Modifier.size(14.dp),
                 tint = LocalContentColor.current
@@ -67,7 +65,7 @@ fun StatusBarBandwidth(element: StatusBarSerializable.Bandwidth) {
                 horizontalArrangement = Arrangement.spacedBy(1.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.ArrowDownward,
+                    painter = painterResource(R.drawable.arrow_downward),
                     contentDescription = null,
                     modifier = Modifier.size(14.dp),
                     tint = LocalContentColor.current
@@ -82,7 +80,7 @@ fun StatusBarBandwidth(element: StatusBarSerializable.Bandwidth) {
                 horizontalArrangement = Arrangement.spacedBy(1.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.ArrowUpward,
+                    painter = painterResource(R.drawable.arrow_upward),
                     contentDescription = null,
                     modifier = Modifier.size(14.dp),
                     tint = LocalContentColor.current

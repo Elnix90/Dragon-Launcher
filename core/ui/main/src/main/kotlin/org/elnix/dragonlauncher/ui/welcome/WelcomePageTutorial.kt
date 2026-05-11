@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,7 +25,7 @@ fun WelcomePageTutorial() {
 
     WelcomePagerHeader(
         title = stringResource(R.string.quick_tutorial),
-        icon = Icons.AutoMirrored.Filled.Help
+        icon = R.drawable.help
     ) {
 
         Column(

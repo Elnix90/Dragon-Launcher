@@ -24,14 +24,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ExitToApp
-import androidx.compose.material.icons.outlined.AccessTime
-import androidx.compose.material.icons.outlined.Layers
-import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.SelfImprovement
-import androidx.compose.material.icons.outlined.Timer
-import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -49,9 +41,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -130,7 +122,7 @@ fun WellbeingTab(onBack: () -> Unit) {
         )
 
         SectionHeader(
-            icon = Icons.Outlined.SelfImprovement,
+            icon = R.drawable.self_improvement,
             title = stringResource(R.string.social_media_pause)
         )
 
@@ -182,7 +174,7 @@ fun WellbeingTab(onBack: () -> Unit) {
 
 
         SectionHeader(
-            icon = Icons.Outlined.Timer,
+            icon = R.drawable.timer,
             title = stringResource(R.string.reminder_mode_title)
         )
 
@@ -231,7 +223,7 @@ fun WellbeingTab(onBack: () -> Unit) {
                     ) {
                         ModeChip(
                             label = stringResource(R.string.reminder_mode_notification),
-                            icon = Icons.Outlined.Notifications,
+                            icon = R.drawable.notification,
                             selected = reminderMode == "notification",
                             modifier = Modifier.weight(1f)
                         ) {
@@ -242,7 +234,7 @@ fun WellbeingTab(onBack: () -> Unit) {
 
                         ModeChip(
                             label = stringResource(R.string.reminder_mode_overlay),
-                            icon = Icons.Outlined.Layers,
+                            icon = R.drawable.layers,
                             selected = reminderMode == "overlay",
                             modifier = Modifier.weight(1f)
                         ) {
@@ -264,7 +256,7 @@ fun WellbeingTab(onBack: () -> Unit) {
         AnimatedVisibility(reminderMode == "overlay" && socialMediaPauseEnabled && reminderEnabled) {
 
             SectionHeader(
-                icon = Icons.Outlined.Visibility,
+                icon = R.drawable.visibility,
                 title = stringResource(R.string.popup_display_title)
             )
 
@@ -294,7 +286,7 @@ fun WellbeingTab(onBack: () -> Unit) {
 
 
         SectionHeader(
-            icon = Icons.AutoMirrored.Outlined.ExitToApp,
+            icon = R.drawable.exit_to_app,
             title = stringResource(R.string.return_to_launcher_title)
         )
 
@@ -310,7 +302,7 @@ fun WellbeingTab(onBack: () -> Unit) {
         }
 
         SectionHeader(
-            icon = Icons.Outlined.AccessTime,
+            icon = R.drawable.schedule,
             title = if (pausedApps.isNotEmpty())
                 "${stringResource(R.string.paused_apps)} (${pausedApps.size})"
             else
@@ -585,7 +577,7 @@ private fun StatusPill(
 
 @Composable
 private fun SectionHeader(
-    icon: ImageVector,
+    icon: Int,
     title: String
 ) {
     Row(
@@ -596,7 +588,7 @@ private fun SectionHeader(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Icon(
-            imageVector = icon,
+            painter = painterResource(icon),
             contentDescription = null,
             modifier = Modifier.size(18.dp),
             tint = MaterialTheme.colorScheme.primary
@@ -613,7 +605,7 @@ private fun SectionHeader(
 @Composable
 private fun ModeChip(
     label: String,
-    icon: ImageVector,
+    icon: Int,
     selected: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
@@ -640,7 +632,7 @@ private fun ModeChip(
         horizontalArrangement = Arrangement.Center
     ) {
         Icon(
-            imageVector = icon,
+            painter = painterResource(icon),
             contentDescription = null,
             modifier = Modifier.size(16.dp),
             tint = if (selected) MaterialTheme.colorScheme.primary

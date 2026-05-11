@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -289,7 +287,7 @@ fun DrawerTab(
             Spacer(Modifier.width(15.dp))
 
             Icon(
-                imageVector = Icons.Default.Restore,
+                painter = painterResource(R.drawable.reset),
                 contentDescription = stringResource(R.string.reset),
                 tint = MaterialTheme.colorScheme.outline,
                 modifier = Modifier

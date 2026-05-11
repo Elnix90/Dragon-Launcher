@@ -32,8 +32,6 @@ extensions.configure<LibraryExtension> {
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.material.icons.core)
-    implementation(libs.androidx.material.icons.extended)
 
     api(libs.androidx.compose.runtime)
     api(libs.androidx.ui)

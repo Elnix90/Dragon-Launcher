@@ -25,11 +25,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CloudDownload
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.Checkbox
@@ -404,8 +399,8 @@ fun FontTab(onBack: () -> Unit) {
                             shapes = UiConstants.dragonShapes()
                         ) {
                             Icon(
-                                Icons.Default.CloudDownload,
-                                null,
+                                painter = painterResource(R.drawable.download),
+                                contentDescription = null,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(Modifier.width(6.dp))
@@ -434,7 +429,11 @@ fun FontTab(onBack: () -> Unit) {
                                 .animateWidth(interactionSources[1]),
                             shapes = UiConstants.dragonShapes()
                         ) {
-                            Icon(Icons.Default.Add, null, modifier = Modifier.size(16.dp))
+                            Icon(
+                                painter = painterResource(R.drawable.add),
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
                             Spacer(Modifier.width(6.dp))
                             Text(
                                 stringResource(R.string.font_import),
@@ -581,7 +580,7 @@ fun FontTab(onBack: () -> Unit) {
                 },
                 leadingIcon = {
                     Icon(
-                        Icons.Default.Search,
+                        painter = painterResource(R.drawable.search),
                         contentDescription = null,
                         modifier = Modifier.size(20.dp)
                     )
@@ -596,7 +595,7 @@ fun FontTab(onBack: () -> Unit) {
                             onClick = { fetchRemoteFonts(true) }
                         ) {
                             Icon(
-                                Icons.Default.Refresh,
+                                painter = painterResource(R.drawable.refresh),
                                 contentDescription = null,
                                 modifier = Modifier.size(20.dp)
                             )
@@ -747,7 +746,7 @@ fun FontRow(
             )
         } else {
             Icon(
-                Icons.Default.CloudDownload,
+                painter = painterResource(R.drawable.download),
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
                 tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)

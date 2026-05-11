@@ -14,9 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LoadingIndicator
@@ -25,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,6 +35,9 @@ import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 fun PrivateSpaceLoadingOverlay(
     onCancel: () -> Unit,
 ) {
+
+
+    // TODO make this down scrollable to dismiss
 
     Box(
         modifier = Modifier
@@ -53,7 +54,7 @@ fun PrivateSpaceLoadingOverlay(
         ) {
 
             Icon(
-                imageVector = Icons.Default.Lock,
+                painter = painterResource(R.drawable.lock),
                 contentDescription = stringResource(R.string.private_space_locked),
                 modifier = Modifier.size(64.dp),
                 tint = MaterialTheme.colorScheme.primary
@@ -87,7 +88,7 @@ fun PrivateSpaceLoadingOverlay(
         }
 
         Icon(
-            imageVector = Icons.Default.Close,
+            painter = painterResource(R.drawable.close),
             contentDescription = stringResource(R.string.close),
             modifier = Modifier
                 .align(Alignment.BottomCenter)

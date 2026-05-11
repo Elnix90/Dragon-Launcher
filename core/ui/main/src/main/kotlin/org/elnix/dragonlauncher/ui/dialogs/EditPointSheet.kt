@@ -18,11 +18,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -363,7 +359,7 @@ fun EditPointSheet(
                                                     onClick = { showLiveNestNestPicker = true }
                                                 ) {
                                                     Icon(
-                                                        imageVector = Icons.Default.Edit,
+                                                        painter = painterResource(R.drawable.edit_rounded),
                                                         contentDescription = null
                                                     )
                                                     Spacer(5.dp)
@@ -541,7 +537,7 @@ fun EditPointSheet(
                                                         )
                                                         Spacer()
                                                         Icon(
-                                                            imageVector = Icons.Default.Edit,
+                                                            painter = painterResource(R.drawable.edit_rounded),
                                                             contentDescription = stringResource(R.string.edit_action),
                                                             tint = MaterialTheme.colorScheme.primary
                                                         )
@@ -736,7 +732,7 @@ fun EditPointSheet(
                                                     )
                                                     Spacer(Modifier.weight(1f))
                                                     Icon(
-                                                        imageVector = Icons.Default.Edit,
+                                                        painter = painterResource(R.drawable.edit_rounded),
                                                         contentDescription = stringResource(R.string.edit_action),
                                                         tint = MaterialTheme.colorScheme.primary
                                                     )
@@ -805,7 +801,7 @@ fun EditPointSheet(
                             )
                             Spacer(5.dp)
                             Icon(
-                                imageVector = Icons.Default.Edit,
+                                painter = painterResource(R.drawable.edit_rounded),
                                 contentDescription = stringResource(R.string.edit_action),
                                 tint = actionColor
                             )
@@ -818,7 +814,7 @@ fun EditPointSheet(
                             Text(stringResource(R.string.edit_icon))
                             Spacer(5.dp)
                             Icon(
-                                imageVector = Icons.Default.Edit,
+                                painter = painterResource(R.drawable.edit_rounded),
                                 contentDescription = stringResource(R.string.edit_action)
                             )
                         }

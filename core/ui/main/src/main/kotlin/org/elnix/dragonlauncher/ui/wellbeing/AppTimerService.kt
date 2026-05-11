@@ -376,12 +376,12 @@ class AppTimerService : Service() {
         }
 
         return NotificationCompat.Builder(this, CHANNEL_TIMER)
-            .setSmallIcon(R.drawable.ic_action_notification)
+            .setSmallIcon(R.drawable.notification)
             .setContentTitle(getString(R.string.timer_notification_title))
             .setContentText(text)
             .setOngoing(true)
             .setSilent(true)
-            .addAction(R.drawable.ic_action_notification, getString(R.string.time_limit_cancel), stopPI)
+            .addAction(R.drawable.notification, getString(R.string.time_limit_cancel), stopPI)
             .build()
     }
 
@@ -410,7 +410,7 @@ class AppTimerService : Service() {
             "notification" -> {
                 val nm = getSystemService(NotificationManager::class.java) ?: return
                 val notif = NotificationCompat.Builder(this, CHANNEL_REMINDER)
-                    .setSmallIcon(R.drawable.ic_action_notification)
+                    .setSmallIcon(R.drawable.notification)
                     .setContentTitle(getString(R.string.reminder_notification_title, appName))
                     .setContentText(getString(R.string.reminder_notification_text, appName, timeText))
                     .setPriority(NotificationCompat.PRIORITY_HIGH)

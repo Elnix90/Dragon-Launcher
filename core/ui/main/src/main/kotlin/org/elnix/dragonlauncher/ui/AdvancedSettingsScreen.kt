@@ -143,15 +143,6 @@ fun AdvancedSettingsScreen(
             icon = R.drawable.self_improvement
         ) { onNavigate(NavigationRoute.Wellbeing) }
         TextDivider(stringResource(R.string.advanced))
-//
-//        item {
-//            SettingsItem(
-//                title = stringResource(R.string.permissions),
-//                icon = Icons.Default.Security
-//            ) {
-//                navController.navigate(SETTINGS.PERMISSIONS)
-//            }
-//        }
 
         SettingItemWithExternalOpen(
             title = stringResource(R.string.extensions),

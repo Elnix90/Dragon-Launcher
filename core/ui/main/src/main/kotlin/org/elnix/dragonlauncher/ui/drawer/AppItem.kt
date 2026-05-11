@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,8 +21,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.AppModel
 import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.ui.actions.AppIcon
@@ -38,7 +38,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
 @Composable
 private fun CheckIcon() {
     Icon(
-        imageVector = Icons.Default.CheckCircle,
+        painter = painterResource(R.drawable.check_circle),
         contentDescription = null,
         tint = MaterialTheme.colorScheme.primary,
         modifier = Modifier.background(MaterialTheme.colorScheme.surface, CircleShape)

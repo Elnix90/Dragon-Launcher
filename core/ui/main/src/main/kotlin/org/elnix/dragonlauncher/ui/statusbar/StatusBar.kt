@@ -23,10 +23,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -52,18 +48,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.messyfolder.Constants
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.STATUS_BAR_TAG
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
 import org.elnix.dragonlauncher.common.serializables.StatusBarJson
 import org.elnix.dragonlauncher.common.serializables.StatusBarSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.serializables.allStatusBarSerializable
-import org.elnix.dragonlauncher.common.messyfolder.Constants
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.STATUS_BAR_TAG
 import org.elnix.dragonlauncher.common.utils.DateUtils.isValidDateFormat
 import org.elnix.dragonlauncher.common.utils.DateUtils.isValidTimeFormat
 import org.elnix.dragonlauncher.logging.logE
@@ -497,7 +494,7 @@ fun EditStatusBar() {
                                     placeholder = { Text("MMM dd") },
                                     trailingIcon = {
                                         Icon(
-                                            imageVector = Icons.Default.Restore,
+                                            painter = painterResource(R.drawable.reset),
                                             contentDescription = stringResource(R.string.reset),
                                             tint = MaterialTheme.colorScheme.primary,
                                             modifier = Modifier.clickable {
@@ -547,7 +544,7 @@ fun EditStatusBar() {
                                     placeholder = { Text("HH:mm:ss") },
                                     trailingIcon = {
                                         Icon(
-                                            imageVector = Icons.Default.Restore,
+                                            painter = painterResource(R.drawable.reset),
                                             contentDescription = stringResource(R.string.reset),
                                             tint = MaterialTheme.colorScheme.primary,
                                             modifier = Modifier.clickable {
@@ -624,7 +621,7 @@ fun EditStatusBar() {
                                     placeholder = { Text("HH:mm") },
                                     trailingIcon = {
                                         Icon(
-                                            imageVector = Icons.Default.Restore,
+                                            painter = painterResource(R.drawable.reset),
                                             contentDescription = stringResource(R.string.reset),
                                             tint = MaterialTheme.colorScheme.primary,
                                             modifier = Modifier.clickable {
@@ -648,7 +645,7 @@ fun EditStatusBar() {
                             colors = AppObjectsColors.cancelButtonColors()
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Close,
+                                painter = painterResource(R.drawable.close),
                                 contentDescription = stringResource(R.string.remove)
                             )
                             Text(stringResource(R.string.remove))

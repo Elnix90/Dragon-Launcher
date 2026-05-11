@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.common.R
@@ -44,7 +43,7 @@ fun ExpandableSection(
     val expanded = state.isExpanded() && enabled
 
     val rotationDegrees = animateFloatAsState(
-        targetValue = if (expanded) 90f else 0f,
+        targetValue = if (expanded) 0f else -90f,
         animationSpec = bouncySpec()
     )
 
@@ -89,7 +88,7 @@ fun ExpandableSection(
             )
 
             Icon(
-                imageVector = Icons.Default.ChevronRight,
+                painter = painterResource(R.drawable.arrow_drop_down),
                 contentDescription = stringResource(R.string.expanded_chevron_indicator),
                 tint = contentColor,
                 modifier = Modifier

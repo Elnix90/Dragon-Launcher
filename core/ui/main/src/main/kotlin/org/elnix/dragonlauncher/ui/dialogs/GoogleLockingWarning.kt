@@ -2,14 +2,13 @@
 
 package org.elnix.dragonlauncher.ui.dialogs
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
@@ -24,7 +23,7 @@ fun GoogleLockingWarning(
     AlertDialog(
         icon = {
             Icon(
-                imageVector = Icons.Default.Warning,
+                painter = painterResource(R.drawable.warning),
                 contentDescription = null,
                 tint = Color.Yellow
             )

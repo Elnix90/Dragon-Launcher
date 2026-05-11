@@ -22,10 +22,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DragHandle
-import androidx.compose.material.icons.filled.Vibration
-import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.CardDefaults.elevatedCardElevation
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
@@ -44,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
@@ -248,7 +245,12 @@ fun HapticFeedbackEditor(
                 ) {
                     AddStepButton(
                         label = stringResource(R.string.vibration),
-                        icon = { Icon(Icons.Default.Vibration, null) },
+                        icon = {
+                            Icon(
+                                painter = painterResource(R.drawable.haptic),
+                                contentDescription = null
+                            )
+                        },
                         modifier = Modifier.weight(1f)
                     ) {
                         entries.add(
@@ -262,7 +264,12 @@ fun HapticFeedbackEditor(
 
                     AddStepButton(
                         label = stringResource(R.string.delay),
-                        icon = { Icon(Icons.Outlined.Timer, null) },
+                        icon = {
+                            Icon(
+                                painter = painterResource(R.drawable.timer),
+                                contentDescription = null
+                            )
+                        },
                         modifier = Modifier.weight(1f)
                     ) {
                         entries.add(
@@ -345,10 +352,12 @@ fun HapticFeedbackEditor(
                                             )
 
                                             Icon(
-                                                imageVector = if (entry.isVibration)
-                                                    Icons.Default.Vibration
-                                                else
-                                                    Icons.Outlined.Timer,
+                                                painter = painterResource(
+                                                    if (entry.isVibration)
+                                                        R.drawable.haptic
+                                                    else
+                                                        R.drawable.timer
+                                                ),
                                                 contentDescription = null,
                                                 tint = if (entry.isVibration)
                                                     MaterialTheme.colorScheme.primary
@@ -380,7 +389,7 @@ fun HapticFeedbackEditor(
                                             ) { entries.removeAt(index) }
 
                                             Icon(
-                                                imageVector = Icons.Default.DragHandle,
+                                                painter = painterResource(R.drawable.drag_handle),
                                                 contentDescription = stringResource(R.string.drag_handle),
                                                 tint = MaterialTheme.colorScheme.outline,
                                                 modifier = Modifier.draggableHandle()
@@ -480,7 +489,7 @@ fun HapticFeedBackEditorButtonWithPlayTest(
             modifier = Modifier.weight(1f)
         ) {
             Icon(
-                imageVector = Icons.Default.Vibration,
+                painter = painterResource(R.drawable.haptic),
                 contentDescription = stringResource(R.string.haptic_feedback_editor)
             )
             Spacer(Modifier.width(5.dp))
