@@ -962,7 +962,12 @@ fun SettingsScreen(
 
                     MultiSelectConnectedButtonRow(
                         entries = AddRemoveCircleTools.entries,
-                        isChecked = { true }
+                        isEnabled = {
+                            when(it) {
+                                AddRemoveCircleTools.Add -> true
+                                AddRemoveCircleTools.Remove -> circles.size > 1
+                            }
+                        },
                     ) { entry ->
                         scope.launch {
                             when (entry) {
