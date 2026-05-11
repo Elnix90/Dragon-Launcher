@@ -76,7 +76,9 @@ fun ToggleAnimatedFab(
     val interactionSource = rememberInteractionSource()
     val buttonPressed by interactionSource.collectIsPressedAsState()
 
-    val isActivated = buttonPressed || checked
+    val isActivated = if (buttonPressed) {
+        !checked
+    } else checked
     val fabAnimation = rememberFancyAnimations(isActivated)
 
     Box(
@@ -84,7 +86,10 @@ fun ToggleAnimatedFab(
             .graphicsLayer {
                 scaleX = fabAnimation.scale
                 scaleY = fabAnimation.scale
-//                rotationZ = fabAnimation.outerRotation
+
+                if (buttonPressed) {
+                    rotationZ = fabAnimation.outerRotation
+                }
             }
             .defaultMinSize(minWidth = minSize, minHeight = minSize)
             .clip(fabAnimation.shape)
@@ -92,7 +97,7 @@ fun ToggleAnimatedFab(
             .toggleable(
                 value = checked,
                 onValueChange = withHapticParam { onCheckedChange(!checked) },
-                interactionSource = null,
+                interactionSource = interactionSource,
                 indication = null
             )
     ) {
@@ -102,7 +107,12 @@ fun ToggleAnimatedFab(
             tint = contentColorFor(containerColor),
             modifier = Modifier
                 .align(Alignment.Center)
-//                .rotate(fabAnimation.rotation - fabAnimation.outerRotation)
+                .graphicsLayer {
+
+                    if (buttonPressed) {
+                        rotationZ = fabAnimation.rotation - fabAnimation.outerRotation
+                    }
+                }
         )
     }
 }
