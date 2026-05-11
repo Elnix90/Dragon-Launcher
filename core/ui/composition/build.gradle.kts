@@ -32,9 +32,7 @@ extensions.configure<LibraryExtension> {
 }
 
 dependencies {
-    api(libs.androidx.navigation.runtime)
     api(libs.androidx.compose.runtime)
-    api(libs.androidx.ui.graphics)
 
     api(project(":core:common"))
     api(project(":core:models"))

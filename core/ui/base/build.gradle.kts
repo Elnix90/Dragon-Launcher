@@ -45,15 +45,21 @@ dependencies {
     implementation(libs.androidx.compose.runtime.retain)
     implementation(libs.androidx.compose.ui.unit)
     implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.annotation)
+    implementation(libs.androidx.compose.runtime.annotation)
+    implementation(libs.androidx.compose.ui.geometry)
+    implementation(libs.androidx.lifecycle.common)
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     runtimeOnly(libs.androidx.lifecycle.process)
 
     api(libs.androidx.compose.foundation)
     api(libs.androidx.compose.runtime)
+    api(libs.androidx.graphics.shapes)
 
+    api(libs.androidx.compose.animation)
+    api(project(":core:enumsui"))
     api(project(":core:common"))
     api(project(":core:settings"))
-    implementation(project(":core:base"))
+    api(project(":core:base"))
 }

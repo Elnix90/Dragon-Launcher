@@ -4,12 +4,15 @@ androidImageCropper = "4.7.0"
 animation = "1.11.0"
 annotation = "1.10.0"
 collection = "1.6.0"
+dagger = "2.59.2"
 datastorePreferencesCore = "1.2.1"
 fragment = "1.8.9"
 #noinspection NewerVersionAvailable - DO not update, it's only there for legacy support
+graphicsShapes = "1.1.0"
 gson = "2.13.2"
 hiltAndroid = "2.59.2"
 hiltNavigationCompose = "1.3.0"
+javaxInject = "1"
 kotlin = "2.3.21"
 coreKtx = "1.18.0"
 kotlinxCoroutinesCore = "1.10.2"
@@ -69,14 +72,19 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-datastore-core = { module = "androidx.datastore:datastore-core", version.ref = "datastorePreferencesCore" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferencesCore" }
 androidx-fragment = { module = "androidx.fragment:fragment", version.ref = "fragment" }
+androidx-graphics-shapes = { module = "androidx.graphics:graphics-shapes", version.ref = "graphicsShapes" }
+androidx-hilt-lifecycle-viewmodel-compose = { module = "androidx.hilt:hilt-lifecycle-viewmodel-compose", version.ref = "hiltNavigationCompose" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-lifecycle-common = { module = "androidx.lifecycle:lifecycle-common", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-viewmodel-savedstate = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycleRuntimeKtx" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 androidx-navigation-common = { module = "androidx.navigation:navigation-common", version.ref = "navigationCompose" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-navigation-runtime = { module = "androidx.navigation:navigation-runtime", version.ref = "navigationCompose" }
 androidx-transition = { module = "androidx.transition:transition", version.ref = "transition" }
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -91,6 +99,8 @@ androidx-compose-foundation = { group = "androidx.compose.foundation", name = "f
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hiltAndroid" }
+hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "dagger" }
+javax-inject = { module = "javax.inject:javax.inject", version.ref = "javaxInject" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
 lazycolumnscrollbar = { module = "com.github.nanihadesuka:LazyColumnScrollbar", version.ref = "lazycolumnscrollbar" }

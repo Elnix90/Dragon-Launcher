@@ -51,7 +51,6 @@ dependencies {
     api(libs.androidx.compose.runtime)
 
     implementation(libs.androidx.compose.animation.core)
-    implementation(libs.androidx.compose.material.icons.core)
     implementation(libs.androidx.compose.ui.geometry)
     implementation(libs.androidx.compose.ui.unit)
     implementation(libs.kotlinx.coroutines.core)

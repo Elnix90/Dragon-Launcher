@@ -34,6 +34,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.compose.runtime)
+    implementation(libs.timber)
 
     api(libs.kotlinx.coroutines.core)
 

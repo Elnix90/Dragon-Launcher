@@ -125,9 +125,7 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.compose.animation)
@@ -135,11 +133,13 @@ dependencies {
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.lifecycle.common)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.navigation.common)
-    implementation(libs.androidx.navigation.runtime)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.hilt.android)
+    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
+    implementation(libs.dagger)
+    implementation(libs.hilt.core)
+    implementation(libs.timber)
 
     ksp(libs.hilt.compiler)
 
@@ -152,8 +152,6 @@ dependencies {
 
     implementation(project(":core:common"))
     implementation(project(":core:models"))
-    implementation(project(":core:enumsui"))
-    implementation(project(":core:shizuku"))
     implementation(project(":core:logging"))
     implementation(project(":core:settings"))
 }

@@ -37,13 +37,17 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.hilt.android)
+    implementation(libs.hilt.core)
+
     ksp(libs.hilt.compiler)
 
     api(libs.kotlinx.coroutines.core)
+    api(libs.dagger)
+    api(libs.javax.inject)
 
+    implementation(project(":core:settings"))
     api(project(":core:logging"))
     api(project(":core:common"))
     api(project(":core:enumsui"))
-    api(project(":core:settings"))
     api(project(":core:shizuku"))
 }

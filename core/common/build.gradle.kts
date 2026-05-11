@@ -43,6 +43,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.lifecycle.common)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.timber)
 
     api(libs.gson)
     api(libs.androidx.activity)

@@ -30,6 +30,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.datastore.core)
+    implementation(libs.timber)
 
     api(libs.androidx.datastore.preferences.core)
     api(libs.kotlinx.coroutines.core)
