@@ -29,6 +29,10 @@ class IconsCache<T>(initialMaxSize: Int) {
         maxSize = newSize
     }
 
+    fun incrementCacheSize(increment: Int = 1) {
+        maxSize += increment
+    }
+
     private val icons = Collections.synchronizedMap(
         object : LinkedHashMap<T, ImageBitmap>(
             maxSize, 0.75f, true

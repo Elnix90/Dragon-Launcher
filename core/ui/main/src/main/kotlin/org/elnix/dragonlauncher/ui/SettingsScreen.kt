@@ -465,6 +465,13 @@ fun SettingsScreen(
     }
 
 
+    fun addPoint(point: SwipePointSerializable) {
+        points.add(point)
+        selectedPoint = point
+        appsViewModel.pointsIconsCache.incrementCacheSize()
+        appsViewModel.reloadPointIcon(point)
+    }
+
     /**
      * Compute the position of a moved point, on the circle, and returns a [Pair] composed of:
      *  - `first`: the new angleDeg of the point on the circles
@@ -1035,10 +1042,9 @@ fun SettingsScreen(
                                         id = UUID.randomUUID().toString(),
                                     )
 
-                                    appsViewModel.reloadPointIcon(newPoint)
 
                                     applyChange {
-                                        points.add(newPoint)
+                                        addPoint(newPoint)
                                         autoSeparate(
                                             points,
                                             nestId,
@@ -1357,14 +1363,8 @@ fun SettingsScreen(
                                                             liveNestTargetNestId = if (createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) newNestId else null
                                                         )
 
-                                                    points.add(newGoParentNestPoint)
-
-                                                    appsViewModel.reloadPointIcon(
-                                                        newGoParentNestPoint
-                                                    )
-
-                                                    points.add(newNestPoint)
-
+                                                    addPoint(newGoParentNestPoint)
+                                                    addPoint(newNestPoint)
 
                                                     // Move the 2 points to the new nest and change their position
                                                     p.nestId = newNestId
@@ -1456,10 +1456,9 @@ fun SettingsScreen(
                                             liveNestTargetNestId = newLiveNest
                                         )
 
-                                        appsViewModel.reloadPointIcon(point)
 
                                         applyChange {
-                                            points.add(point)
+                                            addPoint(point)
                                             if (autoSeparatePoints) autoSeparate(
                                                 points = points,
                                                 nestId = nestId,
@@ -1467,8 +1466,6 @@ fun SettingsScreen(
                                                 draggedPoint = point
                                             )
                                         }
-
-                                        selectedPoint = point
 
                                         // Dequeue: move to the next app
                                         manualPlacementQueue = manualPlacementQueue.drop(1)
@@ -1563,10 +1560,8 @@ fun SettingsScreen(
                                 liveNestTargetNestId = newLiveNest
                             )
 
-                            appsViewModel.reloadPointIcon(newPoint)
 
-                            points.add(newPoint)
-                            selectedPoint = newPoint
+                            addPoint(newPoint)
                             autoSeparate(points, nestId, circle, newPoint)
                         }
                     }
