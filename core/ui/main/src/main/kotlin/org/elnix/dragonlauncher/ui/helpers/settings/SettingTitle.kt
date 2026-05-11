@@ -159,7 +159,7 @@ fun SpecialSettingsTitle(
                     ),
                     MoreOptions(
                         text = { stringResource(R.string.edit_nest) },
-                        icon = R.drawable.edit_nest,
+                        icon = R.drawable.nest_icon,
                         onClick = {
                             dismiss()
                             onEditNest()

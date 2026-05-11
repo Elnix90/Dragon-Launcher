@@ -8,7 +8,7 @@ enum class NestEditTools(
     override val iconEnabled: Int,
     override val iconDisabled: Int? = null
 ) : ToggleButtonOption {
-    NestManagement(R.string.edit_nests, R.drawable.edit_nest),
+    NestManagement(R.string.manage_nests, R.drawable.nest_icon),
     GoParentNest(R.string.go_parent_nest, R.drawable.fullscreen_exit),
     EnterNest(R.string.open_nest_circle, R.drawable.fullscreen),
 }
