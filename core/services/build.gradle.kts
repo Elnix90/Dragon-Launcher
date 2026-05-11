@@ -12,7 +12,7 @@ kotlin {
 extensions.configure<LibraryExtension> {
     namespace = "org.elnix.dragonlauncher.services"
     compileSdk {
-        version = release(36)
+        version = release(37)
     }
 
     defaultConfig {

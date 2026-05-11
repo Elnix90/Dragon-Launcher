@@ -11,7 +11,7 @@ kotlin {
 extensions.configure<LibraryExtension> {
     namespace = "org.elnix.dragonlauncher.logging"
     compileSdk {
-        version = release(36)
+        version = release(37)
     }
 
     defaultConfig {

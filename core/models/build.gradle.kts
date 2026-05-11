@@ -14,7 +14,7 @@ kotlin {
 extensions.configure<LibraryExtension> {
     namespace = "org.elnix.dragonlauncher.models"
     compileSdk {
-        version = release(36)
+        version = release(37)
     }
     defaultConfig {
         minSdk = 26

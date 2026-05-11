@@ -12,7 +12,7 @@ extensions.configure<LibraryExtension> {
     namespace = "org.elnix.dragonlauncher.shizuku"
 
     compileSdk {
-        version = release(36)
+        version = release(37)
     }
 
     defaultConfig {

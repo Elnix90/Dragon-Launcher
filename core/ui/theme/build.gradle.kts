@@ -12,14 +12,14 @@ kotlin {
 extensions.configure<LibraryExtension> {
     namespace = "org.elnix.dragonlauncher.ui.theme"
     compileSdk {
-        version = release(36)
+        version = release(37)
     }
 
     defaultConfig {
         minSdk = 26
         consumerProguardFiles("consumer-rules.pro")
     }
-
+""
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
