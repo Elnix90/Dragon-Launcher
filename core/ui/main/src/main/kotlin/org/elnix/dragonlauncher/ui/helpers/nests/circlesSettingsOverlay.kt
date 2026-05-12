@@ -5,11 +5,9 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SWIPE_TAG
 import org.elnix.dragonlauncher.common.messyfolder.UiCircle
 import org.elnix.dragonlauncher.common.messyfolder.circles.computePosition
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.ui.base.cache.SwipeDrawParams
 
 fun DrawScope.circlesSettingsOverlay(
@@ -117,7 +115,6 @@ fun DrawScope.circlesSettingsOverlay(
         } && it.circleNumber < circles.size
     }
 
-    logD(SWIPE_TAG) { "Displaying those points: ${filteredPoints.map { it.circleNumber }}"}
 
     filteredPoints
         .sortedBy { it.id == selectedPoint?.id }

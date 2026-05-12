@@ -465,9 +465,11 @@ fun SettingsScreen(
     }
 
 
-    fun addPoint(point: SwipePointSerializable) {
+    fun addPoint(point: SwipePointSerializable, select: Boolean = true) {
         points.add(point)
-        selectedPoint = point
+        if (select) {
+            selectedPoint = point
+        }
         appsViewModel.pointsIconsCache.incrementCacheSize()
         appsViewModel.reloadPointIcon(point)
     }
@@ -1458,7 +1460,7 @@ fun SettingsScreen(
 
 
                                         applyChange {
-                                            addPoint(point)
+                                            addPoint(point, false)
                                             if (autoSeparatePoints) autoSeparate(
                                                 points = points,
                                                 nestId = nestId,
@@ -1469,7 +1471,6 @@ fun SettingsScreen(
 
                                         // Dequeue: move to the next app
                                         manualPlacementQueue = manualPlacementQueue.drop(1)
-                                        return@detectTapGestures
                                     }
 
                                     // Normal tap mode
@@ -1478,6 +1479,7 @@ fun SettingsScreen(
                                     var bestPointPos = Offset.Zero
 
                                     filteredPoints.forEach { p ->
+                                        logD(SWIPE_TAG) { "Checking point ${p.id.take(8)}"}
                                         val pointPos = p.computePosition(circles, center)
                                         val dist = hypot(transformedOffset.x - pointPos.x, transformedOffset.y - pointPos.y)
 
@@ -1487,6 +1489,8 @@ fun SettingsScreen(
                                             tapped = p
                                         }
                                     }
+
+                                    logD(SWIPE_TAG) { "Best: $best, tapped: $tapped"}
 
                                     selectedPoint =
                                         if (best <= TOUCH_THRESHOLD_PX)
