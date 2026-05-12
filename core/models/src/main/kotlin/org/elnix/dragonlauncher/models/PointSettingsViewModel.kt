@@ -58,11 +58,12 @@ class PointSettingsViewModel @Inject constructor(
     suspend fun loadIsInDragAroundMode() {
         _isInDragAroundMode.value = SwipeMapSettingsStore.isInDragAroundMode.get(ctx)
     }
-    fun toggleIsInDragAroundMode() {
+    fun toggleIsInDragAroundMode(): Boolean {
         val newValue = _isInDragAroundMode.updateAndGet { !it }
         viewModelScope.launch {
             SwipeMapSettingsStore.isInDragAroundMode.set(ctx, newValue)
         }
+        return newValue
     }
 
     init {

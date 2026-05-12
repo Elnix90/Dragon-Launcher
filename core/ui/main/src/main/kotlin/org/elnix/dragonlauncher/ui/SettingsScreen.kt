@@ -1002,8 +1002,8 @@ fun SettingsScreen(
                 ToggleAnimatedFab(
                     checked = isInDragAroundMode,
                     onCheckedChange = {
-                        pointSettingsViewModel.toggleIsInDragAroundMode()
-                        if (isInDragAroundMode) {
+                        val isDraggingMode = pointSettingsViewModel.toggleIsInDragAroundMode()
+                        if (isDraggingMode) {
                             selectedPoint = null
                         }
                     },
