@@ -61,7 +61,7 @@ fun ExpandableSection(
                 }
             },
             backgroundColor = backgroundColor,
-            border = true,
+            border = false,
             enabled = enabled
         )
     ) {
