@@ -151,6 +151,7 @@ fun WorkspaceDetailScreen(
         SettingsScaffold(
             title = "${stringResource(R.string.workspace)}: ${workspace.name}",
             onBack = onBack,
+            scrollableContent = false,
             helpText = stringResource(R.string.workspace_detail_help),
             onReset = { appsViewModel.resetWorkspace(workspaceId) },
             resetTitle = stringResource(R.string.reset_workspace),
