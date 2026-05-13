@@ -244,10 +244,10 @@ object AppObjectsColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 CardDefaults.cardColors(
-                    surfaceVariant,
-                    onSurfaceVariant,
-                    surfaceVariant.alphaMultiplier(0.5f),
-                    onSurfaceVariant.alphaMultiplier(0.5f),
+                    containerColor = surface,
+                    contentColor = onSurface,
+                    disabledContainerColor = surfaceVariant,
+                    disabledContentColor = onSurfaceVariant,
                 )
             }
         } else CardDefaults.cardColors()
