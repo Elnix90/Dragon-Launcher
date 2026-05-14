@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.helpers
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -67,15 +68,17 @@ fun IconPackListContent(
             color = MaterialTheme.colorScheme.onBackground
         )
 
-        if (isLoading) {
-            LoadingIndicator()
-        } else {
-            DragonIconButton(
-                icon = R.drawable.refresh,
-                contentDescription = stringResource(R.string.reload)
-            ) {
-                isLoading = true
-                onReloadPacks()
+        AnimatedContent(isLoading) {
+            if (it) {
+                LoadingIndicator()
+            } else {
+                DragonIconButton(
+                    icon = R.drawable.refresh,
+                    contentDescription = stringResource(R.string.reload)
+                ) {
+                    isLoading = true
+                    onReloadPacks()
+                }
             }
         }
     }

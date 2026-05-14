@@ -31,7 +31,6 @@
     <string name="language_korean">coréen</string>
     <string name="language_portuguese">portugais</string>
     <string name="system_default">Par défaut système</string>
-    <string name="settings_language_title">Sélecteur de langues</string>
     <string name="choose_your_app_language">Choisissez la langue de votre application</string>
     <string name="version">Version</string>
     <string name="export_cancelled">Exportation annulée</string>

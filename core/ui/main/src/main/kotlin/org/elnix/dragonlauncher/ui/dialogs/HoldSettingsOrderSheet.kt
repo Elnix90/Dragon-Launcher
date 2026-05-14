@@ -96,7 +96,7 @@ fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
 
         MultiSelectConnectedButtonRow(
             entries = BackupSelectStoresButtons.entries,
-            isEnabled = { entry ->
+            enabled = { entry ->
                 val selectedCount = menuItems.count { it.isSelected.value }
                 when (entry) {
                     DeselectAll -> selectedCount > 0

@@ -21,7 +21,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -58,10 +57,10 @@ import org.elnix.dragonlauncher.common.utils.PrivateSpaceUtils
 import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalPrivateSpaceViewModel
+import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.helpers.AppDrawerSearch
@@ -188,7 +187,7 @@ fun AppPickerDialog(
                                 colors = AppObjectsColors.iconButtonColors(),
                                 icon = R.drawable.reload,
                                 contentDescription = stringResource(R.string.reload_apps)
-                            ){ scope.launch { appsViewModel.reloadApps() } }
+                            ) { scope.launch { appsViewModel.reloadApps() } }
                         }
                     } else {
                         AppDrawerSearch(
@@ -265,101 +264,6 @@ fun AppPickerDialog(
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                     )
                 }
-            }
-        },
-        text = {
-            Column {
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.weight(1f)
-                ) { pageIndex ->
-
-                    val workspace = workspaces[pageIndex]
-
-                    val apps by appsViewModel
-                        .appsForWorkspace(workspace, overrides)
-                        .collectAsState(initial = emptyList())
-
-                    val filteredApps by remember(searchQuery, apps) {
-                        derivedStateOf {
-                            val base = if (searchQuery.isBlank()) apps
-                            else apps.filter { app ->
-                                app.name.contains(searchQuery, ignoreCase = true) ||
-
-                                        // Also search for aliases
-                                        aliases[app.iconCacheKey]?.any {
-                                            it.contains(
-                                                searchQuery,
-                                                ignoreCase = true
-                                            )
-                                        } ?: false
-                            }
-
-                            base.sortedBy { it.name.lowercase() }
-                        }
-                    }
-
-
-                    val showLock =
-                        privateSpaceState.isLocked || privateSpaceState.isAuthenticating
-
-                    if (workspace.type == WorkspaceType.PRIVATE && showLock) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            AnimatedContent(targetState = privateSpaceState) {
-                                when {
-                                    // The loading shouldn't be displayed, but just in case I'll keep it for user visual feedback
-                                    it.isLoading -> LoadingIndicator()
-                                    it.isAuthenticating -> LoadingIndicator(color = Color.Yellow)
-                                    it.isLocked -> {
-                                        DragonIconButton(
-                                            icon = R.drawable.lock,
-                                            contentDescription = "Private Space Locked"
-                                        ) {
-                                            logW(PRIVATE_SPACE_TAG) { "Drawer reload button launch!" }
-                                            privateSpaceViewModel.onUnlockPrivateSpace()
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        AppGrid(
-                            apps = filteredApps,
-                            selectedPackages = selectedApps,
-                            isMultiSelectMode = isMultiSelectMode,
-                            onReload = {
-                                scope.launch {
-                                    if (workspace.type == WorkspaceType.PRIVATE) appsViewModel.unlockAndReloadPrivateSpace()
-                                    else appsViewModel.reloadApps()
-                                }
-                            },
-                            onEnterMultiSelect = { app ->
-                                isMultiSelectMode = true
-                                if (!selectedApps.contains(app.packageName)) {
-                                    selectedApps.add(app.packageName)
-                                }
-                            },
-                            onToggleSelect = { app ->
-                                if (selectedApps.contains(app.packageName)) {
-                                    selectedApps.remove(app.packageName)
-                                } else {
-                                    selectedApps.add(app.packageName)
-                                }
-                                if (selectedApps.isEmpty()) {
-                                    isMultiSelectMode = false
-                                }
-                            },
-                            longPressPopup = null,
-                            onClick = {
-                                onAppSelected(it)
-                                onDismiss()
-                            }
-                        )
-                    }
-                }
 
                 // Multi-select action bar
                 AnimatedVisibility(isMultiSelectMode && selectedApps.isNotEmpty() && onMultipleAppsSelected != null) {
@@ -367,25 +271,17 @@ fun AppPickerDialog(
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .settingsGroup(border = true),
+                                .settingsGroup(),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            // Resolve picked apps to AppModel list
-                            Button(
+                            DragonButton(
                                 onClick = {
-//                                val workspaceApps = workspaces.flatMap { ws ->
-//                                    val flow = appsViewModel.appsForWorkspace(ws, overrides)
-//                                    // we'll resolve via getAllApps from ViewModel
-//                                    emptyList<AppModel>()
-//                                }
-                                    // We'll use the allApps state reference
                                     val allApps = appsViewModel.allApps.value
                                     val pickedApps = allApps.filter { it.packageName in selectedApps }
                                     onMultipleAppsSelected(pickedApps, true)
                                     onDismiss()
                                 },
-                                shape = DragonShape,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Icon(
@@ -397,14 +293,13 @@ fun AppPickerDialog(
                                 Text(stringResource(R.string.add_all_auto))
                             }
 
-                            Button(
+                            DragonButton(
                                 onClick = {
                                     val allApps = appsViewModel.allApps.value
                                     val pickedApps = allApps.filter { it.packageName in selectedApps }
                                     onMultipleAppsSelected(pickedApps, false)
                                     onDismiss()
                                 },
-                                shape = DragonShape,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Icon(
@@ -417,6 +312,96 @@ fun AppPickerDialog(
                             }
                         }
                     }
+                }
+            }
+        },
+        text = {
+            HorizontalPager(pagerState) { pageIndex ->
+
+                val workspace = workspaces[pageIndex]
+
+                val apps by appsViewModel
+                    .appsForWorkspace(workspace, overrides)
+                    .collectAsState(initial = emptyList())
+
+                val filteredApps by remember(searchQuery, apps) {
+                    derivedStateOf {
+                        val base = if (searchQuery.isBlank()) apps
+                        else apps.filter { app ->
+                            app.name.contains(searchQuery, ignoreCase = true) ||
+
+                                    // Also search for aliases
+                                    aliases[app.iconCacheKey]?.any {
+                                        it.contains(
+                                            searchQuery,
+                                            ignoreCase = true
+                                        )
+                                    } ?: false
+                        }
+
+                        base.sortedBy { it.name.lowercase() }
+                    }
+                }
+
+
+                val showLock =
+                    privateSpaceState.isLocked || privateSpaceState.isAuthenticating
+
+                if (workspace.type == WorkspaceType.PRIVATE && showLock) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AnimatedContent(targetState = privateSpaceState) {
+                            when {
+                                // The loading shouldn't be displayed, but just in case I'll keep it for user visual feedback
+                                it.isLoading -> LoadingIndicator()
+                                it.isAuthenticating -> LoadingIndicator(color = Color.Yellow)
+                                it.isLocked -> {
+                                    DragonIconButton(
+                                        icon = R.drawable.lock,
+                                        contentDescription = "Private Space Locked"
+                                    ) {
+                                        logW(PRIVATE_SPACE_TAG) { "Drawer reload button launch!" }
+                                        privateSpaceViewModel.onUnlockPrivateSpace()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    AppGrid(
+                        apps = filteredApps,
+                        selectedPackages = selectedApps,
+                        isMultiSelectMode = isMultiSelectMode,
+                        onReload = {
+                            scope.launch {
+                                if (workspace.type == WorkspaceType.PRIVATE) appsViewModel.unlockAndReloadPrivateSpace()
+                                else appsViewModel.reloadApps()
+                            }
+                        },
+                        onEnterMultiSelect = { app ->
+                            isMultiSelectMode = true
+                            if (!selectedApps.contains(app.packageName)) {
+                                selectedApps.add(app.packageName)
+                            }
+                        },
+                        onToggleSelect = { app ->
+                            if (selectedApps.contains(app.packageName)) {
+                                selectedApps.remove(app.packageName)
+                            } else {
+                                selectedApps.add(app.packageName)
+                            }
+                            if (selectedApps.isEmpty()) {
+                                isMultiSelectMode = false
+                            }
+                        },
+                        longPressPopup = null,
+                        onClick = {
+                            onAppSelected(it)
+                            onDismiss()
+                        }
+                    )
                 }
             }
         }

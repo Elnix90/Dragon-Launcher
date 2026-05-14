@@ -27,6 +27,7 @@ import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 @Composable
 fun EditCustomObjectBlock(
+    title: Int? = null,
     editObject: CustomObjectSerializable,
     default: CustomObjectSerializable,
     properties: CustomObjectBlockProperties = CustomObjectBlockProperties(),

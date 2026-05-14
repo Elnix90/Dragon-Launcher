@@ -31,7 +31,6 @@
     <string name="language_korean">कोरियाई</string>
     <string name="language_portuguese">पुर्तगाली</string>
     <string name="system_default">सिस्टम डिफ़ॉल्ट</string>
-    <string name="settings_language_title">भाषा चयनकर्ता</string>
     <string name="choose_your_app_language">अपनी ऐप्लिकेशन की भाषा चुनें</string>
     <string name="version">विवरण</string>
     <string name="export_cancelled">निर्यात रद्द कर दिया गया</string>

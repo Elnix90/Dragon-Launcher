@@ -66,7 +66,7 @@ fun IconPackTab(
             if (showPreview) {
                 LazyRowWithScrollIndicator(
                     items = apps,
-                    modifier = Modifier.height(80.dp),
+                    modifier = Modifier.height(70.dp),
                 ) { app ->
                     AppIcon(app, 56.dp)
                 }

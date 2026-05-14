@@ -41,7 +41,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
  *
  * @param T Any type implementing [ToggleButtonOption], typically an enum.
  * @param entries The ordered list of options to display as toggle buttons.
- * @param isChecked Predicate returning the current checked state for a given entry.
+ * @param checked Predicate returning the current checked state for a given entry.
  * @param onCheck Called when the user taps a button, both on check and uncheck.
  *   regardless of the resulting checked state. Defaults to `true`.
  */
@@ -49,8 +49,8 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
 @Composable
 fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
     entries: List<T>,
-    isEnabled: (T) -> Boolean = { true },
-    isChecked: (T) -> Boolean = { true },
+    enabled: (T) -> Boolean = { true },
+    checked: (T) -> Boolean = { true },
     onCheck: (T) -> Unit
 ) {
     val interactionSources = List(entries.size) { rememberInteractionSource() }
@@ -59,7 +59,7 @@ fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
     ButtonGroup(horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)) {
         entries.forEachIndexed { idx, entry ->
 
-            val checked = isChecked(entry)
+            val checked = checked(entry)
 
             IconToggleButton(
                 checked = checked,
@@ -68,7 +68,7 @@ fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
                 modifier = Modifier
                     .size(IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
                     .animateWidth(interactionSources[idx]),
-                enabled = isEnabled(entry),
+                enabled = enabled(entry),
                 colors = AppObjectsColors.iconToggleButtonColors(),
                 shapes = when (idx) {
                     0 -> connectedLeadingButtonShapes()

@@ -187,7 +187,6 @@ fun SettingsScreen(
     val settingsDebugInfos by DebugSettingsStore.settingsDebugInfo.asState()
 
     var center by remember { mutableStateOf(Offset.Zero) }
-//    var availableWidth by remember { mutableFloatStateOf(0f) }
 
     val points: SnapshotStateList<SwipePointSerializable> = remember { mutableStateListOf() }
     val nests: SnapshotStateList<CircleNest> = remember { mutableStateListOf() }
@@ -272,6 +271,13 @@ fun SettingsScreen(
         }
     }
 
+    fun recenterSelectedTempOffset() {
+        selectedPoint?.let { p ->
+            scope.launch {
+                selectedPointTempOffset.snapTo(p.computePosition(circles, center))
+            }
+        }
+    }
 
     fun reloadIcons() {
         appsViewModel.preloadPointIcons(points)
@@ -314,21 +320,25 @@ fun SettingsScreen(
 
     fun undo() {
         undoRedo.undo()
+        recenterSelectedTempOffset()
         save()
     }
 
     fun redo() {
         undoRedo.redo()
+        recenterSelectedTempOffset()
         save()
     }
 
     fun undoAll() {
         undoRedo.undoAll()
+        recenterSelectedTempOffset()
         save()
     }
 
     fun redoAll() {
         undoRedo.redoAll()
+        recenterSelectedTempOffset()
         save()
     }
 
@@ -557,6 +567,7 @@ fun SettingsScreen(
     }
 
 
+
     val handleBack = {
         if (isInManualPlacementMode) manualPlacementQueue = emptyList()
         else if (selectedPoint != null) selectedPoint = null
@@ -698,14 +709,14 @@ fun SettingsScreen(
 
                     MultiSelectConnectedButtonRow(
                         entries = NestEditTools.entries,
-                        isEnabled = {
+                        enabled = {
                             when (it) {
                                 NestManagement -> true
                                 GoParentNest -> canGoback
                                 EnterNest -> canGoNest
                             }
                         },
-                        isChecked = {
+                        checked = {
                             when (it) {
                                 NestManagement -> true
                                 GoParentNest -> canGoback
@@ -739,7 +750,7 @@ fun SettingsScreen(
                     // The 3 points settings tools: Snap points / Auto separate / Lock to circle
                     MultiSelectConnectedButtonRow(
                         entries = PointsEditTools.entries,
-                        isChecked = {
+                        checked = {
                             when (it) {
                                 SnapPoints -> snapPoints
                                 AutoSeparate -> autoSeparatePoints
@@ -900,7 +911,15 @@ fun SettingsScreen(
                     val redoButtonEnabled = undoRedo.canRedo
                     MultiSelectConnectedButtonRow(
                         entries = UndRedoEditTools.entries,
-                        isEnabled = {
+                        enabled = {
+                            when (it) {
+                                UndRedoEditTools.UndoAll -> undoButtonEnabled
+                                UndRedoEditTools.Undo -> undoButtonEnabled
+                                UndRedoEditTools.Redo -> redoButtonEnabled
+                                UndRedoEditTools.RedoAll -> redoButtonEnabled
+                            }
+                        },
+                        checked = {
                             when (it) {
                                 UndRedoEditTools.UndoAll -> undoButtonEnabled
                                 UndRedoEditTools.Undo -> undoButtonEnabled
@@ -929,14 +948,14 @@ fun SettingsScreen(
 
                     MultiSelectConnectedButtonRow(
                         entries = MoveAroundTools.entries,
-                        isEnabled = {
+                        enabled = {
                             when (it) {
                                 Center -> canResetOffset
                                 ResetZoom -> canResetZoom
                                 ResetRotation -> canResetRotation
                             }
                         },
-                        isChecked = {
+                        checked = {
                             when (it) {
                                 Center -> canResetOffset
                                 ResetZoom -> canResetZoom
@@ -966,7 +985,13 @@ fun SettingsScreen(
 
                     MultiSelectConnectedButtonRow(
                         entries = AddRemoveCircleTools.entries,
-                        isEnabled = {
+                        enabled = {
+                            when(it) {
+                                AddRemoveCircleTools.Add -> true
+                                AddRemoveCircleTools.Remove -> circles.size > 1
+                            }
+                        },
+                        checked = {
                             when(it) {
                                 AddRemoveCircleTools.Add -> true
                                 AddRemoveCircleTools.Remove -> circles.size > 1
@@ -1019,8 +1044,8 @@ fun SettingsScreen(
 
                 MultiSelectConnectedButtonRow(
                     entries = SelectedPointEditTools.entries,
-                    isChecked = { true },
-                    isEnabled = { aPointIsSelected }
+                    checked = { aPointIsSelected },
+                    enabled = { aPointIsSelected }
                 ) { option ->
                     scope.launch {
                         when (option) {
@@ -1476,7 +1501,6 @@ fun SettingsScreen(
                                     // Normal tap mode
                                     var tapped: SwipePointSerializable? = null
                                     var best = Float.MAX_VALUE
-                                    var bestPointPos = Offset.Zero
 
                                     filteredPoints.forEach { p ->
                                         logD(SWIPE_TAG) { "Checking point ${p.id.take(8)}"}
@@ -1485,7 +1509,6 @@ fun SettingsScreen(
 
                                         if (dist < best) {
                                             best = dist
-                                            bestPointPos = pointPos
                                             tapped = p
                                         }
                                     }
@@ -1509,9 +1532,7 @@ fun SettingsScreen(
 
                                     selectedPoint?.let {
                                         lastSelectedCircle = it.circleNumber
-                                        scope.launch {
-                                            selectedPointTempOffset.snapTo(bestPointPos)
-                                        }
+                                        recenterSelectedTempOffset()
                                     }
                                 }
                             )

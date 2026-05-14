@@ -72,7 +72,6 @@ import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
@@ -574,6 +573,11 @@ fun ColorSelectorTab(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+                    SingleSelectConnectedButtonRow(
+                        entries = ColorSelectorModes.entries,
+                        modifier = Modifier.weight(1f),
+                        checked = { it == selectedCustomView }
+                    ) { selectedCustomView = it }
 
                     Box {
                         DragonIconButton(
@@ -619,14 +623,11 @@ fun ColorSelectorTab(
                     }
                 }
 
-                SingleSelectConnectedButtonRow(
-                    entries = ColorSelectorModes.entries,
-                    checked = { it == selectedCustomView }
-                ) { selectedCustomView = it }
-
 
                 AnimatedContent(selectedCustomView) {
-                    DragonColumnGroup {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
                         when (it) {
                             ColorSelectorModes.NORMAL -> {
 

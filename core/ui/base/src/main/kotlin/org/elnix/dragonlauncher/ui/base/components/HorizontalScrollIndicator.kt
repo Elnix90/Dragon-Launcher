@@ -49,6 +49,7 @@ fun <T> LazyRowWithScrollIndicator(
         LazyRow(
             horizontalArrangement = horizontalArrangement,
             verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier,
             state = state
         ) {
             items(

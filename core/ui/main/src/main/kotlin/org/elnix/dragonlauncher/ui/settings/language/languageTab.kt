@@ -44,7 +44,7 @@ fun LanguageTab(onBack: () -> Unit) {
     val selectedTag by LanguageSettingsStore.keyLang.asState()
 
     SettingsScaffold(
-        title = stringResource(R.string.settings_language_title),
+        title = stringResource(R.string.language),
         onBack = onBack,
         helpText = stringResource(R.string.choose_your_app_language),
         onReset = {

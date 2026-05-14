@@ -74,6 +74,7 @@ import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Comp
 import org.elnix.dragonlauncher.common.utils.PermissionsUtils.hasUriReadWritePermission
 import org.elnix.dragonlauncher.common.utils.PermissionsUtils.isAppInstalled
 import org.elnix.dragonlauncher.common.utils.rememberIsDefaultLauncher
+import org.elnix.dragonlauncher.enumsui.other.ReminderMode
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.logging.logD
@@ -121,6 +122,7 @@ import org.elnix.dragonlauncher.ui.navigation.horizontalMetadata
 import org.elnix.dragonlauncher.ui.navigation.verticalMetadata
 import org.elnix.dragonlauncher.ui.settings.backup.BackupTab
 import org.elnix.dragonlauncher.ui.settings.customization.AngleLineTab
+import org.elnix.dragonlauncher.ui.settings.customization.AppDisplayTab
 import org.elnix.dragonlauncher.ui.settings.customization.AppearanceTab
 import org.elnix.dragonlauncher.ui.settings.customization.BehaviorTab
 import org.elnix.dragonlauncher.ui.settings.customization.ColorSelectorTab
@@ -297,8 +299,11 @@ fun MainAppUi(
                             ?: false
                     val remInterval =
                         data?.getIntExtra(DigitalPauseActivity.EXTRA_REMINDER_INTERVAL, 5) ?: 5
-                    val remMode =
-                        data?.getStringExtra(DigitalPauseActivity.EXTRA_REMINDER_MODE) ?: "overlay"
+                    val remMode = try {
+                        data?.getStringExtra(DigitalPauseActivity.EXTRA_REMINDER_MODE)?.let { ReminderMode.valueOf(it) } ?: ReminderMode.Overlay
+                    } catch (_: Exception) {
+                        null
+                    } ?: ReminderMode.Overlay
 
                     AppTimerService.start(
                         ctx = ctx,
@@ -690,7 +695,7 @@ fun MainAppUi(
                                 backStack::navigateBack
                             )
                         }
-                        entry<NavigationRoute.Behavior>(metadata = horizontalMetadata) { BehaviorTab(backStack::navigate, backStack::navigateBack) }
+                        entry<NavigationRoute.Behavior>(metadata = horizontalMetadata) { BehaviorTab(backStack::navigateBack) }
                         entry<NavigationRoute.DrawerSettings>(metadata = horizontalMetadata) { DrawerTab(backStack::navigateBack) }
                         entry<NavigationRoute.Language>(metadata = horizontalMetadata) { LanguageTab(backStack::navigateBack) }
                         entry<NavigationRoute.Backup>(metadata = horizontalMetadata) { BackupTab(backStack::navigateBack) }
@@ -702,6 +707,7 @@ fun MainAppUi(
                         entry<NavigationRoute.SettingsJson>(metadata = horizontalMetadata) { SettingsDebugTab(backStack::navigateBack) }
 
                         // All the appearance sub-settings
+                        entry<NavigationRoute.AppDisplay>(metadata = horizontalMetadata) { AppDisplayTab(backStack::navigateBack) }
                         entry<NavigationRoute.Colors>(metadata = horizontalMetadata) { ColorSelectorTab(backStack::navigateBack) }
                         entry<NavigationRoute.Theme>(metadata = horizontalMetadata) { ThemesTab(backStack::navigateBack) }
                         entry<NavigationRoute.Wallpaper>(metadata = horizontalMetadata) { WallpaperTab(backStack::navigateBack) }

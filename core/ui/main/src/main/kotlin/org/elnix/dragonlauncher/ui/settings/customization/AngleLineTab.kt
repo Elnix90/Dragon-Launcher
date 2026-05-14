@@ -44,6 +44,7 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dialogs.AngleLineObjectsOrderDialog
 import org.elnix.dragonlauncher.ui.dialogs.rememberLineObjectsOrder
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
+import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSectionMode
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
@@ -67,10 +68,10 @@ fun AngleLineTab(onBack: () -> Unit) {
     val showEndObjectPreview by AngleLineSettingsStore.showEndObjectPreview.asState()
 
 
-    val lineObjectExpandableSectionState = rememberExpandableSection(stringResource(R.string.line_object))
-    val angleObjectExpandableSectionState = rememberExpandableSection(stringResource(R.string.angle_object))
-    val startObjectExpandableSectionState = rememberExpandableSection(stringResource(R.string.start_object))
-    val endObjectExpandableSectionState = rememberExpandableSection(stringResource(R.string.end_object))
+    val lineObjectExpandableSectionState = rememberExpandableSection(stringResource(R.string.line_object), mode = ExpandableSectionMode.Expandable)
+    val angleObjectExpandableSectionState = rememberExpandableSection(stringResource(R.string.angle_object), mode = ExpandableSectionMode.Expandable)
+    val startObjectExpandableSectionState = rememberExpandableSection(stringResource(R.string.start_object), mode = ExpandableSectionMode.Expandable)
+    val endObjectExpandableSectionState = rememberExpandableSection(stringResource(R.string.end_object), mode = ExpandableSectionMode.Expandable)
 
     val order by rememberLineObjectsOrder()
     var showOrderDialog by remember { mutableStateOf(false) }

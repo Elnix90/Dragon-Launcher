@@ -31,7 +31,7 @@ class PointSettingsViewModel @Inject constructor(
         _showSubNestSlider.value = SwipeMapSettingsStore.showSubNestsSlider.get(ctx)
     }
     fun toggleShowSubNestSlider() {
-        val newValue = _showAdvancedPointTools.updateAndGet { !it }
+        val newValue = _showSubNestSlider.updateAndGet { !it }
         viewModelScope.launch {
             SwipeMapSettingsStore.showSubNestsSlider.set(ctx, newValue)
         }

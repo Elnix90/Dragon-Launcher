@@ -10,13 +10,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,7 +48,6 @@ import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.base.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.AppModel
@@ -59,18 +58,20 @@ import org.elnix.dragonlauncher.common.utils.ImageUtils.uriToBase64
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.components.VerticalScrollIndicator
+import org.elnix.dragonlauncher.ui.base.modifiers.conditional
+import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.components.PointPreviewCanvas
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
-import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
-import org.elnix.dragonlauncher.ui.dragon.text.TextDivider
 import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 
@@ -252,14 +253,14 @@ private fun IconEditorImpl(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.verticalScroll(columnScrollState)
                 ) {
-                    TextDivider(stringResource(R.string.source))
-
-                    DragonColumnGroup {
-                        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+                    DragonSettingsGroup(R.string.source) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(5.dp),
+                            modifier = Modifier.height(IntrinsicSize.Min)
+                        ) {
                             Column(
-                                verticalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier
-                                    .fillMaxWidth(0.5f) // Hacky lol
+                                verticalArrangement = Arrangement.spacedBy(5.dp),
+                                modifier = Modifier.weight(1f)
                             ) {
                                 SelectableCard(
                                     selected = selectedIcon?.type == IconType.BITMAP && source != null,
@@ -271,12 +272,11 @@ private fun IconEditorImpl(
                                     Icon(
                                         painter = painterResource(R.drawable.image),
                                         contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onSurface
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
-                                    Spacer(Modifier.width(12.dp))
                                     Text(
                                         text = stringResource(R.string.pick_image),
-                                        color = MaterialTheme.colorScheme.onSurface
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
 
@@ -291,33 +291,32 @@ private fun IconEditorImpl(
                                     Icon(
                                         painter = painterResource(R.drawable.palette),
                                         contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onSurface
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
-                                    Spacer(Modifier.width(12.dp))
                                     Text(
                                         text = stringResource(R.string.pick_from_icon_pack),
-                                        color = MaterialTheme.colorScheme.onSurface
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }
 
                             SelectableCard(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight(),
                                 selected = selectedIcon?.type == IconType.TEXT && source != null,
-                                onClick = { }
+                                onClick = null
                             ) {
                                 Column(
-                                    modifier = Modifier
-                                        .clip(DragonShape)
-                                        .background(MaterialTheme.colorScheme.surface.alphaMultiplier(0.7f))
-                                        .padding(12.dp)
+                                    modifier = Modifier.fillMaxHeight(),
+                                    verticalArrangement = Arrangement.Center
                                 ) {
                                     Text(
                                         stringResource(R.string.text_emoji),
-                                        color = MaterialTheme.colorScheme.onSurface,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontWeight = FontWeight.Bold
                                     )
-                                    Spacer(Modifier.height(8.dp))
+                                    Spacer(8.dp)
                                     TextField(
                                         value = textValue,
                                         onValueChange = {
@@ -346,7 +345,7 @@ private fun IconEditorImpl(
 
                         SelectableCard(
                             selected = selectedIcon?.type == IconType.PLAIN_COLOR && source != null,
-                            onClick = {}
+                            onClick = null
                         ) {
                             val currentColor = run {
                                 source
@@ -390,25 +389,20 @@ private fun IconEditorImpl(
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.close),
-                                null,
-                                tint = MaterialTheme.colorScheme.onSurface
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
-                            Spacer(Modifier.width(12.dp))
                             Text(
                                 text = stringResource(R.string.no_custom_icon),
-                                color = MaterialTheme.colorScheme.onSurface
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
 
-
-                    TextDivider(stringResource(R.string.appearance))
-
-
-                    DragonColumnGroup {
-
+                    DragonSettingsGroup(R.string.appearance) {
                         // Opacity
                         SliderWithLabel(
+                            modifier = Modifier.settingsGroupHorizontalPadding(),
                             label = stringResource(R.string.opacity),
                             value = selectedIcon?.opacity ?: 1f,
                             valueRange = 0f..1f,
@@ -422,6 +416,7 @@ private fun IconEditorImpl(
 
                         // Rotation
                         SliderWithLabel(
+                            modifier = Modifier.settingsGroupHorizontalPadding(),
                             label = stringResource(R.string.rotation),
                             value = selectedIcon?.rotationDeg ?: 0f,
                             valueRange = -180f..180f,
@@ -435,6 +430,7 @@ private fun IconEditorImpl(
 
                         // Scale X
                         SliderWithLabel(
+                            modifier = Modifier.settingsGroupHorizontalPadding(),
                             label = stringResource(R.string.scale_x),
                             value = selectedIcon?.scaleX ?: 1f,
                             valueRange = 0.2f..3f,
@@ -448,6 +444,7 @@ private fun IconEditorImpl(
 
                         // Scale Y
                         SliderWithLabel(
+                            modifier = Modifier.settingsGroupHorizontalPadding(),
                             label = stringResource(R.string.scale_y),
                             value = selectedIcon?.scaleY ?: 1f,
                             valueRange = 0.2f..3f,
@@ -458,12 +455,15 @@ private fun IconEditorImpl(
                         ) {
                             updateSelectedIcon((selectedIcon ?: CustomIconSerializable()).copy(scaleY = it))
                         }
+
+                        Spacer(8.dp)
                     }
 
-                    DragonColumnGroup {
+                    DragonSettingsGroup(R.string.advanced) {
                         ColorPickerRow(
                             label = stringResource(R.string.tint),
-                            currentColor = selectedIcon?.tint?.let { Color(it) } ?: Color.Unspecified
+                            currentColor = selectedIcon?.tint?.let { Color(it) } ?: Color.Unspecified,
+                            modifier = Modifier.settingsGroupHorizontalPadding(),
                         ) {
                             val tintColor = it.definedOrNull()?.toArgb()
                             updateSelectedIcon(
@@ -475,6 +475,7 @@ private fun IconEditorImpl(
 
                         ShapeRow(
                             selected = selectedIcon?.shape ?: iconShapes,
+                            modifier = Modifier.settingsGroupHorizontalPadding(),
                             onReset = {
                                 updateSelectedIcon(
                                     (selectedIcon ?: CustomIconSerializable()).copy(
@@ -530,15 +531,16 @@ private fun IconEditorImpl(
 private fun SelectableCard(
     modifier: Modifier = Modifier,
     selected: Boolean,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
     content: @Composable RowScope.() -> Unit
 ) {
     Row(
         modifier = modifier
-            .padding(3.dp)
             .clip(DragonShape)
-            .background(MaterialTheme.colorScheme.surface.alphaMultiplier(0.7f))
-            .clickable { onClick() }
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .conditional(onClick != null) {
+                clickable(onClick = onClick!!)
+            }
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -546,6 +548,7 @@ private fun SelectableCard(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
             content = content,
             modifier = Modifier.weight(1f)
         )

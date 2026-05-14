@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.ui.settings.customization
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -19,8 +19,9 @@ import org.elnix.dragonlauncher.settings.stores.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.StatusBarSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
-import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
+import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSectionMode
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsColorPicker
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
@@ -39,7 +40,7 @@ fun StatusBarTab(
     val mainScreenLayers = LocalMainScreenLayers.current
     val showStatusBar = showStatusBar()
 
-    val paddingsSectionState = rememberExpandableSection(stringResource(R.string.padding))
+    val paddingsSectionState = rememberExpandableSection(stringResource(R.string.padding), mode = ExpandableSectionMode.Expandable)
 
 
     SettingsScaffold(
@@ -90,9 +91,9 @@ fun StatusBarTab(
 
                 EditStatusBar()
 
-                HorizontalDivider()
-
-                ExpandableSection(paddingsSectionState) {
+                DragonSettingsGroup(
+                    title = R.string.padding,
+                    contentPadding = PaddingValues(12.dp)) {
                     SettingsSlider(
                         setting = StatusBarSettingsStore.leftPadding,
                         title = stringResource(R.string.left_padding),

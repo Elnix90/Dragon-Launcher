@@ -18,8 +18,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
 
+
+@Deprecated("use DragonSettingGroup instead")
 @Composable
-fun TextDivider(
+fun TextDividerOld(
     text: String,
     modifier: Modifier = Modifier,
     lineColor: Color = MaterialTheme.colorScheme.outline,

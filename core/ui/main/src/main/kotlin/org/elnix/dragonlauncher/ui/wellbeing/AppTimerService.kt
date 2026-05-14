@@ -17,6 +17,7 @@ import androidx.core.app.ServiceCompat
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.utils.DateUtils.formatDuration
 import org.elnix.dragonlauncher.common.utils.PermissionsUtils.hasUsageStatsPermission
+import org.elnix.dragonlauncher.enumsui.other.ReminderMode
 import java.util.Calendar
 
 /**
@@ -54,7 +55,7 @@ class AppTimerService : Service() {
             appName: String,
             reminderEnabled: Boolean = false,
             reminderIntervalMinutes: Int = 5,
-            reminderMode: String = "overlay",
+            reminderMode: ReminderMode,
             timeLimitEnabled: Boolean = false,
             timeLimitMinutes: Int = 0
         ) {

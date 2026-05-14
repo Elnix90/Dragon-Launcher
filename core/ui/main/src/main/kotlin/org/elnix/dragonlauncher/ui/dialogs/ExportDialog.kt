@@ -84,7 +84,7 @@ fun <T> SelectedActionRow(
 ) {
     MultiSelectConnectedButtonRow(
         entries = BackupSelectStoresButtons.entries,
-        isEnabled = { entry ->
+        enabled = { entry ->
             val selectedCount = selected.map { it.value }.count { it }
             when (entry) {
                 DeselectAll -> selectedCount > 0

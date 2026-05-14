@@ -60,7 +60,7 @@ import org.elnix.dragonlauncher.ui.dialogs.HapticFeedbackEditor
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
-import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
+import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.helpers.nests.circlesSettingsOverlay
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
@@ -273,7 +273,7 @@ fun NestEditingScreen(
         val pagerState = rememberPagerState { 5 }
 
         DragonColumnGroup {
-            SingleSelectConnectedButtonRow(
+            MultiSelectConnectedButtonRow(
                 entries = NestEditMode.entries,
                 checked = { pagerState.currentPage == it.ordinal }
             ) {
@@ -302,8 +302,8 @@ fun NestEditingScreen(
                         Drag -> {
                             dragDistancesState.toSortedMap().forEach { (index, distance) ->
                                 SliderWithLabel(
-                                    label = if (index == -1) "${stringResource(R.string.cancel_zone)} ->"
-                                    else "${stringResource(R.string.circle)}: $index ->",
+                                    label = if (index == -1) stringResource(R.string.cancel_zone)
+                                    else "${stringResource(R.string.circle)}: $index",
                                     value = distance,
                                     valueRange = 0..1000,
                                     showValue = true,
@@ -330,7 +330,7 @@ fun NestEditingScreen(
 
                                     HapticFeedBackEditorButtonWithPlayTest(
                                         customHapticFeedbackSerializable = currentNest.haptic[idx] ?: defaultHapticFeedback(idx),
-                                        titleExt = ": $idx ->",
+                                        titleExt = ": $idx",
                                         onClick = { showHapticFeedbackEditor = idx },
                                     )
                                 }
@@ -341,7 +341,7 @@ fun NestEditingScreen(
                                 .forEach { (index, _) ->
                                     val angle = minAngleState[index] ?: 0
                                     SliderWithLabel(
-                                        label = "${stringResource(R.string.min_angle_to_activate)}: $index ->",
+                                        label = "${stringResource(R.string.min_angle_to_activate)}: $index",
                                         value = angle,
                                         valueRange = 0..360,
                                         backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -385,16 +385,8 @@ fun NestEditingScreen(
                             SwitchRow(
                                 state = currentNest.showCircle ?: drawParams.showAppCirclePreview,
                                 title = stringResource(R.string.show_circle),
-                                onReset = {
-                                    updateNest {
-                                        currentNest.copy(showCircle = null)
-                                    }
-                                }
-                            ) { showCircle ->
-                                updateNest {
-                                    currentNest.copy(showCircle = showCircle)
-                                }
-                            }
+                                onReset = { updateNest { currentNest.copy(showCircle = null) } }
+                            ) { updateNest { currentNest.copy(showCircle = it) } }
                         }
 
                         Other -> {

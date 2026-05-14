@@ -61,7 +61,6 @@ fun ExpandableSection(
                 }
             },
             backgroundColor = backgroundColor,
-            border = false,
             enabled = enabled
         )
     ) {
@@ -74,7 +73,6 @@ fun ExpandableSection(
                         }
                     },
                     backgroundColor = Color.Transparent,
-                    border = false,
                     enabled = enabled
                 )
                 .fillMaxWidth(),

@@ -14,17 +14,18 @@ fun TextWithDescription(
     text: String,
     description: String?,
     modifier: Modifier = Modifier
+) = Column(
+    modifier = modifier,
+    verticalArrangement = Arrangement.spacedBy(5.dp)
 ) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(5.dp)
-    ) {
-        Text(text)
-        if (description != null) {
-            Text(
-                text = description,
-                style = MaterialTheme.typography.labelSmall
-            )
-        }
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelMedium
+    )
+    if (description != null) {
+        Text(
+            text = description,
+            style = MaterialTheme.typography.labelSmall
+        )
     }
 }

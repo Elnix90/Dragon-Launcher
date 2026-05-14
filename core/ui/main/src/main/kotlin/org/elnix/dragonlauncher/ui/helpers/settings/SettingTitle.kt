@@ -142,11 +142,11 @@ fun SpecialSettingsTitle(
                 onDismissRequest = dismiss,
                 actions = listOf(
                     MoreOptions(
-                        text = { stringResource(R.string.edit_default_point_settings) },
-                        icon = R.drawable.edit_rounded,
+                        text = { stringResource(R.string.reset_all_points) },
+                        icon = R.drawable.delete_forever,
                         onClick = {
                             dismiss()
-                            onEditDefaultPoint()
+                            onResetPoints()
                         }
                     ),
                     MoreOptions(
@@ -155,14 +155,6 @@ fun SpecialSettingsTitle(
                         onClick = {
                             dismiss()
                             onReloadPoints()
-                        }
-                    ),
-                    MoreOptions(
-                        text = { stringResource(R.string.edit_nest) },
-                        icon = R.drawable.nest_icon,
-                        onClick = {
-                            dismiss()
-                            onEditNest()
                         }
                     ),
                     MoreOptions(
@@ -183,11 +175,19 @@ fun SpecialSettingsTitle(
                         }
                     ),
                     MoreOptions(
-                        text = { stringResource(R.string.reset_all_points) },
-                        icon = R.drawable.delete_forever,
+                        text = { stringResource(R.string.edit_default_point_settings) },
+                        icon = R.drawable.edit_rounded,
                         onClick = {
                             dismiss()
-                            onResetPoints()
+                            onEditDefaultPoint()
+                        }
+                    ),
+                    MoreOptions(
+                        text = { stringResource(R.string.edit_nest) },
+                        icon = R.drawable.nest_icon,
+                        onClick = {
+                            dismiss()
+                            onEditNest()
                         }
                     )
                 )

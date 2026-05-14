@@ -67,7 +67,7 @@ fun GridSizeSlider(apps: List<AppModel>) {
         ) {
             MultiSelectConnectedButtonRow(
                 entries = HorizontalAlignment.entries,
-                isChecked = { horizontalAlignment == it }
+                checked = { horizontalAlignment == it }
             ) {
                 scope.launch { DrawerSettingsStore.horizontalAlignment.set(ctx, it) }
             }

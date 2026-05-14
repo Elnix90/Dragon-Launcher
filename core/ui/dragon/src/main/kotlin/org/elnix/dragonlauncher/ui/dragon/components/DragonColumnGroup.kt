@@ -16,15 +16,13 @@ import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 fun DragonColumnGroup(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
+) = CompositionLocalProvider(
+    LocalContentColor provides MaterialTheme.colorScheme.onSurface
 ) {
-    CompositionLocalProvider(
-        LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant
-    ){
-        Column(
-            modifier = modifier.settingsGroup(),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            content = content
-        )
-    }
+    Column(
+        modifier = modifier.settingsGroup(),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        content = content
+    )
 }

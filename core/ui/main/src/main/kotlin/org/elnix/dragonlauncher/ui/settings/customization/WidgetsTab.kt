@@ -25,8 +25,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -247,7 +245,7 @@ fun WidgetsTab(
             RowWithScrollIndicator(rowsScrollStates[0]) {
                 MultiSelectConnectedButtonRow(
                     entries = WidgetsToolsSnapping.entries,
-                    isChecked = {
+                    checked = {
                         when (it) {
                             WidgetsToolsSnapping.SnapGrid -> snapMove
                             WidgetsToolsSnapping.SnapResize -> snapResize
@@ -280,7 +278,7 @@ fun WidgetsTab(
 
                 MultiSelectConnectedButtonRow(
                     entries = UndRedoEditTools.entries,
-                    isEnabled = {
+                    enabled = {
                         when (it) {
                             UndRedoEditTools.UndoAll -> undoButtonEnabled
                             UndRedoEditTools.Undo -> undoButtonEnabled
@@ -304,13 +302,13 @@ fun WidgetsTab(
             RowWithScrollIndicator(rowsScrollStates[1]) {
                 MultiSelectConnectedButtonRow(
                     entries = WidgetsToolsAddNestRemove.entries,
-                    isChecked = {
+                    checked = {
                         when (it) {
                             WidgetsToolsAddNestRemove.Add, WidgetsToolsAddNestRemove.Nests -> true
                             WidgetsToolsAddNestRemove.Remove -> aWidgetIsSelected
                         }
                     },
-                    isEnabled = {
+                    enabled = {
                         when (it) {
                             WidgetsToolsAddNestRemove.Add, WidgetsToolsAddNestRemove.Nests -> true
                             WidgetsToolsAddNestRemove.Remove -> aWidgetIsSelected
@@ -347,8 +345,8 @@ fun WidgetsTab(
                     MultiSelectConnectedButtonColumn(
                         entries = WidgetsToolsCenterReset.entries,
                         showLabel = false,
-                        isChecked = { true },
-                        isEnabled = { aWidgetIsSelected }
+                        checked = { true },
+                        enabled = { aWidgetIsSelected }
                     ) { entry ->
                         scope.launch {
                             when (entry) {
@@ -378,7 +376,7 @@ fun WidgetsTab(
                     MultiSelectConnectedButtonColumn(
                         entries = WidgetsToolsUpDown.entries,
                         showLabel = false,
-                        isChecked = { true }
+                        checked = { true }
                     ) { entry ->
                         scope.launch {
                             when (entry) {
@@ -406,8 +404,8 @@ fun WidgetsTab(
                     MultiSelectConnectedButtonColumn(
                         entries = WidgetsToolsMoveUpDown.entries,
                         showLabel = false,
-                        isEnabled = { upDownEnabled },
-                        isChecked = { upDownEnabled }
+                        enabled = { upDownEnabled },
+                        checked = { upDownEnabled }
                     ) { entry ->
                         scope.launch {
                             when (entry) {
@@ -624,14 +622,14 @@ fun WidgetsTab(
 
             MultiSelectConnectedButtonRow(
                 entries = MoveAroundTools.entries,
-                isEnabled = {
+                enabled = {
                     when (it) {
                         Center -> canResetOffset
                         ResetZoom -> canResetZoom
                         ResetRotation -> canResetRotation
                     }
                 },
-                isChecked = {
+                checked = {
                     when (it) {
                         Center -> canResetOffset
                         ResetZoom -> canResetZoom

@@ -48,6 +48,7 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.dialogs.PointIconEditor
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
@@ -102,18 +103,20 @@ fun DebugTab(
             scope.launch { DebugSettingsStore.debugEnabled.set(ctx, it) }
         }
 
-        SettingsItem(
-            title = stringResource(R.string.logs),
-            icon = R.drawable.source_notes
-        ) {
-            onNavigate(NavigationRoute.Logs)
-        }
+        DragonSettingsGroup(R.string.more) {
+            SettingsItem(
+                title = stringResource(R.string.logs),
+                icon = R.drawable.source_notes
+            ) {
+                onNavigate(NavigationRoute.Logs)
+            }
 
-        SettingsItem(
-            title = "Settings debug json",
-            icon = R.drawable.settings
-        ) {
-            onNavigate(NavigationRoute.SettingsJson)
+            SettingsItem(
+                title = "Settings debug json",
+                icon = R.drawable.settings
+            ) {
+                onNavigate(NavigationRoute.SettingsJson)
+            }
         }
 
         ExpandableSection(uiDebugSectionState) {
@@ -124,6 +127,12 @@ fun DebugTab(
                 description = "Disabling that shows the welcome screen"
             )
 
+
+            SettingsSwitchRow(
+                setting = DebugSettingsStore.forceAppLanguageSelector,
+                title = "Force app language selector",
+                description = "Don't use the android language selector when available, always uses the app's native"
+            )
 
             SettingsSwitchRow(
                 setting = PrivateSettingsStore.hideBetaVersionWarning,

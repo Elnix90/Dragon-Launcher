@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.settings.stores
 
+import org.elnix.dragonlauncher.enumsui.other.ReminderMode
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.MapSettingsStore
@@ -97,10 +98,11 @@ object WellbeingSettingsStore : MapSettingsStore() {
     /**
      * Reminder delivery mode: "notification" or "overlay"
      */
-    val reminderMode = Settings.string(
-        key = "REMINDER_MODE",
+    val reminderMode = Settings.enum(
+        key = "reminderMode",
         dataStoreName = dataStoreName,
-        default = "overlay"
+        default = ReminderMode.Overlay,
+        enumClass = ReminderMode::class.java
     )
 
     /**

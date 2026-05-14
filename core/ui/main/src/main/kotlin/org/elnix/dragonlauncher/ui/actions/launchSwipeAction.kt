@@ -10,18 +10,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.net.toUri
 import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.APP_LAUNCH_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
+import org.elnix.dragonlauncher.common.messyfolder.expandQuickActionsDrawer
+import org.elnix.dragonlauncher.common.messyfolder.launchShortcut
+import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.getMobileDataStatus
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isBluetoothEnabled
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isWifiEnabled
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.APP_LAUNCH_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
 import org.elnix.dragonlauncher.common.utils.LifecycleUtils.closeApp
 import org.elnix.dragonlauncher.common.utils.PermissionsUtils.hasUriReadPermission
-import org.elnix.dragonlauncher.common.messyfolder.expandQuickActionsDrawer
-import org.elnix.dragonlauncher.common.messyfolder.launchShortcut
-import org.elnix.dragonlauncher.common.messyfolder.showToast
+import org.elnix.dragonlauncher.enumsui.other.ReminderMode
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.AppsViewModel
@@ -46,7 +47,7 @@ fun launchSwipeAction(
     pauseDuration: Int = 10,
     reminderEnabled: Boolean = false,
     reminderIntervalMinutes: Int = 5,
-    reminderMode: String = "overlay",
+    reminderMode: ReminderMode = ReminderMode.Overlay,
     returnToLauncherEnabled: Boolean = false,
     appName: String = "",
     onOpenPrivateSpaceApp: (SwipeActionSerializable) -> Unit,

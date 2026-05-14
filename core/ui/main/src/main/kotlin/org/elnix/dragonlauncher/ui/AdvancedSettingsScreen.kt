@@ -2,20 +2,26 @@ package org.elnix.dragonlauncher.ui
 
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -61,11 +67,11 @@ import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.components.BetaVersionType
 import org.elnix.dragonlauncher.ui.components.BetaVersionWarning
-import org.elnix.dragonlauncher.ui.dragon.text.TextDivider
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.helpers.settings.ContributorItem
-import org.elnix.dragonlauncher.ui.helpers.settings.SettingItemWithExternalOpen
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
@@ -113,218 +119,175 @@ fun AdvancedSettingsScreen(
         }
 
 
-        SettingsItem(
-            title = stringResource(R.string.appearance),
-            icon = R.drawable.palette
-        ) { onNavigate(NavigationRoute.Appearance) }
-
-        SettingsItem(
-            title = stringResource(R.string.behavior),
-            icon = R.drawable.question_mark
-        ) { onNavigate(NavigationRoute.Behavior) }
-
-        SettingsItem(
-            title = stringResource(R.string.backup_restore),
-            icon = R.drawable.reset
-        ) { onNavigate(NavigationRoute.Backup) }
-
-        SettingsItem(
-            title = stringResource(R.string.app_drawer),
-            icon = R.drawable.grid_on
-        ) { onNavigate(NavigationRoute.DrawerSettings) }
-
-        SettingsItem(
-            title = stringResource(R.string.workspaces),
-            icon = R.drawable.workspaces
-        ) { onNavigate(NavigationRoute.Workspace) }
-
-        SettingsItem(
-            title = stringResource(R.string.wellbeing),
-            icon = R.drawable.self_improvement
-        ) { onNavigate(NavigationRoute.Wellbeing) }
-        TextDivider(stringResource(R.string.advanced))
-
-        SettingItemWithExternalOpen(
-            title = stringResource(R.string.extensions),
-            icon = R.drawable.extension,
-            onExtClick = { ctx.openUrl(EXTENSIONS_GITHUB_REPO_LINK) }
-        ) {
-            onNavigate(NavigationRoute.Extensions)
-        }
-
-        SettingsItem(
-            title = stringResource(R.string.android_settings),
-            icon = R.drawable.settings_alert,
-            trailingIcon = R.drawable.open_in_new
-        ) {
-            val packageName = ctx.packageName
-            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                data = Uri.fromParts("package", packageName, null)
-            }
-            ctx.startActivity(intent)
-        }
-
-
-
-        AnimatedVisibility(isDebugModeEnabled) {
+        DragonSettingsGroup(R.string.common_settings) {
             SettingsItem(
-                title = stringResource(R.string.debug),
-                icon = R.drawable.bug_report,
-                modifier = Modifier
+                title = stringResource(R.string.appearance),
+                icon = R.drawable.palette
+            ) { onNavigate(NavigationRoute.Appearance) }
+
+            SettingsItem(
+                title = stringResource(R.string.wallpaper),
+                icon = R.drawable.wallpaper
+            ) { onNavigate(NavigationRoute.Wallpaper) }
+
+            SettingsItem(
+                title = stringResource(R.string.widgets),
+                icon = R.drawable.widgets
+            ) { onNavigate(NavigationRoute.Widgets()) }
+
+            SettingsItem(
+                title = stringResource(R.string.behavior),
+                icon = R.drawable.question_mark
+            ) { onNavigate(NavigationRoute.Behavior) }
+
+            SettingsItem(
+                title = stringResource(R.string.backup_restore),
+                icon = R.drawable.reset
+            ) { onNavigate(NavigationRoute.Backup) }
+
+            SettingsItem(
+                title = stringResource(R.string.app_drawer),
+                icon = R.drawable.grid_on
+            ) { onNavigate(NavigationRoute.DrawerSettings) }
+
+            SettingsItem(
+                title = stringResource(R.string.workspaces),
+                icon = R.drawable.workspaces
+            ) { onNavigate(NavigationRoute.Workspace) }
+
+            SettingsItem(
+                title = stringResource(R.string.wellbeing),
+                icon = R.drawable.self_improvement
+            ) { onNavigate(NavigationRoute.Wellbeing) }
+        }
+
+
+
+        DragonSettingsGroup(R.string.advanced) {
+
+            val forceAppLanguageSelector by DebugSettingsStore.forceAppLanguageSelector.asState()
+
+            SettingsItem(
+                title = stringResource(R.string.language),
+                icon = R.drawable.web,
+                onClick = {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !forceAppLanguageSelector) {
+                        openSystemLanguageSettings(ctx)
+                    } else {
+                        onNavigate(NavigationRoute.Language)
+                    }
+                }
+            )
+
+            SettingsItem(
+                title = stringResource(R.string.extensions),
+                icon = R.drawable.extension,
+                trailingIcon = R.drawable.open_in_new,
+                onExternalClick = { ctx.openUrl(EXTENSIONS_GITHUB_REPO_LINK) }
+            ) { onNavigate(NavigationRoute.Extensions) }
+
+            SettingsItem(
+                title = stringResource(R.string.android_settings),
+                icon = R.drawable.settings_alert,
+                trailingIcon = R.drawable.open_in_new
             ) {
-                onNavigate(NavigationRoute.Debug)
+                val packageName = ctx.packageName
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", packageName, null)
+                }
+                ctx.startActivity(intent)
+            }
+
+            AnimatedVisibility(isDebugModeEnabled) {
+                SettingsItem(
+                    title = stringResource(R.string.debug),
+                    icon = R.drawable.bug_report,
+                    modifier = Modifier
+                ) { onNavigate(NavigationRoute.Debug) }
             }
         }
 
+        DragonSettingsGroup(R.string.about) {
+            // Social links
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
 
-        TextDivider(stringResource(R.string.about))
-
-
-        // Social links
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(20.dp)
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.Center
-        ) {
-
-            val githubIcon = if (backgroundColor.luminance() < 0.5) {
-                R.drawable.github_invertocat_white
-            } else {
-                R.drawable.github_invertocat_black
+                val githubIcon = if (backgroundColor.luminance() < 0.5) {
+                    R.drawable.github_invertocat_white
+                } else {
+                    R.drawable.github_invertocat_black
+                }
+                SocialIcon(githubIcon, GITHUB_REPO_LINK)
+                SocialIcon(R.drawable.discord_symbol_blurple, DISCORD_INVITE_LINK)
+                SocialIcon(R.drawable.reddit_icon_fullcolor, REDDIT_LINK)
+                SocialIcon(R.drawable.dragon_launcher_foreground, DRAGON_WEBSITE)
+                SocialIcon(R.drawable.weblate_icon, WEBLATE_LINK)
+                SocialIcon(R.drawable.protonmail_icon, MAILTO_LINK)
             }
-            Icon(
-                painter = painterResource(githubIcon),
-                contentDescription = "Github Icon",
-                tint = Color.Unspecified,
-                modifier = Modifier
-                    .weight(1f)
-                    .clip(DragonShape)
-                    .clickable { ctx.openUrl(GITHUB_REPO_LINK) }
-            )
 
+            SettingsItem(
+                title = stringResource(R.string.changelogs),
+                icon = R.drawable.source_notes,
+                trailingIcon = R.drawable.open_in_new,
+                onExternalClick = { ctx.openUrl("$GITHUB_REPO_LINK/blob/main/fastlane/metadata/android/en-US/changelogs/${versionCode}.txt") }
+            ) { onNavigate(NavigationRoute.Changelogs) }
 
-            Icon(
-                painterResource(R.drawable.discord_symbol_blurple),
-                contentDescription = "Discord icon",
-                tint = Color.Unspecified,
-                modifier = Modifier
-                    .weight(1f)
-                    .clip(DragonShape)
-                    .clickable { ctx.openUrl(DISCORD_INVITE_LINK) }
-            )
+            SettingsItem(
+                title = stringResource(R.string.source_code),
+                icon = R.drawable.code,
+                trailingIcon = R.drawable.open_in_new,
+                onLongClick = { ctx.copyToClipboard(GITHUB_REPO_LINK) }
+            ) { ctx.openUrl(GITHUB_REPO_LINK) }
 
-            Icon(
-                painterResource(R.drawable.reddit_icon_fullcolor),
-                contentDescription = "Reddit icon",
-                tint = Color.Unspecified,
-                modifier = Modifier
-                    .weight(1f)
-                    .clip(DragonShape)
-                    .clickable { ctx.openUrl(REDDIT_LINK) }
-            )
+            SettingsItem(
+                title = stringResource(R.string.check_for_update),
+                description = stringResource(R.string.check_for_updates_github),
+                icon = R.drawable.reset,
+                trailingIcon = R.drawable.open_in_new,
+                onLongClick = { ctx.copyToClipboard(GITHUB_REPO_RELEASES_LINK) }
+            ) { ctx.openUrl(GITHUB_REPO_RELEASES_LINK) }
 
-            Icon(
-                painterResource(R.drawable.dragon_launcher_foreground),
-                contentDescription = "Website icon",
-                tint = Color.Unspecified,
-                modifier = Modifier
-                    .weight(1f)
-                    .clip(DragonShape)
-                    .clickable { ctx.openUrl(DRAGON_WEBSITE) }
-            )
-
-            Icon(
-                painterResource(R.drawable.weblate_icon),
-                contentDescription = "Weblate icon",
-                tint = Color.Unspecified,
-                modifier = Modifier
-                    .weight(1f)
-                    .clip(DragonShape)
-                    .clickable { ctx.openUrl(WEBLATE_LINK) }
-            )
-
-            Icon(
-                painterResource(R.drawable.protonmail_icon),
-                contentDescription = "Proton Mail icon",
-                tint = Color.Unspecified,
-                modifier = Modifier
-                    .weight(1f)
-                    .clip(DragonShape)
-                    .clickable { ctx.openUrl(MAILTO_LINK) }
-            )
+            SettingsItem(
+                title = stringResource(R.string.report_a_bug),
+                description = stringResource(R.string.open_an_issue_on_github),
+                icon = R.drawable.report,
+                trailingIcon = R.drawable.open_in_new,
+                onLongClick = { ctx.copyToClipboard(GITHUB_REPO_ISSUES_LINK) }
+            ) { ctx.openUrl(GITHUB_REPO_ISSUES_LINK) }
         }
 
 
+        DragonSettingsGroup(R.string.contributors) {
+            ContributorItem(
+                name = "Elnix90",
+                imageRes = R.drawable.elnix90,
+                description = stringResource(R.string.app_developer),
+                githubUrl = ELNIX90_GITHUB_PROFILE_LINK
+            )
 
-        SettingItemWithExternalOpen(
-            title = stringResource(R.string.changelogs),
-            icon = R.drawable.source_notes,
-            onExtClick = { ctx.openUrl("$GITHUB_REPO_LINK/blob/main/fastlane/metadata/android/en-US/changelogs/${versionCode}.txt") }
-        ) {
-            onNavigate(NavigationRoute.Changelogs)
+            ContributorItem(
+                name = "YoannDev90",
+                imageRes = R.drawable.yoanndev90,
+                description = stringResource(R.string.yoann_desc),
+                githubUrl = "https://github.com/YoannDev90"
+            )
+
+            ContributorItem(
+                name = "Lucky",
+                imageRes = R.drawable.lucky_the_cookie,
+                description = stringResource(R.string.lucky_desc),
+                githubUrl = "https://lthb.fr"
+            )
+
+            ContributorItem(
+                name = "Federico",
+                imageRes = R.drawable.federico,
+                description = stringResource(R.string.federico_desc),
+                githubUrl = "https://github.com/federicobuttafuori"
+            )
         }
-
-        SettingsItem(
-            title = stringResource(R.string.source_code),
-            icon = R.drawable.code,
-            trailingIcon = R.drawable.open_in_new,
-            onLongClick = { ctx.copyToClipboard(GITHUB_REPO_LINK) }
-        ) { ctx.openUrl(GITHUB_REPO_LINK) }
-
-        SettingsItem(
-            title = stringResource(R.string.check_for_update),
-            description = stringResource(R.string.check_for_updates_github),
-            icon = R.drawable.reset,
-            trailingIcon = R.drawable.open_in_new,
-            onLongClick = { ctx.copyToClipboard(GITHUB_REPO_RELEASES_LINK) }
-        ) {
-            ctx.openUrl(GITHUB_REPO_RELEASES_LINK)
-        }
-
-        SettingsItem(
-            title = stringResource(R.string.report_a_bug),
-            description = stringResource(R.string.open_an_issue_on_github),
-            icon = R.drawable.report,
-            trailingIcon = R.drawable.open_in_new,
-            onLongClick = { ctx.copyToClipboard(GITHUB_REPO_ISSUES_LINK) }
-        ) { ctx.openUrl(GITHUB_REPO_ISSUES_LINK) }
-
-        TextDivider(
-            stringResource(R.string.contributors),
-            Modifier.padding(horizontal = 60.dp)
-        )
-
-
-        // Contributors
-        ContributorItem(
-            name = "Elnix90",
-            imageRes = R.drawable.elnix90,
-            description = stringResource(R.string.app_developer),
-            githubUrl = ELNIX90_GITHUB_PROFILE_LINK
-        )
-
-        ContributorItem(
-            name = "YoannDev90",
-            imageRes = R.drawable.yoanndev90,
-            description = stringResource(R.string.yoann_desc),
-            githubUrl = "https://github.com/YoannDev90"
-        )
-
-        ContributorItem(
-            name = "Lucky",
-            imageRes = R.drawable.lucky_the_cookie,
-            description = stringResource(R.string.lucky_desc),
-            githubUrl = "https://lthb.fr"
-        )
-
-        ContributorItem(
-            name = "Federico",
-            imageRes = R.drawable.federico,
-            description = stringResource(R.string.federico_desc),
-            githubUrl = "https://github.com/federicobuttafuori"
-        )
 
 
         // Version name (clickable to access debug / copy)
@@ -395,3 +358,36 @@ fun AdvancedSettingsScreen(
     }
 }
 
+
+@Composable
+private fun RowScope.SocialIcon(
+    icon: Int,
+    link: String
+) {
+    val ctx = LocalContext.current
+
+    Box(
+        modifier = Modifier
+            .weight(1f)
+            .clip(DragonShape)
+            .shapedClickable { ctx.openUrl(link) }
+            .padding(vertical = 15.dp)
+            .size(20.dp)
+
+    ) {
+        Icon(
+            painterResource(icon),
+            contentDescription = null,
+            tint = Color.Unspecified,
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+private fun openSystemLanguageSettings(ctx: Context) {
+    val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS).apply {
+        data = Uri.fromParts("package", ctx.packageName, null)
+    }
+    ctx.startActivity(intent)
+}

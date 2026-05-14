@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.ui.base.modifiers
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -16,16 +15,12 @@ import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 @Composable
 fun Modifier.settingsGroup(
     clickModifier: Modifier? = null,
-    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
-    border: Boolean = true,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
     enabled: Boolean = true
 ): Modifier {
     return this
         .clip(DragonShape)
         .background(backgroundColor.semiTransparentIfDisabled(enabled))
-        .conditional(border) {
-            border(1.dp, MaterialTheme.colorScheme.outlineVariant.semiTransparentIfDisabled(enabled), DragonShape)
-        }
         .then(clickModifier ?: this)
         .padding(10.dp)
 }

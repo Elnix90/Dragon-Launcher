@@ -64,6 +64,7 @@ import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
 @Composable
 fun ColorPickerRow(
     label: String,
+    modifier: Modifier = Modifier,
     showLabel: Boolean = true,
     enabled: Boolean = true,
     currentColor: Color,
@@ -77,6 +78,7 @@ fun ColorPickerRow(
     val initialPage = remember(savedMode) { ColorPickerMode.entries.indexOf(savedMode) }
 
     DragonRow(
+        modifier = modifier,
         enabled = enabled,
         onClick = { showPicker = true }
     ) {
@@ -84,6 +86,7 @@ fun ColorPickerRow(
             Text(
                 text = label,
                 color = MaterialTheme.colorScheme.onSurface.semiTransparentIfDisabled(enabled),
+                style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.weight(1f),
             )
         }

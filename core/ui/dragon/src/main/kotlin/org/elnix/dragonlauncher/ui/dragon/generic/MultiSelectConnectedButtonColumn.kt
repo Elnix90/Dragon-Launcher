@@ -34,7 +34,7 @@ import org.elnix.dragonlauncher.ui.dragon.internals.connectedTopButtonShapes
  *
  * @param T Any type implementing [ToggleButtonOption], typically an enum.
  * @param entries The ordered list of options to display as toggle buttons.
- * @param isChecked Predicate returning the current checked state for a given entry.
+ * @param checked Predicate returning the current checked state for a given entry.
  * @param onCheck Called when the user taps a button, both on check and uncheck.
  * @param showLabel Whether to show the text label alongside the icon. Defaults to `true`.
  * @param hapticFeedback Whether to emit a [HapticFeedbackType.KeyboardTap] on every tap,
@@ -44,13 +44,10 @@ import org.elnix.dragonlauncher.ui.dragon.internals.connectedTopButtonShapes
 @Composable
 fun <T : ToggleButtonOption> MultiSelectConnectedButtonColumn(
     entries: List<T>,
-
-    // Optional parameters
     showLabel: Boolean = true,
     hapticFeedback: Boolean = true,
-
-    isEnabled: (T) -> Boolean = { true },
-    isChecked: (T) -> Boolean,
+    enabled: (T) -> Boolean = { true },
+    checked: (T) -> Boolean,
     onCheck: (T) -> Unit
 ) {
     val haptic = LocalHapticFeedback.current
@@ -62,12 +59,12 @@ fun <T : ToggleButtonOption> MultiSelectConnectedButtonColumn(
         entries.forEachIndexed { index, entry ->
 
             // No idea why, but using a not here feels more natural for the displayed entries
-            val checked = !isChecked(entry)
+            val checked = !checked(entry)
 
             DragonTooltip(entry.resId ?: -1) {
                 ToggleButton(
                     checked = checked,
-                    enabled = isEnabled(entry),
+                    enabled = enabled(entry),
                     onCheckedChange = {
                         onCheck(entry)
                         if (hapticFeedback) {

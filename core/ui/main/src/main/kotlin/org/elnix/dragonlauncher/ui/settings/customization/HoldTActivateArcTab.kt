@@ -10,6 +10,7 @@ import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,10 +46,11 @@ import org.elnix.dragonlauncher.settings.stores.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.base.withHaptic
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.dialogs.HoldSettingsOrderSheet
-import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
@@ -123,7 +125,7 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
 
 
                 SliderWithLabel(
-                    label = null,
+                    label = stringResource(R.string.animated_progress),
                     showValue = false,
                     value = progress.value,
                     valueRange = 0f..1f
@@ -180,34 +182,38 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
             }
         }
 
+        EditCustomObjectBlock(
+            editObject = mutableHoldObject,
+            default = UiConstants.defaultAngleCustomObject
+        ) { mutableHoldObject = it }
 
-        DragonColumnGroup {
-            EditCustomObjectBlock(
-                editObject = mutableHoldObject,
-                default = UiConstants.defaultAngleCustomObject
-            ) { mutableHoldObject = it }
-        }
 
-        DragonColumnGroup {
+        DragonSettingsGroup(
+            title = R.string.configuration,
+            contentPadding = PaddingValues(top = 12.dp)
+        ) {
             SettingsSlider(
                 setting = HoldToActivateArcSettingsStore.longCLickSettingsDuration,
                 title = stringResource(R.string.long_click_settings_duration),
                 description = stringResource(R.string.long_click_settings_duration_desc),
-                valueRange = 0..5000
+                valueRange = 0..5000,
+                modifier = Modifier.settingsGroupHorizontalPadding()
             )
 
             SettingsSlider(
                 setting = HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings,
                 title = stringResource(R.string.hold_delay_before_starting_long_click_settings),
                 description = stringResource(R.string.hold_delay_before_starting_long_click_settings_desc),
-                valueRange = 0..2000
+                valueRange = 0..2000,
+                modifier = Modifier.settingsGroupHorizontalPadding()
             )
 
             SettingsSlider(
                 setting = HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance,
                 title = stringResource(R.string.hold_to_activate_tolerance),
                 description = stringResource(R.string.hold_to_activate_tolerance_desc),
-                valueRange = 1f..200f
+                valueRange = 1f..200f,
+                modifier = Modifier.settingsGroupHorizontalPadding()
             )
 
 
@@ -215,7 +221,8 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
                 setting = HoldToActivateArcSettingsStore.rotationPerSecond,
                 title = stringResource(R.string.rotation_per_second),
                 description = stringResource(R.string.rotation_per_second_desc),
-                valueRange = 0f..5f
+                valueRange = 0f..5f,
+                modifier = Modifier.settingsGroupHorizontalPadding()
             )
 
             SettingsItem(

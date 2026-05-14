@@ -98,7 +98,22 @@ fun DragonLauncherTheme(
         bodySmall = Typography.bodySmall.copy(fontFamily = fontFamily),
         labelLarge = Typography.labelLarge.copy(fontFamily = fontFamily),
         labelMedium = Typography.labelMedium.copy(fontFamily = fontFamily),
-        labelSmall = Typography.labelSmall.copy(fontFamily = fontFamily)
+        labelSmall = Typography.labelSmall.copy(fontFamily = fontFamily),
+        displayLargeEmphasized = Typography.displayLargeEmphasized.copy(fontFamily = fontFamily),
+        displayMediumEmphasized = Typography.displayMediumEmphasized.copy(fontFamily = fontFamily),
+        displaySmallEmphasized = Typography.displaySmallEmphasized.copy(fontFamily = fontFamily),
+        headlineLargeEmphasized = Typography.headlineLargeEmphasized.copy(fontFamily = fontFamily),
+        headlineMediumEmphasized = Typography.headlineMediumEmphasized.copy(fontFamily = fontFamily),
+        headlineSmallEmphasized = Typography.headlineSmallEmphasized.copy(fontFamily = fontFamily),
+        titleLargeEmphasized = Typography.titleLargeEmphasized.copy(fontFamily = fontFamily),
+        titleMediumEmphasized = Typography.titleMediumEmphasized.copy(fontFamily = fontFamily),
+        titleSmallEmphasized = Typography.titleSmallEmphasized.copy(fontFamily = fontFamily),
+        bodyLargeEmphasized = Typography.bodyLargeEmphasized.copy(fontFamily = fontFamily),
+        bodyMediumEmphasized = Typography.bodyMediumEmphasized.copy(fontFamily = fontFamily),
+        bodySmallEmphasized = Typography.bodySmallEmphasized.copy(fontFamily = fontFamily),
+        labelLargeEmphasized = Typography.labelLargeEmphasized.copy(fontFamily = fontFamily),
+        labelMediumEmphasized = Typography.labelMediumEmphasized.copy(fontFamily = fontFamily),
+        labelSmallEmphasized = Typography.labelSmallEmphasized.copy(fontFamily = fontFamily)
     )
 
     CompositionLocalProvider(

@@ -36,6 +36,10 @@ sealed class NavigationRoute : NavKey {
 
 
     /*  ─────────────  Appearance Settings  ─────────────  */
+
+    @Serializable
+    data object AppDisplay : NavigationRoute()
+
     @Serializable
     data object Appearance : NavigationRoute()
 
@@ -145,6 +149,7 @@ sealed class NavigationRoute : NavKey {
                 PointsSettings,
                 AdvancedSettings,
                 Appearance,
+                AppDisplay,
                 Colors,
                 Wallpaper,
                 Widgets(),
@@ -169,7 +174,7 @@ sealed class NavigationRoute : NavKey {
 //                LogsViewer -> Don't use this as it's stupid to display a random log file
                 SettingsJson,
                 NestEdit(0),
-                WorkspaceDetail("")
+            WorkspaceDetail("")
             )
         }
 
@@ -195,6 +200,7 @@ sealed class NavigationRoute : NavKey {
             is AngleLineEdit -> R.string.angle_line
             is HoldToActivateArc -> R.string.hold_settings
             is MainScreenLayers -> R.string.main_screen_layers
+            is AppDisplay -> R.string.app_display
 
             is Behavior -> R.string.behavior
             is DrawerSettings -> R.string.app_drawer
@@ -202,7 +208,7 @@ sealed class NavigationRoute : NavKey {
             is Permissions -> R.string.permissions
             is Backup -> R.string.backup_restore
             is Wellbeing -> R.string.wellbeing
-            is Language -> R.string.settings_language_title
+            is Language -> R.string.language
             is Changelogs -> R.string.changelogs
             is Extensions -> R.string.extensions
 

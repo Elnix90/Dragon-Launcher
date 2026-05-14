@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -60,10 +61,13 @@ fun IconPickerListDialog(
 
     val drawableNames by appsViewModel.packIcons.collectAsState()
 
-    val filteredDrawables = remember(searchQuery, drawableNames) {
-        if (searchQuery.isBlank()) drawableNames
-        else drawableNames.filter {
-            it.contains(searchQuery, ignoreCase = true)
+    val filteredDrawables by remember(searchQuery, drawableNames) {
+        derivedStateOf {
+            val drawables = if (searchQuery.isBlank()) drawableNames
+            else drawableNames.filter {
+                it.contains(searchQuery, ignoreCase = true)
+            }
+            drawables.sorted()
         }
     }
 

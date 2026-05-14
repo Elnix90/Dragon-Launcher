@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,11 +25,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import kotlin.math.roundToInt
 
 
@@ -79,7 +78,7 @@ private fun commitEditText(
 @Composable
 private fun SliderWithLabelInternal(
     modifier: Modifier,
-    label: String?,
+    label: String,
     description: String? = null,
     value: Float,
     valueRange: ClosedFloatingPointRange<Float>,
@@ -122,26 +121,12 @@ private fun SliderWithLabelInternal(
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                modifier = Modifier.weight(1f)
 
-            ) {
-                if (label != null) {
-                    Text(
-                        text = label,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                }
-                if (description != null) {
-                    Text(
-                        text = description,
-                        color = MaterialTheme.colorScheme.onSurface.copy(0.8f),
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                }
-            }
+            TextWithDescription(
+                text = label,
+                description = description,
+                modifier = Modifier.weight(1f)
+            )
 
             if (showValue) {
 
@@ -225,7 +210,7 @@ private fun SliderWithLabelInternal(
 @Composable
 fun SliderWithLabel(
     modifier: Modifier = Modifier,
-    label: String? = null,
+    label: String,
     description: String? = null,
     value: Int,
     valueRange: IntRange,
@@ -290,13 +275,13 @@ fun SliderWithLabel(
 @Composable
 fun SliderWithLabel(
     modifier: Modifier = Modifier,
-    label: String? = null,
+    label: String,
     description: String? = null,
     value: Float,
     valueRange: ClosedFloatingPointRange<Float>,
     color: Color = MaterialTheme.colorScheme.primary,
-    enabled: Boolean = true,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
+    enabled: Boolean = true,
     showValue: Boolean = true,
     decimals: Int = 2,
     allowTextEditValue: Boolean = true,

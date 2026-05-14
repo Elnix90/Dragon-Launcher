@@ -42,7 +42,7 @@ import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
-import org.elnix.dragonlauncher.ui.dragon.text.TextDivider
+import org.elnix.dragonlauncher.ui.dragon.text.TextDividerOld
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -138,7 +138,7 @@ fun DrawerToolbarsOrderDialog(
                             ) {
 
                                 if (item == DrawerToolbar.Spacer) {
-                                    TextDivider(
+                                    TextDividerOld(
                                         text = stringResource(item.resId),
                                         thickness = 5.dp,
                                         modifier = Modifier.weight(1f)

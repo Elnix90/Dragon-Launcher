@@ -61,7 +61,7 @@ fun GradientBigButton(
                 if (enabled) MaterialTheme.colorScheme.background
                 else MaterialTheme.colorScheme.background.copy(alpha = 0.3f)
             )
-            .clickable(enabled) { onClick() },
+            .clickable(enabled, onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Row(

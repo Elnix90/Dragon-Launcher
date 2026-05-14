@@ -39,13 +39,10 @@ fun DrawScope.circlesSettingsOverlay(
     val points = drawParams.points
     val surfaceColorDraw = drawParams.surfaceColorDraw
     val extraColors = drawParams.extraColors
-    val showAppCirclePreview = drawParams.showAppCirclePreview
     val showAppLaunchPreview = drawParams.showAppLaunchPreview
     val showAllActionsOnCurrentCircle = currentNest.showAllActionsOnCurrentCircle ?: drawParams.showAllActionsOnCurrentCircle
     val showAllActionsOnCurrentNest = currentNest.showAllActionsOnCurrentNest ?: drawParams.showAllActionsOnCurrentNest
     val showAppPreviewIconCenterStartPosition = drawParams.showAppPreviewIconCenterStartPosition
-
-//    logW(SWIPE_TAG) {"Displaying ${circles.size} circles: $circles"}
 
 
     val eraseBg = surfaceColorDraw == Color.Transparent && !preventBgErasing
@@ -83,11 +80,13 @@ fun DrawScope.circlesSettingsOverlay(
      */
     circles.forEach { circle ->
 
-        val showCircle = showAllActionsOnCurrentNest || when (currentCircle) {
+        val showCirclesNestLevel = currentNest.showCircle ?: drawParams.showAppCirclePreview
+
+        val showCircle = showCirclesNestLevel && (showAllActionsOnCurrentNest || when (currentCircle) {
             null -> true
-            circle.id if showAppCirclePreview -> true
+            circle.id -> true
             else -> false
-        }
+        })
 
         if (showCircle) {
             drawCircle(

@@ -3,14 +3,9 @@
 package org.elnix.dragonlauncher.ui.settings.customization
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
-import android.provider.Settings
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,18 +19,19 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.showToast
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
-import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateAppsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.composition.LocalPrivateSpaceViewModel
 import org.elnix.dragonlauncher.ui.dialogs.LockMethodDialog
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSectionMode
@@ -49,10 +45,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-fun BehaviorTab(
-    onNavigate: (NavigationRoute) -> Unit,
-    onBack: () -> Unit
-) {
+fun BehaviorTab(onBack: () -> Unit) {
     val ctx = LocalContext.current
     val privateSpaceViewModel = LocalPrivateSpaceViewModel.current
 
@@ -70,8 +63,6 @@ fun BehaviorTab(
     val superWarningModeEnabled = lockMethod != LockMethod.NONE
 
     val paddingState = rememberExpandableSection(stringResource(R.string.drag_zone_padding), mode = ExpandableSectionMode.Expandable)
-    val commonSettingsState = rememberExpandableSection(stringResource(R.string.common_settings))
-    val actionState = rememberExpandableSection(stringResource(R.string.action_settings))
 
     val showAppPreviewOverlay = paddingState.isExpanded()
 
@@ -83,7 +74,6 @@ fun BehaviorTab(
         stringResource(R.string.super_warning_mode)
     ) { superWarningModeEnabled }
 
-    val forceAppLanguageSelector by DebugSettingsStore.forceAppLanguageSelector.asState()
 
     val lockDescription = when (lockMethod) {
         LockMethod.NONE -> stringResource(R.string.lock_none)
@@ -101,27 +91,51 @@ fun BehaviorTab(
             }
         }
     ) {
-        SettingsItem(
-            title = stringResource(R.string.settings_language_title),
-            icon = R.drawable.web,
-            onClick = {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !forceAppLanguageSelector) {
-                    openSystemLanguageSettings(ctx)
-                } else {
-                    onNavigate(NavigationRoute.Language)
+
+        DragonSettingsGroup(R.string.action_settings) {
+            CustomActionSelector(
+                currentAction = backAction,
+                label = stringResource(R.string.back_action),
+                onToggle = {
+                    scope.launch {
+                        BehaviorSettingsStore.backAction.reset(ctx)
+                    }
+                }
+            ) {
+                scope.launch {
+                    BehaviorSettingsStore.backAction.set(ctx, it)
                 }
             }
-        )
 
-        SettingsItem(
-            title = stringResource(R.string.lock_method),
-            description = lockDescription,
-            icon = R.drawable.lock
-        ) {
-            showLockMethodPicker = true
+            CustomActionSelector(
+                currentAction = doubleClickAction,
+                label = stringResource(R.string.double_click_action),
+                onToggle = {
+                    scope.launch {
+                        BehaviorSettingsStore.doubleClickAction.reset(ctx)
+                    }
+                }
+            ) {
+                scope.launch {
+                    BehaviorSettingsStore.doubleClickAction.set(ctx, it)
+                }
+            }
+            CustomActionSelector(
+                currentAction = homeAction,
+                label = stringResource(R.string.home_action),
+                onToggle = {
+                    scope.launch {
+                        BehaviorSettingsStore.homeAction.reset(ctx)
+                    }
+                }
+            ) {
+                scope.launch {
+                    BehaviorSettingsStore.homeAction.set(ctx, it)
+                }
+            }
         }
 
-        ExpandableSection(commonSettingsState) {
+        DragonSettingsGroup(R.string.common_settings) {
             SettingsSwitchRow(
                 setting = BehaviorSettingsStore.keepScreenOn,
                 title = stringResource(R.string.keep_screen_on),
@@ -174,51 +188,11 @@ fun BehaviorTab(
                 setting = BehaviorSettingsStore.offScreenTimeout,
                 title = stringResource(R.string.off_screen_timeout),
                 description = stringResource(R.string.off_screen_timeout_desc),
-                valueRange = -1..60
+                valueRange = -1..60,
+                modifier = Modifier
+                    .settingsGroupHorizontalPadding()
+                    .padding(bottom = 12.dp)
             )
-        }
-
-        ExpandableSection(actionState) {
-            CustomActionSelector(
-                currentAction = backAction,
-                label = stringResource(R.string.back_action),
-                onToggle = {
-                    scope.launch {
-                        BehaviorSettingsStore.backAction.reset(ctx)
-                    }
-                }
-            ) {
-                scope.launch {
-                    BehaviorSettingsStore.backAction.set(ctx, it)
-                }
-            }
-
-            CustomActionSelector(
-                currentAction = doubleClickAction,
-                label = stringResource(R.string.double_click_action),
-                onToggle = {
-                    scope.launch {
-                        BehaviorSettingsStore.doubleClickAction.reset(ctx)
-                    }
-                }
-            ) {
-                scope.launch {
-                    BehaviorSettingsStore.doubleClickAction.set(ctx, it)
-                }
-            }
-            CustomActionSelector(
-                currentAction = homeAction,
-                label = stringResource(R.string.home_action),
-                onToggle = {
-                    scope.launch {
-                        BehaviorSettingsStore.homeAction.reset(ctx)
-                    }
-                }
-            ) {
-                scope.launch {
-                    BehaviorSettingsStore.homeAction.set(ctx, it)
-                }
-            }
         }
 
         ExpandableSection(paddingState) {
@@ -295,6 +269,12 @@ fun BehaviorTab(
             )
         }
 
+        SettingsItem(
+            title = stringResource(R.string.lock_method),
+            description = lockDescription,
+            icon = R.drawable.lock
+        ) { showLockMethodPicker = true }
+
         ExpandableSection(superWarningState) {
             SettingsSwitchRow(
                 setting = BehaviorSettingsStore.superWarningMode,
@@ -355,10 +335,3 @@ fun BehaviorTab(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
-private fun openSystemLanguageSettings(ctx: Context) {
-    val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS).apply {
-        data = Uri.fromParts("package", ctx.packageName, null)
-    }
-    ctx.startActivity(intent)
-}

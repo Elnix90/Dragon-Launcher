@@ -722,7 +722,7 @@ fun AppDrawerScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(5.dp)
-                                    .settingsGroup(border = false)
+                                    .settingsGroup()
                             ) {
                                 AppGrid(
                                     apps = recentApps,

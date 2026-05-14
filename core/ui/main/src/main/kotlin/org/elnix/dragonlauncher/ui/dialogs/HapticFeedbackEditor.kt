@@ -61,10 +61,10 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
-import org.elnix.dragonlauncher.ui.dragon.text.TextDivider
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -198,25 +198,27 @@ fun HapticFeedbackEditor(
                 }
                 Spacer(Modifier.height(5.dp))
 
-                TextDivider(stringResource(R.string.presets))
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(5.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(DragonShape)
-                        .horizontalScroll(rememberScrollState())
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                ) {
-                    hapticFeedbackSerializablePresets.forEach { (name, preset) ->
-                        DragonButton(
-                            onClick = { selectPreset(preset) }
-                        ) {
-                            Text(
-                                text = stringResource(name),
-                                style = MaterialTheme.typography.labelSmall
-                            )
+
+                DragonSettingsGroup(R.string.presets) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(5.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(DragonShape)
+                            .horizontalScroll(rememberScrollState())
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                    ) {
+                        hapticFeedbackSerializablePresets.forEach { (name, preset) ->
+                            DragonButton(
+                                onClick = { selectPreset(preset) }
+                            ) {
+                                Text(
+                                    text = stringResource(name),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
                         }
                     }
                 }
@@ -232,11 +234,7 @@ fun HapticFeedbackEditor(
             }
         },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-
-
-                TextDivider(stringResource(R.string.steps))
-
+            DragonSettingsGroup(R.string.steps) {
 
                 // ── Add buttons ──────────────────────────────────────────────
                 Row(

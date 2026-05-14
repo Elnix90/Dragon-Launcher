@@ -22,7 +22,6 @@
     <string name="language_korean">韓国人</string>
     <string name="language_portuguese">ポルトガル語</string>
     <string name="system_default">システムデフォルト</string>
-    <string name="settings_language_title">言語選択器</string>
     <string name="choose_your_app_language">アプリの言語を選びましょう</string>
     <string name="version">バージョン</string>
     <string name="export_cancelled">輸出中止</string>
