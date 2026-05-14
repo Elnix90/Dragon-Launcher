@@ -92,7 +92,7 @@ private fun ColorPickerButton(
             ) {
                 ColorPickerButtonAction.entries.forEach {
                     Icon(
-                        painter = painterResource(button.iconEnabled),
+                        painter = painterResource(it.iconEnabled),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
