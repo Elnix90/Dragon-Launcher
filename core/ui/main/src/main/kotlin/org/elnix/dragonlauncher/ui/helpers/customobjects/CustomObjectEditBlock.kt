@@ -118,7 +118,6 @@ fun EditCustomObjectBlock(
         if (properties.allowColorCustomization) {
             ColorPickerRow(
                 label = stringResource(R.string.color),
-                showLabel = true,
                 enabled = true,
                 currentColor = tempColor ?: Color.Unspecified,
                 backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -147,7 +146,6 @@ fun EditCustomObjectBlock(
                 ) {
                     ColorPickerRow(
                         label = stringResource(R.string.glow_color),
-                        showLabel = true,
                         enabled = true,
                         currentColor = tempGlowColor ?: default.glow?.color ?: Color.Unspecified,
                         backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
