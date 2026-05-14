@@ -471,14 +471,6 @@ fun WidgetsTab(
                         transformOrigin = TransformOrigin(0f, 0f)
                     }
             ) {
-
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .background(Color.Red)
-                        .size(50.dp)
-                )
-
                 /**
                  * Draw the grid of snapping that fills the entire screen
                  */
