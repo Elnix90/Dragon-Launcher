@@ -1,9 +1,9 @@
 package org.elnix.dragonlauncher.ui.settings.language
 
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -14,7 +14,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
@@ -51,6 +50,7 @@ fun LanguageTab(onBack: () -> Unit) {
         onReset = {
             scope.launch {
                 LanguageSettingsStore.resetAll(ctx)
+                applyLocale(ctx, null)
             }
         },
         lazyContent = {
@@ -59,24 +59,24 @@ fun LanguageTab(onBack: () -> Unit) {
                     onClick = {
                         scope.launch {
                             LanguageSettingsStore.keyLang.set(ctx, tag)
-                            applyLocale(tag)
+                            applyLocale(ctx, tag)
                         }
-                    }
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
+                    Text(
+                        text = name,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                     RadioButton(
                         selected = tag == selectedTag,
                         onClick = {
                             scope.launch {
                                 LanguageSettingsStore.keyLang.set(ctx, tag)
-                                applyLocale(tag)
+                                applyLocale(ctx, tag)
                             }
                         },
                         colors = AppObjectsColors.radioButtonColors()
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        text = name,
-                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -85,14 +85,16 @@ fun LanguageTab(onBack: () -> Unit) {
 }
 
 
-private fun applyLocale(tag: String?) {
+private fun applyLocale(ctx: Context, tag: String?) {
     val localeList = if (tag == null) {
-        AppCompatDelegate.getApplicationLocales().apply {
-            AppCompatDelegate.setApplicationLocales(LocaleListCompat.getEmptyLocaleList())
-        }
         LocaleListCompat.getEmptyLocaleList()
     } else {
         LocaleListCompat.forLanguageTags(tag)
     }
     AppCompatDelegate.setApplicationLocales(localeList)
+
+    // Force the activity to recreate to pick up new locale
+    if (ctx is android.app.Activity) {
+        ctx.recreate()
+    }
 }
