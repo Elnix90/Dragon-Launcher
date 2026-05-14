@@ -1,0 +1,8 @@
+3.1.3 (Wither)
+2026-04-26
+[FIXED]
+* Remove gradle properties version name and code for fdroid build consistency
+* Remove notification permission check, unused and useless
+* Fixed package receiver crash
+[IMPROVED]
+* use hilt viewmodel injectors (internal)

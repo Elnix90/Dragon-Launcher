@@ -68,7 +68,7 @@ jobs:
         with:
           timeout_minutes: 15
           max_attempts: 3
-          command: ./gradlew assembleDebug --parallel --no-daemon ${{ inputs.disable_gradle_cache && '--no-build-cache' || '--build-cache' }} -x lint
+          command: ./gradlew assembleDebug assembleRelease --parallel --no-daemon ${{ inputs.disable_gradle_cache && '--no-build-cache' || '--build-cache' }} -x lint
 
       - name: Prepare release artifacts
         run: |
@@ -76,12 +76,18 @@ jobs:
           RUN="${{ github.run_number }}"
           
           MIN="DragonLauncher-v${VER}-beta-${RUN}.apk"
-
-          # Rename APKs
+          DEBUG="DragonLauncher-v${VER}-beta-${RUN}-debuggable.apk"
+          MAPPING="Mappings-${{ env.VERSION }}.txt"
+          
+          # Rename APKs and mapping
+          mv app/build/outputs/apk/release/app-release.apk "DEBUG"
           mv app/build/outputs/apk/debug/app-debug.apk "$MIN"
+          mv app/build/outputs/mapping/release/mapping.txt "$MAPPING"
           
           {
             echo "APK_MIN=$MIN"
+            echo "APK_DEBUG=DEBUG"
+            echo "MAPPING=$MAPPING"
             echo "TAG_NAME=v${VER}-beta-${RUN}"
           } >> $GITHUB_ENV
 
@@ -97,6 +103,8 @@ jobs:
           name: ${{ env.TAG_NAME }}
           prerelease: true
           files: |
+            ${{ env.APK_DEBUG }}
             ${{ env.APK_MIN }}
+            ${{ env.MAPPING }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
