@@ -12,11 +12,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -65,7 +68,6 @@ import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
 fun ColorPickerRow(
     label: String,
     modifier: Modifier = Modifier,
-    showLabel: Boolean = true,
     enabled: Boolean = true,
     currentColor: Color,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
@@ -82,14 +84,12 @@ fun ColorPickerRow(
         enabled = enabled,
         onClick = { showPicker = true }
     ) {
-        if (showLabel) {
-            Text(
-                text = label,
-                color = MaterialTheme.colorScheme.onSurface.semiTransparentIfDisabled(enabled),
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.weight(1f),
-            )
-        }
+        Text(
+            text = label,
+            color = MaterialTheme.colorScheme.onSurface.semiTransparentIfDisabled(enabled),
+            style = MaterialTheme.typography.labelMedium,
+            modifier = Modifier.weight(1f),
+        )
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -110,7 +110,7 @@ fun ColorPickerRow(
                 onColorPicked = onColorPicked
             )
 
-            Spacer(Modifier.width(12.dp))
+            Spacer(12.dp)
 
             Box(
                 modifier = Modifier
@@ -130,39 +130,46 @@ fun ColorPickerRow(
             sheetState = rememberModalBottomSheetState(true),
             onDismissRequest = { showPicker = false }
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = 16.dp)
             ) {
-                Text(
-                    text = label,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.titleMediumEmphasized
-                )
-
-                Spacer()
-
-                MultiSelectConnectedButtonRow(
-                    entries = ColorActions.entries
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    when(it) {
-                        ColorActions.Reset -> onColorPicked(null)
-                        ColorActions.Random -> actualColor = randomColor()
+                    Text(
+                        text = label,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.titleMediumEmphasized
+                    )
+
+                    Spacer()
+
+                    MultiSelectConnectedButtonRow(
+                        entries = ColorActions.entries
+                    ) {
+                        when (it) {
+                            ColorActions.Reset -> onColorPicked(null)
+                            ColorActions.Random -> actualColor = randomColor()
+                        }
                     }
                 }
-            }
 
-            ColorPicker(
-                color = actualColor,
-                initialPage = initialPage,
-                onColorSelected = { actualColor = it }
-            )
+                ColorPicker(
+                    color = actualColor,
+                    initialPage = initialPage,
+                    onColorSelected = { actualColor = it }
+                )
 
-            ValidateCancelButtons(
-                onCancel = { showPicker = false }
-            ) {
-                onColorPicked(actualColor)
-                showPicker = false
+                ValidateCancelButtons(
+                    onCancel = { showPicker = false }
+                ) {
+                    onColorPicked(actualColor)
+                    showPicker = false
+                }
             }
         }
     }
@@ -270,7 +277,7 @@ private fun ColorPicker(
             }
         }
 
-        Spacer(Modifier.height(15.dp))
+        Spacer(15.dp)
 
         HorizontalPager(
             state = pagerState,
@@ -294,9 +301,7 @@ private fun ColorPicker(
             }
         }
 
-
-        Spacer(Modifier.height(12.dp))
-
+        Spacer(12.dp)
 
         SliderWithLabel(
             label = stringResource(R.string.transparency),
@@ -305,8 +310,6 @@ private fun ColorPicker(
             backgroundColor = MaterialTheme.colorScheme.surface,
             valueRange = 0f..1f
         ) { alpha -> onColorSelected(color.copy(alpha = alpha)) }
-
-        Spacer(12.dp)
     }
 }
 
