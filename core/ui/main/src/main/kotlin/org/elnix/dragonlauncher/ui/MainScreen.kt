@@ -159,7 +159,6 @@ fun MainScreen(
                 holdMenuEntries.size > 1 -> {
                     showDropDownMenuSettings = true
                     holdOffset = offset
-
                 }
 
                 holdMenuEntries.size == 1 -> {
@@ -334,25 +333,31 @@ fun MainScreen(
                                         showDropDownMenuSettings = false
                                         onNavigate(it)
                                     },
-                                    icon =  R.drawable.settings,
+                                    icon = R.drawable.settings,
                                     text = { stringResource(routeResId(it)) }
                                 )
                             }
 
-                            BurgerListAction(
-                                actions = actions,
-                                isExpanded = showDropDownMenuSettings,
-                                offset = with(density) {
-                                    DpOffset(
-                                        x = holdOffset!!.x.toDp(),
-                                        y = holdOffset!!.y.toDp()
-                                    )
-                                },
-                                onDismissRequest = {
-                                    showDropDownMenuSettings = false
-                                    holdOffset = null
-                                }
-                            )
+                            val dpOffset = with(density) {
+                                DpOffset(
+                                    x = holdOffset!!.x.toDp(),
+                                    y = holdOffset!!.y.toDp()
+                                )
+                            }
+
+                            Box(
+                                modifier = Modifier.offset(dpOffset.x, dpOffset.y)
+                            ) {
+                                BurgerListAction(
+                                    actions = actions,
+                                    isExpanded = showDropDownMenuSettings,
+//                                    offset = dpOffset,
+                                    onDismissRequest = {
+                                        showDropDownMenuSettings = false
+                                        holdOffset = null
+                                    }
+                                )
+                            }
                         }
                     }
 
