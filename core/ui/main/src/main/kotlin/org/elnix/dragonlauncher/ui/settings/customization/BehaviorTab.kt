@@ -269,48 +269,50 @@ fun BehaviorTab(onBack: () -> Unit) {
             )
         }
 
-        SettingsItem(
-            title = stringResource(R.string.lock_method),
-            description = lockDescription,
-            icon = R.drawable.lock
-        ) { showLockMethodPicker = true }
+        DragonSettingsGroup(R.string.security) {
+            SettingsItem(
+                title = stringResource(R.string.lock_method),
+                description = lockDescription,
+                icon = R.drawable.lock
+            ) { showLockMethodPicker = true }
 
-        ExpandableSection(superWarningState) {
-            SettingsSwitchRow(
-                setting = BehaviorSettingsStore.superWarningMode,
-                enabled = superWarningModeEnabled,
-                title = stringResource(R.string.super_warning_mode),
-                description = stringResource(R.string.super_warning_mode_desc),
-            )
+            ExpandableSection(superWarningState) {
+                SettingsSwitchRow(
+                    setting = BehaviorSettingsStore.superWarningMode,
+                    enabled = superWarningModeEnabled,
+                    title = stringResource(R.string.super_warning_mode),
+                    description = stringResource(R.string.super_warning_mode_desc),
+                )
 
-            SettingsSwitchRow(
-                setting = BehaviorSettingsStore.vibrateOnError,
-                enabled = superWarningModeEnabled,
-                title = stringResource(R.string.vibrate_on_error),
-                description = stringResource(R.string.vibrate_on_error_desc),
-            )
+                SettingsSwitchRow(
+                    setting = BehaviorSettingsStore.vibrateOnError,
+                    enabled = superWarningModeEnabled,
+                    title = stringResource(R.string.vibrate_on_error),
+                    description = stringResource(R.string.vibrate_on_error_desc),
+                )
 
-            SettingsSwitchRow(
-                setting = BehaviorSettingsStore.alarmSound,
-                enabled = superWarningModeEnabled,
-                title = stringResource(R.string.alarm_sound),
-                description = stringResource(R.string.super_warning_mode_desc),
-            )
+                SettingsSwitchRow(
+                    setting = BehaviorSettingsStore.alarmSound,
+                    enabled = superWarningModeEnabled,
+                    title = stringResource(R.string.alarm_sound),
+                    description = stringResource(R.string.super_warning_mode_desc),
+                )
 
-            SettingsSwitchRow(
-                setting = BehaviorSettingsStore.metalPipesSound,
-                enabled = superWarningModeEnabled,
-                title = stringResource(R.string.metal_pipes_sound),
-                description = stringResource(R.string.metal_pipes_sound_desc),
-            )
+                SettingsSwitchRow(
+                    setting = BehaviorSettingsStore.metalPipesSound,
+                    enabled = superWarningModeEnabled,
+                    title = stringResource(R.string.metal_pipes_sound),
+                    description = stringResource(R.string.metal_pipes_sound_desc),
+                )
 
-            SettingsSlider(
-                setting = BehaviorSettingsStore.superWarningModeSound,
-                enabled = superWarningModeEnabled,
-                title = stringResource(R.string.super_warning_mode_sound),
-                description = stringResource(R.string.super_warning_mode_sound_desc),
-                valueRange = 0..100
-            )
+                SettingsSlider(
+                    setting = BehaviorSettingsStore.superWarningModeSound,
+                    enabled = superWarningModeEnabled,
+                    title = stringResource(R.string.super_warning_mode_sound),
+                    description = stringResource(R.string.super_warning_mode_sound_desc),
+                    valueRange = 0..100
+                )
+            }
         }
     }
 
