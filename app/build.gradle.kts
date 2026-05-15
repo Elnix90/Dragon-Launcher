@@ -39,7 +39,7 @@ extensions.configure<ApplicationExtension> {
         applicationId = "org.elnix.dragonlauncher"
         minSdk = 26
         targetSdk = 37
-        versionName = "3.2.0 (Worm)"
+        versionName = "3.2.0-(Worm)"
         versionCode = 54
     }
 

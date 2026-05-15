@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">ドラゴンランチャー</string>
     <string name="accessibility_service_description">DragonLauncherは通知欄を開き、クイック設定パネルを開き、最近のアプリを開き、現在のアクティビティをチェックできます(Xiaomiユーザーがジェスチャーナビゲーションを失わずにDragonをデフォルトランチャーに設定できない場合</string>
     <string name="help">ヘルプ</string>
     <string name="back">戻る</string>

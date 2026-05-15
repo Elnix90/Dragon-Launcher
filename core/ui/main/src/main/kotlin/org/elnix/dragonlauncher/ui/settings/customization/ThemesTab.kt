@@ -143,8 +143,7 @@ fun ThemesTab(
         title = stringResource(R.string.theme_selector),
         onBack = onBack,
         helpText = stringResource(R.string.theme_selector_help),
-        onReset = null,
-        scrollableContent = true
+        onReset = null
     ) {
         BetaVersionWarning(BetaVersionType.Feature)
 

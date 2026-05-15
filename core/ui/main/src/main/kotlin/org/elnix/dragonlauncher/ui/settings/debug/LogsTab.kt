@@ -196,8 +196,7 @@ fun LogsTab(
                 R.drawable.refresh,
                 stringResource(R.string.refresh)
             )
-        ),
-        scrollableContent = true
+        )
     ) {
         ExpandableSection(rememberExpandableSection("Device info")) {
             Card(

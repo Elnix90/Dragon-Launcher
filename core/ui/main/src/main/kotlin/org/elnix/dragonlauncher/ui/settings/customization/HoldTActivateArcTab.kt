@@ -159,8 +159,7 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
                     } else null
                 )
             }
-        },
-        scrollableContent = true
+        }
     ) {
         LaunchedEffect(
             holdDelayBeforeStartingLongClickSettings,
@@ -182,10 +181,15 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
             }
         }
 
-        EditCustomObjectBlock(
-            editObject = mutableHoldObject,
-            default = UiConstants.defaultAngleCustomObject
-        ) { mutableHoldObject = it }
+        DragonSettingsGroup(
+            title = R.string.object_properties,
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+        ) {
+            EditCustomObjectBlock(
+                editObject = mutableHoldObject,
+                default = UiConstants.defaultAngleCustomObject
+            ) { mutableHoldObject = it }
+        }
 
 
         DragonSettingsGroup(

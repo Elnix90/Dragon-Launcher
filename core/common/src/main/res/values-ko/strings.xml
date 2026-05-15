@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">드래곤 런처</string>
     <string name="accessibility_service_description">DragonLauncher가 알림 창, 빠른 설정 패널, 최근 앱 열기, 현재 활동 확인 등을 할 수 있게 해줍니다(제스처 내비게이션을 잃지 않고는 Dragon을 기본 런처로 설정할 수 없는 Xiaomi 사용자를 위한 경우)</string>
     <string name="help">도움말</string>
     <string name="back">뒤로</string>

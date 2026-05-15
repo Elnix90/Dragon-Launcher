@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.ui.helpers.settings
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -76,16 +75,6 @@ fun SettingsScaffold(
         containerColor = Color.Transparent,
         modifier = modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets.statusBarsIgnoringVisibility.add(WindowInsets(left = horizontalPadding, right = horizontalPadding)),
-        topBar = {
-            if (topContent != null) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    topContent()
-                }
-            }
-        },
         bottomBar = {
 
             Column(
@@ -113,13 +102,17 @@ fun SettingsScaffold(
         }
     ) { paddingValues ->
 
-        Box(
+        Column(
             modifier = Modifier
                 .conditional(applyPadding) {
                     padding(paddingValues)
                         .fillMaxSize()
                 }
         ) {
+            if (topContent != null) {
+                topContent()
+            }
+
             if (lazyContent != null) {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(16.dp),

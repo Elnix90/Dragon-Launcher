@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Dragon Launcher</string>
+    <string name="app_name" translatable="false">Dragon Launcher</string>
     <string name="accessibility_service_description">Allows DragonLauncher to open the notification shade, quick settings panel, open recent apps and check for current activity (for xiaomi users that cannot set Dragon as default launcher without losing gesture navigation</string>
     <string name="help">Help</string>
     <string name="back">Back</string>
@@ -13,6 +13,7 @@
     <string name="appearance_tab_text">Change appearance settings</string>
     <string name="fullscreen_app">Fullscreen app</string>
     <string name="app_display">App display</string>
+    <string name="app_display_desc">Change settings related to global app appearance, in the context of the launcher, not color related</string>
     <string name="color_selector">Color selector</string>
     <string name="debug">Debug</string>
     <string name="extensions">Extensions</string>
@@ -948,4 +949,7 @@
     <string name="language">Language</string>
     <string name="animated_progress">Animated progress</string>
     <string name="miscellaneous">Miscellaneous</string>
+    <string name="cant_remove_to_avoid_lock_out">Can\'t remove this to avoid being locked out of settings</string>
+    <string name="object_properties">Object Properties</string>
+    <string name="security">Security</string>
 </resources>

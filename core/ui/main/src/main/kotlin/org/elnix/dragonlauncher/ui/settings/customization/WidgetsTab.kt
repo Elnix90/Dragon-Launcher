@@ -231,7 +231,6 @@ fun WidgetsTab(
             }
         },
         applyPadding = false,
-//        horizontalPadding = 0.dp,
         scrollableContent = false,
         otherIcons = arrayOf(
             Triple(

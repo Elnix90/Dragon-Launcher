@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Dragon Launcher</string>
     <string name="accessibility_service_description">Permite que o DragonLauncher abra a sombra de notificações, o painel de configurações rápidas, abra aplicativos recentes e verifique a atividade atual (para usuários da xiaomi que não podem definir o Dragon como launcher padrão sem perder a navegação por gestos</string>
     <string name="help">Ajuda</string>
     <string name="back">Voltar</string>

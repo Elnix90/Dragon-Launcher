@@ -27,16 +27,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ANGLE_LINE_TAG
 import org.elnix.dragonlauncher.common.messyfolder.resolveShape
-import org.elnix.dragonlauncher.common.serializables.ColorSerializer
 import org.elnix.dragonlauncher.common.serializables.CustomObjectBlockProperties
-import org.elnix.dragonlauncher.common.serializables.CustomObjectSerializable
-import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.settings.stores.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants
@@ -50,7 +44,8 @@ import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
-import org.elnix.dragonlauncher.ui.remembers.rememberDecodedObject
+import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson
+import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberAngleLineObjects
 import org.elnix.dragonlauncher.ui.remembers.rememberSweepAngle
 import kotlin.math.atan2
 
@@ -76,54 +71,13 @@ fun AngleLineTab(onBack: () -> Unit) {
     val order by rememberLineObjectsOrder()
     var showOrderDialog by remember { mutableStateOf(false) }
 
-    val json = Json {
-        serializersModule = SerializersModule {
-            contextual(Color::class, ColorSerializer)
-        }
-    }
-
-    val lineJson by AngleLineSettingsStore.lineJson.asState()
-    val lineObject = rememberDecodedObject(
-        jsonString = lineJson,
-        default = UiConstants.defaultLineCustomObject,
-        json = json
-    ) {
-        logE(ANGLE_LINE_TAG, it) { "Error decoding lineObject" }
-    }
-
-    val angleLineJson by AngleLineSettingsStore.angleLineJson.asState()
-    val angleLineObject = rememberDecodedObject(
-        jsonString = angleLineJson,
-        default = UiConstants.defaultAngleCustomObject,
-        json = json
-    ) {
-        logE(ANGLE_LINE_TAG, it) { "Error decoding angleLineObject" }
-    }
-
-    val startLineJson by AngleLineSettingsStore.startLineJson.asState()
-    val startLineObject = rememberDecodedObject(
-        jsonString = startLineJson,
-        default = UiConstants.defaultStartCustomObject,
-        json = json
-    ) {
-        logE(ANGLE_LINE_TAG, it) { "Error decoding startLineObject" }
-    }
-
-    val endLineJson by AngleLineSettingsStore.endLineJson.asState()
-    val endLineObject = rememberDecodedObject(
-        jsonString = endLineJson,
-        default = UiConstants.defaultEndCustomObject,
-        json = json
-    ) {
-        logE(ANGLE_LINE_TAG, it) { "Error decoding endLineObject" }
-    }
-
+    val lineObjects = rememberAngleLineObjects()
 
     // Instant mutators to avoid I/O overhead
-    var mutableLineObject by remember(lineObject) { mutableStateOf(lineObject) }
-    var mutableAngleLineObject by remember(angleLineObject) { mutableStateOf(angleLineObject) }
-    var mutableStartObject by remember(startLineObject) { mutableStateOf(startLineObject) }
-    var mutableEndObject by remember(endLineObject) { mutableStateOf(endLineObject) }
+    var mutableLineObject by remember(lineObjects.line) { mutableStateOf(lineObjects.line) }
+    var mutableAngleLineObject by remember(lineObjects.angleLine) { mutableStateOf(lineObjects.angleLine) }
+    var mutableStartObject by remember(lineObjects.startLine) { mutableStateOf(lineObjects.startLine) }
+    var mutableEndObject by remember(lineObjects.endLine) { mutableStateOf(lineObjects.endLine) }
 
 
     val rgbLine by UiSettingsStore.rgbLine.asState()
@@ -183,10 +137,10 @@ fun AngleLineTab(onBack: () -> Unit) {
 
     fun saveAll() {
         scope.launch {
-            AngleLineSettingsStore.lineJson.set(ctx, json.encodeToString(CustomObjectSerializable.serializer(), mutableLineObject))
-            AngleLineSettingsStore.angleLineJson.set(ctx, json.encodeToString(CustomObjectSerializable.serializer(), mutableAngleLineObject))
-            AngleLineSettingsStore.startLineJson.set(ctx, json.encodeToString(CustomObjectSerializable.serializer(), mutableStartObject))
-            AngleLineSettingsStore.endLineJson.set(ctx, json.encodeToString(CustomObjectSerializable.serializer(), mutableEndObject))
+            AngleLineSettingsStore.lineJson.set(ctx, CustomObjectJson.encode(mutableLineObject))
+            AngleLineSettingsStore.angleLineJson.set(ctx, CustomObjectJson.encode(mutableAngleLineObject))
+            AngleLineSettingsStore.startLineJson.set(ctx, CustomObjectJson.encode(mutableStartObject))
+            AngleLineSettingsStore.endLineJson.set(ctx, CustomObjectJson.encode(mutableEndObject))
         }
     }
 
@@ -205,7 +159,6 @@ fun AngleLineTab(onBack: () -> Unit) {
         otherIcons = arrayOf(
             Triple({ showOrderDialog = true }, R.drawable.more_vert, stringResource(R.string.more))
         ),
-        scrollableContent = true,
         topContent = {
             Canvas(
                 modifier = Modifier

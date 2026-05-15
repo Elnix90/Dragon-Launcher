@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Drachenwerfer</string>
     <string name="accessibility_service_description">Ermöglicht es DragonLauncher, den Benachrichtigungsschirm zu öffnen, das Schnelleinstellungsfeld zu öffnen, aktuelle Apps zu öffnen und aktuelle Aktivitäten zu überprüfen (für Xiaomi-Nutzer, die Dragon nicht als Standard-Launcher einstellen können, ohne die Gestennavigation zu verlieren)</string>
     <string name="help">Hilfe</string>
     <string name="back">Zurück</string>

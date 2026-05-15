@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ड्रैगन लांचर</string>
     <string name="accessibility_service_description">DragonLauncher अधिसूचना छाया, त्वरित सेटिंग्स पैनल, हाल के क्षुधा खोलने और वर्तमान गतिविधि के लिए जाँच करने के लिए अनुमति देता है (xiaomi उपयोगकर्ताओं के लिए जो इशारा नेविगेशन खोने के बिना डिफ़ॉल्ट लांचर के रूप में ड्रैगन सेट नहीं कर सकते हैं</string>
     <string name="help">मदद</string>
     <string name="back">शर्त लगाना</string>
