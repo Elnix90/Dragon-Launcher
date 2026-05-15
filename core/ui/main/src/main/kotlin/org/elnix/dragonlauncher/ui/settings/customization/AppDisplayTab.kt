@@ -3,6 +3,7 @@
 package org.elnix.dragonlauncher.ui.settings.customization
 
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -34,6 +35,7 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.components.AppPreviewTitle
 import org.elnix.dragonlauncher.ui.composition.LocalDrawerIconsCache
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSectionMode
@@ -52,7 +54,6 @@ fun AppDisplayTab(
     val icons = LocalDrawerIconsCache.current
     val scope = rememberCoroutineScope()
 
-    // Top overlay things
     val showLaunchingAppLabel by showLaunchingAppLabel.asState()
     val showLaunchingAppIcon by showLaunchingAppIcon.asState()
     val appLabelIconOverlayTopPadding by appLabelIconOverlayTopPadding.asState()
@@ -63,16 +64,15 @@ fun AppDisplayTab(
     val mainScreenLayers = LocalMainScreenLayers.current
 
     val topOverlaySettingsState = rememberExpandableSection(stringResource(R.string.app_preview_settings), mode = ExpandableSectionMode.Expandable)
-    val draggingDisplayState = rememberExpandableSection(stringResource(R.string.dragging_display))
 
     var demoIcon by remember(topOverlaySettingsState.isExpanded()) {
         mutableStateOf(icons.getRandom())
     }
 
     SettingsScaffold(
-        title = stringResource(R.string.color_selector),
+        title = stringResource(R.string.app_display),
         onBack = onBack,
-        helpText = stringResource(R.string.color_selector_text),
+        helpText = stringResource(R.string.app_display_desc),
         onReset = {
             scope.launch {
                 ColorSettingsStore.resetAll(ctx)
@@ -80,27 +80,29 @@ fun AppDisplayTab(
             }
         }
     ) {
-        SettingsSwitchRow(
-            setting = UiSettingsStore.fullScreen,
-            title = stringResource(R.string.fullscreen_app),
-            description = stringResource(R.string.fullscreen_description)
-        )
+        DragonSettingsGroup(R.string.common_settings) {
+            SettingsSwitchRow(
+                setting = UiSettingsStore.fullScreen,
+                title = stringResource(R.string.fullscreen_app),
+                description = stringResource(R.string.fullscreen_description)
+            )
 
-        SwitchRow(
-            title = stringResource(R.string.charging_animation),
-            description = stringResource(R.string.charging_animation_desc),
-            state = showChargingAnimation()
-        ) {
-            scope.launch {
-                UiSettingsStore.mainScreenLayers.set(
-                    ctx,
-                    MainScreenLayerJson.encode(
-                        mainScreenLayers.map {
-                            if (it is MainScreenLayer.ChargingAnimation) it.copy(enabled = !it.enabled)
-                            else it
-                        }
+            SwitchRow(
+                title = stringResource(R.string.charging_animation),
+                description = stringResource(R.string.charging_animation_desc),
+                state = showChargingAnimation()
+            ) {
+                scope.launch {
+                    UiSettingsStore.mainScreenLayers.set(
+                        ctx,
+                        MainScreenLayerJson.encode(
+                            mainScreenLayers.map {
+                                if (it is MainScreenLayer.ChargingAnimation) it.copy(enabled = !it.enabled)
+                                else it
+                            }
+                        )
                     )
-                )
+                }
             }
         }
 
@@ -140,7 +142,10 @@ fun AppDisplayTab(
             )
         }
 
-        ExpandableSection(draggingDisplayState) {
+        DragonSettingsGroup(
+            title = R.string.dragging_display,
+            contentPadding = PaddingValues(vertical = 12.dp)
+        ) {
             SettingsSwitchRow(
                 setting = UiSettingsStore.showAppLaunchingPreview,
                 title = stringResource(R.string.show_app_launch_preview),
@@ -198,19 +203,24 @@ fun AppDisplayTab(
             )
         }
 
-        SettingsSlider(
-            setting = UiSettingsStore.maxNestsDepth,
-            title = stringResource(R.string.depth),
-            description = stringResource(R.string.depth_desc),
-            valueRange = 1..10
-        )
+        DragonSettingsGroup(
+            title = R.string.depth,
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+        ) {
+            SettingsSlider(
+                setting = UiSettingsStore.maxNestsDepth,
+                title = stringResource(R.string.depth),
+                description = stringResource(R.string.depth_desc),
+                valueRange = 1..10
+            )
 
-        SettingsSlider(
-            setting = UiSettingsStore.maxLiveNestsDepth,
-            title = stringResource(R.string.live_nest_depth),
-            description = stringResource(R.string.live_nests_depth_desc),
-            valueRange = 1..10
-        )
+            SettingsSlider(
+                setting = UiSettingsStore.maxLiveNestsDepth,
+                title = stringResource(R.string.live_nest_depth),
+                description = stringResource(R.string.live_nests_depth_desc),
+                valueRange = 1..10
+            )
+        }
     }
 
 
