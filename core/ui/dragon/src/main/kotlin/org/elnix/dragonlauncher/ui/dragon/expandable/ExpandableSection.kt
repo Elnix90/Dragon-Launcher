@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
@@ -48,7 +49,7 @@ fun ExpandableSection(
     )
 
     val backgroundColor by animateColorAsState(
-        if (expanded) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface
+        (if (expanded) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface).semiTransparentIfDisabled(enabled)
     )
 
     val contentColor = contentColorFor(backgroundColor)
