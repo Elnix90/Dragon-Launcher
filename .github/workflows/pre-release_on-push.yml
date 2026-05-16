@@ -44,11 +44,10 @@ jobs:
       - name: Extract versionName
         id: version
         run: |
-          VER=$(grep -oP 'versionName\s*=\s*"\K[0-9.]+' app/build.gradle* | head -n1)
+          VER=$(grep -oP 'versionName\s*=\s*"\K[0-9.]' app/build.gradle* | head -n1)
           echo "versionName=$VER" >> $GITHUB_OUTPUT
           echo "Detected versionName: $VER"
 
-      # Decode keystore
       - name: Decode keystore
         env:
           KEYSTORE_FILE_B64: ${{ secrets.KEYSTORE_FILE_B64 }}
@@ -90,11 +89,6 @@ jobs:
             echo "MAPPING=$MAPPING"
             echo "TAG_NAME=v${VER}-beta-${RUN}"
           } >> $GITHUB_ENV
-
-      - name: Create tag
-        run: |
-          git tag "${{ env.TAG_NAME }}"
-          git push origin "${{ env.TAG_NAME }}"
 
       - name: Upload pre-release
         uses: softprops/action-gh-release@v2

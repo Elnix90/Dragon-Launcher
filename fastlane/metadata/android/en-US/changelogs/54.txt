@@ -1,6 +1,5 @@
 3.2.0 (Worm)
 2026-05-14
-Unreleased
 [NEW]
 * Material3 Expressive API migration
 * Bottom global navigation bar

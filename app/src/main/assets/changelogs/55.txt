@@ -1,0 +1,9 @@
+3.2.1 (Worm)
+2026-05-16
+[FIXED]
+* wrong offset for long press popup
+* lock screen now working correctly
+* HoldSettingsOrderSheet reworked and functional, preventing user lockdown out of settings
+[IMPROVED]
+* Welcome screen (a bit)
+* multiple parts of ui reworked

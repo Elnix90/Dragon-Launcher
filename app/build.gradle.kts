@@ -39,8 +39,8 @@ extensions.configure<ApplicationExtension> {
         applicationId = "org.elnix.dragonlauncher"
         minSdk = 26
         targetSdk = 37
-        versionName = "3.2.0-(Worm)"
-        versionCode = 54
+        versionName = "3.2.1"
+        versionCode = 55
     }
 
     lint {
@@ -76,6 +76,8 @@ extensions.configure<ApplicationExtension> {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            versionNameSuffix = " (${property("version.code") as String})"
+
             signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -92,7 +94,7 @@ extensions.configure<ApplicationExtension> {
 
 
             applicationIdSuffix = ".debug"
-            versionNameSuffix = "-beta"
+            versionNameSuffix =  " (${property("version.code") as String})-beta"
         }
     }
 
