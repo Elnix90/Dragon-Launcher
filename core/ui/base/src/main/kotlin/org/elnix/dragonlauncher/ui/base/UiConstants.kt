@@ -4,6 +4,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonShapes
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.IconButtonShapes
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.common.serializables.CustomGlow
@@ -95,5 +96,45 @@ object UiConstants {
         size = 70f,
         rotation = 0,
         eraseBackground = false
+    )
+
+
+    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
+    val allMaterialShapes = listOf(
+        MaterialShapes.Circle,
+        MaterialShapes.Square,
+        MaterialShapes.Slanted,
+        MaterialShapes.Arch,
+        MaterialShapes.Fan,
+        MaterialShapes.Arrow,
+        MaterialShapes.SemiCircle,
+        MaterialShapes.Oval,
+        MaterialShapes.Pill,
+        MaterialShapes.Triangle,
+        MaterialShapes.Diamond,
+        MaterialShapes.ClamShell,
+        MaterialShapes.Pentagon,
+        MaterialShapes.Gem,
+        MaterialShapes.VerySunny,
+        MaterialShapes.Sunny,
+        MaterialShapes.Cookie4Sided,
+        MaterialShapes.Cookie6Sided,
+        MaterialShapes.Cookie7Sided,
+        MaterialShapes.Cookie9Sided,
+        MaterialShapes.Cookie12Sided,
+        MaterialShapes.Ghostish,
+        MaterialShapes.Clover4Leaf,
+        MaterialShapes.Clover8Leaf,
+        MaterialShapes.Burst,
+        MaterialShapes.SoftBurst,
+        MaterialShapes.Boom,
+        MaterialShapes.SoftBoom,
+        MaterialShapes.Flower,
+        MaterialShapes.Puffy,
+        MaterialShapes.PuffyDiamond,
+        MaterialShapes.PixelCircle,
+        MaterialShapes.PixelTriangle,
+        MaterialShapes.Bun,
+        MaterialShapes.Heart
     )
 }

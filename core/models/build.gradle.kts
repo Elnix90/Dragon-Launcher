@@ -29,6 +29,7 @@ extensions.configure<LibraryExtension> {
 
 dependencies {
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.navigation3.runtime)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.timber)

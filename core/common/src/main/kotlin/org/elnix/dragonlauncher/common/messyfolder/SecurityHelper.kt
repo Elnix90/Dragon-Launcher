@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.helpers
+package org.elnix.dragonlauncher.common.messyfolder
 
 import android.app.KeyguardManager
 import android.content.Context
@@ -9,8 +9,8 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SECURITY_HELPER
+import org.elnix.dragonlauncher.logging.logD
 import java.security.MessageDigest
 
 /**

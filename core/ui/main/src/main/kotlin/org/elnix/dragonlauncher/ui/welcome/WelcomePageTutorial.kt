@@ -27,7 +27,6 @@ fun WelcomePageTutorial() {
         title = stringResource(R.string.quick_tutorial),
         icon = R.drawable.help
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxSize()

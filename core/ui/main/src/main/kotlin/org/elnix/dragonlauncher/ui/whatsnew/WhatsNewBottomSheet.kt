@@ -1,10 +1,7 @@
 package org.elnix.dragonlauncher.ui.whatsnew
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,25 +25,24 @@ import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.rememberVersionCode
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 
 // I hate the behavior of this shitty modal sheet that force showing the system bars, even in fullscreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WhatsNewBottomSheet() {
-
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
     val lastSeenVersionCodeWhatsNew by PrivateSettingsStore.lastSeenVersionCodeWhatsNew.asState()
-
     val versionCode = rememberVersionCode()
-    val updates by produceState(initialValue = emptyList()) {
-        value = loadChangelogs(ctx, versionCode)
-    }
 
     if (lastSeenVersionCodeWhatsNew >= versionCode) return
 
+    val updates by produceState(initialValue = emptyList()) {
+        value = loadChangelogs(ctx, versionCode)
+    }
     DragonModalBottomSheet(
         onDismissRequest = {
             scope.launch {
@@ -58,7 +54,6 @@ fun WhatsNewBottomSheet() {
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp)
         ) {
             Text(
                 text = stringResource(R.string.whats_new),
@@ -68,7 +63,7 @@ fun WhatsNewBottomSheet() {
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(12.dp)
 
             updates.forEach { update ->
                 UpdateCard(

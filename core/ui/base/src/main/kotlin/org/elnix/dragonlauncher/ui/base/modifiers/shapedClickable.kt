@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.Dp
 import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.base.withHaptic
@@ -24,12 +25,19 @@ fun Modifier.shapedClickable(
     hapticFeedback: Boolean = false,
     onClickLabel: String? = null,
     role: Role? = null,
+    pressedTargetRoundedCorner: Dp = UiConstants.PRESSED_DRAGON_SHAPE_CORNER_DP,
+    normalTargetRoundedCorner: Dp = UiConstants.DRAGON_SHAPE_CORNER_DP,
     interactionSource: MutableInteractionSource = rememberInteractionSource(),
     onLongClick: (() -> Unit)? = null,
     onClick: () -> Unit,
 ): Modifier {
 
-    val shape = provideClickableShape(interactionSource, isSelected)
+    val shape = provideClickableShape(
+        interactionSource = interactionSource,
+        pressedTargetRoundedCorner = pressedTargetRoundedCorner,
+        normalTargetRoundedCorner = normalTargetRoundedCorner,
+        isSelected = isSelected
+    )
 
     val onclickWithOptionalHaptic = if (hapticFeedback) {
         withHaptic(HapticFeedbackType.LongPress) {
@@ -49,14 +57,17 @@ fun Modifier.shapedClickable(
 }
 
 @Composable
-fun provideClickableShape(interactionSource: MutableInteractionSource, isSelected: Boolean = false): Shape {
+fun provideClickableShape(
+    interactionSource: MutableInteractionSource,
+    pressedTargetRoundedCorner: Dp = UiConstants.PRESSED_DRAGON_SHAPE_CORNER_DP,
+    normalTargetRoundedCorner: Dp = UiConstants.DRAGON_SHAPE_CORNER_DP,
+    isSelected: Boolean = false
+): Shape {
     val isPressed by interactionSource.collectIsPressedAsState()
 
     val shapeRound by animateDpAsState(
-        targetValue = if (isPressed || isSelected)
-            UiConstants.PRESSED_DRAGON_SHAPE_CORNER_DP
-        else
-            UiConstants.DRAGON_SHAPE_CORNER_DP,
+        targetValue = if (isPressed || isSelected) pressedTargetRoundedCorner
+        else normalTargetRoundedCorner,
         label = "shape_anim"
     )
 

@@ -67,10 +67,10 @@ object AppObjectsColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 ButtonDefaults.outlinedButtonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = error,
-                    disabledContainerColor = Color.Transparent,
-                    disabledContentColor = error.alphaMultiplier(0.5f)
+                    containerColor = errorContainer,
+                    contentColor = onErrorContainer,
+                    disabledContainerColor = errorContainer.alphaMultiplier(0.5f),
+                    disabledContentColor = onErrorContainer.alphaMultiplier(0.5f)
                 )
             }
         } else ButtonDefaults.outlinedButtonColors()

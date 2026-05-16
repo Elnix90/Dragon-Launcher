@@ -24,6 +24,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.messyfolder.SecurityHelper
+import org.elnix.dragonlauncher.common.messyfolder.findFragmentActivity
 import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
@@ -32,8 +34,6 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
-import org.elnix.dragonlauncher.ui.helpers.SecurityHelper
-import org.elnix.dragonlauncher.ui.helpers.findFragmentActivity
 
 @Suppress("VariableNeverRead")
 @SuppressLint("LocalContextGetResourceValueCall")
@@ -48,96 +48,95 @@ fun LockMethodDialog(
     var showPinSetupDialog by remember { mutableStateOf(false) }
     var pendingLockMethod by remember { mutableStateOf<LockMethod?>(null) }
 
-    CustomAlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                stringResource(R.string.lock_method),
-                style = MaterialTheme.typography.titleLarge
-            )
-        },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    if (!showPinSetupDialog) {
+        CustomAlertDialog(
+            onDismissRequest = onDismiss,
+            title = {
                 Text(
-                    text = stringResource(R.string.lock_settings_description),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(0.7f)
+                    stringResource(R.string.lock_method),
+                    style = MaterialTheme.typography.titleLarge
                 )
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = stringResource(R.string.lock_settings_description),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.7f)
+                    )
 
-                Spacer(Modifier.height(8.dp))
-                LockMethod.entries.forEach { method ->
+                    Spacer(Modifier.height(8.dp))
+                    LockMethod.entries.forEach { method ->
 
-                    val unavailableText = if (method == LockMethod.DEVICE_UNLOCK && !SecurityHelper.isDeviceUnlockAvailable(ctx)) {
-                        stringResource(R.string.device_credentials_not_available)
-                    } else null
+                        val unavailableText = if (method == LockMethod.DEVICE_UNLOCK && !SecurityHelper.isDeviceUnlockAvailable(ctx)) {
+                            stringResource(R.string.device_credentials_not_available)
+                        } else null
 
 
-                    fun onClick() {
-                        when (method) {
-                            LockMethod.PIN -> {
-                                pendingLockMethod = LockMethod.PIN
-                                showPinSetupDialog = true
-                            }
-
-                            LockMethod.NONE -> {
-                                scope.launch {
-                                    PrivateSettingsStore.lockPinHash.reset(ctx)
-                                    PrivateSettingsStore.lockMethod.reset(ctx)
-                                    onDismiss()
+                        fun onClick() {
+                            when (method) {
+                                LockMethod.PIN -> {
+                                    pendingLockMethod = LockMethod.PIN
+                                    showPinSetupDialog = true
                                 }
-                            }
 
-                            LockMethod.DEVICE_UNLOCK -> {
-                                // Test biometric authentication immediately
-                                val activity = ctx.findFragmentActivity()
-                                if (activity != null && SecurityHelper.isDeviceUnlockAvailable(ctx)) {
-                                    SecurityHelper.showDeviceUnlockPrompt(
-                                        activity = activity,
-                                        onSuccess = {
-                                            scope.launch {
-                                                PrivateSettingsStore.lockPinHash.reset(ctx)
-                                                PrivateSettingsStore.lockMethod.set(ctx, LockMethod.DEVICE_UNLOCK)
-                                                onDismiss()
+                                LockMethod.NONE -> {
+                                    scope.launch {
+                                        PrivateSettingsStore.lockPinHash.reset(ctx)
+                                        PrivateSettingsStore.lockMethod.reset(ctx)
+                                        onDismiss()
+                                    }
+                                }
+
+                                LockMethod.DEVICE_UNLOCK -> {
+                                    // Test biometric authentication immediately
+                                    val activity = ctx.findFragmentActivity()
+                                    if (activity != null && SecurityHelper.isDeviceUnlockAvailable(ctx)) {
+                                        SecurityHelper.showDeviceUnlockPrompt(
+                                            activity = activity,
+                                            onSuccess = {
+                                                scope.launch {
+                                                    PrivateSettingsStore.lockPinHash.reset(ctx)
+                                                    PrivateSettingsStore.lockMethod.set(ctx, LockMethod.DEVICE_UNLOCK)
+                                                    onDismiss()
+                                                }
+                                            },
+                                            onError = { msg ->
+                                                ctx.showToast(ctx.getString(R.string.authentication_error, msg))
+                                            },
+                                            onFailed = {
+                                                ctx.showToast(ctx.getString(R.string.authentication_failed))
                                             }
-                                        },
-                                        onError = { msg ->
-                                            ctx.showToast(ctx.getString(R.string.authentication_error, msg))
-                                        },
-                                        onFailed = {
-                                            ctx.showToast(ctx.getString(R.string.authentication_failed))
-                                        }
-                                    )
-                                } else {
-                                    ctx.showToast(ctx.getString(R.string.device_credentials_not_available))
+                                        )
+                                    } else {
+                                        ctx.showToast(ctx.getString(R.string.device_credentials_not_available))
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    DragonRow(
-                        onClick = ::onClick,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-
-                        TextWithDescription(
-                            text = stringResource(method.resId),
-                            description = unavailableText
-                        )
-
-                        Spacer(Modifier.width(8.dp))
-                        RadioButton(
-                            selected = method == currentLockMethod,
+                        DragonRow(
                             onClick = ::onClick,
-                            colors = AppObjectsColors.radioButtonColors()
-                        )
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+
+                            TextWithDescription(
+                                text = stringResource(method.resId),
+                                description = unavailableText
+                            )
+
+                            Spacer(Modifier.width(8.dp))
+                            RadioButton(
+                                selected = method == currentLockMethod,
+                                onClick = ::onClick,
+                                colors = AppObjectsColors.radioButtonColors()
+                            )
+                        }
                     }
                 }
             }
-        }
-    )
-
-    // ── PIN setup dialog ──
-    if (showPinSetupDialog) {
+        )
+    } else {
         PinSetup(
             onDismiss = {
                 showPinSetupDialog = false

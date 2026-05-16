@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -76,10 +77,10 @@ import org.elnix.dragonlauncher.common.utils.PermissionsUtils.isAppInstalled
 import org.elnix.dragonlauncher.common.utils.rememberIsDefaultLauncher
 import org.elnix.dragonlauncher.enumsui.other.ReminderMode
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar
-import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logW
+import org.elnix.dragonlauncher.models.LockScreenViewModel
 import org.elnix.dragonlauncher.settings.stores.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.ColorModesSettingsStore
@@ -115,9 +116,7 @@ import org.elnix.dragonlauncher.ui.helpers.FpsCounterGraph
 import org.elnix.dragonlauncher.ui.helpers.LauncherSnackbarHost
 import org.elnix.dragonlauncher.ui.helpers.PrivateSpaceStateDebugDialog
 import org.elnix.dragonlauncher.ui.helpers.ReselectAutoBackupBanner
-import org.elnix.dragonlauncher.ui.helpers.SecurityHelper
 import org.elnix.dragonlauncher.ui.helpers.SetDefaultLauncherBanner
-import org.elnix.dragonlauncher.ui.helpers.findFragmentActivity
 import org.elnix.dragonlauncher.ui.navigation.horizontalMetadata
 import org.elnix.dragonlauncher.ui.navigation.verticalMetadata
 import org.elnix.dragonlauncher.ui.settings.backup.BackupTab
@@ -155,6 +154,7 @@ import rikka.shizuku.Shizuku
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun MainAppUi(
+    lockScreenViewModel: LockScreenViewModel = hiltViewModel(),
     onBindCustomWidget: (Int, ComponentName, nestId: Int) -> Unit,
     onResetWidgetSize: (id: Int, widgetId: Int) -> Unit,
     onRemoveFloatingApp: (FloatingAppObject) -> Unit
@@ -218,7 +218,6 @@ fun MainAppUi(
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
-
     val startScreen = NavigationRoute.Main
     val backStack = rememberNavBackStack(startScreen)
     val currentRoute by remember {
@@ -226,24 +225,22 @@ fun MainAppUi(
     }
 
 
-    /* ───────────── Lock gate state ───────────── */
-    val lockMethod by PrivateSettingsStore.lockMethod.asState()
-
-    /** Once unlocked during this session, stay unlocked */
-    var isUnlocked by remember { mutableStateOf(false) }
-
-
-    LaunchedEffect(lockMethod) {
-        isUnlocked = lockMethod == LockMethod.NONE
-    }
+    val isLocked by lockScreenViewModel.isLocked.collectAsState()
+    val screenToUnlock by lockScreenViewModel.screenToUnlock.collectAsState()
 
     LaunchedEffect(currentRoute) {
-        if (currentRoute !in NavigationRoute.settingsRoutes) {
-            isUnlocked = false
-        }
+        lockScreenViewModel.onEnterNewRoute(currentRoute)
     }
 
-    /*  ─────────────  Wellbeing Settings  ─────────────  */
+    val lockMethod by lockScreenViewModel.lockMethod.collectAsState()
+//    LaunchedEffect(lockMethod) {
+//        if (lockMethod == LockMethod.NONE) {
+//            lockScreenViewModel.unlock()
+//        }
+//    }
+
+
+    /*  ─────────────  Wellbeing Settings  ─────────────  */ // TODO move this shit into a viewmodel
     val socialMediaPauseEnabled by WellbeingSettingsStore.socialMediaPauseEnabled.asState()
     val guiltModeEnabled by WellbeingSettingsStore.guiltModeEnabled.asState()
     val pauseDuration by WellbeingSettingsStore.pauseDurationSeconds.asState()
@@ -343,38 +340,17 @@ fun MainAppUi(
             add(screen)
         }
 
-        if (isUnlocked) {
+        if (!isLocked) {
             go()
             return
         }
 
-        when (lockMethod) {
-            LockMethod.NONE -> go()
-            LockMethod.PIN -> {
-                backStack.navigate(NavigationRoute.PinUnlock(screen))
+        if (screen in NavigationRoute.settingsRoutes) {
+            lockScreenViewModel.requestUnlock(screen) {
+                go()
             }
-
-            LockMethod.DEVICE_UNLOCK -> {
-                val activity = ctx.findFragmentActivity()
-                if (activity != null && SecurityHelper.isDeviceUnlockAvailable(ctx)) {
-                    SecurityHelper.showDeviceUnlockPrompt(
-                        activity = activity,
-                        onSuccess = {
-                            isUnlocked = true
-                            go()
-                        },
-                        onError = { msg ->
-                            ctx.showToast(ctx.getString(R.string.authentication_error, msg))
-                        },
-                        onFailed = {
-                            ctx.showToast(ctx.getString(R.string.authentication_failed))
-                        }
-                    )
-                } else {
-                    ctx.showToast(ctx.getString(R.string.device_credentials_not_available))
-                }
-            }
-
+        } else {
+            go()
         }
     }
 
@@ -571,6 +547,13 @@ fun MainAppUi(
     val colorTestMode by ColorModesSettingsStore.colorTestMode.asState()
 
 
+    val hasSeenWelcome by PrivateSettingsStore.hasSeenWelcome.asStateNull()
+    LaunchedEffect(hasSeenWelcome) {
+        if (hasSeenWelcome == false) {
+            backStack.navigate(NavigationRoute.Welcome)
+        }
+    }
+
     ProvideGlobalCompositionLocals {
         OverlayHost(
             modifier = Modifier
@@ -760,12 +743,14 @@ fun MainAppUi(
                             )
                         }
 
-                        entry<NavigationRoute.PinUnlock>(metadata = horizontalMetadata) { key ->
-                            PinUnlock(
-                                onDismiss = backStack::navigateBack,
-                                onValidate = { backStack.navigate(key.screenToGo) }
-                            )
-                        }
+//                        entry<NavigationRoute.PinUnlock>(metadata = horizontalMetadata) { key ->
+//                            PinUnlock(
+//                                onDismiss = backStack::navigateBack,
+//                                onValidate = {
+//                                    backStack.remove<Any>(NavigationRoute.PinUnlock)
+//                                    backStack.navigate(key.screenToGo) }
+//                            )
+//                        }
                     }
                 )
             }
@@ -837,6 +822,24 @@ fun MainAppUi(
         BackupResultDialog()
         GoogleLockingWarningDialog()
         PrivateSpaceStateDebugDialog()
+
+
+//        DragonColumnGroup {
+//            Text("isLocked: $isLocked; screenToUnlock: $screenToUnlock")
+//        }
+
+        if (isLocked && screenToUnlock != null) {
+            PinUnlock(
+                onDismiss = {
+                    lockScreenViewModel.cancelPinUnlock()
+                },
+                onValidate = {
+                    lockScreenViewModel.unlock()
+                    backStack.remove(screenToUnlock!!)
+                    backStack.add(screenToUnlock!!)
+                }
+            )
+        }
     }
 }
 

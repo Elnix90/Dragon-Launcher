@@ -45,7 +45,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.biometric)
     implementation(libs.androidx.material3)
     implementation(libs.reorderable)
     implementation(libs.android.image.cropper)

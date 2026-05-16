@@ -7,6 +7,7 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.SoundPool
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -20,8 +21,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,10 +32,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsIgnoringVisibility
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -42,27 +51,32 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.graphics.shapes.RoundedPolygon
+import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.resolveShape
-import org.elnix.dragonlauncher.common.serializables.IconShape
-import org.elnix.dragonlauncher.common.serializables.allShapesWithoutRandom
+import org.elnix.dragonlauncher.common.messyfolder.SecurityHelper
 import org.elnix.dragonlauncher.common.utils.HapticUtils.vibrate
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
+import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import org.elnix.dragonlauncher.ui.base.UiConstants.allMaterialShapes
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
-import org.elnix.dragonlauncher.ui.helpers.SecurityHelper
+import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 /**
  * Dialog for entering a PIN to unlock settings.
@@ -72,10 +86,11 @@ fun PinUnlock(
     onDismiss: () -> Unit,
     onValidate: () -> Unit,
 ) {
+    val haptic = LocalHapticFeedback.current
     val pinHash by PrivateSettingsStore.lockPinHash.asState()
 
     var pin by remember { mutableStateOf("") }
-    val pinShapes = remember { mutableStateListOf<IconShape>() }
+    val pinShapes = remember { mutableStateListOf<RoundedPolygon>() }
     var failedTries by remember { mutableIntStateOf(0) }
     var pinError by remember { mutableStateOf<String?>(null) }
 
@@ -86,12 +101,14 @@ fun PinUnlock(
         subtitle = stringResource(R.string.enter_pin),
         pinValue = pin,
         pinShapes = pinShapes,
+        errorMessage = pinError,
+        failedTries = failedTries,
         onPinChanged = { newValue ->
             pinError = null
             pin = newValue
             if (pinShapes.size < newValue.length) {
                 repeat(newValue.length - pinShapes.size) {
-                    pinShapes.add(allShapesWithoutRandom.random())
+                    pinShapes.add(allMaterialShapes.random())
                 }
             } else {
                 repeat(pinShapes.size - newValue.length) {
@@ -99,20 +116,22 @@ fun PinUnlock(
                 }
             }
         },
-        onPrimaryAction = {
-            if (SecurityHelper.verifyPin(pin, pinHash)) {
-                onValidate()
-            } else {
-                pinError = wrongPinText
-                failedTries++
-            }
+        onDismiss = {
+            haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+            onDismiss()
+        }
+    ) {
+        if (SecurityHelper.verifyPin(pin, pinHash)) {
+            haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+            onValidate()
+        } else {
+            haptic.performHapticFeedback(HapticFeedbackType.Reject)
+            pinError = wrongPinText
+            failedTries++
             pinShapes.clear()
             pin = ""
-        },
-        onDismiss = onDismiss,
-        errorMessage = pinError,
-        failedTries = failedTries
-    )
+        }
+    }
 }
 
 
@@ -124,14 +143,20 @@ fun PinSetup(
     onDismiss: () -> Unit,
     onPinSet: (String) -> Unit
 ) {
+    val haptic = LocalHapticFeedback.current
+
     var firstPin by remember { mutableStateOf("") }
     var confirmPin by remember { mutableStateOf("") }
     var isConfirmStep by remember { mutableStateOf(false) }
+
+    var showWarningDialog by remember { mutableStateOf(false) }
+    val doNotRemindMeWarningDialog by UiSettingsStore.doNotRemindMeAgainPinLockWarning.asState()
+
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var failedTries by remember { mutableIntStateOf(0) }
     val pinMismatch = stringResource(R.string.pin_mismatch)
 
-    val pinShapes = remember(isConfirmStep) { mutableStateListOf<IconShape>() }
+    val pinShapes = remember(isConfirmStep) { mutableStateListOf<RoundedPolygon>() }
     val currentPin = if (isConfirmStep) confirmPin else firstPin
 
     PinPrompt(
@@ -139,11 +164,13 @@ fun PinSetup(
         subtitle = if (isConfirmStep) stringResource(R.string.confirm_pin) else stringResource(R.string.enter_pin),
         pinValue = currentPin,
         pinShapes = pinShapes,
+        errorMessage = errorMessage,
+        failedTries = failedTries,
         onPinChanged = { newValue ->
             errorMessage = null
             if (pinShapes.size < newValue.length) {
                 repeat(newValue.length - pinShapes.size) {
-                    pinShapes.add(allShapesWithoutRandom.random())
+                    pinShapes.add(allMaterialShapes.random())
                 }
             } else {
                 repeat(pinShapes.size - newValue.length) {
@@ -156,28 +183,8 @@ fun PinSetup(
                 firstPin = newValue
             }
         },
-        onPrimaryAction = {
-            if (!isConfirmStep) {
-                isConfirmStep = true
-                confirmPin = ""
-            } else {
-                when {
-                    // Error
-                    firstPin != confirmPin -> {
-                        errorMessage = pinMismatch
-                        confirmPin = ""
-                        pinShapes.clear()
-                        failedTries++
-                    }
-
-                    else -> onPinSet(firstPin)
-                }
-            }
-        },
-        onDismiss = onDismiss,
-        errorMessage = errorMessage,
-        failedTries = failedTries,
-        onSecondaryAction = {
+        onDismiss = {
+            haptic.performHapticFeedback(HapticFeedbackType.Confirm)
             if (isConfirmStep) {
                 isConfirmStep = false
                 confirmPin = ""
@@ -186,24 +193,70 @@ fun PinSetup(
                 onDismiss()
             }
         }
-    )
+    ) {
+        if (!isConfirmStep) {
+            isConfirmStep = true
+            confirmPin = ""
+            haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+        } else {
+            when {
+                // Error
+                firstPin != confirmPin -> {
+                    errorMessage = pinMismatch
+                    confirmPin = ""
+                    pinShapes.clear()
+                    failedTries++
+                    haptic.performHapticFeedback(HapticFeedbackType.Reject)
+                }
+
+                else -> {
+                    haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+
+                    if (doNotRemindMeWarningDialog) {
+                        onPinSet(firstPin)
+                    } else {
+                        showWarningDialog = true
+                    }
+                }
+            }
+        }
+    }
+    
+    val ctx = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    if (showWarningDialog) {
+        UserValidation(
+            title = stringResource(R.string.pin_code_warning_titls),
+            message = stringResource(R.string.pin_code_warning_desc),
+            doNotRemindMeAgain = {
+              scope.launch {
+                  UiSettingsStore.doNotRemindMeAgainPinLockWarning.set(ctx, true)
+              }
+            },
+            onDismiss = onDismiss
+        ) {
+            onPinSet(firstPin)
+        }
+        
+    }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
 private fun PinPrompt(
     title: String,
     subtitle: String,
     pinValue: String,
-    pinShapes: List<IconShape>,
-    onPinChanged: (String) -> Unit,
-    onPrimaryAction: () -> Unit,
-    onDismiss: () -> Unit,
+    pinShapes: List<RoundedPolygon>,
     errorMessage: String? = null,
     failedTries: Int,
     minDigits: Int = 1,
     maxDigits: Int = Int.MAX_VALUE,
-    onSecondaryAction: () -> Unit = onDismiss
+    onPinChanged: (String) -> Unit,
+    onDismiss: () -> Unit,
+    onPrimaryAction: () -> Unit
 ) {
     val ctx = LocalContext.current
     val horizontalOffsetError = remember {
@@ -286,14 +339,17 @@ private fun PinPrompt(
         }
     }
 
+    BackHandler(onBack = onDismiss)
 
 
-    Surface(
+    Scaffold(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets.statusBarsIgnoringVisibility
+    ) { paddingValues ->
         Column(
             modifier = Modifier
+                .padding(paddingValues)
                 .fillMaxSize()
                 .background(backgroundOverlayColor.value)
                 .padding(20.dp),
@@ -352,7 +408,7 @@ private fun PinPrompt(
                 onValidate = onPrimaryAction,
                 backSpaceOrClose = pinValue.isNotEmpty(),
                 onClear = {
-                    if (pinValue.isEmpty()) onSecondaryAction()
+                    if (pinValue.isEmpty()) onDismiss()
                     else onPinChanged("")
                 }
             )
@@ -360,12 +416,25 @@ private fun PinPrompt(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PinIndicator(
-    shapes: List<IconShape>
+    shapes: List<RoundedPolygon>
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        shapes.forEachIndexed { _, shape ->
+    val scope = rememberCoroutineScope()
+    val lazyState = rememberLazyListState()
+
+    LaunchedEffect(shapes.size) {
+        if (shapes.isNotEmpty()){
+            scope.launch { lazyState.scrollToItem(shapes.lastIndex) }
+        }
+    }
+
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        state = lazyState
+    ) {
+        items(shapes) { shape ->
             var scaleTarget by remember { mutableFloatStateOf(0f) }
 
             // Trigger visibility only once when shape is added
@@ -388,7 +457,7 @@ private fun PinIndicator(
                     .graphicsLayer(scaleX = scale, scaleY = scale)
                     .background(
                         color = MaterialTheme.colorScheme.primary,
-                        shape = shape.resolveShape()
+                        shape = shape.toShape()
                     )
             )
         }

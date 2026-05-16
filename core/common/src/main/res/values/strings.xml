@@ -952,4 +952,11 @@
     <string name="cant_remove_to_avoid_lock_out">Can\'t remove this to avoid being locked out of settings</string>
     <string name="object_properties">Object Properties</string>
     <string name="security">Security</string>
+    <string name="ui_flow_and_debug">UI Flow &amp; Debug</string>
+    <string name="package_search">Package Search</string>
+    <string name="test_overlays">Test overlays</string>
+    <string name="risky">Risky</string>
+    <string name="accessibility_and_system">Accessibility &amp; system</string>
+    <string name="pin_code_warning_titls">Warning: Potential data loss</string>
+    <string name="pin_code_warning_desc">To reset in case you forget it, you have no choice but to reset all app settings via android app info menu</string>
 </resources>

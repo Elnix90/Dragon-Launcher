@@ -136,13 +136,6 @@ sealed class NavigationRoute : NavKey {
         val workspaceId: String
     ) : NavigationRoute()
 
-
-    @Serializable
-    data class PinUnlock(
-        val screenToGo: NavigationRoute
-    ) : NavigationRoute()
-
-
     companion object {
         val settingsRoutes: List<NavigationRoute> by lazy {
             listOf(
@@ -218,7 +211,6 @@ sealed class NavigationRoute : NavKey {
             is SettingsJson -> R.string.settings_json
             is NestEdit -> R.string.edit_nest
             is WorkspaceDetail -> R.string.workspaces
-            is PinUnlock -> R.string.unlock_settings
         }
     }
 }

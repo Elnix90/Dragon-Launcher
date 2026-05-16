@@ -6,15 +6,14 @@ import android.content.Intent
 import android.provider.Settings
 import android.system.Os.kill
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,6 +42,7 @@ import org.elnix.dragonlauncher.services.SystemControl
 import org.elnix.dragonlauncher.settings.allStores
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
+import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
@@ -63,7 +63,6 @@ fun DebugTab(
 ) {
     val ctx = LocalContext.current
     val appsViewModel = LocalAppsViewModel.current
-
     val scope = rememberCoroutineScope()
 
     val systemLauncherPackageName by DebugSettingsStore.systemLauncherPackageName.asState()
@@ -71,13 +70,8 @@ fun DebugTab(
     var pendingSystemLauncher by remember { mutableStateOf<String?>(null) }
     var showEditAppOverrides by remember { mutableStateOf(false) }
 
-    val debugInfosSectionState = rememberExpandableSection(stringResource(R.string.debug_infos))
-    val packageSearchSectionState = rememberExpandableSection("Package Search")
     val storeResetSectionState = rememberExpandableSection(stringResource(R.string.store_reset))
     val dangerousActionsSectionState = rememberExpandableSection("Dangerous Actions")
-    val testOverlaysSectionState = rememberExpandableSection("Test Overlays")
-    val accessibilitySectionState = rememberExpandableSection("Accessibility & System")
-    val uiDebugSectionState = rememberExpandableSection("UI & Flow Debug")
 
     var packageQuery by remember { mutableStateOf("") }
     var packageResult by remember { mutableStateOf<String?>(null) }
@@ -119,14 +113,30 @@ fun DebugTab(
             }
         }
 
-        ExpandableSection(uiDebugSectionState) {
+        DragonSettingsGroup(
+            title = R.string.ui_flow_and_debug,
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+        ) {
+            DragonButton(
+                onClick = { scope.launch { PrivateSettingsStore.lastSeenVersionCodeWhatsNew.reset(ctx) } },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "Show What's New sheet")
+            }
 
-            SettingsSwitchRow(
-                setting = PrivateSettingsStore.hasSeenWelcome,
-                title = "Has seen welcome",
-                description = "Disabling that shows the welcome screen"
-            )
+            DragonButton(
+                onClick = { scope.launch { PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.reset(ctx) } },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "Show Google lockdown warning")
+            }
 
+            DragonButton(
+                onClick = { scope.launch { PrivateSettingsStore.hasSeenWelcome.reset(ctx) } },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "Show Welcome Screen")
+            }
 
             SettingsSwitchRow(
                 setting = DebugSettingsStore.forceAppLanguageSelector,
@@ -139,7 +149,6 @@ fun DebugTab(
                 title = "Hide beta version warning",
                 description = "Hides the beta version warning in top of the adv settings screen"
             )
-
 
             SettingsSwitchRow(
                 setting = PrivateSettingsStore.showSetDefaultLauncherBanner,
@@ -159,55 +168,14 @@ fun DebugTab(
                 description = "If false, the kill launcher action is hidden"
             )
 
-            DragonButton(
-                onClick = {
-                    scope.launch {
-                        PrivateSettingsStore.lastSeenVersionCodeWhatsNew.set(
-                            ctx,
-                            0
-                        )
-                    }
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Reset What's New sheet")
-            }
-
-            DragonButton(
-                onClick = {
-                    scope.launch {
-                        PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.set(
-                            ctx,
-                            0
-                        )
-                    }
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Reset Google lockdown warning")
-            }
-
-            DragonButton(
-                onClick = {
-                    showEditAppOverrides = true
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Edit ALL app overrides \uD83D\uDE08")
-            }
-
-            DragonButton(
-                onClick = {
-                    @Suppress("DIVISION_BY_ZERO")
-                    5 / 0
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "What is 5 / 0? \uD83E\uDD2F")
-            }
+            SettingsSwitchRow(
+                setting = UiSettingsStore.doNotRemindMeAgainPinLockWarning,
+                title = "Do not remind me again Pin Lock",
+                description = "Whether to show the pin code warning when setting a pin"
+            )
         }
 
-        ExpandableSection(debugInfosSectionState) {
+        DragonSettingsGroup(R.string.debug_infos) {
             SettingsSwitchRow(
                 setting = DebugSettingsStore.debugInfos,
                 title = stringResource(R.string.show_debug_infos),
@@ -239,7 +207,7 @@ fun DebugTab(
             )
         }
 
-        ExpandableSection(packageSearchSectionState) {
+        DragonSettingsGroup(R.string.package_search) {
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -283,7 +251,10 @@ fun DebugTab(
             }
         }
 
-        ExpandableSection(accessibilitySectionState) {
+        DragonSettingsGroup(
+            title = R.string.accessibility_and_system,
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+        ) {
             SettingsSwitchRow(
                 setting = DebugSettingsStore.useAccessibilityInsteadOfContextToExpandActionPanel,
                 title = stringResource(R.string.use_accessibility_instead_of_context),
@@ -355,7 +326,11 @@ fun DebugTab(
                 colors = AppObjectsColors.outlinedTextFieldColors()
             )
         }
-        ExpandableSection(testOverlaysSectionState) {
+
+        DragonSettingsGroup(
+            title = R.string.test_overlays,
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+        ) {
             DragonButton(
                 onClick = {
                     if (!Settings.canDrawOverlays(ctx)) {
@@ -399,68 +374,75 @@ fun DebugTab(
             }
         }
 
-        ExpandableSection(storeResetSectionState) {
-            allStores.entries.forEach { entry ->
-                val settingsStore = entry.value
-                OutlinedButton(
-                    onClick = { scope.launch { settingsStore.resetAll(ctx) } },
-                    colors = AppObjectsColors.cancelButtonColors(),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                ) {
-                    Text(
-                        text = "Reset ${settingsStore.name}",
-                        color = MaterialTheme.colorScheme.error
-                    )
+        DragonSettingsGroup(R.string.risky) {
+            ExpandableSection(storeResetSectionState) {
+                allStores.entries.forEach { entry ->
+                    val settingsStore = entry.value
+                    DragonButton(
+                        onClick = { scope.launch { settingsStore.resetAll(ctx) } },
+                        colors = AppObjectsColors.cancelButtonColors(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = "Reset ${settingsStore.name}",
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
-        }
 
-        ExpandableSection(dangerousActionsSectionState) {
-            DragonButton(
-                modifier = Modifier.fillMaxWidth(),
-                colors = AppObjectsColors.cancelButtonColors(),
-                onClick = { LifecycleUtils.closeApp(ctx as ComponentActivity) }
-            ) {
-                Text("Close app (gently)")
+            ExpandableSection(dangerousActionsSectionState) {
+                DragonButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { LifecycleUtils.closeApp(ctx as ComponentActivity) }
+                ) { Text("Close app (gently)") }
+
+                DragonButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { kill(9, 9) }
+                ) { Text("☠\uFE0F Kill Process") }
+
+                DragonButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        ctx.startActivity(
+                            Intent(Intent.ACTION_DELETE).apply {
+                                data = "package:${ctx.packageName}".toUri()
+                            }
+                        )
+                    }
+                ) { Text("☠\uFE0F Uninstall Launcher") }
+
+                DragonButton(
+                    onClick = {
+                        showEditAppOverrides = true
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) { Text(text = "Edit ALL app overrides \uD83D\uDE08") }
+
+                DragonButton(
+                    onClick = {
+                        @Suppress("DIVISION_BY_ZERO")
+                        5 / 0
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) { Text(text = "What is 5 / 0? \uD83E\uDD2F") }
+
+                SettingsSwitchRow(
+                    setting = DebugSettingsStore.disableExtensionSignatureCheck,
+                    title = "Disable extension signature check",
+                    description = "Allow extensions not signed with the official key"
+                )
+
+                SettingsSwitchRow(
+                    setting = PrivateSettingsStore.hasInitialized,
+                    title = stringResource(R.string.has_initialized),
+                    description = "De-initializing will re-run the welcome flow. Will reset points",
+                    needValidationToDisable = true
+                )
             }
-
-            DragonButton(
-                modifier = Modifier.fillMaxWidth(),
-                colors = AppObjectsColors.cancelButtonColors(),
-                onClick = { kill(9, 9) }
-            ) {
-                Text("☠\uFE0F Kill Process")
-            }
-
-            DragonButton(
-                modifier = Modifier.fillMaxWidth(),
-                colors = AppObjectsColors.cancelButtonColors(),
-                onClick = {
-                    ctx.startActivity(
-                        Intent(Intent.ACTION_DELETE).apply {
-                            data = "package:${ctx.packageName}".toUri()
-                        }
-                    )
-                }
-            ) {
-                Text("☠\uFE0F Uninstall Launcher")
-            }
-
-            SettingsSwitchRow(
-                setting = DebugSettingsStore.disableExtensionSignatureCheck,
-                title = "Disable extension signature check",
-                description = "Allow extensions not signed with the official key"
-            )
-
-            SettingsSwitchRow(
-                setting = PrivateSettingsStore.hasInitialized,
-                title = stringResource(R.string.has_initialized),
-                description = "De-initializing will re-run the welcome flow. Will reset points",
-                needValidationToDisable = true
-            )
         }
     }
 

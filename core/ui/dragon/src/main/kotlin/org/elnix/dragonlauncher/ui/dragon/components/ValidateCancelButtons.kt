@@ -23,8 +23,8 @@ import org.elnix.dragonlauncher.ui.dragon.text.AutoResizeableText
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ValidateCancelButtons(
-    validateText: String? = null,
-    cancelText: String? = null,
+    validateText: String = stringResource(R.string.save),
+    cancelText: String = stringResource(R.string.cancel),
     validateEnabled: Boolean = true,
     onCancel: (() -> Unit)? = null,
     onConfirm: () -> Unit
@@ -48,7 +48,7 @@ fun ValidateCancelButtons(
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
             ) {
                 AutoResizeableText(
-                    text = cancelText ?: stringResource(R.string.cancel),
+                    text = cancelText,
                     style = MaterialTheme.typography.labelLarge
                 )
             }
@@ -66,7 +66,8 @@ fun ValidateCancelButtons(
             shapes = UiConstants.dragonShapes(),
         ) {
             AutoResizeableText(
-                text = validateText ?: stringResource(R.string.save),
+                text = validateText,
+                style = MaterialTheme.typography.labelLarge
             )
         }
     }
