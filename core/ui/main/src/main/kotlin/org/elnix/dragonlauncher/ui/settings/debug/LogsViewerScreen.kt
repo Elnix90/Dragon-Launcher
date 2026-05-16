@@ -12,18 +12,19 @@ import androidx.compose.ui.res.stringResource
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
-import org.elnix.dragonlauncher.ui.composition.LocalDragonLogViewModel
+import org.elnix.dragonlauncher.models.DragonLogViewModel
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.helpers.MonospaceScrollableText
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import java.io.File
 
 @Composable
 fun LogsViewerScreen(
+    dragonLogViewModel: DragonLogViewModel = activityViewModel(),
     filename: String,
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
-    val dragonLogViewModel = LocalDragonLogViewModel.current
 
     val file = File(ctx.filesDir, "logs/$filename")
 

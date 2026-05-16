@@ -41,6 +41,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
@@ -51,18 +52,19 @@ import org.elnix.dragonlauncher.common.utils.DateUtils.today
 import org.elnix.dragonlauncher.enumsui.select.ExportImportTheme
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.BackupResult
+import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.settings.SettingsBackupManager
 import org.elnix.dragonlauncher.settings.stores.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.settings.themeStores
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.components.BetaVersionType
 import org.elnix.dragonlauncher.ui.components.BetaVersionWarning
-import org.elnix.dragonlauncher.ui.composition.LocalBackupViewModel
 import org.elnix.dragonlauncher.ui.dialogs.ThemeJsonPopup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
@@ -77,12 +79,11 @@ import org.json.JSONObject
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun ThemesTab(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    backupViewModel: BackupViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
-    val backupViewModel = LocalBackupViewModel.current
     val scope = rememberCoroutineScope()
-
 
     val userThemesStore by UiSettingsStore.userThemes.asState()
     val userThemes: SnapshotStateSet<String> = remember { mutableStateSetOf() }

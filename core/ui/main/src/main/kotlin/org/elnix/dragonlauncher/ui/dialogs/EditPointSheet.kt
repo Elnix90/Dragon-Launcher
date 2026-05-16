@@ -42,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import org.elnix.dragonlauncher.base.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.common.R
@@ -50,13 +51,14 @@ import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.enumsui.select.PointFeaturePanel
 import org.elnix.dragonlauncher.enumsui.select.SelectedUnselectedViewMode
+import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.actionColor
 import org.elnix.dragonlauncher.ui.actions.actionLabel
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.PointPreviewCanvas
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.composition.LocalNests
 import org.elnix.dragonlauncher.ui.defaultHapticFeedback
@@ -79,6 +81,7 @@ import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 fun EditPointSheet(
     point: SwipePointSerializable,
     isDefaultEditing: Boolean = false,
+    appsViewModel: AppsViewModel = activityViewModel(),
     /** When non-null, "Create new nest" is shown in the Live Nest nest picker (same as [AddPointDialog]). */
     onNewNest: (() -> Unit)?,
     onRenameNest: ((id: Int, name: String) -> Unit)?,
@@ -89,7 +92,6 @@ fun EditPointSheet(
     val extraColors = LocalExtraColors.current
     val defaultPoint = LocalDefaultPoint.current
 
-    val appsViewModel = LocalAppsViewModel.current
     val nests = LocalNests.current
 
 

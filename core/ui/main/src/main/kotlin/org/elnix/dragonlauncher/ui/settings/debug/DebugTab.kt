@@ -38,14 +38,16 @@ import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Comp
 import org.elnix.dragonlauncher.common.utils.LifecycleUtils
 import org.elnix.dragonlauncher.common.utils.PermissionsUtils.detectSystemLauncher
 import org.elnix.dragonlauncher.common.utils.VersionsUtils.getVersionCode
+import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.InitializationViewModel
 import org.elnix.dragonlauncher.services.SystemControl
 import org.elnix.dragonlauncher.settings.allStores
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.dialogs.PointIconEditor
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -59,10 +61,11 @@ import org.elnix.dragonlauncher.ui.wellbeing.OverlayReminderService
 @Composable
 fun DebugTab(
     onNavigate: (NavigationRoute) -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    appsViewModel: AppsViewModel = activityViewModel(),
+    initializationViewModel: InitializationViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
-    val appsViewModel = LocalAppsViewModel.current
     val scope = rememberCoroutineScope()
 
     val systemLauncherPackageName by DebugSettingsStore.systemLauncherPackageName.asState()
@@ -204,6 +207,12 @@ fun DebugTab(
                 setting = DebugSettingsStore.privateSpaceDebugInfo,
                 title = stringResource(R.string.private_space_debug_info),
                 description = stringResource(R.string.private_space_debug_info_desc)
+            )
+
+            SettingsSwitchRow(
+                setting = DebugSettingsStore.showDebugViewModel,
+                title = "Show viewModels debug infos",
+                description = "Displays a card that shows the hashCodes of all the view models in colors, if they change color, it is really bad, please report it to me if this is the case"
             )
         }
 
@@ -430,17 +439,15 @@ fun DebugTab(
                     modifier = Modifier.fillMaxWidth()
                 ) { Text(text = "What is 5 / 0? \uD83E\uDD2F") }
 
+                DragonButton(
+                    onClick = { scope.launch { initializationViewModel.initialize() } },
+                    modifier = Modifier.fillMaxWidth()
+                ) { Text(text = "Re-initialize points") }
+
                 SettingsSwitchRow(
                     setting = DebugSettingsStore.disableExtensionSignatureCheck,
                     title = "Disable extension signature check",
                     description = "Allow extensions not signed with the official key"
-                )
-
-                SettingsSwitchRow(
-                    setting = PrivateSettingsStore.hasInitialized,
-                    title = stringResource(R.string.has_initialized),
-                    description = "De-initializing will re-run the welcome flow. Will reset points",
-                    needValidationToDisable = true
                 )
             }
         }

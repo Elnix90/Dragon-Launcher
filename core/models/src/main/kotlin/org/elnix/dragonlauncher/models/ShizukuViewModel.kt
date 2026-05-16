@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
+import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.shizuku.OutputLine
 import org.elnix.dragonlauncher.shizuku.ShellCommandExecutor
 import org.elnix.dragonlauncher.shizuku.ShizukuPermissionHandler
@@ -21,25 +23,20 @@ class ShizukuViewModel @Inject constructor(
     private val shellCommandExecutor = ShellCommandExecutor()
     private val shizukuPermissionHandler = ShizukuPermissionHandler()
 
-
     private val _output = MutableStateFlow<OutputLine?>(null)
     val outputValue = _output.asStateFlow()
+
+    private val _showUnavailable = MutableStateFlow(false)
+    val showUnavailable = _showUnavailable.asStateFlow()
+
 
     fun clearOutput() {
         _output.value = null
     }
 
-//    fun hasShizukuPermission(): Boolean {
-//        return shizukuPermissionHandler.hasPermission()
-//    }
-
     fun shizukuPermissionState(): StateFlow<Boolean> {
         return shizukuPermissionHandler.permissionGranted
     }
-
-//    fun refreshShizukuPermission() {
-//        return shizukuPermissionHandler.refreshPermissionState()
-//    }
 
     fun requestShizukuPermission() {
         return shizukuPermissionHandler.requestPermission()
@@ -54,7 +51,15 @@ class ShizukuViewModel @Inject constructor(
         }
     }
 
-//    fun stopCommand() {
-//        return shellCommandExecutor.stop()
-//    }
+    fun setUnavailable() {
+        _showUnavailable.value = true
+    }
+
+    fun dismissUnavailableDialog() {
+        _showUnavailable.value = false
+    }
+
+    init {
+        logD(TAG) { "created ShizukuVM ${System.identityHashCode(this)}" }
+    }
 }

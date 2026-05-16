@@ -12,14 +12,16 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.BackupResult
+import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.settings.stores.BackupSettingsStore
-import org.elnix.dragonlauncher.ui.composition.LocalBackupViewModel
+import org.elnix.dragonlauncher.ui.activityViewModel
 
 @Composable
-fun rememberAutoBackupLauncher(): ManagedActivityResultLauncher<String, Uri?> {
+fun rememberAutoBackupLauncher(
+    backupViewModel: BackupViewModel = activityViewModel(),
+): ManagedActivityResultLauncher<String, Uri?> {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
-    val backupViewModel = LocalBackupViewModel.current
 
     return rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/json")

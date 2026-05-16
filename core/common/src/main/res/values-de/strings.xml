@@ -633,7 +633,6 @@
     <string name="set_status_bar_template">Statusleistenvorlage festlegen (meine) Warnung: Wenn Sie darauf klicken, wird Ihr aktuelles Setup gelöscht!</string>
     <string name="notch_mode">Modus: Notch (Setzt einen Abstandshalter auf die Notch)</string>
     <string name="google_lockdown_warning">„Google hat angekündigt, dass ab 2026/2027 alle Apps auf zertifizierten Android-Geräten vom Entwickler verlangt werden, persönliche Identitätsdaten direkt an Google zu übermitteln. Da die Entwickler dieser App dieser Anforderung nicht zustimmen, wird diese App nach diesem Zeitpunkt nicht mehr auf zertifizierten Android-Geräten funktionieren.“</string>
-    <string name="solution">Lösung</string>
     <string name="dismiss">Zurückweisen</string>
     <string name="nest_radius">Nestradius</string>
     <string name="edit_nest">Verschachtelung bearbeiten</string>

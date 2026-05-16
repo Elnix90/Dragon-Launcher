@@ -40,14 +40,12 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.PRIVATE_SPACE_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.STARTUP_TAG
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.WIDGET_TAG
 import org.elnix.dragonlauncher.common.messyfolder.SamsungWorkspaceIntegration
 import org.elnix.dragonlauncher.common.messyfolder.WidgetHostProvider
 import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
 import org.elnix.dragonlauncher.common.utils.PrivateSpaceUtils
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
@@ -55,11 +53,9 @@ import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel
 import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.models.BackupViewModel
-import org.elnix.dragonlauncher.models.DragonLogViewModel
-import org.elnix.dragonlauncher.models.FloatingAppsViewModel
+import org.elnix.dragonlauncher.models.InitializationViewModel
 import org.elnix.dragonlauncher.models.PrivateSpaceViewModel
-import org.elnix.dragonlauncher.models.ShizukuViewModel
+import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.receiver.BootReceiver
 import org.elnix.dragonlauncher.receiver.FontReceiver
 import org.elnix.dragonlauncher.receiver.PackageReceiver
@@ -67,33 +63,19 @@ import org.elnix.dragonlauncher.settings.SettingsBackupManager
 import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
-import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.theme.DragonLauncherTheme
 import org.elnix.dragonlauncher.ui.MainAppUi
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.asStateNull
-import org.elnix.dragonlauncher.ui.composition.LocalAppLifecycleViewModel
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
-import org.elnix.dragonlauncher.ui.composition.LocalBackupViewModel
-import org.elnix.dragonlauncher.ui.composition.LocalDragonLogViewModel
-import org.elnix.dragonlauncher.ui.composition.LocalFloatingAppsViewModel
-import org.elnix.dragonlauncher.ui.composition.LocalPrivateSpaceViewModel
-import org.elnix.dragonlauncher.ui.composition.LocalShizukuViewModel
+import org.elnix.dragonlauncher.ui.composition.LocalWidgetsViewModel
 import org.elnix.dragonlauncher.ui.dialogs.CrashScreen
 import org.elnix.dragonlauncher.ui.widgets.LauncherWidgetHolder
-import java.util.UUID
 
 @AndroidEntryPoint
 class MainActivity : FragmentActivity(), WidgetHostProvider {
 
-    private val appLifecycleViewModel: AppLifecycleViewModel by viewModels()
-    private val privateSpaceViewModel: PrivateSpaceViewModel by viewModels()
-    private val backupViewModel: BackupViewModel by viewModels()
-    private val floatingAppsViewModel: FloatingAppsViewModel by viewModels()
-    private val dragonLogViewModel: DragonLogViewModel by viewModels()
-    private val shizukuViewModel: ShizukuViewModel by viewModels()
-    private val appsViewModel: AppsViewModel by viewModels()
+    private val widgetsViewModel: WidgetsViewModel by viewModels()
 
     companion object {
         private var GLOBAL_APPWIDGET_HOST: AppWidgetHost? = null
@@ -226,7 +208,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                 logE(WIDGET_TAG, e) { "DRAGON_FLOW: Proxy launch failed" }
                 showToast("Failed to launch configuration")
                 // Add it anyway if config fails to launch
-                floatingAppsViewModel.addFloatingApp(
+                widgetsViewModel.addFloatingApp(
                     action = SwipeActionSerializable.OpenWidget(
                         widgetId,
                         info.provider.packageName,
@@ -239,7 +221,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
             }
         } else {
             logD(WIDGET_TAG) { "DRAGON_FLOW: No configuration needed, adding widget" }
-            floatingAppsViewModel.addFloatingApp(
+            widgetsViewModel.addFloatingApp(
                 action = SwipeActionSerializable.OpenWidget(
                     widgetId,
                     info.provider.packageName,
@@ -263,7 +245,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
             if (resultCode == RESULT_OK && widgetId != -1) {
                 val info = widgetHolder.getAppWidgetInfo(widgetId)
                 if (info != null) {
-                    floatingAppsViewModel.addFloatingApp(
+                    widgetsViewModel.addFloatingApp(
                         action = SwipeActionSerializable.OpenWidget(
                             widgetId,
                             info.provider.packageName,
@@ -313,24 +295,40 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
         )
 
         super.onCreate(savedInstanceState)
-        logI(STARTUP_TAG) { "MainActivity.onCreate started" }
+        logI(TAG) { "MainActivity.onCreate started, hash=${System.identityHashCode(this)}" }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             try {
                 registerReceiver(packageReceiver, filter, RECEIVER_EXPORTED)
+                logI(TAG) { "PackageReceiver registered!" }
             } catch (e: Exception) {
                 logE(TAG, e) { "Failed to register packageReceiver" }
             }
 
             // Register fonts update receiver (extensions send org.elnix.dragonlauncher.ACTION_FONTS_RESULT)
             try {
-                registerReceiver(fontsReceiver, IntentFilter("org.elnix.dragonlauncher.ACTION_FONTS_RESULT"), RECEIVER_EXPORTED)
+                registerReceiver(
+                    fontsReceiver,
+                    IntentFilter("org.elnix.dragonlauncher.ACTION_FONTS_RESULT"),
+                    RECEIVER_EXPORTED
+                )
+                logI(TAG) { "FontsReceiver registered!" }
             } catch (e: Exception) {
                 logE(TAG, e) { "Failed to register fontsReceiver" }
             }
 
             try {
-                registerReceiver(bootReceiver, IntentFilter(Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_MY_PACKAGE_REPLACED), RECEIVER_EXPORTED)
+                val filter = IntentFilter().apply {
+                    addAction(Intent.ACTION_BOOT_COMPLETED)
+                    addAction(Intent.ACTION_MY_PACKAGE_REPLACED)
+                }
+
+                registerReceiver(
+                    bootReceiver,
+                    filter,
+                    RECEIVER_EXPORTED
+                )
+                logI(TAG) { "BootReceiver registered!" }
             } catch (e: Exception) {
                 logE(TAG, e) { "Failed to register bootReceiver" }
             }
@@ -358,6 +356,11 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
 
             if (lastStackTrace.isNullOrBlank()) {
 
+                val appsViewModel: AppsViewModel = activityViewModel()
+                val privateSpaceViewModel: PrivateSpaceViewModel = activityViewModel()
+                val appLifecycleViewModel: AppLifecycleViewModel = activityViewModel()
+                val initializationViewModel: InitializationViewModel = activityViewModel()
+
                 DragonLauncherTheme {
 
                     // Force launch of full viewmodel after first frame for performance
@@ -365,11 +368,11 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                     LaunchedEffect(Unit) {
                         lifecycleScope.launch(Dispatchers.Default) {
                             yield() // Wait for first frame
-                            logI(STARTUP_TAG) {
+                            logI(TAG) {
                                 "First frame rendered in ${System.currentTimeMillis() - startTime}ms. Starting AppsViewModel.loadAll()."
                             }
                             appsViewModel.loadAll()
-                            logI(STARTUP_TAG) {
+                            logI(TAG) {
                                 "AppsViewModel.loadAll() finished at ${System.currentTimeMillis() - startTime}ms total."
                             }
 
@@ -425,9 +428,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
 
                     val keepScreenOn by BehaviorSettingsStore.keepScreenOn.asState()
                     val fullscreen by UiSettingsStore.fullScreen.asState()
-                    val hasInitialized by PrivateSettingsStore.hasInitialized.asStateNull()
                     val samsungPreferSecureFolder by PrivateSettingsStore.samsungPreferSecureFolder.asState()
-
 
                     val offScreenTimeout by BehaviorSettingsStore.offScreenTimeout.asState()
                     LaunchedEffect(offScreenTimeout) {
@@ -485,50 +486,15 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                         }
                     }
 
-
-                    LaunchedEffect(hasInitialized) {
-                        if (hasInitialized == false) {
-
-                            /* ───────────── Create the 3 default points (has to be changed ───────────── */
-                            SwipeSettingsStore.savePoints(
-                                ctx,
-                                listOf(
-                                    SwipePointSerializable(
-                                        circleNumber = 0,
-                                        angleDeg = 0.toDouble(),
-                                        action = SwipeActionSerializable.OpenAppDrawer(),
-                                        id = UUID.randomUUID().toString()
-                                    ),
-                                    SwipePointSerializable(
-                                        circleNumber = 1,
-                                        angleDeg = 200.toDouble(),
-                                        action = SwipeActionSerializable.NotificationShade,
-                                        id = UUID.randomUUID().toString()
-                                    ),
-                                    SwipePointSerializable(
-                                        circleNumber = 1,
-                                        angleDeg = 160.toDouble(),
-                                        action = SwipeActionSerializable.ControlPanel,
-                                        id = UUID.randomUUID().toString()
-                                    )
-                                )
-                            )
-
-                            /* ───────────── Finally, initialize ───────────── */
-                            PrivateSettingsStore.hasInitialized.set(ctx, true)
+                    LaunchedEffect(pendingHomeAction) {
+                        if (pendingHomeAction) {
+                            logD(TAG) { "HOME intent transferred to viewModel" }
+                            appLifecycleViewModel.onHomeAction()
+                            pendingHomeAction = false
                         }
                     }
 
-
-                    CompositionLocalProvider(
-                        LocalBackupViewModel provides backupViewModel,
-                        LocalAppsViewModel provides appsViewModel,
-                        LocalAppLifecycleViewModel provides appLifecycleViewModel,
-                        LocalPrivateSpaceViewModel provides privateSpaceViewModel,
-                        LocalFloatingAppsViewModel provides floatingAppsViewModel,
-                        LocalDragonLogViewModel provides dragonLogViewModel,
-                        LocalShizukuViewModel provides shizukuViewModel
-                    ) {
+                    CompositionLocalProvider(LocalWidgetsViewModel provides widgetsViewModel) {
                         MainAppUi(
                             onBindCustomWidget = { widgetId, provider, nestId ->
                                 pendingAddNestId = nestId
@@ -536,10 +502,10 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                             },
                             onResetWidgetSize = { id, widgetId ->
                                 val info = appWidgetManager.getAppWidgetInfo(widgetId)
-                                floatingAppsViewModel.resetFloatingAppSize(id, info)
+                                widgetsViewModel.resetFloatingAppSize(id, info)
                             },
                             onRemoveFloatingApp = { floatingAppObject ->
-                                floatingAppsViewModel.removeFloatingApp(floatingAppObject.id) {
+                                widgetsViewModel.removeFloatingApp(floatingAppObject.id) {
                                     (ctx as MainActivity).deleteWidget(it)
                                 }
                             }
@@ -563,42 +529,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
     }
 
 
-    // For the home action, to prevent it to work TOO MUCH (I tested, and it was launching
-    // the action everytime I clicked on the home button/gesture lol
-    var pauseTime: Long = 0L
-    var isNewHomeIntent: Boolean = false
-
-
-//    override fun onPause() {
-//        super.onPause()
-//
-//        /* ────────────────  Home detection actions ──────────────── */
-//        pauseTime = SystemClock.uptimeMillis()
-//
-//
-//        /* ──────────────── Returns back to home if outside for too long ─────────────────── */
-//        appLifecycleViewModel.onPause()
-//    }
-//
-//    override fun onResume() {
-//        super.onResume()
-//
-//
-//        /* ────────────────  Home detection actions ──────────────── */
-//        val now = SystemClock.uptimeMillis()
-//        val delta = now - pauseTime
-//
-//        if (
-//            isNewHomeIntent &&
-//            delta in 1..HOME_REENTER_WINDOW_MS
-//        ) {
-//            // HOME pressed while launcher already visible
-//            isNewHomeIntent = false
-//            appLifecycleViewModel.onHomeAction()
-//        }
-//
-//        isNewHomeIntent = false
-//    }
+    private var pendingHomeAction by mutableStateOf(false)
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -610,7 +541,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
             intent.action == Intent.ACTION_MAIN &&
             intent.hasCategory(Intent.CATEGORY_HOME)
         ) {
-            appLifecycleViewModel.onHomeAction()
+            pendingHomeAction = true
             logD(TAG) { "HOME intent received (pending)" }
         }
     }
@@ -620,6 +551,10 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
         appWidgetHost.startListening()
     }
 
+    override fun onPause() {
+        super.onPause()
+        pendingHomeAction = false
+    }
 
     override fun onStop() {
         super.onStop()
@@ -637,9 +572,6 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
         } catch (_: Exception) {
         }
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        lifecycleScope.launch {
-            SettingsBackupManager.triggerBackup(this@MainActivity)
-        }
 
         // Widgets
         GLOBAL_APPWIDGET_HOST = null

@@ -6,7 +6,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.AdvancedSettings.routeResId
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Settings.routeResId
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.messyfolder.PackageManagerCompat
 import org.elnix.dragonlauncher.common.messyfolder.getFilePathFromUri

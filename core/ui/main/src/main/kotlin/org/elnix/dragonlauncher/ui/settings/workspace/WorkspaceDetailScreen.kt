@@ -33,9 +33,10 @@ import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.AppModel
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.enumsui.select.WorkspaceViewMode
+import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.dialogs.AppAliasesDialog
 import org.elnix.dragonlauncher.ui.dialogs.AppIconEditor
 import org.elnix.dragonlauncher.ui.dialogs.AppLongPressRow
@@ -47,13 +48,12 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
 fun WorkspaceDetailScreen(
+    appsViewModel: AppsViewModel = activityViewModel(),
     workspaceId: String,
     onBack: () -> Unit,
     onLaunchAction: (SwipeActionSerializable) -> Unit
 ) {
     val ctx = LocalContext.current
-    val appsViewModel = LocalAppsViewModel.current
-
     val scope = rememberCoroutineScope()
 
     val workspaceState by appsViewModel.state.collectAsState()

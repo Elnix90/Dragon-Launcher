@@ -7,9 +7,7 @@ import android.provider.Settings
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -47,16 +45,18 @@ import org.elnix.dragonlauncher.common.serializables.AppModel
 import org.elnix.dragonlauncher.common.utils.PermissionsUtils.hasUsageStatsPermission
 import org.elnix.dragonlauncher.enumsui.other.ReminderMode
 import org.elnix.dragonlauncher.enumsui.toggle.WellbeingPausedAppActions
+import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.settings.stores.WellbeingSettingsStore
 import org.elnix.dragonlauncher.settings.stores.WellbeingSettingsStore.pausedApps
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.appIcon
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
+import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
@@ -67,10 +67,11 @@ import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
-fun WellbeingTab(onBack: () -> Unit) {
+fun WellbeingTab(
+    onBack: () -> Unit,
+    appsViewModel: AppsViewModel = activityViewModel()
+) {
     val ctx = LocalContext.current
-    val appsViewModel = LocalAppsViewModel.current
-
     val scope = rememberCoroutineScope()
 
     val socialMediaPauseEnabled by WellbeingSettingsStore.socialMediaPauseEnabled.asState()
@@ -213,7 +214,6 @@ fun WellbeingTab(onBack: () -> Unit) {
             }
         }
 
-
         SwitchRow(
             state = returnToLauncherEnabled,
             title = stringResource(R.string.return_to_launcher_title),
@@ -226,8 +226,8 @@ fun WellbeingTab(onBack: () -> Unit) {
         }
 
         DragonSettingsGroup(
-            R.string.paused_apps,
-            contentPadding = PaddingValues(top = 5.dp)
+            title = R.string.paused_apps,
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
         ) {
 
             MultiSelectConnectedButtonRow(
@@ -279,15 +279,7 @@ fun WellbeingTab(onBack: () -> Unit) {
                     }
                 }
             } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(DragonShape)
-                        .background(MaterialTheme.colorScheme.surface)
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, DragonShape)
-                        .padding(vertical = 32.dp),
-                    contentAlignment = Alignment.Center
-                ) {
+                DragonColumnGroup {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp)

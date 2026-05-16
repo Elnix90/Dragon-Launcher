@@ -38,7 +38,7 @@ import org.elnix.dragonlauncher.base.ktx.toDp
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.circles.rememberNestNavigation
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.AdvancedSettings.routeResId
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Settings.routeResId
 import org.elnix.dragonlauncher.common.serializables.FloatingAppObject
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
@@ -53,7 +53,7 @@ import org.elnix.dragonlauncher.ui.base.asStateNull
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
-import org.elnix.dragonlauncher.ui.composition.LocalFloatingAppsViewModel
+import org.elnix.dragonlauncher.ui.composition.LocalWidgetsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.composition.LocalNests
@@ -76,7 +76,7 @@ fun MainScreen(
     val nests = LocalNests.current
     val holdCustomObject = LocalHoldCustomObject.current
     val mainScreenLayers = LocalMainScreenLayers.current
-    val floatingAppsViewModel = LocalFloatingAppsViewModel.current
+    val floatingAppsViewModel = LocalWidgetsViewModel.current
 
     var lastClickTime by remember { mutableLongStateOf(0L) }
 

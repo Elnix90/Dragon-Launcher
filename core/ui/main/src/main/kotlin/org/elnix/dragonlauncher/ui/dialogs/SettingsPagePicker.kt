@@ -19,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.AdvancedSettings.routeResId
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Settings.routeResId
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Companion.settingsRoutes
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog

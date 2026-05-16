@@ -630,7 +630,6 @@
     <string name="set_status_bar_template">स्टेटस बार टेम्प्लेट (मेरा) चेतावनी सेट करें, इस पर क्लिक करने से आपका वर्तमान सेटअप मिट जाता है!</string>
     <string name="notch_mode">मोड: नॉच (नॉच पर स्पेसर लगाता है)</string>
     <string name="google_lockdown_warning">\"Google ने घोषणा की है कि, 2026/2027 से शुरू होकर, प्रमाणित एंड्रॉइड डिवाइसों पर सभी ऐप्स के लिए डेवलपर को व्यक्तिगत पहचान विवरण सीधे Google को सबमिट करना होगा। चूंकि इस ऐप के डेवलपर्स इस आवश्यकता से सहमत नहीं हैं, इसलिए यह ऐप उस समय के बाद प्रमाणित एंड्रॉइड डिवाइसों पर काम नहीं करेगा।\"</string>
-    <string name="solution">समाधान</string>
     <string name="dismiss">नकार देना</string>
     <string name="nest_radius">घोंसला त्रिज्या</string>
     <string name="edit_nest">घोंसला संपादित करें</string>

@@ -705,7 +705,6 @@
     <string name="set_status_bar_template">Set status bar template (mine) warning clicking this erases your current setup!</string>
     <string name="notch_mode">Mode: Notch (Applies a spacer on the notch)</string>
     <string name="google_lockdown_warning">"Google has announced that, starting in 2026/2027, all apps on certified Android devices will require the developer to submit personal identity details directly to Google. Since the developers of this app do not agree to this requirement, this app will no longer work on certified Android devices after that time. "</string>
-    <string name="solution">Solution</string>
     <string name="dismiss">Dismiss</string>
     <string name="nest_radius">Nest Radius</string>
     <string name="edit_nest">Edit nest</string>
@@ -959,4 +958,10 @@
     <string name="accessibility_and_system">Accessibility &amp; system</string>
     <string name="pin_code_warning_titls">Warning: Potential data loss</string>
     <string name="pin_code_warning_desc">To reset in case you forget it, you have no choice but to reset all app settings via android app info menu</string>
+    <string name="do_something">Do something</string>
+    <string name="warning_title">Important Warning</string>
+    <string name="warning_subtitle">Your phone is about to stop being yours.</string>
+    <string name="warning_days_until_lockdown">DAYS UNTIL LOCKDOWN</string>
+    <string name="warning_description">Starting September 2026, a silent update will block every Android app whose developer hasn\'t registered with Google, signed their contract, paid up, and handed over government ID.</string>
+    <string name="warning_worldwide">Every app and every device, worldwide, with no opt-out.</string>
 </resources>

@@ -8,12 +8,14 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ICONS_TAG
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.STATUS_BAR_TAG
 import org.elnix.dragonlauncher.common.serializables.StatusBarJson
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logV
+import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.StatusBarJsonSettingsStore
@@ -24,7 +26,6 @@ import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalAppItemSettings
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.base.compositionslocals.rememberAppItemSettings
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.composition.LocalDrawerIconsCache
 import org.elnix.dragonlauncher.ui.composition.LocalEndLineObject
@@ -43,8 +44,10 @@ import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberAngleLineO
 import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberHoldCustomObject
 
 @Composable
-fun ProvideGlobalCompositionLocals(content: @Composable () -> Unit) {
-    val appsViewModel = LocalAppsViewModel.current
+fun ProvideGlobalCompositionLocals(
+    appsViewModel: AppsViewModel = activityViewModel(),
+    content: @Composable () -> Unit
+) {
     val ctx = LocalContext.current
 
     val disableHapticFeedbackGlobally by BehaviorSettingsStore.disableHapticFeedbackGlobally.asState()
@@ -57,7 +60,7 @@ fun ProvideGlobalCompositionLocals(content: @Composable () -> Unit) {
     val points by SwipeSettingsStore.getPointsFlow(ctx).collectAsState(emptyList())
     val pointsIconCache = appsViewModel.pointsIconsCache
     LaunchedEffect(points.size) {
-        logD(ICONS_TAG) { "Updating icons cache size to ${points.size}"}
+        logD(ICONS_TAG) { "Updating icons cache size to ${points.size}" }
         pointsIconCache.updateMaxCacheSize(points.size)
     }
 

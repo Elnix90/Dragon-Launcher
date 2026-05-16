@@ -7,14 +7,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.ui.composition.LocalShizukuViewModel
+import org.elnix.dragonlauncher.models.ShizukuViewModel
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
-fun ShizukuOutputDialog() {
-
-    val shizukuViewModel = LocalShizukuViewModel.current
+fun ShizukuOutputDialog(
+    shizukuViewModel: ShizukuViewModel = activityViewModel()
+) {
     val output by shizukuViewModel.outputValue.collectAsState()
 
     output?.let { output ->

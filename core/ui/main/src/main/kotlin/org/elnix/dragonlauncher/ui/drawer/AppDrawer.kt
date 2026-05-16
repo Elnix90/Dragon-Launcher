@@ -69,6 +69,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
@@ -97,16 +98,17 @@ import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar.RecentlyUsed
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar.SearchBar
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar.Spacer
 import org.elnix.dragonlauncher.enumsui.toggle.isUsed
+import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.PrivateSpaceViewModel
 import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
-import org.elnix.dragonlauncher.ui.composition.LocalPrivateSpaceViewModel
 import org.elnix.dragonlauncher.ui.dialogs.AppAliasesDialog
 import org.elnix.dragonlauncher.ui.dialogs.AppIconEditor
 import org.elnix.dragonlauncher.ui.dialogs.AppLongPressRow
@@ -123,6 +125,8 @@ import kotlin.math.pow
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppDrawerScreen(
+    appsViewModel: AppsViewModel = activityViewModel(),
+    privateSpaceViewModel: PrivateSpaceViewModel = activityViewModel(),
     autoShowKeyboard: Boolean,
     drawerToolbarsOrder: List<DrawerToolbar>,
     leftAction: DrawerActions,
@@ -136,9 +140,6 @@ fun AppDrawerScreen(
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
-
-    val appsViewModel = LocalAppsViewModel.current
-    val privateSpaceViewModel = LocalPrivateSpaceViewModel.current
 
     val privateSpaceState by appsViewModel.privateSpaceState.collectAsState()
 

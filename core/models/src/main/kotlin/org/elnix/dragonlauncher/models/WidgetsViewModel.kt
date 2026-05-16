@@ -14,9 +14,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
 import org.elnix.dragonlauncher.common.serializables.FloatingAppObject
 import org.elnix.dragonlauncher.common.serializables.FloatingAppsJson
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
+import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.settings.stores.LegacyFloatingAppsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.settings.stores.WidgetsSettingsStore
@@ -24,7 +26,7 @@ import javax.inject.Inject
 import kotlin.random.Random
 
 @HiltViewModel
-class FloatingAppsViewModel @Inject constructor(
+class WidgetsViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
@@ -54,7 +56,9 @@ class FloatingAppsViewModel @Inject constructor(
         viewModelScope.launch {
             _cellSizeDp.value = UiSettingsStore.cellSizeDp.get(ctx)
         }
-    }
+        logD(TAG) { "created FloatingAppsVM ${System.identityHashCode(this)}"
+        } }
+
 
     /* ───────────────────────────── Public API ───────────────────────────── */
 

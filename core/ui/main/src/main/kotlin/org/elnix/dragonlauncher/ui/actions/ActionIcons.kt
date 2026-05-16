@@ -27,15 +27,18 @@ import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
 import org.elnix.dragonlauncher.common.utils.ImageUtils.createUntintedBitmap
 import org.elnix.dragonlauncher.common.utils.ImageUtils.loadDrawableResAsBitmap
 import org.elnix.dragonlauncher.logging.logW
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
+import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalDrawerIconsCache
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 
 
 @Composable
-fun appIcon(app: AppModel): Painter {
+fun appIcon(
+    app: AppModel,
+    appsViewModel: AppsViewModel = activityViewModel()
+): Painter {
     val icons = LocalDrawerIconsCache.current
-    val appsViewModel = LocalAppsViewModel.current
     val profileKey = app.iconCacheKey
 
     val iconsTrigger by icons.iconsTrigger.collectAsState()

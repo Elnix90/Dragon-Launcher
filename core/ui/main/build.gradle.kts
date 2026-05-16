@@ -4,8 +4,6 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
-//    alias(libs.plugins.ksp)
-//    alias(libs.plugins.hilt.android)
 }
 
 kotlin {
@@ -69,9 +67,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.kotlinx.datetime)
     implementation(libs.timber)
-
-//    ksp(libs.hilt.compiler)
 
     api(libs.androidx.activity.compose)
     api(libs.androidx.activity)

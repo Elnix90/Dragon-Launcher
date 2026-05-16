@@ -53,18 +53,18 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.AppModel
+import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.widgets.LauncherWidgetHolder
 
 @Composable
 fun WidgetPickerDialog(
+    appsViewModel: AppsViewModel = activityViewModel(),
     onBindCustomWidget: (Int, ComponentName) -> Unit,
     onDismiss: () -> Unit
 ) {
     val ctx = LocalContext.current
-    val appsViewModel = LocalAppsViewModel.current
-
     val apps by appsViewModel.allApps.collectAsState()
 
     val appWidgetManager = remember { AppWidgetManager.getInstance(ctx) }

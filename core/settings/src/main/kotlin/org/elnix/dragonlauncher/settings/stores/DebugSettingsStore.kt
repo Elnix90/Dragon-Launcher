@@ -114,6 +114,12 @@ object DebugSettingsStore : MapSettingsStore() {
         default = false
     )
 
+    val showDebugViewModel = Settings.boolean(
+        key = "showDebugViewModel",
+        dataStoreName = dataStoreName,
+        default = false
+    )
+
     override val ALL: List<BaseSettingObject<*,*>>
         get() = listOf(
             this.debugEnabled,
@@ -132,6 +138,7 @@ object DebugSettingsStore : MapSettingsStore() {
             this.filesLogLevel,
             this.showFps,
             this.filterTag,
-            this.showKillLauncherActionInActionPicker
+            this.showKillLauncherActionInActionPicker,
+            this.showDebugViewModel
         )
     }

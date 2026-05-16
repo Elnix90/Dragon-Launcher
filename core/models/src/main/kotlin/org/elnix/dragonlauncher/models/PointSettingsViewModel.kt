@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
+import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.settings.stores.SwipeMapSettingsStore
 import javax.inject.Inject
 
@@ -30,6 +32,7 @@ class PointSettingsViewModel @Inject constructor(
     suspend fun loadShowSubNestSlider() {
         _showSubNestSlider.value = SwipeMapSettingsStore.showSubNestsSlider.get(ctx)
     }
+
     fun toggleShowSubNestSlider() {
         val newValue = _showSubNestSlider.updateAndGet { !it }
         viewModelScope.launch {
@@ -38,13 +41,12 @@ class PointSettingsViewModel @Inject constructor(
     }
 
 
-
-
     private val _showAdvancedPointTools = MutableStateFlow(false)
     val showAdvancedPointTools = _showAdvancedPointTools.asStateFlow()
     suspend fun loadAdvancedPointsTools() {
         _showAdvancedPointTools.value = SwipeMapSettingsStore.showAdvancedPointTools.get(ctx)
     }
+
     fun toggleAdvancedPointsTools() {
         val newValue = _showAdvancedPointTools.updateAndGet { !it }
         viewModelScope.launch {
@@ -58,6 +60,7 @@ class PointSettingsViewModel @Inject constructor(
     suspend fun loadIsInDragAroundMode() {
         _isInDragAroundMode.value = SwipeMapSettingsStore.isInDragAroundMode.get(ctx)
     }
+
     fun toggleIsInDragAroundMode(): Boolean {
         val newValue = _isInDragAroundMode.updateAndGet { !it }
         viewModelScope.launch {
@@ -72,5 +75,7 @@ class PointSettingsViewModel @Inject constructor(
             loadShowSubNestSlider()
             loadIsInDragAroundMode()
         }
+
+        logD(TAG) { "created PointsSettingdVM ${System.identityHashCode(this)}" }
     }
 }

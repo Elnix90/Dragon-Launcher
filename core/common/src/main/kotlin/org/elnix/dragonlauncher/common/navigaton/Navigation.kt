@@ -32,7 +32,7 @@ sealed class NavigationRoute : NavKey {
     data object PointsSettings : NavigationRoute()
 
     @Serializable
-    data object AdvancedSettings : NavigationRoute()
+    data object Settings : NavigationRoute()
 
 
     /*  ─────────────  Appearance Settings  ─────────────  */
@@ -97,9 +97,6 @@ sealed class NavigationRoute : NavKey {
     data object Wellbeing : NavigationRoute()
 
     @Serializable
-    data object Language : NavigationRoute()
-
-    @Serializable
     data object Changelogs : NavigationRoute()
 
     @Serializable
@@ -140,7 +137,7 @@ sealed class NavigationRoute : NavKey {
         val settingsRoutes: List<NavigationRoute> by lazy {
             listOf(
                 PointsSettings,
-                AdvancedSettings,
+                Settings,
                 Appearance,
                 AppDisplay,
                 Colors,
@@ -159,7 +156,6 @@ sealed class NavigationRoute : NavKey {
                 Permissions,
                 Backup,
                 Wellbeing,
-                Language,
                 Changelogs,
                 Extensions,
                 Debug,
@@ -181,7 +177,7 @@ sealed class NavigationRoute : NavKey {
             is Welcome -> R.string.welcome_screen
 
             is PointsSettings -> R.string.points_settings
-            is AdvancedSettings -> R.string.settings
+            is Settings -> R.string.settings
             is Appearance -> R.string.appearance
             is Colors -> R.string.color_selector
             is Wallpaper -> R.string.wallpaper
@@ -201,7 +197,6 @@ sealed class NavigationRoute : NavKey {
             is Permissions -> R.string.permissions
             is Backup -> R.string.backup_restore
             is Wellbeing -> R.string.wellbeing
-            is Language -> R.string.language
             is Changelogs -> R.string.changelogs
             is Extensions -> R.string.extensions
 

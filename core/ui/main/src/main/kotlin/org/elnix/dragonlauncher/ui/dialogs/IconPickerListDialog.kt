@@ -42,21 +42,21 @@ import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ICONS_TAG
 import org.elnix.dragonlauncher.common.serializables.IconPackInfo
 import org.elnix.dragonlauncher.common.utils.ImageUtils.loadDrawableAsBitmap
 import org.elnix.dragonlauncher.logging.logW
+import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.helpers.AppDrawerSearch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun IconPickerListDialog(
+    appsViewModel: AppsViewModel = activityViewModel(),
     pack: IconPackInfo,
     onDismiss: () -> Unit,
     onIconSelected: (iconName: String) -> Unit
 ) {
-    val appsViewModel = LocalAppsViewModel.current
-
     var searchQuery by remember { mutableStateOf("") }
 
     val drawableNames by appsViewModel.packIcons.collectAsState()
@@ -145,14 +145,12 @@ fun IconPickerListDialog(
 
 @Composable
 private fun IconCell(
+    appsViewModel: AppsViewModel = activityViewModel(),
     pack: IconPackInfo,
     drawableName: String,
     packTint: Int?,
     onClick: () -> Unit
 ) {
-
-    val appsViewModel = LocalAppsViewModel.current
-
     val bitmap by produceState<ImageBitmap?>(null, drawableName) {
         value = withContext(Dispatchers.IO) {
             appsViewModel.loadIconFromPack(pack.packageName, drawableName, "")

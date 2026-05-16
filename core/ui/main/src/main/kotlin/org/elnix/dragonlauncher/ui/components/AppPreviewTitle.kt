@@ -29,18 +29,20 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
+import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
 import org.elnix.dragonlauncher.common.serializables.applyColorAction
-import org.elnix.dragonlauncher.common.messyfolder.resolveShape
+import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.ui.actions.actionColor
 import org.elnix.dragonlauncher.ui.actions.actionLabel
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.composition.LocalPointIconsCache
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
 fun AppPreviewTitle(
+    appsViewModel: AppsViewModel = activityViewModel(),
     point: SwipePointSerializable?,
     topPadding: Dp = 60.dp,
     labelSize: Int,
@@ -50,7 +52,6 @@ fun AppPreviewTitle(
 ) {
     if (point == null) return
 
-    val appsViewModel = LocalAppsViewModel.current
     val extraColors = LocalExtraColors.current
     val icons = LocalPointIconsCache.current
     val iconShape = LocalIconShape.current

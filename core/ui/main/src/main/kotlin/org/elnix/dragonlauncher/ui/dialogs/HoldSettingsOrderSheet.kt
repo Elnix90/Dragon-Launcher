@@ -37,7 +37,7 @@ import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.HOLD_TAG
 import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.AdvancedSettings.routeResId
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Settings.routeResId
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Companion.settingsRoutes
 import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons
 import org.elnix.dragonlauncher.logging.logD

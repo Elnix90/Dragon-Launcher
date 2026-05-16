@@ -196,7 +196,6 @@ object Constants {
         val PINNED_SHORTCUTS = LogTag("PinnedShortcuts")
         val SECURITY_HELPER = LogTag("SecurityHelper")
         val LOGS_TAG = LogTag("LogsTab")
-        val STARTUP_TAG = LogTag("StartupPerf")
         val OVERLAY_REMINDER_TAG = LogTag("OverlayReminder")
         val FONT_RECEIVER_TAG = LogTag("FontsReceiver")
         val FONT_PROVIDER = LogTag("FontsProvider")
@@ -209,6 +208,7 @@ object Constants {
         val NAVIGATION_TAG = LogTag("NavigationDebug")
         val THEMES_TAG = LogTag("ThemeDebug")
         val CONTEXT_TAG = LogTag("ContextDebug")
+        val INIT_TAG = LogTag("InitDebug")
 //        val SPECIAL_TAG = LogTag("SpecialDebug")
     }
 
@@ -236,7 +236,6 @@ object Constants {
         const val HOVER_POINT_DURATION = 500L
         const val HOVER_GRADIENT_RADIUS = 75f
         const val SNAP_STEP_DEG = 15.0
-        const val HOME_REENTER_WINDOW_MS = 80L
 
         const val STATUS_BAR_TEMPLATE = "[\n" +
                 "    {\n" +

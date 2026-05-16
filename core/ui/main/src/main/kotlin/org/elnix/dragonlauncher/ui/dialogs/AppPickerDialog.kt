@@ -55,11 +55,12 @@ import org.elnix.dragonlauncher.common.serializables.AppModel
 import org.elnix.dragonlauncher.common.serializables.WorkspaceType
 import org.elnix.dragonlauncher.common.utils.PrivateSpaceUtils
 import org.elnix.dragonlauncher.logging.logW
+import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.PrivateSpaceViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
-import org.elnix.dragonlauncher.ui.composition.LocalPrivateSpaceViewModel
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
@@ -69,14 +70,14 @@ import org.elnix.dragonlauncher.ui.helpers.AppGrid
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppPickerDialog(
+    appsViewModel: AppsViewModel = activityViewModel(),
+    privateSpaceViewModel: PrivateSpaceViewModel = activityViewModel(),
     multiSelectEnabled: Boolean = false,
     onDismiss: () -> Unit,
     onAppSelected: (AppModel) -> Unit,
     onMultipleAppsSelected: ((List<AppModel>, Boolean) -> Unit)? = null
 ) {
 
-    val appsViewModel = LocalAppsViewModel.current
-    val privateSpaceViewModel = LocalPrivateSpaceViewModel.current
 
     val privateSpaceState by appsViewModel.privateSpaceState.collectAsState()
 

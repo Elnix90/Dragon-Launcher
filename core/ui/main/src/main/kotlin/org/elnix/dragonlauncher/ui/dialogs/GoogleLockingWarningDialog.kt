@@ -4,11 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.messyfolder.openUrl
 import org.elnix.dragonlauncher.common.utils.rememberVersionCode
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.warning.WarningDialog
+import org.elnix.dragonlauncher.ui.warning.WarningManager
 
 @Composable
 fun GoogleLockingWarningDialog() {
@@ -17,25 +19,16 @@ fun GoogleLockingWarningDialog() {
     val currentVersionCode = rememberVersionCode()
 
     val lastSeenVersionCodeGoogleLockdownWarning by PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.asState()
-    
-    if (lastSeenVersionCodeGoogleLockdownWarning < currentVersionCode) {
-        GoogleLockingWarning(
-            onSolution = {
-                ctx.openUrl("https://keepandroidopen.org/")
+    val showWarning by WarningManager.showWarningDialog.collectAsStateWithLifecycle()
+
+    if ((lastSeenVersionCodeGoogleLockdownWarning < currentVersionCode) && showWarning) {
+        WarningDialog(
+            onDismissRequest = {
                 scope.launch {
-                    PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.set(
-                        ctx,
-                        currentVersionCode
-                    )
+                    PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.set(ctx, currentVersionCode)
                 }
+                WarningManager.updateWarningDialog(false)
             }
-        ) {
-            scope.launch {
-                PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.set(
-                    ctx,
-                    currentVersionCode
-                )
-            }
-        }
+        )
     }
 }

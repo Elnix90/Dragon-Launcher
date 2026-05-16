@@ -21,15 +21,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
+import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 
 @Composable
 fun WorkspacePickerDialog(
+    appsViewModel: AppsViewModel = activityViewModel(),
     onDismiss: () -> Unit,
     onActionPicked: (SwipeActionSerializable.OpenAppDrawer) -> Unit
 ) {
-    val appsViewModel = LocalAppsViewModel.current
     val workspaces by appsViewModel.enabledState.collectAsState()
     val availableWorkspaces = workspaces.workspaces
 

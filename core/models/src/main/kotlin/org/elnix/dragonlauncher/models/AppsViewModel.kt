@@ -38,6 +38,15 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.json.Json
 import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.APPS_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BROADCAST_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ICONS_TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.WORKSPACES_TAG
+import org.elnix.dragonlauncher.common.messyfolder.IconsCache
+import org.elnix.dragonlauncher.common.messyfolder.PackageManagerCompat
+import org.elnix.dragonlauncher.common.messyfolder.isNotBlankJson
+import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.serializables.AppModel
 import org.elnix.dragonlauncher.common.serializables.AppOverride
 import org.elnix.dragonlauncher.common.serializables.CacheKey
@@ -55,18 +64,10 @@ import org.elnix.dragonlauncher.common.serializables.defaultWorkspaces
 import org.elnix.dragonlauncher.common.serializables.resolveApp
 import org.elnix.dragonlauncher.common.serializables.splitCacheKey
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isDefaultLauncher
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.APPS_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BROADCAST_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ICONS_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.WORKSPACES_TAG
-import org.elnix.dragonlauncher.common.messyfolder.IconsCache
 import org.elnix.dragonlauncher.common.utils.ImageUtils.createUntintedBitmap
 import org.elnix.dragonlauncher.common.utils.ImageUtils.loadDrawableAsBitmap
 import org.elnix.dragonlauncher.common.utils.ImageUtils.resolveCustomIconBitmap
-import org.elnix.dragonlauncher.common.messyfolder.PackageManagerCompat
 import org.elnix.dragonlauncher.common.utils.PrivateSpaceUtils
-import org.elnix.dragonlauncher.common.messyfolder.isNotBlankJson
-import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.enumsui.other.PrivateSpaceLoadingState
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
@@ -183,6 +184,8 @@ class AppsViewModel @Inject constructor(
                 reloadApps()
             }
         }
+
+        logD(TAG) { "created AppsViewModel ${System.identityHashCode(this)}" }
     }
 
     /**

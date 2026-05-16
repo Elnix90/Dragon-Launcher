@@ -17,18 +17,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.common.serializables.IconPackInfo
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
+import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.helpers.IconPackListContent
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun IconPackPickerDialog(
+    appsViewModel: AppsViewModel = activityViewModel(),
     onDismiss: () -> Unit,
     onIconPicked: (drawableName: String, packName: String) -> Unit
 ) {
-
-    val appsViewModel = LocalAppsViewModel.current
-
     var showIconPickerDialog by remember { mutableStateOf<IconPackInfo?>(null) }
 
     val packs by appsViewModel.iconPacksList.collectAsState()

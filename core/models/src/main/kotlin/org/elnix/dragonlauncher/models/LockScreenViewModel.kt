@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SECURITY_HELPER
+import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
 import org.elnix.dragonlauncher.common.messyfolder.SecurityHelper
 import org.elnix.dragonlauncher.common.messyfolder.findFragmentActivity
 import org.elnix.dragonlauncher.common.messyfolder.showToast
@@ -39,10 +40,10 @@ class LockScreenViewModel @Inject constructor(
     val screenToUnlock = _screenToUnlock.asStateFlow()
 
 
-
-
     init {
         loadLockMethod()
+
+        logD(TAG) { "created LockScreenVM ${System.identityHashCode(this)}" }
     }
 
     private fun loadLockMethod() {
@@ -52,12 +53,11 @@ class LockScreenViewModel @Inject constructor(
     }
 
 
-
-
     fun lock() {
         logD(SECURITY_HELPER) { "User asked to lock!" }
         _isLocked.value = true
     }
+
     fun unlock() {
         logD(SECURITY_HELPER) { "User asked to unlock!" }
         _isLocked.value = false

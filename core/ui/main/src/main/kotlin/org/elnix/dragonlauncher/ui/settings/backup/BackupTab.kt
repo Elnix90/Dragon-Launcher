@@ -39,14 +39,15 @@ import org.elnix.dragonlauncher.common.utils.DateUtils.today
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.BackupResult
+import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.settings.SettingsBackupManager
 import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.settings.bases.DatastoreProvider
 import org.elnix.dragonlauncher.settings.stores.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
-import org.elnix.dragonlauncher.ui.composition.LocalBackupViewModel
 import org.elnix.dragonlauncher.ui.dialogs.ExportSettingsDialog
 import org.elnix.dragonlauncher.ui.dialogs.ImportSettingsDialog
 import org.elnix.dragonlauncher.ui.dialogs.SelectedActionRow
@@ -63,17 +64,17 @@ import org.json.JSONObject
 @SuppressLint("LocalContextGetResourceValueCall")
 @Suppress("AssignedValueIsNeverRead")
 @Composable
-fun BackupTab(onBack: () -> Unit) {
+fun BackupTab(
+    onBack: () -> Unit,
+    backupViewModel: BackupViewModel = activityViewModel()
+) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
-    val backupViewModel = LocalBackupViewModel.current
-
 
     val autoBackupEnabled by BackupSettingsStore.autoBackupEnabled.asState()
     val autoBackupUriString by BackupSettingsStore.autoBackupUri.asState()
     val lastBackupTime by PrivateSettingsStore.lastBackupTime.asState()
     val backupStores by BackupSettingsStore.backupStores.asState()
-
 
     val selectedStores = remember(backupStores) {
         mutableStateMapOf<DatastoreProvider, Boolean>().apply {

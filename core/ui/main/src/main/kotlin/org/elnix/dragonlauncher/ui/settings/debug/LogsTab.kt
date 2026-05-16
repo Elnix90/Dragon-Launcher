@@ -67,8 +67,8 @@ import org.elnix.dragonlauncher.logging.logLevelName
 import org.elnix.dragonlauncher.models.DragonLogViewModel
 import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.composition.LocalDragonLogViewModel
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
@@ -83,10 +83,10 @@ import java.io.File
 @Composable
 fun LogsTab(
     onNavigate: (NavigationRoute) -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    dragonLogViewModel: DragonLogViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
-    val dragonLogViewModel = LocalDragonLogViewModel.current
 
     val enableLogging by dragonLogViewModel.isLoggingEnabled.collectAsState()
     val snackBarLogLevel by dragonLogViewModel.snackBarLogLevel.collectAsState()

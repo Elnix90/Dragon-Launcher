@@ -55,15 +55,16 @@ import org.elnix.dragonlauncher.common.serializables.CustomIconSerializable
 import org.elnix.dragonlauncher.common.serializables.IconType
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
 import org.elnix.dragonlauncher.common.utils.ImageUtils.uriToBase64
+import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.AppIcon
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.components.VerticalScrollIndicator
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.components.PointPreviewCanvas
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
@@ -77,13 +78,13 @@ import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 @Composable
 fun PointIconEditor(
+    appsViewModel: AppsViewModel = activityViewModel(),
     point: SwipePointSerializable,
     onReset: (() -> Unit)? = null,
     onDismiss: () -> Unit,
     onPicked: (CustomIconSerializable?) -> Unit
 ) {
     val defaultPoint = LocalDefaultPoint.current
-    val appsViewModel = LocalAppsViewModel.current
 
     var selectedIcon by remember { mutableStateOf(point.customIcon) }
 
@@ -113,12 +114,12 @@ fun PointIconEditor(
 
 @Composable
 fun AppIconEditor(
+    appsViewModel: AppsViewModel = activityViewModel(),
     app: AppModel,
     onReset: (() -> Unit)? = null,
     onDismiss: () -> Unit,
     onPicked: (CustomIconSerializable?) -> Unit
 ) {
-    val appsViewModel = LocalAppsViewModel.current
 
     val workspaceState by appsViewModel.state.collectAsState()
     val appOverrides = workspaceState.appOverrides

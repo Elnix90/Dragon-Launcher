@@ -24,12 +24,13 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
+import org.elnix.dragonlauncher.models.PrivateSpaceViewModel
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateAppsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
-import org.elnix.dragonlauncher.ui.composition.LocalPrivateSpaceViewModel
 import org.elnix.dragonlauncher.ui.dialogs.LockMethodDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
@@ -45,10 +46,11 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-fun BehaviorTab(onBack: () -> Unit) {
+fun BehaviorTab(
+    onBack: () -> Unit,
+    privateSpaceViewModel: PrivateSpaceViewModel = activityViewModel()
+) {
     val ctx = LocalContext.current
-    val privateSpaceViewModel = LocalPrivateSpaceViewModel.current
-
     val scope = rememberCoroutineScope()
 
     val backAction by BehaviorSettingsStore.backAction.asState()

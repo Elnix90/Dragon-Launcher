@@ -17,21 +17,21 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.actions.AppIcon
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asStateNull
 import org.elnix.dragonlauncher.ui.base.components.LazyRowWithScrollIndicator
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.helpers.IconPackListContent
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
 fun IconPackTab(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    appsViewModel: AppsViewModel = activityViewModel()
 ) {
-
-    val appsViewModel = LocalAppsViewModel.current
     val scope = rememberCoroutineScope()
 
     val apps by appsViewModel.userApps.collectAsState(initial = emptyList())

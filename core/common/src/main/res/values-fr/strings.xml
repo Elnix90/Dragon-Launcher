@@ -634,7 +634,6 @@
     <string name="set_status_bar_template">Définir le modèle de barre de statut (le mien). Attention: en cliquant dessus, cela efface votre configuration actuelle !</string>
     <string name="notch_mode">Mode: Notch (Fixe un spacer sur l\'encoche)</string>
     <string name="google_lockdown_warning">\"Google a annoncé qu\'à partir de 2026/2027, toutes les applications sur les appareils Android certifiés nécessiteront que le développeur soumette des informations d\'identité personnelles directement à Google. Étant donné que les développeurs de cette application n\'acceptent pas cette exigence, cette application ne fonctionnera plus sur les appareils Android certifiés après cette date. \"</string>
-    <string name="solution">Solution</string>
     <string name="dismiss">Rejeter</string>
     <string name="nest_radius">Rayon du nid</string>
     <string name="edit_nest">Modifier le nid</string>

@@ -25,6 +25,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SWIPE_TAG
 import org.elnix.dragonlauncher.common.messyfolder.circles.computePosition
@@ -37,6 +38,7 @@ import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.common.utils.HapticUtils.performCustomHaptic
 import org.elnix.dragonlauncher.logging.logI
+import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.settings.stores.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
@@ -45,7 +47,6 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.components.AppPreviewTitle
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.composition.LocalEndLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalLineObject
@@ -62,6 +63,7 @@ import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
 
 @Composable
 fun MainScreenOverlay(
+    appsViewModel: AppsViewModel = activityViewModel(),
     start: Offset?,
     current: Offset?,
     currentNest: CircleNest,
@@ -69,7 +71,6 @@ fun MainScreenOverlay(
 ) {
     val ctx = LocalContext.current
     val extraColors = LocalExtraColors.current
-    val appsViewModel = LocalAppsViewModel.current
     val defaultPoint = LocalDefaultPoint.current
     val disableHapticFeedbackGlobally = LocalDisableHapticFeedbackGlobally.current
 

@@ -41,10 +41,11 @@ import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.DRAWER_TAG
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SHAPES_TAG
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
 import org.elnix.dragonlauncher.logging.logD
+import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.dialogs.DrawerToolbarsOrderDialog
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -63,10 +64,10 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
 fun DrawerTab(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    appsViewModel: AppsViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
-    val appsViewModel = LocalAppsViewModel.current
     val scope = rememberCoroutineScope()
 
     val apps by appsViewModel.userApps.collectAsState(initial = emptyList())

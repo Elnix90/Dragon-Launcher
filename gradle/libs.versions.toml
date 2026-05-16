@@ -15,6 +15,7 @@ javaxInject = "1"
 kotlin = "2.3.21"
 coreKtx = "1.18.0"
 kotlinxCoroutinesCore = "1.11.0"
+kotlinxDatetime = "0.8.0"
 kotlinxSerializationCore = "1.11.0"
 lazycolumnscrollbar = "2.2.0"
 lifecycleRuntimeKtx = "2.10.0"
@@ -92,6 +93,7 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", v
 hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "dagger" }
 javax-inject = { module = "javax.inject:javax.inject", version.ref = "javaxInject" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
 lazycolumnscrollbar = { module = "com.github.nanihadesuka:LazyColumnScrollbar", version.ref = "lazycolumnscrollbar" }
 material = { module = "com.google.android.material:material", version.ref = "material" }

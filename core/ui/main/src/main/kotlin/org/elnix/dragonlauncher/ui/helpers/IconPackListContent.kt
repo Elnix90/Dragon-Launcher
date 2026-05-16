@@ -32,8 +32,9 @@ import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.common.serializables.IconPackInfo
 import org.elnix.dragonlauncher.common.serializables.dummyAppModel
+import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalDrawerIconsCache
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -43,6 +44,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 @Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun IconPackListContent(
+    appsViewModel: AppsViewModel = activityViewModel(),
     packs: List<IconPackInfo>,
     selectedPackPackage: String?,
     showClearOption: Boolean,
@@ -50,6 +52,7 @@ fun IconPackListContent(
     onPackClick: (IconPackInfo) -> Unit,
     onClearClick: () -> Unit
 ) {
+    val icons = LocalDrawerIconsCache.current
     var isLoading by remember { mutableStateOf(false) }
 
     LaunchedEffect(isLoading) {
@@ -84,8 +87,6 @@ fun IconPackListContent(
     }
 
     packs.forEach { pack ->
-        val appsViewModel = LocalAppsViewModel.current
-        val icons = LocalDrawerIconsCache.current
 
         DragonRow(
             { onPackClick(pack) }

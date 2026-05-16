@@ -12,17 +12,18 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.models.BackupResult
-import org.elnix.dragonlauncher.settings.bases.DatastoreProvider
+import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.settings.SettingsBackupManager
-import org.elnix.dragonlauncher.ui.composition.LocalBackupViewModel
+import org.elnix.dragonlauncher.settings.bases.DatastoreProvider
+import org.elnix.dragonlauncher.ui.activityViewModel
 
 @Composable
 fun rememberSettingsExportLauncher(
-    selectedStoresForExport: Set<DatastoreProvider>
+    selectedStoresForExport: Set<DatastoreProvider>,
+    backupViewModel: BackupViewModel = activityViewModel()
 ): ManagedActivityResultLauncher<String, Uri?> {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
-    val backupViewModel = LocalBackupViewModel.current
 
     val exportCancelledText = stringResource(R.string.export_cancelled)
     val exportSuccessfulText = stringResource(R.string.export_successful)

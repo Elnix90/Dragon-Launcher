@@ -46,12 +46,13 @@ import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.WELCOME_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.BackupResult
+import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.settings.SettingsBackupManager
 import org.elnix.dragonlauncher.settings.bases.DatastoreProvider
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.composition.LocalBackupViewModel
 import org.elnix.dragonlauncher.ui.dialogs.ImportSettingsDialog
 import org.elnix.dragonlauncher.ui.remembers.rememberSettingsImportLauncher
 import org.json.JSONObject
@@ -63,6 +64,7 @@ private const val pageNumber = 6
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun WelcomeScreen(
+    backupViewModel: BackupViewModel = activityViewModel(),
     onEnterSettings: () -> Unit,
     onEnterApp: () -> Unit
 ) {
@@ -70,7 +72,6 @@ fun WelcomeScreen(
     val scope = rememberCoroutineScope()
     val ctx = LocalContext.current
 
-    val backupViewModel = LocalBackupViewModel.current
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {

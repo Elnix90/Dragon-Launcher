@@ -13,19 +13,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
+import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.models.BackupResult
-import org.elnix.dragonlauncher.ui.composition.LocalBackupViewModel
+import org.elnix.dragonlauncher.models.BackupViewModel
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.json.JSONObject
 
 @Composable
 fun rememberSettingsImportLauncher(
+    backupViewModel: BackupViewModel = activityViewModel(),
     onJsonReady: (JSONObject) -> Unit
 ): ManagedActivityResultLauncher<Array<String>, Uri?> {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
-    val backupViewModel = LocalBackupViewModel.current
 
     val importCancelledText = stringResource(R.string.import_cancelled)
     val importFailedText = stringResource(R.string.import_failed)

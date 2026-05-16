@@ -2,6 +2,8 @@ package org.elnix.dragonlauncher.ui
 
 import android.annotation.SuppressLint
 import android.content.ComponentName
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -43,6 +45,7 @@ import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
@@ -80,7 +83,11 @@ import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logW
+import org.elnix.dragonlauncher.models.AppLifecycleViewModel
+import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.models.LockScreenViewModel
+import org.elnix.dragonlauncher.models.PrivateSpaceViewModel
+import org.elnix.dragonlauncher.models.ShizukuViewModel
 import org.elnix.dragonlauncher.settings.stores.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.ColorModesSettingsStore
@@ -97,11 +104,8 @@ import org.elnix.dragonlauncher.ui.base.asStateNull
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.overlays.OverlayHost
-import org.elnix.dragonlauncher.ui.composition.LocalAppLifecycleViewModel
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
+import org.elnix.dragonlauncher.ui.components.DebugViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalPoints
-import org.elnix.dragonlauncher.ui.composition.LocalPrivateSpaceViewModel
-import org.elnix.dragonlauncher.ui.composition.LocalShizukuViewModel
 import org.elnix.dragonlauncher.ui.dialogs.AdbCommandInputDialog
 import org.elnix.dragonlauncher.ui.dialogs.BackupResultDialog
 import org.elnix.dragonlauncher.ui.dialogs.FilePickerDialog
@@ -139,7 +143,6 @@ import org.elnix.dragonlauncher.ui.settings.debug.LogsTab
 import org.elnix.dragonlauncher.ui.settings.debug.LogsViewerScreen
 import org.elnix.dragonlauncher.ui.settings.debug.SettingsDebugTab
 import org.elnix.dragonlauncher.ui.settings.extensions.ExtensionsTab
-import org.elnix.dragonlauncher.ui.settings.language.LanguageTab
 import org.elnix.dragonlauncher.ui.settings.wellbeing.WellbeingTab
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceDetailScreen
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceListScreen
@@ -151,10 +154,20 @@ import org.elnix.dragonlauncher.ui.whatsnew.WhatsNewBottomSheet
 import rikka.shizuku.Shizuku
 
 
+@Composable
+inline fun <reified VM : ViewModel> activityViewModel(): VM {
+    val activity = LocalActivity.current as ComponentActivity
+    return hiltViewModel(activity)
+}
+
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun MainAppUi(
-    lockScreenViewModel: LockScreenViewModel = hiltViewModel(),
+    appLifecycleViewModel: AppLifecycleViewModel = activityViewModel(),
+    appsViewModel: AppsViewModel = activityViewModel(),
+    lockScreenViewModel: LockScreenViewModel = activityViewModel(),
+    privateSpaceViewModel: PrivateSpaceViewModel = activityViewModel(),
+    shizukuViewModel: ShizukuViewModel = activityViewModel(),
     onBindCustomWidget: (Int, ComponentName, nestId: Int) -> Unit,
     onResetWidgetSize: (id: Int, widgetId: Int) -> Unit,
     onRemoveFloatingApp: (FloatingAppObject) -> Unit
@@ -162,20 +175,14 @@ fun MainAppUi(
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val appsViewModel = LocalAppsViewModel.current
     val privateSpaceState = appsViewModel.privateSpaceState
-
-    val appLifecycleViewModel = LocalAppLifecycleViewModel.current
-    val privateSpaceViewModel = LocalPrivateSpaceViewModel.current
-
 
     var showWidgetPicker by remember { mutableStateOf<Int?>(null) }
     var showFilePicker: SwipePointSerializable? by remember { mutableStateOf(null) }
 
 
-    val shizukuViewModel = LocalShizukuViewModel.current
     var showShizukuCommandPromter by remember { mutableStateOf<SwipeActionSerializable.RunAdbCommand?>(null) }
-    var showShizukuUnavailableDialog by rememberSaveable { mutableStateOf(false) }
+    val showShizukuUnavailableDialog by shizukuViewModel.showUnavailable.collectAsState()
     val hasShizukuPermission by shizukuViewModel.shizukuPermissionState().collectAsState()
     var isShizukuInstalled by rememberSaveable {
         mutableStateOf(
@@ -231,13 +238,6 @@ fun MainAppUi(
     LaunchedEffect(currentRoute) {
         lockScreenViewModel.onEnterNewRoute(currentRoute)
     }
-
-    val lockMethod by lockScreenViewModel.lockMethod.collectAsState()
-//    LaunchedEffect(lockMethod) {
-//        if (lockMethod == LockMethod.NONE) {
-//            lockScreenViewModel.unlock()
-//        }
-//    }
 
 
     /*  ─────────────  Wellbeing Settings  ─────────────  */ // TODO move this shit into a viewmodel
@@ -361,7 +361,6 @@ fun MainAppUi(
 
 
     val lastInteraction by appLifecycleViewModel.lastInteraction.collectAsState()
-
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
@@ -378,7 +377,7 @@ fun MainAppUi(
                 }
 
             } else if (event == Lifecycle.Event.ON_PAUSE) {
-                appLifecycleViewModel.onPause()
+                appLifecycleViewModel.updateLastInteraction()
             }
         }
 
@@ -402,8 +401,7 @@ fun MainAppUi(
     fun runShisukuCommandNotEmpty(command: SwipeActionSerializable.RunAdbCommand) {
         if (!Shizuku.pingBinder()) {
             logD(SHIZUKU_TAG) { "Shizuku is not running, opening it..." }
-
-            showShizukuUnavailableDialog = true
+            shizukuViewModel.setUnavailable()
             return
         }
 
@@ -436,6 +434,8 @@ fun MainAppUi(
                 action.packageName
             }
         }
+
+        appLifecycleViewModel.blockHomeActionsTemporarily()
 
         try {
             launchSwipeAction(
@@ -657,8 +657,8 @@ fun MainAppUi(
                         }
 
                         entry<NavigationRoute.PointsSettings>(metadata = horizontalMetadata) {
-                            SettingsScreen(
-                                onAdvSettings = { backStack.navigate(NavigationRoute.AdvancedSettings) },
+                            PointsSettingsScreen(
+                                onAdvSettings = { backStack.navigate(NavigationRoute.Settings) },
                                 onNestEdit = {
                                     backStack.navigate(NavigationRoute.NestEdit(it))
                                 },
@@ -666,7 +666,7 @@ fun MainAppUi(
                             )
                         }
 
-                        entry<NavigationRoute.AdvancedSettings>(metadata = horizontalMetadata) {
+                        entry<NavigationRoute.Settings>(metadata = horizontalMetadata) {
                             AdvancedSettingsScreen(
                                 backStack::navigate,
                                 backStack::navigateBack
@@ -680,7 +680,6 @@ fun MainAppUi(
                         }
                         entry<NavigationRoute.Behavior>(metadata = horizontalMetadata) { BehaviorTab(backStack::navigateBack) }
                         entry<NavigationRoute.DrawerSettings>(metadata = horizontalMetadata) { DrawerTab(backStack::navigateBack) }
-                        entry<NavigationRoute.Language>(metadata = horizontalMetadata) { LanguageTab(backStack::navigateBack) }
                         entry<NavigationRoute.Backup>(metadata = horizontalMetadata) { BackupTab(backStack::navigateBack) }
                         entry<NavigationRoute.Changelogs>(metadata = horizontalMetadata) { ChangelogsScreen(backStack::navigateBack) }
                         entry<NavigationRoute.Extensions>(metadata = horizontalMetadata) { ExtensionsTab(backStack::navigateBack) }
@@ -756,18 +755,6 @@ fun MainAppUi(
             }
         }
 
-
-        if (showShizukuCommandPromter != null) {
-            AdbCommandInputDialog(
-                onDismiss = { showShizukuCommandPromter = null },
-                showLeaveEmptyNotice = false
-            ) {
-                if (it.command.trim().isNotEmpty()) {
-                    runShisukuCommandNotEmpty(it)
-                }
-            }
-        }
-
         if (showFilePicker != null) {
             val currentPoint = showFilePicker!!
             val points = LocalPoints.current
@@ -803,9 +790,23 @@ fun MainAppUi(
             ) { showWidgetPicker = null }
         }
 
+
+        if (showShizukuCommandPromter != null) {
+            AdbCommandInputDialog(
+                onDismiss = { showShizukuCommandPromter = null },
+                showLeaveEmptyNotice = false
+            ) {
+                if (it.command.trim().isNotEmpty()) {
+                    runShisukuCommandNotEmpty(it)
+                }
+            }
+        }
+
         if (showShizukuUnavailableDialog) {
             ShizukuUnavailableDialog(
-                onDismiss = { showShizukuUnavailableDialog = false },
+                onDismiss = {
+                    shizukuViewModel.dismissUnavailableDialog()
+                },
                 onConfirm = {
                     if (isShizukuInstalled) launchAction(SwipeActionSerializable.LaunchApp(SHIZUKU_PACKAGE_NAME, false, 0))
                     else ctx.openUrl(
@@ -822,6 +823,7 @@ fun MainAppUi(
         BackupResultDialog()
         GoogleLockingWarningDialog()
         PrivateSpaceStateDebugDialog()
+        DebugViewModel()
 
 
 //        DragonColumnGroup {

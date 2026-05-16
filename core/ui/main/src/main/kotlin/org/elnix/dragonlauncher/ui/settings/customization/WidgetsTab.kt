@@ -85,8 +85,8 @@ import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsMoveUpDown
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsSnapping
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsUpDown
 import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.models.FloatingAppsViewModel
-import org.elnix.dragonlauncher.models.FloatingAppsViewModel.ResizeCorner
+import org.elnix.dragonlauncher.models.WidgetsViewModel
+import org.elnix.dragonlauncher.models.WidgetsViewModel.ResizeCorner
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.WidgetsSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
@@ -96,7 +96,7 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
-import org.elnix.dragonlauncher.ui.composition.LocalFloatingAppsViewModel
+import org.elnix.dragonlauncher.ui.composition.LocalWidgetsViewModel
 import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
@@ -125,7 +125,7 @@ fun WidgetsTab(
 ) {
     val ctx = LocalContext.current
 
-    val floatingAppsViewModel = LocalFloatingAppsViewModel.current
+    val floatingAppsViewModel = LocalWidgetsViewModel.current
     val cellSizePx by floatingAppsViewModel.cellSizePx.collectAsState()
     val cellSizeDp by floatingAppsViewModel.cellSizeDp.collectAsState()
     val scope = rememberCoroutineScope()
@@ -515,7 +515,7 @@ fun WidgetsTab(
                     .filter { it.nestId == nestId }
                     .forEach { floatingApp ->
                         DraggableFloatingApp(
-                            floatingAppsViewModel = floatingAppsViewModel,
+                            widgetsViewModel = floatingAppsViewModel,
                             app = floatingApp,
                             snapRotation = { snapRotation },
                             snapMove = { snapMove },
@@ -692,7 +692,7 @@ fun WidgetsTab(
  * Position compensation on resize and move is angle-aware: deltas are rotated through the
  * widget's current angle so handles behave correctly at any rotation.
  *
- * @param floatingAppsViewModel Provides `cellSizePx`, `minSize` and screen dimensions.
+ * @param widgetsViewModel Provides `cellSizePx`, `minSize` and screen dimensions.
  * @param app Current immutable widget data used as the source of truth on each commit.
  * @param selected Whether this widget is currently selected, controls handle visibility.
  * @param snapRotation Returns true if rotation should snap to 15° increments.
@@ -704,7 +704,7 @@ fun WidgetsTab(
  */
 @Composable
 private fun DraggableFloatingApp(
-    floatingAppsViewModel: FloatingAppsViewModel,
+    widgetsViewModel: WidgetsViewModel,
     app: FloatingAppObject,
     selected: Boolean,
 
@@ -719,9 +719,9 @@ private fun DraggableFloatingApp(
     val haptic = LocalHapticFeedback.current
     val borderColor = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent
 
-    val cellSizePx by floatingAppsViewModel.cellSizePx.collectAsState()
-    val minSize = floatingAppsViewModel.minSize
-    val dm = floatingAppsViewModel.dm
+    val cellSizePx by widgetsViewModel.cellSizePx.collectAsState()
+    val minSize = widgetsViewModel.minSize
+    val dm = widgetsViewModel.dm
 
     val widthPixels = dm.widthPixels
     val heightPixels = dm.heightPixels

@@ -26,18 +26,20 @@ import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.common.serializables.StatusBarSerializable
 import org.elnix.dragonlauncher.common.serializables.dummyAppModel
+import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.services.DragonNotificationListenerService
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalDrawerIconsCache
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 
 @Composable
 fun StatusBarNotifications(
-    element: StatusBarSerializable.Notifications
+    element: StatusBarSerializable.Notifications,
+    appsViewModel: AppsViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
     val icons = LocalDrawerIconsCache.current
-    val appsViewModel = LocalAppsViewModel.current
+
     val packageNames by DragonNotificationListenerService.notifications.collectAsState()
     var hasPermission by remember { mutableStateOf(DragonNotificationListenerService.isPermissionGranted(ctx)) }
 

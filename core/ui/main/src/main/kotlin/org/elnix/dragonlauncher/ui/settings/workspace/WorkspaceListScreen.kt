@@ -39,11 +39,12 @@ import org.elnix.dragonlauncher.enumsui.toggle.WorkspaceAction
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.logging.logW
+import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.dialogs.CreateOrEditWorkspaceDialog
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -53,12 +54,11 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
 fun WorkspaceListScreen(
+    appsViewModel: AppsViewModel = activityViewModel(),
     onOpenWorkspace: (String) -> Unit,
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
-    val appsViewModel = LocalAppsViewModel.current
-
     val scope = rememberCoroutineScope()
 
     val state by appsViewModel.state.collectAsState()

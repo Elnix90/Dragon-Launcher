@@ -8,16 +8,17 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.logging.logLevelChar
+import org.elnix.dragonlauncher.models.DragonLogViewModel
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
-import org.elnix.dragonlauncher.ui.composition.LocalDragonLogViewModel
 
 @Composable
-fun LauncherSnackbarHost(modifier: Modifier = Modifier) {
+fun LauncherSnackbarHost(
+    dragonLogViewModel: DragonLogViewModel = activityViewModel(),
+) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val dragonLogViewModel = LocalDragonLogViewModel.current
 
     LaunchedEffect(Unit) {
         dragonLogViewModel.alertFlow.collect { alert ->
@@ -35,7 +36,6 @@ fun LauncherSnackbarHost(modifier: Modifier = Modifier) {
 
     SnackbarHost(
         hostState = snackbarHostState,
-        modifier = modifier,
         snackbar = { data ->
             Snackbar(
                 snackbarData = data,

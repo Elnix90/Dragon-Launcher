@@ -632,7 +632,6 @@
     <string name="set_status_bar_template">¡Aviso de configurar plantilla de barra de sattus (mía). ¡Al hacer clic aquí borra tu configuración actual!</string>
     <string name="notch_mode">Modo: Muesca (Aplica un espaciador en la muesca)</string>
     <string name="google_lockdown_warning">"\"Google ha anunciado que, a partir de 2026/2027, todas las aplicaciones en dispositivos Android certificados requerirán que el desarrollador envíe datos de identidad personal directamente a Google. Dado que los desarrolladores de esta aplicación no están de acuerdo con este requisito, esta aplicación ya no funcionará en dispositivos Android certificados después de ese tiempo.\" "</string>
-    <string name="solution">Solución</string>
     <string name="dismiss">Despedir</string>
     <string name="nest_radius">Radio del nido</string>
     <string name="edit_nest">Editar nido</string>

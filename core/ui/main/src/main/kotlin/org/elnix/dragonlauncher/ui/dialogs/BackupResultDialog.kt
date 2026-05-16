@@ -12,14 +12,17 @@ import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
-import org.elnix.dragonlauncher.ui.composition.LocalBackupViewModel
+import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.BackupViewModel
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 @Composable
-fun BackupResultDialog() {
-    val appsViewModel = LocalAppsViewModel.current
-    val backupViewModel = LocalBackupViewModel.current
+fun BackupResultDialog(
+    appsViewModel: AppsViewModel = activityViewModel(),
+    backupViewModel: BackupViewModel = activityViewModel(),
+
+) {
     val scope = rememberCoroutineScope()
     val result by backupViewModel.result.collectAsState()
 

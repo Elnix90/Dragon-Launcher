@@ -12,12 +12,13 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.common.serializables.CircleNest
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
+import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.settings.stores.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.cache.DrawPathCache
 import org.elnix.dragonlauncher.ui.base.cache.SwipeDrawParams
-import org.elnix.dragonlauncher.ui.composition.LocalAppsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.composition.LocalNests
@@ -27,6 +28,7 @@ import org.elnix.dragonlauncher.ui.composition.LocalPoints
 
 @Composable
 fun rememberSwipeDefaultParams(
+    appsViewModel: AppsViewModel = activityViewModel(),
     backgroundColor: Color? = null,
     nests: List<CircleNest>? = null,
     defaultPointSerializable: SwipePointSerializable? = null,
@@ -35,8 +37,6 @@ fun rememberSwipeDefaultParams(
 ): SwipeDrawParams {
     val ctx = LocalContext.current
     val density = LocalDensity.current
-
-    val appsViewModel = LocalAppsViewModel.current
 
     val points = LocalPoints.current
     val defaultPointSettings = LocalDefaultPoint.current

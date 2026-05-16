@@ -27,14 +27,14 @@ import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 fun CustomAlertDialog(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    imePadding: Boolean = true,
+    scroll: Boolean = true,
+    alignment: Alignment = Alignment.BottomCenter,
     confirmButton: @Composable (() -> Unit)? = null,
     dismissButton: @Composable (() -> Unit)? = null,
     icon: @Composable (() -> Unit)? = null,
     title: @Composable (() -> Unit)? = null,
-    text: @Composable (() -> Unit)? = null,
-    imePadding: Boolean = true,
-    scroll: Boolean = true,
-    alignment: Alignment = Alignment.BottomCenter
+    text: @Composable (() -> Unit)? = null
 ) {
 
     @SuppressLint("ConfigurationScreenWidthHeight")

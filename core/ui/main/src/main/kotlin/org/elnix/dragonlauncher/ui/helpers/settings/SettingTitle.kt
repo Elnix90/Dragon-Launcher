@@ -20,9 +20,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.models.PointSettingsViewModel
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
@@ -111,7 +111,7 @@ fun SettingsTitle(
 
 @Composable
 fun SpecialSettingsTitle(
-    pointSettingsViewModel: PointSettingsViewModel = hiltViewModel(),
+    pointSettingsViewModel: PointSettingsViewModel = activityViewModel(),
     onSettings: () -> Unit,
     onEditDefaultPoint: () -> Unit,
     onReloadPoints: () -> Unit,
