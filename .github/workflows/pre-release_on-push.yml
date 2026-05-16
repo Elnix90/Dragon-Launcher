@@ -44,7 +44,7 @@ jobs:
       - name: Extract versionName
         id: version
         run: |
-          VER=$(grep -oP 'versionName\s*=\s*"\K[0-9.]' app/build.gradle* | head -n1)
+          VER=$(grep -oP 'versionName\s*=\s*"\K[0-9.]+' app/build.gradle* | head -n1)
           echo "versionName=$VER" >> $GITHUB_OUTPUT
           echo "Detected versionName: $VER"
 
