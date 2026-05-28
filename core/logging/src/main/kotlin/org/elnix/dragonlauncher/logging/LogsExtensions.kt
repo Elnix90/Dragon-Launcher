@@ -1,17 +1,12 @@
-package org.elnix.dragonlauncher.logging
-
-import timber.log.Timber
-
 /**
  * Extension for optimized logging with Timber.
  * Uses inline and lambda for performance when logging complex strings.
  */
 
-// Used to force consistency across logs, to avoid Yoan's vibecoding to create logs with hard coded tags
-data class LogTag(
-    val tag: String
-)
 
+package org.elnix.dragonlauncher.logging
+
+import timber.log.Timber
 
 inline fun logV(tag: LogTag, throwable: Throwable? = null, message: () -> String) {
     Timber.tag(tag.tag).v(throwable, message())

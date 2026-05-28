@@ -25,17 +25,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SWIPE_TAG
 import org.elnix.dragonlauncher.common.messyfolder.circles.computePosition
 import org.elnix.dragonlauncher.common.messyfolder.circles.scaleDragDistances
 import org.elnix.dragonlauncher.common.messyfolder.resolveShape
-import org.elnix.dragonlauncher.common.serializables.CircleNest
-import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedbackSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.defaultSwipePointsValues
+import org.elnix.dragonlauncher.common.serializables.Nest
+import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedback
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
+import org.elnix.dragonlauncher.common.serializables.Point
+import org.elnix.dragonlauncher.common.serializables.Point.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.common.utils.HapticUtils.performCustomHaptic
 import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.models.AppsViewModel
@@ -66,8 +65,8 @@ fun MainScreenOverlay(
     appsViewModel: AppsViewModel = activityViewModel(),
     start: Offset?,
     current: Offset?,
-    currentNest: CircleNest,
-    onLaunch: ((SwipePointSerializable) -> Unit)?
+    currentNest: Nest,
+    onLaunch: ((Point) -> Unit)?
 ) {
     val ctx = LocalContext.current
     val extraColors = LocalExtraColors.current
@@ -110,7 +109,7 @@ fun MainScreenOverlay(
 
     val isAnyLiveNestActive = activeLevelIndex > 0
 
-    val selectedPointsPerLevel: List<SwipePointSerializable?> =
+    val selectedPointsPerLevel: List<Point?> =
         buildList {
             for (i in 0..activeLevelIndex) {
                 add(liveNestControllersStack[i].nestedHit?.selectedPoint)
@@ -128,14 +127,14 @@ fun MainScreenOverlay(
     // so actionsInCircle and AppPreviewTitle reflect the action that will fire on release.
     // Loop Over reuses the last stage's action with a temporary label; customIcon is cleared
     // whenever either the base or staged action is OpenCircleNest (mini-nest rings need null icon).
-    val displayPoint: SwipePointSerializable? = hoveredPoint?.let { hp ->
+    val displayPoint: Point? = hoveredPoint?.let { hp ->
         val ca = hp.cycleActions
         if (ca.isNullOrEmpty()) return@let hp
 
         val idx = cycleActionsController.currentStageIndex
         if (idx > 0) {
             val staged = ca.getOrNull(idx - 1)?.action ?: return@let hp
-            if (staged is SwipeActionSerializable.OpenCircleNest || hp.action is SwipeActionSerializable.OpenCircleNest)
+            if (staged is SwipeAction.OpenCircleNest || hp.action is SwipeAction.OpenCircleNest)
                 hp.copy(action = staged, customIcon = null)
             else {
                 hp.copy(action = staged)
@@ -290,7 +289,7 @@ fun MainScreenOverlay(
 
         /**
          *  Main nest (lines + rings + icons) and Live Nest overlay are split so the host can
-         *  dim the main layer via [SwipePointSerializable.liveNestMainNestOpacityPercent].
+         *  dim the main layer via [Point.liveNestMainNestOpacityPercent].
          */
         if (isDragging) {
             Box(Modifier.fillMaxSize()) {
@@ -413,9 +412,9 @@ fun MainScreenOverlay(
 
 @Composable
 private fun MainScreenOverlayDebugInfos(
-    hoveredPoint: SwipePointSerializable?,
-    selectedPointPerLevel: List<SwipePointSerializable?>,
-    currentNest: CircleNest,
+    hoveredPoint: Point?,
+    selectedPointPerLevel: List<Point?>,
+    currentNest: Nest,
     activeLevel: Int,
     isAliveNestActive: Boolean,
     start: Offset?,
@@ -451,7 +450,7 @@ private fun MainScreenOverlayDebugInfos(
 }
 
 
-fun defaultHapticFeedback(id: Int): CustomHapticFeedbackSerializable = CustomHapticFeedbackSerializable(
+fun defaultHapticFeedback(id: Int): CustomHapticFeedback = CustomHapticFeedback(
     listOf(
         true to
                 when (id) {

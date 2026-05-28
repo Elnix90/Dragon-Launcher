@@ -1,6 +1,6 @@
 package org.elnix.dragonlauncher.enumsui.toggle
 
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.enumsui.ToggleButtonOption
 
 enum class HorizontalAlignment(

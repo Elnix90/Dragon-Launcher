@@ -24,9 +24,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.serializables.AppModel
+import org.elnix.dragonlauncher.common.search.Application
 import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -47,11 +47,11 @@ private fun CheckIcon() {
 
 @Composable
 fun AppItemHorizontal(
-    app: AppModel,
+    app: Application,
     selected: Boolean,
-    onLongClick: ((AppModel) -> Unit)?,
-    longPressPopup: @Composable ((AppModel) -> Unit)?,
-    onClick: ((AppModel) -> Unit)?
+    onLongClick: ((Application) -> Unit)?,
+    longPressPopup: @Composable ((Application) -> Unit)?,
+    onClick: ((Application) -> Unit)?
 ) {
 
     require(!((onLongClick != null) and (longPressPopup != null))) {
@@ -102,7 +102,7 @@ fun AppItemHorizontal(
             if (appItemSettings.showLabels) {
                 Spacer(appItemSettings.iconSpacingHorizontal)
                 Text(
-                    text = app.name,
+                    text = app.label,
                     color = appItemSettings.txtColor
                 )
             }
@@ -118,11 +118,11 @@ fun AppItemHorizontal(
 
 @Composable
 fun AppItemGrid(
-    app: AppModel,
+    app: Application,
     selected: Boolean,
-    onLongClick: ((AppModel) -> Unit)?,
-    longPressPopup: @Composable ((AppModel) -> Unit)?,
-    onClick: ((AppModel) -> Unit)?
+    onLongClick: ((Application) -> Unit)?,
+    longPressPopup: @Composable ((Application) -> Unit)?,
+    onClick: ((Application) -> Unit)?
 ) {
     require(!((onLongClick != null) and (longPressPopup != null))) {
         "Long press action, or popup, or neither, but not both!"
@@ -166,7 +166,7 @@ fun AppItemGrid(
 
             if (appItemSettings.showLabels) {
                 Text(
-                    text = app.name,
+                    text = app.label,
                     color = appItemSettings.txtColor,
                     style = MaterialTheme.typography.labelSmall,
                     maxLines = 1,

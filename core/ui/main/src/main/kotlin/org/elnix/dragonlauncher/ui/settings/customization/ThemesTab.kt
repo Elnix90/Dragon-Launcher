@@ -41,9 +41,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.THEMES_TAG
 import org.elnix.dragonlauncher.common.messyfolder.ThemeObject
@@ -57,7 +56,7 @@ import org.elnix.dragonlauncher.settings.SettingsBackupManager
 import org.elnix.dragonlauncher.settings.stores.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
-import org.elnix.dragonlauncher.settings.themeStores
+import org.elnix.dragonlauncher.settings.themeDataStores
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
@@ -136,7 +135,7 @@ fun ThemesTab(
         }
     )
 
-    val settingsExportLauncher = rememberSettingsExportLauncher(themeStores)
+    val settingsExportLauncher = rememberSettingsExportLauncher(themeDataStores)
 
 
 
@@ -210,7 +209,7 @@ fun ThemesTab(
         fun addCurrentTheme() {
 
             scope.launch {
-                val json = SettingsBackupManager.createJsonToExport(ctx, themeStores)
+                val json = SettingsBackupManager.createJsonToExport(ctx, themeDataStores)
 
                 userThemes.add(json.toString())
                 UiSettingsStore.userThemes.set(ctx, userThemes)

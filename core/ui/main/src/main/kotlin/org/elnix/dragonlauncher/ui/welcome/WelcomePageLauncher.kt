@@ -5,7 +5,7 @@ import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.utils.rememberIsDefaultLauncher
 import org.elnix.dragonlauncher.ui.helpers.GradientBigButton
 

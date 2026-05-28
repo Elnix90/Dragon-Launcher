@@ -28,7 +28,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 
 @Composable

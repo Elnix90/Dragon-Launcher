@@ -2,7 +2,7 @@ package org.elnix.dragonlauncher.common.messyfolder.circles
 
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Settings.POINT_HITBOX_RADIUS_PX
 import org.elnix.dragonlauncher.common.messyfolder.UiCircle
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
+import org.elnix.dragonlauncher.common.serializables.Point
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -13,10 +13,10 @@ fun minAngleGapForCircle(circleRadius: Float): Double {
 }
 
 fun autoSeparate(
-    points: MutableList<SwipePointSerializable>,
+    points: MutableList<Point>,
     nestId: Int,
     circle: UiCircle?,
-    draggedPoint: SwipePointSerializable
+    draggedPoint: Point
 ): Boolean {
     val circleNumber = circle?.id ?: return false
     var hasMovedPoints = false

@@ -11,8 +11,8 @@ import androidx.compose.runtime.remember
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.logging.logLevelChar
 import org.elnix.dragonlauncher.models.DragonLogViewModel
-import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 @Composable
 fun LauncherSnackbarHost(

@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.common.navigaton
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
-import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Backup
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Drawer
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.DrawerSettings
@@ -10,6 +9,7 @@ import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Main
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Wallpaper
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Welcome
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Widgets
+import org.elnix.dragonlauncher.i18n.R
 
 
 @Serializable
@@ -120,8 +120,6 @@ sealed class NavigationRoute : NavKey {
     @Serializable
     data object SettingsJson : NavigationRoute()
 
-
-    /*  ─────────────  Special Edit Screens  ─────────────  */
 
     @Serializable
     data class NestEdit(

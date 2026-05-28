@@ -2,71 +2,58 @@ package org.elnix.dragonlauncher.settings.stores
 
 import org.elnix.dragonlauncher.enumsui.other.AngleLineObjects
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.Settings
-import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
-import org.elnix.dragonlauncher.settings.bases.MapSettingsStore
+import org.elnix.dragonlauncher.settings.bases.boolean
+import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
+import org.elnix.dragonlauncher.settings.bases.string
 
-object AngleLineSettingsStore : MapSettingsStore() {
-
-    override val name: String = "Angle line"
-    override val dataStoreName: DataStoreName = DataStoreName.ANGLE_LINE
-
+object AngleLineSettingsStore : MapSettingsStore(DataStoreName.ANGLE_LINE) {
 
     /*  ─────────────  Main toggler for showing or not the line objects  ─────────────  */
-    val showLineObjectPreview = Settings.boolean(
+    val showLineObjectPreview = boolean(
         key = "showLineObjectPreview",
-        dataStoreName = dataStoreName,
         default = true
     )
 
-    val showAngleLineObjectPreview = Settings.boolean(
+    val showAngleLineObjectPreview = boolean(
         key = "showAngleLineObjectPreview",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val showStartObjectPreview = Settings.boolean(
+    val showStartObjectPreview = boolean(
         key = "showStartObjectPreview",
-        dataStoreName = dataStoreName,
         default = true
     )
 
-    val showEndObjectPreview = Settings.boolean(
+    val showEndObjectPreview = boolean(
         key = "showEndObjectPreview",
-        dataStoreName = dataStoreName,
         default = true
     )
 
 
     /*  ───────────── Custom line objects stored as JSON using kotlin serializer ─────────────  */
-    val lineJson = Settings.string(
+    val lineJson = string(
         key = "lineJson",
-        dataStoreName = dataStoreName,
         default = ""
     )
 
-    val angleLineJson = Settings.string(
+    val angleLineJson = string(
         key = "angleLineJson",
-        dataStoreName = dataStoreName,
         default = ""
     )
 
-    val startLineJson = Settings.string(
+    val startLineJson = string(
         key = "startLineJson",
-        dataStoreName = dataStoreName,
         default = ""
     )
 
-    val endLineJson = Settings.string(
+    val endLineJson = string(
         key = "endLineJson",
-        dataStoreName = dataStoreName,
         default = ""
     )
 
-
-    val angleLineObjectsOrder = Settings.string(
+    val angleLineObjectsOrder = string(
         key = "angleLineObjectsOrder",
-        dataStoreName = dataStoreName,
         default = AngleLineObjects.entries.joinToString(",") { it.name }
     )
 

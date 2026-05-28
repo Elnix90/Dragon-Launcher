@@ -4,13 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ANGLE_LINE_TAG
 import org.elnix.dragonlauncher.common.messyfolder.isNotBlankJson
-import org.elnix.dragonlauncher.common.serializables.ColorSerializer
-import org.elnix.dragonlauncher.common.serializables.CustomObjectSerializable
+import org.elnix.dragonlauncher.common.serializables.CustomObject
+import org.elnix.dragonlauncher.common.serializables.DragonJson
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.settings.stores.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.HoldToActivateArcSettingsStore
@@ -41,24 +39,12 @@ private inline fun <reified T> rememberDecodedObject(
 }
 
 
-object CustomObjectJson {
-
-    private val json = Json {
-        serializersModule = SerializersModule {
-            contextual(Color::class, ColorSerializer)
-        }
-    }
-
-    fun encode(customObject: CustomObjectSerializable): String =
-        json.encodeToString(CustomObjectSerializable.serializer(), customObject)
-
-
-
-    data class AngleLineObjects(
-        val line: CustomObjectSerializable,
-        val angleLine: CustomObjectSerializable,
-        val startLine: CustomObjectSerializable,
-        val endLine: CustomObjectSerializable
+object CustomObjectJson : DragonJson<CustomObject>() {
+        data class AngleLineObjects(
+            val line: CustomObject,
+            val angleLine: CustomObject,
+            val startLine: CustomObject,
+            val endLine: CustomObject
     )
 
     @Composable
@@ -103,7 +89,7 @@ object CustomObjectJson {
 
 
     @Composable
-    fun rememberHoldCustomObject(): CustomObjectSerializable {
+    fun rememberHoldCustomObject(): CustomObject {
         val holdCustomObjectJson by HoldToActivateArcSettingsStore.holdToActivateArcCustomObject.asState()
         return rememberDecodedObject(
             jsonString = holdCustomObjectJson,

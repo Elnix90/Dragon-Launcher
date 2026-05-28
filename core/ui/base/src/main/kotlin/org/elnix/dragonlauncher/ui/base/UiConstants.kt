@@ -8,7 +8,7 @@ import androidx.compose.material3.MaterialShapes
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.common.serializables.CustomGlow
-import org.elnix.dragonlauncher.common.serializables.CustomObjectSerializable
+import org.elnix.dragonlauncher.common.serializables.CustomObject
 import org.elnix.dragonlauncher.common.serializables.IconShape
 
 object UiConstants {
@@ -33,7 +33,7 @@ object UiConstants {
             pressedShape = PressedDragonShape
         )
 
-    val defaultLineCustomObject = CustomObjectSerializable(
+    val defaultLineCustomObject = CustomObject(
         stroke = 2f,
         color = null, // RGB Color according to the angle
         glow = CustomGlow(
@@ -49,7 +49,7 @@ object UiConstants {
     )
 
 
-    val defaultAngleCustomObject = CustomObjectSerializable(
+    val defaultAngleCustomObject = CustomObject(
         stroke = 2f,
         color = null, // RGB Color according to the angle
         glow = CustomGlow(
@@ -61,7 +61,7 @@ object UiConstants {
         eraseBackground = false
     )
 
-    val defaultStartCustomObject = CustomObjectSerializable(
+    val defaultStartCustomObject = CustomObject(
         stroke = 4f,
         color = null, // RGB Color according to the angle
         glow = CustomGlow(
@@ -73,7 +73,7 @@ object UiConstants {
         eraseBackground = true
     )
 
-    val defaultEndCustomObject = CustomObjectSerializable(
+    val defaultEndCustomObject = CustomObject(
         stroke = 0f,
         color = null, // RGB Color according to the angle
         glow = CustomGlow(
@@ -86,7 +86,7 @@ object UiConstants {
     )
 
 
-    val defaultHoldCustomObject = CustomObjectSerializable(
+    val defaultHoldCustomObject = CustomObject(
         stroke = 10f,
         color = Color.Red,
         glow = CustomGlow(

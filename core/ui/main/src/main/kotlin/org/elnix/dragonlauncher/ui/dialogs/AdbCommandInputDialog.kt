@@ -14,8 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
@@ -25,7 +25,7 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 fun AdbCommandInputDialog(
     onDismiss: () -> Unit,
     showLeaveEmptyNotice: Boolean,
-    onActionSelected: (SwipeActionSerializable.RunAdbCommand) -> Unit
+    onActionSelected: (SwipeAction.RunAdbCommand) -> Unit
 ) {
     var commandText by remember { mutableStateOf("adb ") }
     var toast by remember { mutableStateOf(false) }
@@ -72,7 +72,7 @@ fun AdbCommandInputDialog(
             ValidateCancelButtons(
                 onCancel = onDismiss
             ) {
-                onActionSelected(SwipeActionSerializable.RunAdbCommand(commandText, toast))
+                onActionSelected(SwipeAction.RunAdbCommand(commandText, toast))
                 onDismiss()
             }
         }

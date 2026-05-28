@@ -32,14 +32,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.HOLD_TAG
 import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Settings.routeResId
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Companion.settingsRoutes
+import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Settings.routeResId
+import org.elnix.dragonlauncher.common.serializables.DragonJson
 import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.settings.stores.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
@@ -378,22 +378,17 @@ fun rememberHoldMenuEntries(): List<NavigationRoute> {
 }
 
 
-object HoldMenuEntriesJson {
-    private val jsonConfig = Json {
-        explicitNulls = false
-        ignoreUnknownKeys = true
-    }
+object HoldMenuEntriesJson : DragonJson() {
 
-    fun decode(json: String): List<NavigationRoute> {
+    fun decode(string: String): List<NavigationRoute> {
         return try {
-            jsonConfig
-                .decodeFromString<List<NavigationRoute>>(json)
+            json.decodeFromString<List<NavigationRoute>>(string)
         } catch (_: Exception) {
             emptyList()
         }
     }
 
     fun encode(list: List<NavigationRoute>): String {
-        return jsonConfig.encodeToString(list)
+        return json.encodeToString(list)
     }
 }

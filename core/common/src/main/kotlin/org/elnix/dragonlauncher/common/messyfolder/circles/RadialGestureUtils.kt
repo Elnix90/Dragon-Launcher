@@ -3,8 +3,8 @@ package org.elnix.dragonlauncher.common.messyfolder.circles
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.geometry.Offset
 import org.elnix.dragonlauncher.common.messyfolder.UiCircle
-import org.elnix.dragonlauncher.common.serializables.CircleNest
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
+import org.elnix.dragonlauncher.common.serializables.Nest
+import org.elnix.dragonlauncher.common.serializables.Point
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -107,11 +107,11 @@ fun computeTargetCircleFromDistFloat(
  * Returns null when no candidate falls within the angle tolerance.
  */
 fun selectPointOnRing(
-    candidates: List<SwipePointSerializable>,
+    candidates: List<Point>,
     angle360: Float,
     targetCircle: Int,
     minAngles: Map<Int, Int>
-): SwipePointSerializable? {
+): Point? {
     val onRing = candidates.filter { it.circleNumber == targetCircle }
     val closest = onRing.minByOrNull { angularDistanceDeg(it.angleDeg, angle360) } ?: return null
     val minAngle = minAngles[targetCircle] ?: 0
@@ -145,7 +145,7 @@ fun outerRadiusPx(scaled: Map<Int, Float>): Float =
  */
 data class HitResult(
     val targetCircle: Int,
-    val selectedPoint: SwipePointSerializable?,
+    val selectedPoint: Point?,
     val isOutsideBounds: Boolean,
     val angle360: Float
 ) {
@@ -161,7 +161,7 @@ data class HitResult(
  *
  * @param center Gesture origin (same `start` used throughout the drag).
  * @param pointerPos Current finger position.
- * @param nestedNest The [CircleNest] that will be rendered as a Live Nest.
+ * @param nestedNest The [Nest] that will be rendered as a Live Nest.
  * @param liveNestScale Scale factor applied to all radii (0.3–1.0).
  * @param points All swipe points; filtered internally to [nestedNest].id.
  * @param pointsActionSnapToOuterCircle Same flag as `BehaviorSettingsStore.pointsActionSnapsToOuterCircle`.
@@ -171,9 +171,9 @@ data class HitResult(
 fun resolveLiveNestHit(
     center: Offset,
     pointerPos: Offset,
-    nestedNest: CircleNest,
+    nestedNest: Nest,
     liveNestScale: Float,
-    points: List<SwipePointSerializable>,
+    points: List<Point>,
     pointsActionSnapToOuterCircle: Boolean,
     graceDistancePx: Float = 0f
 ): HitResult {

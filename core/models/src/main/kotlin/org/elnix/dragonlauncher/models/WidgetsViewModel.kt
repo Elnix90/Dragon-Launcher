@@ -14,10 +14,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
-import org.elnix.dragonlauncher.common.serializables.FloatingAppObject
 import org.elnix.dragonlauncher.common.serializables.FloatingAppsJson
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
+import org.elnix.dragonlauncher.common.serializables.Widget
+import org.elnix.dragonlauncher.logging.TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.settings.stores.LegacyFloatingAppsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
@@ -33,9 +33,8 @@ class WidgetsViewModel @Inject constructor(
     @SuppressLint("StaticFieldLeak")
     private val ctx = application.applicationContext
 
-    private val _floatingApps = MutableStateFlow<List<FloatingAppObject>>(emptyList())
+    private val _floatingApps = MutableStateFlow<List<Widget>>(emptyList())
     val floatingApps = _floatingApps.asStateFlow()
-
 
 
     val dm: DisplayMetrics = ctx.resources.displayMetrics
@@ -56,17 +55,19 @@ class WidgetsViewModel @Inject constructor(
         viewModelScope.launch {
             _cellSizeDp.value = UiSettingsStore.cellSizeDp.get(ctx)
         }
-        logD(TAG) { "created FloatingAppsVM ${System.identityHashCode(this)}"
-        } }
+        logD(TAG) {
+            "created FloatingAppsVM ${System.identityHashCode(this)}"
+        }
+    }
 
 
     /* ───────────────────────────── Public API ───────────────────────────── */
 
-    fun addFloatingApp(action: SwipeActionSerializable, info: AppWidgetProviderInfo? = null, nestId: Int) {
+    fun addFloatingApp(action: SwipeAction, info: AppWidgetProviderInfo? = null, nestId: Int) {
 
         viewModelScope.launch {
-            val appWidgetId = if (action is SwipeActionSerializable.OpenWidget) action.widgetId else null
-            val app = FloatingAppObject(
+            val appWidgetId = if (action is SwipeAction.OpenWidget) action.widgetId else null
+            val app = Widget(
                 id = Random.nextInt(),
                 appWidgetId = appWidgetId,
                 nestId = nestId,
@@ -141,7 +142,7 @@ class WidgetsViewModel @Inject constructor(
     }
 
 
-    fun editFloatingApp(app: FloatingAppObject) {
+    fun editFloatingApp(app: Widget) {
         val updated = _floatingApps.value.map { floatingApp ->
             if (floatingApp.id == app.id) app
             else floatingApp
@@ -156,7 +157,7 @@ class WidgetsViewModel @Inject constructor(
     }
 
 
-    fun restoreFloatingApps(snapshot: List<FloatingAppObject>) {
+    fun restoreFloatingApps(snapshot: List<Widget>) {
         _floatingApps.value = snapshot.map { it.copy() }
     }
 
@@ -185,7 +186,7 @@ class WidgetsViewModel @Inject constructor(
 
     private fun updateApp(
         appId: Int,
-        block: (FloatingAppObject) -> FloatingAppObject
+        block: (Widget) -> Widget
     ) {
         val current = _floatingApps.value
 
@@ -203,8 +204,8 @@ class WidgetsViewModel @Inject constructor(
     private fun loadFloatingApps() {
         viewModelScope.launch {
             val floatingAppsJsonString = WidgetsSettingsStore.jsonSetting.get(ctx)
-            _floatingApps.value = FloatingAppsJson.decodeFloatingApps(floatingAppsJsonString)
-                // If null try to load legacy floating apps
+            _floatingApps.value = FloatingAppsJson.decode<List<Widget>>(floatingAppsJsonString)
+                    // If null try to load legacy floating apps
                 ?: LegacyFloatingAppsSettingsStore.legacyLoadFloatingApps(ctx)
         }
     }

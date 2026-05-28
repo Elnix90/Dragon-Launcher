@@ -5,12 +5,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logW
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
+import org.elnix.dragonlauncher.common.serializables.Point
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.PINNED_SHORTCUTS
 import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
@@ -79,7 +79,7 @@ class PinnedShortcutActivity : ComponentActivity() {
                 // Check if this shortcut is already added
                 val alreadyExists = existingPoints.any { point ->
                     val action = point.action
-                    action is SwipeActionSerializable.LaunchShortcut &&
+                    action is SwipeAction.LaunchShortcut &&
                             action.packageName == packageName &&
                             action.shortcutId == shortcutId
                 }
@@ -98,10 +98,10 @@ class PinnedShortcutActivity : ComponentActivity() {
                 // Create a new point at a random angle on circle 0
                 val angle = (0..359).random().toDouble()
 
-                val newPoint = SwipePointSerializable(
+                val newPoint = Point(
                     id = UUID.randomUUID().toString(),
                     angleDeg = angle,
-                    action = SwipeActionSerializable.LaunchShortcut(packageName, shortcutId),
+                    action = SwipeAction.LaunchShortcut(packageName, shortcutId),
                     circleNumber = 0,
                     nestId = 0
                 )

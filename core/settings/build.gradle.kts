@@ -2,6 +2,7 @@ import com.android.build.api.dsl.LibraryExtension
 
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -10,12 +11,13 @@ kotlin {
 
 extensions.configure<LibraryExtension> {
     namespace = "org.elnix.dragonlauncher.settings"
+
     compileSdk {
-        version = release(37)
+        version = release(libs.versions.compileSdk.get().toInt())
     }
 
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -26,11 +28,12 @@ extensions.configure<LibraryExtension> {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.datastore.core)
     implementation(libs.timber)
+    implementation(libs.kotlinx.serialization.json)
 
     api(libs.androidx.datastore.preferences.core)
     api(libs.kotlinx.coroutines.core)

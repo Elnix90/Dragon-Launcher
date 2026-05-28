@@ -6,12 +6,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
 
 @Composable
 fun FilePickerDialog(
     onDismiss: () -> Unit,
-    onFileSelected: (SwipeActionSerializable.OpenFile) -> Unit
+    onFileSelected: (SwipeAction.OpenFile) -> Unit
 ) {
     val ctx = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
@@ -27,7 +27,7 @@ fun FilePickerDialog(
                             Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 )
 
-                val action = SwipeActionSerializable.OpenFile(
+                val action = SwipeAction.OpenFile(
                     uri = it.toString(),
                     mimeType = mimeType
                 )

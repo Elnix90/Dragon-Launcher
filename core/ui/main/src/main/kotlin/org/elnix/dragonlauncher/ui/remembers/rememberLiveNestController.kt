@@ -9,9 +9,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import kotlinx.coroutines.delay
-import org.elnix.dragonlauncher.common.serializables.CircleNest
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.defaultSwipePointsValues
+import org.elnix.dragonlauncher.common.serializables.Nest
+import org.elnix.dragonlauncher.common.serializables.Point
+import org.elnix.dragonlauncher.common.serializables.Point.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SWIPE_TAG
 import org.elnix.dragonlauncher.common.messyfolder.UiCircle
 import org.elnix.dragonlauncher.common.messyfolder.circles.HitResult
@@ -35,7 +35,7 @@ import org.elnix.dragonlauncher.ui.composition.LocalPoints
  *
  * @property isActive True while the user is inside an active Live Nest overlay.
  * @property hostPoint The parent point whose hold triggered the Live Nest.
- * @property nestedNest The [CircleNest] being rendered as a scaled overlay.
+ * @property nestedNest The [Nest] being rendered as a scaled overlay.
  * @property liveNestScale Scale applied to ring radii (0.3–1.0).
  * @property liveNestCenter Finger position at the moment Live Nest activated; used as the
  *   drawing center and hit-test origin so the overlay appears around the host point
@@ -46,8 +46,8 @@ import org.elnix.dragonlauncher.ui.composition.LocalPoints
  */
 data class LiveNestState(
     val isActive: Boolean,
-    val hostPoint: SwipePointSerializable?,
-    val nestedNest: CircleNest?,
+    val hostPoint: Point?,
+    val nestedNest: Nest?,
     val liveNestScale: Float,
     val liveNestCenter: Offset?,
     val scaledUiCircles: List<UiCircle>,
@@ -61,7 +61,7 @@ data class LiveNestState(
      *  - the host point (Case B – cancel zone)
      *  - null (Cases C/F – aborted, or not active)
      */
-    val resolveOnRelease: () -> SwipePointSerializable?,
+    val resolveOnRelease: () -> Point?,
     /** Call after a successful nested launch to clean up all Live Nest state. */
     val clearAfterLaunch: () -> Unit
 )
@@ -70,8 +70,8 @@ data class LiveNestState(
 private data class NestLevelState(
     // All the mutable state from rememberLiveNestController
     var liveNestActive: Boolean = false,
-    var hostPoint: SwipePointSerializable? = null,
-    var nestedNest: CircleNest? = null,
+    var hostPoint: Point? = null,
+    var nestedNest: Nest? = null,
     var liveNestScale: Float = 0.5f,
     var liveNestCenter: Offset? = null,
     var suppressMainLaunch: Boolean = false,
@@ -91,7 +91,7 @@ private class MutableReference<T>(var value: T)
 fun rememberLiveNestControllerStack(
     isDragging: Boolean,
     rootStartPos: Offset?,
-    rootNest: CircleNest,
+    rootNest: Nest,
     current: Offset?,
 ): List<LiveNestState> {
 
@@ -284,7 +284,7 @@ fun rememberLiveNestControllerStack(
                 level.currentRef.value ?: return@LaunchedEffect
             }
 
-            val nest = nests.firstOrNull { it.id == targetNestId } ?: CircleNest(targetNestId)
+            val nest = nests.firstOrNull { it.id == targetNestId } ?: Nest(targetNestId)
 
             level.hostPoint = currentPoint
             level.nestedNest = nest

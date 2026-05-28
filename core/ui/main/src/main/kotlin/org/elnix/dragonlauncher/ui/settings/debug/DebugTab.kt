@@ -31,10 +31,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.dummySwipePoint
+import org.elnix.dragonlauncher.common.serializables.Point.Companion.dummySwipePoint
 import org.elnix.dragonlauncher.common.utils.LifecycleUtils
 import org.elnix.dragonlauncher.common.utils.PermissionsUtils.detectSystemLauncher
 import org.elnix.dragonlauncher.common.utils.VersionsUtils.getVersionCode
@@ -395,7 +395,7 @@ fun DebugTab(
                             .padding(vertical = 4.dp)
                     ) {
                         Text(
-                            text = "Reset ${settingsStore.name}",
+                            text = "Reset ${settingsStore.dataStoreName.backupKey}",
                             color = MaterialTheme.colorScheme.error
                         )
                     }
@@ -440,7 +440,7 @@ fun DebugTab(
                 ) { Text(text = "What is 5 / 0? \uD83E\uDD2F") }
 
                 DragonButton(
-                    onClick = { scope.launch { initializationViewModel.initialize() } },
+                    onClick = { initializationViewModel.initialize() },
                     modifier = Modifier.fillMaxWidth()
                 ) { Text(text = "Re-initialize points") }
 

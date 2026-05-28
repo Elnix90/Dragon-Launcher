@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 
 /**
  * Collects the current value of this setting as a Compose [State], using a default value if none is set.
@@ -34,3 +34,8 @@ fun <T, R> BaseSettingObject<T, R>.asStateNull(): State<T?> {
     val ctx = LocalContext.current
     return flow(ctx).collectAsStateWithLifecycle(initialValue = null)
 }
+
+//@Composable
+//fun <T> ViewModelValue<T>.asState(): State<T> {
+//    return value.collectAsState()
+//}

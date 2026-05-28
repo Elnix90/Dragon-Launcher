@@ -1,14 +1,12 @@
 package org.elnix.dragonlauncher.settings.stores
 
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
-import org.elnix.dragonlauncher.settings.bases.MapSettingsStore
-import org.elnix.dragonlauncher.settings.bases.Settings
+import org.elnix.dragonlauncher.settings.bases.boolean
+import org.elnix.dragonlauncher.settings.bases.int
+import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
-object SwipeMapSettingsStore : MapSettingsStore() {
-
-    override val name: String = "Swipe Map"
-    override val dataStoreName = DataStoreName.SWIPE_MAP
+object SwipeMapSettingsStore : MapSettingsStore(DataStoreName.SWIPE_MAP) {
 
     override val ALL: List<BaseSettingObject <*, *> >
         get() = listOf(
@@ -18,28 +16,24 @@ object SwipeMapSettingsStore : MapSettingsStore() {
             this.isInDragAroundMode
         )
 
-    val subNestDefaultRadius = Settings.int(
+    val subNestDefaultRadius = int(
         key = "subNestDefaultRadius",
-        dataStoreName = dataStoreName,
         default = 35,
         allowedRange = 0..50
     )
 
-    val showSubNestsSlider = Settings.boolean(
+    val showSubNestsSlider = boolean(
         key = "showSubNestsSlider",
-        dataStoreName = UiSettingsStore.dataStoreName,
         default = false
     )
 
-    val showAdvancedPointTools = Settings.boolean(
+    val showAdvancedPointTools = boolean(
         key = "showAdvancedPointTools",
-        dataStoreName = UiSettingsStore.dataStoreName,
         default = false
     )
 
-    val isInDragAroundMode = Settings.boolean(
+    val isInDragAroundMode = boolean(
         key = "isInDragAroundMode",
-        dataStoreName = UiSettingsStore.dataStoreName,
         default = false
     )
 }

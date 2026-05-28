@@ -10,16 +10,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
+import org.elnix.dragonlauncher.common.serializables.Point
 import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.helpers.nests.actionsInCircle
 import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
 
 @Composable
 fun PointPreviewCanvas(
-    editPoint: SwipePointSerializable,
-    defaultPoint: SwipePointSerializable,
+    editPoint: Point,
+    defaultPoint: Point,
     backgroundSurfaceColor: Color,
     modifier: Modifier = Modifier,
 ) {
@@ -32,9 +32,9 @@ fun PointPreviewCanvas(
 
     val height =
         when (editPoint.action) {
-            is SwipeActionSerializable.OpenCircleNest -> 100
-            else -> (editPoint.size ?: defaultPoint.size ?: SwipePointSerializable.defaultSwipePointsValues.size!!) +
-                    (editPoint.innerPadding ?: defaultPoint.innerPadding ?: SwipePointSerializable.defaultSwipePointsValues.innerPadding!!) * 2
+            is SwipeAction.OpenCircleNest -> 100
+            else -> (editPoint.size ?: defaultPoint.size ?: Point.defaultSwipePointsValues.size!!) +
+                    (editPoint.innerPadding ?: defaultPoint.innerPadding ?: Point.defaultSwipePointsValues.innerPadding!!) * 2
 
         }
 

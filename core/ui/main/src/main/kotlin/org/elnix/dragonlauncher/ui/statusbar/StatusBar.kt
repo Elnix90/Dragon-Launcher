@@ -53,16 +53,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.STATUS_BAR_TAG
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
 import org.elnix.dragonlauncher.common.serializables.StatusBarJson
-import org.elnix.dragonlauncher.common.serializables.StatusBarSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.allStatusBarSerializable
+import org.elnix.dragonlauncher.common.serializables.StatusBar
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
+import org.elnix.dragonlauncher.common.serializables.allStatusBars
 import org.elnix.dragonlauncher.common.utils.DateUtils.isValidDateFormat
 import org.elnix.dragonlauncher.common.utils.DateUtils.isValidTimeFormat
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.settings.stores.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.StatusBarSettingsStore
@@ -105,7 +105,7 @@ enum class TimeFormat(val pattern: String, val displayName: String) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun StatusBar(
-    launchAction: ((SwipeActionSerializable) -> Unit)?,
+    launchAction: ((SwipeAction) -> Unit)?,
 ) {
     val view = LocalView.current
     val density = LocalDensity.current
@@ -155,7 +155,7 @@ fun StatusBar(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 elements.forEach { element ->
-                    if (element !is StatusBarSerializable.Spacer) {
+                    if (element !is StatusBar.Spacer) {
                         StatusBarItem(element, launchAction)
                     } else {
                         val modifier = Modifier.conditional(
@@ -183,7 +183,7 @@ fun StatusBar(
 
 private data class StatusBarElement(
     val id: String,
-    val item: StatusBarSerializable
+    val item: StatusBar
 )
 
 @Composable
@@ -210,7 +210,7 @@ fun EditStatusBar() {
 
         val loadedElements = StatusBarJsonSettingsStore.jsonSetting.get(ctx)
 
-        val elementsJson = StatusBarJson.decodeStatusBarElements(loadedElements)
+        val elementsJson = StatusBarJson.decode<List<StatusBar>>(loadedElements) ?: emptyList()
 
         elementsJson.forEach { item ->
             elements.add(
@@ -228,13 +228,13 @@ fun EditStatusBar() {
     }
 
     fun save() {
-        val elementsJson = StatusBarJson.encodeStatusBarElements(elements.map { it.item })
+        val elementsJson = StatusBarJson.encode(elements.map { it.item })
         scope.launch {
             StatusBarJsonSettingsStore.jsonSetting.set(ctx, elementsJson)
         }
     }
 
-    fun addElement(element: StatusBarSerializable) {
+    fun addElement(element: StatusBar) {
         elements.add(
             StatusBarElement(
                 id = java.util.UUID.randomUUID().toString(),
@@ -249,14 +249,14 @@ fun EditStatusBar() {
         if (index == -1) return
 
         val copiedItem = when (val item = element.item) {
-            is StatusBarSerializable.Time -> item.copy()
-            is StatusBarSerializable.Date -> item.copy()
-            is StatusBarSerializable.Bandwidth -> item.copy()
-            is StatusBarSerializable.Notifications -> item.copy()
-            is StatusBarSerializable.Connectivity -> item.copy()
-            is StatusBarSerializable.Spacer -> item.copy()
-            is StatusBarSerializable.Battery -> item.copy()
-            is StatusBarSerializable.NextAlarm -> item.copy()
+            is StatusBar.Time -> item.copy()
+            is StatusBar.Date -> item.copy()
+            is StatusBar.Bandwidth -> item.copy()
+            is StatusBar.Notifications -> item.copy()
+            is StatusBar.Connectivity -> item.copy()
+            is StatusBar.Spacer -> item.copy()
+            is StatusBar.Battery -> item.copy()
+            is StatusBar.NextAlarm -> item.copy()
         }
 
         elements.add(
@@ -276,7 +276,7 @@ fun EditStatusBar() {
         save()
     }
 
-    fun updateElement(updated: StatusBarSerializable) {
+    fun updateElement(updated: StatusBar) {
         val index = elements.indexOfFirst { it.id == selectedElementId }
         if (index == -1) return
 
@@ -397,7 +397,7 @@ fun EditStatusBar() {
 
                     when (val item = element.item) {
 
-                        is StatusBarSerializable.Bandwidth -> {
+                        is StatusBar.Bandwidth -> {
                             SwitchRow(
                                 title = stringResource(R.string.merge_bandwidth),
                                 description = "",
@@ -407,7 +407,7 @@ fun EditStatusBar() {
                             }
                         }
 
-                        is StatusBarSerializable.Connectivity -> {
+                        is StatusBar.Connectivity -> {
                             Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                                 SwitchRow(
                                     title = stringResource(R.string.show_airplane_mode),
@@ -462,7 +462,7 @@ fun EditStatusBar() {
                             }
                         }
 
-                        is StatusBarSerializable.Date -> {
+                        is StatusBar.Date -> {
 
                             Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                                 FlowRow(
@@ -515,7 +515,7 @@ fun EditStatusBar() {
                             }
                         }
 
-                        is StatusBarSerializable.Time -> {
+                        is StatusBar.Time -> {
                             Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                                 FlowRow(
                                     modifier = Modifier.fillMaxWidth(),
@@ -558,7 +558,7 @@ fun EditStatusBar() {
                             }
                         }
 
-                        is StatusBarSerializable.Notifications -> {
+                        is StatusBar.Notifications -> {
                             SliderWithLabel(
                                 label = stringResource(R.string.max_notification_icons),
                                 value = item.maxIcons,
@@ -569,7 +569,7 @@ fun EditStatusBar() {
                             }
                         }
 
-                        is StatusBarSerializable.Spacer -> {
+                        is StatusBar.Spacer -> {
                             SliderWithLabel(
                                 label = stringResource(R.string.width),
                                 value = item.width,
@@ -589,7 +589,7 @@ fun EditStatusBar() {
                             }
                         }
 
-                        is StatusBarSerializable.Battery -> {
+                        is StatusBar.Battery -> {
                             SwitchRow(
                                 title = stringResource(R.string.show_percentage),
                                 description = stringResource(R.string.show_percentage_desc),
@@ -599,7 +599,7 @@ fun EditStatusBar() {
                             }
                         }
 
-                        is StatusBarSerializable.NextAlarm -> {
+                        is StatusBar.NextAlarm -> {
                             Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                                 Text(
                                     text = stringResource(R.string.time_format_examples),
@@ -669,7 +669,7 @@ fun EditStatusBar() {
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            allStatusBarSerializable.forEach { item ->
+            allStatusBars.forEach { item ->
 
                 val itemName = remember(item) { item::class.simpleName.toString() }
 
@@ -706,49 +706,49 @@ fun EditStatusBar() {
 
 @Composable
 fun StatusBarItem(
-    element: StatusBarSerializable,
-    launchAction: ((SwipeActionSerializable) -> Unit)? = null,
+    element: StatusBar,
+    launchAction: ((SwipeAction) -> Unit)? = null,
     previewMode: Boolean = false
 ) {
     when (element) {
-        is StatusBarSerializable.Bandwidth -> {
+        is StatusBar.Bandwidth -> {
             StatusBarBandwidth(element)
         }
 
-        is StatusBarSerializable.Connectivity -> {
+        is StatusBar.Connectivity -> {
             StatusBarConnectivity(
                 element = element,
                 previewMode = previewMode
             )
         }
 
-        is StatusBarSerializable.Date -> {
+        is StatusBar.Date -> {
             StatusBarDate(
                 element = element,
                 onAction = launchAction,
             )
         }
 
-        is StatusBarSerializable.Time -> {
+        is StatusBar.Time -> {
             StatusBarTime(
                 element = element,
                 onAction = launchAction,
             )
         }
 
-        is StatusBarSerializable.Notifications -> {
+        is StatusBar.Notifications -> {
             StatusBarNotifications(element)
         }
 
-        is StatusBarSerializable.Spacer -> {
+        is StatusBar.Spacer -> {
             Text(stringResource(R.string.spacer))
         }
 
-        is StatusBarSerializable.Battery -> {
+        is StatusBar.Battery -> {
             StatusBarBattery(element)
         }
 
-        is StatusBarSerializable.NextAlarm -> {
+        is StatusBar.NextAlarm -> {
             StatusBarNextAlarm(element, forceShowIcon = previewMode)
         }
     }

@@ -13,24 +13,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.SecurityHelper
 import org.elnix.dragonlauncher.common.messyfolder.findFragmentActivity
 import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.models.LockScreenViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
@@ -39,12 +38,12 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun LockMethodDialog(
+    lockScreenViewModel: LockScreenViewModel = activityViewModel(),
     onDismiss: () -> Unit
 ) {
     val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
 
-    val currentLockMethod by PrivateSettingsStore.lockMethod.asState()
+    val currentLockMethod by lockScreenViewModel.lockMethod.collectAsState()
     var showPinSetupDialog by remember { mutableStateOf(false) }
     var pendingLockMethod by remember { mutableStateOf<LockMethod?>(null) }
 
@@ -81,11 +80,9 @@ fun LockMethodDialog(
                                 }
 
                                 LockMethod.NONE -> {
-                                    scope.launch {
-                                        PrivateSettingsStore.lockPinHash.reset(ctx)
-                                        PrivateSettingsStore.lockMethod.reset(ctx)
-                                        onDismiss()
-                                    }
+                                    lockScreenViewModel.removeLock()
+                                    onDismiss()
+
                                 }
 
                                 LockMethod.DEVICE_UNLOCK -> {
@@ -95,11 +92,8 @@ fun LockMethodDialog(
                                         SecurityHelper.showDeviceUnlockPrompt(
                                             activity = activity,
                                             onSuccess = {
-                                                scope.launch {
-                                                    PrivateSettingsStore.lockPinHash.reset(ctx)
-                                                    PrivateSettingsStore.lockMethod.set(ctx, LockMethod.DEVICE_UNLOCK)
-                                                    onDismiss()
-                                                }
+                                                lockScreenViewModel.setLockScreenMethod()
+                                                onDismiss()
                                             },
                                             onError = { msg ->
                                                 ctx.showToast(ctx.getString(R.string.authentication_error, msg))
@@ -143,16 +137,12 @@ fun LockMethodDialog(
                 pendingLockMethod = null
             },
             onPinSet = { pin ->
-                scope.launch {
-                    val hash = SecurityHelper.hashPin(pin)
-                    PrivateSettingsStore.lockPinHash.set(ctx, hash)
-                    PrivateSettingsStore.lockMethod.set(ctx, LockMethod.PIN)
-                    ctx.showToast(ctx.getString(R.string.pin_set_success))
+                lockScreenViewModel.setPinLockMethod(pin)
 
-                    showPinSetupDialog = false
-                    pendingLockMethod = null
-                    onDismiss()
-                }
+                showPinSetupDialog = false
+                pendingLockMethod = null
+                onDismiss()
+
             }
         )
     }

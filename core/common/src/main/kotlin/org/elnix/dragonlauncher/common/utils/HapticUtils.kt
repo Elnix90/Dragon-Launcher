@@ -5,7 +5,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import kotlinx.coroutines.delay
-import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedbackSerializable
+import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedback
 
 object HapticUtils {
     /**
@@ -39,7 +39,7 @@ object HapticUtils {
      * @param ctx The context used to trigger vibrations.
      * @param customHaptic The haptic pattern to play, or `null` to do nothing.
      */
-    suspend fun performCustomHaptic(ctx: Context, customHaptic: CustomHapticFeedbackSerializable?) {
+    suspend fun performCustomHaptic(ctx: Context, customHaptic: CustomHapticFeedback?) {
         customHaptic?.haptics?.forEach { (vibrationOrSilent, duration) ->
             if (vibrationOrSilent) {
                 vibrate(ctx, duration.toLong())

@@ -35,15 +35,15 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.ktx.toDp
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.messyfolder.circles.rememberNestNavigation
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Settings.routeResId
-import org.elnix.dragonlauncher.common.serializables.FloatingAppObject
+import org.elnix.dragonlauncher.common.serializables.Widget
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.dummySwipePoint
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
+import org.elnix.dragonlauncher.common.serializables.Point
+import org.elnix.dragonlauncher.common.serializables.Point.Companion.dummySwipePoint
 import org.elnix.dragonlauncher.common.serializables.enabled
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.HoldToActivateArcSettingsStore
@@ -70,7 +70,7 @@ import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 @Composable
 fun MainScreen(
     onNavigate: (NavigationRoute) -> Unit,
-    onLaunchAction: (SwipePointSerializable) -> Unit
+    onLaunchAction: (Point) -> Unit
 ) {
     val ctx = LocalContext.current
     val nests = LocalNests.current
@@ -130,7 +130,7 @@ fun MainScreen(
     val cellSizePx by floatingAppsViewModel.cellSizePx.collectAsState()
 
 
-    fun launchAction(point: SwipePointSerializable) {
+    fun launchAction(point: Point) {
         start = null
         current = null
         lastClickTime = 0
@@ -138,8 +138,8 @@ fun MainScreen(
 
         // Handle nest related actions here, and let the rest pass through
         when (val action = point.action) {
-            SwipeActionSerializable.GoParentNest -> nestNavigation.goBack()
-            is SwipeActionSerializable.OpenCircleNest -> nestNavigation.goToNest(action.nestId)
+            SwipeAction.GoParentNest -> nestNavigation.goBack()
+            is SwipeAction.OpenCircleNest -> nestNavigation.goToNest(action.nestId)
             else -> {
                 nestNavigation.clearStack()
                 onLaunchAction(point)
@@ -228,7 +228,7 @@ fun MainScreen(
 
                         if (isInsideForegroundWidget(
                                 pos = pos,
-                                floatingAppObjects = filteredFloatingAppObjects,
+                                widgets = filteredFloatingAppObjects,
                                 dm = dm,
                                 cellSizePx = cellSizePx
                             )
@@ -319,7 +319,7 @@ fun MainScreen(
                             progress = hold.progressProvider(),
                             rgbLoading = rgbLoading,
                             rotationsPerSecond = rotationPerSecond,
-                            customObjectSerializable = holdCustomObject,
+                            customObject = holdCustomObject,
                             showHoldTolerance = if (showToleranceOnMainScreen) {
                                 { holdToActivateSettingsTolerance }
                             } else null
@@ -371,7 +371,7 @@ fun MainScreen(
                         filteredFloatingAppObjects.forEach { floatingAppObject ->
                             key(floatingAppObject.id, nestId) {
                                 WidgetHostView(
-                                    floatingAppObject = floatingAppObject,
+                                    widget = floatingAppObject,
                                     cellSizePx = cellSizePx,
                                     modifier = Modifier
                                         .offset {
@@ -446,11 +446,11 @@ private fun isInsideActiveZone(
  */
 private fun isInsideForegroundWidget(
     pos: Offset,
-    floatingAppObjects: List<FloatingAppObject>,
+    widgets: List<Widget>,
     dm: DisplayMetrics,
     cellSizePx: Float
 ): Boolean {
-    return floatingAppObjects.any { widget ->
+    return widgets.any { widget ->
         if (widget.foreground == false) return@any false
 
         val left = widget.x * dm.widthPixels

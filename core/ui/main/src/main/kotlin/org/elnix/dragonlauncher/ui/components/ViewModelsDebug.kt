@@ -8,17 +8,16 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel
 import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.models.DragonLogViewModel
-import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.models.LockScreenViewModel
 import org.elnix.dragonlauncher.models.PointSettingsViewModel
-import org.elnix.dragonlauncher.models.PrivateSpaceViewModel
+import org.elnix.dragonlauncher.models.ProfilesVM
 import org.elnix.dragonlauncher.models.ShizukuViewModel
+import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
@@ -28,12 +27,12 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 fun DebugViewModel(
     appLifecycleViewModel: AppLifecycleViewModel = activityViewModel(),
     appsViewModel: AppsViewModel = activityViewModel(),
-    backupViewModel: BackupViewModel = hiltViewModel(),
-    dragonLogViewModel: DragonLogViewModel = hiltViewModel(),
-    widgetsViewModel: WidgetsViewModel = hiltViewModel(),
+    backupViewModel: BackupViewModel = activityViewModel(),
+    dragonLogViewModel: DragonLogViewModel = activityViewModel(),
+    widgetsViewModel: WidgetsViewModel = activityViewModel(),
     lockScreenViewModel: LockScreenViewModel = activityViewModel(),
-    pointSettingsViewModel: PointSettingsViewModel = hiltViewModel(),
-    privateSpaceViewModel: PrivateSpaceViewModel = activityViewModel(),
+    pointSettingsViewModel: PointSettingsViewModel = activityViewModel(),
+    profilesVM: ProfilesVM = activityViewModel(),
     shizukuViewModel: ShizukuViewModel = activityViewModel(),
 ) {
     val showDebugViewModel by DebugSettingsStore.showDebugViewModel.asState()
@@ -65,7 +64,7 @@ fun DebugViewModel(
         vmTestColor("floatingAppsViewModel", widgetsViewModel)
         vmTestColor("lockScreenViewModel", lockScreenViewModel)
         vmTestColor("pointSettingsViewModel", pointSettingsViewModel)
-        vmTestColor("privateSpaceViewModel", privateSpaceViewModel)
+        vmTestColor("privateSpaceViewModel", profilesVM)
         vmTestColor("shizukuViewModel", shizukuViewModel)
     }
 }

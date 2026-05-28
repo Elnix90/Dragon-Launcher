@@ -2,8 +2,6 @@ package org.elnix.dragonlauncher.ui
 
 import android.annotation.SuppressLint
 import android.content.ComponentName
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -34,7 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,10 +40,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
@@ -59,34 +55,37 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.APP_LAUNCH_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SHIZUKU_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
 import org.elnix.dragonlauncher.common.messyfolder.Constants.PackageNames.SHIZUKU_PACKAGE_NAME
 import org.elnix.dragonlauncher.common.messyfolder.Constants.URLs.URL_SHIZUKU_SITE
+import org.elnix.dragonlauncher.common.messyfolder.SecurityHelper
+import org.elnix.dragonlauncher.common.messyfolder.findFragmentActivity
 import org.elnix.dragonlauncher.common.messyfolder.openUrl
 import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.common.navigaton.isInIgnoredReturnScreen
 import org.elnix.dragonlauncher.common.navigaton.isInTransparentScreen
-import org.elnix.dragonlauncher.common.serializables.FloatingAppObject
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.dummySwipePoint
+import org.elnix.dragonlauncher.common.serializables.Widget
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
+import org.elnix.dragonlauncher.common.serializables.Point
+import org.elnix.dragonlauncher.common.serializables.Point.Companion.dummySwipePoint
 import org.elnix.dragonlauncher.common.utils.PermissionsUtils.hasUriReadWritePermission
 import org.elnix.dragonlauncher.common.utils.PermissionsUtils.isAppInstalled
 import org.elnix.dragonlauncher.common.utils.rememberIsDefaultLauncher
 import org.elnix.dragonlauncher.enumsui.other.ReminderMode
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar
+import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.logging.APP_LAUNCH_TAG
+import org.elnix.dragonlauncher.logging.DRAWER_TAG
+import org.elnix.dragonlauncher.logging.SHIZUKU_TAG
+import org.elnix.dragonlauncher.logging.TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel
 import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.models.LockScreenViewModel
-import org.elnix.dragonlauncher.models.PrivateSpaceViewModel
+import org.elnix.dragonlauncher.models.ProfilesVM
 import org.elnix.dragonlauncher.models.ShizukuViewModel
 import org.elnix.dragonlauncher.settings.stores.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
@@ -99,6 +98,7 @@ import org.elnix.dragonlauncher.settings.stores.WellbeingSettingsStore
 import org.elnix.dragonlauncher.ui.actions.AppLaunchException
 import org.elnix.dragonlauncher.ui.actions.launchAppDirectly
 import org.elnix.dragonlauncher.ui.actions.launchSwipeAction
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.asStateNull
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
@@ -154,11 +154,6 @@ import org.elnix.dragonlauncher.ui.whatsnew.WhatsNewBottomSheet
 import rikka.shizuku.Shizuku
 
 
-@Composable
-inline fun <reified VM : ViewModel> activityViewModel(): VM {
-    val activity = LocalActivity.current as ComponentActivity
-    return hiltViewModel(activity)
-}
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
@@ -166,31 +161,23 @@ fun MainAppUi(
     appLifecycleViewModel: AppLifecycleViewModel = activityViewModel(),
     appsViewModel: AppsViewModel = activityViewModel(),
     lockScreenViewModel: LockScreenViewModel = activityViewModel(),
-    privateSpaceViewModel: PrivateSpaceViewModel = activityViewModel(),
+    profilesVM: ProfilesVM = activityViewModel(),
     shizukuViewModel: ShizukuViewModel = activityViewModel(),
     onBindCustomWidget: (Int, ComponentName, nestId: Int) -> Unit,
     onResetWidgetSize: (id: Int, widgetId: Int) -> Unit,
-    onRemoveFloatingApp: (FloatingAppObject) -> Unit
+    onRemoveFloatingApp: (Widget) -> Unit
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val privateSpaceState = appsViewModel.privateSpaceState
-
     var showWidgetPicker by remember { mutableStateOf<Int?>(null) }
-    var showFilePicker: SwipePointSerializable? by remember { mutableStateOf(null) }
+    var showFilePicker: Point? by remember { mutableStateOf(null) }
 
 
-    var showShizukuCommandPromter by remember { mutableStateOf<SwipeActionSerializable.RunAdbCommand?>(null) }
+    var showShizukuCommandPromter by remember { mutableStateOf<SwipeAction.RunAdbCommand?>(null) }
     val showShizukuUnavailableDialog by shizukuViewModel.showUnavailable.collectAsState()
     val hasShizukuPermission by shizukuViewModel.shizukuPermissionState().collectAsState()
-    var isShizukuInstalled by rememberSaveable {
-        mutableStateOf(
-            ctx.isAppInstalled(
-                SHIZUKU_PACKAGE_NAME
-            )
-        )
-    }
+    val isShizukuInstalled by retain { mutableStateOf(ctx.isAppInstalled(SHIZUKU_PACKAGE_NAME)) }
 
 
     val autoShowKeyboardOnDrawer by DrawerSettingsStore.autoShowKeyboardOnDrawer.asState()
@@ -203,7 +190,7 @@ fun MainAppUi(
                     DrawerToolbar.valueOf(it)
                 }
             } catch (e: Exception) {
-                logE(Constants.Logging.DRAWER_TAG, e) { "Unable to decode drawerToolbars order, using default value" }
+                logE(DRAWER_TAG, e) { "Unable to decode drawerToolbars order, using default value" }
                 DrawerToolbar.entries
             }
         }
@@ -231,9 +218,10 @@ fun MainAppUi(
         derivedStateOf { backStack.lastOrNull() ?: NavigationRoute.Main }
     }
 
-
     val isLocked by lockScreenViewModel.isLocked.collectAsState()
     val screenToUnlock by lockScreenViewModel.screenToUnlock.collectAsState()
+    val lockMethod by lockScreenViewModel.lockMethod.collectAsState()
+
 
     LaunchedEffect(currentRoute) {
         lockScreenViewModel.onEnterNewRoute(currentRoute)
@@ -345,10 +333,8 @@ fun MainAppUi(
             return
         }
 
-        if (screen in NavigationRoute.settingsRoutes) {
-            lockScreenViewModel.requestUnlock(screen) {
-                go()
-            }
+        if (screen in NavigationRoute.settingsRoutes && lockMethod != LockMethod.NONE) {
+            lockScreenViewModel.requestUnlock(screen)
         } else {
             go()
         }
@@ -398,7 +384,7 @@ fun MainAppUi(
     }
 
 
-    fun runShisukuCommandNotEmpty(command: SwipeActionSerializable.RunAdbCommand) {
+    fun runShisukuCommandNotEmpty(command: SwipeAction.RunAdbCommand) {
         if (!Shizuku.pingBinder()) {
             logD(SHIZUKU_TAG) { "Shizuku is not running, opening it..." }
             shizukuViewModel.setUnavailable()
@@ -418,12 +404,12 @@ fun MainAppUi(
         }
     }
 
-    fun launchAction(point: SwipePointSerializable) {
+    fun launchAction(point: Point) {
         // Store package for potential pause callback
         val action = point.action
 
         // Store package for potential pause callback
-        if (action is SwipeActionSerializable.LaunchApp) {
+        if (action is SwipeAction.LaunchApp) {
             pendingPackageToLaunch = action.packageName
             pendingUserIdToLaunch = action.userId ?: 0
             pendingAppName = point.customName ?: try {
@@ -454,10 +440,10 @@ fun MainAppUi(
                 appName = pendingAppName ?: "",
                 digitalPauseLauncher = digitalPauseLauncher,
                 onOpenPrivateSpaceApp = { action ->
-                    if (action !is SwipeActionSerializable.LaunchApp) return@launchSwipeAction
+                    if (action !is SwipeAction.LaunchApp) return@launchSwipeAction
 
                     if (privateSpaceState.value.isLocked) {
-                        privateSpaceViewModel.onUnlockPrivateSpace()
+                        profilesVM.onUnlockPrivateSpace()
                     }
 
                     scope.launch {
@@ -504,7 +490,7 @@ fun MainAppUi(
         }
     }
 
-    fun launchAction(action: SwipeActionSerializable) {
+    fun launchAction(action: SwipeAction) {
         launchAction(
             dummySwipePoint(action)
         )
@@ -651,8 +637,11 @@ fun MainAppUi(
 
                         entry<NavigationRoute.Welcome>(metadata = horizontalMetadata) {
                             WelcomeScreen(
-                                onEnterSettings = { backStack.navigate(NavigationRoute.PointsSettings) },
-                                onEnterApp = backStack::navigateBack
+                                onEnterSettings = {
+                                    popBackMainScreen()
+                                    backStack.navigate(NavigationRoute.PointsSettings)
+                                },
+                                onEnterApp = ::popBackMainScreen
                             )
                         }
 
@@ -667,7 +656,7 @@ fun MainAppUi(
                         }
 
                         entry<NavigationRoute.Settings>(metadata = horizontalMetadata) {
-                            AdvancedSettingsScreen(
+                            SettingsScreen(
                                 backStack::navigate,
                                 backStack::navigateBack
                             )
@@ -741,15 +730,6 @@ fun MainAppUi(
                                 onLaunchAction = ::launchAction
                             )
                         }
-
-//                        entry<NavigationRoute.PinUnlock>(metadata = horizontalMetadata) { key ->
-//                            PinUnlock(
-//                                onDismiss = backStack::navigateBack,
-//                                onValidate = {
-//                                    backStack.remove<Any>(NavigationRoute.PinUnlock)
-//                                    backStack.navigate(key.screenToGo) }
-//                            )
-//                        }
                     }
                 )
             }
@@ -808,7 +788,7 @@ fun MainAppUi(
                     shizukuViewModel.dismissUnavailableDialog()
                 },
                 onConfirm = {
-                    if (isShizukuInstalled) launchAction(SwipeActionSerializable.LaunchApp(SHIZUKU_PACKAGE_NAME, false, 0))
+                    if (isShizukuInstalled) launchAction(SwipeAction.LaunchApp(SHIZUKU_PACKAGE_NAME, false, 0))
                     else ctx.openUrl(
                         url = URL_SHIZUKU_SITE
                     )
@@ -830,17 +810,42 @@ fun MainAppUi(
 //            Text("isLocked: $isLocked; screenToUnlock: $screenToUnlock")
 //        }
 
-        if (isLocked && screenToUnlock != null) {
-            PinUnlock(
-                onDismiss = {
-                    lockScreenViewModel.cancelPinUnlock()
-                },
-                onValidate = {
-                    lockScreenViewModel.unlock()
-                    backStack.remove(screenToUnlock!!)
-                    backStack.add(screenToUnlock!!)
-                }
-            )
+    }
+
+    if (screenToUnlock != null && lockMethod == LockMethod.PIN) {
+        PinUnlock(
+            onDismiss = {
+                lockScreenViewModel.cancelPinUnlock()
+            },
+            onValidate = {
+                lockScreenViewModel.unlock()
+                backStack.remove(screenToUnlock!!)
+                backStack.add(screenToUnlock!!)
+            }
+        )
+    }
+
+    if (screenToUnlock != null && lockMethod == LockMethod.DEVICE_UNLOCK) {
+        LaunchedEffect(screenToUnlock) {
+            val activity = ctx.findFragmentActivity()
+            if (activity != null && SecurityHelper.isDeviceUnlockAvailable(ctx)) {
+                SecurityHelper.showDeviceUnlockPrompt(
+                    activity = activity,
+                    onSuccess = {
+                        lockScreenViewModel.unlock()
+                        backStack.navigate(screenToUnlock!!)
+                        lockScreenViewModel.cancelPinUnlock()
+                    },
+                    onError = { msg ->
+                        ctx.showToast(ctx.getString(R.string.authentication_error, msg))
+                        lockScreenViewModel.cancelPinUnlock()
+                    },
+                    onFailed = {
+                        ctx.showToast(ctx.getString(R.string.authentication_failed))
+                        lockScreenViewModel.cancelPinUnlock()
+                    }
+                )
+            }
         }
     }
 }

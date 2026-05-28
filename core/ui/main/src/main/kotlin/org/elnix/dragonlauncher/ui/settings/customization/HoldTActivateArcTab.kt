@@ -27,7 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -37,11 +36,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.serializables.ColorSerializer
-import org.elnix.dragonlauncher.common.serializables.CustomObjectSerializable
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants
@@ -58,6 +53,7 @@ import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
 import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
+import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson
 
 
 @Composable
@@ -83,14 +79,8 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
 
     val progress = remember { Animatable(0f) }
 
-    val json = Json {
-        serializersModule = SerializersModule {
-            contextual(Color::class, ColorSerializer)
-        }
-    }
-
     fun save() {
-        val newAngleJson = json.encodeToString(CustomObjectSerializable.serializer(), mutableHoldObject)
+        val newAngleJson = CustomObjectJson.encode(mutableHoldObject)
         scope.launch {
             HoldToActivateArcSettingsStore.holdToActivateArcCustomObject.set(ctx, newAngleJson)
         }
@@ -152,7 +142,7 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
                     progress = progress.value,
                     rgbLoading = rgbLoading,
                     rotationsPerSecond = rotationPerSecond,
-                    customObjectSerializable = mutableHoldObject,
+                    customObject = mutableHoldObject,
                     playAnimation = playAnimation,
                     showHoldTolerance = if (showToleranceOnMainScreen) {
                         { holdToActivateSettingsTolerance }

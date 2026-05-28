@@ -34,10 +34,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.serializables.CircleNest
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.common.serializables.Nest
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
+import org.elnix.dragonlauncher.common.serializables.Point
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
@@ -53,11 +53,11 @@ import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
 fun NestManagementDialog(
     onDismissRequest: () -> Unit,
     title: String? = null,
-    nests: List<CircleNest>? = null,
+    nests: List<Nest>? = null,
     onNewNest: (() -> Unit)? = null,
     onNameChange: ((id: Int, name: String) -> Unit)?,
     onDelete: ((id: Int) -> Unit)?,
-    onSelect: ((CircleNest) -> Unit)? = null
+    onSelect: ((Nest) -> Unit)? = null
 ) {
     val nests = nests ?: LocalNests.current
 
@@ -125,9 +125,9 @@ fun NestManagementDialog(
 
 @Composable
 private fun NestManagementItem(
-    nest: CircleNest,
+    nest: Nest,
     modifier: Modifier,
-    nests: List<CircleNest>?,
+    nests: List<Nest>?,
     onNameChange: ((id: Int, name: String) -> Unit)?,
     onDelete: ((id: Int) -> Unit)?,
     onSelect: (() -> Unit)? = null
@@ -144,10 +144,10 @@ private fun NestManagementItem(
     var tempCustomName by remember { mutableStateOf(nest.name ?: "") }
 
 
-    val editPoint = SwipePointSerializable(
+    val editPoint = Point(
         circleNumber = 0,
         angleDeg = 0.0,
-        SwipeActionSerializable.OpenCircleNest(nest.id),
+        SwipeAction.OpenCircleNest(nest.id),
         id = ""
     )
 

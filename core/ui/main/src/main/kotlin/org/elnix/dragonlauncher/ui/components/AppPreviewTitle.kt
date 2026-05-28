@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.common.messyfolder.resolveShape
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
+import org.elnix.dragonlauncher.common.serializables.Point
 import org.elnix.dragonlauncher.common.serializables.applyColorAction
 import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.ui.actions.actionColor
@@ -43,7 +43,7 @@ import org.elnix.dragonlauncher.ui.composition.LocalPointIconsCache
 @Composable
 fun AppPreviewTitle(
     appsViewModel: AppsViewModel = activityViewModel(),
-    point: SwipePointSerializable?,
+    point: Point?,
     topPadding: Dp = 60.dp,
     labelSize: Int,
     iconSize: Int,

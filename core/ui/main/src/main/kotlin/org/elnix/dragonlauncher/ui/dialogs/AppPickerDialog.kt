@@ -47,16 +47,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.common.search.Application
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.PRIVATE_SPACE_TAG
-import org.elnix.dragonlauncher.common.serializables.AppModel
 import org.elnix.dragonlauncher.common.serializables.WorkspaceType
 import org.elnix.dragonlauncher.common.utils.PrivateSpaceUtils
 import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.models.PrivateSpaceViewModel
+import org.elnix.dragonlauncher.models.ProfilesVM
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.UiConstants
@@ -71,16 +72,12 @@ import org.elnix.dragonlauncher.ui.helpers.AppGrid
 @Composable
 fun AppPickerDialog(
     appsViewModel: AppsViewModel = activityViewModel(),
-    privateSpaceViewModel: PrivateSpaceViewModel = activityViewModel(),
+    profilesVM: ProfilesVM = activityViewModel(),
     multiSelectEnabled: Boolean = false,
     onDismiss: () -> Unit,
-    onAppSelected: (AppModel) -> Unit,
-    onMultipleAppsSelected: ((List<AppModel>, Boolean) -> Unit)? = null
+    onAppSelected: (Application) -> Unit,
+    onMultipleAppsSelected: ((List<Application>, Boolean) -> Unit)? = null
 ) {
-
-
-    val privateSpaceState by appsViewModel.privateSpaceState.collectAsState()
-
     // Auto Show keyboard logic
     val focusRequester = remember { FocusRequester() }
 
@@ -95,7 +92,7 @@ fun AppPickerDialog(
     }
 
 
-    val workspaceState by appsViewModel.enabledState.collectAsState()
+    val workspaceState by appsViewModel.workspaceManager.workspacesState.collectAsState()
     val workspaces = workspaceState.workspaces
     val overrides = workspaceState.appOverrides
     val aliases = workspaceState.appAliases
@@ -125,7 +122,7 @@ fun AppPickerDialog(
             privateSpaceState.isLocked
         ) {
             logW(PRIVATE_SPACE_TAG) { "Picker launch!" }
-            privateSpaceViewModel.onUnlockPrivateSpace()
+            profilesVM.onUnlockPrivateSpace()
         }
 
         appsViewModel.selectWorkspace(newWorkspaceId)
@@ -184,11 +181,11 @@ fun AppPickerDialog(
                                 contentDescription = stringResource(R.string.search_apps)
                             ) { isSearchBarEnabled = true }
 
-                            DragonIconButton(
-                                colors = AppObjectsColors.iconButtonColors(),
-                                icon = R.drawable.reload,
-                                contentDescription = stringResource(R.string.reload_apps)
-                            ) { scope.launch { appsViewModel.reloadApps() } }
+//                            DragonIconButton(
+//                                colors = AppObjectsColors.iconButtonColors(),
+//                                icon = R.drawable.reload,
+//                                contentDescription = stringResource(R.string.reload_apps)
+//                            ) { scope.launch { appsViewModel.reloadApps() } }
                         }
                     } else {
                         AppDrawerSearch(
@@ -296,7 +293,7 @@ fun AppPickerDialog(
 
                             DragonButton(
                                 onClick = {
-                                    val allApps = appsViewModel.allApps.value
+                                    val allApps by appsViewModel.allApps.collectAsState(emptyList())
                                     val pickedApps = allApps.filter { it.packageName in selectedApps }
                                     onMultipleAppsSelected(pickedApps, false)
                                     onDismiss()
@@ -332,7 +329,7 @@ fun AppPickerDialog(
                             app.name.contains(searchQuery, ignoreCase = true) ||
 
                                     // Also search for aliases
-                                    aliases[app.iconCacheKey]?.any {
+                                    aliases[app.key]?.any {
                                         it.contains(
                                             searchQuery,
                                             ignoreCase = true
@@ -364,7 +361,7 @@ fun AppPickerDialog(
                                         contentDescription = "Private Space Locked"
                                     ) {
                                         logW(PRIVATE_SPACE_TAG) { "Drawer reload button launch!" }
-                                        privateSpaceViewModel.onUnlockPrivateSpace()
+                                        profilesVM.onUnlockPrivateSpace()
                                     }
                                 }
                             }

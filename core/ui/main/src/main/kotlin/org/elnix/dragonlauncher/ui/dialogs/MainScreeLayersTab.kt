@@ -35,14 +35,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.isNotBlankJson
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
+import org.elnix.dragonlauncher.common.serializables.MainScreenLayer.Companion.copyWithEnabled
+import org.elnix.dragonlauncher.common.serializables.MainScreenLayer.Companion.defaultMainScreenLayers
+import org.elnix.dragonlauncher.common.serializables.MainScreenLayer.Companion.enabled
+import org.elnix.dragonlauncher.common.serializables.MainScreenLayer.Companion.label
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayerJson
-import org.elnix.dragonlauncher.common.serializables.copyWithEnabled
-import org.elnix.dragonlauncher.common.serializables.defaultMainScreenLayers
-import org.elnix.dragonlauncher.common.serializables.enabled
-import org.elnix.dragonlauncher.common.serializables.label
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.asState
@@ -231,8 +231,8 @@ fun rememberMainScreenLayerOrder(): MutableState<List<MainScreenLayer>> {
             orderString
                 .takeIf { it.isNotBlankJson }
                 ?.let {
-                    MainScreenLayerJson.decode(orderString)
-                        .takeIf { it.size == 6 } // Ensure they have been saved
+                    MainScreenLayerJson.decode<List<MainScreenLayer>>(orderString)
+                        .takeIf { it?.size == 6 } // Ensure they have been saved
                 } ?: defaultMainScreenLayers
 
         mutableStateOf(decoded)

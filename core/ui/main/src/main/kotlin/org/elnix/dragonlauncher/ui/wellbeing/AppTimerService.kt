@@ -14,7 +14,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.utils.DateUtils.formatDuration
 import org.elnix.dragonlauncher.common.utils.PermissionsUtils.hasUsageStatsPermission
 import org.elnix.dragonlauncher.enumsui.other.ReminderMode
@@ -72,14 +72,14 @@ class AppTimerService : Service() {
         }
 
 //        fun stop(ctx: Context) {
-//            ctx.stopService(Intent(ctx, AppTimerService::class.java))
+//            ctx.stopService(Intent(ctx, AppTimerService::class.kotlin))
 //        }
 
 //        /**
 //         * Helper used by debug UI to send a one-off reminder notification for testing.
 //         */
 //        fun sendTestReminderNotification(ctx: Context, appName: String = "Dragon Launcher", minutes: Int = 5) {
-//            val nm = ctx.getSystemService(NotificationManager::class.java) ?: return
+//            val nm = ctx.getSystemService(NotificationManager::class.kotlin) ?: return
 //            nm.createNotificationChannel(
 //                NotificationChannel(
 //                    CHANNEL_REMINDER,

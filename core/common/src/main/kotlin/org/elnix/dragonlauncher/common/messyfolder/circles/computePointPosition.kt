@@ -2,7 +2,7 @@ package org.elnix.dragonlauncher.common.messyfolder.circles
 
 import androidx.compose.ui.geometry.Offset
 import org.elnix.dragonlauncher.common.messyfolder.UiCircle
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
+import org.elnix.dragonlauncher.common.serializables.Point
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -20,7 +20,7 @@ private fun computePointPositionInternal(
     )
 }
 
-fun SwipePointSerializable.computePosition(
+fun Point.computePosition(
     circles: List<UiCircle>,
     center: Offset
 ): Offset {
@@ -35,7 +35,7 @@ fun SwipePointSerializable.computePosition(
 }
 
 
-fun SwipePointSerializable.computePosition(
+fun Point.computePosition(
     radius: Float,
     center: Offset
 ): Offset {

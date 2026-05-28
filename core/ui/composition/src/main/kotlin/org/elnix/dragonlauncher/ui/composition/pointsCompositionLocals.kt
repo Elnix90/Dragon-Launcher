@@ -1,10 +1,10 @@
 package org.elnix.dragonlauncher.ui.composition
 
 import androidx.compose.runtime.compositionLocalOf
-import org.elnix.dragonlauncher.common.serializables.CircleNest
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
+import org.elnix.dragonlauncher.common.serializables.Nest
+import org.elnix.dragonlauncher.common.serializables.Point
 
-val LocalNests = compositionLocalOf<List<CircleNest>> { error("No nests provided") }
-val LocalPoints = compositionLocalOf<List<SwipePointSerializable>> { error("No points provided") }
-val LocalDefaultPoint = compositionLocalOf<SwipePointSerializable> { error("No default point provided") }
+val LocalNests = compositionLocalOf<List<Nest>> { error("No nests provided") }
+val LocalPoints = compositionLocalOf<List<Point>> { error("No points provided") }
+val LocalDefaultPoint = compositionLocalOf<Point> { error("No default point provided") }
 

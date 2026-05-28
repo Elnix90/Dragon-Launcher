@@ -14,14 +14,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 
 @Composable
 fun UrlInputDialog(
     onDismiss: () -> Unit,
-    onUrlSelected: (SwipeActionSerializable.OpenUrl) -> Unit
+    onUrlSelected: (SwipeAction.OpenUrl) -> Unit
 ) {
     var text by remember { mutableStateOf("https://") }
     var error by remember { mutableStateOf(false) }
@@ -58,7 +58,7 @@ fun UrlInputDialog(
                         error = true
                         return@Button
                     }
-                    onUrlSelected(SwipeActionSerializable.OpenUrl(text))
+                    onUrlSelected(SwipeAction.OpenUrl(text))
                     onDismiss()
                 },
                 colors = AppObjectsColors.buttonColors()

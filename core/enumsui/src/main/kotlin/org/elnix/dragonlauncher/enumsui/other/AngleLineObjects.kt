@@ -1,6 +1,6 @@
 package org.elnix.dragonlauncher.enumsui.other
 
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 
 enum class AngleLineObjects(
     val resId: Int

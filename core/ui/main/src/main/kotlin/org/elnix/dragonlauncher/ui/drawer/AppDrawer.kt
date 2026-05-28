@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.provider.Settings
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,17 +25,19 @@ import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -52,7 +56,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -69,20 +72,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
-import org.elnix.dragonlauncher.base.ktx.px
-import org.elnix.dragonlauncher.base.ktx.toDp
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.base.profiles.Profile.Type.Personal
+import org.elnix.dragonlauncher.base.profiles.Profile.Type.Private
+import org.elnix.dragonlauncher.base.profiles.Profile.Type.Work
+import org.elnix.dragonlauncher.common.search.Application
 import org.elnix.dragonlauncher.common.messyfolder.Constants
 import org.elnix.dragonlauncher.common.messyfolder.openSearch
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.common.serializables.AppModel
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.WorkspaceType
-import org.elnix.dragonlauncher.common.utils.PrivateSpaceUtils
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
+import org.elnix.dragonlauncher.common.serializables.WorkspaceType.PRIVATE
+import org.elnix.dragonlauncher.common.serializables.WorkspaceType.WORK
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.CLEAR
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.CLOSE
@@ -98,11 +100,14 @@ import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar.RecentlyUsed
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar.SearchBar
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar.Spacer
 import org.elnix.dragonlauncher.enumsui.toggle.isUsed
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.px
+import org.elnix.dragonlauncher.ktx.toDp
 import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.models.PrivateSpaceViewModel
+import org.elnix.dragonlauncher.models.ProfilesVM
 import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
@@ -111,9 +116,7 @@ import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dialogs.AppAliasesDialog
 import org.elnix.dragonlauncher.ui.dialogs.AppIconEditor
-import org.elnix.dragonlauncher.ui.dialogs.AppLongPressRow
 import org.elnix.dragonlauncher.ui.dialogs.TextEditorDialog
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.helpers.AppDrawerSearch
 import org.elnix.dragonlauncher.ui.helpers.AppGrid
 import org.elnix.dragonlauncher.ui.helpers.WallpaperDim
@@ -126,7 +129,7 @@ import kotlin.math.pow
 @Composable
 fun AppDrawerScreen(
     appsViewModel: AppsViewModel = activityViewModel(),
-    privateSpaceViewModel: PrivateSpaceViewModel = activityViewModel(),
+    profilesVM: ProfilesVM = activityViewModel(),
     autoShowKeyboard: Boolean,
     drawerToolbarsOrder: List<DrawerToolbar>,
     leftAction: DrawerActions,
@@ -135,18 +138,24 @@ fun AppDrawerScreen(
     rightWeight: Float,
     onRegisterHomeHandler: ((() -> Unit)?) -> Unit,
     onNavigate: (NavigationRoute) -> Unit,
-    onLaunchAction: (SwipeActionSerializable) -> Unit,
+    onLaunchAction: (SwipeAction) -> Unit,
     onClose: () -> Unit
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val privateSpaceState by appsViewModel.privateSpaceState.collectAsState()
 
-    val workspaceState by appsViewModel.enabledState.collectAsState()
+    val workspacesManager = appsViewModel.workspaceManager
+    val workspaceState by workspacesManager.workspacesState.collectAsState()
     val visibleWorkspaces = workspaceState.workspaces
-    val overrides = workspaceState.appOverrides
-    val aliases = workspaceState.appAliases
+
+    val appOverridesManager = appsViewModel.appOverrideManager
+    val appOverrideState by appOverridesManager.appOverrideState.collectAsState()
+    val appOverrides = appOverrideState.appOverrides
+
+    val profiles by profilesVM.profiles.collectAsState(emptyList())
+    val profileStates by profilesVM.profileStates.collectAsState(emptyList())
+    val hasProfilesPermission by profilesVM.hasProfilesPermission.collectAsState(false)
 
 
     val selectedWorkspaceId by appsViewModel.selectedWorkspaceId.collectAsState()
@@ -159,7 +168,6 @@ fun AppDrawerScreen(
     val autoLaunchSingleMatch by DrawerSettingsStore.autoOpenSingleMatch.asState()
     val disableAutoLaunchOnSpaceFirstChar by DrawerSettingsStore.disableAutoLaunchOnSpaceFirstChar.asState()
 
-    /* ───────────── Actions ───────────── */
     val tapEmptySpaceToRaiseKeyboard by DrawerSettingsStore.tapEmptySpaceAction.asState()
     val drawerEnterAction by DrawerSettingsStore.drawerEnterAction.asState()
     val drawerBackAction by DrawerSettingsStore.backDrawerAction.asState()
@@ -171,7 +179,6 @@ fun AppDrawerScreen(
     val showSearchBar by DrawerSettingsStore.showSearchBar.asState()
 
 
-    /* ───────────── Recently Used Apps ───────────── */
     val showRecentlyUsedApps by DrawerSettingsStore.showRecentlyUsedApps.asState()
     val recentlyUsedAppsCount by DrawerSettingsStore.recentlyUsedAppsCount.asState()
     val recentApps by appsViewModel.getRecentApps(recentlyUsedAppsCount)
@@ -187,13 +194,13 @@ fun AppDrawerScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     var isSearchFocused by remember { mutableStateOf(false) }
 
-    var renameAppTarget by remember { mutableStateOf<AppModel?>(null) }
-    var showAliasDialog by remember { mutableStateOf<AppModel?>(null) }
+    var renameAppTarget by remember { mutableStateOf<Application?>(null) }
+    var showAliasDialog by remember { mutableStateOf<Application?>(null) }
 
     var workspaceId by remember { mutableStateOf<String?>(null) }
 
 
-    var appTarget by remember { mutableStateOf<AppModel?>(null) }
+    var appTarget by remember { mutableStateOf<Application?>(null) }
     var showMoreMenu by remember { mutableStateOf(false) }
 
 
@@ -225,26 +232,27 @@ fun AppDrawerScreen(
         }
     }
 
-    /**
-     * Fires on workspace state change
-     * launch the private space unlocking prompt if workspace type if private space
-     */
-    LaunchedEffect(pagerState.currentPage) {
-        val newWorkspace =
-            visibleWorkspaces.getOrNull(pagerState.currentPage) ?: return@LaunchedEffect
-        val newWorkspaceId = newWorkspace.id
-
-        // Check if switching to Private Space (Android 15+)
-        if (PrivateSpaceUtils.isPrivateSpaceSupported() &&
-            newWorkspace.type == WorkspaceType.PRIVATE &&
-            privateSpaceState.isLocked
-        ) {
-            privateSpaceViewModel.onUnlockPrivateSpace()
-        }
-
-        workspaceId = newWorkspaceId
-        appsViewModel.selectWorkspace(newWorkspaceId)
-    }
+    // TODO
+//    /**
+//     * Fires on workspace state change
+//     * launch the private space unlocking prompt if workspace type if private space
+//     */
+//    LaunchedEffect(pagerState.currentPage) {
+//        val newWorkspace =
+//            visibleWorkspaces.getOrNull(pagerState.currentPage) ?: return@LaunchedEffect
+//        val newWorkspaceId = newWorkspace.id
+//
+//        // Check if switching to Private Space (Android 15+)
+//        if (PrivateSpaceUtils.isPrivateSpaceSupported() &&
+//            newWorkspace.type == WorkspaceType.PRIVATE &&
+//            privateSpaceState.isLocked
+//        ) {
+//            profilesVM.onUnlockPrivateSpace()
+//        }
+//
+//        workspaceId = newWorkspaceId
+//        appsViewModel.selectWorkspace(newWorkspaceId)
+//    }
 
 
     fun closeKeyboard() {
@@ -477,13 +485,13 @@ fun AppDrawerScreen(
     val animatedPadding by animateDpAsState(targetValue = pullDownPadding.toDp)
 
     @Composable
-    fun AppLongPressRow(app: AppModel) {
-        val cacheKey = app.iconCacheKey
+    fun AppLongPressRow(app: Application) {
+        val cacheKey = app.key
 
         AppLongPressRow(
             app = app,
             onOpen = { onLaunchAction(app.action) },
-            onSettings = if (!app.isPrivateProfile && !app.isWorkProfile) {
+            onSettings = if (!app.isPrivate && !app.isWork) {
                 {
                     ctx.startActivity(
                         Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -493,7 +501,7 @@ fun AppDrawerScreen(
                     onClose()
                 }
             } else null,
-            onUninstall = if (!app.isPrivateProfile && !app.isWorkProfile) {
+            onUninstall = if (!app.isPrivate && !app.isWork) {
                 {
                     ctx.startActivity(
                         Intent(Intent.ACTION_DELETE).apply {
@@ -503,12 +511,12 @@ fun AppDrawerScreen(
                     onClose()
                 }
             } else null,
-            onRemoveFromWorkspace = if (!app.isPrivateProfile) {
+            onRemoveFromWorkspace = if (!app.isPrivate) {
                 {
                     workspaceId?.let { wsId ->
                         scope.launch {
-                            appsViewModel.removeAppFromWorkspace(
-                                workspaceId = wsId,
+                            workspacesManager.removeAppFromWorkspace(
+                                id = wsId,
                                 cacheKey = cacheKey
                             )
                         }
@@ -587,6 +595,24 @@ fun AppDrawerScreen(
 
                         val workspace = visibleWorkspaces[pageIndex]
 
+                        val workspaceProfileType = when (workspace.type) {
+                            WORK -> Work
+                            PRIVATE -> Private
+                            else -> Personal
+                        }
+
+                        val workspaceProfile = when (workspaceProfileType) {
+                            Personal -> profiles[0]
+                            Work -> profiles[1]
+                            Private -> profiles[2]
+                        }
+
+                        val workspaceLocked = when (workspaceProfileType) {
+                            Work -> profileStates[1]!!.locked
+                            Private -> profileStates[2]!!.locked
+                            Personal -> false
+                        }
+
                         val gridState = remember(workspace.id) {
                             LazyGridState()
                         }
@@ -600,7 +626,7 @@ fun AppDrawerScreen(
                         }
 
                         val apps by appsViewModel
-                            .appsForWorkspace(workspace, overrides)
+                            .appsForWorkspace(workspace)
                             .collectAsStateWithLifecycle(emptyList())
 
                         val filteredApps by remember(searchQuery, apps) {
@@ -609,10 +635,10 @@ fun AppDrawerScreen(
 
                                 val base = if (trimmedSearchQuery.isBlank()) apps
                                 else apps.filter { app ->
-                                    app.name.contains(trimmedSearchQuery, ignoreCase = true) ||
+                                    app.label.contains(trimmedSearchQuery, ignoreCase = true) ||
 
                                             // Also search for aliases
-                                            aliases[app.iconCacheKey]?.any {
+                                            appOverrides[app.key]?.aliases?.any {
                                                 it.contains(
                                                     trimmedSearchQuery,
                                                     ignoreCase = true
@@ -620,7 +646,7 @@ fun AppDrawerScreen(
                                             } ?: false
                                 }
 
-                                base.sortedBy { it.name.lowercase() }
+                                base.sortedBy { it.label.lowercase() }
                             }
                         }
 
@@ -637,30 +663,88 @@ fun AppDrawerScreen(
                             }
                         }
 
-                        // If the current workspace is a private space and locked, display a lock icon
-                        val showLock =
-                            privateSpaceState.isLocked || privateSpaceState.isAuthenticating
 
-                        if (workspace.type == WorkspaceType.PRIVATE && showLock) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    // Just so that the scroll actions are registered
-                                    .verticalScroll(rememberScrollState()),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                AnimatedContent(targetState = privateSpaceState) {
-                                    when {
-                                        // The loading shouldn't be displayed, but just in case I'll keep it for user visual feedback
-                                        it.isLoading -> LoadingIndicator()
-                                        it.isAuthenticating -> LoadingIndicator(color = Color.Yellow)
-                                        it.isLocked -> {
-                                            DragonIconButton(
-                                                icon = R.drawable.lock,
-                                                contentDescription = stringResource(R.string.private_space_locked)
-                                            ) { privateSpaceViewModel.onUnlockPrivateSpace() }
+                        if (workspaceProfileType != Personal) {
+                            if (workspaceLocked) {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(12.dp)
+                                        .fillMaxWidth()
+                                        .border(
+                                            1.dp,
+                                            MaterialTheme.colorScheme.outlineVariant,
+                                            MaterialTheme.shapes.small
+                                        )
+                                        .background(
+                                            MaterialTheme.colorScheme.surfaceContainer,
+                                            MaterialTheme.shapes.small
+                                        )
+                                        .padding(vertical = 64.dp),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                ) {
+                                    Icon(
+                                        painterResource(if (workspaceProfileType == Work) R.drawable.enterprise_off else R.drawable.lock),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(48.dp),
+                                        tint = MaterialTheme.colorScheme.secondary,
+                                    )
+                                    Text(
+                                        stringResource(
+                                            if (workspaceProfileType == Work) R.string.profile_work_profile_state_locked
+                                            else R.string.profile_private_profile_state_locked
+                                        ),
+                                        modifier = Modifier.padding(top = 8.dp),
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        style = MaterialTheme.typography.titleSmall,
+                                    )
+                                    if (hasProfilesPermission) {
+                                        Button(
+                                            modifier = Modifier.padding(top = 32.dp),
+                                            onClick = {
+                                                appsViewModel.setProfileLock(workspaceProfile, false)
+                                            },
+                                            contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
+                                        ) {
+                                            Icon(
+                                                painterResource(if (workspaceProfileType == Work) R.drawable.enterprise else R.drawable.lock_open),
+                                                contentDescription = null,
+                                                modifier = Modifier
+                                                    .padding(end = ButtonDefaults.IconSpacing)
+                                                    .size(ButtonDefaults.IconSize)
+                                            )
+                                            Text(
+                                                stringResource(
+                                                    if (workspaceProfileType == Work) R.string.profile_work_profile_action_unlock
+                                                    else R.string.profile_private_profile_action_unlock
+                                                )
+                                            )
                                         }
                                     }
+                                }
+                            } else if (hasProfilesPermission) {
+                                FilledTonalButton(
+                                    modifier = Modifier
+                                        .padding(12.dp)
+                                        .fillMaxWidth(),
+                                    onClick = {
+                                        appsViewModel.setProfileLock(workspaceProfile, true)
+                                    },
+                                    contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
+                                ) {
+                                    Icon(
+                                        painterResource(if (workspaceProfileType == Work) R.drawable.enterprise_off else R.drawable.lock),
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .padding(end = ButtonDefaults.IconSpacing)
+                                            .size(ButtonDefaults.IconSize)
+                                    )
+                                    Text(
+                                        stringResource(
+                                            if (workspaceProfileType == Work) R.string.profile_work_profile_action_lock
+                                            else R.string.profile_private_profile_action_lock
+                                        )
+                                    )
                                 }
                             }
                         } else {
@@ -672,12 +756,12 @@ fun AppDrawerScreen(
                                 categoryGridState = categoryGridState,
                                 listState = listState,
                                 onTopStateChange = { atTop = it },
-                                onReload = {
-                                    scope.launch {
-                                        if (workspace.type == WorkspaceType.PRIVATE) appsViewModel.unlockAndReloadPrivateSpace()
-                                        else appsViewModel.reloadApps()
-                                    }
-                                },
+//                                onReload = {
+//                                    scope.launch {
+//                                        if (workspace.type == WorkspaceType.PRIVATE) appsViewModel.unlockAndReloadPrivateSpace()
+//                                        else appsViewModel.reloadApps()
+//                                    }
+//                                },
                                 longPressPopup = { app -> AppLongPressRow(app) }
                             ) {
                                 onLaunchAction(it.action)
@@ -783,21 +867,21 @@ fun AppDrawerScreen(
 
     if (renameAppTarget != null) {
         val app = renameAppTarget!!
-        val cacheKey = app.iconCacheKey
+        val cacheKey = app.key
 
         TextEditorDialog(
             title = { stringResource(R.string.rename) },
-            placeHolder = { app.name },
+            placeHolder = { app.label },
             onDismiss = { renameAppTarget = null },
-            initialText = app.name
+            initialText = app.label
         ) {
             if (it != "") {
-                appsViewModel.renameApp(
+                appOverridesManager.renameApp(
                     cacheKey = cacheKey,
                     customName = it
                 )
             } else {
-                appsViewModel.resetAppName(cacheKey)
+                appOverridesManager.renameApp(cacheKey, null)
             }
             renameAppTarget = null
         }
@@ -806,24 +890,33 @@ fun AppDrawerScreen(
     if (appTarget != null) {
 
         val app = appTarget!!
-        val cacheKey = app.iconCacheKey
+        val cacheKey = app.key
+
+        val iconService = appsViewModel.iconsService
 
         AppIconEditor(
             app = app,
-            onReset = { appsViewModel.reloadAppIcon(app) },
+            onReset = {
+                // Reload
+                @Suppress("UnusedFlow")
+                iconService.getAppIcon(app, true)
+            },
             onDismiss = { appTarget = null }
         ) { customIcon ->
 
             scope.launch {
                 if (customIcon != null) {
-                    appsViewModel.setAppIcon(
+                    appOverridesManager.setAppIcon(
                         cacheKey = cacheKey,
                         customIcon = customIcon
                     )
                 } else {
-                    appsViewModel.resetAppIcon(cacheKey)
+                    appOverridesManager.setAppIcon(cacheKey, null)
                 }
-                appsViewModel.reloadAppIcon(app)
+
+                // Reload
+                @Suppress("UnusedFlow")
+                iconService.getAppIcon(app, true)
                 appTarget = null
             }
         }

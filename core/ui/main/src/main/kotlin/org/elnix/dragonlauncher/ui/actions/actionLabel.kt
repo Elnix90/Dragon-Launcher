@@ -4,16 +4,16 @@ import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.content.PackageManagerCompat
 import androidx.core.net.toUri
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Settings.routeResId
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.messyfolder.PackageManagerCompat
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
 import org.elnix.dragonlauncher.common.messyfolder.getFilePathFromUri
 import org.elnix.dragonlauncher.ui.composition.LocalNests
 
 @Composable
-fun actionLabel(action: SwipeActionSerializable): String {
+fun actionLabel(action: SwipeAction): String {
     val ctx = LocalContext.current
     val nests = LocalNests.current
 
@@ -22,7 +22,7 @@ fun actionLabel(action: SwipeActionSerializable): String {
 
     return when (action) {
 
-        is SwipeActionSerializable.LaunchApp -> {
+        is SwipeAction.LaunchApp -> {
             try {
                 pm.getApplicationLabel(
                     pm.getApplicationInfo(action.packageName, 0)
@@ -32,7 +32,7 @@ fun actionLabel(action: SwipeActionSerializable): String {
             }
         }
 
-        is SwipeActionSerializable.LaunchShortcut -> {
+        is SwipeAction.LaunchShortcut -> {
             // Empty package = sentinel for "Pinned Shortcuts" chooser entry
             if (action.packageName.isEmpty()) {
                 return stringResource(R.string.pinned_shortcuts)
@@ -64,26 +64,26 @@ fun actionLabel(action: SwipeActionSerializable): String {
         }
 
 
-        is SwipeActionSerializable.OpenUrl -> action.url
+        is SwipeAction.OpenUrl -> action.url
 
-        SwipeActionSerializable.NotificationShade -> stringResource(R.string.notifications)
+        SwipeAction.NotificationShade -> stringResource(R.string.notifications)
 
-        SwipeActionSerializable.ControlPanel -> stringResource(R.string.control_panel)
+        SwipeAction.ControlPanel -> stringResource(R.string.control_panel)
 
-        is SwipeActionSerializable.OpenAppDrawer -> stringResource(R.string.app_drawer)
+        is SwipeAction.OpenAppDrawer -> stringResource(R.string.app_drawer)
 
-        is SwipeActionSerializable.OpenDragonLauncherSettings -> "${stringResource(R.string.dragon_launcher_settings)} (${stringResource(routeResId(action.route))})"
+        is SwipeAction.OpenDragonLauncherSettings -> "${stringResource(R.string.dragon_launcher_settings)} (${stringResource(routeResId(action.route))})"
 
-        SwipeActionSerializable.Lock -> stringResource(R.string.lock)
+        SwipeAction.Lock -> stringResource(R.string.lock)
 
-        is SwipeActionSerializable.OpenFile ->
+        is SwipeAction.OpenFile ->
             getFilePathFromUri(ctx, action.uri.toUri())
 
-        SwipeActionSerializable.ReloadApps -> stringResource(R.string.reload_apps)
+        SwipeAction.ReloadApps -> stringResource(R.string.reload_apps)
 
-        SwipeActionSerializable.OpenRecentApps -> stringResource(R.string.recent_apps)
+        SwipeAction.OpenRecentApps -> stringResource(R.string.recent_apps)
 
-        is SwipeActionSerializable.OpenCircleNest -> {
+        is SwipeAction.OpenCircleNest -> {
             nests
                 .find { it.id == action.nestId }
                 ?.name
@@ -91,13 +91,13 @@ fun actionLabel(action: SwipeActionSerializable): String {
                 ?: stringResource(R.string.open_nest_circle)
         }
 
-        SwipeActionSerializable.GoParentNest -> stringResource(R.string.go_parent_nest)
-        is SwipeActionSerializable.OpenWidget -> stringResource(R.string.widgets)
-        is SwipeActionSerializable.RunAdbCommand -> action.command.trim().takeIf { it.isNotEmpty() } ?: stringResource(R.string.run_adb_command)
-        is SwipeActionSerializable.ToggleBluetooth -> stringResource(R.string.toggle_bluetooth)
-        is SwipeActionSerializable.ToggleData -> stringResource(R.string.toggle_mobile_data)
-        is SwipeActionSerializable.ToggleWifi -> stringResource(R.string.toggle_wifi)
-        SwipeActionSerializable.None -> "None"
-        SwipeActionSerializable.KillLauncher -> stringResource(R.string.kill_launcher)
+        SwipeAction.GoParentNest -> stringResource(R.string.go_parent_nest)
+        is SwipeAction.OpenWidget -> stringResource(R.string.widgets)
+        is SwipeAction.RunAdbCommand -> action.command.trim().takeIf { it.isNotEmpty() } ?: stringResource(R.string.run_adb_command)
+        is SwipeAction.ToggleBluetooth -> stringResource(R.string.toggle_bluetooth)
+        is SwipeAction.ToggleData -> stringResource(R.string.toggle_mobile_data)
+        is SwipeAction.ToggleWifi -> stringResource(R.string.toggle_wifi)
+        SwipeAction.None -> "None"
+        SwipeAction.KillLauncher -> stringResource(R.string.kill_launcher)
     }
 }

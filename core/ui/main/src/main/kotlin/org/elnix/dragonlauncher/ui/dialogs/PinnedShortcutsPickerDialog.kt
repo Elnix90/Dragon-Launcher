@@ -42,10 +42,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ICONS_TAG
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.PINNED_SHORTCUTS
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
 import org.elnix.dragonlauncher.common.utils.ImageUtils.loadDrawableAsBitmap
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
@@ -79,7 +79,7 @@ private fun PinnedShortcutItem.matchesShortcutSearch(q: String): Boolean {
 @Composable
 fun PinnedShortcutsPickerDialog(
     onDismiss: () -> Unit,
-    onShortcutSelected: (SwipeActionSerializable.LaunchShortcut) -> Unit
+    onShortcutSelected: (SwipeAction.LaunchShortcut) -> Unit
 ) {
     val ctx = LocalContext.current
 
@@ -197,7 +197,7 @@ fun PinnedShortcutsPickerDialog(
                                         shortcut = item.shortcutInfo,
                                         onClick = {
                                             onShortcutSelected(
-                                                SwipeActionSerializable.LaunchShortcut(
+                                                SwipeAction.LaunchShortcut(
                                                     packageName = item.packageName,
                                                     shortcutId = item.shortcutInfo.id
                                                 )

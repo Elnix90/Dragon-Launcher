@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,13 +22,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
-import org.elnix.dragonlauncher.models.PrivateSpaceViewModel
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.models.LockScreenViewModel
+import org.elnix.dragonlauncher.models.ProfilesVM
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
-import org.elnix.dragonlauncher.settings.stores.PrivateAppsSettingsStore
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
@@ -48,7 +47,8 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 @Composable
 fun BehaviorTab(
     onBack: () -> Unit,
-    privateSpaceViewModel: PrivateSpaceViewModel = activityViewModel()
+    lockScreenViewModel: LockScreenViewModel = activityViewModel(),
+    profilesVM: ProfilesVM = activityViewModel()
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -61,7 +61,7 @@ fun BehaviorTab(
     val topPadding by BehaviorSettingsStore.topPadding.asState()
     val bottomPadding by BehaviorSettingsStore.bottomPadding.asState()
 
-    val lockMethod by PrivateSettingsStore.lockMethod.asState()
+    val lockMethod by lockScreenViewModel.lockMethod.collectAsState()
     val superWarningModeEnabled = lockMethod != LockMethod.NONE
 
     val paddingState = rememberExpandableSection(stringResource(R.string.drag_zone_padding), mode = ExpandableSectionMode.Expandable)
@@ -167,24 +167,6 @@ fun BehaviorTab(
                 title = stringResource(R.string.create_live_nest_by_default),
                 description = stringResource(R.string.create_live_nest_by_default_desc)
             )
-
-            SettingsSwitchRow(
-                setting = BehaviorSettingsStore.useDifferentialLoadingForPrivateSpace,
-                title = stringResource(R.string.use_differential_loading_private_space),
-                description = stringResource(R.string.use_differential_loading_private_space_desc)
-            ) {
-                if (it) {
-                    scope.launch {
-                        ctx.showToast("Reloading apps")
-                        privateSpaceViewModel.onUnlockPrivateSpace()
-                    }
-                } else {
-                    scope.launch {
-                        ctx.showToast("Removing cache")
-                        PrivateAppsSettingsStore.resetAll(ctx)
-                    }
-                }
-            }
 
             SettingsSlider(
                 setting = BehaviorSettingsStore.offScreenTimeout,

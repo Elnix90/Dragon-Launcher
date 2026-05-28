@@ -28,7 +28,7 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.ktx.px
-import org.elnix.dragonlauncher.common.serializables.CustomObjectSerializable
+import org.elnix.dragonlauncher.common.serializables.CustomObject
 import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawNeonGlowShapePath
@@ -52,7 +52,7 @@ fun HoldToActivateArc(
     progress: Float,
     rgbLoading: Boolean,
     rotationsPerSecond: Float,
-    customObjectSerializable: CustomObjectSerializable,
+    customObject: CustomObject,
     erase: Boolean = false,
     playAnimation: Boolean = true,
     showHoldTolerance: (() -> Float)? = null
@@ -64,18 +64,18 @@ fun HoldToActivateArc(
     val color = if (rgbLoading) {
         Color.hsv(progress * 360f, 1f, 1f)
     } else {
-        customObjectSerializable.color ?: UiConstants.defaultHoldCustomObject.color!!
+        customObject.color ?: UiConstants.defaultHoldCustomObject.color!!
     }
 
-    val shape = customObjectSerializable.shape ?: UiConstants.defaultHoldCustomObject.shape
-    val radius = (customObjectSerializable.size ?: UiConstants.defaultHoldCustomObject.size!!).dp
-    val strokeWidth = (customObjectSerializable.stroke ?: UiConstants.defaultHoldCustomObject.stroke!!).dp
-    val glowRadius = customObjectSerializable.glow?.radius?.dp?.px ?: 0f
-    val glowColor = customObjectSerializable.glow?.color
+    val shape = customObject.shape ?: UiConstants.defaultHoldCustomObject.shape
+    val radius = (customObject.size ?: UiConstants.defaultHoldCustomObject.size!!).dp
+    val strokeWidth = (customObject.stroke ?: UiConstants.defaultHoldCustomObject.stroke!!).dp
+    val glowRadius = customObject.glow?.radius?.dp?.px ?: 0f
+    val glowColor = customObject.glow?.color
 
     // Remembers for each new click the random or not rotation it applies (if -1)
     val rotationAngleStart = remember(center) {
-        (customObjectSerializable.rotation ?: UiConstants.defaultHoldCustomObject.rotation!!)
+        (customObject.rotation ?: UiConstants.defaultHoldCustomObject.rotation!!)
             .takeIf { it != -1 }
             ?: (0..360).random()
     }

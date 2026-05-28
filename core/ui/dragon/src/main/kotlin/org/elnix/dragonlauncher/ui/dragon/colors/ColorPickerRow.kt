@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.ColorUtils.randomColor
 import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.base.ColorUtils.toHexWithAlpha
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.pasteClipboard

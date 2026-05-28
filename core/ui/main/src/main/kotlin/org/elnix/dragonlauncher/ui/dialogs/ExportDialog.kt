@@ -21,14 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons
 import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons.DeselectAll
 import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons.Invert
 import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons.SelectAll
-import org.elnix.dragonlauncher.settings.bases.DatastoreProvider
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.backupableStores
-import org.elnix.dragonlauncher.settings.bases.BaseSettingsStore
+import org.elnix.dragonlauncher.settings.bases.stores.BaseSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
@@ -36,13 +36,13 @@ import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 @Composable
 fun ExportSettingsDialog(
     onDismiss: () -> Unit,
-    availableStores: Map<DatastoreProvider, BaseSettingsStore<*, *>> = backupableStores,
-    defaultStores: Map<DatastoreProvider, BaseSettingsStore<*, *>> = backupableStores,
-    onConfirm: (selectedStores: Map<DatastoreProvider, BaseSettingsStore<*, *>>) -> Unit
+    availableStores: Map<DataStoreName, BaseSettingsStore<*, *>> = backupableStores,
+    defaultStores: Map<DataStoreName, BaseSettingsStore<*, *>> = backupableStores,
+    onConfirm: (selectedStores: Map<DataStoreName, BaseSettingsStore<*, *>>) -> Unit
 ) {
 
     val selected = remember(availableStores) {
-        mutableStateMapOf<DatastoreProvider, Boolean>().apply {
+        mutableStateMapOf<DataStoreName, Boolean>().apply {
             availableStores.forEach { put(it.key, it.value in defaultStores.values) }
         }
     }
@@ -121,8 +121,8 @@ fun <T> SelectedActionRow(
 
 @Composable
 fun StoreItem(
-    selected: SnapshotStateMap<DatastoreProvider, Boolean>,
-    dataStoreName: DatastoreProvider,
+    selected: SnapshotStateMap<DataStoreName, Boolean>,
+    dataStoreName: DataStoreName,
     settingsStore: BaseSettingsStore<*, *>
 ) {
     Row(
@@ -136,7 +136,7 @@ fun StoreItem(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(settingsStore.name)
+        Text(settingsStore.dataStoreName.backupKey)
         Checkbox(
             checked = selected[dataStoreName] ?: true,
             onCheckedChange = null

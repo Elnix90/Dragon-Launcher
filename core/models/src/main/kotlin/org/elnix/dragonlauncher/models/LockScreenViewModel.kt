@@ -9,14 +9,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SECURITY_HELPER
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
 import org.elnix.dragonlauncher.common.messyfolder.SecurityHelper
-import org.elnix.dragonlauncher.common.messyfolder.findFragmentActivity
 import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.logging.SECURITY_HELPER
+import org.elnix.dragonlauncher.logging.TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 import javax.inject.Inject
@@ -42,13 +41,38 @@ class LockScreenViewModel @Inject constructor(
 
     init {
         loadLockMethod()
-
         logD(TAG) { "created LockScreenVM ${System.identityHashCode(this)}" }
     }
 
     private fun loadLockMethod() {
         viewModelScope.launch {
             _lockMethod.value = PrivateSettingsStore.lockMethod.get(ctx)
+        }
+    }
+
+    fun removeLock() {
+        viewModelScope.launch {
+            PrivateSettingsStore.lockPinHash.reset(ctx)
+            PrivateSettingsStore.lockMethod.reset(ctx)
+            unlock()
+        }
+    }
+
+    fun setPinLockMethod(pin: String) {
+        viewModelScope.launch{
+            val hash = SecurityHelper.hashPin(pin)
+            PrivateSettingsStore.lockPinHash.set(ctx, hash)
+            PrivateSettingsStore.lockMethod.set(ctx, LockMethod.PIN)
+            ctx.showToast(ctx.getString(R.string.pin_set_success))
+            unlock()
+        }
+    }
+
+    fun setLockScreenMethod() {
+        viewModelScope.launch{
+            PrivateSettingsStore.lockPinHash.reset(ctx)
+            PrivateSettingsStore.lockMethod.set(ctx, LockMethod.DEVICE_UNLOCK)
+            unlock()
         }
     }
 
@@ -75,36 +99,18 @@ class LockScreenViewModel @Inject constructor(
     }
 
 
-    fun requestUnlock(targetScreen: NavigationRoute, onSuccess: () -> Unit) {
+
+
+    fun requestUnlock(targetScreen: NavigationRoute) {
         when (_lockMethod.value) {
-            LockMethod.NONE -> {
-                unlock()
-                onSuccess()
-            }
+            LockMethod.NONE -> unlock()
 
             LockMethod.PIN -> {
                 _screenToUnlock.value = targetScreen
             }
 
             LockMethod.DEVICE_UNLOCK -> {
-                val activity = ctx.findFragmentActivity()
-                if (activity != null && SecurityHelper.isDeviceUnlockAvailable(ctx)) {
-                    SecurityHelper.showDeviceUnlockPrompt(
-                        activity = activity,
-                        onSuccess = {
-                            unlock()
-                            onSuccess()
-                        },
-                        onError = { msg ->
-                            ctx.showToast(ctx.getString(org.elnix.dragonlauncher.common.R.string.authentication_error, msg))
-                        },
-                        onFailed = {
-                            ctx.showToast(ctx.getString(org.elnix.dragonlauncher.common.R.string.authentication_failed))
-                        }
-                    )
-                } else {
-                    ctx.showToast(ctx.getString(R.string.device_credentials_not_available))
-                }
+                _screenToUnlock.value = targetScreen
             }
         }
     }

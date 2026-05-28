@@ -8,8 +8,8 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SECURITY_HELPER
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.logging.SECURITY_HELPER
 import org.elnix.dragonlauncher.logging.logD
 import java.security.MessageDigest
 

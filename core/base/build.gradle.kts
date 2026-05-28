@@ -11,12 +11,13 @@ kotlin {
 
 extensions.configure<LibraryExtension> {
     namespace = "org.elnix.dragonlauncher.base"
+
     compileSdk {
-        version = release(37)
+        version = release(libs.versions.compileSdk.get().toInt())
     }
 
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -27,14 +28,19 @@ extensions.configure<LibraryExtension> {
 }
 
 dependencies {
-    implementation(libs.androidx.compose.runtime)
-    implementation(libs.androidx.compose.runtime.annotation)
-    implementation(libs.androidx.compose.ui.geometry)
-    implementation(libs.androidx.compose.ui.unit)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.material3)
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.core)
+    implementation(libs.material)
+    implementation(libs.androidx.palette)
 
     api(libs.androidx.ui.graphics)
 
+    api(project(":core:libs:material-color-utilities"))
+    implementation(project(":core:ktx"))
+    implementation(project(":core:i18n"))
+    implementation(project(":core:logging"))
+    implementation(project(":core:services:compat"))
 }

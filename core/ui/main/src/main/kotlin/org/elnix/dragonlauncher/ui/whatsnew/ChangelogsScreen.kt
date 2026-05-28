@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.messyfolder.loadChangelogs
 import org.elnix.dragonlauncher.common.messyfolder.openUrl
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard

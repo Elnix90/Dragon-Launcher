@@ -38,11 +38,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.messyfolder.UiCircle
 import org.elnix.dragonlauncher.common.messyfolder.showToast
-import org.elnix.dragonlauncher.common.serializables.CircleNest
-import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedbackSerializable
+import org.elnix.dragonlauncher.common.serializables.Nest
+import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.enumsui.select.NestEditMode
 import org.elnix.dragonlauncher.enumsui.select.NestEditMode.Drag
 import org.elnix.dragonlauncher.enumsui.select.NestEditMode.Haptic
@@ -100,7 +100,7 @@ fun NestEditingScreen(
     val currentNest = nests.find { it.id == nestId } ?: run {
         // The nest isn't found in the list, create a new one with this id
         scope.launch {
-            val newList = nests + CircleNest(id = nestId)
+            val newList = nests + Nest(id = nestId)
             SwipeSettingsStore.saveNests(ctx, newList)
 
             ctx.showToast("Saved missing nest!")
@@ -143,7 +143,7 @@ fun NestEditingScreen(
         )
     }
 
-    var pendingNestUpdate by remember { mutableStateOf<List<CircleNest>?>(null) }
+    var pendingNestUpdate by remember { mutableStateOf<List<Nest>?>(null) }
 
     /**
      * Saving system, the nests are immutable, they are saved using a pending value, that
@@ -157,7 +157,7 @@ fun NestEditingScreen(
     }
 
 
-    fun updateNest(block: () -> CircleNest) {
+    fun updateNest(block: () -> Nest) {
         pendingNestUpdate = nests.map { nest ->
             if (nest.id == nestId) {
                 block()
@@ -171,7 +171,7 @@ fun NestEditingScreen(
         }
     }
 
-    fun commitHaptic(state: Map<Int, CustomHapticFeedbackSerializable>) {
+    fun commitHaptic(state: Map<Int, CustomHapticFeedback>) {
         updateNest {
             currentNest.copy(haptic = state.toMap())
         }
@@ -197,7 +197,7 @@ fun NestEditingScreen(
         onReset = {
             // Resets current nest to a new one, with the same id (avoids destroying it)
             pendingNestUpdate = nests.map {
-                if (it.id == nestId) CircleNest(id = nestId)
+                if (it.id == nestId) Nest(id = nestId)
                 else it
             }
         }
@@ -329,7 +329,7 @@ fun NestEditingScreen(
                                 .forEach { (idx, _) ->
 
                                     HapticFeedBackEditorButtonWithPlayTest(
-                                        customHapticFeedbackSerializable = currentNest.haptic[idx] ?: defaultHapticFeedback(idx),
+                                        customHapticFeedback = currentNest.haptic[idx] ?: defaultHapticFeedback(idx),
                                         titleExt = ": $idx",
                                         onClick = { showHapticFeedbackEditor = idx },
                                     )

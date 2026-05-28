@@ -1,0 +1,43 @@
+import com.android.build.api.dsl.LibraryExtension
+
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.compose)
+}
+
+kotlin {
+    jvmToolchain(21)
+}
+
+extensions.configure<LibraryExtension> {
+    namespace = "org.elnix.dragonlauncher.ktx"
+
+    compileSdk {
+        version = release(libs.versions.compileSdk.get().toInt())
+    }
+
+    defaultConfig {
+        minSdk = libs.versions.minSdk.get().toInt()
+        consumerProguardFiles("consumer-rules.pro")
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+}
+
+dependencies {
+    implementation(libs.bundles.kotlin)
+
+    implementation(libs.androidx.core)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.bundles.androidx.lifecycle)
+    implementation(libs.commons.text)
+
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.compose.runtime.annotation)
+    implementation(libs.androidx.compose.ui.unit)
+    implementation(libs.androidx.ui)
+    implementation(platform(libs.androidx.compose.bom))
+}

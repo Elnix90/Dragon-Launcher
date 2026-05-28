@@ -9,14 +9,14 @@ import android.os.UserManager
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.net.toUri
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.APP_LAUNCH_TAG
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
 import org.elnix.dragonlauncher.common.messyfolder.expandQuickActionsDrawer
 import org.elnix.dragonlauncher.common.messyfolder.launchShortcut
 import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.getMobileDataStatus
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isBluetoothEnabled
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isWifiEnabled
@@ -39,7 +39,7 @@ class AppLaunchException(message: String, cause: Throwable? = null) : Exception(
 fun launchSwipeAction(
     ctx: Context,
     appsViewModel: AppsViewModel,
-    action: SwipeActionSerializable?,
+    action: SwipeAction?,
     useAccessibilityInsteadOfContextToExpandActionPanel: Boolean = true,
     pausedApps: Set<String> = emptySet(),
     socialMediaPauseEnabled: Boolean = false,
@@ -50,19 +50,19 @@ fun launchSwipeAction(
     reminderMode: ReminderMode = ReminderMode.Overlay,
     returnToLauncherEnabled: Boolean = false,
     appName: String = "",
-    onOpenPrivateSpaceApp: (SwipeActionSerializable) -> Unit,
+    onOpenPrivateSpaceApp: (SwipeAction) -> Unit,
     digitalPauseLauncher: ActivityResultLauncher<Intent>,
     onReloadApps: () -> Unit,
     onReselectFile: () -> Unit,
     onAppSettings: (NavigationRoute) -> Unit,
     onAppDrawer: (workspaceId: String?) -> Unit,
-    onShizukuCommand: (SwipeActionSerializable.RunAdbCommand) -> Unit
+    onShizukuCommand: (SwipeAction.RunAdbCommand) -> Unit
 ) {
     if (action == null) return
 
     when (action) {
 
-        is SwipeActionSerializable.LaunchApp -> {
+        is SwipeAction.LaunchApp -> {
 
             try {
 
@@ -108,19 +108,19 @@ fun launchSwipeAction(
         }
 
 
-        is SwipeActionSerializable.LaunchShortcut -> {
+        is SwipeAction.LaunchShortcut -> {
             if (action.packageName.isNotEmpty()) {
                 launchShortcut(ctx, action.packageName, action.shortcutId)
             }
         }
 
 
-        is SwipeActionSerializable.OpenUrl -> {
+        is SwipeAction.OpenUrl -> {
             val i = Intent(Intent.ACTION_VIEW, action.url.toUri())
             ctx.startActivity(i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         }
 
-        SwipeActionSerializable.NotificationShade -> {
+        SwipeAction.NotificationShade -> {
             if (!SystemControl.isServiceEnabled(ctx)) {
                 ctx.showToast(ctx.getString(R.string.please_enable_accessibility_services_to_use_that_feature))
                 SystemControl.openServiceSettings(ctx)
@@ -129,7 +129,7 @@ fun launchSwipeAction(
             SystemControl.expandNotifications()
         }
 
-        SwipeActionSerializable.ControlPanel -> {
+        SwipeAction.ControlPanel -> {
             if (useAccessibilityInsteadOfContextToExpandActionPanel) {
                 SystemControl.expandQuickSettings(
                     ctx
@@ -137,15 +137,15 @@ fun launchSwipeAction(
             } else ctx.expandQuickActionsDrawer()
         }
 
-        is SwipeActionSerializable.OpenAppDrawer -> {
+        is SwipeAction.OpenAppDrawer -> {
             onAppDrawer(action.workspaceId)
         }
 
-        is SwipeActionSerializable.OpenDragonLauncherSettings -> {
+        is SwipeAction.OpenDragonLauncherSettings -> {
             onAppSettings(action.route)
         }
 
-        SwipeActionSerializable.Lock -> {
+        SwipeAction.Lock -> {
             if (!SystemControl.isServiceEnabled(ctx)) {
                 ctx.showToast("Please enable accessibility settings to use that feature")
                 SystemControl.openServiceSettings(ctx)
@@ -158,7 +158,7 @@ fun launchSwipeAction(
             }
         }
 
-        is SwipeActionSerializable.OpenFile -> {
+        is SwipeAction.OpenFile -> {
             try {
                 val uri = action.uri.toUri()
 
@@ -186,8 +186,8 @@ fun launchSwipeAction(
             }
         }
 
-        SwipeActionSerializable.ReloadApps -> onReloadApps()
-        SwipeActionSerializable.OpenRecentApps -> {
+        SwipeAction.ReloadApps -> onReloadApps()
+        SwipeAction.OpenRecentApps -> {
             if (!SystemControl.isServiceEnabled(ctx)) {
                 ctx.showToast("Please enable accessibility settings to use that feature")
                 SystemControl.openServiceSettings(ctx)
@@ -197,13 +197,13 @@ fun launchSwipeAction(
         }
 
 
-        is SwipeActionSerializable.RunAdbCommand -> {
+        is SwipeAction.RunAdbCommand -> {
             onShizukuCommand(action)
         }
 
-        is SwipeActionSerializable.ToggleBluetooth -> {
+        is SwipeAction.ToggleBluetooth -> {
             onShizukuCommand(
-                SwipeActionSerializable.RunAdbCommand(
+                SwipeAction.RunAdbCommand(
                     command = if (ctx.isBluetoothEnabled()) {
                         action.command.commandDisable
                     } else {
@@ -214,9 +214,9 @@ fun launchSwipeAction(
             )
         }
 
-        is SwipeActionSerializable.ToggleData -> {
+        is SwipeAction.ToggleData -> {
             onShizukuCommand(
-                SwipeActionSerializable.RunAdbCommand(
+                SwipeAction.RunAdbCommand(
                     command = if (ctx.getMobileDataStatus().first) {
                         action.command.commandDisable
                     } else {
@@ -227,9 +227,9 @@ fun launchSwipeAction(
             )
         }
 
-        is SwipeActionSerializable.ToggleWifi -> {
+        is SwipeAction.ToggleWifi -> {
             onShizukuCommand(
-                SwipeActionSerializable.RunAdbCommand(
+                SwipeAction.RunAdbCommand(
                     command = if (ctx.isWifiEnabled()) {
                         action.command.commandDisable
                     } else {
@@ -240,14 +240,14 @@ fun launchSwipeAction(
             )
         }
 
-        SwipeActionSerializable.KillLauncher -> {
+        SwipeAction.KillLauncher -> {
             closeApp(ctx as ComponentActivity)
         }
 
-        is SwipeActionSerializable.OpenCircleNest, SwipeActionSerializable.GoParentNest -> {} // Handled by the main screen / settings
-        is SwipeActionSerializable.OpenWidget -> {} // The widget action isn't meant to be part of the choosable actions, so nothing on launch
+        is SwipeAction.OpenCircleNest, SwipeAction.GoParentNest -> {} // Handled by the main screen / settings
+        is SwipeAction.OpenWidget -> {} // The widget action isn't meant to be part of the choosable actions, so nothing on launch
 
-        SwipeActionSerializable.None -> {}
+        SwipeAction.None -> {}
     }
 }
 

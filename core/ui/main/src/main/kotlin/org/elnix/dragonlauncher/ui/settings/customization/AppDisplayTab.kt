@@ -16,13 +16,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayerJson
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.dummySwipePoint
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
+import org.elnix.dragonlauncher.common.serializables.Point.Companion.dummySwipePoint
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.logging.logD
+import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.settings.stores.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
@@ -31,9 +32,9 @@ import org.elnix.dragonlauncher.settings.stores.UiSettingsStore.appLabelIconOver
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore.appLabelOverlaySize
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore.showLaunchingAppIcon
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore.showLaunchingAppLabel
+import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.components.AppPreviewTitle
-import org.elnix.dragonlauncher.ui.composition.LocalDrawerIconsCache
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
@@ -48,10 +49,11 @@ import org.elnix.dragonlauncher.ui.statusbar.showChargingAnimation
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppDisplayTab(
-    onBack: (() -> Unit)
+    onBack: (() -> Unit),
+    appsViewModel: AppsViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
-    val icons = LocalDrawerIconsCache.current
+    val drawerIconCache = appsViewModel.drawerIconsCache
     val scope = rememberCoroutineScope()
 
     val showLaunchingAppLabel by showLaunchingAppLabel.asState()
@@ -66,7 +68,7 @@ fun AppDisplayTab(
     val topOverlaySettingsState = rememberExpandableSection(stringResource(R.string.app_preview_settings), mode = ExpandableSectionMode.Expandable)
 
     var demoIcon by remember(topOverlaySettingsState.isExpanded()) {
-        mutableStateOf(icons.getRandom())
+        mutableStateOf(drawerIconCache.getRandom())
     }
 
     SettingsScaffold(
@@ -227,7 +229,7 @@ fun AppDisplayTab(
     if (topOverlaySettingsState.isExpanded()) {
         logD(TAG) { "App preview shown " }
         AppPreviewTitle(
-            point = dummySwipePoint(SwipeActionSerializable.OpenRecentApps).copy(
+            point = dummySwipePoint(SwipeAction.OpenRecentApps).copy(
                 customName = "Preview",
                 id = demoIcon?.cacheKey ?: ""
             ),

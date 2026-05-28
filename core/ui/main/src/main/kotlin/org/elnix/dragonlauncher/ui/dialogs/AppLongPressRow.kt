@@ -2,14 +2,10 @@
 
 package org.elnix.dragonlauncher.ui.dialogs
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroup
@@ -27,53 +23,34 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.resolveShape
-import org.elnix.dragonlauncher.common.serializables.AppModel
-import org.elnix.dragonlauncher.ui.actions.appIcon
+import org.elnix.dragonlauncher.common.search.Application
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ui.actions.AppIcon
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
-import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppLongPressRow(
-    app: AppModel,
+    app: Application,
     onOpen: () -> Unit,
     onRenameApp: () -> Unit,
     onChangeAppIcon: () -> Unit,
     onAliases: () -> Unit,
     onSettings: (() -> Unit)? = null,
-    onUninstall: (() -> Unit)? = null,
+//    onUninstall: (() -> Unit)? = null,
     onRemoveFromWorkspace: (() -> Unit)? = null,
     onAddToWorkspace: (() -> Unit)? = null
 ) {
-
-//    val iconsShape = LocalIconShape.current
+    val ctx = LocalContext.current
 
     var showDetailedAppInfoDialog by remember { mutableStateOf(false) }
 
     val entries = buildList {
-//        add(
-//            MoreOptions(
-//                text = { app.name },
-//                icon = R.drawable.open_in_new,
-//                onClick = onOpen
-//            )
-//        )
-//        onUninstall?.let {
-//            add(
-//                MoreOptions(
-//                    text = { stringResource(R.string.uninstall) },
-//                    icon = R.drawable.delete_forever,
-//                    onClick = it
-//                )
-//            )
-//        }
         add(
             MoreOptions(
                 text = { stringResource(R.string.rename) },
@@ -123,17 +100,26 @@ fun AppLongPressRow(
         ) {
 
             onSettings?.let {
-                Button(onClick = it, icon = R.drawable.settings)
+                Button(
+                    onClick = it,
+                    icon = R.drawable.settings
+                )
             }
 
-            Button(onClick = { showDetailedAppInfoDialog = true }, icon = R.drawable.info)
+            Button(
+                onClick = { showDetailedAppInfoDialog = true },
+                icon = R.drawable.info
+            )
 
-            onUninstall?.let {
-                Button(onClick = it, icon = R.drawable.delete_forever)
+            if (!app.isPrivate) {
+                Button(
+                    onClick = { app.uninstall(ctx) },
+                    icon = R.drawable.delete_forever
+                )
             }
         }
 
-        Spacer(Modifier.height(MenuDefaults.GroupSpacing))
+        Spacer(MenuDefaults.GroupSpacing)
 
 
         DropdownMenuGroup(
@@ -142,16 +128,8 @@ fun AppLongPressRow(
             DropdownMenuItem(
                 onClick = onOpen,
                 shape = MenuDefaults.leadingItemShape,
-                text = { Text(app.name) },
-                leadingIcon = {
-                    Image(
-                        painter = appIcon(app),
-                        contentDescription = "App icon",
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(LocalIconShape.current.resolveShape())
-                    )
-                }
+                text = { Text(app.label) },
+                leadingIcon = { AppIcon(app) }
             )
 
             entries.fastForEachIndexed { index, option ->

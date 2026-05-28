@@ -49,7 +49,6 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.base.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.base.theme.DefaultExtraColors
-import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.enumsui.select.ColorSelectorModes
 import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes
 import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.AMOLED
@@ -57,7 +56,8 @@ import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.CUSTOM
 import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.DARK
 import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.LIGHT
 import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.SYSTEM
-import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.stores.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
@@ -96,7 +96,6 @@ fun ColorSelectorTab(
 
     val defaultColorScheme = getSystemColorScheme(defaultTheme, dynamicColors)
 
-    // ───────────── PRIMARY COLORS ─────────────
     val primaryColors = listOf(
         ColorEdit(ColorSettingsStore.primaryColor, stringResource(R.string.primary_color), defaultColorScheme.primary),
         ColorEdit(
@@ -122,7 +121,6 @@ fun ColorSelectorTab(
     )
     val primarySectionTitle = stringResource(R.string.primary_colors_section)
 
-    // ───────────── SECONDARY COLORS ─────────────
     val secondaryColors = listOf(
         ColorEdit(
             ColorSettingsStore.secondaryColor,
@@ -147,7 +145,6 @@ fun ColorSelectorTab(
     )
     val secondarySectionTitle = stringResource(R.string.secondary_colors_section)
 
-    // ───────────── TERTIARY COLORS ─────────────
     val tertiaryColors = listOf(
         ColorEdit(
             ColorSettingsStore.tertiaryColor,
@@ -172,7 +169,6 @@ fun ColorSelectorTab(
     )
     val tertiarySectionTitle = stringResource(R.string.tertiary_colors_section)
 
-    // ───────────── BACKGROUND / SURFACE ─────────────
     val backgroundColors = listOf(
         ColorEdit(
             ColorSettingsStore.backgroundColor,
@@ -218,7 +214,6 @@ fun ColorSelectorTab(
     )
     val backgroundSectionTitle = stringResource(R.string.background_surface_colors_section)
 
-    // ───────────── ERROR COLORS ─────────────
     val errorColors = listOf(
         ColorEdit(ColorSettingsStore.errorColor, stringResource(R.string.error_color), defaultColorScheme.error),
         ColorEdit(ColorSettingsStore.onErrorColor, stringResource(R.string.on_error_color), defaultColorScheme.onError),
@@ -235,7 +230,6 @@ fun ColorSelectorTab(
     )
     val errorSectionTitle = stringResource(R.string.error_colors_section)
 
-    // ───────────── OUTLINE / MISC ─────────────
     val outlineColors = listOf(
         ColorEdit(ColorSettingsStore.outlineColor, stringResource(R.string.outline_color), defaultColorScheme.outline),
         ColorEdit(
@@ -247,7 +241,6 @@ fun ColorSelectorTab(
     )
     val outlineSectionTitle = stringResource(R.string.outline_colors_section)
 
-    // ───────────── SURFACE CONTAINERS ─────────────
     val surfaceContainerColors = listOf(
         ColorEdit(
             ColorSettingsStore.surfaceBrightColor,
@@ -287,7 +280,6 @@ fun ColorSelectorTab(
     )
     val surfaceContainerSectionTitle = stringResource(R.string.surface_container_colors_section)
 
-    // ───────────── PRIMARY / SECONDARY / TERTIARY FIXED ─────────────
     val fixedColors = listOf(
         ColorEdit(
             ColorSettingsStore.primaryFixedColor,
@@ -610,7 +602,7 @@ fun ColorSelectorTab(
                                         scope.launch {
                                             ColorSettingsStore.backupColors(ctx)
                                             ColorModesSettingsStore.colorTestMode.set(ctx, true)
-                                            onBack() // Go back to main screen
+                                            onBack()
                                         }
                                     },
                                     icon = R.drawable.colorize,

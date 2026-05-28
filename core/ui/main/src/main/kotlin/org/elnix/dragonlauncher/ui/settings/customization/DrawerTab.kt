@@ -36,7 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.DRAWER_TAG
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SHAPES_TAG
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions

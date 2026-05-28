@@ -13,11 +13,13 @@ kotlin {
 
 extensions.configure<LibraryExtension> {
     namespace = "org.elnix.dragonlauncher.models"
+
     compileSdk {
-        version = release(37)
+        version = release(libs.versions.compileSdk.get().toInt())
     }
+
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -30,25 +32,39 @@ extensions.configure<LibraryExtension> {
 dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.navigation3.runtime)
-    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.timber)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.compose.ui.unit)
     implementation(libs.androidx.core)
-    implementation(libs.kotlinx.serialization.core)
-    implementation(libs.hilt.android)
-    implementation(libs.hilt.core)
+    implementation(libs.bundles.kotlin)
+    implementation(libs.androidx.compose.material3)
 
+
+    implementation(libs.hilt.core)
+    implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-    api(libs.kotlinx.coroutines.core)
     api(libs.dagger)
     api(libs.javax.inject)
 
     implementation(project(":core:settings"))
     api(project(":core:logging"))
     api(project(":core:common"))
+    api(project(":core:i18n"))
     api(project(":core:enumsui"))
     api(project(":core:shizuku"))
+
+    api(project(":core:services:icons"))
+    api(project(":core:services:points"))
+    api(project(":core:services:recents"))
+    api(project(":core:services:colors"))
+    api(project(":core:services:fonts"))
+
+    api(project(":data:applications"))
+    api(project(":data:workspaces"))
+    api(project(":data:appoverrides"))
+    api(project(":core:profiles"))
+    api(project(":core:permissions"))
+    api(project(":core:ktx"))
 }

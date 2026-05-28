@@ -12,8 +12,8 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asComposePath
-import org.elnix.dragonlauncher.common.serializables.CornerRadiusSerializable
-import org.elnix.dragonlauncher.common.serializables.CustomIconShapeSerializable
+import org.elnix.dragonlauncher.common.serializables.CornerRadius
+import org.elnix.dragonlauncher.common.serializables.CustomIconShape
 import org.elnix.dragonlauncher.common.serializables.IconCornerType
 import org.elnix.dragonlauncher.common.serializables.IconShape
 import org.elnix.dragonlauncher.common.serializables.allShapes
@@ -288,25 +288,25 @@ private fun corner(
     type: IconCornerType
 ) {
     when (type) {
-        IconCornerType.FILLET ->
+        IconCornerType.Fillet ->
             path.quadraticTo(x1, y1, x2, y2)
 
-        IconCornerType.CHAMFER ->
+        IconCornerType.Chamfer ->
             path.lineTo(x2, y2)
     }
 }
 
 
-fun customIconShape(shape: CustomIconShapeSerializable?): Shape =
+fun customIconShape(shape: CustomIconShape?): Shape =
     GenericShape { size, _ ->
 
         val w = size.width
         val h = size.height
         val min = minOf(w, h)
 
-        fun CornerRadiusSerializable?.resolve(): Pair<Float, IconCornerType> {
+        fun CornerRadius?.resolve(): Pair<Float, IconCornerType> {
             val r = ((this?.corner ?: 0f).coerceIn(0f, 1f)) * min * 0.5f
-            val t = this?.type ?: IconCornerType.FILLET
+            val t = this?.type ?: IconCornerType.Fillet
             return r to t
         }
 

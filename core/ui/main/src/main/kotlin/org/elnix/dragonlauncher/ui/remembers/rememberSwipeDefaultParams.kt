@@ -10,8 +10,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.common.serializables.CircleNest
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
+import org.elnix.dragonlauncher.common.serializables.Nest
+import org.elnix.dragonlauncher.common.serializables.Point
 import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.settings.stores.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
@@ -30,8 +30,8 @@ import org.elnix.dragonlauncher.ui.composition.LocalPoints
 fun rememberSwipeDefaultParams(
     appsViewModel: AppsViewModel = activityViewModel(),
     backgroundColor: Color? = null,
-    nests: List<CircleNest>? = null,
-    defaultPointSerializable: SwipePointSerializable? = null,
+    nests: List<Nest>? = null,
+    defaultPointSerializable: Point? = null,
     forceShowAllActionsInCurrentNest: Boolean? = null,
     allowShowIconInCenter: Boolean = false
 ): SwipeDrawParams {

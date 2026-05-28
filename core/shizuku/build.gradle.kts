@@ -12,11 +12,11 @@ extensions.configure<LibraryExtension> {
     namespace = "org.elnix.dragonlauncher.shizuku"
 
     compileSdk {
-        version = release(37)
+        version = release(libs.versions.compileSdk.get().toInt())
     }
 
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
         consumerProguardFiles("consumer-rules.pro")
     }
 

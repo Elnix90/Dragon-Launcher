@@ -8,11 +8,10 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ICONS_TAG
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.STATUS_BAR_TAG
 import org.elnix.dragonlauncher.common.serializables.StatusBarJson
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.defaultSwipePointsValues
+import org.elnix.dragonlauncher.common.serializables.Point.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logV
 import org.elnix.dragonlauncher.models.AppsViewModel
@@ -24,17 +23,16 @@ import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalAppItemSettings
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
+import org.elnix.dragonlauncher.ui.base.compositionslocals.ProvideCurrentTime
 import org.elnix.dragonlauncher.ui.base.compositionslocals.rememberAppItemSettings
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
-import org.elnix.dragonlauncher.ui.composition.LocalDrawerIconsCache
 import org.elnix.dragonlauncher.ui.composition.LocalEndLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.composition.LocalLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.composition.LocalNests
-import org.elnix.dragonlauncher.ui.composition.LocalPointIconsCache
 import org.elnix.dragonlauncher.ui.composition.LocalPoints
 import org.elnix.dragonlauncher.ui.composition.LocalShowLabelsInAddPointDialog
 import org.elnix.dragonlauncher.ui.composition.LocalStartLineObject
@@ -64,7 +62,6 @@ fun ProvideGlobalCompositionLocals(
         pointsIconCache.updateMaxCacheSize(points.size)
     }
 
-    val drawerIconCache = appsViewModel.drawerIconCache
 
     val elementsJson by StatusBarJsonSettingsStore.jsonSetting.asState()
 
@@ -99,9 +96,6 @@ fun ProvideGlobalCompositionLocals(
     CompositionLocalProvider(
         LocalDefaultPoint provides defaultPoint,
 
-        LocalDrawerIconsCache provides drawerIconCache,
-        LocalPointIconsCache provides pointsIconCache,
-
         LocalIconShape provides iconsShape,
         LocalPoints provides points,
         LocalNests provides nests,
@@ -121,6 +115,8 @@ fun ProvideGlobalCompositionLocals(
 
         LocalAppItemSettings provides rememberAppItemSettings()
     ) {
-        content()
+        ProvideCurrentTime {
+            content()
+        }
     }
 }

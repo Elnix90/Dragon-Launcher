@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.serializables.CustomObjectSerializable
+import org.elnix.dragonlauncher.common.serializables.CustomObject
 import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.enumsui.other.AngleLineObjects
 import org.elnix.dragonlauncher.enumsui.other.AngleLineObjects.Angle
@@ -42,10 +42,10 @@ fun DrawScope.actionLine(
     pickedRememberShapeEnd: Shape,
     pickedRememberRotationAngle: Int,
 
-    lineCustomObject: CustomObjectSerializable,
-    angleLineCustomObject: CustomObjectSerializable,
-    startCustomObject: CustomObjectSerializable,
-    endCustomObject: CustomObjectSerializable
+    lineCustomObject: CustomObject,
+    angleLineCustomObject: CustomObject,
+    startCustomObject: CustomObject,
+    endCustomObject: CustomObject
 ) {
 
     order.forEach { drawObject ->
@@ -109,7 +109,7 @@ private fun DrawScope.lineObject(
     start: Offset,
     end: Offset,
     lineColor: Color,
-    lineCustomObject: CustomObjectSerializable,
+    lineCustomObject: CustomObject,
 ) {
     val lineGlow = lineCustomObject.glow
     val lineStrokeWidth = (lineCustomObject.stroke ?: UiConstants.defaultLineCustomObject.stroke!!).dp.toPx()
@@ -157,7 +157,7 @@ private fun DrawScope.angleObject(
     lineColor: Color,
     rotation: Int,
     shape: Shape,
-    angleLineCustomObject: CustomObjectSerializable,
+    angleLineCustomObject: CustomObject,
 ) {
     val strokeWidth = (angleLineCustomObject.stroke ?: UiConstants.defaultAngleCustomObject.stroke!!).dp.toPx()
     if (strokeWidth <= 0f) return

@@ -1,20 +1,16 @@
 package org.elnix.dragonlauncher.settings.stores
 
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.Settings
-import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
-import org.elnix.dragonlauncher.settings.bases.MapSettingsStore
+import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
+import org.elnix.dragonlauncher.settings.bases.string
 
-object LanguageSettingsStore : MapSettingsStore() {
-    override val name: String = "Language"
-    override val dataStoreName: DataStoreName
-        get() = DataStoreName.LANGUAGE
+object LanguageSettingsStore : MapSettingsStore(DataStoreName.LANGUAGE) {
     override val ALL: List<BaseSettingObject<*,*>>
         get() = listOf(this.keyLang)
 
-    val keyLang = Settings.string(
+    val keyLang = string(
         key = "pref_app_language",
-        dataStoreName = dataStoreName,
         default = ""
     )
 }

@@ -37,9 +37,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.serializables.AppCategory
-import org.elnix.dragonlauncher.common.serializables.AppModel
+import org.elnix.dragonlauncher.common.search.Application
+import org.elnix.dragonlauncher.common.search.AppCategory
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.utils.LifecycleUtils.waitASec
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalAppItemSettings
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
@@ -52,7 +52,7 @@ import kotlin.math.min
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppGrid(
-    apps: List<AppModel>,
+    apps: List<Application>,
     fillMaxSize: Boolean = true,
 
     gridState: LazyGridState? = null,
@@ -64,13 +64,13 @@ fun AppGrid(
     // Multi select things
     isMultiSelectMode: Boolean = false,
     selectedPackages: List<String> = emptyList(),
-    onEnterMultiSelect: ((AppModel) -> Unit)? = null,
-    onToggleSelect: ((AppModel) -> Unit)? = null,
+    onEnterMultiSelect: ((Application) -> Unit)? = null,
+    onToggleSelect: ((Application) -> Unit)? = null,
 
     onTopStateChange: ((Boolean) -> Unit)? = null,
     onReload: (() -> Unit)? = null,
-    longPressPopup: @Composable ((AppModel) -> Unit)?,
-    onClick: ((AppModel) -> Unit)?
+    longPressPopup: @Composable ((Application) -> Unit)?,
+    onClick: ((Application) -> Unit)?
 ) {
     var openedCategory by remember { mutableStateOf<AppCategory?>(null) }
 
@@ -208,7 +208,7 @@ fun AppGrid(
                 contentPadding = paddingValues,
                 verticalArrangement = Arrangement.spacedBy(appItemSettings.iconSpacingVertical),
             ) {
-                items(visibleApps, key = { it.iconCacheKey.cacheKey }) { app ->
+                items(visibleApps, key = { it.key.cacheKey }) { app ->
                     val selected = app.packageName in selectedPackages
 
                     AppItemHorizontal(
@@ -243,7 +243,7 @@ fun AppGrid(
                 verticalArrangement = Arrangement.spacedBy(appItemSettings.iconSpacingVertical),
                 horizontalArrangement = Arrangement.spacedBy(appItemSettings.iconSpacingHorizontal)
             ) {
-                items(visibleApps, key = { it.iconCacheKey.cacheKey }) { app ->
+                items(visibleApps, key = { it.key.cacheKey }) { app ->
                     val selected = app.packageName in selectedPackages
 
                     AppItemGrid(
@@ -273,10 +273,10 @@ fun AppGrid(
 @Composable
 private fun CategoryGrid(
     category: AppCategory,
-    apps: List<AppModel>,
+    apps: List<Application>,
     modifier: Modifier = Modifier,
-    longPressPopup: @Composable ((AppModel) -> Unit)?,
-    onClick: ((AppModel) -> Unit)?,
+    longPressPopup: @Composable ((Application) -> Unit)?,
+    onClick: ((Application) -> Unit)?,
     onOpenCategory: () -> Unit
 ) {
     val categorySettings = LocalAppItemSettings.current.categorySettings
@@ -310,12 +310,12 @@ private fun CategoryGrid(
 
 @Composable
 private fun AppDefinedGrid(
-    apps: List<AppModel>,
+    apps: List<Application>,
     gridCells: Int,
     modifier: Modifier = Modifier,
-    onLongClick: ((AppModel) -> Unit)? = null,
-    longPressPopup: @Composable ((AppModel) -> Unit)?,
-    onClick: ((AppModel) -> Unit)?,
+    onLongClick: ((Application) -> Unit)? = null,
+    longPressPopup: @Composable ((Application) -> Unit)?,
+    onClick: ((Application) -> Unit)?,
 ) {
     var appIndex = 0
 

@@ -1,10 +1,10 @@
 package org.elnix.dragonlauncher.common.messyfolder.circles
 
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
+import org.elnix.dragonlauncher.common.serializables.Point
 import org.elnix.dragonlauncher.common.messyfolder.UiCircle
 
 
-fun randomFreeAngle(circle: UiCircle?, list: List<SwipePointSerializable>): Double? {
+fun randomFreeAngle(circle: UiCircle?, list: List<Point>): Double? {
 
     val circleRadius = circle?.radius ?: return null
 

@@ -21,11 +21,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.serializables.StatusBarSerializable
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.common.serializables.StatusBar
 
 @Composable
-fun StatusBarBandwidth(element: StatusBarSerializable.Bandwidth) {
+fun StatusBarBandwidth(element: StatusBar.Bandwidth) {
     var rxSpeed by remember { mutableLongStateOf(0L) }
     var txSpeed by remember { mutableLongStateOf(0L) }
 

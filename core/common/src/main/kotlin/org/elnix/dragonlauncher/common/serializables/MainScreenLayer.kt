@@ -2,41 +2,46 @@ package org.elnix.dragonlauncher.common.serializables
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.MAIN_SCREEN_LAYERS_TAG
-import org.elnix.dragonlauncher.logging.logE
+import org.elnix.dragonlauncher.i18n.R
 
 
 @Serializable
+@SerialName("MainScreenLayer")
 sealed class MainScreenLayer {
     @Serializable
+    @SerialName("ChargingAnimation")
     data class ChargingAnimation(
         val enabled: Boolean = true
     ) : MainScreenLayer()
 
     @Serializable
+    @SerialName("Widgets")
     data class Widgets(
         val enabled: Boolean = true
     ) : MainScreenLayer()
 
     @Serializable
+    @SerialName("StatusBar")
     data class StatusBar(
         val enabled: Boolean = true
     ) : MainScreenLayer()
 
     @Serializable
+    @SerialName("DragOverlay")
     data class DragOverlay(
         val enabled: Boolean = true
     ) : MainScreenLayer()
 
     @Serializable
+    @SerialName("HoldToActivate")
     data class HoldToActivate(
         val enabled: Boolean = true
     ) : MainScreenLayer()
 
     @Serializable
+    @SerialName("CustomDim")
     data class CustomDim(
         val enabled: Boolean = true,
         /** How powerful the fim is */
@@ -44,68 +49,52 @@ sealed class MainScreenLayer {
         /** After how long to hold the overlay shows up*/
         val showAfter: Int = 1000
     ) : MainScreenLayer()
-}
+
+    companion object {
+        val defaultMainScreenLayers: List<MainScreenLayer> = listOf(
+            ChargingAnimation(),
+            StatusBar(),
+            Widgets(),
+            CustomDim(false), // Disabled by default
+            DragOverlay(),
+            HoldToActivate()
+        )
+
+        val MainScreenLayer.label: String
+            @Composable
+            get() = stringResource(
+                when (this) {
+                    is ChargingAnimation -> R.string.charging_animation
+                    is Widgets -> R.string.widgets
+                    is StatusBar -> R.string.status_bar
+                    is DragOverlay -> R.string.drag_overlay
+                    is HoldToActivate -> R.string.hold_to_activate
+                    is CustomDim -> R.string.custom_dim
+                }
+            )
+
+        val MainScreenLayer.enabled: Boolean
+            get() = when (this) {
+                is ChargingAnimation -> enabled
+                is DragOverlay -> enabled
+                is HoldToActivate -> enabled
+                is StatusBar -> enabled
+                is Widgets -> enabled
+                is CustomDim -> enabled
+            }
 
 
-val MainScreenLayer.label: String
-    @Composable
-    get() = stringResource(
-        when (this) {
-            is MainScreenLayer.ChargingAnimation -> R.string.charging_animation
-            is MainScreenLayer.Widgets -> R.string.widgets
-            is MainScreenLayer.StatusBar -> R.string.status_bar
-            is MainScreenLayer.DragOverlay -> R.string.drag_overlay
-            is MainScreenLayer.HoldToActivate -> R.string.hold_to_activate
-            is MainScreenLayer.CustomDim -> R.string.custom_dim
+        fun MainScreenLayer.copyWithEnabled(enabled: Boolean): MainScreenLayer = when (this) {
+            is ChargingAnimation -> copy(enabled = enabled)
+            is DragOverlay -> copy(enabled = enabled)
+            is HoldToActivate -> copy(enabled = enabled)
+            is StatusBar -> copy(enabled = enabled)
+            is Widgets -> copy(enabled = enabled)
+            is CustomDim -> copy(enabled = enabled)
         }
-    )
-
-val MainScreenLayer.enabled: Boolean
-    get() = when (this) {
-        is MainScreenLayer.ChargingAnimation -> enabled
-        is MainScreenLayer.DragOverlay -> enabled
-        is MainScreenLayer.HoldToActivate -> enabled
-        is MainScreenLayer.StatusBar -> enabled
-        is MainScreenLayer.Widgets -> enabled
-        is MainScreenLayer.CustomDim -> enabled
-    }
 
 
-fun MainScreenLayer.copyWithEnabled(enabled: Boolean): MainScreenLayer = when (this) {
-    is MainScreenLayer.ChargingAnimation -> copy(enabled = enabled)
-    is MainScreenLayer.DragOverlay -> copy(enabled = enabled)
-    is MainScreenLayer.HoldToActivate -> copy(enabled = enabled)
-    is MainScreenLayer.StatusBar -> copy(enabled = enabled)
-    is MainScreenLayer.Widgets -> copy(enabled = enabled)
-    is MainScreenLayer.CustomDim -> copy(enabled = enabled)
-}
-
-
-val defaultMainScreenLayers: List<MainScreenLayer> = listOf(
-    MainScreenLayer.ChargingAnimation(),
-    MainScreenLayer.StatusBar(),
-    MainScreenLayer.Widgets(),
-    MainScreenLayer.CustomDim(false), // Disabled by default
-    MainScreenLayer.DragOverlay(),
-    MainScreenLayer.HoldToActivate()
-)
-
-object MainScreenLayerJson {
-    private val jsonConfig = Json {
-        explicitNulls = false
-        ignoreUnknownKeys = true
-    }
-
-    fun encode(list: List<MainScreenLayer>): String =
-        jsonConfig.encodeToString(list)
-
-
-    fun decode(jsonString: String): List<MainScreenLayer> {
-        return try {
-            jsonConfig.decodeFromString<List<MainScreenLayer>>(jsonString)
-        } catch (e: Exception) {
-            logE(MAIN_SCREEN_LAYERS_TAG, e) { "Failed to decode main screen layers" }
-            defaultMainScreenLayers
-        }
     }
 }
+
+object MainScreenLayerJson : DragonJson<List<MainScreenLayer>>()

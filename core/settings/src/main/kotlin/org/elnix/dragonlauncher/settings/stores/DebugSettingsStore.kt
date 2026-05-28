@@ -2,121 +2,103 @@ package org.elnix.dragonlauncher.settings.stores
 
 import android.util.Log
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
-import org.elnix.dragonlauncher.settings.bases.MapSettingsStore
-import org.elnix.dragonlauncher.settings.bases.Settings
+import org.elnix.dragonlauncher.settings.bases.boolean
+import org.elnix.dragonlauncher.settings.bases.int
+import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
+import org.elnix.dragonlauncher.settings.bases.string
 
-object DebugSettingsStore : MapSettingsStore() {
-    override val name: String = "Debug"
-    override val dataStoreName = DataStoreName.DEBUG
+object DebugSettingsStore : MapSettingsStore(DataStoreName.DEBUG) {
 
-    val debugEnabled = Settings.boolean(
+    val debugEnabled = boolean(
         key = "debugEnabled",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val debugInfos = Settings.boolean(
+    val debugInfos = boolean(
         key = "debugInfos",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val settingsDebugInfo = Settings.boolean(
+    val settingsDebugInfo = boolean(
         key = "settingsDebugInfo",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val widgetsDebugInfo = Settings.boolean(
+    val widgetsDebugInfo = boolean(
         key = "widgetsDebugInfo",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val workspacesDebugInfo = Settings.boolean(
+    val workspacesDebugInfo = boolean(
         key = "workspacesDebugInfo",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val forceAppLanguageSelector = Settings.boolean(
+    val forceAppLanguageSelector = boolean(
         key = "forceAppLanguageSelector",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val autoRaiseDragonOnSystemLauncher = Settings.boolean(
+    val autoRaiseDragonOnSystemLauncher = boolean(
         key = "autoRaiseDragonOnSystemLauncher",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val systemLauncherPackageName = Settings.string(
+    val systemLauncherPackageName = string(
         key = "systemLauncherPackageName",
-        dataStoreName = dataStoreName,
         default = ""
     )
 
-    val useAccessibilityInsteadOfContextToExpandActionPanel = Settings.boolean(
+    val useAccessibilityInsteadOfContextToExpandActionPanel = boolean(
         key = "useAccessibilityInsteadOfContextToExpandActionPanel",
-        dataStoreName = dataStoreName,
         default = true
     )
 
-    val enableLogging = Settings.boolean(
+    val enableLogging = boolean(
         key = "enableLogging",
-        dataStoreName = dataStoreName,
         default = true
     )
 
-    val privateSpaceDebugInfo = Settings.boolean(
+    val privateSpaceDebugInfo = boolean(
         key = "privateSpaceDebugInfo",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val disableExtensionSignatureCheck = Settings.boolean(
+    val disableExtensionSignatureCheck = boolean(
         key = "disableExtensionSignatureCheck",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val snackBarLogLevel = Settings.int(
+    val snackBarLogLevel = int(
         key = "snackBarLogLevel",
-        dataStoreName = dataStoreName,
         default = 7, // No logs
         allowedRange = 2..7
     )
 
-    val filesLogLevel = Settings.int(
+    val filesLogLevel = int(
         key = "filesLogLevel",
-        dataStoreName = dataStoreName,
         default = Log.DEBUG,
         allowedRange = 2..7
     )
 
-    val filterTag = Settings.string(
+    val filterTag = string(
         key = "filterTag",
-        dataStoreName = dataStoreName,
         default = ""
     )
 
-    val showFps = Settings.boolean(
+    val showFps = boolean(
         key = "showFps",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val showKillLauncherActionInActionPicker = Settings.boolean(
+    val showKillLauncherActionInActionPicker = boolean(
         key = "showKillLauncherActionInActionPicker",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val showDebugViewModel = Settings.boolean(
+    val showDebugViewModel = boolean(
         key = "showDebugViewModel",
-        dataStoreName = dataStoreName,
         default = false
     )
 

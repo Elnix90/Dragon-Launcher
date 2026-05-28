@@ -33,7 +33,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
-import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants.URLs.ELNIX90_GITHUB_PROFILE_LINK
 import org.elnix.dragonlauncher.common.messyfolder.Constants.URLs.EXTENSIONS_GITHUB_REPO_LINK
 import org.elnix.dragonlauncher.common.messyfolder.Constants.URLs.GITHUB_REPO_ISSUES_LINK
@@ -46,6 +45,8 @@ import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.LifecycleUtils.closeApp
 import org.elnix.dragonlauncher.common.utils.VersionsUtils.isBetaVersion
 import org.elnix.dragonlauncher.common.utils.rememberVersionCode
+import org.elnix.dragonlauncher.common.utils.rememberVersionName
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.clearAllData
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
@@ -63,7 +64,7 @@ import org.elnix.dragonlauncher.ui.warning.WarningReminder
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-fun AdvancedSettingsScreen(
+fun SettingsScreen(
     onNavigate: (NavigationRoute) -> Unit,
     onBack: () -> Unit
 ) {
@@ -71,11 +72,11 @@ fun AdvancedSettingsScreen(
     val scope = rememberCoroutineScope()
 
     val versionCode = rememberVersionCode()
+    val versionName = rememberVersionName()
 
     val isDebugModeEnabled by DebugSettingsStore.debugEnabled.asState()
 
     var toast by remember { mutableStateOf<Toast?>(null) }
-    val versionName = ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName ?: "unknown"
     var timesClickedOnVersion by remember { mutableIntStateOf(0) }
 
     var showLanguageSheet by remember { mutableStateOf(false) }

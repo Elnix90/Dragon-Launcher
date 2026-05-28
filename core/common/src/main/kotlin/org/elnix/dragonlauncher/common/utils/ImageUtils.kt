@@ -36,22 +36,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
 import androidx.core.graphics.withSave
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ICONS_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.IMAGE_TAG
-import org.elnix.dragonlauncher.common.messyfolder.IconsCache
-import org.elnix.dragonlauncher.common.messyfolder.PackageManagerCompat
-import org.elnix.dragonlauncher.common.messyfolder.loadShortcutIcon
 import org.elnix.dragonlauncher.common.messyfolder.resolveShape
-import org.elnix.dragonlauncher.common.serializables.CacheKey
-import org.elnix.dragonlauncher.common.serializables.CustomIconSerializable
+import org.elnix.dragonlauncher.common.serializables.CustomIconProperties
 import org.elnix.dragonlauncher.common.serializables.IconShape
-import org.elnix.dragonlauncher.common.serializables.IconType
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.toAppModel
-import org.elnix.dragonlauncher.logging.logD
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.logging.IMAGE_TAG
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.logging.logW
 import java.io.ByteArrayOutputStream
 import kotlin.math.ceil
 
@@ -69,7 +60,7 @@ object ImageUtils {
         width: Int,
         height: Int,
         tint: Int? = null
-    ): ImageBitmap {
+    ): Bitmap {
         val bitmap = createBitmap(width, height)
         val canvas = Canvas(bitmap)
 
@@ -106,12 +97,11 @@ object ImageUtils {
             drawable.draw(canvas)
         }
 
-        val imageBitmap = bitmap.asImageBitmap()
 
         // If tint is not unspecified (transparent)
         return tint?.takeIf { it != 0 }?.let {
-            tintBitmap(imageBitmap, tint)
-        } ?: imageBitmap
+            bitmap.tintedWith(tint)
+        } ?: bitmap
     }
 
     fun cropCenterSquare(src: Bitmap): Bitmap {
@@ -235,161 +225,172 @@ object ImageUtils {
         return bitmap.asImageBitmap()
     }
 
-    fun tintBitmap(original: ImageBitmap, color: Int): ImageBitmap {
-        val bitmap = createBitmap(original.width, original.height)
+    fun Bitmap.tintedWith(color: Int?): Bitmap {
+        if (color == null) return this
+        val bitmap = createBitmap(width, height)
         val canvas = Canvas(bitmap)
         val paint = Paint().apply {
-            colorFilter = PorterDuffColorFilter(
+            this.colorFilter = PorterDuffColorFilter(
                 color,
                 PorterDuff.Mode.SRC_IN
             )
         }
-        canvas.drawBitmap(original.asAndroidBitmap(), 0f, 0f, paint)
-        return bitmap.asImageBitmap()
+        canvas.drawBitmap(bitmap, 0f, 0f, paint)
+        return bitmap
     }
 
     fun createDefaultBitmap(
         width: Int,
         height: Int
-    ): ImageBitmap {
+    ): Bitmap {
         val bitmap = createBitmap(width, height)
         val canvas = Canvas(bitmap)
         canvas.drawColor(Color.Gray.toArgb())
-        return bitmap.asImageBitmap()
+        return bitmap
     }
 
     fun Context.loadDrawableResAsBitmap(
         resId: Int,
         width: Int,
         height: Int
-    ): ImageBitmap {
+    ): Bitmap {
         val drawable = ContextCompat.getDrawable(this, resId)
             ?: return createDefaultBitmap(width, height)
 
         return loadDrawableAsBitmap(drawable, width, height)
     }
 
-    fun createUntintedBitmap(
-        action: SwipeActionSerializable,
-        ctx: Context,
-        icons: IconsCache<CacheKey>,
+
+    fun Context.loadDrawableResAsImageBitmap(
+        resId: Int,
         width: Int,
         height: Int
     ): ImageBitmap {
+        val drawable = ContextCompat.getDrawable(this, resId)
+            ?: return createDefaultBitmap(width, height).asImageBitmap()
 
-        val pm = ctx.packageManager
-        val pmCompat = PackageManagerCompat(pm, ctx)
+        return loadDrawableAsBitmap(drawable, width, height).asImageBitmap()
+    }
 
+
+    fun createUntintedBitmap(
+        action: SwipeAction,
+        ctx: Context,
+        width: Int,
+        height: Int
+    ): Bitmap {
         return with(ctx) {
             when (action) {
-                is SwipeActionSerializable.LaunchApp -> {
-                    val dummyAppModel = action.toAppModel()
-
-                    val cacheKey = dummyAppModel.iconCacheKey
-                    logD(ICONS_TAG) { "Searching in drawer cache (${icons.cacheUUID})\naction: $action\ndummyApp: $dummyAppModel\n cacheKey: $cacheKey" }
-
-                    icons.getOrCompute(cacheKey) {
-
-                        logW(ICONS_TAG) { "Did not find the cacheKey `$cacheKey` in drawer ${icons.cacheUUID}" }
-
-                        val drawable = pmCompat.getAppIcon(
-                            packageName = action.packageName,
-                            userId = action.userId ?: 0,
-                            isPrivateProfile = action.isPrivateSpace
-                        )
-
-                        loadDrawableAsBitmap(drawable, width, height)
-                    }
+                is SwipeAction.LaunchApp -> {
+                    null
+//                    val dummyAppModel = action.toAppModel()
+//
+//                    val cacheKey = dummyAppModel.key
+//                    logD(ICONS_TAG) { "Searching in drawer cache (${icons.cacheUUID})\naction: $action\ndummyApp: $dummyAppModel\n cacheKey: $cacheKey" }
+//
+//                    icons.getOrCompute(cacheKey) {
+//
+//                        logW(ICONS_TAG) { "Did not find the cacheKey `$cacheKey` in drawer ${icons.cacheUUID}" }
+//
+//                        val drawable = pmCompat.getAppIcon(
+//                            packageName = action.packageName,
+//                            userId = action.userId ?: 0,
+//                            isPrivate = action.isPrivateSpace
+//                        )
+//
+//                        loadDrawableAsBitmap(drawable, width, height)
+//                    }
                 }
 
-                is SwipeActionSerializable.LaunchShortcut -> {
-                    loadShortcutIcon(
-                        ctx = ctx,
-                        packageName = action.packageName,
-                        shortcutId = action.shortcutId,
-                        widthPx = width,
-                        heightPx = height
-                    ) ?: loadDrawableResAsBitmap(
-                        R.drawable.ic_action_pinned_shortcut,
-                        width,
-                        height
-                    )
+                is SwipeAction.LaunchShortcut -> {
+//                    loadShortcutIcon(
+//                        ctx = ctx,
+//                        packageName = action.packageName,
+//                        shortcutId = action.shortcutId,
+//                        widthPx = width,
+//                        heightPx = height
+//                    ) ?: loadDrawableResAsBitmap(
+//                        R.drawable.ic_action_pinned_shortcut,
+//                        width,
+//                        height
+//                    )
+                    null
                 }
 
-                is SwipeActionSerializable.OpenUrl -> loadDrawableResAsBitmap(R.drawable.web, width, height)
+                is SwipeAction.OpenUrl -> loadDrawableResAsBitmap(R.drawable.web, width, height)
 
-                SwipeActionSerializable.NotificationShade -> loadDrawableResAsBitmap(R.drawable.notification, width, height)
+                SwipeAction.NotificationShade -> loadDrawableResAsBitmap(R.drawable.notification, width, height)
 
-                SwipeActionSerializable.ControlPanel -> loadDrawableResAsBitmap(R.drawable.ic_action_grid, width, height)
+                SwipeAction.ControlPanel -> loadDrawableResAsBitmap(R.drawable.ic_action_grid, width, height)
 
-                is SwipeActionSerializable.OpenAppDrawer -> loadDrawableResAsBitmap(R.drawable.ic_action_drawer, width, height)
+                is SwipeAction.OpenAppDrawer -> loadDrawableResAsBitmap(R.drawable.ic_action_drawer, width, height)
 
-                is SwipeActionSerializable.OpenDragonLauncherSettings -> loadDrawableResAsBitmap(R.drawable.dragon_launcher_foreground, width, height)
+                is SwipeAction.OpenDragonLauncherSettings -> loadDrawableResAsBitmap(R.drawable.dragon_launcher_foreground, width, height)
 
-                SwipeActionSerializable.Lock -> loadDrawableResAsBitmap(R.drawable.ic_action_lock, width, height)
-                is SwipeActionSerializable.OpenFile -> loadDrawableResAsBitmap(R.drawable.ic_action_open_file, width, height)
+                SwipeAction.Lock -> loadDrawableResAsBitmap(R.drawable.ic_action_lock, width, height)
+                is SwipeAction.OpenFile -> loadDrawableResAsBitmap(R.drawable.ic_action_open_file, width, height)
 
-                SwipeActionSerializable.ReloadApps -> loadDrawableResAsBitmap(R.drawable.ic_action_reload, width, height)
+                SwipeAction.ReloadApps -> loadDrawableResAsBitmap(R.drawable.ic_action_reload, width, height)
 
-                SwipeActionSerializable.OpenRecentApps -> loadDrawableResAsBitmap(R.drawable.ic_action_recent, width, height)
+                SwipeAction.OpenRecentApps -> loadDrawableResAsBitmap(R.drawable.ic_action_recent, width, height)
 
-                is SwipeActionSerializable.OpenCircleNest -> loadDrawableResAsBitmap(R.drawable.ic_action_target, width, height)
+                is SwipeAction.OpenCircleNest -> loadDrawableResAsBitmap(R.drawable.ic_action_target, width, height)
 
-                SwipeActionSerializable.GoParentNest -> loadDrawableResAsBitmap(R.drawable.fullscreen_exit, width, height)
+                SwipeAction.GoParentNest -> loadDrawableResAsBitmap(R.drawable.fullscreen_exit, width, height)
 
-                is SwipeActionSerializable.OpenWidget -> loadDrawableResAsBitmap(R.drawable.ic_action_widgets, width, height)
+                is SwipeAction.OpenWidget -> loadDrawableResAsBitmap(R.drawable.ic_action_widgets, width, height)
 
-                is SwipeActionSerializable.RunAdbCommand -> loadDrawableResAsBitmap(R.drawable.adb_icon, width, height)
+                is SwipeAction.RunAdbCommand -> loadDrawableResAsBitmap(R.drawable.adb_icon, width, height)
 
-                is SwipeActionSerializable.ToggleBluetooth -> loadDrawableResAsBitmap(R.drawable.bluetooth, width, height)
+                is SwipeAction.ToggleBluetooth -> loadDrawableResAsBitmap(R.drawable.bluetooth, width, height)
 
-                is SwipeActionSerializable.ToggleData -> loadDrawableResAsBitmap(R.drawable.cellular_icon, width, height)
+                is SwipeAction.ToggleData -> loadDrawableResAsBitmap(R.drawable.cellular_icon, width, height)
 
-                is SwipeActionSerializable.ToggleWifi -> loadDrawableResAsBitmap(R.drawable.wifi, width, height)
-                SwipeActionSerializable.KillLauncher -> loadDrawableResAsBitmap(R.drawable.ic_action_kill, width, height)
+                is SwipeAction.ToggleWifi -> loadDrawableResAsBitmap(R.drawable.wifi, width, height)
+                SwipeAction.KillLauncher -> loadDrawableResAsBitmap(R.drawable.ic_action_kill, width, height)
 
-                SwipeActionSerializable.None -> null
+                SwipeAction.None -> null
             } ?: loadDrawableResAsBitmap(R.drawable.ic_app_default, width, height)
         }
     }
 
-    fun resolveCustomIconBitmap(
-        base: ImageBitmap,
-        icon: CustomIconSerializable,
+    fun resolveCustomIconProperties(
+        base: Bitmap,
+        properties: CustomIconProperties,
         sizePx: Int,
         density: Density,
         iconShape: IconShape
-    ): ImageBitmap {
-        // Step 1: choose source bitmap (override or base)
-        val sourceBitmap: ImageBitmap = when (icon.type) {
-            IconType.BITMAP -> {
-                icon.source
-                    ?.let { base64ToImageBitmap(it) }
-                    ?: base
-            }
-
-            IconType.ICON_PACK -> base
-            IconType.TEXT -> {
-                icon.source?.let {
-                    textToBitmap(
-                        text = it,
-                        sizePx = sizePx
-                    )
-                } ?: base
-            }
-
-            IconType.PLAIN_COLOR -> icon.source?.let {
-                try {
-                    val sourceColor = it.toInt()
-                    val bmp = createDefaultBitmap(sizePx, sizePx)
-                    tintBitmap(bmp, sourceColor)
-                } catch (_: Exception) {
-                    base
-                }
-            } ?: base
-
-            null -> base
-        }
+    ): Bitmap {
+//        // Step 1: choose source bitmap (override or base)
+//        val sourceBitmap: ImageBitmap = when (icon.type) {
+//            IconType.BITMAP -> {
+//                icon.source
+//                    ?.let { base64ToImageBitmap(it) }
+//                    ?: base
+//            }
+//
+//            IconType.ICON_PACK -> base
+//            IconType.TEXT -> {
+//                icon.source?.let {
+//                    textToBitmap(
+//                        text = it,
+//                        sizePx = sizePx
+//                    )
+//                } ?: base
+//            }
+//
+//            IconType.PLAIN_COLOR -> icon.source?.let {
+//                try {
+//                    val sourceColor = it.toInt()
+//                    val bmp = createDefaultBitmap(sizePx, sizePx)
+//                    bmp.tintedWith(sourceColor)
+//                } catch (_: Exception) {
+//                    base
+//                }
+//            } ?: base
+//
+//            null -> base
+//        }
 
         // Step 2: prepare output bitmap
         val outBitmap = createBitmap(sizePx, sizePx)
@@ -399,10 +400,10 @@ object ImageUtils {
         val paint = Paint(
             Paint.ANTI_ALIAS_FLAG
         ).apply {
-            alpha = ((icon.opacity ?: 1f)
+            alpha = ((properties.opacity ?: 1f)
                 .coerceIn(0f, 1f) * 255).toInt()
 
-            icon.tint?.let {
+            properties.tint?.let {
                 colorFilter = PorterDuffColorFilter(
                     it,
                     PorterDuff.Mode.SRC_IN
@@ -412,9 +413,9 @@ object ImageUtils {
 
         canvas.withSave {
             // Step 7: transform (scale + rotation)
-            val scaleX = icon.scaleX ?: 1f
-            val scaleY = icon.scaleY ?: 1f
-            val rotation = icon.rotationDeg ?: 0f
+            val scaleX = properties.scaleX ?: 1f
+            val scaleY = properties.scaleY ?: 1f
+            val rotation = properties.rotationDeg ?: 0f
 
             val half = sizePx / 2f
 
@@ -424,28 +425,28 @@ object ImageUtils {
             translate(-half, -half)
 
 
-            clipToShape(icon, iconShape, sizePx, density)
+            clipToShape(properties, iconShape, sizePx, density)
 
             // Step 9: Save
             drawBitmap(
-                sourceBitmap.asAndroidBitmap(),
+                base,
                 null,
                 Rect(0, 0, sizePx, sizePx),
                 paint
             )
         }
 
-        return outBitmap.asImageBitmap()
+        return outBitmap
     }
 
     private fun Canvas.clipToShape(
-        icon: CustomIconSerializable,
+        properties: CustomIconProperties,
         iconShape: IconShape,
         sizePx: Int,
         density: Density
     ) {
         // Step 8: CLip to shape
-        val shape = (icon.shape ?: iconShape).resolveShape()
+        val shape = (properties.shape ?: iconShape).resolveShape()
 
         val outline = shape.createOutline(
             size = Size(sizePx.toFloat(), sizePx.toFloat()),

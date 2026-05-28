@@ -5,13 +5,13 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import org.elnix.dragonlauncher.common.serializables.CircleNest
+import org.elnix.dragonlauncher.common.serializables.Nest
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.NESTS_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logW
 
 data class NestNavigationState(
-    val currentNest: CircleNest,
+    val currentNest: Nest,
     val goBack: () -> Unit,
     val goToNest: (Int) -> Unit,
     val clearStack: () -> Unit
@@ -19,7 +19,7 @@ data class NestNavigationState(
 
 
 /**
- * Remembers and manages navigation state between [CircleNest]s.
+ * Remembers and manages navigation state between [Nest]s.
  *
  * Navigation is modeled as a simple stack of nest ids:
  *
@@ -29,7 +29,7 @@ data class NestNavigationState(
  * The state is fully reactive:
  * - When the navigation stack changes, the current nest id updates.
  * - When either the current nest id or the [nests] list changes,
- *   the resolved [CircleNest] updates.
+ *   the resolved [Nest] updates.
  *
  * @param nests A reactive list of available nests. Must be a state-backed list
  *              (e.g., SnapshotStateList) for proper recomposition.
@@ -38,7 +38,7 @@ data class NestNavigationState(
  */
 @Composable
 fun rememberNestNavigation(
-    nests: List<CircleNest>,
+    nests: List<Nest>,
 ): NestNavigationState {
 
     /**
@@ -59,7 +59,7 @@ fun rememberNestNavigation(
     }
 
     /**
-     * Currently active [CircleNest].
+     * Currently active [Nest].
      *
      * Recomputes when:
      * - The navigation stack changes (via [nestId])
@@ -73,7 +73,7 @@ fun rememberNestNavigation(
             nests.find { it.id == nestId }
                 ?: run {
                     logW(NESTS_TAG) { "Current nest (id = $nestId) not found among ${nests.size} nests, in rememberNestNavigation" }
-                    CircleNest(nestId)
+                    Nest(nestId)
                 }
         }
     }

@@ -42,18 +42,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import org.elnix.dragonlauncher.base.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.serializables.CycleActionStage
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.defaultSwipePointsValues
+import org.elnix.dragonlauncher.common.serializables.SwipeAction.Companion.actionColor
+import org.elnix.dragonlauncher.common.serializables.Point
+import org.elnix.dragonlauncher.common.serializables.Point.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.enumsui.select.PointFeaturePanel
 import org.elnix.dragonlauncher.enumsui.select.SelectedUnselectedViewMode
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.actions.actionColor
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
@@ -79,7 +78,7 @@ import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditPointSheet(
-    point: SwipePointSerializable,
+    point: Point,
     isDefaultEditing: Boolean = false,
     appsViewModel: AppsViewModel = activityViewModel(),
     /** When non-null, "Create new nest" is shown in the Live Nest nest picker (same as [AddPointDialog]). */
@@ -87,12 +86,14 @@ fun EditPointSheet(
     onRenameNest: ((id: Int, name: String) -> Unit)?,
     onDeleteNest: ((id: Int) -> Unit)?,
     onDismiss: () -> Unit,
-    onConfirm: (SwipePointSerializable) -> Unit
+    onConfirm: (Point) -> Unit
 ) {
     val extraColors = LocalExtraColors.current
     val defaultPoint = LocalDefaultPoint.current
 
     val nests = LocalNests.current
+
+    val iconService = appsViewModel.iconsService
 
 
     var editPoint by remember { mutableStateOf(point) }
@@ -112,11 +113,10 @@ fun EditPointSheet(
     var editingCycleStageHapticIndex by remember { mutableStateOf<Int?>(null) }
 
 
-    val currentActionColor = actionColor(editPoint.action, extraColors)
+    val currentActionColor = editPoint.action.actionColor(extraColors)
 
     val label = editPoint.customName ?: actionLabel(editPoint.action)
-    val actionColor =
-        actionColor(editPoint.action, extraColors, editPoint.customActionColor?.let { Color(it) })
+    val actionColor = editPoint.action.actionColor(extraColors, editPoint.customActionColor?.let { Color(it) })
 
 
     val defaultBorderStroke =
@@ -216,7 +216,7 @@ fun EditPointSheet(
         editPoint.resolution,
         editPoint.size
     ) {
-        appsViewModel.reloadPointIcon(editPoint)
+        iconService.reloadPointIcon(editPoint)
     }
 
 
@@ -245,7 +245,7 @@ fun EditPointSheet(
                     icon = R.drawable.reset,
                     contentDescription = stringResource(R.string.reset)
                 ) {
-                    editPoint = SwipePointSerializable(
+                    editPoint = Point(
                         circleNumber = editPoint.circleNumber,
                         angleDeg = editPoint.angleDeg,
                         nestId = editPoint.nestId,
@@ -460,11 +460,9 @@ fun EditPointSheet(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 if (!isDefaultEditing) {
-                                    /*  ─── One card per stage ───  */
                                     cycleStages.forEachIndexed { index, stage ->
                                         val stageLabel = actionLabel(stage.action)
-                                        val stageActionColor = actionColor(stage.action, extraColors)
-
+                                        val stageActionColor = stage.action.actionColor(extraColors)
 
                                         OutlinedCard(
                                             modifier = Modifier.fillMaxWidth(),
@@ -553,7 +551,7 @@ fun EditPointSheet(
                                                 }
 
                                                 HapticFeedBackEditorButtonWithPlayTest(
-                                                    customHapticFeedbackSerializable = stage.hapticFeedback
+                                                    customHapticFeedback = stage.hapticFeedback
                                                         ?: defaultHapticFeedback(point.circleNumber),
                                                     titleExt = " (Stage ${index + 1})",
                                                     onClick = { editingCycleStageHapticIndex = index }
@@ -650,7 +648,6 @@ fun EditPointSheet(
                                     val harEnabled = editPoint.holdAndRunDelayMs != null
 
                                     if (!harEnabled) {
-                                        /*  ─── "Enable Hold & Run" row — mirrors Cycle Actions "Add Stage" ───  */
                                         DragonButton(
                                             onClick = {
                                                 editPoint = editPoint.copy(
@@ -662,7 +659,6 @@ fun EditPointSheet(
                                             Text(stringResource(R.string.hold_and_run_enable))
                                         }
                                     } else {
-                                        /*  ─── Delay slider ───  */
                                         SliderWithLabel(
                                             label = stringResource(R.string.hold_and_run_delay),
                                             value = editPoint.holdAndRunDelayMs ?: defaultHoldAndRunDelayMs,
@@ -695,8 +691,7 @@ fun EditPointSheet(
 
                                         editPoint.holdAndRunAction?.let { harAction ->
                                             val harLabel = actionLabel(harAction)
-                                            val harColor = actionColor(
-                                                harAction,
+                                            val harColor = harAction.actionColor(
                                                 extraColors,
                                                 editPoint.customActionColor?.let { Color(it) }
                                             )
@@ -725,7 +720,6 @@ fun EditPointSheet(
                                             }
                                         }
 
-                                        /*  ─── Disable button ───  */
                                         OutlinedButton(
                                             onClick = {
                                                 editPoint = editPoint.copy(
@@ -959,7 +953,7 @@ fun EditPointSheet(
             DragonColumnGroup {
                 if (!isDefaultEditing) {
                     HapticFeedBackEditorButtonWithPlayTest(
-                        customHapticFeedbackSerializable = editPoint.hapticFeedback ?: defaultHapticFeedback(point.circleNumber),
+                        customHapticFeedback = editPoint.hapticFeedback ?: defaultHapticFeedback(point.circleNumber),
                         onClick = { showHapticFeedbackEditor = true },
                     )
                 } else {
@@ -984,7 +978,7 @@ fun EditPointSheet(
 
             val previewPoint = point.copy(customIcon = newIcon)
 
-            appsViewModel.reloadPointIcon(previewPoint)
+            iconService.reloadPointIcon(previewPoint)
 
             showEditIconDialog = false
             editPoint = editPoint.copy(customIcon = newIcon)

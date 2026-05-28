@@ -30,12 +30,12 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
 import org.elnix.dragonlauncher.common.messyfolder.getFilePathFromUri
 import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.utils.DateUtils.formatDateTime
 import org.elnix.dragonlauncher.common.utils.DateUtils.today
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.BackupResult
@@ -240,7 +240,7 @@ fun BackupTab(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = backupableStores[datastoreName]!!.name,
+                            text = backupableStores[datastoreName]!!.dataStoreName.backupKey,
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurface
                         )

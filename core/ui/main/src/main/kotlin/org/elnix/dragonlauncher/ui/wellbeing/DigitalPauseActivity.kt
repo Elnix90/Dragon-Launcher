@@ -81,7 +81,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import kotlinx.coroutines.delay
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.utils.DateUtils.formatDuration
 import org.elnix.dragonlauncher.common.utils.PermissionsUtils.hasUsageStatsPermission
 import org.elnix.dragonlauncher.theme.DragonLauncherTheme

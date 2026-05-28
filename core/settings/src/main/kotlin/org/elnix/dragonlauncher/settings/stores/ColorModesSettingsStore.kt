@@ -1,19 +1,15 @@
 package org.elnix.dragonlauncher.settings.stores
 
-import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction
-import kotlin.jvm.java
 import org.elnix.dragonlauncher.enumsui.select.ColorPickerMode
+import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction
 import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
-import org.elnix.dragonlauncher.settings.bases.MapSettingsStore
-import org.elnix.dragonlauncher.settings.bases.Settings
+import org.elnix.dragonlauncher.settings.bases.boolean
+import org.elnix.dragonlauncher.settings.bases.enum
+import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
-object ColorModesSettingsStore : MapSettingsStore() {
-
-    override val name: String = "Color Modes"
-    override val dataStoreName = DataStoreName.COLOR_MODE
-
+object ColorModesSettingsStore : MapSettingsStore(DataStoreName.COLOR_MODE) {
 
     override val ALL: List<BaseSettingObject <*, *> >
         get() = listOf(
@@ -25,42 +21,36 @@ object ColorModesSettingsStore : MapSettingsStore() {
             this.colorTestMode
         )
 
-    val colorPickerMode = Settings.enum(
+    val colorPickerMode = enum(
         key = "colorPickerMode",
-        dataStoreName = dataStoreName,
         default = ColorPickerMode.DEFAULTS,
         enumClass = ColorPickerMode::class.java,
     )
 
-    val defaultTheme = Settings.enum(
+    val defaultTheme = enum(
         key = "defaultTheme",
-        dataStoreName = dataStoreName,
         default = DefaultThemes.AMOLED,
         enumClass = DefaultThemes::class.java
     )
 
-    val colorPickerButtonOne = Settings.enum(
+    val colorPickerButtonOne = enum(
         key = "colorPickerButton",
-        dataStoreName = dataStoreName,
         default = ColorPickerButtonAction.RANDOM,
         enumClass = ColorPickerButtonAction::class.java
     )
-    val colorPickerButtonTwo = Settings.enum(
+    val colorPickerButtonTwo = enum(
         key = "colorPickerButtonTwo",
-        dataStoreName = dataStoreName,
         default = ColorPickerButtonAction.COPY,
         enumClass = ColorPickerButtonAction::class.java
     )
 
-    val dynamicColor = Settings.boolean(
+    val dynamicColor = boolean(
         key = "dynamicColor",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val colorTestMode = Settings.boolean(
+    val colorTestMode = boolean(
         key = "colorTestMode",
-        dataStoreName = dataStoreName,
         default = false
     )
 }

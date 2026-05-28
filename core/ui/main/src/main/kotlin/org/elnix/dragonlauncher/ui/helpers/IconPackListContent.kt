@@ -28,7 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.messyfolder.resolveShape
 import org.elnix.dragonlauncher.common.serializables.IconPackInfo
 import org.elnix.dragonlauncher.common.serializables.dummyAppModel
@@ -92,7 +92,7 @@ fun IconPackListContent(
             { onPackClick(pack) }
         ) {
             val packPkg = pack.packageName
-            val packCacheKey = dummyAppModel(packPkg).iconCacheKey
+            val packCacheKey = dummyAppModel(packPkg).key
 
             val packIcon = icons.getOrLazyCompute(packCacheKey) {
                 appsViewModel.reloadAppIcon(dummyAppModel(packPkg))

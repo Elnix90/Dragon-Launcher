@@ -211,30 +211,12 @@
 
 
         <receiver
-            android:name=".receiver.BootReceiver"
-            android:exported="true">
+            android:name=".receiver.FontReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
             <intent-filter android:priority="999">
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="org.elnix.dragonlauncher.ACTION_FONTS_RESULT" />
             </intent-filter>
         </receiver>
-
-        <receiver
-            android:name=".receiver.PackageReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter android:priority="1000">
-                <action android:name="android.intent.action.PACKAGE_ADDED" />
-                <action android:name="android.intent.action.PACKAGE_REMOVED" />
-                <action android:name="android.intent.action.PACKAGE_REPLACED" />
-                <action android:name="android.intent.action.PACKAGES_SUSPENDED" />
-                <action android:name="android.intent.action.PACKAGES_UNSUSPENDED" />
-                <action android:name="android.intent.action.PACKAGE_CHANGED" />
-
-                <data android:scheme="package" />
-            </intent-filter>
-        </receiver>
-
     </application>
-
 </manifest>

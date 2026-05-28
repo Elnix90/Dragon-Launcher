@@ -29,9 +29,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.serializables.AppModel
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
+import org.elnix.dragonlauncher.common.search.Application
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
 import org.elnix.dragonlauncher.enumsui.select.WorkspaceViewMode
 import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
@@ -39,7 +39,6 @@ import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dialogs.AppAliasesDialog
 import org.elnix.dragonlauncher.ui.dialogs.AppIconEditor
-import org.elnix.dragonlauncher.ui.dialogs.AppLongPressRow
 import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
 import org.elnix.dragonlauncher.ui.dialogs.TextEditorDialog
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
@@ -51,14 +50,19 @@ fun WorkspaceDetailScreen(
     appsViewModel: AppsViewModel = activityViewModel(),
     workspaceId: String,
     onBack: () -> Unit,
-    onLaunchAction: (SwipeActionSerializable) -> Unit
+    onLaunchAction: (SwipeAction) -> Unit
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val workspaceState by appsViewModel.state.collectAsState()
+    val workspaceManager = appsViewModel.workspaceManager
+    val workspaceState by workspaceManager.workspacesState.collectAsState()
     val workspace = workspaceState.workspaces.first { it.id == workspaceId }
-    val overrides = workspaceState.appOverrides
+
+
+    val overridesManager = appsViewModel.appOverrideManager
+    val appOverrideState by overridesManager.appOverrideState.collectAsState()
+    val overrides = workspaceState.workspaces
 
     val workspaceDebugInfos by DebugSettingsStore.workspacesDebugInfo.asState()
 
@@ -69,26 +73,26 @@ fun WorkspaceDetailScreen(
     val getOnlyAdded = selectedView == WorkspaceViewMode.Added
 
     val apps by appsViewModel
-        .appsForWorkspace(workspace, overrides, getOnlyAdded, getOnlyRemoved)
+        .appsForWorkspace(workspace, getOnlyAdded, getOnlyRemoved)
         .collectAsState(initial = emptyList())
 
 
     var showAppPicker by remember { mutableStateOf(false) }
 
-    var renameAppTarget by remember { mutableStateOf<AppModel?>(null) }
+    var renameAppTarget by remember { mutableStateOf<Application?>(null) }
 
-    var showAliasDialog by remember { mutableStateOf<AppModel?>(null) }
+    var showAliasDialog by remember { mutableStateOf<Application?>(null) }
 
-    var iconTargetApp by remember { mutableStateOf<AppModel?>(null) }
+    var iconTargetApp by remember { mutableStateOf<Application?>(null) }
 
     @Composable
-    fun AppLongPressRow(app: AppModel) {
-        val cacheKey = app.iconCacheKey
+    fun AppLongPressRow(app: Application) {
+        val cacheKey = app.key
 
         AppLongPressRow(
             app = app,
             onOpen = { onLaunchAction(app.action) },
-            onSettings = if (!app.isPrivateProfile && !app.isWorkProfile) {
+            onSettings = if (!app.isPrivate && !app.isWork) {
                 {
                     ctx.startActivity(
                         Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -97,7 +101,7 @@ fun WorkspaceDetailScreen(
                     )
                 }
             } else null,
-            onUninstall = if (!app.isPrivateProfile && !app.isWorkProfile) {
+            onUninstall = if (!app.isPrivate && !app.isWork) {
                 {
                     ctx.startActivity(
                         Intent(Intent.ACTION_DELETE).apply {
@@ -106,39 +110,29 @@ fun WorkspaceDetailScreen(
                     )
                 }
             } else null,
-            onRemoveFromWorkspace = if (
-                (cacheKey !in (workspace.removedAppIds ?: emptyList())) &&
-                !app.isPrivateProfile
-            // Can't remove private apps from private workspace somehow cause its too
-            // annoying to handle
-            ) {
-                {
-                    workspaceId.let {
-                        scope.launch {
-                            appsViewModel.removeAppFromWorkspace(
-                                workspaceId = it,
-                                cacheKey = cacheKey
-                            )
-                        }
+            onRemoveFromWorkspace = {
+                workspaceId.let {
+                    scope.launch {
+                        workspaceManager.removeAppFromWorkspace(
+                            id = it,
+                            cacheKey = cacheKey
+                        )
                     }
                 }
-            } else null,
+            },
             onAddToWorkspace = if (cacheKey in (workspace.removedAppIds ?: emptyList())) {
                 {
                     workspaceId.let {
                         scope.launch {
-                            appsViewModel.addAppToWorkspace(
-                                workspaceId = it,
+                            workspaceManager.addAppToWorkspace(
+                                id = it,
                                 cacheKey = cacheKey
                             )
                         }
                     }
                 }
             } else null,
-            onRenameApp = {
-//                renameText = overrides[cacheKey]?.customName ?: app.name
-                renameAppTarget = app
-            },
+            onRenameApp = { renameAppTarget = app },
             onChangeAppIcon = {
                 iconTargetApp = app
             },
@@ -196,7 +190,7 @@ fun WorkspaceDetailScreen(
             onDismiss = { showAppPicker = false },
             onAppSelected = { app ->
                 scope.launch {
-                    appsViewModel.addAppToWorkspace(workspaceId, app.iconCacheKey)
+                    appsViewModel.addAppToWorkspace(workspaceId, app.key)
                 }
             }
         )
@@ -205,7 +199,7 @@ fun WorkspaceDetailScreen(
 
     if (renameAppTarget != null) {
         val app = renameAppTarget!!
-        val cacheKey = app.iconCacheKey
+        val cacheKey = app.key
 
         TextEditorDialog(
             title = { stringResource(R.string.rename) },
@@ -228,7 +222,7 @@ fun WorkspaceDetailScreen(
     if (iconTargetApp != null) {
 
         val app = iconTargetApp!!
-        val cacheKey = app.iconCacheKey
+        val cacheKey = app.key
 
         AppIconEditor(
             app = app,

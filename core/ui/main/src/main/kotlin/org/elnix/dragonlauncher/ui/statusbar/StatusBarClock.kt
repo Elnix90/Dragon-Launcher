@@ -14,8 +14,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.delay
-import org.elnix.dragonlauncher.common.serializables.StatusBarSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
+import org.elnix.dragonlauncher.common.serializables.StatusBar
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.STATUS_BAR_TAG
 import org.elnix.dragonlauncher.common.utils.DateUtils.openAlarmApp
 import org.elnix.dragonlauncher.common.utils.DateUtils.openCalendar
@@ -27,8 +27,8 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun StatusBarDate(
-    element: StatusBarSerializable.Date,
-    onAction: ((SwipeActionSerializable) -> Unit)? = null
+    element: StatusBar.Date,
+    onAction: ((SwipeAction) -> Unit)? = null
 ) {
     val ctx = LocalContext.current
     val formatterPattern = element.formatter
@@ -85,8 +85,8 @@ fun StatusBarDate(
 
 @Composable
 fun StatusBarTime(
-    element: StatusBarSerializable.Time,
-    onAction: ((SwipeActionSerializable) -> Unit)? = null
+    element: StatusBar.Time,
+    onAction: ((SwipeAction) -> Unit)? = null
 ) {
     val ctx = LocalContext.current
 

@@ -1,6 +1,6 @@
 package org.elnix.dragonlauncher.common.messyfolder
 
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 
 interface ADBCommands {
     val commandEnable: String

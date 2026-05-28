@@ -69,7 +69,7 @@ import androidx.core.net.toUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.FONT_PROVIDER
 import org.elnix.dragonlauncher.common.messyfolder.showToast
@@ -78,7 +78,7 @@ import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.theme.fontNameToFont
+import org.elnix.dragonlauncher.fonts.fontNameToFont
 import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.asState

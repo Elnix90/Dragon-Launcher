@@ -67,12 +67,12 @@ import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import org.elnix.dragonlauncher.base.ktx.toDp
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.WIDGET_TAG
-import org.elnix.dragonlauncher.common.serializables.FloatingAppObject
+import org.elnix.dragonlauncher.common.serializables.Widget
 import org.elnix.dragonlauncher.common.serializables.FloatingAppsJson
 import org.elnix.dragonlauncher.common.serializables.IconShape
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
 import org.elnix.dragonlauncher.common.undoredo.UndoRedoManager
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.Center
@@ -120,7 +120,7 @@ fun WidgetsTab(
     onBack: () -> Unit,
     onLaunchSystemWidgetPicker: (nestId: Int) -> Unit,
     onResetWidgetSize: (id: Int, widgetId: Int) -> Unit,
-    onRemoveWidget: (FloatingAppObject) -> Unit,
+    onRemoveWidget: (Widget) -> Unit,
     initialNestId: Int = 0
 ) {
     val ctx = LocalContext.current
@@ -134,7 +134,7 @@ fun WidgetsTab(
 
     val floatingApps by floatingAppsViewModel.floatingApps.collectAsState()
 
-    var selected by remember { mutableStateOf<FloatingAppObject?>(null) }
+    var selected by remember { mutableStateOf<Widget?>(null) }
     val aWidgetIsSelected = selected != null
 
     var snapMove by remember { mutableStateOf(true) }
@@ -151,7 +151,7 @@ fun WidgetsTab(
 
     /* ───────────────────────────────────────────────────────────────── */
 
-    fun snapshotWidgets(): List<FloatingAppObject> = floatingApps.map { it.copy() }
+    fun snapshotWidgets(): List<Widget> = floatingApps.map { it.copy() }
 
 
     val undoRedo = remember { UndoRedoManager() }
@@ -199,7 +199,7 @@ fun WidgetsTab(
     }
 
 
-    fun removeWidget(floatingApp: FloatingAppObject) {
+    fun removeWidget(floatingApp: Widget) {
         onRemoveWidget(floatingApp)
         if (selected == floatingApp) selected = null
     }
@@ -360,8 +360,8 @@ fun WidgetsTab(
                                 WidgetsToolsCenterReset.Reset -> {
                                     selected?.let {
                                         applyChange {
-                                            if (it.action is SwipeActionSerializable.OpenWidget) {
-                                                onResetWidgetSize(it.id, (it.action as SwipeActionSerializable.OpenWidget).widgetId)
+                                            if (it.action is SwipeAction.OpenWidget) {
+                                                onResetWidgetSize(it.id, (it.action as SwipeAction.OpenWidget).widgetId)
                                             } else {
                                                 floatingAppsViewModel.resetFloatingAppSize(it.id)
                                             }
@@ -571,24 +571,24 @@ fun WidgetsTab(
         AddPointDialog(
             onDismiss = { showAddDialog = false },
             actions = setOf(
-                SwipeActionSerializable.OpenWidget(0, "", ""),
-                SwipeActionSerializable.OpenCircleNest(0),
-                SwipeActionSerializable.GoParentNest,
-                SwipeActionSerializable.LaunchShortcut("", ""),
-                SwipeActionSerializable.LaunchApp("", false, 0),
-                SwipeActionSerializable.OpenUrl(""),
-                SwipeActionSerializable.OpenFile(""),
-                SwipeActionSerializable.NotificationShade,
-                SwipeActionSerializable.ControlPanel,
-                SwipeActionSerializable.OpenAppDrawer(),
-                SwipeActionSerializable.Lock,
-                SwipeActionSerializable.ReloadApps,
-                SwipeActionSerializable.OpenRecentApps,
-                SwipeActionSerializable.OpenDragonLauncherSettings()
+                SwipeAction.OpenWidget(0, "", ""),
+                SwipeAction.OpenCircleNest(0),
+                SwipeAction.GoParentNest,
+                SwipeAction.LaunchShortcut("", ""),
+                SwipeAction.LaunchApp("", false, 0),
+                SwipeAction.OpenUrl(""),
+                SwipeAction.OpenFile(""),
+                SwipeAction.NotificationShade,
+                SwipeAction.ControlPanel,
+                SwipeAction.OpenAppDrawer(),
+                SwipeAction.Lock,
+                SwipeAction.ReloadApps,
+                SwipeAction.OpenRecentApps,
+                SwipeAction.OpenDragonLauncherSettings()
             ),
             onActionSelected = { action ->
                 when (action) {
-                    is SwipeActionSerializable.OpenWidget -> onLaunchSystemWidgetPicker(nestId)
+                    is SwipeAction.OpenWidget -> onLaunchSystemWidgetPicker(nestId)
                     else -> floatingAppsViewModel.addFloatingApp(action, nestId = nestId)
                 }
                 showAddDialog = false
@@ -700,12 +700,12 @@ fun WidgetsTab(
  * @param snapResize Returns true if span should snap to whole cell units.
  * @param onPrecisionModeChange Called when the long-press precision mode toggles on or off.
  * @param onSelect Called when the widget is tapped or a drag starts on it.
- * @param onEdit Called at the end of any drag (move, resize, rotate) with the updated [FloatingAppObject].
+ * @param onEdit Called at the end of any drag (move, resize, rotate) with the updated [Widget].
  */
 @Composable
 private fun DraggableFloatingApp(
     widgetsViewModel: WidgetsViewModel,
-    app: FloatingAppObject,
+    app: Widget,
     selected: Boolean,
 
     snapRotation: () -> Boolean,
@@ -714,7 +714,7 @@ private fun DraggableFloatingApp(
 
     onPrecisionModeChange: (Boolean) -> Unit,
     onSelect: () -> Unit,
-    onEdit: (FloatingAppObject) -> Unit
+    onEdit: (Widget) -> Unit
 ) {
     val haptic = LocalHapticFeedback.current
     val borderColor = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent
@@ -754,7 +754,7 @@ private fun DraggableFloatingApp(
     }
 
 
-    fun commitChange(newApp: FloatingAppObject? = null) {
+    fun commitChange(newApp: Widget? = null) {
         onEdit(
             newApp ?: app.copy(
                 spanX = widgetWidth,
@@ -850,7 +850,7 @@ private fun DraggableFloatingApp(
 
         // Widget / App content (touch blocked during editing)
         WidgetHostView(
-            floatingAppObject = app,
+            widget = app,
             blockTouches = true,
             cellSizePx = cellSizePx
         ) { }

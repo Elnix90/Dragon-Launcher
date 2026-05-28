@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.SnackbarDefaults.actionColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,40 +34,46 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.common.search.Application
+import org.elnix.dragonlauncher.common.search.PointApp
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.messyfolder.BluetoothADBCommands
 import org.elnix.dragonlauncher.common.messyfolder.Constants
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Actions.defaultChoosableActions
 import org.elnix.dragonlauncher.common.messyfolder.DataADBCommands
 import org.elnix.dragonlauncher.common.messyfolder.PackageManagerCompat
 import org.elnix.dragonlauncher.common.messyfolder.WifiADBCommands
-import org.elnix.dragonlauncher.common.serializables.AppModel
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
+import org.elnix.dragonlauncher.common.serializables.SwipeAction.Companion.actionColor
+import org.elnix.dragonlauncher.common.serializables.Point
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
 import org.elnix.dragonlauncher.ui.actions.ActionIcon
+import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.actions.actionColor
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.composition.LocalShowLabelsInAddPointDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.dragon.text.AutoResizeableText
+import kotlin.collections.map
 
 @Suppress("AssignedValueIsNeverRead")
 @Composable
 fun AddPointDialog(
-    actions: Set<SwipeActionSerializable> = defaultChoosableActions,
+    actions: Set<SwipeAction> = defaultChoosableActions,
     onNewNest: (() -> Unit)? = null,
     onDismiss: () -> Unit,
-    onActionSelected: ((SwipeActionSerializable) -> Unit)? = null,
-    onMultipleActionsSelected: ((List<SwipeActionSerializable>, Boolean) -> Unit)? = null
+    onActionSelected: ((SwipeAction) -> Unit)? = null,
+    onMultipleActionsSelected: ((List<SwipeAction>, Boolean) -> Unit)? = null
 ) {
     require((onActionSelected != null) xor (onMultipleActionsSelected != null))
 
@@ -91,7 +98,7 @@ fun AddPointDialog(
 
     val actualActions = remember(showKillLauncherActionInActionPicker, actions) {
         if (showKillLauncherActionInActionPicker) actions.toMutableSet().apply {
-            add(SwipeActionSerializable.KillLauncher)
+            add(SwipeAction.KillLauncher)
         } else actions
     }
 
@@ -99,12 +106,12 @@ fun AddPointDialog(
     val showTooltipsOnAddPointDialog = LocalShowLabelsInAddPointDialog.current
 
 
-    var selectedApp by remember { mutableStateOf<AppModel?>(null) }
+    var selectedApp by remember { mutableStateOf<Application?>(null) }
     var shortcutDialogVisible by remember { mutableStateOf(false) }
     var shortcuts by remember { mutableStateOf<List<ShortcutInfo>>(emptyList()) }
 
 
-    fun onActionPicked(action: SwipeActionSerializable) {
+    fun onActionPicked(action: SwipeAction) {
         if (onMultipleActionsSelected != null) {
             onMultipleActionsSelected(listOf(action), false)
         } else {
@@ -140,10 +147,12 @@ fun AddPointDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                if (actualActions.any { it is SwipeActionSerializable.LaunchApp }) {
+                if (actualActions.any { it is SwipeAction.LaunchApp }) {
 
-                    val dummyLaunchAppAction = SwipeActionSerializable.LaunchApp("", false, 0)
-                    val color = actionColor(dummyLaunchAppAction, LocalExtraColors.current)
+                    val dummyLaunchAppAction = SwipeAction.LaunchApp("", false, 0)
+                    val dummyPoint = Point.dummySwipePoint(dummyLaunchAppAction)
+                    val fakeApp = PointApp(dummyPoint)
+                    val color = dummyLaunchAppAction.actionColor(LocalExtraColors.current)
 
 
                     Row(
@@ -157,12 +166,8 @@ fun AddPointDialog(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        ActionIcon(
-                            action = dummyLaunchAppAction,
-                            modifier = Modifier.size(30.dp),
-                            showLaunchAppVectorGrid = true
-                        )
-                        Spacer(Modifier.width(5.dp))
+                        AppIcon(fakeApp)
+                        Spacer(5.dp)
                         Text(
                             text = stringResource(R.string.open_app),
                             color = Color.White,
@@ -179,49 +184,49 @@ fun AddPointDialog(
                     horizontalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
                     // Loop through all actions
-                    items(actualActions.filterNot { it is SwipeActionSerializable.LaunchApp }) { action ->
+                    items(actualActions.filterNot { it is SwipeAction.LaunchApp }) { action ->
                         AddPointColumn(
                             action = action,
                             showText = { showTooltipsOnAddPointDialog },
                             onSelected = {
                                 when (action) {
-                                    is SwipeActionSerializable.LaunchShortcut -> {
+                                    is SwipeAction.LaunchShortcut -> {
                                         showPinnedShortcutsPicker = true
                                     }
 
-                                    is SwipeActionSerializable.OpenAppDrawer -> {
+                                    is SwipeAction.OpenAppDrawer -> {
                                         showWorkspacePicker = true
                                     }
 
-                                    is SwipeActionSerializable.OpenCircleNest -> {
+                                    is SwipeAction.OpenCircleNest -> {
                                         showNestPicker = true
                                     }
 
-                                    is SwipeActionSerializable.OpenDragonLauncherSettings -> {
+                                    is SwipeAction.OpenDragonLauncherSettings -> {
                                         showSettingsPagePicker = true
                                     }
 
-                                    is SwipeActionSerializable.OpenFile -> {
+                                    is SwipeAction.OpenFile -> {
                                         showFilePicker = true
                                     }
 
-                                    is SwipeActionSerializable.OpenUrl -> {
+                                    is SwipeAction.OpenUrl -> {
                                         showUrlInput = true
                                     }
 
-                                    is SwipeActionSerializable.RunAdbCommand -> {
+                                    is SwipeAction.RunAdbCommand -> {
                                         showAdbCommandInput = true
                                     }
 
-                                    is SwipeActionSerializable.ToggleData -> {
+                                    is SwipeAction.ToggleData -> {
                                         showDataCommandInput = true
                                     }
 
-                                    is SwipeActionSerializable.ToggleWifi -> {
+                                    is SwipeAction.ToggleWifi -> {
                                         showWifiCommandInput = true
                                     }
 
-                                    is SwipeActionSerializable.ToggleBluetooth -> {
+                                    is SwipeAction.ToggleBluetooth -> {
                                         showBluetoothCommandInput = true
                                     }
 
@@ -267,9 +272,9 @@ fun AddPointDialog(
                     shortcutDialogVisible = true
                 } else {
                     onActionPicked(
-                        SwipeActionSerializable.LaunchApp(
+                        SwipeAction.LaunchApp(
                             app.packageName,
-                            app.isPrivateProfile,
+                            app.isPrivate,
                             app.userId ?: 0
                         )
                     )
@@ -277,7 +282,7 @@ fun AddPointDialog(
             },
             onMultipleAppsSelected = if (onMultipleActionsSelected != null) {
                 { apps, autoPlace ->
-                    val actions = apps.map { SwipeActionSerializable.LaunchApp(it.packageName, it.isPrivateProfile, it.userId ?: 0) }
+                    val actions = apps.map { SwipeAction.LaunchApp(it.packageName, it.isPrivate, it.userId ?: 0) }
                     onMultipleActionsSelected(actions, autoPlace)
                     showAppPicker = false
                 }
@@ -313,7 +318,7 @@ fun AddPointDialog(
             selected = { WifiADBCommands.Svc },
             onDismiss = { showWifiCommandInput = false },
         ) { command, toast ->
-            onActionPicked(SwipeActionSerializable.ToggleWifi(command, toast))
+            onActionPicked(SwipeAction.ToggleWifi(command, toast))
             showWifiCommandInput = false
         }
     }
@@ -326,7 +331,7 @@ fun AddPointDialog(
             selected = { BluetoothADBCommands.Cmd },
             onDismiss = { showBluetoothCommandInput = false },
         ) { command, toast ->
-            onActionPicked(SwipeActionSerializable.ToggleBluetooth(command, toast))
+            onActionPicked(SwipeAction.ToggleBluetooth(command, toast))
             showBluetoothCommandInput = false
         }
     }
@@ -339,7 +344,7 @@ fun AddPointDialog(
             selected = { DataADBCommands.Svc },
             onDismiss = { showDataCommandInput = false },
         ) { command, toast ->
-            onActionPicked(SwipeActionSerializable.ToggleData(command, toast))
+            onActionPicked(SwipeAction.ToggleData(command, toast))
             showDataCommandInput = false
         }
     }
@@ -360,14 +365,14 @@ fun AddPointDialog(
             shortcuts = shortcuts,
             onDismiss = { shortcutDialogVisible = false },
             onShortcutSelected = { pkg, id ->
-                onActionPicked(SwipeActionSerializable.LaunchShortcut(pkg, id))
+                onActionPicked(SwipeAction.LaunchShortcut(pkg, id))
                 shortcutDialogVisible = false
             },
             onOpenApp = {
                 onActionPicked(
-                    SwipeActionSerializable.LaunchApp(
+                    SwipeAction.LaunchApp(
                         selectedApp!!.packageName,
-                        selectedApp!!.isPrivateProfile,
+                        selectedApp!!.isPrivate,
                         selectedApp!!.userId ?: 0
                     )
                 )
@@ -384,7 +389,7 @@ fun AddPointDialog(
             onNameChange = null,
             onDelete = null,
             onSelect = {
-                onActionPicked(SwipeActionSerializable.OpenCircleNest(it.id))
+                onActionPicked(SwipeAction.OpenCircleNest(it.id))
                 showNestPicker = false
             }
         )
@@ -394,7 +399,7 @@ fun AddPointDialog(
         SettingsPagePicker(
             onDismissRequest = { showSettingsPagePicker = false }
         ) {
-            onActionPicked(SwipeActionSerializable.OpenDragonLauncherSettings(it))
+            onActionPicked(SwipeAction.OpenDragonLauncherSettings(it))
             showSettingsPagePicker = false
         }
     }
@@ -420,7 +425,7 @@ fun AddPointDialog(
 
 @Composable
 private fun AddPointColumn(
-    action: SwipeActionSerializable,
+    action: SwipeAction,
     showText: () -> Boolean,
     onSelected: () -> Unit
 ) {
@@ -430,15 +435,15 @@ private fun AddPointColumn(
         /** Not verifying for open app, because it is filtered by the filter above in [AddPointColumn] */
 
 
-        is SwipeActionSerializable.LaunchShortcut -> {
+        is SwipeAction.LaunchShortcut -> {
             if (action.packageName.isEmpty()) stringResource(R.string.pinned_shortcuts)
             else actionLabel(action)
         }
 
-        is SwipeActionSerializable.OpenUrl -> stringResource(R.string.open_url)
-        is SwipeActionSerializable.RunAdbCommand -> stringResource(R.string.run_adb_command)
-        is SwipeActionSerializable.OpenFile -> stringResource(R.string.open_file)
-        is SwipeActionSerializable.OpenCircleNest -> stringResource(R.string.open_nest_circle)
+        is SwipeAction.OpenUrl -> stringResource(R.string.open_url)
+        is SwipeAction.RunAdbCommand -> stringResource(R.string.run_adb_command)
+        is SwipeAction.OpenFile -> stringResource(R.string.open_file)
+        is SwipeAction.OpenCircleNest -> stringResource(R.string.open_nest_circle)
         else -> actionLabel(action)
     }
 

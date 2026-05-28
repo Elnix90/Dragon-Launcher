@@ -1,18 +1,15 @@
 package org.elnix.dragonlauncher.settings.stores
 
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
-import org.elnix.dragonlauncher.settings.bases.MapSettingsStore
-import org.elnix.dragonlauncher.settings.bases.Settings
+import org.elnix.dragonlauncher.settings.bases.boolean
+import org.elnix.dragonlauncher.settings.bases.int
+import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
+import org.elnix.dragonlauncher.settings.bases.swipeAction
 
-object BehaviorSettingsStore : MapSettingsStore() {
-
-    override val name: String = "Behavior"
-
-    override val dataStoreName = DataStoreName.BEHAVIOR
-
-    override val ALL: List<BaseSettingObject <*, *> >
+object BehaviorSettingsStore : MapSettingsStore(DataStoreName.BEHAVIOR) {
+    override val ALL: List<BaseSettingObject<*, *>>
         get() = listOf(
             this.backAction,
             this.doubleClickAction,
@@ -24,7 +21,6 @@ object BehaviorSettingsStore : MapSettingsStore() {
             this.bottomPadding,
             this.disableHapticFeedbackGlobally,
             this.pointsActionSnapsToOuterCircle,
-            this.useDifferentialLoadingForPrivateSpace,
             this.superWarningMode,
             this.superWarningModeSound,
             this.metalPipesSound,
@@ -34,134 +30,106 @@ object BehaviorSettingsStore : MapSettingsStore() {
             this.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint
         )
 
-    val backAction = Settings.swipeAction(
+    val backAction = swipeAction(
         key = "backAction",
-        dataStoreName = dataStoreName,
-        default = SwipeActionSerializable.None
+        default = SwipeAction.None
     )
 
-    val doubleClickAction = Settings.swipeAction(
+    val doubleClickAction = swipeAction(
         key = "doubleClickAction",
-        dataStoreName = dataStoreName,
-        default = SwipeActionSerializable.OpenAppDrawer()
+        default = SwipeAction.OpenAppDrawer()
     )
 
-    val homeAction = Settings.swipeAction(
+    val homeAction = swipeAction(
         key = "homeAction",
-        dataStoreName = dataStoreName,
-        default = SwipeActionSerializable.OpenDragonLauncherSettings()
+        default = SwipeAction.OpenDragonLauncherSettings()
     )
 
-    val keepScreenOn = Settings.boolean(
+    val keepScreenOn = boolean(
         key = "keepScreenOn",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val leftPadding = Settings.int(
+    val leftPadding = int(
         key = "leftPadding",
-        dataStoreName = dataStoreName,
         default = 60,
         allowedRange = 0..300
     )
 
-    val rightPadding = Settings.int(
+    val rightPadding = int(
         key = "rightPadding",
-        dataStoreName = dataStoreName,
         default = 60,
         allowedRange = 0..300
     )
 
-    val topPadding = Settings.int(
+    val topPadding = int(
         key = "upPadding",
-        dataStoreName = dataStoreName,
         default = 80,
         allowedRange = 0..300
     )
 
-    val bottomPadding = Settings.int(
+    val bottomPadding = int(
         key = "downPadding",
-        dataStoreName = dataStoreName,
         default = 100,
         allowedRange = 0..300
     )
 
     /*  ─────────────  Other Useful Settings  ─────────────  */
 
-    val disableHapticFeedbackGlobally = Settings.boolean(
+    val disableHapticFeedbackGlobally = boolean(
         key = "disableHapticFeedbackGlobally",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val pointsActionSnapsToOuterCircle = Settings.boolean(
+    val pointsActionSnapsToOuterCircle = boolean(
         key = "pointsActionSnapsToOuterCircle",
-        dataStoreName = dataStoreName,
         default = true
     )
 
 
     /*  ─────────────  Super Warning mode  ─────────────  */
 
-    val superWarningMode = Settings.boolean(
+    val superWarningMode = boolean(
         key = "superWarningMode",
-        dataStoreName = dataStoreName,
         default = false
     )
 
 
-    val vibrateOnError = Settings.boolean(
+    val vibrateOnError = boolean(
         key = "vibrateOnError",
-        dataStoreName = dataStoreName,
         default = false
     )
 
 
-    val alarmSound = Settings.boolean(
+    val alarmSound = boolean(
         key = "alarmSound",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val metalPipesSound = Settings.boolean(
+    val metalPipesSound = boolean(
         key = "metalPipesSound",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val superWarningModeSound = Settings.int(
+    val superWarningModeSound = int(
         key = "superWarningModeSound",
-        dataStoreName = dataStoreName,
         default = 100,
         allowedRange = 0..100
     )
 
-
-    /*  ─────────────  Internal used settings concerning apps loading ───────────── */
-    val useDifferentialLoadingForPrivateSpace = Settings.boolean(
-        key = "useDifferentialLoadingForPrivateSpace",
-        dataStoreName = dataStoreName,
-        default = false
-    )
-
-    val promptForShortcutsWhenAddingApp = Settings.boolean(
+    val promptForShortcutsWhenAddingApp = boolean(
         key = "promptForShortcutsWhenAddingApp",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-
-    val offScreenTimeout = Settings.int(
+    val offScreenTimeout = int(
         key = "offScreenTimeout",
-        dataStoreName = dataStoreName,
         default = 10,
         allowedRange = -1..60
     )
 
-
-    val createLiveNestByDefaultWhenCreatingOpenCircleNestPoint = Settings.boolean(
+    val createLiveNestByDefaultWhenCreatingOpenCircleNestPoint = boolean(
         key = "createLiveNestByDefaultWhenCreatingOpenCircleNestPoint",
-        dataStoreName = UiSettingsStore.dataStoreName,
         default = true
     )
 }

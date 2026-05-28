@@ -31,14 +31,15 @@ kotlin {
 // Configure Android
 extensions.configure<ApplicationExtension> {
     namespace = "org.elnix.dragonlauncher"
+
     compileSdk {
-        version = release(37)
+        version = release(libs.versions.compileSdk.get().toInt())
     }
 
     defaultConfig {
         applicationId = "org.elnix.dragonlauncher"
-        minSdk = 26
-        targetSdk = 37
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionName = "3.2.1"
         versionCode = 55
     }
@@ -121,7 +122,7 @@ extensions.configure<ApplicationExtension> {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
@@ -131,7 +132,6 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.compose.animation)
-    implementation(libs.androidx.core)
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.lifecycle.common)
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -157,6 +157,8 @@ dependencies {
     implementation(project(":core:models"))
     implementation(project(":core:logging"))
     implementation(project(":core:settings"))
+
+    implementation(project(":core:permissions"))
 }
 
 

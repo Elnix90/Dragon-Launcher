@@ -1,8 +1,5 @@
 package org.elnix.dragonlauncher.common.messyfolder
 
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.logging.LogTag
-
 
 object Constants {
     object PackageNameLists {
@@ -139,78 +136,10 @@ object Constants {
     }
 
     object Actions {
-        val defaultChoosableActions: Set<SwipeActionSerializable> = setOf(
-            SwipeActionSerializable.OpenCircleNest(0),
-            SwipeActionSerializable.GoParentNest,
-            SwipeActionSerializable.LaunchApp("", false, 0),
-            SwipeActionSerializable.LaunchShortcut("", ""),
-            SwipeActionSerializable.OpenUrl(""),
-            SwipeActionSerializable.OpenFile(""),
-            SwipeActionSerializable.NotificationShade,
-            SwipeActionSerializable.ControlPanel,
-            SwipeActionSerializable.OpenAppDrawer(),
-            SwipeActionSerializable.Lock,
-            SwipeActionSerializable.ReloadApps,
-            SwipeActionSerializable.OpenRecentApps,
-            SwipeActionSerializable.OpenDragonLauncherSettings(),
-            SwipeActionSerializable.RunAdbCommand(""),
-            SwipeActionSerializable.ToggleBluetooth(),
-            SwipeActionSerializable.ToggleWifi(),
-            SwipeActionSerializable.ToggleData(),
-        )
+
     }
 
-    object Logging {
-        /*  ─────────────  Tags constants  ─────────────  */
-        val TAG = LogTag("DragonLauncherDebug")
-        val APPS_TAG = LogTag("AppsVm")
-        val ICONS_TAG = LogTag("IconsDebug")
-        val BACKUP_TAG = LogTag("SettingsBackupManager")
-        val SWIPE_TAG = LogTag("SwipeDebug")
-        val WIDGET_TAG = LogTag("WidgetsDebug")
-        val FLOATING_APPS_TAG = LogTag("FloatingAppsDebug")
-        val ACCESSIBILITY_TAG = LogTag("SystemControl")
-        val IMAGE_TAG = LogTag("ImageDebug")
 
-        //        val SETTINGS_TAG = LogTag("SettingsDebug")
-//        val ICON_PACK_TAG = LogTag("IconsPacks")
-        val SHAPES_TAG = LogTag("ShapesDebug")
-
-        //        val COLORS_TAG = LogTag("ColorsDebug")
-        val DRAWER_TAG = LogTag("DrawerDebug")
-        val APP_LAUNCH_TAG = LogTag("AppLaunchDebug")
-        val PRIVATE_SPACE_TAG = LogTag("PrivateSpaceDebug")
-
-        //        val APPS_JSON_TAG = LogTag("AppsJsonDebug")
-        val PM_COMPAT_TAG = LogTag("PmCompatDebug")
-        val BROADCAST_TAG = LogTag("BroadcastDebug")
-
-        //        val POINTS_TAG = LogTag("PointsDebug")
-        val STATUS_BAR_TAG = LogTag("StatusBarDebug")
-        val WORKSPACES_TAG = LogTag("WorkspacesDebug")
-        val NESTS_TAG = LogTag("NestsDebug")
-        val ANGLE_LINE_TAG = LogTag("AngleLineDebug")
-        val HOLD_TAG = LogTag("HoldDebug")
-        val LAUNCHER_WIDGET_HOLDER_TAG = LogTag("LauncherWidgetHolder")
-        val PRIVATE_SPACE_UTILS = LogTag("PrivateSpaceUtils")
-        val PINNED_SHORTCUTS = LogTag("PinnedShortcuts")
-        val SECURITY_HELPER = LogTag("SecurityHelper")
-        val LOGS_TAG = LogTag("LogsTab")
-        val OVERLAY_REMINDER_TAG = LogTag("OverlayReminder")
-        val FONT_RECEIVER_TAG = LogTag("FontsReceiver")
-        val FONT_PROVIDER = LogTag("FontsProvider")
-        val SAMSUNG_INTEGRATION_TAG = LogTag("SamsungIntegration")
-        val EXTENSION_MANAGER_TAG = LogTag("ExtensionManager")
-        val HAPTIC_TAG = LogTag("HapticDebug")
-        val WELCOME_TAG = LogTag("WelcomeDebug")
-        val MAIN_SCREEN_LAYERS_TAG = LogTag("MainScreenLayersTag")
-        val SHIZUKU_TAG = LogTag("ShizukuDebug")
-        val NAVIGATION_TAG = LogTag("NavigationDebug")
-        val THEMES_TAG = LogTag("ThemeDebug")
-        val CONTEXT_TAG = LogTag("ContextDebug")
-        val INIT_TAG = LogTag("InitDebug")
-//        val SPECIAL_TAG = LogTag("SpecialDebug")
-    }
 
     /*  ─────────────  Links  ─────────────  */
     object URLs {

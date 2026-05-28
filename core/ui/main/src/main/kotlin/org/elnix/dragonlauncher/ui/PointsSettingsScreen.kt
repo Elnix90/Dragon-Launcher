@@ -71,7 +71,6 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.NESTS_TAG
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SWIPE_TAG
@@ -88,9 +87,9 @@ import org.elnix.dragonlauncher.common.messyfolder.circles.scaleDragDistances
 import org.elnix.dragonlauncher.common.messyfolder.circles.uiCirclesFromScaledDragDistances
 import org.elnix.dragonlauncher.common.messyfolder.circles.undoTransformations
 import org.elnix.dragonlauncher.common.messyfolder.showToast
-import org.elnix.dragonlauncher.common.serializables.CircleNest
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
+import org.elnix.dragonlauncher.common.serializables.Nest
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
+import org.elnix.dragonlauncher.common.serializables.Point
 import org.elnix.dragonlauncher.common.undoredo.UndoRedoManager
 import org.elnix.dragonlauncher.enumsui.toggle.AddRemoveCircleTools
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools
@@ -107,6 +106,7 @@ import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.FreeMove
 import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.SnapPoints
 import org.elnix.dragonlauncher.enumsui.toggle.SelectedPointEditTools
 import org.elnix.dragonlauncher.enumsui.toggle.UndRedoEditTools
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.AppsViewModel
@@ -166,6 +166,8 @@ fun PointsSettingsScreen(
     val defaultPoint = LocalDefaultPoint.current
     val extraColors = LocalExtraColors.current
 
+    val iconService = appsViewModel.iconsService
+
     val scope = rememberCoroutineScope()
 
     val pointsIconsTrigger by appsViewModel.pointsIconsCache.iconsTrigger.collectAsState()
@@ -187,14 +189,14 @@ fun PointsSettingsScreen(
 
     var center by remember { mutableStateOf(Offset.Zero) }
 
-    val points: SnapshotStateList<SwipePointSerializable> = remember { mutableStateListOf() }
-    val nests: SnapshotStateList<CircleNest> = remember { mutableStateListOf() }
+    val points: SnapshotStateList<Point> = remember { mutableStateListOf() }
+    val nests: SnapshotStateList<Nest> = remember { mutableStateListOf() }
 
     var recomposeTrigger by remember { mutableIntStateOf(0) }
 
     val circles: SnapshotStateList<UiCircle> = remember { mutableStateListOf() }
 
-    var selectedPoint by remember { mutableStateOf<SwipePointSerializable?>(null) }
+    var selectedPoint by remember { mutableStateOf<Point?>(null) }
 
     val selectedPointTempOffset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
     fun animateHomingTempOffset(home: Offset) {
@@ -211,7 +213,7 @@ fun PointsSettingsScreen(
 
     val isDragging = selectedPointTempOffset.value != Offset.Zero
 
-    var closestHoveredPoint by remember { mutableStateOf<SwipePointSerializable?>(null) }
+    var closestHoveredPoint by remember { mutableStateOf<Point?>(null) }
     var closestHoveredTempOffset by remember { mutableStateOf<Offset?>(null) }
     var ableToLaunchHoverAction by remember { mutableStateOf(false) }
 
@@ -225,10 +227,10 @@ fun PointsSettingsScreen(
 
     var showEditDefaultPoint by remember { mutableStateOf(false) }
     var showAddDialog by remember { mutableStateOf(false) }
-    var showEditDialog by remember { mutableStateOf<SwipePointSerializable?>(null) }
+    var showEditDialog by remember { mutableStateOf<Point?>(null) }
 
     // Manual placement mode state (multi-select "Place one by one")
-    var manualPlacementQueue by remember { mutableStateOf<List<SwipeActionSerializable>>(emptyList()) }
+    var manualPlacementQueue by remember { mutableStateOf<List<SwipeAction>>(emptyList()) }
     val isInManualPlacementMode = manualPlacementQueue.isNotEmpty()
     var isEditing by remember { mutableStateOf(false) }
 
@@ -266,7 +268,7 @@ fun PointsSettingsScreen(
     LaunchedEffect(Unit, nestId, nests.size) {
         if (nests.none { it.id == nestId }) {
             logD(NESTS_TAG) { "Creating missing nest $nestId" }
-            nests.add(CircleNest(id = nestId))
+            nests.add(Nest(id = nestId))
         }
     }
 
@@ -278,9 +280,9 @@ fun PointsSettingsScreen(
         }
     }
 
-    fun reloadIcons() {
-        appsViewModel.preloadPointIcons(points)
-    }
+//    fun reloadIcons() {
+//        appsViewModel.preloadPointIcons(points)
+//    }
 
     val undoRedo = remember { UndoRedoManager() }
 
@@ -370,7 +372,7 @@ fun PointsSettingsScreen(
         }
 
         // Add the new nest
-        nests += CircleNest(
+        nests += Nest(
             id = newNestId,
             dragDistances = dragDistances
         )
@@ -474,13 +476,13 @@ fun PointsSettingsScreen(
     }
 
 
-    fun addPoint(point: SwipePointSerializable, select: Boolean = true) {
+    fun addPoint(point: Point, select: Boolean = true) {
         points.add(point)
         if (select) {
             selectedPoint = point
         }
-        appsViewModel.pointsIconsCache.incrementCacheSize()
-        appsViewModel.reloadPointIcon(point)
+        iconService.pointsIconsCache.incrementCacheSize()
+        iconService.reloadPointIcon(point)
     }
 
     /**
@@ -494,7 +496,7 @@ fun PointsSettingsScreen(
      * @return Pair with elements or null if the points hasn't moved
      */
     fun computePointMoved(
-        point: SwipePointSerializable,
+        point: Point,
         circles: List<UiCircle>,
         pos: Offset
     ): Pair<Double, Int>? {
@@ -538,7 +540,7 @@ fun PointsSettingsScreen(
      * @param pos the new position of the points, can be anywhere on the screen, not only on a circle
      */
     fun updatePointPosition(
-        point: SwipePointSerializable,
+        point: Point,
         circles: List<UiCircle>,
         pos: Offset
     ) {
@@ -687,7 +689,7 @@ fun PointsSettingsScreen(
             SpecialSettingsTitle(
                 onSettings = onAdvSettings,
                 onEditDefaultPoint = { showEditDefaultPoint = true },
-                onReloadPoints = { appsViewModel.preloadPointIcons(points) },
+                onReloadPoints = { iconService.reloadAllPointIcons() },
                 onEditNest = { onNestEdit(currentNest.id) },
                 onResetPoints = { showResetPointsAndNestsDialog = true },
                 onBack = handleBack
@@ -698,8 +700,8 @@ fun PointsSettingsScreen(
                 RowWithScrollIndicator(rowsScrollStates[0]) {
                     // Nests toolbar
                     val nestToGo =
-                        if (selectedPoint?.action is SwipeActionSerializable.OpenCircleNest) {
-                            (selectedPoint!!.action as SwipeActionSerializable.OpenCircleNest).nestId
+                        if (selectedPoint?.action is SwipeAction.OpenCircleNest) {
+                            (selectedPoint!!.action as SwipeAction.OpenCircleNest).nestId
                         } else null
 
                     val canGoNest = nestToGo != null
@@ -1231,7 +1233,7 @@ fun PointsSettingsScreen(
                                 onDragStart = { tapOffset ->
                                     val transformedOffset = tapOffset.transformPointerCoordinates()
 
-                                    var closest: SwipePointSerializable? = null
+                                    var closest: Point? = null
                                     var best = Float.MAX_VALUE
 
                                     // Can only select points on the same nest
@@ -1292,7 +1294,7 @@ fun PointsSettingsScreen(
                                     }
 
 
-                                    var closest: SwipePointSerializable? = null
+                                    var closest: Point? = null
                                     var best = Float.MAX_VALUE
 
                                     // Can only see points on the same nest
@@ -1330,11 +1332,11 @@ fun PointsSettingsScreen(
                                             // The hovered point
                                             val closest = closestHoveredPoint!!
 
-                                            if (closest.action is SwipeActionSerializable.OpenCircleNest) {
+                                            if (closest.action is SwipeAction.OpenCircleNest) {
                                                 // Put the hovered point in the hovered nest
 
                                                 val targetNestId =
-                                                    (closest.action as SwipeActionSerializable.OpenCircleNest).nestId
+                                                    (closest.action as SwipeAction.OpenCircleNest).nestId
 
                                                 // Adjust the merged nest circle size if the point belongs to higher circles and the nest has less
                                                 nests.find { it.id == targetNestId }
@@ -1368,11 +1370,11 @@ fun PointsSettingsScreen(
                                                 applyChange {
                                                     val newNestId = addNewNest(1)
 
-                                                    val newNestPoint = SwipePointSerializable(
+                                                    val newNestPoint = Point(
                                                         circleNumber = closest.circleNumber,
                                                         angleDeg = closest.angleDeg,
                                                         nestId = closest.nestId,
-                                                        action = SwipeActionSerializable.OpenCircleNest(
+                                                        action = SwipeAction.OpenCircleNest(
                                                             newNestId
                                                         ),
                                                         id = UUID.randomUUID().toString()
@@ -1380,11 +1382,11 @@ fun PointsSettingsScreen(
 
                                                     // Creates a new go parent nest that'll be put on top of the nest, to easily exit this nest
                                                     val newGoParentNestPoint =
-                                                        SwipePointSerializable(
+                                                        Point(
                                                             circleNumber = 0,
                                                             angleDeg = 0.0,
                                                             nestId = newNestId,
-                                                            action = SwipeActionSerializable.GoParentNest,
+                                                            action = SwipeAction.GoParentNest,
                                                             id = UUID.randomUUID().toString(),
                                                             liveNestTargetNestId = if (createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) newNestId else null
                                                         )
@@ -1469,11 +1471,11 @@ fun PointsSettingsScreen(
                                         val circleId = closestCircle?.id ?: targetCircle
 
                                         val newLiveNest =
-                                            if (action is SwipeActionSerializable.OpenCircleNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
+                                            if (action is SwipeAction.OpenCircleNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
                                                 action.nestId
                                             } else null
 
-                                        val point = SwipePointSerializable(
+                                        val point = Point(
                                             id = UUID.randomUUID().toString(),
                                             angleDeg = finalAngle,
                                             action = action,
@@ -1498,7 +1500,7 @@ fun PointsSettingsScreen(
                                     }
 
                                     // Normal tap mode
-                                    var tapped: SwipePointSerializable? = null
+                                    var tapped: Point? = null
                                     var best = Float.MAX_VALUE
 
                                     filteredPoints.forEach { p ->
@@ -1518,8 +1520,8 @@ fun PointsSettingsScreen(
                                         if (best <= TOUCH_THRESHOLD_PX)
                                             if (selectedPoint?.id == tapped?.id) {
                                                 // Same point tapped -> if circle next, open it, else edit point
-                                                if (selectedPoint?.action is SwipeActionSerializable.OpenCircleNest) {
-                                                    nestNavigation.goToNest((selectedPoint?.action as SwipeActionSerializable.OpenCircleNest).nestId)
+                                                if (selectedPoint?.action is SwipeAction.OpenCircleNest) {
+                                                    nestNavigation.goToNest((selectedPoint?.action as SwipeAction.OpenCircleNest).nestId)
                                                     null
                                                 } else {
                                                     showEditDialog = selectedPoint
@@ -1571,11 +1573,11 @@ fun PointsSettingsScreen(
                             val newAngle = randomFreeAngle(circle, points) ?: continue
 
                             val newLiveNest =
-                                if (action is SwipeActionSerializable.OpenCircleNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
+                                if (action is SwipeAction.OpenCircleNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
                                     action.nestId
                                 } else null
 
-                            val newPoint = SwipePointSerializable(
+                            val newPoint = Point(
                                 id = UUID.randomUUID().toString(),
                                 angleDeg = newAngle,
                                 action = action,
@@ -1608,10 +1610,10 @@ fun PointsSettingsScreen(
             onDeleteNest = ::deleteNest,
             onDismiss = {
                 showEditDialog = null
-                appsViewModel.reloadPointIcon(editPoint)
+                iconService.reloadPointIcon(editPoint)
             },
         ) { newPoint ->
-            appsViewModel.reloadPointIcon(newPoint)
+            iconService.reloadPointIcon(newPoint)
 
             applyChange {
                 val index = points.indexOfFirst { it.id == editPoint.id }
@@ -1651,7 +1653,7 @@ fun PointsSettingsScreen(
 
     if (isInManualPlacementMode) {
         val appName = when (val currentAction = manualPlacementQueue.first()) {
-            is SwipeActionSerializable.LaunchApp -> {
+            is SwipeAction.LaunchApp -> {
                 ctx.packageManager.runCatching {
                     getApplicationLabel(
                         getApplicationInfo(currentAction.packageName, 0)
@@ -1712,7 +1714,7 @@ fun PointsSettingsScreen(
         ) {
             scope.launch {
                 SwipeSettingsStore.setDefaultPoint(ctx, it)
-                reloadIcons()
+                iconService.reloadAllPointIcons()
             }
             showEditDefaultPoint = false
         }
@@ -1757,7 +1759,7 @@ fun PointsSettingsScreen(
 
 private suspend fun loadNestsList(
     ctx: Context,
-    nests: SnapshotStateList<CircleNest>
+    nests: SnapshotStateList<Nest>
 ) {
     val savedNests = SwipeSettingsStore.getNests(ctx)
     nests.clear()
@@ -1771,7 +1773,7 @@ private suspend fun loadNestsList(
 
 private suspend fun loadLivePointsList(
     ctx: Context,
-    points: SnapshotStateList<SwipePointSerializable>
+    points: SnapshotStateList<Point>
 ) {
     val savedPoints = SwipeSettingsStore.getPoints(ctx)
     points.clear()
@@ -1788,7 +1790,7 @@ private suspend fun loadLivePointsList(
                 points.add(
                     it.copy(
                         action = it.action
-                            ?: SwipeActionSerializable.OpenDragonLauncherSettings()
+                            ?: SwipeAction.OpenDragonLauncherSettings()
                     )
                 )
             }

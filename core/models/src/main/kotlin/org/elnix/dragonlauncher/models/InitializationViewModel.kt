@@ -6,11 +6,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.INIT_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
-import org.elnix.dragonlauncher.common.serializables.CircleNest
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
+import org.elnix.dragonlauncher.common.serializables.Nest
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
+import org.elnix.dragonlauncher.common.serializables.Point
+import org.elnix.dragonlauncher.logging.INIT_TAG
+import org.elnix.dragonlauncher.logging.TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
@@ -47,42 +47,44 @@ class InitializationViewModel @Inject constructor(
     }
 
 
-    suspend fun initializeSwipeSettings(
-        points: List<SwipePointSerializable>,
-        nests: List<CircleNest>
+    fun initializeSwipeSettings(
+        points: List<Point>,
+        nests: List<Nest>
     ) {
-        SwipeSettingsStore.savePoints(ctx, points)
-        SwipeSettingsStore.saveNests(ctx, nests)
+        viewModelScope.launch{
+            SwipeSettingsStore.savePoints(ctx, points)
+            SwipeSettingsStore.saveNests(ctx, nests)
 
-        PrivateSettingsStore.hasInitialized.set(ctx, true)
+            PrivateSettingsStore.hasInitialized.set(ctx, true)
+        }
     }
 
-    suspend fun initialize() {
+    fun initialize() {
         initializeSwipeSettings(defaultInitializationSetup, defaultNestsInitializationSetup)
     }
 }
 
 
 val defaultInitializationSetup = listOf(
-    SwipePointSerializable(
+    Point(
         circleNumber = 0,
         angleDeg = 0.toDouble(),
-        action = SwipeActionSerializable.OpenAppDrawer(),
+        action = SwipeAction.OpenAppDrawer(),
         id = UUID.randomUUID().toString()
     ),
-    SwipePointSerializable(
+    Point(
         circleNumber = 1,
         angleDeg = 200.toDouble(),
-        action = SwipeActionSerializable.NotificationShade,
+        action = SwipeAction.NotificationShade,
         id = UUID.randomUUID().toString()
     ),
-    SwipePointSerializable(
+    Point(
         circleNumber = 1,
         angleDeg = 160.toDouble(),
-        action = SwipeActionSerializable.ControlPanel,
+        action = SwipeAction.ControlPanel,
         id = UUID.randomUUID().toString()
     )
 )
 val defaultNestsInitializationSetup = listOf(
-    CircleNest(0)
+    Nest(0)
 )

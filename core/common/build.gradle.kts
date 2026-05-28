@@ -12,12 +12,13 @@ kotlin {
 
 extensions.configure<LibraryExtension> {
     namespace = "org.elnix.dragonlauncher.common"
+
     compileSdk {
-        version = release(37)
+        version = release(libs.versions.compileSdk.get().toInt())
     }
 
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -28,7 +29,7 @@ extensions.configure<LibraryExtension> {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.biometric)
@@ -47,6 +48,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.common)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.timber)
+    implementation(libs.stringsimilarity)
 
     api(libs.gson)
     api(libs.androidx.activity)
@@ -55,4 +57,7 @@ dependencies {
     api(libs.androidx.compose.runtime)
 
     api(project(":core:logging"))
+    api(project(":core:base"))
+    api(project(":core:i18n"))
+    api(project(":core:ktx"))
 }

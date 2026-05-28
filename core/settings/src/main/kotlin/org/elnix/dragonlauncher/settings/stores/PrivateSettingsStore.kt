@@ -2,77 +2,68 @@ package org.elnix.dragonlauncher.settings.stores
 
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
-import org.elnix.dragonlauncher.settings.bases.MapSettingsStore
-import org.elnix.dragonlauncher.settings.bases.Settings
+import org.elnix.dragonlauncher.settings.bases.boolean
+import org.elnix.dragonlauncher.settings.bases.enum
+import org.elnix.dragonlauncher.settings.bases.int
+import org.elnix.dragonlauncher.settings.bases.long
+import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
+import org.elnix.dragonlauncher.settings.bases.string
 
-object PrivateSettingsStore : MapSettingsStore() {
+object PrivateSettingsStore : MapSettingsStore(DataStoreName.PRIVATE_SETTINGS) {
 
-    override val name: String = "Private"
-    override val dataStoreName: DataStoreName = DataStoreName.PRIVATE_SETTINGS
-
-    val hasSeenWelcome = Settings.boolean(
+    val hasSeenWelcome = boolean(
         key = "hasSeenWelcome",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val hasInitialized = Settings.boolean(
+    val hasInitialized = boolean(
         key = "hasInitialized",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val showSetDefaultLauncherBanner = Settings.boolean(
+    val showSetDefaultLauncherBanner = boolean(
         key = "showSetDefaultLauncherBanner",
-        dataStoreName = dataStoreName,
         default = true
     )
 
-    val hideBetaVersionWarning = Settings.boolean(
+    val hideBetaVersionWarning = boolean(
         key = "hideBetaVersionWarning",
-        dataStoreName = dataStoreName,
         default = false
     )
 
 
-    val lastSeenVersionCodeWhatsNew = Settings.int(
+    val lastSeenVersionCodeWhatsNew = int(
         key = "lastSeenVersionCode",
-        dataStoreName = dataStoreName,
         default = 0,
         allowedRange = 0..Int.MAX_VALUE
     )
 
-    val lastSeenVersionCodeGoogleLockdownWarning = Settings.int(
+    val lastSeenVersionCodeGoogleLockdownWarning = int(
         key = "lastSeenVersionCodeGoogleLockdownWarning",
-        dataStoreName = dataStoreName,
         default = 0,
         allowedRange = 0..Int.MAX_VALUE
     )
 
     /** Hashed PIN for settings lock (SHA-256). Empty string means no PIN set. */
-    val lockPinHash = Settings.string(
+    val lockPinHash = string(
         key = "lockPinHash",
-        dataStoreName = dataStoreName,
         default = ""
     )
 
-    val lockMethod = Settings.enum(
+    val lockMethod = enum(
         key = "lockMethod",
-        dataStoreName = dataStoreName,
         default = LockMethod.NONE,
         enumClass = LockMethod::class.java
     )
 
-    val samsungPreferSecureFolder = Settings.boolean(
+    val samsungPreferSecureFolder = boolean(
         key = "samsung_prefer_secure_folder",
-        dataStoreName = dataStoreName,
         default = false
     )
 
-    val lastBackupTime = Settings.long(
+    val lastBackupTime = long(
         key = "lastBackupTime",
-        dataStoreName = dataStoreName,
         default = System.currentTimeMillis(),
         allowedRange = Long.MIN_VALUE..Long.MAX_VALUE
     )
@@ -80,18 +71,14 @@ object PrivateSettingsStore : MapSettingsStore() {
     /**
      * Used to remember the page the user left when exiting the welcome screen, and going, for example to the default launcher selection
      */
-    val welcomeScreenTempPage = Settings.int(
+    val welcomeScreenTempPage = int(
         key = "welcomeScreenTempPage",
-        dataStoreName = dataStoreName,
         default = 0,
         allowedRange = 0..6,
     )
 
-
-
-    val lastCrashStackTrace = Settings.string(
+    val lastCrashStackTrace = string(
         key = "lastCrashStackTrace",
-        dataStoreName = dataStoreName,
         default = ""
     )
 

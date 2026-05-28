@@ -49,11 +49,11 @@ import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.ColorUtils.definedOrNull
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.serializables.AppModel
-import org.elnix.dragonlauncher.common.serializables.CustomIconSerializable
+import org.elnix.dragonlauncher.common.search.Application
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.common.serializables.CustomIcon
 import org.elnix.dragonlauncher.common.serializables.IconType
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
+import org.elnix.dragonlauncher.common.serializables.Point
 import org.elnix.dragonlauncher.common.utils.ImageUtils.uriToBase64
 import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
@@ -79,10 +79,10 @@ import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 @Composable
 fun PointIconEditor(
     appsViewModel: AppsViewModel = activityViewModel(),
-    point: SwipePointSerializable,
+    point: Point,
     onReset: (() -> Unit)? = null,
     onDismiss: () -> Unit,
-    onPicked: (CustomIconSerializable?) -> Unit
+    onPicked: (CustomIcon?) -> Unit
 ) {
     val defaultPoint = LocalDefaultPoint.current
 
@@ -115,16 +115,16 @@ fun PointIconEditor(
 @Composable
 fun AppIconEditor(
     appsViewModel: AppsViewModel = activityViewModel(),
-    app: AppModel,
+    app: Application,
     onReset: (() -> Unit)? = null,
     onDismiss: () -> Unit,
-    onPicked: (CustomIconSerializable?) -> Unit
+    onPicked: (CustomIcon?) -> Unit
 ) {
 
     val workspaceState by appsViewModel.state.collectAsState()
     val appOverrides = workspaceState.appOverrides
 
-    val customIcon = appOverrides[app.iconCacheKey]?.customIcon
+    val customIcon = appOverrides[app.key]?.customIcon
 
     var selectedIcon by remember { mutableStateOf(customIcon) }
 
@@ -147,12 +147,12 @@ fun AppIconEditor(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun IconEditorImpl(
-    customIcon: CustomIconSerializable?,
+    customIcon: CustomIcon?,
     onReset: (() -> Unit)? = null,
     onDismiss: () -> Unit,
     preview: @Composable RowScope.() -> Unit,
-    onUpdate: (CustomIconSerializable?) -> Unit,
-    onPicked: (CustomIconSerializable?) -> Unit
+    onUpdate: (CustomIcon?) -> Unit,
+    onPicked: (CustomIcon?) -> Unit
 ) {
     val ctx = LocalContext.current
     val iconShapes = LocalIconShape.current
@@ -161,7 +161,7 @@ private fun IconEditorImpl(
     var selectedIcon by remember { mutableStateOf(customIcon) }
 
 
-    fun updateSelectedIcon(newIcon: CustomIconSerializable?) {
+    fun updateSelectedIcon(newIcon: CustomIcon?) {
         onUpdate(newIcon)
         selectedIcon = newIcon
     }
@@ -188,7 +188,7 @@ private fun IconEditorImpl(
         scope.launch {
             val base64 = uriToBase64(ctx, uri)
             updateSelectedIcon(
-                (selectedIcon ?: CustomIconSerializable()).copy(
+                (selectedIcon ?: CustomIcon()).copy(
                     type = IconType.BITMAP,
                     source = base64
                 )
@@ -324,7 +324,7 @@ private fun IconEditorImpl(
                                             textValue = it
                                             updateSelectedIcon(
                                                 if (it.isNotBlank()) {
-                                                    (selectedIcon ?: CustomIconSerializable()).copy(
+                                                    (selectedIcon ?: CustomIcon()).copy(
                                                         type = IconType.TEXT,
                                                         source = it
                                                     )
@@ -360,14 +360,14 @@ private fun IconEditorImpl(
                             ) { newColor ->
                                 newColor?.let {
                                     updateSelectedIcon(
-                                        (selectedIcon ?: CustomIconSerializable()).copy(
+                                        (selectedIcon ?: CustomIcon()).copy(
                                             type = IconType.PLAIN_COLOR,
                                             source = it.toArgb().toString()
                                         )
                                     )
                                 } ?: run {
                                     updateSelectedIcon(
-                                        (selectedIcon ?: CustomIconSerializable()).copy(
+                                        (selectedIcon ?: CustomIcon()).copy(
                                             type = null,
                                             source = null
                                         )
@@ -412,7 +412,7 @@ private fun IconEditorImpl(
                                 updateSelectedIcon(selectedIcon?.copy(opacity = null))
                             }
                         ) {
-                            updateSelectedIcon((selectedIcon ?: CustomIconSerializable()).copy(opacity = it))
+                            updateSelectedIcon((selectedIcon ?: CustomIcon()).copy(opacity = it))
                         }
 
                         // Rotation
@@ -426,7 +426,7 @@ private fun IconEditorImpl(
                                 updateSelectedIcon(selectedIcon?.copy(rotationDeg = null))
                             }
                         ) {
-                            updateSelectedIcon((selectedIcon ?: CustomIconSerializable()).copy(rotationDeg = it))
+                            updateSelectedIcon((selectedIcon ?: CustomIcon()).copy(rotationDeg = it))
                         }
 
                         // Scale X
@@ -440,7 +440,7 @@ private fun IconEditorImpl(
                                 updateSelectedIcon(selectedIcon?.copy(scaleX = null))
                             }
                         ) {
-                            updateSelectedIcon((selectedIcon ?: CustomIconSerializable()).copy(scaleX = it))
+                            updateSelectedIcon((selectedIcon ?: CustomIcon()).copy(scaleX = it))
                         }
 
                         // Scale Y
@@ -454,7 +454,7 @@ private fun IconEditorImpl(
                                 updateSelectedIcon(selectedIcon?.copy(scaleY = null))
                             }
                         ) {
-                            updateSelectedIcon((selectedIcon ?: CustomIconSerializable()).copy(scaleY = it))
+                            updateSelectedIcon((selectedIcon ?: CustomIcon()).copy(scaleY = it))
                         }
 
                         Spacer(8.dp)
@@ -468,7 +468,7 @@ private fun IconEditorImpl(
                         ) {
                             val tintColor = it.definedOrNull()?.toArgb()
                             updateSelectedIcon(
-                                (selectedIcon ?: CustomIconSerializable()).copy(
+                                (selectedIcon ?: CustomIcon()).copy(
                                     tint = tintColor
                                 )
                             )
@@ -479,7 +479,7 @@ private fun IconEditorImpl(
                             modifier = Modifier.settingsGroupHorizontalPadding(),
                             onReset = {
                                 updateSelectedIcon(
-                                    (selectedIcon ?: CustomIconSerializable()).copy(
+                                    (selectedIcon ?: CustomIcon()).copy(
                                         shape = null
                                     )
                                 )
@@ -504,7 +504,7 @@ private fun IconEditorImpl(
                 // renders at runtime, as equally efficient since rendering bitmap also consumes lots
                 // Comma separated with the name of the drawable and the pack name
                 updateSelectedIcon(
-                    (selectedIcon ?: CustomIconSerializable()).copy(
+                    (selectedIcon ?: CustomIcon()).copy(
                         type = IconType.ICON_PACK,
                         source = "$name,$packName"
                     )
@@ -520,7 +520,7 @@ private fun IconEditorImpl(
             onDismiss = { showShapePickerDialog = false }
         ) {
             updateSelectedIcon(
-                (selectedIcon ?: CustomIconSerializable()).copy(
+                (selectedIcon ?: CustomIcon()).copy(
                     shape = it
                 )
             )

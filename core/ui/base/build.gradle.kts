@@ -12,12 +12,13 @@ kotlin {
 
 extensions.configure<LibraryExtension> {
     namespace = "org.elnix.dragonlauncher.ui.base"
+
     compileSdk {
-        version = release(37)
+        version = release(libs.versions.compileSdk.get().toInt())
     }
 
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -50,6 +51,8 @@ dependencies {
     implementation(libs.androidx.compose.ui.geometry)
     implementation(libs.androidx.lifecycle.common)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
+
 
     runtimeOnly(libs.androidx.lifecycle.process)
 
@@ -58,7 +61,9 @@ dependencies {
     api(libs.androidx.graphics.shapes)
 
     api(libs.androidx.compose.animation)
+
     api(project(":core:enumsui"))
+    api(project(":core:models"))
     api(project(":core:common"))
     api(project(":core:settings"))
     api(project(":core:base"))

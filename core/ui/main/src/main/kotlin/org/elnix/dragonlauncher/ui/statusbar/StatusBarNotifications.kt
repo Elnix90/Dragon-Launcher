@@ -22,9 +22,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.messyfolder.resolveShape
-import org.elnix.dragonlauncher.common.serializables.StatusBarSerializable
+import org.elnix.dragonlauncher.common.serializables.StatusBar
 import org.elnix.dragonlauncher.common.serializables.dummyAppModel
 import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.services.DragonNotificationListenerService
@@ -34,7 +34,7 @@ import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 
 @Composable
 fun StatusBarNotifications(
-    element: StatusBarSerializable.Notifications,
+    element: StatusBar.Notifications,
     appsViewModel: AppsViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
@@ -67,7 +67,7 @@ fun StatusBarNotifications(
 
     val notificationsIcons = packageNames.take(maxIcons).map {
         val dummyAppModel = dummyAppModel(it)
-        it to icons.getOrLazyCompute(dummyAppModel.iconCacheKey) {
+        it to icons.getOrLazyCompute(dummyAppModel.key) {
             appsViewModel.reloadAppIcon(dummyAppModel)
         }
     }

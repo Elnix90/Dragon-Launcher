@@ -11,7 +11,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.animation.AnimatedIconStatus.Default
 import org.elnix.dragonlauncher.ui.base.animation.AnimatedIconStatus.Error
 import org.elnix.dragonlauncher.ui.base.animation.AnimatedIconStatus.Success

@@ -1,26 +1,29 @@
 package org.elnix.dragonlauncher.ui.helpers.nests
 
+import android.content.Context
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.serializables.IconShape
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.defaultSwipePointsValues
-import org.elnix.dragonlauncher.common.serializables.applyColorAction
-import org.elnix.dragonlauncher.common.utils.ImageUtils.loadDrawableResAsBitmap
 import org.elnix.dragonlauncher.common.messyfolder.UiCircle
 import org.elnix.dragonlauncher.common.messyfolder.resolveShape
-import org.elnix.dragonlauncher.ui.actions.actionColor
+import org.elnix.dragonlauncher.common.serializables.IconShape
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
+import org.elnix.dragonlauncher.common.serializables.SwipeAction.Companion.actionColor
+import org.elnix.dragonlauncher.common.serializables.Point
+import org.elnix.dragonlauncher.common.serializables.Point.Companion.applyColorAction
+import org.elnix.dragonlauncher.common.serializables.Point.Companion.defaultSwipePointsValues
+import org.elnix.dragonlauncher.common.utils.ImageUtils.loadDrawableResAsImageBitmap
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.icons.DragonCache
 import org.elnix.dragonlauncher.ui.base.cache.SwipeDrawParams
 import org.elnix.dragonlauncher.ui.helpers.customobjects.shapeToPath
 
@@ -30,7 +33,7 @@ fun DrawScope.actionsInCircle(
 
     center: Offset,
     depth: Int,
-    point: SwipePointSerializable,
+    point: Point,
     selected: Boolean,
     preventBgErasing: Boolean = false,
     preventDrawingSubNests: Boolean = false,
@@ -40,7 +43,6 @@ fun DrawScope.actionsInCircle(
     val ctx = drawParams.ctx
     val nests = drawParams.nests
     val defaultPoint = drawParams.defaultPoint
-    val icons = drawParams.icons
     val surfaceColorDraw = drawParams.surfaceColorDraw
     val extraColors = drawParams.extraColors
     val maxDepth = drawParams.maxDepth
@@ -71,14 +73,12 @@ fun DrawScope.actionsInCircle(
     val intSize = IntSize(iconSize, iconSize)
 
 
-    /*  ─────────────  Stroke computation  ─────────────  */
     val borderStroke = if (selected) {
         point.borderStrokeSelected ?: defaultPoint.borderStrokeSelected ?: 8f
     } else {
         point.borderStroke ?: defaultPoint.borderStroke ?: 4f
     }
 
-    /*  ─────────────  Foreground / background colors computation  ─────────────  */
     val borderColor = if (selected) {
         point.borderColorSelected?.let { Color(it) }
             ?: defaultPoint.borderColorSelected?.let { Color(it) }
@@ -97,7 +97,6 @@ fun DrawScope.actionsInCircle(
         Color.Transparent
     }
 
-    /*  ─────────────  Shapes computation  ─────────────  */
     val borderIconShape = if (selected) {
         point.borderShapeSelected ?: defaultPoint.borderShapeSelected
     } else {
@@ -108,7 +107,7 @@ fun DrawScope.actionsInCircle(
     // Prevent overloading since the drawing is recursive
     if (depth <= maxDepth) {
 
-        if (action !is SwipeActionSerializable.OpenCircleNest || point.customIcon != null) {
+        if (action !is SwipeAction.OpenCircleNest || point.customIcon != null) {
 
 
             // if no background color provided, erases the background
@@ -174,55 +173,22 @@ fun DrawScope.actionsInCircle(
             drawContext.canvas.restore()
 
 
-            // Small `+1` icon top left to indicate a Cycle Actions
-            if (showConfiguratorDecorations && !point.cycleActions.isNullOrEmpty()) {
-                val iconPx = intSize.width
-                val badgeSize = (iconPx / 3f).toInt().coerceIn(14, 36)
-                val plusOneIcon = ctx.loadDrawableResAsBitmap(
-                    R.drawable.ic_plus_one,
-                    badgeSize,
-                    badgeSize
-                )
-                val leftI = px.toInt() - iconPx / 2
-                val topI = py.toInt() - iconPx / 2
-                val plusOneTop = topI - (badgeSize / 4).coerceAtLeast(1)
-
-                drawImage(
-                    image = plusOneIcon,
-                    dstOffset = IntOffset(leftI, plusOneTop),
-                    dstSize = IntSize(badgeSize, badgeSize)
-                )
-            }
-
-            
-            // Small bolt icon top right to indicate a Hold & Run
-            if (showConfiguratorDecorations && point.holdAndRunDelayMs != null) {
-                val iconPx = intSize.width
-                val badgeSize = (iconPx / 3f).toInt().coerceIn(14, 36)
-                val bolt = ctx.loadDrawableResAsBitmap(
-                    R.drawable.ic_hold_and_run_bolt,
-                    badgeSize,
-                    badgeSize
-                )
-                val leftI = px.toInt() - iconPx / 2
-                val topI = py.toInt() - iconPx / 2
-                val boltLeft = leftI + iconPx - badgeSize
-                val boltTop = topI - (badgeSize / 4).coerceAtLeast(1)
-
-                drawImage(
-                    image = bolt,
-                    dstOffset = IntOffset(boltLeft, boltTop),
-                    dstSize = IntSize(badgeSize, badgeSize)
-                )
-            }
+            decorationIcons(
+                ctx = ctx,
+                center = center,
+                intSize = intSize,
+                point = point,
+                showConfiguratorDecorations = showConfiguratorDecorations
+            )
 
 
             // The actual app icon
-            val icon = icons.getOrLazyCompute(point.id) {
+            val icon = drawParams.pointsIconsCache.getOrLazyCompute(point.key) {
                 drawParams.computeIcon(point)
             }
+
             if (icon != null) {
-                val colorAction = actionColor(point.action, extraColors)
+                val colorAction = point.action.actionColor(extraColors)
                 drawImage(
                     image = icon,
                     dstOffset = dstOffset,
@@ -270,10 +236,75 @@ fun DrawScope.actionsInCircle(
                  *  If this is drawn there is either a big bug, it means no nests was found, and shouldn't happen,
                  *  or that the user is in the edit nest screen and that the nest should not be recursively drawn
                  */
-                image = ctx.loadDrawableResAsBitmap(R.drawable.ic_action_target, 48, 48),
+                image = ctx.loadDrawableResAsImageBitmap(R.drawable.ic_action_target, 48, 48),
                 dstOffset = dstOffset,
                 dstSize = intSize
             )
         }
+    }
+}
+
+private object DecorationCache : DragonCache<Int, ImageBitmap>(2)
+
+
+private fun DrawScope.decorationIcons(
+    ctx: Context,
+    center: Offset,
+    intSize: IntSize,
+    showConfiguratorDecorations: Boolean,
+    point: Point
+) {
+
+    val px = center.x
+    val py = center.y
+
+    // Small `+1` icon top left to indicate a Cycle Actions
+    if (showConfiguratorDecorations && !point.cycleActions.isNullOrEmpty()) {
+        val iconPx = intSize.width
+        val badgeSize = (iconPx / 3f).toInt().coerceIn(14, 36)
+
+        val plusOneIcon = DecorationCache.getOrCompute(0) {
+            ctx.loadDrawableResAsImageBitmap(
+                R.drawable.ic_plus_one,
+                badgeSize,
+                badgeSize
+            )
+        }
+
+        val leftI = px.toInt() - iconPx / 2
+        val topI = py.toInt() - iconPx / 2
+        val plusOneTop = topI - (badgeSize / 4).coerceAtLeast(1)
+
+        drawImage(
+            image = plusOneIcon,
+            dstOffset = IntOffset(leftI, plusOneTop),
+            dstSize = IntSize(badgeSize, badgeSize)
+        )
+    }
+
+
+    // Small bolt icon top right to indicate a Hold & Run
+    if (showConfiguratorDecorations && point.holdAndRunDelayMs != null) {
+
+        val iconPx = intSize.width
+        val badgeSize = (iconPx / 3f).toInt().coerceIn(14, 36)
+        val boltIcon =  DecorationCache.getOrCompute(1) {
+            ctx.loadDrawableResAsImageBitmap(
+                R.drawable.ic_hold_and_run_bolt,
+                badgeSize,
+                badgeSize
+            )
+        }
+
+        val leftI = px.toInt() - iconPx / 2
+        val topI = py.toInt() - iconPx / 2
+        val boltLeft = leftI + iconPx - badgeSize
+        val boltTop = topI - (badgeSize / 4).coerceAtLeast(1)
+
+        drawImage(
+            image = boltIcon,
+            dstOffset = IntOffset(boltLeft, boltTop),
+            dstSize = IntSize(badgeSize, badgeSize)
+        )
     }
 }

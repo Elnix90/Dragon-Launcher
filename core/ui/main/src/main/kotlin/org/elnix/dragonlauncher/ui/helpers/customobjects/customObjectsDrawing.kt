@@ -6,11 +6,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.serializables.CustomObjectSerializable
+import org.elnix.dragonlauncher.common.serializables.CustomObject
 
 fun DrawScope.customObject(
-    customObject: CustomObjectSerializable,
-    default: CustomObjectSerializable,
+    customObject: CustomObject,
+    default: CustomObject,
     rotation: Int,
     shape: Shape,
     angleColor: Color,

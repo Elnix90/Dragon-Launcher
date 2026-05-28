@@ -47,10 +47,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.HAPTIC_TAG
 import org.elnix.dragonlauncher.common.messyfolder.showToast
-import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedbackSerializable
+import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.common.serializables.hapticFeedbackSerializablePresets
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.pasteClipboard
@@ -76,9 +76,9 @@ private data class HapticEntry(
 
 @Composable
 fun HapticFeedbackEditor(
-    initial: CustomHapticFeedbackSerializable? = null,
+    initial: CustomHapticFeedback? = null,
     onDismiss: () -> Unit,
-    onPicked: (CustomHapticFeedbackSerializable?) -> Unit
+    onPicked: (CustomHapticFeedback?) -> Unit
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -107,9 +107,9 @@ fun HapticFeedbackEditor(
     )
 
 
-    fun currentEditingSnapshot(): CustomHapticFeedbackSerializable? {
+    fun currentEditingSnapshot(): CustomHapticFeedback? {
         val snapshot = if (entries.isEmpty()) null
-        else CustomHapticFeedbackSerializable(
+        else CustomHapticFeedback(
             haptics = entries.map { Pair(it.isVibration, it.durationMs) }
         )
         logD(HAPTIC_TAG) { "Got snapshot: $snapshot" }
@@ -122,7 +122,7 @@ fun HapticFeedbackEditor(
         }
     }
 
-    fun selectPreset(customFeedback: CustomHapticFeedbackSerializable) {
+    fun selectPreset(customFeedback: CustomHapticFeedback) {
         entries.clear()
         customFeedback.haptics.mapIndexed { i, (isVibration, duration) ->
             entries.add(
@@ -150,7 +150,7 @@ fun HapticFeedbackEditor(
         val clipboardContent = ctx.pasteClipboard() ?: ""
 
         try {
-            val decoded = Json.decodeFromString<CustomHapticFeedbackSerializable>(clipboardContent)
+            val decoded = Json.decodeFromString<CustomHapticFeedback>(clipboardContent)
 
             selectPreset(decoded)
             ctx.showToast("✅ Successfully imported!")
@@ -471,7 +471,7 @@ private fun AddStepButton(
 
 @Composable
 fun HapticFeedBackEditorButtonWithPlayTest(
-    customHapticFeedbackSerializable: CustomHapticFeedbackSerializable,
+    customHapticFeedback: CustomHapticFeedback,
     titleExt: String = "",
     onClick: () -> Unit
 ) {
@@ -498,7 +498,7 @@ fun HapticFeedBackEditorButtonWithPlayTest(
             enabled = true
         ) {
             scope.launch {
-                performCustomHaptic(ctx, customHapticFeedbackSerializable)
+                performCustomHaptic(ctx, customHapticFeedback)
             }
         }
     }

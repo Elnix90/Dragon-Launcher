@@ -19,8 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.common.serializables.SwipeAction
 import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
@@ -29,7 +29,7 @@ import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 fun WorkspacePickerDialog(
     appsViewModel: AppsViewModel = activityViewModel(),
     onDismiss: () -> Unit,
-    onActionPicked: (SwipeActionSerializable.OpenAppDrawer) -> Unit
+    onActionPicked: (SwipeAction.OpenAppDrawer) -> Unit
 ) {
     val workspaces by appsViewModel.enabledState.collectAsState()
     val availableWorkspaces = workspaces.workspaces
@@ -56,7 +56,7 @@ fun WorkspacePickerDialog(
                         .clip(DragonShape)
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .clickable {
-                            onActionPicked(SwipeActionSerializable.OpenAppDrawer())
+                            onActionPicked(SwipeAction.OpenAppDrawer())
                         }
                         .padding(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -77,7 +77,7 @@ fun WorkspacePickerDialog(
                             .background(MaterialTheme.colorScheme.surface)
                             .clickable {
                                 onActionPicked(
-                                    SwipeActionSerializable.OpenAppDrawer(workspace.id)
+                                    SwipeAction.OpenAppDrawer(workspace.id)
                                 )
                             }
                             .padding(12.dp),

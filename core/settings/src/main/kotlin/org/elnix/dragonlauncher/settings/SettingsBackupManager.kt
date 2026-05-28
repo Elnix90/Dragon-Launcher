@@ -6,19 +6,18 @@ import androidx.core.net.toUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
-import org.elnix.dragonlauncher.common.utils.PermissionsUtils.hasUriReadWritePermission
-import org.elnix.dragonlauncher.common.utils.VersionsUtils.getVersionNameAndCode
 import org.elnix.dragonlauncher.common.messyfolder.getFilePathFromUri
 import org.elnix.dragonlauncher.common.messyfolder.showToast
+import org.elnix.dragonlauncher.common.utils.PermissionsUtils.hasUriReadWritePermission
+import org.elnix.dragonlauncher.common.utils.VersionsUtils.getVersionNameAndCode
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.logging.logV
 import org.elnix.dragonlauncher.logging.logW
-import org.elnix.dragonlauncher.settings.bases.DatastoreProvider
-import org.elnix.dragonlauncher.settings.bases.JsonArraySettingsStore
-import org.elnix.dragonlauncher.settings.bases.JsonObjectSettingsStore
-import org.elnix.dragonlauncher.settings.bases.MapSettingsStore
+import org.elnix.dragonlauncher.settings.bases.stores.JsonArraySettingsStore
+import org.elnix.dragonlauncher.settings.bases.stores.JsonObjectSettingsStore
+import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
 import org.json.JSONArray
@@ -233,6 +232,6 @@ object SettingsBackupManager {
         ctx: Context,
         json: JSONObject
     ) {
-        importSettingsFromJson(ctx,json, themeStores)
+        importSettingsFromJson(ctx,json, themeDataStores)
     }
 }

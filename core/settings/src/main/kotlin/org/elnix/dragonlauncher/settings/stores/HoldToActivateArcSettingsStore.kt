@@ -1,15 +1,14 @@
 package org.elnix.dragonlauncher.settings.stores
 
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
-import org.elnix.dragonlauncher.settings.bases.MapSettingsStore
-import org.elnix.dragonlauncher.settings.bases.Settings
+import org.elnix.dragonlauncher.settings.bases.boolean
+import org.elnix.dragonlauncher.settings.bases.float
+import org.elnix.dragonlauncher.settings.bases.int
+import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
+import org.elnix.dragonlauncher.settings.bases.string
 
-object HoldToActivateArcSettingsStore : MapSettingsStore() {
-
-    override val name: String = "Hold to activate"
-
-    override val dataStoreName = DataStoreName.HOLD_TO_ACTIVATE
+object HoldToActivateArcSettingsStore : MapSettingsStore(DataStoreName.HOLD_TO_ACTIVATE) {
 
     override val ALL: List<BaseSettingObject <*, *> >
         get() = listOf(
@@ -23,49 +22,42 @@ object HoldToActivateArcSettingsStore : MapSettingsStore() {
         )
 
 
-    val holdDelayBeforeStartingLongClickSettings = Settings.int(
+    val holdDelayBeforeStartingLongClickSettings = int(
         key = "holdDelayBeforeStartingLongClickSettings",
-        dataStoreName = dataStoreName,
         default = 500,
         allowedRange = 0..2000
     )
 
-    val longCLickSettingsDuration = Settings.int(
+    val longCLickSettingsDuration = int(
         key = "longCLickSettingsDuration",
-        dataStoreName = dataStoreName,
         default = 1000,
         allowedRange = 0..5000
     )
 
-    val holdToActivateSettingsTolerance = Settings.float(
+    val holdToActivateSettingsTolerance = float(
         key = "holdToActivateSettingsTolerance",
-        dataStoreName = dataStoreName,
         default = 24f,
         allowedRange = 1f..200f
     )
 
-    val showToleranceOnMainScreen = Settings.boolean(
+    val showToleranceOnMainScreen = boolean(
         key = "showToleranceOnMainScreen",
-        dataStoreName = dataStoreName,
         default = false,
     )
 
-    val holdToActivateArcCustomObject = Settings.string(
+    val holdToActivateArcCustomObject = string(
         key = "holdToActivateArcCustomObject",
-        dataStoreName = dataStoreName,
         default = "",
     )
 
-    val rotationPerSecond = Settings.float(
+    val rotationPerSecond = float(
         key = "rotationPerSecond",
-        dataStoreName = dataStoreName,
         default = 0f,
         allowedRange = 0f..5f
     )
 
-    val holdMenuEntries = Settings.string(
+    val holdMenuEntries = string(
         key = "holdMenuEntries2",
-        dataStoreName = dataStoreName,
         default = ""
     )
 }
