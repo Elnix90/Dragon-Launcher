@@ -43,6 +43,14 @@ object PrivateSettingsStore : MapSettingsStore() {
         allowedRange = 0..Int.MAX_VALUE
     )
 
+    // TODO remove next version
+    val lastSeenVersionCodeDoABackup = Settings.int(
+        key = "lastSeenVersionCodeDoABackup",
+        dataStoreName = dataStoreName,
+        default = 0,
+        allowedRange = 0..Int.MAX_VALUE
+    )
+
     val lastSeenVersionCodeGoogleLockdownWarning = Settings.int(
         key = "lastSeenVersionCodeGoogleLockdownWarning",
         dataStoreName = dataStoreName,
@@ -107,6 +115,7 @@ object PrivateSettingsStore : MapSettingsStore() {
         this.samsungPreferSecureFolder,
         this.lastBackupTime,
         this.welcomeScreenTempPage,
-        this.lastCrashStackTrace
+        this.lastCrashStackTrace,
+        this.lastSeenVersionCodeDoABackup
     )
 }

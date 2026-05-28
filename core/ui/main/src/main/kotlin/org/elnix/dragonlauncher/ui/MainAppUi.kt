@@ -150,6 +150,7 @@ import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceListScreen
 import org.elnix.dragonlauncher.ui.welcome.WelcomeScreen
 import org.elnix.dragonlauncher.ui.wellbeing.AppTimerService
 import org.elnix.dragonlauncher.ui.wellbeing.DigitalPauseActivity
+import org.elnix.dragonlauncher.ui.whatsnew.BackupReminder
 import org.elnix.dragonlauncher.ui.whatsnew.ChangelogsScreen
 import org.elnix.dragonlauncher.ui.whatsnew.WhatsNewBottomSheet
 import rikka.shizuku.Shizuku
@@ -817,6 +818,7 @@ fun MainAppUi(
                 }
             )
         }
+        BackupReminder { backStack.navigate(NavigationRoute.Backup) }
 
         BottomBanners(currentRoute)
         ShizukuOutputDialog()
