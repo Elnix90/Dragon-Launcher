@@ -66,6 +66,7 @@ import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SHIZUKU_TAG
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
 import org.elnix.dragonlauncher.common.messyfolder.Constants.PackageNames.SHIZUKU_PACKAGE_NAME
 import org.elnix.dragonlauncher.common.messyfolder.Constants.URLs.URL_SHIZUKU_SITE
+import org.elnix.dragonlauncher.common.messyfolder.findFragmentActivity
 import org.elnix.dragonlauncher.common.messyfolder.openUrl
 import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
@@ -346,7 +347,8 @@ fun MainAppUi(
         }
 
         if (screen in NavigationRoute.settingsRoutes) {
-            lockScreenViewModel.requestUnlock(screen) {
+            val activity = ctx.findFragmentActivity()
+            lockScreenViewModel.requestUnlock(activity, screen) {
                 go()
             }
         } else {

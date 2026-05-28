@@ -2,6 +2,7 @@ package org.elnix.dragonlauncher.models
 
 import android.annotation.SuppressLint
 import android.app.Application
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation3.runtime.NavKey
@@ -13,7 +14,6 @@ import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SECURITY_HELPER
 import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
 import org.elnix.dragonlauncher.common.messyfolder.SecurityHelper
-import org.elnix.dragonlauncher.common.messyfolder.findFragmentActivity
 import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
@@ -75,7 +75,11 @@ class LockScreenViewModel @Inject constructor(
     }
 
 
-    fun requestUnlock(targetScreen: NavigationRoute, onSuccess: () -> Unit) {
+    fun requestUnlock(
+        activity: FragmentActivity?,
+        targetScreen: NavigationRoute,
+        onSuccess: () -> Unit
+    ) {
         when (_lockMethod.value) {
             LockMethod.NONE -> {
                 unlock()
@@ -87,7 +91,6 @@ class LockScreenViewModel @Inject constructor(
             }
 
             LockMethod.DEVICE_UNLOCK -> {
-                val activity = ctx.findFragmentActivity()
                 if (activity != null && SecurityHelper.isDeviceUnlockAvailable(ctx)) {
                     SecurityHelper.showDeviceUnlockPrompt(
                         activity = activity,
