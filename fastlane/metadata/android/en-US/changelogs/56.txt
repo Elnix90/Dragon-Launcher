@@ -1,0 +1,10 @@
+3.2.2 (Worm)
+2026-05-28
+[NEW]
+* Google lockdown warning
+* Global ui improvements
+[FIXED]
+* settings were locked when setting device credentials
+* corrected workflows
+[IMPROVED]
+* Use Hilt viewModels
