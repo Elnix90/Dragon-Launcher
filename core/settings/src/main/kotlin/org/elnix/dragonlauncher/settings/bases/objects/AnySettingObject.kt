@@ -12,17 +12,15 @@ import android.content.Context
  * @property key Unique identifier shared with [BaseSettingObject].
  */
 internal interface AnySettingObject {
-    val key: String
-
-    /**
-     * Retrieves current value as `Any?` for generic access.
-     *
-     * Delegates to concrete typed `get()` but erases return type for use in maps/lists.
-     *
-     * @param ctx Android [Context] for DataStore access.
-     * @return Current value or default, as `Any?`.
-     */
-    suspend fun getAny(ctx: Context): Any?
+//    /**
+//     * Retrieves current value as `Any?` for generic access.
+//     *
+//     * Delegates to concrete typed `get()` but erases return type for use in maps/lists.
+//     *
+//     * @param ctx Android [Context] for DataStore access.
+//     * @return Current value or default, as `Any?`.
+//     */
+//    suspend fun getAny(ctx: Context): Any?
 
     /**
      * Sets value from `Any?` input for generic mutations.

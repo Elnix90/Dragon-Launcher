@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="PackageVisibilityPolicy,QueryAllPackagesPermission" />
@@ -94,7 +95,7 @@
         tools:targetApi="33">
 
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activities.MainActivity"
             android:enableOnBackInvokedCallback="true"
             android:exported="true"
             android:launchMode="singleTask"
@@ -118,7 +119,7 @@
 
         <!-- Pinned Shortcuts: Receives pin shortcut requests from other apps -->
         <activity
-            android:name=".activity.PinnedShortcutActivity"
+            android:name=".activities.PinnedShortcutActivity"
             android:enableOnBackInvokedCallback="true"
             android:excludeFromRecents="true"
             android:exported="true"
@@ -131,11 +132,7 @@
 
 
         <activity
-            android:name="com.canhub.cropper.CropImageActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar" />
-
-        <activity
-            android:name="org.elnix.dragonlauncher.ui.wellbeing.DigitalPauseActivity"
+            android:name="org.elnix.dragonlauncher.activities.DigitalPauseActivity"
             android:enableOnBackInvokedCallback="true"
             android:excludeFromRecents="true"
             android:exported="false"
@@ -143,18 +140,11 @@
             android:theme="@style/DragonLauncherTheme" />
 
         <activity
-            android:name="org.elnix.dragonlauncher.ui.wellbeing.TimeLimitExceededActivity"
+            android:name="org.elnix.dragonlauncher.activities.TimeLimitExceededActivity"
             android:excludeFromRecents="true"
             android:exported="false"
             android:launchMode="singleTop"
             android:theme="@style/DragonLauncherTheme" />
-
-
-        <activity
-            android:name="org.elnix.dragonlauncher.activity.PrivateSpaceUnlockActivity"
-            android:exported="false"
-            android:theme="@style/DragonLauncherTheme" />
-
 
         <service
             android:name="org.elnix.dragonlauncher.services.DragonNotificationListenerService"
@@ -167,11 +157,11 @@
         </service>
 
         <service
-            android:name="org.elnix.dragonlauncher.ui.wellbeing.OverlayReminderService"
+            android:name="org.elnix.dragonlauncher.timer.OverlayReminderService"
             android:exported="false" />
 
         <service
-            android:name="org.elnix.dragonlauncher.ui.wellbeing.AppTimerService"
+            android:name="org.elnix.dragonlauncher.timer.AppTimerService"
             android:exported="false"
             android:foregroundServiceType="specialUse" />
 

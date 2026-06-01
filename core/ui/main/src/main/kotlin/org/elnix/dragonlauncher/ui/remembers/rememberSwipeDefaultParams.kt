@@ -5,24 +5,26 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.common.serializables.Nest
-import org.elnix.dragonlauncher.common.serializables.Point
+import org.elnix.dragonlauncher.common.serializables.IconShape
+import org.elnix.dragonlauncher.base.model.serializables.Nest
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.DragonCache
 import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.settings.stores.SwipeMapSettingsStore
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.cache.DrawPathCache
-import org.elnix.dragonlauncher.ui.base.cache.SwipeDrawParams
+import org.elnix.dragonlauncher.base.model.models.SwipeDrawParams
 import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.composition.LocalNests
-import org.elnix.dragonlauncher.ui.composition.LocalPointIconsCache
 import org.elnix.dragonlauncher.ui.composition.LocalPoints
 
 
@@ -56,10 +58,8 @@ fun rememberSwipeDefaultParams(
         derivedStateOf { subNestDefaultRadius.dp.value * density.density }
     }
 
-    val drawPathCache = remember { DrawPathCache(points.size) }
-
     LaunchedEffect(points.size) {
-        drawPathCache.updateMaxCacheSize(points.size)
+        DrawPathCache.updateMaxCacheSize(points.size)
     }
 
 
@@ -86,7 +86,6 @@ fun rememberSwipeDefaultParams(
         defaultPoint,
         maxNestsDepth,
         subNestDefaultRadius,
-        drawPathCache,
         showAppLaunchPreview,
         showAppCirclePreview,
         showAllActionsOnCurrentCircle,
@@ -98,13 +97,12 @@ fun rememberSwipeDefaultParams(
             points = points,
             ctx = ctx,
             defaultPoint = defaultPoint,
-            icons = icons,
+            pointsIconsCache = icons,
             surfaceColorDraw = surfaceColorDraw,
             extraColors = extraColors,
             maxDepth = maxNestsDepth,
             iconShape = iconShape,
             subNestDefaultRadius = subNestDefaultRadiusPixels,
-            drawPathCache = drawPathCache,
             showAppCirclePreview = showAppCirclePreview,
             showAppLaunchPreview = showAppLaunchPreview,
             showAllActionsOnCurrentCircle = showAllActionsOnCurrentCircle,
@@ -116,3 +114,5 @@ fun rememberSwipeDefaultParams(
         )
     }
 }
+
+object DrawPathCache : DragonCache<Pair<IconShape, Size>, Path>(200)

@@ -71,26 +71,26 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.common.messyfolder.Constants
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.NESTS_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SWIPE_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Settings.SNAP_STEP_DEG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Settings.TOUCH_THRESHOLD_PX
-import org.elnix.dragonlauncher.common.messyfolder.UiCircle
-import org.elnix.dragonlauncher.common.messyfolder.circles.autoSeparate
-import org.elnix.dragonlauncher.common.messyfolder.circles.computePosition
-import org.elnix.dragonlauncher.common.messyfolder.circles.createCirclesFromDragDistances
-import org.elnix.dragonlauncher.common.messyfolder.circles.normalizeAngle
-import org.elnix.dragonlauncher.common.messyfolder.circles.randomFreeAngle
-import org.elnix.dragonlauncher.common.messyfolder.circles.rememberNestNavigation
-import org.elnix.dragonlauncher.common.messyfolder.circles.scaleDragDistances
-import org.elnix.dragonlauncher.common.messyfolder.circles.uiCirclesFromScaledDragDistances
-import org.elnix.dragonlauncher.common.messyfolder.circles.undoTransformations
-import org.elnix.dragonlauncher.common.messyfolder.showToast
-import org.elnix.dragonlauncher.common.serializables.Nest
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
-import org.elnix.dragonlauncher.common.serializables.Point
-import org.elnix.dragonlauncher.common.undoredo.UndoRedoManager
+import org.elnix.dragonlauncher.base.Constants
+import org.elnix.dragonlauncher.base.Constants.Logging.NESTS_TAG
+import org.elnix.dragonlauncher.base.Constants.Logging.SWIPE_TAG
+import org.elnix.dragonlauncher.base.Constants.Settings.SNAP_STEP_DEG
+import org.elnix.dragonlauncher.base.Constants.Settings.TOUCH_THRESHOLD_PX
+import org.elnix.dragonlauncher.base.model.models.UiCircle
+import org.elnix.dragonlauncher.common.circles.autoSeparate
+import org.elnix.dragonlauncher.common.circles.computePosition
+import org.elnix.dragonlauncher.common.circles.createCirclesFromDragDistances
+import org.elnix.dragonlauncher.common.circles.normalizeAngle
+import org.elnix.dragonlauncher.common.circles.randomFreeAngle
+import org.elnix.dragonlauncher.common.circles.rememberNestNavigation
+import org.elnix.dragonlauncher.common.circles.scaleDragDistances
+import org.elnix.dragonlauncher.common.circles.uiCirclesFromScaledDragDistances
+import org.elnix.dragonlauncher.common.circles.undoTransformations
+import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.base.model.serializables.Nest
+
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.undoredo.UndoRedoManager
 import org.elnix.dragonlauncher.enumsui.toggle.AddRemoveCircleTools
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.Center
@@ -111,14 +111,14 @@ import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.models.PointSettingsViewModel
-import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
-import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
-import org.elnix.dragonlauncher.settings.stores.SwipeMapSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore.autoSeparatePoints
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore.freeMoveDraggedPoint
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore.snapPoints
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.autoSeparatePoints
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.freeMoveDraggedPoint
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.snapPoints
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
@@ -230,7 +230,7 @@ fun PointsSettingsScreen(
     var showEditDialog by remember { mutableStateOf<Point?>(null) }
 
     // Manual placement mode state (multi-select "Place one by one")
-    var manualPlacementQueue by remember { mutableStateOf<List<SwipeAction>>(emptyList()) }
+    var manualPlacementQueue by remember { mutableStateOf<List<Action>>(emptyList()) }
     val isInManualPlacementMode = manualPlacementQueue.isNotEmpty()
     var isEditing by remember { mutableStateOf(false) }
 
@@ -700,8 +700,8 @@ fun PointsSettingsScreen(
                 RowWithScrollIndicator(rowsScrollStates[0]) {
                     // Nests toolbar
                     val nestToGo =
-                        if (selectedPoint?.action is SwipeAction.OpenCircleNest) {
-                            (selectedPoint!!.action as SwipeAction.OpenCircleNest).nestId
+                        if (selectedPoint?.action is Action.OpenCircleNest) {
+                            (selectedPoint!!.action as Action.OpenCircleNest).nestId
                         } else null
 
                     val canGoNest = nestToGo != null
@@ -1332,11 +1332,11 @@ fun PointsSettingsScreen(
                                             // The hovered point
                                             val closest = closestHoveredPoint!!
 
-                                            if (closest.action is SwipeAction.OpenCircleNest) {
+                                            if (closest.action is Action.OpenCircleNest) {
                                                 // Put the hovered point in the hovered nest
 
                                                 val targetNestId =
-                                                    (closest.action as SwipeAction.OpenCircleNest).nestId
+                                                    (closest.action as Action.OpenCircleNest).nestId
 
                                                 // Adjust the merged nest circle size if the point belongs to higher circles and the nest has less
                                                 nests.find { it.id == targetNestId }
@@ -1374,7 +1374,7 @@ fun PointsSettingsScreen(
                                                         circleNumber = closest.circleNumber,
                                                         angleDeg = closest.angleDeg,
                                                         nestId = closest.nestId,
-                                                        action = SwipeAction.OpenCircleNest(
+                                                        action = Action.OpenCircleNest(
                                                             newNestId
                                                         ),
                                                         id = UUID.randomUUID().toString()
@@ -1386,7 +1386,7 @@ fun PointsSettingsScreen(
                                                             circleNumber = 0,
                                                             angleDeg = 0.0,
                                                             nestId = newNestId,
-                                                            action = SwipeAction.GoParentNest,
+                                                            action = Action.GoParentNest,
                                                             id = UUID.randomUUID().toString(),
                                                             liveNestTargetNestId = if (createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) newNestId else null
                                                         )
@@ -1471,7 +1471,7 @@ fun PointsSettingsScreen(
                                         val circleId = closestCircle?.id ?: targetCircle
 
                                         val newLiveNest =
-                                            if (action is SwipeAction.OpenCircleNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
+                                            if (action is Action.OpenCircleNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
                                                 action.nestId
                                             } else null
 
@@ -1520,8 +1520,8 @@ fun PointsSettingsScreen(
                                         if (best <= TOUCH_THRESHOLD_PX)
                                             if (selectedPoint?.id == tapped?.id) {
                                                 // Same point tapped -> if circle next, open it, else edit point
-                                                if (selectedPoint?.action is SwipeAction.OpenCircleNest) {
-                                                    nestNavigation.goToNest((selectedPoint?.action as SwipeAction.OpenCircleNest).nestId)
+                                                if (selectedPoint?.action is Action.OpenCircleNest) {
+                                                    nestNavigation.goToNest((selectedPoint?.action as Action.OpenCircleNest).nestId)
                                                     null
                                                 } else {
                                                     showEditDialog = selectedPoint
@@ -1573,7 +1573,7 @@ fun PointsSettingsScreen(
                             val newAngle = randomFreeAngle(circle, points) ?: continue
 
                             val newLiveNest =
-                                if (action is SwipeAction.OpenCircleNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
+                                if (action is Action.OpenCircleNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
                                     action.nestId
                                 } else null
 
@@ -1653,7 +1653,7 @@ fun PointsSettingsScreen(
 
     if (isInManualPlacementMode) {
         val appName = when (val currentAction = manualPlacementQueue.first()) {
-            is SwipeAction.LaunchApp -> {
+            is Action.LaunchApp -> {
                 ctx.packageManager.runCatching {
                     getApplicationLabel(
                         getApplicationInfo(currentAction.packageName, 0)
@@ -1790,7 +1790,7 @@ private suspend fun loadLivePointsList(
                 points.add(
                     it.copy(
                         action = it.action
-                            ?: SwipeAction.OpenDragonLauncherSettings()
+                            ?: Action.OpenDragonLauncherSettings()
                     )
                 )
             }

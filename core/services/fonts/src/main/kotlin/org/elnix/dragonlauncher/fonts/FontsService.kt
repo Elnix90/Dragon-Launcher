@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.compose.ui.text.font.FontFamily
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 
 
 interface FontService {

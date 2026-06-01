@@ -12,7 +12,7 @@ import org.elnix.dragonlauncher.base.icons.TintedClockLayer
 import org.elnix.dragonlauncher.base.icons.TintedIconLayer
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
 import org.elnix.dragonlauncher.base.icons.VectorLayer
-import org.elnix.dragonlauncher.common.search.Application
+import org.elnix.dragonlauncher.base.model.models.Application
 
 internal class ThemedPlaceholderIconProvider(
     private val ctx: Context,

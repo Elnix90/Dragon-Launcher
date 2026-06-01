@@ -12,8 +12,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.elnix.dragonlauncher.settings.stores.LanguageSettingsStore
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.LanguageSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 
 @HiltAndroidApp
 class DragonLauncherApplication : Application() {

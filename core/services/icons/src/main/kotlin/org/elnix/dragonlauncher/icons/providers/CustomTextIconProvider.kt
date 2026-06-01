@@ -4,8 +4,8 @@ import org.elnix.dragonlauncher.base.icons.ColorLayer
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.icons.TextLayer
-import org.elnix.dragonlauncher.common.search.Application
-import org.elnix.dragonlauncher.common.serializables.CustomTextIcon
+import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.serializables.CustomTextIcon
 
 class CustomTextIconProvider(
     private val customIcon: CustomTextIcon,

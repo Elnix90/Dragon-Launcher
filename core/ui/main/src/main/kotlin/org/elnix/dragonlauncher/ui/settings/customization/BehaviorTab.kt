@@ -25,8 +25,8 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.LockScreenViewModel
-import org.elnix.dragonlauncher.models.ProfilesVM
-import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
+import org.elnix.dragonlauncher.models.ProfilesViewModel
+import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
@@ -48,7 +48,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 fun BehaviorTab(
     onBack: () -> Unit,
     lockScreenViewModel: LockScreenViewModel = activityViewModel(),
-    profilesVM: ProfilesVM = activityViewModel()
+    profilesViewModel: ProfilesViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()

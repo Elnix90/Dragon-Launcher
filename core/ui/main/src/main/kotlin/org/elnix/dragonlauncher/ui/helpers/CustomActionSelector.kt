@@ -28,8 +28,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
-import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
+
+import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ui.actions.ActionIcon
 import org.elnix.dragonlauncher.ui.actions.actionColor
 import org.elnix.dragonlauncher.ui.actions.actionLabel
@@ -41,12 +41,12 @@ import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
 @Composable
 fun CustomActionSelector(
     label: String,
-    currentAction: SwipeAction?,
+    currentAction: Action?,
     nullText: String? = null,
     enabled: Boolean = true,
     switchEnabled: Boolean = true,
     onToggle: (Boolean) -> Unit,
-    onSelected: (SwipeAction) -> Unit
+    onSelected: (Action) -> Unit
 ) {
     val extraColors = LocalExtraColors.current
 
@@ -54,7 +54,7 @@ fun CustomActionSelector(
 
     var showDialog by remember { mutableStateOf(false) }
 
-    val toggled = currentAction != null && currentAction != SwipeAction.None
+    val toggled = currentAction != null && currentAction != Action.None
     val actionColor = actionColor(currentAction, extraColors).semiTransparentIfDisabled(enabled)
 
     DragonRow(

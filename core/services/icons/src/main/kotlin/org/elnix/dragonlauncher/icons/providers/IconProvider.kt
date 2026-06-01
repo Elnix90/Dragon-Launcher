@@ -1,7 +1,7 @@
 package org.elnix.dragonlauncher.icons.providers
 
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
-import org.elnix.dragonlauncher.common.search.Application
+import org.elnix.dragonlauncher.base.model.models.Application
 
 
 interface IconProvider {

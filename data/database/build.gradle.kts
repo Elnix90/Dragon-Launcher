@@ -13,7 +13,7 @@ kotlin {
 }
 
 extensions.configure<LibraryExtension> {
-    namespace = "org.elnix.dragonlauncher.applications"
+    namespace = "org.elnix.dragonlauncher.database"
 
     compileSdk {
         version = release(libs.versions.compileSdk.get().toInt())

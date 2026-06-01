@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
 import org.elnix.dragonlauncher.base.theme.ExtraColors
-import org.elnix.dragonlauncher.settings.stores.ColorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 
 interface ColorService {
     val extraColors: Flow<ExtraColors>

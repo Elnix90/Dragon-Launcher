@@ -46,10 +46,10 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
+import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.HAPTIC_TAG
-import org.elnix.dragonlauncher.common.messyfolder.showToast
+import org.elnix.dragonlauncher.base.Constants.Logging.HAPTIC_TAG
+import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.common.serializables.hapticFeedbackSerializablePresets
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard

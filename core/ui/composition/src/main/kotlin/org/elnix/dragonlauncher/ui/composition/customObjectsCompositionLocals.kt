@@ -1,7 +1,7 @@
 package org.elnix.dragonlauncher.ui.composition
 
 import androidx.compose.runtime.compositionLocalOf
-import org.elnix.dragonlauncher.common.serializables.CustomObject
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 
 val LocalLineObject = compositionLocalOf<CustomObject> {
     error("No LocalLine provided")

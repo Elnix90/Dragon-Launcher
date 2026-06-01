@@ -36,18 +36,18 @@ import androidx.compose.ui.unit.IntSize
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.ktx.toDp
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.messyfolder.circles.rememberNestNavigation
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Settings.routeResId
-import org.elnix.dragonlauncher.common.serializables.Widget
+import org.elnix.dragonlauncher.common.circles.rememberNestNavigation
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeResId
+
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
-import org.elnix.dragonlauncher.common.serializables.Point
-import org.elnix.dragonlauncher.common.serializables.Point.Companion.dummySwipePoint
+
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
 import org.elnix.dragonlauncher.common.serializables.enabled
-import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
-import org.elnix.dragonlauncher.settings.stores.HoldToActivateArcSettingsStore
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.asStateNull
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
@@ -138,8 +138,8 @@ fun MainScreen(
 
         // Handle nest related actions here, and let the rest pass through
         when (val action = point.action) {
-            SwipeAction.GoParentNest -> nestNavigation.goBack()
-            is SwipeAction.OpenCircleNest -> nestNavigation.goToNest(action.nestId)
+            Action.GoParentNest -> nestNavigation.goBack()
+            is Action.OpenCircleNest -> nestNavigation.goToNest(action.nestId)
             else -> {
                 nestNavigation.clearStack()
                 onLaunchAction(point)

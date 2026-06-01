@@ -68,12 +68,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import org.elnix.dragonlauncher.base.ktx.toDp
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.WIDGET_TAG
-import org.elnix.dragonlauncher.common.serializables.Widget
+import org.elnix.dragonlauncher.base.Constants.Logging.WIDGET_TAG
+
 import org.elnix.dragonlauncher.common.serializables.FloatingAppsJson
 import org.elnix.dragonlauncher.common.serializables.IconShape
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
-import org.elnix.dragonlauncher.common.undoredo.UndoRedoManager
+
+import org.elnix.dragonlauncher.base.undoredo.UndoRedoManager
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.Center
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.ResetRotation
@@ -87,8 +87,8 @@ import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsUpDown
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.models.WidgetsViewModel.ResizeCorner
-import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
-import org.elnix.dragonlauncher.settings.stores.WidgetsSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.array.WidgetsSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
@@ -360,8 +360,8 @@ fun WidgetsTab(
                                 WidgetsToolsCenterReset.Reset -> {
                                     selected?.let {
                                         applyChange {
-                                            if (it.action is SwipeAction.OpenWidget) {
-                                                onResetWidgetSize(it.id, (it.action as SwipeAction.OpenWidget).widgetId)
+                                            if (it.action is Action.OpenWidget) {
+                                                onResetWidgetSize(it.id, (it.action as Action.OpenWidget).widgetId)
                                             } else {
                                                 floatingAppsViewModel.resetFloatingAppSize(it.id)
                                             }
@@ -571,24 +571,24 @@ fun WidgetsTab(
         AddPointDialog(
             onDismiss = { showAddDialog = false },
             actions = setOf(
-                SwipeAction.OpenWidget(0, "", ""),
-                SwipeAction.OpenCircleNest(0),
-                SwipeAction.GoParentNest,
-                SwipeAction.LaunchShortcut("", ""),
-                SwipeAction.LaunchApp("", false, 0),
-                SwipeAction.OpenUrl(""),
-                SwipeAction.OpenFile(""),
-                SwipeAction.NotificationShade,
-                SwipeAction.ControlPanel,
-                SwipeAction.OpenAppDrawer(),
-                SwipeAction.Lock,
-                SwipeAction.ReloadApps,
-                SwipeAction.OpenRecentApps,
-                SwipeAction.OpenDragonLauncherSettings()
+                Action.OpenWidget(0, "", ""),
+                Action.OpenCircleNest(0),
+                Action.GoParentNest,
+                Action.LaunchShortcut("", ""),
+                Action.LaunchApp("", false, 0),
+                Action.OpenUrl(""),
+                Action.OpenFile(""),
+                Action.NotificationShade,
+                Action.ControlPanel,
+                Action.OpenAppDrawer(),
+                Action.Lock,
+                Action.ReloadApps,
+                Action.OpenRecentApps,
+                Action.OpenDragonLauncherSettings()
             ),
             onActionSelected = { action ->
                 when (action) {
-                    is SwipeAction.OpenWidget -> onLaunchSystemWidgetPicker(nestId)
+                    is Action.OpenWidget -> onLaunchSystemWidgetPicker(nestId)
                     else -> floatingAppsViewModel.addFloatingApp(action, nestId = nestId)
                 }
                 showAddDialog = false

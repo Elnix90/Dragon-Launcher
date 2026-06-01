@@ -10,9 +10,9 @@ import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import org.elnix.dragonlauncher.common.serializables.CycleActionStage
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
-import org.elnix.dragonlauncher.common.serializables.Point
-import org.elnix.dragonlauncher.common.serializables.Point.Companion.defaultSwipePointsValues
+
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.common.utils.HapticUtils.performCustomHaptic
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
@@ -47,8 +47,8 @@ private fun cumulativeTriggerThresholdsMs(stages: List<CycleActionStage>): List<
 data class CycleActionsState(
     val isActive: Boolean,
     val currentStageIndex: Int,
-    val currentStageAction: SwipeAction?,
-    val resolveOnRelease: () -> SwipeAction?,
+    val currentStageAction: Action?,
+    val resolveOnRelease: () -> Action?,
     val clear: () -> Unit
 )
 
@@ -152,7 +152,7 @@ fun rememberCycleActionsController(
     /*  ─────────────  Release resolution helpers  ─────────────  */
 
 
-    val resolveOnRelease: () -> SwipeAction? = remember(stages) {
+    val resolveOnRelease: () -> Action? = remember(stages) {
         {
             val idx = currentStageIndex
             if (idx == 0 || stages.isNullOrEmpty()) null
@@ -165,7 +165,7 @@ fun rememberCycleActionsController(
 
     val safeStageIndex = currentStageIndex.coerceIn(0, stages?.size ?: 0)
 
-    val currentStageAction: SwipeAction? = when {
+    val currentStageAction: Action? = when {
         stages.isNullOrEmpty() -> null
         safeStageIndex == 0 -> null
         safeStageIndex in 1..stages.size -> stages[safeStageIndex - 1].action

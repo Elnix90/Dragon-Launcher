@@ -7,8 +7,8 @@ import android.content.pm.PackageManager
 import android.provider.AlarmClock
 import android.provider.CalendarContract
 import androidx.compose.runtime.Composable
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.PackageNameLists.knownClockPackages
+import org.elnix.dragonlauncher.base.Constants.PackageNameLists.knownClockPackages
+import org.elnix.dragonlauncher.logging.TAG
 import org.elnix.dragonlauncher.logging.logD
 import java.text.SimpleDateFormat
 import java.time.LocalDate

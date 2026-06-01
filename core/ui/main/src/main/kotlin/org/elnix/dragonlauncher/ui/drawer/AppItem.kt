@@ -24,7 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.search.Application
+import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.actions.AppIcon

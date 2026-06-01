@@ -30,9 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
-import org.elnix.dragonlauncher.common.messyfolder.getFilePathFromUri
-import org.elnix.dragonlauncher.common.messyfolder.showToast
+import org.elnix.dragonlauncher.base.Constants.Logging.BACKUP_TAG
+import org.elnix.dragonlauncher.ktx.getFilePathFromUri
+import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.common.utils.DateUtils.formatDateTime
 import org.elnix.dragonlauncher.common.utils.DateUtils.today
 import org.elnix.dragonlauncher.i18n.R
@@ -43,8 +43,8 @@ import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.settings.SettingsBackupManager
 import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.settings.bases.DatastoreProvider
-import org.elnix.dragonlauncher.settings.stores.BackupSettingsStore
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
@@ -100,7 +100,7 @@ fun BackupTab(
     val autoBackupUri: Uri? = autoBackupUriString.takeIf { it.isNotEmpty() }?.toUri()
 
     val backupPath: String? = autoBackupUri?.let { uri ->
-        getFilePathFromUri(ctx, uri)
+        ctx.getFilePathFromUri(uri)
     }
 
     var selectedStoresForExport by remember { mutableStateOf(setOf<DatastoreProvider>()) }

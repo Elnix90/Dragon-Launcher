@@ -2,9 +2,6 @@ package org.elnix.dragonlauncher.ui
 
 import android.annotation.SuppressLint
 import android.content.ComponentName
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -16,8 +13,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -32,14 +27,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -51,61 +43,46 @@ import androidx.navigation3.runtime.metadata
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
-import org.elnix.dragonlauncher.common.messyfolder.Constants.PackageNames.SHIZUKU_PACKAGE_NAME
-import org.elnix.dragonlauncher.common.messyfolder.Constants.URLs.URL_SHIZUKU_SITE
-import org.elnix.dragonlauncher.common.messyfolder.SecurityHelper
-import org.elnix.dragonlauncher.common.messyfolder.findFragmentActivity
-import org.elnix.dragonlauncher.common.messyfolder.openUrl
-import org.elnix.dragonlauncher.common.messyfolder.showToast
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.common.navigaton.isInIgnoredReturnScreen
-import org.elnix.dragonlauncher.common.navigaton.isInTransparentScreen
-import org.elnix.dragonlauncher.common.serializables.Widget
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
-import org.elnix.dragonlauncher.common.serializables.Point
-import org.elnix.dragonlauncher.common.serializables.Point.Companion.dummySwipePoint
-import org.elnix.dragonlauncher.common.utils.PermissionsUtils.hasUriReadWritePermission
-import org.elnix.dragonlauncher.common.utils.PermissionsUtils.isAppInstalled
-import org.elnix.dragonlauncher.common.utils.rememberIsDefaultLauncher
-import org.elnix.dragonlauncher.enumsui.other.ReminderMode
+import org.elnix.dragonlauncher.base.Constants.PackageNames.SHIZUKU_PACKAGE_NAME
+import org.elnix.dragonlauncher.base.Constants.URLs.URL_SHIZUKU_SITE
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
+import org.elnix.dragonlauncher.base.model.serializables.Profile
+import org.elnix.dragonlauncher.base.model.serializables.Widget
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.navigaton.isInIgnoredReturnScreen
+import org.elnix.dragonlauncher.base.navigaton.isInTransparentScreen
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.logging.APP_LAUNCH_TAG
+import org.elnix.dragonlauncher.ktx.findFragmentActivity
+import org.elnix.dragonlauncher.ktx.openUrl
+import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.logging.DRAWER_TAG
 import org.elnix.dragonlauncher.logging.SHIZUKU_TAG
 import org.elnix.dragonlauncher.logging.TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.logging.logW
+import org.elnix.dragonlauncher.models.AppLaunchException
+import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel
 import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.models.LockScreenViewModel
-import org.elnix.dragonlauncher.models.ProfilesVM
+import org.elnix.dragonlauncher.models.PointSettingsViewModel
 import org.elnix.dragonlauncher.models.ShizukuViewModel
-import org.elnix.dragonlauncher.settings.stores.BackupSettingsStore
-import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
-import org.elnix.dragonlauncher.settings.stores.ColorModesSettingsStore
-import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
-import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
-import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
-import org.elnix.dragonlauncher.settings.stores.WellbeingSettingsStore
-import org.elnix.dragonlauncher.ui.actions.AppLaunchException
-import org.elnix.dragonlauncher.ui.actions.launchAppDirectly
-import org.elnix.dragonlauncher.ui.actions.launchSwipeAction
+import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
+import org.elnix.dragonlauncher.ui.actions.launchAction
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.asStateNull
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
-import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.overlays.OverlayHost
 import org.elnix.dragonlauncher.ui.components.DebugViewModel
-import org.elnix.dragonlauncher.ui.composition.LocalPoints
 import org.elnix.dragonlauncher.ui.dialogs.AdbCommandInputDialog
 import org.elnix.dragonlauncher.ui.dialogs.BackupResultDialog
 import org.elnix.dragonlauncher.ui.dialogs.FilePickerDialog
@@ -116,11 +93,10 @@ import org.elnix.dragonlauncher.ui.dialogs.ShizukuOutputDialog
 import org.elnix.dragonlauncher.ui.dialogs.ShizukuUnavailableDialog
 import org.elnix.dragonlauncher.ui.dialogs.WidgetPickerDialog
 import org.elnix.dragonlauncher.ui.drawer.AppDrawerScreen
+import org.elnix.dragonlauncher.ui.helpers.BottomBanners
 import org.elnix.dragonlauncher.ui.helpers.FpsCounterGraph
 import org.elnix.dragonlauncher.ui.helpers.LauncherSnackbarHost
 import org.elnix.dragonlauncher.ui.helpers.PrivateSpaceStateDebugDialog
-import org.elnix.dragonlauncher.ui.helpers.ReselectAutoBackupBanner
-import org.elnix.dragonlauncher.ui.helpers.SetDefaultLauncherBanner
 import org.elnix.dragonlauncher.ui.navigation.horizontalMetadata
 import org.elnix.dragonlauncher.ui.navigation.verticalMetadata
 import org.elnix.dragonlauncher.ui.settings.backup.BackupTab
@@ -147,12 +123,10 @@ import org.elnix.dragonlauncher.ui.settings.wellbeing.WellbeingTab
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceDetailScreen
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceListScreen
 import org.elnix.dragonlauncher.ui.welcome.WelcomeScreen
-import org.elnix.dragonlauncher.ui.wellbeing.AppTimerService
-import org.elnix.dragonlauncher.ui.wellbeing.DigitalPauseActivity
+import org.elnix.dragonlauncher.ui.wellbeing.DigitalPauseScreen
 import org.elnix.dragonlauncher.ui.whatsnew.ChangelogsScreen
 import org.elnix.dragonlauncher.ui.whatsnew.WhatsNewBottomSheet
 import rikka.shizuku.Shizuku
-
 
 
 @SuppressLint("LocalContextGetResourceValueCall")
@@ -161,7 +135,7 @@ fun MainAppUi(
     appLifecycleViewModel: AppLifecycleViewModel = activityViewModel(),
     appsViewModel: AppsViewModel = activityViewModel(),
     lockScreenViewModel: LockScreenViewModel = activityViewModel(),
-    profilesVM: ProfilesVM = activityViewModel(),
+    appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
     shizukuViewModel: ShizukuViewModel = activityViewModel(),
     onBindCustomWidget: (Int, ComponentName, nestId: Int) -> Unit,
     onResetWidgetSize: (id: Int, widgetId: Int) -> Unit,
@@ -174,11 +148,10 @@ fun MainAppUi(
     var showFilePicker: Point? by remember { mutableStateOf(null) }
 
 
-    var showShizukuCommandPromter by remember { mutableStateOf<SwipeAction.RunAdbCommand?>(null) }
+    var showShizukuCommandPromter by remember { mutableStateOf<Action.RunAdbCommand?>(null) }
     val showShizukuUnavailableDialog by shizukuViewModel.showUnavailable.collectAsState()
     val hasShizukuPermission by shizukuViewModel.shizukuPermissionState().collectAsState()
-    val isShizukuInstalled by retain { mutableStateOf(ctx.isAppInstalled(SHIZUKU_PACKAGE_NAME)) }
-
+    val isShizukuInstalled by appsViewModel.isAppInstalled(SHIZUKU_PACKAGE_NAME).collectAsState(false)
 
     val autoShowKeyboardOnDrawer by DrawerSettingsStore.autoShowKeyboardOnDrawer.asState()
 
@@ -218,6 +191,7 @@ fun MainAppUi(
         derivedStateOf { backStack.lastOrNull() ?: NavigationRoute.Main }
     }
 
+    val securityService = lockScreenViewModel.securityService
     val isLocked by lockScreenViewModel.isLocked.collectAsState()
     val screenToUnlock by lockScreenViewModel.screenToUnlock.collectAsState()
     val lockMethod by lockScreenViewModel.lockMethod.collectAsState()
@@ -228,96 +202,91 @@ fun MainAppUi(
     }
 
 
-    /*  ─────────────  Wellbeing Settings  ─────────────  */ // TODO move this shit into a viewmodel
-    val socialMediaPauseEnabled by WellbeingSettingsStore.socialMediaPauseEnabled.asState()
-    val guiltModeEnabled by WellbeingSettingsStore.guiltModeEnabled.asState()
-    val pauseDuration by WellbeingSettingsStore.pauseDurationSeconds.asState()
-    val pausedApps by WellbeingSettingsStore.pausedApps.asState()
-    val reminderEnabled by WellbeingSettingsStore.reminderEnabled.asState()
-    val reminderInterval by WellbeingSettingsStore.reminderIntervalMinutes.asState()
-    val reminderMode by WellbeingSettingsStore.reminderMode.asState()
-    val returnToLauncherEnabled by WellbeingSettingsStore.returnToLauncherEnabled.asState()
+//    val socialMediaPauseEnabled by WellbeingSettingsStore.socialMediaPauseEnabled.asState()
+//    val guiltModeEnabled by WellbeingSettingsStore.guiltModeEnabled.asState()
+//    val pauseDuration by WellbeingSettingsStore.pauseDurationSeconds.asState()
+//    val pausedApps by WellbeingSettingsStore.pausedApps.asState()
+//    val reminderEnabled by WellbeingSettingsStore.reminderEnabled.asState()
+//    val reminderInterval by WellbeingSettingsStore.reminderIntervalMinutes.asState()
+//    val reminderMode by WellbeingSettingsStore.reminderMode.asState()
+//    val returnToLauncherEnabled by WellbeingSettingsStore.returnToLauncherEnabled.asState()
 
-    /* ───────────── Store pending package to launch after pause ───────────── */
-    var pendingPackageToLaunch by remember { mutableStateOf<String?>(null) }
-    var pendingUserIdToLaunch by remember { mutableStateOf<Int?>(null) }
-    var pendingAppName by remember { mutableStateOf<String?>(null) }
-
-    val digitalPauseLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (pendingPackageToLaunch != null) {
-            val packageName = pendingPackageToLaunch!!
-
-            logD(APP_LAUNCH_TAG) { "result: $result" }
-
-            if (result.resultCode == DigitalPauseActivity.RESULT_PROCEED) {
-                try {
-                    // Start reminder-only timer if enabled (no time limit)
-                    if (reminderEnabled) {
-                        AppTimerService.start(
-                            ctx = ctx,
-                            packageName = packageName,
-                            appName = pendingAppName ?: packageName,
-                            reminderEnabled = true,
-                            reminderIntervalMinutes = reminderInterval,
-                            reminderMode = reminderMode
-                        )
-                    }
-
-                    launchAppDirectly(
-                        appsViewModel,
-                        ctx,
-                        packageName,
-                        pendingUserIdToLaunch!!
-                    )
-                } catch (e: Exception) {
-                    logE(TAG, e) { "Failed to launch after pause" }
-                }
-            } else if (result.resultCode == DigitalPauseActivity.RESULT_PROCEED_WITH_TIMER) {
-                try {
-                    val data = result.data
-                    val timeLimitMin =
-                        data?.getIntExtra(DigitalPauseActivity.RESULT_EXTRA_TIME_LIMIT, 10) ?: 10
-                    val hasReminder =
-                        data?.getBooleanExtra(DigitalPauseActivity.EXTRA_REMINDER_ENABLED, false)
-                            ?: false
-                    val remInterval =
-                        data?.getIntExtra(DigitalPauseActivity.EXTRA_REMINDER_INTERVAL, 5) ?: 5
-                    val remMode = try {
-                        data?.getStringExtra(DigitalPauseActivity.EXTRA_REMINDER_MODE)?.let { ReminderMode.valueOf(it) } ?: ReminderMode.Overlay
-                    } catch (_: Exception) {
-                        null
-                    } ?: ReminderMode.Overlay
-
-                    AppTimerService.start(
-                        ctx = ctx,
-                        packageName = packageName,
-                        appName = pendingAppName ?: packageName,
-                        reminderEnabled = hasReminder,
-                        reminderIntervalMinutes = remInterval,
-                        reminderMode = remMode,
-                        timeLimitEnabled = true,
-                        timeLimitMinutes = timeLimitMin
-                    )
-
-                    launchAppDirectly(
-                        appsViewModel,
-                        ctx,
-                        packageName,
-                        pendingUserIdToLaunch!!
-                    )
-                } catch (e: Exception) {
-                    logE(APP_LAUNCH_TAG, e) {
-                        "Failed to launch after pause with timer"
-                    }
-                }
-            }
-        }
-        pendingUserIdToLaunch = null
-        pendingPackageToLaunch = null
-        pendingAppName = null
-    }
+//
+//    val digitalPauseLauncher = rememberLauncherForActivityResult(
+//        ActivityResultContracts.StartActivityForResult()
+//    ) { result ->
+//        if (pendingPackageToLaunch != null) {
+//            val packageName = pendingPackageToLaunch!!
+//
+//            logD(APP_LAUNCH_TAG) { "result: $result" }
+//
+//            if (result.resultCode == DigitalPauseActivity.RESULT_PROCEED) {
+//                try {
+//                    // Start reminder-only timer if enabled (no time limit)
+//                    if (reminderEnabled) {
+//                        AppTimerService.start(
+//                            ctx = ctx,
+//                            packageName = packageName,
+//                            appName = pendingAppName ?: packageName,
+//                            reminderEnabled = true,
+//                            reminderIntervalMinutes = reminderInterval,
+//                            reminderMode = reminderMode
+//                        )
+//                    }
+//
+//                    launchAppDirectly(
+//                        appsViewModel,
+//                        ctx,
+//                        packageName,
+//                        pendingUserIdToLaunch!!
+//                    )
+//                } catch (e: Exception) {
+//                    logE(TAG, e) { "Failed to launch after pause" }
+//                }
+//            } else if (result.resultCode == DigitalPauseActivity.RESULT_PROCEED_WITH_TIMER) {
+//                try {
+//                    val data = result.data
+//                    val timeLimitMin =
+//                        data?.getIntExtra(DigitalPauseActivity.RESULT_EXTRA_TIME_LIMIT, 10) ?: 10
+//                    val hasReminder =
+//                        data?.getBooleanExtra(DigitalPauseActivity.EXTRA_REMINDER_ENABLED, false)
+//                            ?: false
+//                    val remInterval =
+//                        data?.getIntExtra(DigitalPauseActivity.EXTRA_REMINDER_INTERVAL, 5) ?: 5
+//                    val remMode = try {
+//                        data?.getStringExtra(DigitalPauseActivity.EXTRA_REMINDER_MODE)?.let { ReminderMode.valueOf(it) } ?: ReminderMode.Overlay
+//                    } catch (_: Exception) {
+//                        null
+//                    } ?: ReminderMode.Overlay
+//
+//                    AppTimerService.start(
+//                        ctx = ctx,
+//                        packageName = packageName,
+//                        appName = pendingAppName ?: packageName,
+//                        reminderEnabled = hasReminder,
+//                        reminderIntervalMinutes = remInterval,
+//                        reminderMode = remMode,
+//                        timeLimitEnabled = true,
+//                        timeLimitMinutes = timeLimitMin
+//                    )
+//
+//                    launchAppDirectly(
+//                        appsViewModel,
+//                        ctx,
+//                        packageName,
+//                        pendingUserIdToLaunch!!
+//                    )
+//                } catch (e: Exception) {
+//                    logE(APP_LAUNCH_TAG, e) {
+//                        "Failed to launch after pause with timer"
+//                    }
+//                }
+//            }
+//        }
+//        pendingUserIdToLaunch = null
+//        pendingPackageToLaunch = null
+//        pendingAppName = null
+//    }
 
 
     @SuppressLint("LocalContextGetResourceValueCall")
@@ -384,7 +353,7 @@ fun MainAppUi(
     }
 
 
-    fun runShisukuCommandNotEmpty(command: SwipeAction.RunAdbCommand) {
+    fun runShisukuCommandNotEmpty(command: Action.RunAdbCommand) {
         if (!Shizuku.pingBinder()) {
             logD(SHIZUKU_TAG) { "Shizuku is not running, opening it..." }
             shizukuViewModel.setUnavailable()
@@ -405,66 +374,64 @@ fun MainAppUi(
     }
 
     fun launchAction(point: Point) {
-        // Store package for potential pause callback
         val action = point.action
 
-        // Store package for potential pause callback
-        if (action is SwipeAction.LaunchApp) {
-            pendingPackageToLaunch = action.packageName
-            pendingUserIdToLaunch = action.userId ?: 0
-            pendingAppName = point.customName ?: try {
-                ctx.packageManager.getApplicationLabel(
-                    ctx.packageManager.getApplicationInfo(action.packageName, 0)
-                ).toString()
-            } catch (_: Exception) {
-                action.packageName
-            }
-        }
+//        if (action is Action.LaunchApp) {
+//            pendingPackageToLaunch = action.packageName
+//            pendingUserIdToLaunch = action.userId ?: 0
+//            pendingAppName = point.customName ?: try {
+//                ctx.packageManager.getApplicationLabel(
+//                    ctx.packageManager.getApplicationInfo(action.packageName, 0)
+//                ).toString()
+//            } catch (_: Exception) {
+//                action.packageName
+//            }
+//        }
 
         appLifecycleViewModel.blockHomeActionsTemporarily()
 
         try {
-            launchSwipeAction(
+            launchAction(
                 ctx = ctx,
-                appsViewModel = appsViewModel,
+                appLaunchViewModel = appLaunchViewModel,
                 action = action,
+//                pausedApps = pausedApps,
+//                socialMediaPauseEnabled = socialMediaPauseEnabled,
+//                guiltModeEnabled = guiltModeEnabled,
+//                pauseDuration = pauseDuration,
+//                reminderEnabled = reminderEnabled,
+//                reminderIntervalMinutes = reminderInterval,
+//                reminderMode = reminderMode,
+//                returnToLauncherEnabled = returnToLauncherEnabled,
+//                appName = pendingAppName ?: "",
+//                onOpenPrivateSpaceApp = { action ->
+//                    if (action !is Action.LaunchApp) return@launchAction
+//
+//                    if (privateSpaceState.value.isLocked) {
+//                        profilesViewModel.onUnlockPrivateSpace()
+//                    }
+//
+//                    scope.launch {
+//
+//                        logD(APP_LAUNCH_TAG) { "Waiting for private space to unlock before launch" }
+//
+//                        val unlocked = withTimeoutOrNull(10_000L) {
+//                            privateSpaceState
+//                                .filter { !it.isLocked }
+//                                .first()
+//                        }
+//
+//                        if (unlocked != null) {
+//                            logD(APP_LAUNCH_TAG) { "Private space unlocked, launching" }
+//                            launchAction(dummySwipePoint(action.copy(isPrivateSpace = false)))
+//                        } else {
+//                            logW(APP_LAUNCH_TAG) { "Timeout expired for private space unlock" }
+//                        }
+//                    }
+//                },
                 useAccessibilityInsteadOfContextToExpandActionPanel = useAccessibilityInsteadOfContextToExpandActionPanel,
-                pausedApps = pausedApps,
-                socialMediaPauseEnabled = socialMediaPauseEnabled,
-                guiltModeEnabled = guiltModeEnabled,
-                pauseDuration = pauseDuration,
-                reminderEnabled = reminderEnabled,
-                reminderIntervalMinutes = reminderInterval,
-                reminderMode = reminderMode,
-                returnToLauncherEnabled = returnToLauncherEnabled,
-                appName = pendingAppName ?: "",
-                digitalPauseLauncher = digitalPauseLauncher,
-                onOpenPrivateSpaceApp = { action ->
-                    if (action !is SwipeAction.LaunchApp) return@launchSwipeAction
-
-                    if (privateSpaceState.value.isLocked) {
-                        profilesVM.onUnlockPrivateSpace()
-                    }
-
-                    scope.launch {
-
-                        logD(APP_LAUNCH_TAG) { "Waiting for private space to unlock before launch" }
-
-                        val unlocked = withTimeoutOrNull(10_000L) {
-                            privateSpaceState
-                                .filter { !it.isLocked }
-                                .first()
-                        }
-
-                        if (unlocked != null) {
-                            logD(APP_LAUNCH_TAG) { "Private space unlocked, launching" }
-                            launchAction(dummySwipePoint(action.copy(isPrivateSpace = false)))
-                        } else {
-                            logW(APP_LAUNCH_TAG) { "Timeout expired for private space unlock" }
-                        }
-                    }
-                },
-                onReloadApps = { scope.launch { appsViewModel.reloadApps() } },
+//                digitalPauseLauncher = digitalPauseLauncher,
+//                onReloadApps = { scope.launch { TODO()/*appsViewModel.reloadApps() */} },
                 onReselectFile = { showFilePicker = point },
                 onAppSettings = backStack::navigate,
                 onAppDrawer = { workspaceId ->
@@ -472,17 +439,13 @@ fun MainAppUi(
                         appsViewModel.selectWorkspace(workspaceId)
                     }
                     backStack.navigate(NavigationRoute.Drawer)
-                },
-                onShizukuCommand = { command ->
-                    logD(SHIZUKU_TAG) { "Got shizuku command: $command" }
-
-                    if (command.command.trim().isEmpty()) {
-                        showShizukuCommandPromter = command
-                    }
-
-                    runShisukuCommandNotEmpty(command)
                 }
-            )
+            ) { command ->
+                if (command.command.trim().isEmpty()) {
+                    showShizukuCommandPromter = command
+                }
+                runShisukuCommandNotEmpty(command)
+            }
         } catch (e: AppLaunchException) {
             logE(TAG, e) { "Failed to launch action" }
         } catch (e: Exception) {
@@ -490,7 +453,7 @@ fun MainAppUi(
         }
     }
 
-    fun launchAction(action: SwipeAction) {
+    fun launchAction(action: Action) {
         launchAction(
             dummySwipePoint(action)
         )
@@ -639,7 +602,7 @@ fun MainAppUi(
                             WelcomeScreen(
                                 onEnterSettings = {
                                     popBackMainScreen()
-                                    backStack.navigate(NavigationRoute.PointsSettings)
+                                    backStack.navigate(NavigationRoute.PointsSettings(0))
                                 },
                                 onEnterApp = ::popBackMainScreen
                             )
@@ -730,6 +693,19 @@ fun MainAppUi(
                                 onLaunchAction = ::launchAction
                             )
                         }
+
+//                        entry<NavigationRoute.DigitalPause>(metadata = horizontalMetadata) { key ->
+//
+//                            val application by appsViewModel
+//                                .appsRepository
+//                                .findOne(key.pendingPackage, key.pendingProfile.userHandle)
+//                                .collectAsState(null)
+//
+//
+//                            application?.let {
+//
+//                            }
+//                        }
                     }
                 )
             }
@@ -737,25 +713,15 @@ fun MainAppUi(
 
         if (showFilePicker != null) {
             val currentPoint = showFilePicker!!
-            val points = LocalPoints.current
+            val pointSettingsViewModel: PointSettingsViewModel = activityViewModel()
 
             FilePickerDialog(
                 onDismiss = { showFilePicker = null },
                 onFileSelected = { newAction ->
-
-                    // Build the updated point
                     val updatedPoint = currentPoint.copy(action = newAction)
-
-                    // Replace only this point
-                    val finalList = points.map { p ->
-                        if (p.id == currentPoint.id) updatedPoint else p
-                    }
-
-                    scope.launch {
-                        SwipeSettingsStore.savePoints(ctx, finalList)
-                    }
-
+                    pointSettingsViewModel.pointsService.editPoint(currentPoint.id, updatedPoint)
                     showFilePicker = null
+                    launchAction(updatedPoint)
                 }
             )
         }
@@ -788,11 +754,37 @@ fun MainAppUi(
                     shizukuViewModel.dismissUnavailableDialog()
                 },
                 onConfirm = {
-                    if (isShizukuInstalled) launchAction(SwipeAction.LaunchApp(SHIZUKU_PACKAGE_NAME, false, 0))
+                    if (isShizukuInstalled) launchAction(Action.LaunchApp(SHIZUKU_PACKAGE_NAME, Profile.dummy()))
                     else ctx.openUrl(
                         url = URL_SHIZUKU_SITE
                     )
                 }
+            )
+        }
+
+        val pendingAppToLaunch by appLaunchViewModel.pendingAppLaunch.collectAsState(null)
+
+        if (pendingAppToLaunch != null) {
+            val pendingApp = pendingAppToLaunch!!
+            DigitalPauseScreen(
+                application = pendingApp,
+//                                    onProceedWithTimer = { timeLimitMinutes ->
+//                                        val data = Intent().apply {
+//                                            putExtra(RESULT_EXTRA_TIME_LIMIT, timeLimitMinutes)
+//                                            putExtra(EXTRA_REMINDER_ENABLED, reminderEnabled)
+//                                            putExtra(EXTRA_REMINDER_INTERVAL, reminderInterval)
+//                                            putExtra(EXTRA_REMINDER_MODE, reminderMode)
+//                                        }
+//                                        setResult(RESULT_PROCEED_WITH_TIMER, data)
+//                                        finish()
+//                                    },
+                onProceed = {
+                    appLaunchViewModel.onAppTimerServiceStarted()
+                },
+                onProceedWithTimer = {
+
+                },
+                onCancel = backStack::navigateBack
             )
         }
 
@@ -804,12 +796,6 @@ fun MainAppUi(
         GoogleLockingWarningDialog()
         PrivateSpaceStateDebugDialog()
         DebugViewModel()
-
-
-//        DragonColumnGroup {
-//            Text("isLocked: $isLocked; screenToUnlock: $screenToUnlock")
-//        }
-
     }
 
     if (screenToUnlock != null && lockMethod == LockMethod.PIN) {
@@ -828,8 +814,8 @@ fun MainAppUi(
     if (screenToUnlock != null && lockMethod == LockMethod.DEVICE_UNLOCK) {
         LaunchedEffect(screenToUnlock) {
             val activity = ctx.findFragmentActivity()
-            if (activity != null && SecurityHelper.isDeviceUnlockAvailable(ctx)) {
-                SecurityHelper.showDeviceUnlockPrompt(
+            if (activity != null && securityService.isDeviceUnlockAvailable(ctx)) {
+                securityService.showDeviceUnlockPrompt(
                     activity = activity,
                     onSuccess = {
                         lockScreenViewModel.unlock()
@@ -850,60 +836,6 @@ fun MainAppUi(
     }
 }
 
-@Composable
-private fun BottomBanners(currentRoute: NavKey) {
-    val ctx = LocalContext.current
-
-    val showSetDefaultLauncherBanner by PrivateSettingsStore.showSetDefaultLauncherBanner.asStateNull()
-    val isDefaultLauncher = rememberIsDefaultLauncher()
-
-    val autoBackupEnabled by BackupSettingsStore.autoBackupEnabled.asState()
-    val autoBackupUriString by BackupSettingsStore.autoBackupUri.asStateNull()
-    val autoBackupUri = autoBackupUriString?.toUri()
-
-
-    val showSetAsDefaultBanner = (showSetDefaultLauncherBanner == true) &&
-            !isDefaultLauncher &&
-            currentRoute != NavigationRoute.Welcome
-
-
-    var hasAutoBackupPermission by remember {
-        mutableStateOf<Boolean?>(null)
-    }
-
-    LaunchedEffect(autoBackupUri) {
-        hasAutoBackupPermission = if (autoBackupUri == null) {
-            null
-        } else {
-            ctx.hasUriReadWritePermission(autoBackupUri)
-        }
-    }
-
-    val showReselectAutoBackupFile =
-        autoBackupEnabled &&
-                hasAutoBackupPermission == false &&
-                autoBackupUri != null &&
-                currentRoute != NavigationRoute.Welcome
-
-
-
-    if (showSetAsDefaultBanner || showReselectAutoBackupFile) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            Spacer()
-            AnimatedVisibility(showSetAsDefaultBanner) {
-                SetDefaultLauncherBanner()
-            }
-            AnimatedVisibility(showReselectAutoBackupFile) {
-                ReselectAutoBackupBanner()
-            }
-        }
-    }
-}
 
 private fun NavBackStack<NavKey>.navigateBack() {
     // Popping the only screen will crash so this avoids it

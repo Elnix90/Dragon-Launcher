@@ -1,11 +1,12 @@
 package org.elnix.dragonlauncher.common.utils
+
 import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import kotlinx.coroutines.delay
-import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedback
+import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
 
 object HapticUtils {
     /**

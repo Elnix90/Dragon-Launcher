@@ -1,9 +1,9 @@
 package org.elnix.dragonlauncher.icons.providers
 
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
-import org.elnix.dragonlauncher.common.search.Application
+import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.serializables.CustomIconPackIcon
 import org.elnix.dragonlauncher.database.entities.IconEntity
-import org.elnix.dragonlauncher.common.serializables.CustomIconPackIcon
 import org.elnix.dragonlauncher.icons.IconPackAppIcon
 import org.elnix.dragonlauncher.icons.IconPackManager
 

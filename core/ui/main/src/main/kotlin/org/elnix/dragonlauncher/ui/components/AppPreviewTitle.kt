@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Text
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -29,16 +31,16 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.common.messyfolder.resolveShape
-import org.elnix.dragonlauncher.common.serializables.Point
-import org.elnix.dragonlauncher.common.serializables.applyColorAction
+import org.elnix.dragonlauncher.base.resolveShape
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.applyColorAction
+.Companion.actionColor
 import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.ui.actions.actionColor
 import org.elnix.dragonlauncher.ui.actions.actionLabel
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
-import org.elnix.dragonlauncher.ui.composition.LocalPointIconsCache
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
 fun AppPreviewTitle(
@@ -95,7 +97,7 @@ fun AppPreviewTitle(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 val colorAction =
-                    actionColor(action, extraColors, point.customActionColor?.let { Color(it) })
+                    action.actionColor(extraColors, point.customActionColor?.let { Color(it) })
 
 
                 if (showIcon) {
@@ -111,7 +113,7 @@ fun AppPreviewTitle(
                                 else null,
                             modifier = Modifier
                                 .size(iconSize.dp)
-                                .clip(shape.resolveShape())
+                                .clip(shape.resolveShape().toShape())
                         )
                     }
                 }

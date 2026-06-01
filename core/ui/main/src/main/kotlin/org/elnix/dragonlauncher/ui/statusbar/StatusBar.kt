@@ -53,19 +53,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.messyfolder.Constants
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.STATUS_BAR_TAG
+import org.elnix.dragonlauncher.base.Constants
+import org.elnix.dragonlauncher.base.Constants.Logging.STATUS_BAR_TAG
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
 import org.elnix.dragonlauncher.common.serializables.StatusBarJson
 import org.elnix.dragonlauncher.common.serializables.StatusBar
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
+
 import org.elnix.dragonlauncher.common.serializables.allStatusBars
 import org.elnix.dragonlauncher.common.utils.DateUtils.isValidDateFormat
 import org.elnix.dragonlauncher.common.utils.DateUtils.isValidTimeFormat
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.settings.stores.StatusBarJsonSettingsStore
-import org.elnix.dragonlauncher.settings.stores.StatusBarSettingsStore
+import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.asState
@@ -105,7 +105,7 @@ enum class TimeFormat(val pattern: String, val displayName: String) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun StatusBar(
-    launchAction: ((SwipeAction) -> Unit)?,
+    launchAction: ((Action) -> Unit)?,
 ) {
     val view = LocalView.current
     val density = LocalDensity.current
@@ -707,7 +707,7 @@ fun EditStatusBar() {
 @Composable
 fun StatusBarItem(
     element: StatusBar,
-    launchAction: ((SwipeAction) -> Unit)? = null,
+    launchAction: ((Action) -> Unit)? = null,
     previewMode: Boolean = false
 ) {
     when (element) {

@@ -44,7 +44,6 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.material3)
 
-    runtimeOnly(libs.android.image.cropper)
     runtimeOnly(libs.androidx.lifecycle.process)
 
     api(libs.androidx.compose.animation)

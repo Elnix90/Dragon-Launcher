@@ -40,5 +40,6 @@ dependencies {
     ksp(libs.hilt.compiler)
 
     implementation(project(":core:logging"))
-    implementation(project(":core:common"))
+    implementation(project(":core:base"))
+    implementation(project(":core:i18n"))
 }

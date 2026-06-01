@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.Text
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -26,22 +28,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SWIPE_TAG
-import org.elnix.dragonlauncher.common.messyfolder.circles.computePosition
-import org.elnix.dragonlauncher.common.messyfolder.circles.scaleDragDistances
-import org.elnix.dragonlauncher.common.messyfolder.resolveShape
-import org.elnix.dragonlauncher.common.serializables.Nest
+import org.elnix.dragonlauncher.common.circles.computePosition
+import org.elnix.dragonlauncher.common.circles.scaleDragDistances
+import org.elnix.dragonlauncher.base.resolveShape
+import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedback
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
-import org.elnix.dragonlauncher.common.serializables.Point
-import org.elnix.dragonlauncher.common.serializables.Point.Companion.defaultSwipePointsValues
+
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.common.utils.HapticUtils.performCustomHaptic
+import org.elnix.dragonlauncher.logging.SWIPE_TAG
 import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.settings.stores.AngleLineSettingsStore
-import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.components.AppPreviewTitle
@@ -134,7 +137,7 @@ fun MainScreenOverlay(
         val idx = cycleActionsController.currentStageIndex
         if (idx > 0) {
             val staged = ca.getOrNull(idx - 1)?.action ?: return@let hp
-            if (staged is SwipeAction.OpenCircleNest || hp.action is SwipeAction.OpenCircleNest)
+            if (staged is Action.OpenCircleNest || hp.action is Action.OpenCircleNest)
                 hp.copy(action = staged, customIcon = null)
             else {
                 hp.copy(action = staged)
@@ -226,6 +229,8 @@ fun MainScreenOverlay(
             ?.takeIf { it != -1 }
             ?: (0..360).random()
     }
+
+    MaterialShapes.Arch.toShape()
 
     val pickedRememberShapeStart = remember(isDragging) {
         (startObject.shape ?: UiConstants.defaultStartCustomObject.shape).resolveShape()

@@ -2,16 +2,22 @@ package org.elnix.dragonlauncher.recents
 
 import android.content.Context
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.serializables.Nest
-import org.elnix.dragonlauncher.common.serializables.Point
-import org.elnix.dragonlauncher.common.serializables.Point.Companion.dummySwipePoint
-import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
+import org.elnix.dragonlauncher.base.model.serializables.Nest
+import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.NestJson
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.PointsListJson
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
+import org.elnix.dragonlauncher.settings.stores.array.NestsSettingsStore
+import org.elnix.dragonlauncher.settings.stores.array.PointsSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 
 interface PointsService {
     val defaultPoint: Flow<Point>
@@ -26,6 +32,7 @@ interface PointsService {
     fun editPoint(id: String, editedPoint: Point): Boolean
     fun editNest(id: Int, editedNest: Nest): Boolean
     fun persist()
+    fun set(points: List<Point>, nests: List<Nest>)
 }
 
 internal class PointsServiceImpl(
@@ -44,8 +51,11 @@ internal class PointsServiceImpl(
 
     init {
         scope.launch {
-            loadPoints()
-            loadNests()
+            async(start = CoroutineStart.ATOMIC) {
+                loadPoints()
+                loadNests()
+                loadDefaultPoint()
+            }.await()
         }
     }
 
@@ -93,16 +103,33 @@ internal class PointsServiceImpl(
 
     override fun persist() {
         scope.launch {
-            SwipeSettingsStore.savePoints(ctx, _points.value)
-            SwipeSettingsStore.saveNests(ctx, _nests.value)
+            val encodedPoints = PointsListJson.encode(_points.value)
+            val encodedNests = NestJson.encode(_nests.value)
+
+            PointsSettingsStore.jsonSetting.set(ctx, encodedPoints)
+            NestsSettingsStore.jsonSetting.set(ctx, encodedNests)
         }
     }
 
+    override fun set(
+        points: List<Point>,
+        nests: List<Nest>
+    ) {
+        _points.value = points
+        _nests.value = nests
+
+        persist()
+    }
+
     private suspend fun loadPoints() {
-        _points.value = SwipeSettingsStore.getPoints(ctx)
+        _points.value = PointsListJson.decode<List<Point>>(PointsSettingsStore.jsonSetting.get(ctx)) ?: emptyList()
     }
 
     private suspend fun loadNests() {
-        _nests.value = SwipeSettingsStore.getNests(ctx)
+        _nests.value = NestJson.decode<List<Nest>>(NestsSettingsStore.jsonSetting.get(ctx)) ?: emptyList()
+    }
+
+    private suspend fun loadDefaultPoint() {
+        _defaultPoint.value = SwipeMapSettingsStore.defaultPoint.get(ctx)
     }
 }

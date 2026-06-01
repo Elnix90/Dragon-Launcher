@@ -9,8 +9,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
-import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
-import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore.useCategory
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore.useCategory
 import org.elnix.dragonlauncher.ui.base.asState
 
 

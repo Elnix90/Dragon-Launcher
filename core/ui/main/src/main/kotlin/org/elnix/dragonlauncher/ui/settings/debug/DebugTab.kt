@@ -32,9 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.messyfolder.showToast
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.common.serializables.Point.Companion.dummySwipePoint
+import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
 import org.elnix.dragonlauncher.common.utils.LifecycleUtils
 import org.elnix.dragonlauncher.common.utils.PermissionsUtils.detectSystemLauncher
 import org.elnix.dragonlauncher.common.utils.VersionsUtils.getVersionCode
@@ -42,9 +42,9 @@ import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.models.InitializationViewModel
 import org.elnix.dragonlauncher.services.SystemControl
 import org.elnix.dragonlauncher.settings.allStores
-import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
@@ -81,7 +81,7 @@ fun DebugTab(
 
 
     LaunchedEffect(Unit) {
-        pendingSystemLauncher = detectSystemLauncher(ctx)
+        pendingSystemLauncher = ctx.detectSystemLauncher()
     }
 
     SettingsScaffold(
@@ -290,7 +290,7 @@ fun DebugTab(
                 ) {
                     DragonButton(
                         onClick = {
-                            pendingSystemLauncher = detectSystemLauncher(ctx)
+                            pendingSystemLauncher = ctx.detectSystemLauncher()
                         },
                         modifier = Modifier.weight(1f)
                     ) {

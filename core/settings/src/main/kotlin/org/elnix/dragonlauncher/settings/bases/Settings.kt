@@ -8,26 +8,30 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
-import org.elnix.dragonlauncher.base.ColorUtils.toHexWithAlpha
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
-import org.elnix.dragonlauncher.common.serializables.IconShape
-import org.elnix.dragonlauncher.common.serializables.IconShapeJson
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
-import org.elnix.dragonlauncher.common.serializables.SwipeJson
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.ActionJson
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
+import org.elnix.dragonlauncher.base.model.serializables.IconShape.Companion.IconShapeJson
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.PointsJson
+import org.elnix.dragonlauncher.base.util.ColorUtils.toHexWithAlpha
+import org.elnix.dragonlauncher.logging.BACKUP_TAG
 import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.stores.BaseSettingsStore
+import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
+
 
 /**
- * Factory object for creating typed [org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject] instances backed by DataStore.
+ * Factory functions for creating typed [org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject] instances backed by DataStore.
  *
- * This object provides convenient functions to create strongly-typed settings without
+ * This file provides convenient functions to create strongly-typed settings without
  * manually specifying generic parameters or creating dedicated subclasses for every type.
  *
  * Supported types include:
- * - Primitive types: [Boolean], [Int], [Long], [Float], [Double], [String], [Set<String>]
+ * - Primitive types: [Boolean], [Int], [Long], [Float], [Double], [String], [Set]
  * - Enum types: any [Enum] using its name as the stored string
- * - Complex types: [androidx.compose.ui.graphics.Color] and [org.elnix.dragonlauncher.common.serializables.SwipeAction], with proper encode/decode handling
+ * - Complex types: [androidx.compose.ui.graphics.Color] , [Point] and [Action], with proper encode/decode handling
  *
  * Each function returns a [org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject] which can be used to get/set values, reset
  * the setting, or observe changes via flows.
@@ -35,20 +39,22 @@ import org.elnix.dragonlauncher.settings.bases.stores.BaseSettingsStore
  * Example usage:
  * ```
  * val primaryColor = Settings.color(
- *     key = "primary_color",
- *     dataStoreName = dataStoreName,
- *     default = AmoledDefault.Primary
+ *     key = "primaryColor",
+ *     default = Color.Purple
  * )
  *
- * val swipeAction = Settings.swipeAction(
- *     key = "main_swipe_action",
- *     dataStoreName = dataStoreName,
- *     default = SwipeActionSerializable.OpenDragonLauncherSettings
+ * val someAction = Settings.Action(
+ *     key = "someAction",
+ *     default = Action.OpenDragonLauncherSettings
  * )
  * ```
  */
 
-fun BaseSettingsStore<*, *>.boolean(
+/**
+ * Creates Boolean [BaseSettingObject]
+ * stored in the datastore using the built-in [booleanPreferencesKey]
+ */
+fun MapSettingsStore.boolean(
     key: String,
     default: Boolean,
     onChange: (() -> Unit)? = null
@@ -63,7 +69,11 @@ fun BaseSettingsStore<*, *>.boolean(
         onChanged = onChange
     )
 
-fun BaseSettingsStore<*, *>.int(
+
+/**
+ * Creates int [BaseSettingObject]
+ */
+fun MapSettingsStore.int(
     key: String,
     default: Int,
     allowedRange: ClosedRange<Int>,
@@ -80,7 +90,7 @@ fun BaseSettingsStore<*, *>.int(
     )
 
 
-fun BaseSettingsStore<*, *>.float(
+fun MapSettingsStore.float(
     key: String,
     default: Float,
     allowedRange: ClosedRange<Float>,
@@ -96,7 +106,7 @@ fun BaseSettingsStore<*, *>.float(
         onChanged = onChange
     )
 
-fun BaseSettingsStore<*, *>.long(
+fun MapSettingsStore.long(
     key: String,
     default: Long,
     allowedRange: ClosedRange<Long>,
@@ -113,7 +123,7 @@ fun BaseSettingsStore<*, *>.long(
     )
 
 @Suppress("unused")
-fun BaseSettingsStore<*, *>.double(
+fun MapSettingsStore.double(
     key: String,
     default: Double,
     allowedRange: ClosedRange<Double>,
@@ -161,7 +171,7 @@ fun BaseSettingsStore<*, *>.string(
 //            onChanged = onChange
 //        )
 
-fun BaseSettingsStore<*, *>.stringSet(
+fun MapSettingsStore.stringSet(
     key: String,
     default: Set<String>,
     onChange: (() -> Unit)? = null
@@ -176,7 +186,7 @@ fun BaseSettingsStore<*, *>.stringSet(
         onChanged = onChange
     )
 
-fun BaseSettingsStore<*, *>.stringList(
+fun MapSettingsStore.stringList(
     key: String,
     default: List<String>,
     onChange: (() -> Unit)? = null
@@ -196,7 +206,7 @@ fun BaseSettingsStore<*, *>.stringList(
         onChanged = onChange
     )
 
-fun <E : Enum<E>> BaseSettingsStore<*, *>.enum(
+fun <E : Enum<E>> MapSettingsStore.enum(
     key: String,
     default: E,
     enumClass: Class<E>,
@@ -213,7 +223,7 @@ fun <E : Enum<E>> BaseSettingsStore<*, *>.enum(
     )
 
 @Suppress("unused")
-fun <E : Enum<E>> BaseSettingsStore<*, *>.enumList(
+fun <E : Enum<E>> MapSettingsStore.enumList(
     key: String,
     default: List<E>,
     enumClass: Class<E>,
@@ -232,7 +242,7 @@ fun <E : Enum<E>> BaseSettingsStore<*, *>.enumList(
     )
 
 
-fun BaseSettingsStore<*, *>.color(
+fun MapSettingsStore.color(
     key: String,
     default: Color,
     onChange: (() -> Unit)? = null
@@ -247,23 +257,38 @@ fun BaseSettingsStore<*, *>.color(
         onChanged = onChange
     )
 
-fun BaseSettingsStore<*, *>.swipeAction(
+fun MapSettingsStore.action(
     key: String,
-    default: SwipeAction,
+    default: Action,
     onChange: (() -> Unit)? = null
-): BaseSettingObject<SwipeAction, String> =
+): BaseSettingObject<Action, String> =
     BaseSettingObject(
         key = key,
         dataStoreName = dataStoreName,
         default = default,
         preferenceKey = stringPreferencesKey(key),
-        encode = { raw -> SwipeJson.encodeAction(raw) },
-        decode = { raw -> getSwipeActionSerializableStrict(raw, default) },
+        encode = { raw -> ActionJson.encode(raw) },
+        decode = { raw -> getActionStrict(raw, default) },
         onChanged = onChange
     )
 
 
-fun BaseSettingsStore<*, *>.shape(
+fun MapSettingsStore.point(
+    key: String,
+    default: Point,
+    onChange: (() -> Unit)? = null
+): BaseSettingObject<Point, String> =
+    BaseSettingObject(
+        key = key,
+        dataStoreName = dataStoreName,
+        default = default,
+        preferenceKey = stringPreferencesKey(key),
+        encode = { raw -> PointsJson.encode(raw) },
+        decode = { raw -> getPointStrict(raw, default) },
+        onChanged = onChange
+    )
+
+fun MapSettingsStore.shape(
     key: String,
     default: IconShape,
     onChange: (() -> Unit)? = null

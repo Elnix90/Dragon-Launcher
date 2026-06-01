@@ -49,25 +49,25 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.LOGS_TAG
-import org.elnix.dragonlauncher.common.messyfolder.showToast
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.createShareableFile
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.shareContent
 import org.elnix.dragonlauncher.common.utils.DateUtils.formatDateTime
-import org.elnix.dragonlauncher.common.utils.PermissionsUtils.detectSystemLauncher
+import org.elnix.dragonlauncher.common.utils.detectSystemLauncher
 import org.elnix.dragonlauncher.common.utils.rememberIsDefaultLauncher
 import org.elnix.dragonlauncher.common.utils.rememberVersionCode
 import org.elnix.dragonlauncher.common.utils.rememberVersionName
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.logging.LOGS_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logLevelName
 import org.elnix.dragonlauncher.models.DragonLogViewModel
 import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -106,7 +106,7 @@ fun LogsTab(
     val am = ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
     val memInfo = ActivityManager.MemoryInfo()
     am.getMemoryInfo(memInfo)
-    val currentLauncher = detectSystemLauncher(ctx)
+    val currentLauncher = ctx.detectSystemLauncher()
     val isDefault = rememberIsDefaultLauncher()
     val versionName = rememberVersionName()
     val versionCode = rememberVersionCode()

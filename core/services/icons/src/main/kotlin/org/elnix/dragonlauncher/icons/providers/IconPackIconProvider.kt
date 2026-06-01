@@ -7,7 +7,7 @@ import androidx.core.content.getSystemService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
-import org.elnix.dragonlauncher.common.search.Application
+import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.icons.IconPack
 import org.elnix.dragonlauncher.icons.IconPackManager
 

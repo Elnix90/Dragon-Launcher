@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.logging.TAG
 import org.elnix.dragonlauncher.logging.logD
+import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.shizuku.OutputLine
 import org.elnix.dragonlauncher.shizuku.ShellCommandExecutor
 import org.elnix.dragonlauncher.shizuku.ShizukuPermissionHandler
@@ -60,6 +61,6 @@ class ShizukuViewModel @Inject constructor(
     }
 
     init {
-        logD(TAG) { "created ShizukuVM ${System.identityHashCode(this)}" }
+        viewModelInitialized()
     }
 }

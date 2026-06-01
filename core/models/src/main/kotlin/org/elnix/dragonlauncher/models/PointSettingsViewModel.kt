@@ -9,18 +9,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.logging.TAG
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.settings.stores.SwipeMapSettingsStore
+import org.elnix.dragonlauncher.models.utils.viewModelInitialized
+import org.elnix.dragonlauncher.recents.PointsService
+import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import javax.inject.Inject
 
 /**
  * Point settings view model, responsible for holding different values related to the point settings screen
- * @param application
  */
 @HiltViewModel
 class PointSettingsViewModel @Inject constructor(
-    application: Application
+    application: Application,
+    val pointsService: PointsService
 ) : AndroidViewModel(application) {
 
     @SuppressLint("StaticFieldLeak")
@@ -76,6 +76,6 @@ class PointSettingsViewModel @Inject constructor(
             loadIsInDragAroundMode()
         }
 
-        logD(TAG) { "created PointsSettingdVM ${System.identityHashCode(this)}" }
+        viewModelInitialized()
     }
 }

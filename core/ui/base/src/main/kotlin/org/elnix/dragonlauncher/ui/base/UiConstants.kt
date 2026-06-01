@@ -7,9 +7,9 @@ import androidx.compose.material3.IconButtonShapes
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.serializables.CustomGlow
-import org.elnix.dragonlauncher.common.serializables.CustomObject
-import org.elnix.dragonlauncher.common.serializables.IconShape
+import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
 
 object UiConstants {
 

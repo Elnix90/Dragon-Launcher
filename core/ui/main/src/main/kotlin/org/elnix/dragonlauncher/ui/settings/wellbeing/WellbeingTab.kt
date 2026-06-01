@@ -5,7 +5,6 @@ package org.elnix.dragonlauncher.ui.settings.wellbeing
 import android.content.Intent
 import android.provider.Settings
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,32 +27,28 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.PackageNameLists.knownSocialMediaApps
-import org.elnix.dragonlauncher.common.messyfolder.resolveShape
-import org.elnix.dragonlauncher.common.serializables.AppModel
-import org.elnix.dragonlauncher.common.utils.PermissionsUtils.hasUsageStatsPermission
-import org.elnix.dragonlauncher.enumsui.other.ReminderMode
+import org.elnix.dragonlauncher.base.Constants.PackageNameLists.knownSocialMediaApps
+import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.models.ReminderMode
 import org.elnix.dragonlauncher.enumsui.toggle.WellbeingPausedAppActions
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.hasUsageStatsPermission
 import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.settings.stores.WellbeingSettingsStore
-import org.elnix.dragonlauncher.settings.stores.WellbeingSettingsStore.pausedApps
+import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore.pausedApps
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.actions.appIcon
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
-import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -64,13 +58,15 @@ import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
+import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
 fun WellbeingTab(
     onBack: () -> Unit,
-    appsViewModel: AppsViewModel = activityViewModel()
-) {
+    appsViewModel: AppsViewModel = activityViewModel(),
+
+    ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -79,7 +75,7 @@ fun WellbeingTab(
     val pauseDuration by WellbeingSettingsStore.pauseDurationSeconds.asState()
     val pausedApps by pausedApps.asState()
 
-    val allApps by appsViewModel.allApps.collectAsState()
+    val allApps by appsViewModel.allApps.collectAsState(emptyList())
 
     var showAppPicker by remember { mutableStateOf(false) }
     var showPermissionDialog by remember { mutableStateOf(false) }
@@ -125,7 +121,7 @@ fun WellbeingTab(
                         description = stringResource(R.string.guilt_mode_description),
                         enabled = true,
                     ) { newValue ->
-                        if (newValue && !hasUsageStatsPermission(ctx)) {
+                        if (newValue && !ctx.hasUsageStatsPermission()) {
                             showPermissionDialog = true
                         } else {
                             scope.launch {
@@ -372,11 +368,9 @@ fun WellbeingTab(
 
 @Composable
 private fun PausedAppItem(
-    app: AppModel,
+    app: Application,
     onRemove: () -> Unit
 ) {
-    val iconShape = LocalIconShape.current
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -392,36 +386,19 @@ private fun PausedAppItem(
             modifier = Modifier.weight(1f)
         ) {
 
-            Image(
-                painter = appIcon(app),
-                contentDescription = app.name,
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(iconShape.resolveShape()),
-                contentScale = ContentScale.Fit
+            AppIcon(app)
+
+            TextWithDescription(
+                text = app.label,
+                description = app.packageName
             )
-
-            Column {
-                Text(
-                    text = app.name,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium
-                )
-                Text(
-                    text = app.packageName,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
-                    fontSize = 10.sp,
-                    maxLines = 1
-                )
-            }
         }
-
-        DragonIconButton(
-            onClick = onRemove,
-            icon = R.drawable.close,
-            contentDescription = stringResource(R.string.remove),
-            colors = AppObjectsColors.cancelIconButtonColors()
-        )
     }
+
+    DragonIconButton(
+        onClick = onRemove,
+        icon = R.drawable.close,
+        contentDescription = stringResource(R.string.remove),
+        colors = AppObjectsColors.cancelIconButtonColors()
+    )
 }

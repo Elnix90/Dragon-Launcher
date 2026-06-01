@@ -8,8 +8,8 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.CONTEXT_TAG
-import org.elnix.dragonlauncher.common.messyfolder.showToast
+import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.logging.CONTEXT_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logW

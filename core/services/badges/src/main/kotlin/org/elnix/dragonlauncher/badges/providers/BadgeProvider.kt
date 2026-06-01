@@ -2,7 +2,7 @@ package org.elnix.dragonlauncher.badges.providers
 
 import kotlinx.coroutines.flow.Flow
 import org.elnix.dragonlauncher.badges.Badge
-import org.elnix.dragonlauncher.common.search.Application
+import org.elnix.dragonlauncher.base.model.models.Application
 
 interface BadgeProvider {
     /**

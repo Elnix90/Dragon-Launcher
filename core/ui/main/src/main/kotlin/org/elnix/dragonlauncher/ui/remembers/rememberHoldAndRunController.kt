@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.delay
-import org.elnix.dragonlauncher.common.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Point
 
 /*  ─────────────  Hold & Run public state  ─────────────  */
 

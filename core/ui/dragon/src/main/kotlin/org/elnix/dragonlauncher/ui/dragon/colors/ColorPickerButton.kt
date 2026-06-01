@@ -25,16 +25,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
-import org.elnix.dragonlauncher.base.ColorUtils.randomColor
-import org.elnix.dragonlauncher.base.ColorUtils.toHexWithAlpha
+import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
+import org.elnix.dragonlauncher.base.util.ColorUtils.randomColor
+import org.elnix.dragonlauncher.base.util.ColorUtils.toHexWithAlpha
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.COPY
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.PASTE
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.RANDOM
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.RESET
-import org.elnix.dragonlauncher.settings.stores.ColorModesSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
 
 

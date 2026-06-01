@@ -15,9 +15,9 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayerJson
-import org.elnix.dragonlauncher.settings.stores.StatusBarJsonSettingsStore
-import org.elnix.dragonlauncher.settings.stores.StatusBarSettingsStore
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow

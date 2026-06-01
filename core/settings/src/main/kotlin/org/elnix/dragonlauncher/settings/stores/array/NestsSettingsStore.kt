@@ -1,0 +1,6 @@
+package org.elnix.dragonlauncher.settings.stores.array
+
+import org.elnix.dragonlauncher.settings.DataStoreName
+import org.elnix.dragonlauncher.settings.bases.stores.JsonArraySettingsStore
+
+object NestsSettingsStore : JsonArraySettingsStore(DataStoreName.NESTS)

@@ -2,125 +2,94 @@ package org.elnix.dragonlauncher.ui.actions
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.LauncherApps
 import android.os.Build
 import android.os.Process
-import android.os.UserManager
-import androidx.activity.ComponentActivity
-import androidx.activity.result.ActivityResultLauncher
 import androidx.core.net.toUri
-import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.APP_LAUNCH_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
-import org.elnix.dragonlauncher.common.messyfolder.expandQuickActionsDrawer
-import org.elnix.dragonlauncher.common.messyfolder.launchShortcut
-import org.elnix.dragonlauncher.common.messyfolder.showToast
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.getMobileDataStatus
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isBluetoothEnabled
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isWifiEnabled
-import org.elnix.dragonlauncher.common.utils.LifecycleUtils.closeApp
-import org.elnix.dragonlauncher.common.utils.PermissionsUtils.hasUriReadPermission
-import org.elnix.dragonlauncher.enumsui.other.ReminderMode
-import org.elnix.dragonlauncher.logging.logD
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.expandQuickActionsDrawer
+import org.elnix.dragonlauncher.ktx.hasUriReadPermission
+import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.logging.TAG
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.services.SystemControl
-import org.elnix.dragonlauncher.ui.wellbeing.DigitalPauseActivity
 
 
-/**
- * Exception for app launch failures
- */
-class AppLaunchException(message: String, cause: Throwable? = null) : Exception(message, cause)
-
-
-fun launchSwipeAction(
+internal fun launchAction(
     ctx: Context,
-    appsViewModel: AppsViewModel,
-    action: SwipeAction?,
+    appLaunchViewModel: AppLaunchViewModel,
+    action: Action,
     useAccessibilityInsteadOfContextToExpandActionPanel: Boolean = true,
-    pausedApps: Set<String> = emptySet(),
-    socialMediaPauseEnabled: Boolean = false,
-    guiltModeEnabled: Boolean = false,
-    pauseDuration: Int = 10,
-    reminderEnabled: Boolean = false,
-    reminderIntervalMinutes: Int = 5,
-    reminderMode: ReminderMode = ReminderMode.Overlay,
-    returnToLauncherEnabled: Boolean = false,
-    appName: String = "",
-    onOpenPrivateSpaceApp: (SwipeAction) -> Unit,
-    digitalPauseLauncher: ActivityResultLauncher<Intent>,
-    onReloadApps: () -> Unit,
     onReselectFile: () -> Unit,
     onAppSettings: (NavigationRoute) -> Unit,
     onAppDrawer: (workspaceId: String?) -> Unit,
-    onShizukuCommand: (SwipeAction.RunAdbCommand) -> Unit
+    onShizukuCommand: (Action.RunAdbCommand) -> Unit
 ) {
-    if (action == null) return
-
     when (action) {
 
-        is SwipeAction.LaunchApp -> {
-
-            try {
-
-                logD(APP_LAUNCH_TAG) { "Launching action: $action" }
-
-                /*  ─────────────  1. Private Space Check ─────────────  */
-                if (action.isPrivateSpace) {
-                    onOpenPrivateSpaceApp(action)
-                    return
-                }
-
-                /*  ─────────────  2. Wellbeing Pause Check  ─────────────  */
-                if (socialMediaPauseEnabled && action.packageName in pausedApps) {
-                    val intent = Intent(ctx, DigitalPauseActivity::class.java).apply {
-                        putExtra(DigitalPauseActivity.EXTRA_PACKAGE_NAME, action.packageName)
-                        putExtra(DigitalPauseActivity.EXTRA_APP_NAME, appName)
-                        putExtra(DigitalPauseActivity.EXTRA_PAUSE_DURATION, pauseDuration)
-                        putExtra(DigitalPauseActivity.EXTRA_GUILT_MODE, guiltModeEnabled)
-                        putExtra(DigitalPauseActivity.EXTRA_REMINDER_ENABLED, reminderEnabled)
-                        putExtra(
-                            DigitalPauseActivity.EXTRA_REMINDER_INTERVAL,
-                            reminderIntervalMinutes
-                        )
-                        putExtra(DigitalPauseActivity.EXTRA_REMINDER_MODE, reminderMode)
-                        putExtra(
-                            DigitalPauseActivity.EXTRA_RETURN_TO_LAUNCHER,
-                            returnToLauncherEnabled
-                        )
-                    }
-                    digitalPauseLauncher.launch(intent)
-                    return
-                }
+        is Action.LaunchApp -> {
 
 
-                // If app has no wellbeing checks to do; it launches directly
-                launchAppDirectly(appsViewModel, ctx, action.packageName, action.userId ?: 0)
-            } catch (e: AppLaunchException) {
-                logE(APP_LAUNCH_TAG, e) { e.toString() }
-            } catch (e: Exception) {
-                logE(APP_LAUNCH_TAG, e) { e.toString() }
-                e.printStackTrace()
-            }
+            appLaunchViewModel.requestAppLaunch(action)
+//            try {
+//
+//
+//
+//                logD(APP_LAUNCH_TAG) { "Launching action: $action" }
+//
+////                /*  ─────────────  1. Private Space Check ─────────────  */
+////                if (action.isPrivateSpace) {
+////                    onOpenPrivateSpaceApp(action)
+////                    return
+////                }
+//
+//                /*  ─────────────  2. Wellbeing Pause Check  ─────────────  */
+//                if (socialMediaPauseEnabled && action.packageName in pausedApps) {
+//                    val intent = Intent(ctx, DigitalPauseActivity::class.java).apply {
+//                        putExtra(DigitalPauseActivity.EXTRA_PACKAGE_NAME, action.packageName)
+//                        putExtra(DigitalPauseActivity.EXTRA_APP_NAME, appName)
+//                        putExtra(DigitalPauseActivity.EXTRA_PAUSE_DURATION, pauseDuration)
+//                        putExtra(DigitalPauseActivity.EXTRA_GUILT_MODE, guiltModeEnabled)
+//                        putExtra(DigitalPauseActivity.EXTRA_REMINDER_ENABLED, reminderEnabled)
+//                        putExtra(
+//                            DigitalPauseActivity.EXTRA_REMINDER_INTERVAL,
+//                            reminderIntervalMinutes
+//                        )
+//                        putExtra(DigitalPauseActivity.EXTRA_REMINDER_MODE, reminderMode)
+//                        putExtra(
+//                            DigitalPauseActivity.EXTRA_RETURN_TO_LAUNCHER,
+//                            returnToLauncherEnabled
+//                        )
+//                    }
+//                    digitalPauseLauncher.launch(intent)
+//                    return
+//                }
+//
+//
+//                // If app has no wellbeing checks to do; it launches directly
+//                launchAppDirectly(appsViewModel, ctx, action.packageName, action.userId ?: 0)
+//            } catch (e: AppLaunchException) {
+//                logE(APP_LAUNCH_TAG, e) { e.toString() }
+//            } catch (e: Exception) {
+//                logE(APP_LAUNCH_TAG, e) { e.toString() }
+//                e.printStackTrace()
+//            }
         }
 
 
-        is SwipeAction.LaunchShortcut -> {
-            if (action.packageName.isNotEmpty()) {
-                launchShortcut(ctx, action.packageName, action.shortcutId)
-            }
-        }
+        is Action.LaunchShortcut -> { appLaunchViewModel.launchShortcut(action) }
 
-
-        is SwipeAction.OpenUrl -> {
+        is Action.OpenUrl -> {
             val i = Intent(Intent.ACTION_VIEW, action.url.toUri())
             ctx.startActivity(i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         }
 
-        SwipeAction.NotificationShade -> {
+        Action.NotificationShade -> {
             if (!SystemControl.isServiceEnabled(ctx)) {
                 ctx.showToast(ctx.getString(R.string.please_enable_accessibility_services_to_use_that_feature))
                 SystemControl.openServiceSettings(ctx)
@@ -129,7 +98,7 @@ fun launchSwipeAction(
             SystemControl.expandNotifications()
         }
 
-        SwipeAction.ControlPanel -> {
+        Action.ControlPanel -> {
             if (useAccessibilityInsteadOfContextToExpandActionPanel) {
                 SystemControl.expandQuickSettings(
                     ctx
@@ -137,15 +106,15 @@ fun launchSwipeAction(
             } else ctx.expandQuickActionsDrawer()
         }
 
-        is SwipeAction.OpenAppDrawer -> {
+        is Action.OpenAppDrawer -> {
             onAppDrawer(action.workspaceId)
         }
 
-        is SwipeAction.OpenDragonLauncherSettings -> {
+        is Action.OpenDragonLauncherSettings -> {
             onAppSettings(action.route)
         }
 
-        SwipeAction.Lock -> {
+        Action.Lock -> {
             if (!SystemControl.isServiceEnabled(ctx)) {
                 ctx.showToast("Please enable accessibility settings to use that feature")
                 SystemControl.openServiceSettings(ctx)
@@ -158,7 +127,7 @@ fun launchSwipeAction(
             }
         }
 
-        is SwipeAction.OpenFile -> {
+        is Action.OpenFile -> {
             try {
                 val uri = action.uri.toUri()
 
@@ -186,8 +155,8 @@ fun launchSwipeAction(
             }
         }
 
-        SwipeAction.ReloadApps -> onReloadApps()
-        SwipeAction.OpenRecentApps -> {
+//        Action.ReloadApps -> onReloadApps()
+        Action.OpenRecentApps -> {
             if (!SystemControl.isServiceEnabled(ctx)) {
                 ctx.showToast("Please enable accessibility settings to use that feature")
                 SystemControl.openServiceSettings(ctx)
@@ -197,13 +166,13 @@ fun launchSwipeAction(
         }
 
 
-        is SwipeAction.RunAdbCommand -> {
+        is Action.RunAdbCommand -> {
             onShizukuCommand(action)
         }
 
-        is SwipeAction.ToggleBluetooth -> {
+        is Action.ToggleBluetooth -> {
             onShizukuCommand(
-                SwipeAction.RunAdbCommand(
+                Action.RunAdbCommand(
                     command = if (ctx.isBluetoothEnabled()) {
                         action.command.commandDisable
                     } else {
@@ -214,9 +183,9 @@ fun launchSwipeAction(
             )
         }
 
-        is SwipeAction.ToggleData -> {
+        is Action.ToggleData -> {
             onShizukuCommand(
-                SwipeAction.RunAdbCommand(
+                Action.RunAdbCommand(
                     command = if (ctx.getMobileDataStatus().first) {
                         action.command.commandDisable
                     } else {
@@ -227,9 +196,9 @@ fun launchSwipeAction(
             )
         }
 
-        is SwipeAction.ToggleWifi -> {
+        is Action.ToggleWifi -> {
             onShizukuCommand(
-                SwipeAction.RunAdbCommand(
+                Action.RunAdbCommand(
                     command = if (ctx.isWifiEnabled()) {
                         action.command.commandDisable
                     } else {
@@ -240,72 +209,15 @@ fun launchSwipeAction(
             )
         }
 
-        SwipeAction.KillLauncher -> {
-            closeApp(ctx as ComponentActivity)
+        Action.KillLauncher -> {
+            Process.killProcess(Process.myPid())
         }
 
-        is SwipeAction.OpenCircleNest, SwipeAction.GoParentNest -> {} // Handled by the main screen / settings
-        is SwipeAction.OpenWidget -> {} // The widget action isn't meant to be part of the choosable actions, so nothing on launch
-
-        SwipeAction.None -> {}
+        // Handled by the main screen / settings
+        // The widget action isn't meant to be part of the choosable actions, so nothing on launch
+        // None do nothing, pretty straightforward
+        is Action.OpenCircleNest, is Action.GoParentNest, is Action.OpenWidget, Action.None -> {}
     }
 }
 
-/**
- * Launch an app directly without any pause check.
- * Used both by launchSwipeAction and after the digital pause screen.
- */
-fun launchAppDirectly(
-    appsViewModel: AppsViewModel,
-    ctx: Context,
-    packageName: String,
-    userId: Int
-) {
-    val userManager = ctx.getSystemService(Context.USER_SERVICE) as UserManager
-    val launcherApps = ctx.getSystemService(LauncherApps::class.java)
-        ?: throw AppLaunchException("LauncherApps unavailable")
 
-    val allUsers = userManager.userProfiles
-
-    // 1. Find the user profile that owns the package
-    val targetUserHandle = allUsers.firstOrNull { userHandle ->
-
-        // Selects the requested user handle, that corresponds to userId
-        userHandle.hashCode() == userId
-
-
-//        launcherApps
-//            .getActivityList(null, userHandle)
-//            .any { it.applicationInfo.packageName == packageName }
-    } ?: Process.myUserHandle()
-
-    logD(APP_LAUNCH_TAG) { "pkg: $packageName; userId: $userId: handle: $targetUserHandle" }
-
-    // 2. Find the launcher activity in that profile
-    val activity = launcherApps
-        .getActivityList(null, targetUserHandle)
-        .firstOrNull { it.applicationInfo.packageName == packageName }
-        ?: throw AppLaunchException("Launcher activity not found for $packageName")
-
-    // 3. Launch correctly (profile-aware)
-    try {
-        launcherApps.startMainActivity(
-            activity.componentName,
-            targetUserHandle,
-            null,
-            null
-        )
-
-        // Track recently used app
-        appsViewModel.addRecentlyUsedApp(packageName)
-    } catch (e: SecurityException) {
-        logE(APP_LAUNCH_TAG, e) { "Security error launching $packageName" }
-        throw AppLaunchException("Security error launching $packageName", e)
-    } catch (e: NullPointerException) {
-        logE(APP_LAUNCH_TAG, e) { "App component not found for $packageName" }
-        throw AppLaunchException("App component not found for $packageName", e)
-    } catch (e: Exception) {
-        logE(APP_LAUNCH_TAG, e) { "Failed to launch $packageName" }
-        throw AppLaunchException("Failed to launch $packageName", e)
-    }
-}

@@ -5,13 +5,13 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import kotlinx.serialization.json.Json
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ANGLE_LINE_TAG
-import org.elnix.dragonlauncher.common.messyfolder.isNotBlankJson
+import org.elnix.dragonlauncher.base.Constants.Logging.ANGLE_LINE_TAG
+import org.elnix.dragonlauncher.ktx.isNotBlankJson
 import org.elnix.dragonlauncher.common.serializables.CustomObject
 import org.elnix.dragonlauncher.common.serializables.DragonJson
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.settings.stores.AngleLineSettingsStore
-import org.elnix.dragonlauncher.settings.stores.HoldToActivateArcSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.asState
 

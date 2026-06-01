@@ -1,8 +1,6 @@
 package org.elnix.dragonlauncher.ui.drawer
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
@@ -71,20 +69,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
-import org.elnix.dragonlauncher.base.profiles.Profile.Type.Personal
-import org.elnix.dragonlauncher.base.profiles.Profile.Type.Private
-import org.elnix.dragonlauncher.base.profiles.Profile.Type.Work
-import org.elnix.dragonlauncher.common.search.Application
-import org.elnix.dragonlauncher.common.messyfolder.Constants
-import org.elnix.dragonlauncher.common.messyfolder.openSearch
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
-import org.elnix.dragonlauncher.common.serializables.WorkspaceType.PRIVATE
-import org.elnix.dragonlauncher.common.serializables.WorkspaceType.WORK
+import org.elnix.dragonlauncher.base.Constants
+import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Profile.Type.Personal
+import org.elnix.dragonlauncher.base.model.serializables.Profile.Type.Private
+import org.elnix.dragonlauncher.base.model.serializables.Profile.Type.Work
+import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.CLEAR
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.CLOSE
@@ -101,12 +96,14 @@ import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar.SearchBar
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar.Spacer
 import org.elnix.dragonlauncher.enumsui.toggle.isUsed
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.openSearch
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ktx.toDp
+import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.models.ProfilesVM
-import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import org.elnix.dragonlauncher.models.ProfilesViewModel
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
@@ -116,6 +113,7 @@ import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dialogs.AppAliasesDialog
 import org.elnix.dragonlauncher.ui.dialogs.AppIconEditor
+import org.elnix.dragonlauncher.ui.dialogs.AppLongPressRowImpl
 import org.elnix.dragonlauncher.ui.dialogs.TextEditorDialog
 import org.elnix.dragonlauncher.ui.helpers.AppDrawerSearch
 import org.elnix.dragonlauncher.ui.helpers.AppGrid
@@ -129,7 +127,8 @@ import kotlin.math.pow
 @Composable
 fun AppDrawerScreen(
     appsViewModel: AppsViewModel = activityViewModel(),
-    profilesVM: ProfilesVM = activityViewModel(),
+    appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
+    profilesViewModel: ProfilesViewModel = activityViewModel(),
     autoShowKeyboard: Boolean,
     drawerToolbarsOrder: List<DrawerToolbar>,
     leftAction: DrawerActions,
@@ -138,7 +137,7 @@ fun AppDrawerScreen(
     rightWeight: Float,
     onRegisterHomeHandler: ((() -> Unit)?) -> Unit,
     onNavigate: (NavigationRoute) -> Unit,
-    onLaunchAction: (SwipeAction) -> Unit,
+    onLaunchAction: (Action) -> Unit,
     onClose: () -> Unit
 ) {
     val ctx = LocalContext.current
@@ -153,9 +152,9 @@ fun AppDrawerScreen(
     val appOverrideState by appOverridesManager.appOverrideState.collectAsState()
     val appOverrides = appOverrideState.appOverrides
 
-    val profiles by profilesVM.profiles.collectAsState(emptyList())
-    val profileStates by profilesVM.profileStates.collectAsState(emptyList())
-    val hasProfilesPermission by profilesVM.hasProfilesPermission.collectAsState(false)
+    val profiles by profilesViewModel.profiles.collectAsState(emptyList())
+    val profileStates by profilesViewModel.profileStates.collectAsState(emptyList())
+    val hasProfilesPermission by profilesViewModel.hasProfilesPermission.collectAsState(false)
 
 
     val selectedWorkspaceId by appsViewModel.selectedWorkspaceId.collectAsState()
@@ -181,7 +180,7 @@ fun AppDrawerScreen(
 
     val showRecentlyUsedApps by DrawerSettingsStore.showRecentlyUsedApps.asState()
     val recentlyUsedAppsCount by DrawerSettingsStore.recentlyUsedAppsCount.asState()
-    val recentApps by appsViewModel.getRecentApps(recentlyUsedAppsCount)
+    val recentApps by appLaunchViewModel.getRecentApps(recentlyUsedAppsCount)
         .collectAsStateWithLifecycle(emptyList())
 
 
@@ -363,9 +362,6 @@ fun AppDrawerScreen(
         )
     }
 
-//    logD(DRAWER_TAG) { "toolbar order: $drawerToolbarsOrder, filtered: $filteredToolbarsOrder SpacerIndex: $spacerIndex, beforeSpacer: $beforeSpacer, after: $afterSpacer\ntopPadding: $topPadding, bottomPadding: $bottomPadding" }
-
-    /* ───────────── Pull Down System ───────────── */
 
     val pullDownAnimations by DrawerSettingsStore.pullDownAnimations.asState()
     val pullDownScaleIn by DrawerSettingsStore.pullDownScaleIn.asState()
@@ -488,29 +484,9 @@ fun AppDrawerScreen(
     fun AppLongPressRow(app: Application) {
         val cacheKey = app.key
 
-        AppLongPressRow(
+        AppLongPressRowImpl(
             app = app,
-            onOpen = { onLaunchAction(app.action) },
-            onSettings = if (!app.isPrivate && !app.isWork) {
-                {
-                    ctx.startActivity(
-                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                            data = "package:${app.packageName}".toUri()
-                        }
-                    )
-                    onClose()
-                }
-            } else null,
-            onUninstall = if (!app.isPrivate && !app.isWork) {
-                {
-                    ctx.startActivity(
-                        Intent(Intent.ACTION_DELETE).apply {
-                            data = "package:${app.packageName}".toUri()
-                        }
-                    )
-                    onClose()
-                }
-            } else null,
+            onLaunch = { appLaunchViewModel.requestAppLaunch(app) },
             onRemoveFromWorkspace = if (!app.isPrivate) {
                 {
                     workspaceId?.let { wsId ->
@@ -529,8 +505,6 @@ fun AppDrawerScreen(
         )
     }
 
-
-    /* ───────────── Dim wallpaper system ───────────── */
     val wallpaperDimDrawerScreen by UiSettingsStore.wallpaperDimDrawerScreen.asState()
     val pullDownWallPaperDimFadeEnabled by DrawerSettingsStore.pullDownWallPaperDimFade.asState()
 
@@ -544,7 +518,6 @@ fun AppDrawerScreen(
     WallpaperDim(dimAmount)
 
 
-    /* ───────────── Main Content ───────────── */
     Box(
         modifier = Modifier
             .windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.ime))
@@ -596,8 +569,8 @@ fun AppDrawerScreen(
                         val workspace = visibleWorkspaces[pageIndex]
 
                         val workspaceProfileType = when (workspace.type) {
-                            WORK -> Work
-                            PRIVATE -> Private
+                            WorkspaceType.WORK -> Work
+                            WorkspaceType.PRIVATE -> Private
                             else -> Personal
                         }
 
@@ -702,9 +675,9 @@ fun AppDrawerScreen(
                                         Button(
                                             modifier = Modifier.padding(top = 32.dp),
                                             onClick = {
-                                                appsViewModel.setProfileLock(workspaceProfile, false)
+                                                profilesViewModel.setProfileLock(workspaceProfile, false)
                                             },
-                                            contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
+                                            contentPadding = ButtonDefaults.TextButtonWithIconContentPadding
                                         ) {
                                             Icon(
                                                 painterResource(if (workspaceProfileType == Work) R.drawable.enterprise else R.drawable.lock_open),
@@ -728,9 +701,9 @@ fun AppDrawerScreen(
                                         .padding(12.dp)
                                         .fillMaxWidth(),
                                     onClick = {
-                                        appsViewModel.setProfileLock(workspaceProfile, true)
+                                        profilesViewModel.setProfileLock(workspaceProfile, true)
                                     },
-                                    contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
+                                    contentPadding = ButtonDefaults.TextButtonWithIconContentPadding
                                 ) {
                                     Icon(
                                         painterResource(if (workspaceProfileType == Work) R.drawable.enterprise_off else R.drawable.lock),

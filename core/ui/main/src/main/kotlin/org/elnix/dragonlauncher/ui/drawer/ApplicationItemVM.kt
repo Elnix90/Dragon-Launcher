@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.elnix.dragonlauncher.badges.BadgeService
-import org.elnix.dragonlauncher.common.search.Application
+import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.icons.IconService
 import org.elnix.dragonlauncher.notifications.Notification
 import org.elnix.dragonlauncher.notifications.NotificationRepository

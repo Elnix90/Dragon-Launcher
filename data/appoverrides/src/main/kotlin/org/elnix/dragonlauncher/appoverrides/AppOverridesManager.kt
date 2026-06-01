@@ -10,16 +10,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.elnix.dragonlauncher.common.search.Application
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.WORKSPACES_TAG
-import org.elnix.dragonlauncher.common.serializables.AppOverride
-import org.elnix.dragonlauncher.common.serializables.AppOverride.Companion.isNotNullOrEmpty
-import org.elnix.dragonlauncher.common.serializables.AppOverrideState
-import org.elnix.dragonlauncher.common.serializables.CacheKey
-import org.elnix.dragonlauncher.common.serializables.CustomIcon
-import org.elnix.dragonlauncher.common.serializables.DragonJson
+import org.elnix.dragonlauncher.base.model.DragonJson
+import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.serializables.AppOverride
+import org.elnix.dragonlauncher.base.model.serializables.AppOverride.Companion.isNotNullOrEmpty
+import org.elnix.dragonlauncher.base.model.serializables.AppOverrideState
+import org.elnix.dragonlauncher.base.model.serializables.CacheKey
+import org.elnix.dragonlauncher.base.model.serializables.CustomIcon
+import org.elnix.dragonlauncher.logging.WORKSPACES_TAG
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.settings.stores.AppOverridesSettingsStore
+import org.elnix.dragonlauncher.settings.stores.`object`.AppOverridesSettingsStore
 
 
 object AppOverridesJson : DragonJson<AppOverrideState>()

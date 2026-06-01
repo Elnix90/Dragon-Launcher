@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults.elevatedCardElevation
@@ -35,7 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.messyfolder.isNotBlankJson
+import org.elnix.dragonlauncher.ktx.isNotBlankJson
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayer.Companion.copyWithEnabled
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayer.Companion.defaultMainScreenLayers
@@ -43,7 +42,7 @@ import org.elnix.dragonlauncher.common.serializables.MainScreenLayer.Companion.e
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayer.Companion.label
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayerJson
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup

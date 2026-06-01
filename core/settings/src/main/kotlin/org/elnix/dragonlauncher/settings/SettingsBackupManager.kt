@@ -5,11 +5,11 @@ import android.net.Uri
 import androidx.core.net.toUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
-import org.elnix.dragonlauncher.common.messyfolder.getFilePathFromUri
-import org.elnix.dragonlauncher.common.messyfolder.showToast
-import org.elnix.dragonlauncher.common.utils.PermissionsUtils.hasUriReadWritePermission
 import org.elnix.dragonlauncher.common.utils.VersionsUtils.getVersionNameAndCode
+import org.elnix.dragonlauncher.ktx.getFilePathFromUri
+import org.elnix.dragonlauncher.ktx.hasUriReadWritePermission
+import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.logging.BACKUP_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logI
@@ -18,8 +18,8 @@ import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.settings.bases.stores.JsonArraySettingsStore
 import org.elnix.dragonlauncher.settings.bases.stores.JsonObjectSettingsStore
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
-import org.elnix.dragonlauncher.settings.stores.BackupSettingsStore
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.FileOutputStream
@@ -49,7 +49,7 @@ object SettingsBackupManager {
             }
 
             val uri = uriString.toUri()
-            val path = getFilePathFromUri(ctx, uri)
+            val path = ctx.getFilePathFromUri(uri)
 
             if (!ctx.hasUriReadWritePermission(uri)) {
                 logW(BACKUP_TAG) { "URI permission expired!" }
@@ -98,7 +98,7 @@ object SettingsBackupManager {
 
     suspend fun createJsonToExport(
         ctx: Context,
-        requestedStores: Set<DatastoreProvider>
+        requestedStores: Set<DataStoreName>
     ): JSONObject {
         val json = JSONObject()
 
@@ -121,14 +121,14 @@ object SettingsBackupManager {
 
     /**
      * Exports only the requested stores.
-     * @param requestedStores List of _root_ide_package_.org.elnix.dragonlauncher.settings.bases.DatastoreProvider objects
+     * @param requestedStores List of _root_ide_package_.org.elnix.dragonlauncher.settings.bases._root_ide_package_.org.elnix.dragonlauncher.settings.DataStoreName objects
      */
     suspend fun exportSettings(
         ctx: Context,
         uri: Uri,
-        requestedStores: Set<DatastoreProvider>
+        requestedStores: Set<DataStoreName>
     ) {
-       val json = createJsonToExport(ctx, requestedStores)
+        val json = createJsonToExport(ctx, requestedStores)
 
         writeJson(ctx, uri, json)
     }
@@ -142,12 +142,12 @@ object SettingsBackupManager {
      *
      * @param ctx Context used for accessing DataStores
      * @param json Parsed JSONObject containing backup data
-     * @param requestedStores List of _root_ide_package_.org.elnix.dragonlauncher.settings.bases.DatastoreProvider objects specifying which stores to restore
+     * @param requestedStores List of _root_ide_package_.org.elnix.dragonlauncher.settings.bases._root_ide_package_.org.elnix.dragonlauncher.settings.DataStoreName objects specifying which stores to restore
      */
     suspend fun importSettingsFromJson(
         ctx: Context,
         json: JSONObject,
-        requestedStores: Set<DatastoreProvider>
+        requestedStores: Set<DataStoreName>
     ) {
         logD(BACKUP_TAG) { json.toString() }
 
@@ -186,10 +186,7 @@ object SettingsBackupManager {
             }
         }
 
-        // If the swipe store is in the requested, set has initialized to true, as it may think that you haven't set it
-        if (DataStoreName.SWIPE in requestedStores) {
-            PrivateSettingsStore.hasInitialized.set(ctx, true)
-        }
+        PrivateSettingsStore.hasInitialized.set(ctx, true)
 
 
         // FUCK LEGACY 🤎
@@ -232,6 +229,6 @@ object SettingsBackupManager {
         ctx: Context,
         json: JSONObject
     ) {
-        importSettingsFromJson(ctx,json, themeDataStores)
+        importSettingsFromJson(ctx, json, themeDataStores)
     }
 }

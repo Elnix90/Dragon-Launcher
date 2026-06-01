@@ -13,10 +13,9 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.logging.FileLoggingTree
 import org.elnix.dragonlauncher.logging.LOGS_TAG
 import org.elnix.dragonlauncher.logging.LogAlert
-import org.elnix.dragonlauncher.logging.TAG
-import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
+import org.elnix.dragonlauncher.models.utils.viewModelInitialized
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -69,7 +68,7 @@ class DragonLogViewModel @Inject constructor(
         }
 
         updateLoggingState()
-        logD(TAG) { "created DragonLogsViewModel ${System.identityHashCode(this)}" }
+        viewModelInitialized()
     }
 
     private fun onHighPriorityLog(level: Int, message: String) {

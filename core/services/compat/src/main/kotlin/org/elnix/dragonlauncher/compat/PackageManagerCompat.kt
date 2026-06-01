@@ -14,7 +14,7 @@ import android.os.Process.myUserHandle
 import android.os.UserManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import org.elnix.dragonlauncher.common.utils.ImageUtils.loadDrawableAsBitmap
+import org.elnix.dragonlauncher.base.util.ImageUtils.loadDrawableAsBitmap
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.logging.APPS_TAG
 import org.elnix.dragonlauncher.logging.ICONS_TAG
@@ -24,8 +24,6 @@ import org.elnix.dragonlauncher.logging.logE
 
 
 interface PackageManagerCompat {
-    fun isPackageInstalled(packageName: String): Boolean
-
     /**
      * Get ALL apps (launchable + system + hidden)
      */
@@ -189,14 +187,6 @@ class PackageManagerCompatImpl(
         }
     }
 
-    override fun isPackageInstalled(packageName: String): Boolean {
-        return try {
-            pm.getPackageInfo(packageName, 0)
-            true
-        } catch (_: PackageManager.NameNotFoundException) {
-            false
-        }
-    }
 
     override fun launchShortcut(packageName: String, id: String) {
         val launcherApps = ctx.getSystemService(LauncherApps::class.java) ?: return

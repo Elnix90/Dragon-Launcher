@@ -46,7 +46,6 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.material3)
     implementation(libs.reorderable)
-    implementation(libs.android.image.cropper)
     implementation(libs.material3)
     implementation(libs.shapeindicators)
     implementation(libs.shizuku.api)

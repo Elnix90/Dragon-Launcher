@@ -14,14 +14,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.serializables.FloatingAppsJson
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
-import org.elnix.dragonlauncher.common.serializables.Widget
-import org.elnix.dragonlauncher.logging.TAG
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.settings.stores.LegacyFloatingAppsSettingsStore
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
-import org.elnix.dragonlauncher.settings.stores.WidgetsSettingsStore
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Widget
+import org.elnix.dragonlauncher.base.model.serializables.Widget.Companion.WidgetsJson
+import org.elnix.dragonlauncher.models.utils.viewModelInitialized
+import org.elnix.dragonlauncher.settings.stores.array.WidgetsSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -55,18 +53,13 @@ class WidgetsViewModel @Inject constructor(
         viewModelScope.launch {
             _cellSizeDp.value = UiSettingsStore.cellSizeDp.get(ctx)
         }
-        logD(TAG) {
-            "created FloatingAppsVM ${System.identityHashCode(this)}"
-        }
+        viewModelInitialized()
     }
 
-
-    /* ───────────────────────────── Public API ───────────────────────────── */
-
-    fun addFloatingApp(action: SwipeAction, info: AppWidgetProviderInfo? = null, nestId: Int) {
+    fun addFloatingApp(action: Action, info: AppWidgetProviderInfo? = null, nestId: Int) {
 
         viewModelScope.launch {
-            val appWidgetId = if (action is SwipeAction.OpenWidget) action.widgetId else null
+            val appWidgetId = if (action is Action.OpenWidget) action.widgetId else null
             val app = Widget(
                 id = Random.nextInt(),
                 appWidgetId = appWidgetId,
@@ -204,9 +197,7 @@ class WidgetsViewModel @Inject constructor(
     private fun loadFloatingApps() {
         viewModelScope.launch {
             val floatingAppsJsonString = WidgetsSettingsStore.jsonSetting.get(ctx)
-            _floatingApps.value = FloatingAppsJson.decode<List<Widget>>(floatingAppsJsonString)
-                    // If null try to load legacy floating apps
-                ?: LegacyFloatingAppsSettingsStore.legacyLoadFloatingApps(ctx)
+            _floatingApps.value = WidgetsJson.decode<List<Widget>>(floatingAppsJsonString) ?: emptyList()
         }
     }
 

@@ -46,8 +46,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
-import org.elnix.dragonlauncher.base.ColorUtils.definedOrNull
+import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
+import org.elnix.dragonlauncher.base.util.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.base.theme.DefaultExtraColors
 import org.elnix.dragonlauncher.enumsui.select.ColorSelectorModes
 import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes
@@ -58,9 +58,9 @@ import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.LIGHT
 import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.SYSTEM
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
-import org.elnix.dragonlauncher.settings.stores.ColorModesSettingsStore
-import org.elnix.dragonlauncher.settings.stores.ColorSettingsStore
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.theme.getSystemColorScheme
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape

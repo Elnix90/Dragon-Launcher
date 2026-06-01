@@ -60,6 +60,8 @@ dependencies {
     api(project(":core:services:recents"))
     api(project(":core:services:colors"))
     api(project(":core:services:fonts"))
+    api(project(":core:services:security"))
+    api(project(":core:services:compat"))
 
     api(project(":data:applications"))
     api(project(":data:workspaces"))

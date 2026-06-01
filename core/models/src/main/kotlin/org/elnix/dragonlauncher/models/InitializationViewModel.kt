@@ -6,14 +6,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.serializables.Nest
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
-import org.elnix.dragonlauncher.common.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Nest
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.logging.INIT_TAG
-import org.elnix.dragonlauncher.logging.TAG
 import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
-import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
+import org.elnix.dragonlauncher.models.utils.viewModelInitialized
+import org.elnix.dragonlauncher.recents.PointsService
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import java.util.UUID
 import javax.inject.Inject
 
@@ -23,7 +23,8 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class InitializationViewModel @Inject constructor(
-    application: Application
+    application: Application,
+    private val pointsService: PointsService,
 ) : AndroidViewModel(application) {
 
     @SuppressLint("StaticFieldLeak")
@@ -31,11 +32,11 @@ class InitializationViewModel @Inject constructor(
 
 
     init {
-        logD(TAG) { "created InitializationViewModel ${System.identityHashCode(this)}" }
-        checkInitialization()
+        checkLauncherInitialization()
+        viewModelInitialized()
     }
 
-    fun checkInitialization() {
+    fun checkLauncherInitialization() {
         viewModelScope.launch {
             val hasInitialized = PrivateSettingsStore.hasInitialized.get(ctx)
 
@@ -52,9 +53,7 @@ class InitializationViewModel @Inject constructor(
         nests: List<Nest>
     ) {
         viewModelScope.launch{
-            SwipeSettingsStore.savePoints(ctx, points)
-            SwipeSettingsStore.saveNests(ctx, nests)
-
+            pointsService.set(points, nests)
             PrivateSettingsStore.hasInitialized.set(ctx, true)
         }
     }
@@ -65,23 +64,23 @@ class InitializationViewModel @Inject constructor(
 }
 
 
-val defaultInitializationSetup = listOf(
+private val defaultInitializationSetup = listOf(
     Point(
         circleNumber = 0,
         angleDeg = 0.toDouble(),
-        action = SwipeAction.OpenAppDrawer(),
+        action = Action.OpenAppDrawer(),
         id = UUID.randomUUID().toString()
     ),
     Point(
         circleNumber = 1,
         angleDeg = 200.toDouble(),
-        action = SwipeAction.NotificationShade,
+        action = Action.NotificationShade,
         id = UUID.randomUUID().toString()
     ),
     Point(
         circleNumber = 1,
         angleDeg = 160.toDouble(),
-        action = SwipeAction.ControlPanel,
+        action = Action.ControlPanel,
         id = UUID.randomUUID().toString()
     )
 )

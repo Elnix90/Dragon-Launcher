@@ -48,7 +48,7 @@ data class StaticLauncherIcon(
             renderSemaphore.withPermit {
                 val bmp =
                     if (cachedBmp == null || cachedBmp.width != settings.size || cachedBmp.height != settings.size) {
-                        Bitmap.createBitmap(settings.size, settings.size, Bitmap.Config.ARGB_8888)!!
+                        Bitmap.createBitmap(settings.size, settings.size, Bitmap.Config.ARGB_8888)
                     } else cachedBmp
                 val canvas = Canvas(bmp)
                 canvas.drawRect(

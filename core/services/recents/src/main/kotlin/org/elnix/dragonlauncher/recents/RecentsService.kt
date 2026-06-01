@@ -11,13 +11,15 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.applications.AppRepository
-import org.elnix.dragonlauncher.common.search.Application
-import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
+import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 
+
+// TODO track correctly app launches in recent apps profile aware
 
 interface RecentsService {
 
-    fun addRecentlyUsedApp(packageName: String)
+    fun touch(application: Application)
     fun getRecentApps(count: Int): StateFlow<List<Application>>
 }
 
@@ -52,7 +54,8 @@ internal class RecentsServiceImpl(
      * Record a package as recently used.
      * Moves it to the front if already present, trims the list to a reasonable max.
      */
-    override fun addRecentlyUsedApp(packageName: String) {
+    override fun touch(application: Application) {
+        val packageName = application.packageName
         val maxStored = 30 // store more than display, user can raise the count later
         val current = _recentlyUsedPackages.value.toMutableList()
         current.remove(packageName)

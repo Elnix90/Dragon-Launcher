@@ -7,7 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.elnix.dragonlauncher.common.search.Application
+import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ui.components.ShapedLauncherIcon
 import org.elnix.dragonlauncher.ui.drawer.ApplicationItemVM
@@ -67,7 +67,7 @@ fun AppIcon(
 
 //@Composable
 //fun ActionIcon(
-//    action: SwipeActionSerializable,
+//    action: ActionSerializable,
 //    modifier: Modifier = Modifier,
 //    size: Dp,
 //    showLaunchAppVectorGrid: Boolean = false
@@ -82,7 +82,7 @@ fun AppIcon(
 //    val extraColors = LocalExtraColors.current
 //
 //    val bitmap: ImageBitmap? = when {
-//        action is SwipeActionSerializable.LaunchApp && showLaunchAppVectorGrid ->
+//        action is ActionSerializable.LaunchApp && showLaunchAppVectorGrid ->
 //            ctx.loadDrawableResAsBitmap(R.drawable.ic_app_grid, size, size)
 //
 //        else -> {
@@ -102,9 +102,9 @@ fun AppIcon(
 //        bitmap = bitmap,
 //        contentDescription = null,
 //        colorFilter = if (
-//            ((action !is SwipeActionSerializable.LaunchApp) || showLaunchAppVectorGrid) &&
-//            (action !is SwipeActionSerializable.LaunchShortcut || action.packageName.isEmpty()) &&
-//            action !is SwipeActionSerializable.OpenDragonLauncherSettings
+//            ((action !is ActionSerializable.LaunchApp) || showLaunchAppVectorGrid) &&
+//            (action !is ActionSerializable.LaunchShortcut || action.packageName.isEmpty()) &&
+//            action !is ActionSerializable.OpenDragonLauncherSettings
 //        ) ColorFilter.tint(actionColor(action, extraColors))
 //        else null,
 //        modifier = modifier

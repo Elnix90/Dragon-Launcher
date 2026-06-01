@@ -11,15 +11,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.WORKSPACES_TAG
-import org.elnix.dragonlauncher.common.serializables.CacheKey
-import org.elnix.dragonlauncher.common.serializables.DragonJson
-import org.elnix.dragonlauncher.common.serializables.Workspace
-import org.elnix.dragonlauncher.common.serializables.WorkspaceState
-import org.elnix.dragonlauncher.common.serializables.WorkspaceType
+import org.elnix.dragonlauncher.base.model.DragonJson
+import org.elnix.dragonlauncher.base.model.serializables.CacheKey
+import org.elnix.dragonlauncher.base.model.serializables.WorkspaceState
+import org.elnix.dragonlauncher.base.model.serializables.Workspace
+import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
+import org.elnix.dragonlauncher.logging.WORKSPACES_TAG
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
-import org.elnix.dragonlauncher.settings.stores.WorkspaceSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
+import org.elnix.dragonlauncher.settings.stores.`object`.WorkspaceSettingsStore
 
 object WorkspaceJson : DragonJson<WorkspaceState>()
 

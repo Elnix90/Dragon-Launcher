@@ -9,20 +9,21 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.messyfolder.SecurityHelper
-import org.elnix.dragonlauncher.common.messyfolder.showToast
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.logging.SECURITY_HELPER
-import org.elnix.dragonlauncher.logging.TAG
+import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.logging.SECURITY_SERVICE
 import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
+import org.elnix.dragonlauncher.models.utils.viewModelInitialized
+import org.elnix.dragonlauncher.security.SecurityService
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import javax.inject.Inject
 
 @HiltViewModel
 class LockScreenViewModel @Inject constructor(
-    application: Application
+    application: Application,
+    val securityService: SecurityService,
 ) : AndroidViewModel(application) {
 
     @SuppressLint("StaticFieldLeak")
@@ -41,7 +42,7 @@ class LockScreenViewModel @Inject constructor(
 
     init {
         loadLockMethod()
-        logD(TAG) { "created LockScreenVM ${System.identityHashCode(this)}" }
+        viewModelInitialized()
     }
 
     private fun loadLockMethod() {
@@ -59,8 +60,8 @@ class LockScreenViewModel @Inject constructor(
     }
 
     fun setPinLockMethod(pin: String) {
-        viewModelScope.launch{
-            val hash = SecurityHelper.hashPin(pin)
+        viewModelScope.launch {
+            val hash = securityService.hashPin(pin)
             PrivateSettingsStore.lockPinHash.set(ctx, hash)
             PrivateSettingsStore.lockMethod.set(ctx, LockMethod.PIN)
             ctx.showToast(ctx.getString(R.string.pin_set_success))
@@ -69,7 +70,7 @@ class LockScreenViewModel @Inject constructor(
     }
 
     fun setLockScreenMethod() {
-        viewModelScope.launch{
+        viewModelScope.launch {
             PrivateSettingsStore.lockPinHash.reset(ctx)
             PrivateSettingsStore.lockMethod.set(ctx, LockMethod.DEVICE_UNLOCK)
             unlock()
@@ -78,12 +79,12 @@ class LockScreenViewModel @Inject constructor(
 
 
     fun lock() {
-        logD(SECURITY_HELPER) { "User asked to lock!" }
+        logD(SECURITY_SERVICE) { "User asked to lock!" }
         _isLocked.value = true
     }
 
     fun unlock() {
-        logD(SECURITY_HELPER) { "User asked to unlock!" }
+        logD(SECURITY_SERVICE) { "User asked to unlock!" }
         _isLocked.value = false
         _screenToUnlock.value = null
     }
@@ -97,8 +98,6 @@ class LockScreenViewModel @Inject constructor(
             lock()
         }
     }
-
-
 
 
     fun requestUnlock(targetScreen: NavigationRoute) {

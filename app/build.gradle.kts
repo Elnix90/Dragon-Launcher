@@ -1,4 +1,3 @@
-
 import com.android.build.api.dsl.ApplicationExtension
 import java.io.InputStream
 import java.io.OutputStream
@@ -28,7 +27,6 @@ kotlin {
     jvmToolchain(21)
 }
 
-// Configure Android
 extensions.configure<ApplicationExtension> {
     namespace = "org.elnix.dragonlauncher"
 
@@ -146,7 +144,6 @@ dependencies {
 
     ksp(libs.hilt.compiler)
 
-    runtimeOnly(libs.android.image.cropper)
 
     implementation(project(":core:ui:base"))
     implementation(project(":core:ui:main"))

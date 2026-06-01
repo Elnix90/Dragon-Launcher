@@ -10,8 +10,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
+import org.elnix.dragonlauncher.logging.TAG
 import org.elnix.dragonlauncher.logging.logD
+import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import javax.inject.Inject
 
 private const val HOME_REENTER_WINDOW_MS = 80L
@@ -25,7 +26,7 @@ class AppLifecycleViewModel @Inject constructor(
 
 
     init {
-        logD(TAG) { "created appLifecycleVM ${System.identityHashCode(this)}" }
+        viewModelInitialized()
     }
 
     /**  Tracks the home events */
@@ -63,7 +64,7 @@ class AppLifecycleViewModel @Inject constructor(
      * Update the value, to be able to compute on return
      * */
     fun updateLastInteraction() {
-        logD(TAG) { "Last interaction updated!"}
+        logD(TAG) { "Last interaction updated!" }
         _lastInteraction.value = System.currentTimeMillis()
     }
 

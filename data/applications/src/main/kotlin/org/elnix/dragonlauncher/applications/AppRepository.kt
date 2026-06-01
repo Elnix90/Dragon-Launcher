@@ -24,16 +24,16 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.StringNormalizer
-import org.elnix.dragonlauncher.base.profiles.Profile
-import org.elnix.dragonlauncher.common.search.Application
-import org.elnix.dragonlauncher.common.search.Application.Companion.getPackageVersionName
-import org.elnix.dragonlauncher.common.search.LauncherApp
-import org.elnix.dragonlauncher.common.search.ResultScore
-import org.elnix.dragonlauncher.common.search.SystemApp
-import org.elnix.dragonlauncher.common.search.AppCategory.Companion.mapAppToSection
+import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
+import org.elnix.dragonlauncher.base.model.models.AppCategory.Companion.mapAppToSection
+import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.models.Application.Companion.getPackageVersionName
+import org.elnix.dragonlauncher.base.model.models.LauncherApp
+import org.elnix.dragonlauncher.base.model.models.ResultScore
+import org.elnix.dragonlauncher.base.model.models.SystemApp
+import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.compat.PackageManagerCompat
 import org.elnix.dragonlauncher.profiles.ProfileManager
-import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
 
 interface AppRepository {
     fun findOne(packageName: String, user: UserHandle): Flow<Application?>
@@ -41,6 +41,8 @@ interface AppRepository {
     fun getLaunchableApps(): Flow<ImmutableList<Application>>
     fun getSystemApps(): Flow<ImmutableList<Application>>
     fun search(query: String): Flow<ImmutableList<Application>>
+
+    fun queryAppShortcuts(packageName: String): List<ShortcutInfo>
 }
 
 internal class AppRepositoryImpl(
@@ -172,7 +174,6 @@ internal class AppRepositoryImpl(
 
         return LauncherApp(
             launcherActivityInfo = activityInfo,
-            packageManagerCompat = packageManagerCompat,
             versionName = versionName,
             profile = profile,
             category = category
@@ -254,4 +255,6 @@ internal class AppRepositoryImpl(
             }
         }
     }
+
+    override fun queryAppShortcuts(packageName: String): List<ShortcutInfo> = packageManagerCompat.queryAppShortcuts(packageName)
 }

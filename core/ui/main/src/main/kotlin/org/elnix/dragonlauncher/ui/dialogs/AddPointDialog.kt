@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.SnackbarDefaults.actionColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,23 +33,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.search.Application
-import org.elnix.dragonlauncher.common.search.PointApp
+import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.models.PointApp
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.messyfolder.BluetoothADBCommands
-import org.elnix.dragonlauncher.common.messyfolder.Constants
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Actions.defaultChoosableActions
-import org.elnix.dragonlauncher.common.messyfolder.DataADBCommands
+import org.elnix.dragonlauncher.base.model.models.BluetoothADBCommands
+import org.elnix.dragonlauncher.base.Constants
+import org.elnix.dragonlauncher.base.Constants.Actions.defaultChoosableActions
+import org.elnix.dragonlauncher.base.model.models.DataADBCommands
 import org.elnix.dragonlauncher.common.messyfolder.PackageManagerCompat
-import org.elnix.dragonlauncher.common.messyfolder.WifiADBCommands
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
-import org.elnix.dragonlauncher.common.serializables.SwipeAction.Companion.actionColor
-import org.elnix.dragonlauncher.common.serializables.Point
+import org.elnix.dragonlauncher.base.model.models.WifiADBCommands
+
+.Companion.actionColor
+import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
-import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.actions.ActionIcon
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.actions.actionColor
@@ -69,11 +68,11 @@ import kotlin.collections.map
 @Suppress("AssignedValueIsNeverRead")
 @Composable
 fun AddPointDialog(
-    actions: Set<SwipeAction> = defaultChoosableActions,
+    actions: Set<Action> = defaultChoosableActions,
     onNewNest: (() -> Unit)? = null,
     onDismiss: () -> Unit,
-    onActionSelected: ((SwipeAction) -> Unit)? = null,
-    onMultipleActionsSelected: ((List<SwipeAction>, Boolean) -> Unit)? = null
+    onActionSelected: ((Action) -> Unit)? = null,
+    onMultipleActionsSelected: ((List<Action>, Boolean) -> Unit)? = null
 ) {
     require((onActionSelected != null) xor (onMultipleActionsSelected != null))
 
@@ -98,7 +97,7 @@ fun AddPointDialog(
 
     val actualActions = remember(showKillLauncherActionInActionPicker, actions) {
         if (showKillLauncherActionInActionPicker) actions.toMutableSet().apply {
-            add(SwipeAction.KillLauncher)
+            add(Action.KillLauncher)
         } else actions
     }
 
@@ -111,7 +110,7 @@ fun AddPointDialog(
     var shortcuts by remember { mutableStateOf<List<ShortcutInfo>>(emptyList()) }
 
 
-    fun onActionPicked(action: SwipeAction) {
+    fun onActionPicked(action: Action) {
         if (onMultipleActionsSelected != null) {
             onMultipleActionsSelected(listOf(action), false)
         } else {
@@ -147,9 +146,9 @@ fun AddPointDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                if (actualActions.any { it is SwipeAction.LaunchApp }) {
+                if (actualActions.any { it is Action.LaunchApp }) {
 
-                    val dummyLaunchAppAction = SwipeAction.LaunchApp("", false, 0)
+                    val dummyLaunchAppAction = Action.LaunchApp("", false, 0)
                     val dummyPoint = Point.dummySwipePoint(dummyLaunchAppAction)
                     val fakeApp = PointApp(dummyPoint)
                     val color = dummyLaunchAppAction.actionColor(LocalExtraColors.current)
@@ -184,49 +183,49 @@ fun AddPointDialog(
                     horizontalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
                     // Loop through all actions
-                    items(actualActions.filterNot { it is SwipeAction.LaunchApp }) { action ->
+                    items(actualActions.filterNot { it is Action.LaunchApp }) { action ->
                         AddPointColumn(
                             action = action,
                             showText = { showTooltipsOnAddPointDialog },
                             onSelected = {
                                 when (action) {
-                                    is SwipeAction.LaunchShortcut -> {
+                                    is Action.LaunchShortcut -> {
                                         showPinnedShortcutsPicker = true
                                     }
 
-                                    is SwipeAction.OpenAppDrawer -> {
+                                    is Action.OpenAppDrawer -> {
                                         showWorkspacePicker = true
                                     }
 
-                                    is SwipeAction.OpenCircleNest -> {
+                                    is Action.OpenCircleNest -> {
                                         showNestPicker = true
                                     }
 
-                                    is SwipeAction.OpenDragonLauncherSettings -> {
+                                    is Action.OpenDragonLauncherSettings -> {
                                         showSettingsPagePicker = true
                                     }
 
-                                    is SwipeAction.OpenFile -> {
+                                    is Action.OpenFile -> {
                                         showFilePicker = true
                                     }
 
-                                    is SwipeAction.OpenUrl -> {
+                                    is Action.OpenUrl -> {
                                         showUrlInput = true
                                     }
 
-                                    is SwipeAction.RunAdbCommand -> {
+                                    is Action.RunAdbCommand -> {
                                         showAdbCommandInput = true
                                     }
 
-                                    is SwipeAction.ToggleData -> {
+                                    is Action.ToggleData -> {
                                         showDataCommandInput = true
                                     }
 
-                                    is SwipeAction.ToggleWifi -> {
+                                    is Action.ToggleWifi -> {
                                         showWifiCommandInput = true
                                     }
 
-                                    is SwipeAction.ToggleBluetooth -> {
+                                    is Action.ToggleBluetooth -> {
                                         showBluetoothCommandInput = true
                                     }
 
@@ -272,7 +271,7 @@ fun AddPointDialog(
                     shortcutDialogVisible = true
                 } else {
                     onActionPicked(
-                        SwipeAction.LaunchApp(
+                        Action.LaunchApp(
                             app.packageName,
                             app.isPrivate,
                             app.userId ?: 0
@@ -282,7 +281,7 @@ fun AddPointDialog(
             },
             onMultipleAppsSelected = if (onMultipleActionsSelected != null) {
                 { apps, autoPlace ->
-                    val actions = apps.map { SwipeAction.LaunchApp(it.packageName, it.isPrivate, it.userId ?: 0) }
+                    val actions = apps.map { Action.LaunchApp(it.packageName, it.isPrivate, it.userId ?: 0) }
                     onMultipleActionsSelected(actions, autoPlace)
                     showAppPicker = false
                 }
@@ -318,7 +317,7 @@ fun AddPointDialog(
             selected = { WifiADBCommands.Svc },
             onDismiss = { showWifiCommandInput = false },
         ) { command, toast ->
-            onActionPicked(SwipeAction.ToggleWifi(command, toast))
+            onActionPicked(Action.ToggleWifi(command, toast))
             showWifiCommandInput = false
         }
     }
@@ -331,7 +330,7 @@ fun AddPointDialog(
             selected = { BluetoothADBCommands.Cmd },
             onDismiss = { showBluetoothCommandInput = false },
         ) { command, toast ->
-            onActionPicked(SwipeAction.ToggleBluetooth(command, toast))
+            onActionPicked(Action.ToggleBluetooth(command, toast))
             showBluetoothCommandInput = false
         }
     }
@@ -344,7 +343,7 @@ fun AddPointDialog(
             selected = { DataADBCommands.Svc },
             onDismiss = { showDataCommandInput = false },
         ) { command, toast ->
-            onActionPicked(SwipeAction.ToggleData(command, toast))
+            onActionPicked(Action.ToggleData(command, toast))
             showDataCommandInput = false
         }
     }
@@ -365,12 +364,12 @@ fun AddPointDialog(
             shortcuts = shortcuts,
             onDismiss = { shortcutDialogVisible = false },
             onShortcutSelected = { pkg, id ->
-                onActionPicked(SwipeAction.LaunchShortcut(pkg, id))
+                onActionPicked(Action.LaunchShortcut(pkg, id))
                 shortcutDialogVisible = false
             },
             onOpenApp = {
                 onActionPicked(
-                    SwipeAction.LaunchApp(
+                    Action.LaunchApp(
                         selectedApp!!.packageName,
                         selectedApp!!.isPrivate,
                         selectedApp!!.userId ?: 0
@@ -389,7 +388,7 @@ fun AddPointDialog(
             onNameChange = null,
             onDelete = null,
             onSelect = {
-                onActionPicked(SwipeAction.OpenCircleNest(it.id))
+                onActionPicked(Action.OpenCircleNest(it.id))
                 showNestPicker = false
             }
         )
@@ -399,7 +398,7 @@ fun AddPointDialog(
         SettingsPagePicker(
             onDismissRequest = { showSettingsPagePicker = false }
         ) {
-            onActionPicked(SwipeAction.OpenDragonLauncherSettings(it))
+            onActionPicked(Action.OpenDragonLauncherSettings(it))
             showSettingsPagePicker = false
         }
     }
@@ -425,7 +424,7 @@ fun AddPointDialog(
 
 @Composable
 private fun AddPointColumn(
-    action: SwipeAction,
+    action: Action,
     showText: () -> Boolean,
     onSelected: () -> Unit
 ) {
@@ -435,15 +434,15 @@ private fun AddPointColumn(
         /** Not verifying for open app, because it is filtered by the filter above in [AddPointColumn] */
 
 
-        is SwipeAction.LaunchShortcut -> {
+        is Action.LaunchShortcut -> {
             if (action.packageName.isEmpty()) stringResource(R.string.pinned_shortcuts)
             else actionLabel(action)
         }
 
-        is SwipeAction.OpenUrl -> stringResource(R.string.open_url)
-        is SwipeAction.RunAdbCommand -> stringResource(R.string.run_adb_command)
-        is SwipeAction.OpenFile -> stringResource(R.string.open_file)
-        is SwipeAction.OpenCircleNest -> stringResource(R.string.open_nest_circle)
+        is Action.OpenUrl -> stringResource(R.string.open_url)
+        is Action.RunAdbCommand -> stringResource(R.string.run_adb_command)
+        is Action.OpenFile -> stringResource(R.string.open_file)
+        is Action.OpenCircleNest -> stringResource(R.string.open_nest_circle)
         else -> actionLabel(action)
     }
 

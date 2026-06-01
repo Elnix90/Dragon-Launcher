@@ -1,9 +1,12 @@
 package org.elnix.dragonlauncher.settings.bases
 
 import androidx.compose.ui.graphics.Color
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
-import org.elnix.dragonlauncher.common.serializables.SwipeJson
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ANGLE_LINE_TAG
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.PointsJson
+
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.ActionJson
+import org.elnix.dragonlauncher.logging.ANGLE_LINE_TAG
 import org.elnix.dragonlauncher.logging.logE
 
 
@@ -107,13 +110,23 @@ internal fun getStringStrict(
 //    }
 //}
 
-internal fun getSwipeActionSerializableStrict(
+internal fun getActionStrict(
     raw: Any?,
-    def: SwipeAction
-): SwipeAction {
+    def: Action
+): Action {
     return when (raw) {
-        is String -> SwipeJson.decodeAction(raw)
-        else -> SwipeJson.decodeAction(raw.toString())
+        is String -> ActionJson.decode(raw)
+        else -> ActionJson.decode(raw.toString())
+    } ?: def
+}
+
+internal fun getPointStrict(
+    raw: Any?,
+    def: Point
+): Point {
+    return when (raw) {
+        is String -> PointsJson.decode(raw)
+        else -> PointsJson.decode(raw.toString())
     } ?: def
 }
 

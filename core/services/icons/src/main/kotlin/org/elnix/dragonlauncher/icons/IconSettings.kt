@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import org.elnix.dragonlauncher.settings.stores.IconsSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.IconsSettingsStore
 
 class IconSettingsRepository(
     ctx: Context

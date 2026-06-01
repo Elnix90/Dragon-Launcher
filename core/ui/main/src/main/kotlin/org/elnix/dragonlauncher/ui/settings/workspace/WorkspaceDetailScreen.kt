@@ -2,8 +2,6 @@
 
 package org.elnix.dragonlauncher.ui.settings.workspace
 
-import android.content.Intent
-import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,22 +21,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.search.Application
-import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
+import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.enumsui.select.WorkspaceViewMode
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dialogs.AppAliasesDialog
 import org.elnix.dragonlauncher.ui.dialogs.AppIconEditor
+import org.elnix.dragonlauncher.ui.dialogs.AppLongPressRowImpl
 import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
 import org.elnix.dragonlauncher.ui.dialogs.TextEditorDialog
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
@@ -50,19 +47,15 @@ fun WorkspaceDetailScreen(
     appsViewModel: AppsViewModel = activityViewModel(),
     workspaceId: String,
     onBack: () -> Unit,
-    onLaunchAction: (SwipeAction) -> Unit
+    onLaunchAction: (Action.LaunchApp) -> Unit
 ) {
-    val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
     val workspaceManager = appsViewModel.workspaceManager
     val workspaceState by workspaceManager.workspacesState.collectAsState()
     val workspace = workspaceState.workspaces.first { it.id == workspaceId }
 
-
-    val overridesManager = appsViewModel.appOverrideManager
-    val appOverrideState by overridesManager.appOverrideState.collectAsState()
-    val overrides = workspaceState.workspaces
+    val appOverridesManager = appsViewModel.appOverrideManager
 
     val workspaceDebugInfos by DebugSettingsStore.workspacesDebugInfo.asState()
 
@@ -89,27 +82,9 @@ fun WorkspaceDetailScreen(
     fun AppLongPressRow(app: Application) {
         val cacheKey = app.key
 
-        AppLongPressRow(
+        AppLongPressRowImpl(
             app = app,
-            onOpen = { onLaunchAction(app.action) },
-            onSettings = if (!app.isPrivate && !app.isWork) {
-                {
-                    ctx.startActivity(
-                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                            data = "package:${app.packageName}".toUri()
-                        }
-                    )
-                }
-            } else null,
-            onUninstall = if (!app.isPrivate && !app.isWork) {
-                {
-                    ctx.startActivity(
-                        Intent(Intent.ACTION_DELETE).apply {
-                            data = "package:${app.packageName}".toUri()
-                        }
-                    )
-                }
-            } else null,
+            onLaunch = { onLaunchAction(app.action) },
             onRemoveFromWorkspace = {
                 workspaceId.let {
                     scope.launch {
@@ -147,7 +122,7 @@ fun WorkspaceDetailScreen(
             onBack = onBack,
             scrollableContent = false,
             helpText = stringResource(R.string.workspace_detail_help),
-            onReset = { appsViewModel.resetWorkspace(workspaceId) },
+            onReset = { workspaceManager.resetWorkspace(workspaceId) },
             resetTitle = stringResource(R.string.reset_workspace),
             resetText = stringResource(R.string.reset_this_workspace_to_default_apps)
         ) {
@@ -157,7 +132,7 @@ fun WorkspaceDetailScreen(
             ) { selectedView = it }
 
             AppGrid(
-                apps = apps.sortedBy { it.name },
+                apps = apps.sortedBy { it.label },
                 longPressPopup = { app -> AppLongPressRow(app) },
                 onClick = null
             )
@@ -190,7 +165,7 @@ fun WorkspaceDetailScreen(
             onDismiss = { showAppPicker = false },
             onAppSelected = { app ->
                 scope.launch {
-                    appsViewModel.addAppToWorkspace(workspaceId, app.key)
+                    workspaceManager.addAppToWorkspace(workspaceId, app.key)
                 }
             }
         )
@@ -203,17 +178,17 @@ fun WorkspaceDetailScreen(
 
         TextEditorDialog(
             title = { stringResource(R.string.rename) },
-            placeHolder = { app.name },
+            placeHolder = { app.label },
             onDismiss = { renameAppTarget = null },
-            initialText = app.name
+            initialText = app.label
         ) {
             if (it != "") {
-                appsViewModel.renameApp(
+                appOverridesManager.renameApp(
                     cacheKey = cacheKey,
                     customName = it
                 )
             } else {
-                appsViewModel.resetAppName(cacheKey)
+                appOverridesManager.renameApp(cacheKey, "")
             }
             renameAppTarget = null
         }
@@ -230,12 +205,12 @@ fun WorkspaceDetailScreen(
         ) {
             scope.launch {
                 if (it != null) {
-                    appsViewModel.setAppIcon(
+                    appOverridesManager.setAppIcon(
                         cacheKey = cacheKey,
                         customIcon = it
                     )
                 } else {
-                    appsViewModel.resetAppIcon(cacheKey)
+                    appOverridesManager.setAppIcon(cacheKey, null)
                 }
                 iconTargetApp = null
             }

@@ -21,24 +21,24 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
+import org.elnix.dragonlauncher.base.cache.IconsCache
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
-import org.elnix.dragonlauncher.common.search.Application
-import org.elnix.dragonlauncher.common.search.PointApp
+import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.models.PointApp
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.AdaptifiedLegacyIcon
+import org.elnix.dragonlauncher.base.model.serializables.CacheKey
+import org.elnix.dragonlauncher.base.model.serializables.CustomActionIcon
+import org.elnix.dragonlauncher.base.model.serializables.CustomIcon
+import org.elnix.dragonlauncher.base.model.serializables.CustomIconPackIcon
+import org.elnix.dragonlauncher.base.model.serializables.CustomIconProperties
+import org.elnix.dragonlauncher.base.model.serializables.CustomTextIcon
+import org.elnix.dragonlauncher.base.model.serializables.DefaultPlaceholderIcon
+import org.elnix.dragonlauncher.base.model.serializables.ForceThemedIcon
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.UnmodifiedSystemDefaultIcon
 import org.elnix.dragonlauncher.colors.ColorService
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ICONS_TAG
-import org.elnix.dragonlauncher.common.serializables.AdaptifiedLegacyIcon
-import org.elnix.dragonlauncher.common.serializables.CacheKey
-import org.elnix.dragonlauncher.common.serializables.CustomActionIcon
-import org.elnix.dragonlauncher.common.serializables.CustomIcon
-import org.elnix.dragonlauncher.common.serializables.CustomIconPackIcon
-import org.elnix.dragonlauncher.common.serializables.CustomIconProperties
-import org.elnix.dragonlauncher.common.serializables.CustomTextIcon
-import org.elnix.dragonlauncher.common.serializables.DefaultPlaceholderIcon
-import org.elnix.dragonlauncher.common.serializables.ForceThemedIcon
-import org.elnix.dragonlauncher.common.serializables.IconShape
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
-import org.elnix.dragonlauncher.common.serializables.Point
-import org.elnix.dragonlauncher.common.serializables.UnmodifiedSystemDefaultIcon
 import org.elnix.dragonlauncher.icons.providers.ActionIconProvider
 import org.elnix.dragonlauncher.icons.providers.CalendarIconProvider
 import org.elnix.dragonlauncher.icons.providers.CompatIconProvider
@@ -56,9 +56,10 @@ import org.elnix.dragonlauncher.icons.transformations.LauncherIconTransformation
 import org.elnix.dragonlauncher.icons.transformations.LegacyToAdaptiveTransformation
 import org.elnix.dragonlauncher.icons.transformations.transform
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
+import org.elnix.dragonlauncher.logging.ICONS_TAG
 import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.recents.PointsService
-import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 
 class IconService(
     val ctx: Context,
@@ -282,8 +283,8 @@ class IconService(
             var icon = if (!reload) {
                 val pointsCacheIcon = pointsIconsCache[pointKey]
                 when (val action = point.action) {
-                    is SwipeAction.LaunchApp -> {
-                        val pointKey = CacheKey(action.packageName, action.userId)
+                    is Action.LaunchApp -> {
+                        val pointKey = CacheKey(action.packageName, action.profile.userHandle.hashCode())
                         val key = CacheKey(
                             cacheKey = pointKey,
                             customIconHashCode = customIcon.hashCode(),
@@ -293,7 +294,7 @@ class IconService(
                         pointsCacheIcon ?: drawerIconCache[key]
                     }
 
-                    is SwipeAction.LaunchShortcut -> {
+                    is Action.LaunchShortcut -> {
                         val pointKey = CacheKey(action.packageName, 0)
                         val key = CacheKey(
                             cacheKey = pointKey,

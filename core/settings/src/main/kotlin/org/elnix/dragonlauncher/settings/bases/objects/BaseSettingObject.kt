@@ -7,17 +7,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
+import org.elnix.dragonlauncher.logging.BACKUP_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logV
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.DatastoreProvider
 import org.elnix.dragonlauncher.settings.resolveDataStore
 
 
 /**
  * Abstract base class for strongly-typed settings persisted in [androidx.datastore.core.DataStore].
- *²
+ *
  * Provides a consistent API for getting/setting individual settings with type-safe encoding/decoding,
  * reactive flows for UI observation, and change callbacks. Extends [AnySettingObject] for use in
  * heterogeneous collections like [org.elnix.dragonlauncher.settings.bases.stores.BaseSettingsStore.ALL].
@@ -33,8 +32,8 @@ import org.elnix.dragonlauncher.settings.resolveDataStore
  * @param onChanged Optional callback invoked after successful set/reset operations.
  */
 class BaseSettingObject<T, R>(
-    override val key: String,
-    val dataStoreName: DatastoreProvider,
+    val key: String,
+    val dataStoreName: DataStoreName,
     val default: T,
     private val preferenceKey: Preferences.Key<R>,
     val encode: (T) -> R?,
@@ -43,22 +42,22 @@ class BaseSettingObject<T, R>(
 ) : AnySettingObject {
 
 
-    /**
-     * Returns the current value of this setting in a type-erased form.
-     *
-     * This method is part of the type-erased settings API and allows heterogeneous
-     * collections of settings to be accessed without knowing their concrete generic
-     * type parameters at compile time.
-     *
-     * Internally, this simply delegates to [get], preserving the original value,
-     * but exposes it as [Any?] so it can be used in generic containers such as
-     * maps or lists of mixed setting types.
-     *
-     * @param ctx Android context used to access the underlying data store.
-     * @return The current value of this setting, or its default value if none
-     *         has been persisted yet.
-     */
-    override suspend fun getAny(ctx: Context) = get(ctx)
+//    /**
+//     * Returns the current value of this setting in a type-erased form.
+//     *
+//     * This method is part of the type-erased settings API and allows heterogeneous
+//     * collections of settings to be accessed without knowing their concrete generic
+//     * type parameters at compile time.
+//     *
+//     * Internally, this simply delegates to [get], preserving the original value,
+//     * but exposes it as [Any?] so it can be used in generic containers such as
+//     * maps or lists of mixed setting types.
+//     *
+//     * @param ctx Android context used to access the underlying data store.
+//     * @return The current value of this setting, or its default value if none
+//     *         has been persisted yet.
+//     */
+//    override suspend fun getAny(ctx: Context) = get(ctx)
 
     /**
      * Sets the value of this setting using a type-erased input.
@@ -133,6 +132,7 @@ class BaseSettingObject<T, R>(
         // After reviewing this, I find it even mores shitier,
         // but I really don't want to touch that, as it works.
         // if I touch this, it'll break the whole app
+        // timesIReadThisAndFearWhatIWrote = 3
         return raw?.let {
             try {
                 encode(decode(it))

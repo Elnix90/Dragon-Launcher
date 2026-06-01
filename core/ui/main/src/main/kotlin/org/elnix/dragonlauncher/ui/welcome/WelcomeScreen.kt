@@ -41,16 +41,16 @@ import `in`.hridayan.shapeindicators.ShapeIndicatorDefaults
 import `in`.hridayan.shapeindicators.ShapeIndicatorRow
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.WELCOME_TAG
+import org.elnix.dragonlauncher.logging.BACKUP_TAG
+import org.elnix.dragonlauncher.logging.WELCOME_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
+import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.SettingsBackupManager
-import org.elnix.dragonlauncher.settings.bases.DatastoreProvider
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dialogs.ImportSettingsDialog
@@ -108,7 +108,7 @@ fun WelcomeScreen(
         }
     }
 
-    var selectedStoresForImport by remember { mutableStateOf(setOf<DatastoreProvider>()) }
+    var selectedStoresForImport by remember { mutableStateOf(setOf<DataStoreName>()) }
     var importJson by remember { mutableStateOf<JSONObject?>(null) }
     var showImportDialog by remember { mutableStateOf(false) }
 

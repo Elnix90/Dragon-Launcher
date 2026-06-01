@@ -2,53 +2,46 @@ package org.elnix.dragonlauncher.ui.actions
 
 import android.os.Build
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.core.content.PackageManagerCompat
 import androidx.core.net.toUri
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Profile
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeResId
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Settings.routeResId
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
-import org.elnix.dragonlauncher.common.messyfolder.getFilePathFromUri
+import org.elnix.dragonlauncher.ktx.getFilePathFromUri
+import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalNests
 
 @Composable
-fun actionLabel(action: SwipeAction): String {
+fun actionLabel(
+    action: Action,
+    appsViewModel: AppsViewModel = activityViewModel()
+): String {
     val ctx = LocalContext.current
     val nests = LocalNests.current
 
-    val pm = ctx.packageManager
-    val packageManagerCompat = PackageManagerCompat(pm, ctx)
-
     return when (action) {
 
-        is SwipeAction.LaunchApp -> {
-            try {
-                pm.getApplicationLabel(
-                    pm.getApplicationInfo(action.packageName, 0)
-                ).toString()
-            } catch (_: Exception) {
-                action.packageName
-            }
+        is Action.LaunchApp -> {
+            val app by appsViewModel.appsRepository.findOne(action.packageName, action.profile.userHandle).collectAsState(null)
+            app?.label ?: action.packageName
         }
 
-        is SwipeAction.LaunchShortcut -> {
+        is Action.LaunchShortcut -> {
             // Empty package = sentinel for "Pinned Shortcuts" chooser entry
             if (action.packageName.isEmpty()) {
                 return stringResource(R.string.pinned_shortcuts)
             }
 
-            val appLabel = try {
-                pm.getApplicationLabel(
-                    pm.getApplicationInfo(action.packageName, 0)
-                ).toString()
-            } catch (_: Exception) {
-                action.packageName
-            }
+            val appLabel = actionLabel(Action.LaunchApp(action.packageName, Profile.dummy()))
 
             val shortcutLabel = try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    packageManagerCompat.queryAppShortcuts(action.packageName)
+                    appsViewModel.appsRepository.queryAppShortcuts(action.packageName)
                         .firstOrNull { it.id == action.shortcutId }
                         ?.shortLabel
                         ?.toString()
@@ -64,26 +57,26 @@ fun actionLabel(action: SwipeAction): String {
         }
 
 
-        is SwipeAction.OpenUrl -> action.url
+        is Action.OpenUrl -> action.url
 
-        SwipeAction.NotificationShade -> stringResource(R.string.notifications)
+        Action.NotificationShade -> stringResource(R.string.notifications)
 
-        SwipeAction.ControlPanel -> stringResource(R.string.control_panel)
+        Action.ControlPanel -> stringResource(R.string.control_panel)
 
-        is SwipeAction.OpenAppDrawer -> stringResource(R.string.app_drawer)
+        is Action.OpenAppDrawer -> stringResource(R.string.app_drawer)
 
-        is SwipeAction.OpenDragonLauncherSettings -> "${stringResource(R.string.dragon_launcher_settings)} (${stringResource(routeResId(action.route))})"
+        is Action.OpenDragonLauncherSettings -> "${stringResource(R.string.dragon_launcher_settings)} (${stringResource(routeResId(action.route))})"
 
-        SwipeAction.Lock -> stringResource(R.string.lock)
+        Action.Lock -> stringResource(R.string.lock)
 
-        is SwipeAction.OpenFile ->
-            getFilePathFromUri(ctx, action.uri.toUri())
+        is Action.OpenFile ->
+            ctx.getFilePathFromUri(action.uri.toUri())
 
-        SwipeAction.ReloadApps -> stringResource(R.string.reload_apps)
+        Action.ReloadApps -> stringResource(R.string.reload_apps)
 
-        SwipeAction.OpenRecentApps -> stringResource(R.string.recent_apps)
+        Action.OpenRecentApps -> stringResource(R.string.recent_apps)
 
-        is SwipeAction.OpenCircleNest -> {
+        is Action.OpenCircleNest -> {
             nests
                 .find { it.id == action.nestId }
                 ?.name
@@ -91,13 +84,13 @@ fun actionLabel(action: SwipeAction): String {
                 ?: stringResource(R.string.open_nest_circle)
         }
 
-        SwipeAction.GoParentNest -> stringResource(R.string.go_parent_nest)
-        is SwipeAction.OpenWidget -> stringResource(R.string.widgets)
-        is SwipeAction.RunAdbCommand -> action.command.trim().takeIf { it.isNotEmpty() } ?: stringResource(R.string.run_adb_command)
-        is SwipeAction.ToggleBluetooth -> stringResource(R.string.toggle_bluetooth)
-        is SwipeAction.ToggleData -> stringResource(R.string.toggle_mobile_data)
-        is SwipeAction.ToggleWifi -> stringResource(R.string.toggle_wifi)
-        SwipeAction.None -> "None"
-        SwipeAction.KillLauncher -> stringResource(R.string.kill_launcher)
+        Action.GoParentNest -> stringResource(R.string.go_parent_nest)
+        is Action.OpenWidget -> stringResource(R.string.widgets)
+        is Action.RunAdbCommand -> action.command.trim().takeIf { it.isNotEmpty() } ?: stringResource(R.string.run_adb_command)
+        is Action.ToggleBluetooth -> stringResource(R.string.toggle_bluetooth)
+        is Action.ToggleData -> stringResource(R.string.toggle_mobile_data)
+        is Action.ToggleWifi -> stringResource(R.string.toggle_wifi)
+        Action.None -> "None"
+        Action.KillLauncher -> stringResource(R.string.kill_launcher)
     }
 }

@@ -9,7 +9,6 @@ import android.util.AttributeSet
 import android.util.Xml
 import android.view.InflateException
 import androidx.core.content.res.ResourcesCompat
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ICONS_TAG
 import org.elnix.dragonlauncher.base.icons.ClockLayer
 import org.elnix.dragonlauncher.base.icons.ClockSublayer
 import org.elnix.dragonlauncher.base.icons.ClockSublayerRole
@@ -20,6 +19,7 @@ import org.elnix.dragonlauncher.base.icons.TintedClockLayer
 import org.elnix.dragonlauncher.base.icons.TintedIconLayer
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import org.elnix.dragonlauncher.ktx.skipToNextTag
+import org.elnix.dragonlauncher.logging.ICONS_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
@@ -49,7 +49,7 @@ data class AdaptiveIconDrawableCompat(
                     } else {
                         null
                     }
-                } catch (e: Resources.NotFoundException) {
+                } catch (_: Resources.NotFoundException) {
                     null
                 }
             }
@@ -91,11 +91,11 @@ data class AdaptiveIconDrawableCompat(
                         monochrome = monochrome,
                     )
                 }
-            } catch (e: Resources.NotFoundException) {
+            } catch (_: Resources.NotFoundException) {
                 return null
-            } catch (e: IOException) {
+            } catch (_: IOException) {
                 return null
-            } catch (e: XmlPullParserException) {
+            } catch (_: XmlPullParserException) {
                 return null
             } finally {
                 xmlParser?.close()

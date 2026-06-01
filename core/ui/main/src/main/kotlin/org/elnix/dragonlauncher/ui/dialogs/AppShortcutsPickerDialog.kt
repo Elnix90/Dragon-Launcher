@@ -36,9 +36,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.messyfolder.resolveShape
+import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.common.serializables.AppModel
-import org.elnix.dragonlauncher.common.utils.ImageUtils.loadDrawableAsBitmap
+import org.elnix.dragonlauncher.base.util.ImageUtils.loadDrawableAsBitmap
 import org.elnix.dragonlauncher.ui.actions.appIcon
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape

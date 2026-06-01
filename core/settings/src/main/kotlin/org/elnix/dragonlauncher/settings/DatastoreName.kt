@@ -19,38 +19,38 @@ import org.elnix.dragonlauncher.settings.DataStoreName.DRAWER
 import org.elnix.dragonlauncher.settings.DataStoreName.HOLD_TO_ACTIVATE
 import org.elnix.dragonlauncher.settings.DataStoreName.ICONS
 import org.elnix.dragonlauncher.settings.DataStoreName.LANGUAGE
-import org.elnix.dragonlauncher.settings.DataStoreName.PRIVATE_APPS
+import org.elnix.dragonlauncher.settings.DataStoreName.NESTS
+import org.elnix.dragonlauncher.settings.DataStoreName.POINTS
 import org.elnix.dragonlauncher.settings.DataStoreName.PRIVATE_SETTINGS
 import org.elnix.dragonlauncher.settings.DataStoreName.STATUS_BAR
 import org.elnix.dragonlauncher.settings.DataStoreName.STATUS_BAR_JSON
-import org.elnix.dragonlauncher.settings.DataStoreName.SWIPE
 import org.elnix.dragonlauncher.settings.DataStoreName.SWIPE_MAP
 import org.elnix.dragonlauncher.settings.DataStoreName.UI
 import org.elnix.dragonlauncher.settings.DataStoreName.WELLBEING
 import org.elnix.dragonlauncher.settings.DataStoreName.WIDGETS
 import org.elnix.dragonlauncher.settings.DataStoreName.WORKSPACES
 import org.elnix.dragonlauncher.settings.bases.stores.BaseSettingsStore
-import org.elnix.dragonlauncher.settings.stores.AngleLineSettingsStore
-import org.elnix.dragonlauncher.settings.stores.AppOverridesSettingsStore
-import org.elnix.dragonlauncher.settings.stores.BackupSettingsStore
-import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
-import org.elnix.dragonlauncher.settings.stores.ColorModesSettingsStore
-import org.elnix.dragonlauncher.settings.stores.ColorSettingsStore
-import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
-import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
-import org.elnix.dragonlauncher.settings.stores.HoldToActivateArcSettingsStore
-import org.elnix.dragonlauncher.settings.stores.IconsSettingsStore
-import org.elnix.dragonlauncher.settings.stores.LanguageSettingsStore
-import org.elnix.dragonlauncher.settings.stores.PrivateAppsSettingsStore
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
-import org.elnix.dragonlauncher.settings.stores.StatusBarJsonSettingsStore
-import org.elnix.dragonlauncher.settings.stores.StatusBarSettingsStore
-import org.elnix.dragonlauncher.settings.stores.SwipeMapSettingsStore
-import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
-import org.elnix.dragonlauncher.settings.stores.WellbeingSettingsStore
-import org.elnix.dragonlauncher.settings.stores.WidgetsSettingsStore
-import org.elnix.dragonlauncher.settings.stores.WorkspaceSettingsStore
+import org.elnix.dragonlauncher.settings.stores.array.NestsSettingsStore
+import org.elnix.dragonlauncher.settings.stores.array.PointsSettingsStore
+import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
+import org.elnix.dragonlauncher.settings.stores.array.WidgetsSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.IconsSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.LanguageSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
+import org.elnix.dragonlauncher.settings.stores.`object`.AppOverridesSettingsStore
+import org.elnix.dragonlauncher.settings.stores.`object`.WorkspaceSettingsStore
 
 
 enum class DataStoreName(
@@ -63,13 +63,13 @@ enum class DataStoreName(
     COLOR_MODE("colorModeDatastore", "color_mode"),
     COLOR("colorDatastore", "color"),
     PRIVATE_SETTINGS("privateSettingsStore", "private", false),
-    SWIPE("swipePointsDatastore", "new_actions"),
+    POINTS("pointsDatastore", "points"),
+    NESTS("nestsDatastore", "nests"),
     LANGUAGE("languageDatastore", "language"),
     DRAWER("drawerDatastore", "drawer"),
     DEBUG("debugDatastore", "debug"),
     APP_OVERRIDES("AppOverridesDatastore", "app_overrides"),
     WORKSPACES("workspacesDataStore", "workspaces"),
-    PRIVATE_APPS("privateAppsDatastore", "private_apps", false),
     BEHAVIOR("behaviorDatastore", "behavior"),
     BACKUP("backupDatastore", "backup"),
     STATUS_BAR("statusDatastore", "status_bar"),
@@ -98,13 +98,13 @@ val allStores: Map<DataStoreName, BaseSettingsStore<*, *>>
         COLOR_MODE to ColorModesSettingsStore,
         COLOR to ColorSettingsStore,
         PRIVATE_SETTINGS to PrivateSettingsStore,
-        SWIPE to SwipeSettingsStore,
+        POINTS to PointsSettingsStore,
+        NESTS to NestsSettingsStore,
         LANGUAGE to LanguageSettingsStore,
         DRAWER to DrawerSettingsStore,
         DEBUG to DebugSettingsStore,
         WORKSPACES to WorkspaceSettingsStore,
         APP_OVERRIDES to AppOverridesSettingsStore,
-        PRIVATE_APPS to PrivateAppsSettingsStore,
         BEHAVIOR to BehaviorSettingsStore,
         BACKUP to BackupSettingsStore,
         STATUS_BAR to StatusBarSettingsStore,

@@ -50,14 +50,14 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
-import org.elnix.dragonlauncher.common.search.Application
+import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.PRIVATE_SPACE_TAG
+import org.elnix.dragonlauncher.base.Constants.Logging.PRIVATE_SPACE_TAG
 import org.elnix.dragonlauncher.common.serializables.WorkspaceType
 import org.elnix.dragonlauncher.common.utils.PrivateSpaceUtils
 import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.models.ProfilesVM
+import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.UiConstants
@@ -72,7 +72,7 @@ import org.elnix.dragonlauncher.ui.helpers.AppGrid
 @Composable
 fun AppPickerDialog(
     appsViewModel: AppsViewModel = activityViewModel(),
-    profilesVM: ProfilesVM = activityViewModel(),
+    profilesViewModel: ProfilesViewModel = activityViewModel(),
     multiSelectEnabled: Boolean = false,
     onDismiss: () -> Unit,
     onAppSelected: (Application) -> Unit,
@@ -122,7 +122,7 @@ fun AppPickerDialog(
             privateSpaceState.isLocked
         ) {
             logW(PRIVATE_SPACE_TAG) { "Picker launch!" }
-            profilesVM.onUnlockPrivateSpace()
+            profilesViewModel.onUnlockPrivateSpace()
         }
 
         appsViewModel.selectWorkspace(newWorkspaceId)
@@ -361,7 +361,7 @@ fun AppPickerDialog(
                                         contentDescription = "Private Space Locked"
                                     ) {
                                         logW(PRIVATE_SPACE_TAG) { "Drawer reload button launch!" }
-                                        profilesVM.onUnlockPrivateSpace()
+                                        profilesViewModel.onUnlockPrivateSpace()
                                     }
                                 }
                             }

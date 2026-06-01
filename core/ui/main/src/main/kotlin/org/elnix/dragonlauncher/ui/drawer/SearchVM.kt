@@ -23,9 +23,9 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.profiles.Profile
-import org.elnix.dragonlauncher.common.search.Application
-import org.elnix.dragonlauncher.common.search.ResultScore
+import org.elnix.dragonlauncher.base.model.serializables.Profile
+import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.models.ResultScore
 import org.elnix.dragonlauncher.data.customattrs.SavableSearchableRepository
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import org.elnix.dragonlauncher.permissions.PermissionGroup

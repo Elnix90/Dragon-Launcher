@@ -37,8 +37,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.search.Application
-import org.elnix.dragonlauncher.common.search.AppCategory
+import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.models.AppCategory
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.utils.LifecycleUtils.waitASec
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalAppItemSettings

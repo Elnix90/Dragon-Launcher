@@ -21,11 +21,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.viewinterop.AndroidView
-import org.elnix.dragonlauncher.common.messyfolder.resolveShape
-import org.elnix.dragonlauncher.common.serializables.Widget
+import org.elnix.dragonlauncher.base.resolveShape
+
 import org.elnix.dragonlauncher.common.serializables.IconShape
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
-import org.elnix.dragonlauncher.common.serializables.Point
+
+import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.ktx.toDp
 import org.elnix.dragonlauncher.ui.actions.ActionIcon
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
@@ -48,9 +48,9 @@ fun WidgetHostView(
     val currentView = LocalView.current
 
 
-    if (widget.action is SwipeAction.OpenWidget) {
+    if (widget.action is Action.OpenWidget) {
         val launcherWidgetHolder = remember(ctx) { LauncherWidgetHolder.getInstance(ctx) }
-        val appWidgetId = widget.appWidgetId ?: (widget.action as SwipeAction.OpenWidget).widgetId
+        val appWidgetId = widget.appWidgetId ?: (widget.action as Action.OpenWidget).widgetId
 
         val hostView = remember(appWidgetId, currentView) {
             val info = launcherWidgetHolder.getAppWidgetInfo(appWidgetId)
@@ -108,7 +108,7 @@ fun WidgetHostView(
             min((widget.spanX * cellSizePx), (widget.spanY * cellSizePx)).toDp
         }
 
-        if (widget.action !is SwipeAction.OpenCircleNest) {
+        if (widget.action !is Action.OpenCircleNest) {
             ActionIcon(
                 action = widget.action,
                 modifier = modifier
@@ -127,7 +127,7 @@ fun WidgetHostView(
             val editPoint = Point(
                 circleNumber = 0,
                 angleDeg = 0.0,
-                action = SwipeAction.OpenCircleNest((widget.action as SwipeAction.OpenCircleNest).nestId),
+                action = Action.OpenCircleNest((widget.action as Action.OpenCircleNest).nestId),
                 id = ""
             )
 

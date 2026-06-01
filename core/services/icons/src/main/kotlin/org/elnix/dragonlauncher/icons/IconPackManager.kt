@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.icons
 
+import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
@@ -32,8 +33,7 @@ import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.icons.TintedClockLayer
 import org.elnix.dragonlauncher.base.icons.TintedIconLayer
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ICONS_TAG
-import org.elnix.dragonlauncher.common.utils.ImageUtils.tintedWith
+import org.elnix.dragonlauncher.base.util.ImageUtils.tintedWith
 import org.elnix.dragonlauncher.database.AppDatabase
 import org.elnix.dragonlauncher.icons.compat.AdaptiveIconDrawableCompat
 import org.elnix.dragonlauncher.icons.compat.toLauncherIcon
@@ -41,6 +41,7 @@ import org.elnix.dragonlauncher.icons.loaders.AppFilterIconPackInstaller
 import org.elnix.dragonlauncher.icons.loaders.GrayscaleMapIconPackInstaller
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import org.elnix.dragonlauncher.ktx.randomElementOrNull
+import org.elnix.dragonlauncher.logging.ICONS_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import kotlin.math.roundToInt
@@ -107,7 +108,7 @@ class IconPackManager(
         val res = try {
             ctx.packageManager.getResourcesForApplication(iconPack)
         } catch (e: PackageManager.NameNotFoundException) {
-            logE(ICONS_TAG,e) { "Icon pack package $iconPack not found!" }
+            logE(ICONS_TAG, e) { "Icon pack package $iconPack not found!" }
             return@withContext null
         }
         val activity = activityName?.let { ComponentName(packageName, it) }?.shortClassName
@@ -115,14 +116,19 @@ class IconPackManager(
         val icon = iconDao.getIcon(packageName, activity, iconPack)?.let { IconPackAppIcon(it) }
             ?: return@withContext null
 
-        if (icon is CalendarIcon) {
-            return@withContext getIconPackCalendarIcon(icon, res, allowThemed)
-        } else if (icon is AppIcon) {
-            return@withContext getIconPackStaticIcon(icon, res, allowThemed)
-        } else if (icon is ClockIcon) {
-            return@withContext getIconPackClockIcon(icon, res, allowThemed)
+        when (icon) {
+            is CalendarIcon -> {
+                return@withContext getIconPackCalendarIcon(icon, res, allowThemed)
+            }
+
+            is AppIcon -> {
+                return@withContext getIconPackStaticIcon(icon, res, allowThemed)
+            }
+
+            is ClockIcon -> {
+                return@withContext getIconPackClockIcon(icon, res, allowThemed)
+            }
         }
-        return@withContext null
     }
 
     suspend fun getIcon(
@@ -133,7 +139,7 @@ class IconPackManager(
         val res = try {
             ctx.packageManager.getResourcesForApplication(iconPack)
         } catch (e: PackageManager.NameNotFoundException) {
-            logE(ICONS_TAG,e) { "Icon pack package $iconPack not found!" }
+            logE(ICONS_TAG, e) { "Icon pack package $iconPack not found!" }
             return@withContext null
         }
         when (icon) {
@@ -151,6 +157,7 @@ class IconPackManager(
         }
     }
 
+    @SuppressLint("DiscouragedApi")
     suspend fun generateIcon(
         ctx: Context,
         iconPack: String,
@@ -193,9 +200,9 @@ class IconPackManager(
         val pm = ctx.packageManager
         val res = try {
             pm.getResourcesForApplication(iconPack)
-        } catch (e: Resources.NotFoundException) {
+        } catch (_: Resources.NotFoundException) {
             return@withContext null
-        } catch (e: PackageManager.NameNotFoundException) {
+        } catch (_: PackageManager.NameNotFoundException) {
             return@withContext null
         }
 
@@ -204,7 +211,7 @@ class IconPackManager(
                 paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
                 val maskDrawable = try {
                     ResourcesCompat.getDrawable(res, it, null) ?: return@withContext null
-                } catch (e: Resources.NotFoundException) {
+                } catch (_: Resources.NotFoundException) {
                     return@withContext null
                 }
                 val maskBmp = maskDrawable.toBitmap(size, size)
@@ -218,7 +225,7 @@ class IconPackManager(
                 paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
                 val maskDrawable = try {
                     ResourcesCompat.getDrawable(res, it, null) ?: return@withContext null
-                } catch (e: Resources.NotFoundException) {
+                } catch (_: Resources.NotFoundException) {
                     return@withContext null
                 }
                 val maskBmp = maskDrawable.toBitmap(size, size)
@@ -232,7 +239,7 @@ class IconPackManager(
                 paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OVER)
                 val maskDrawable = try {
                     ResourcesCompat.getDrawable(res, it, null) ?: return@withContext null
-                } catch (e: Resources.NotFoundException) {
+                } catch (_: Resources.NotFoundException) {
                     return@withContext null
                 }
                 val maskBmp = maskDrawable.toBitmap(size, size)
@@ -280,6 +287,7 @@ class IconPackManager(
         return iconDao.getScale(iconPack) ?: 1f
     }
 
+    @SuppressLint("DiscouragedApi")
     private fun getIconPackStaticIcon(
         icon: AppIcon,
         resources: Resources,
@@ -295,14 +303,14 @@ class IconPackManager(
         }
         val drawable = try {
             ResourcesCompat.getDrawable(resources, resId, ctx.theme) ?: return null
-        } catch (e: Resources.NotFoundException) {
+        } catch (_: Resources.NotFoundException) {
             return null
         }
         val themed = icon.themed && allowThemed
         return when {
             themed && drawable is AdaptiveIconDrawable -> {
                 if (isAtLeastApiLevel(33) && drawable.monochrome != null) {
-                    return StaticLauncherIcon(
+                    StaticLauncherIcon(
                         foregroundLayer = TintedIconLayer(
                             icon = drawable.monochrome!!,
                             scale = 1.5f,
@@ -310,7 +318,7 @@ class IconPackManager(
                         backgroundLayer = ColorLayer(),
                     )
                 } else {
-                    return StaticLauncherIcon(
+                    StaticLauncherIcon(
                         foregroundLayer = TintedIconLayer(
                             icon = drawable.foreground,
                             scale = 1.5f,
@@ -321,7 +329,7 @@ class IconPackManager(
             }
 
             themed -> {
-                return StaticLauncherIcon(
+                StaticLauncherIcon(
                     foregroundLayer = TintedIconLayer(
                         icon = drawable,
                         scale = 0.65f,
@@ -331,7 +339,7 @@ class IconPackManager(
             }
 
             drawable is AdaptiveIconDrawable -> {
-                return StaticLauncherIcon(
+                StaticLauncherIcon(
                     foregroundLayer = drawable.foreground?.let {
                         StaticIconLayer(
                             icon = it,
@@ -359,6 +367,7 @@ class IconPackManager(
         }
     }
 
+    @SuppressLint("DiscouragedApi")
     private fun getIconPackCalendarIcon(
         icon: CalendarIcon,
         resources: Resources,
@@ -383,6 +392,7 @@ class IconPackManager(
         )
     }
 
+    @SuppressLint("DiscouragedApi")
     private fun getIconPackClockIcon(
         icon: ClockIcon,
         resources: Resources,
@@ -391,7 +401,7 @@ class IconPackManager(
         val drawableId = try {
             resources.getIdentifier(icon.drawable, "drawable", icon.iconPack).takeIf { it != 0 }
                 ?: return null
-        } catch (e: Resources.NotFoundException) {
+        } catch (_: Resources.NotFoundException) {
             return null
         }
         val adaptiveIconCompat = AdaptiveIconDrawableCompat.from(resources, drawableId)
@@ -400,7 +410,7 @@ class IconPackManager(
         }
         val drawable = try {
             ResourcesCompat.getDrawable(resources, drawableId, null)
-        } catch (e: Resources.NotFoundException) {
+        } catch (_: Resources.NotFoundException) {
             null
         } ?: return null
 

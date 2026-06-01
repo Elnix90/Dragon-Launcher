@@ -15,10 +15,10 @@ import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.models.DragonLogViewModel
 import org.elnix.dragonlauncher.models.LockScreenViewModel
 import org.elnix.dragonlauncher.models.PointSettingsViewModel
-import org.elnix.dragonlauncher.models.ProfilesVM
+import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.models.ShizukuViewModel
 import org.elnix.dragonlauncher.models.WidgetsViewModel
-import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
@@ -32,7 +32,7 @@ fun DebugViewModel(
     widgetsViewModel: WidgetsViewModel = activityViewModel(),
     lockScreenViewModel: LockScreenViewModel = activityViewModel(),
     pointSettingsViewModel: PointSettingsViewModel = activityViewModel(),
-    profilesVM: ProfilesVM = activityViewModel(),
+    profilesViewModel: ProfilesViewModel = activityViewModel(),
     shizukuViewModel: ShizukuViewModel = activityViewModel(),
 ) {
     val showDebugViewModel by DebugSettingsStore.showDebugViewModel.asState()
@@ -64,7 +64,7 @@ fun DebugViewModel(
         vmTestColor("floatingAppsViewModel", widgetsViewModel)
         vmTestColor("lockScreenViewModel", lockScreenViewModel)
         vmTestColor("pointSettingsViewModel", pointSettingsViewModel)
-        vmTestColor("privateSpaceViewModel", profilesVM)
+        vmTestColor("privateSpaceViewModel", profilesViewModel)
         vmTestColor("shizukuViewModel", shizukuViewModel)
     }
 }

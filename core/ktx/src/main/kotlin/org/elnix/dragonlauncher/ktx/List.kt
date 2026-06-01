@@ -27,3 +27,17 @@ fun <T> List<T>.distinctByEquality(equalityPredicate: (T, T) -> Boolean): List<T
 
     return ret
 }
+
+
+//fun <T> SnapshotStateList<T>.move(from: Int, to: Int) {
+//    if (from == to) return
+//    if (from in 0 until size && to in 0 until size) {
+//        add(to, removeAt(from))
+//    }
+//}
+
+fun <E> MutableSet<E>.addOrRemove(element: E) {
+    if (contains(element)) {
+        remove(element)
+    } else add(element)
+}

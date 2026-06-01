@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.map
 import org.elnix.dragonlauncher.badges.providers.NotificationBadgeProvider
 import org.elnix.dragonlauncher.badges.providers.ProfileBadgeProvider
 import org.elnix.dragonlauncher.badges.providers.SuspendedAppsBadgeProvider
-import org.elnix.dragonlauncher.common.search.Application
+import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.notifications.NotificationRepository
 import org.elnix.dragonlauncher.profiles.ProfileManager
 
 
@@ -18,12 +19,13 @@ interface BadgeService {
 
 
 internal class BadgeServiceImpl(
-    profileManager: ProfileManager
+    profileManager: ProfileManager,
+    notificationRepository: NotificationRepository
 ) : BadgeService {
 
     private val badgeProviders = listOf(
         ProfileBadgeProvider(profileManager),
-        NotificationBadgeProvider(),
+        NotificationBadgeProvider(notificationRepository),
         SuspendedAppsBadgeProvider()
     )
 

@@ -7,8 +7,8 @@ import android.os.Build
 import android.provider.Settings
 import androidx.annotation.RequiresApi
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ACCESSIBILITY_TAG
-import org.elnix.dragonlauncher.common.messyfolder.showToast
+import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.logging.ACCESSIBILITY_TAG
 
 object SystemControl {
 

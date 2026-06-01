@@ -1,10 +1,8 @@
 package org.elnix.dragonlauncher.settings.bases.stores
 
 import android.content.Context
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.WORKSPACES_TAG
+import org.elnix.dragonlauncher.logging.BACKUP_TAG
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.string
@@ -31,7 +29,7 @@ import org.json.JSONObject
  */
 abstract class JsonObjectSettingsStore(
     override val dataStoreName: DataStoreName
-) : BaseSettingsStore<JSONObject?, JSONObject>(datastoreName) {
+) : BaseSettingsStore<JSONObject?, JSONObject>(dataStoreName) {
 
     /**
      * Underlying setting that stores the JSON payload as a raw string.
@@ -52,7 +50,6 @@ abstract class JsonObjectSettingsStore(
         // Skips if default value provided (no changes made), keeps the backup lighter
         val raw = jsonSetting.getEncoded(ctx)?.trim() ?: return null
 
-//        logI(WORKSPACES_TAG) { raw }
         return try {
             if (raw.isEmpty()) null else JSONObject(raw)
         } catch (e: JSONException) {
@@ -66,7 +63,6 @@ abstract class JsonObjectSettingsStore(
      * Serializes and writes the provided [JSONObject] into DataStore.
      */
     override suspend fun setAll(ctx: Context, value: JSONObject?) {
-        logI(WORKSPACES_TAG) { value?.toString() ?: "null" }
         jsonSetting.set(ctx, value?.toString())
     }
 

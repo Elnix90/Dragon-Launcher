@@ -1,7 +1,7 @@
 package org.elnix.dragonlauncher.settings.bases.stores
 
 import android.content.Context
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
+import org.elnix.dragonlauncher.logging.BACKUP_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject

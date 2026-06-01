@@ -16,15 +16,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
-import org.elnix.dragonlauncher.common.search.Application
-import org.elnix.dragonlauncher.common.serializables.AppOverride
-import org.elnix.dragonlauncher.common.serializables.IconShape
-import org.elnix.dragonlauncher.common.serializables.Point
-import org.elnix.dragonlauncher.common.serializables.Workspace
-import org.elnix.dragonlauncher.common.serializables.WorkspaceType
+import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Workspace
+import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
 import org.elnix.dragonlauncher.icons.IconPackManager
 import org.elnix.dragonlauncher.icons.IconService
-import org.elnix.dragonlauncher.profiles.ProfileManager
+import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.recents.RecentsService
 import org.elnix.dragonlauncher.workspaces.WorkspacesManager
 import javax.inject.Inject
@@ -33,9 +32,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AppsViewModel @Inject constructor(
     application: android.app.Application,
-    private val profileManager: ProfileManager,
-    private val iconPackManager: IconPackManager,
-    private val appsRepository: AppRepository,
+    iconPackManager: IconPackManager,
+    val appsRepository: AppRepository,
     private val recentsService: RecentsService,
     val iconsService: IconService,
     val workspaceManager: WorkspacesManager,
@@ -43,6 +41,12 @@ class AppsViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
 
     val allApps: Flow<ImmutableList<Application>> = appsRepository.getAllApps()
+
+    fun isAppInstalled(packageName: String) : Flow<Boolean> {
+        return allApps.map { apps ->
+            apps.any { it.packageName == packageName }
+        }
+    }
 
     val iconPackList = iconPackManager.getInstalledIconPacks()
     val pointsIconsCache = iconsService.pointsIconsCache
@@ -72,9 +76,7 @@ class AppsViewModel @Inject constructor(
 //    private val pmCompat = PackageManagerCompat(ctx)
 
 
-    fun getRecentApps(count: Int): StateFlow<List<Application>> {
-        return recentsService.getRecentApps(count)
-    }
+
 
 
     val selectedWorkspaceId = workspaceManager.selectedWorkspaceId
@@ -82,18 +84,10 @@ class AppsViewModel @Inject constructor(
 
 
     fun selectWorkspace(workspaceId: String) = workspaceManager.selectWorkspace(workspaceId)
-//
-//    init {
-//        // Receive package receiver events to trigger a app reload (app installed, etc..)
-//        viewModelScope.launch {
-//            AppsRepository.reloadTrigger.collect { event ->
-//                logI(BROADCAST_TAG) { "Received $event from AppsRepository, reloading apps!" }
-//                reloadApps()
-//            }
-//        }
-//
-//        logD(TAG) { "created AppsViewModel ${System.identityHashCode(this)}" }
-//    }
+
+    init {
+        viewModelInitialized()
+    }
 
 //    /**
 //     * Loads everything the AppViewModel needs

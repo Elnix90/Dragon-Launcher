@@ -6,16 +6,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Process
 import androidx.core.net.toUri
+import org.elnix.dragonlauncher.base.model.serializables.ExtensionModel
+import org.elnix.dragonlauncher.ktx.openUrl
+import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.logging.EXTENSION_MANAGER_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logW
-import org.elnix.dragonlauncher.common.serializables.ExtensionModel
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.EXTENSION_MANAGER_TAG
-import org.elnix.dragonlauncher.common.messyfolder.PackageManagerCompat
-import org.elnix.dragonlauncher.common.messyfolder.openUrl
-import org.elnix.dragonlauncher.common.messyfolder.showToast
-import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 
 object ExtensionManager {
 
@@ -48,7 +48,6 @@ object ExtensionManager {
     }
 
     fun isExtensionInstalled(ctx: Context, packageNameOrId: String): Boolean {
-        val pmCompat = PackageManagerCompat(ctx.packageManager, ctx)
         logD(EXTENSION_MANAGER_TAG) { "Checking extension installed for: $packageNameOrId" }
 
         val disableSigCheck = kotlinx.coroutines.runBlocking {
@@ -77,7 +76,13 @@ object ExtensionManager {
                 }
                 return true
             } else {
-                val isInstalled = pmCompat.isPackageInstalled(packageNameOrId)
+                val isInstalled =
+                    try {
+                        ctx.packageManager.getPackageInfo(packageNameOrId, Process.myUserHandle().hashCode())
+                        true
+                    } catch (_: PackageManager.NameNotFoundException) {
+                        false
+                    }
                 if (isInstalled) {
                     logD(EXTENSION_MANAGER_TAG) { "App installed: $packageNameOrId" }
                 } else {

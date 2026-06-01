@@ -16,14 +16,15 @@ import androidx.core.content.getSystemService
 import androidx.core.net.toUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.PERMISSIONS_TAG
+import kotlinx.coroutines.flow.first
 import org.elnix.dragonlauncher.ktx.checkPermission
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import org.elnix.dragonlauncher.ktx.tryStartActivity
+import org.elnix.dragonlauncher.logging.PERMISSIONS_TAG
 import org.elnix.dragonlauncher.logging.logE
 
 interface PermissionsManager {
-    fun requestPermission(context: AppCompatActivity, permissionGroup: PermissionGroup)
+    fun requestPermission(ctx: AppCompatActivity, permissionGroup: PermissionGroup)
 
     /**
      * Check if this permission is granted right now without receiving further updates
@@ -43,6 +44,7 @@ interface PermissionsManager {
     }
 
     fun hasPermission(permissionGroup: PermissionGroup): Flow<Boolean>
+    suspend fun hasPermissionBlocking(permissionGroup: PermissionGroup): Boolean
 
     /**
      * Special function for the Notification listener to report its status.
@@ -57,82 +59,47 @@ interface PermissionsManager {
     fun reportAccessibilityServiceState(running: Boolean)
 }
 
-enum class PermissionGroup {
-    Calendar,
-    Tasks,
-    Location,
-    Contacts,
-    ExternalStorage,
-    Notifications,
-    AppShortcuts,
-    Accessibility,
-    ManageProfiles,
-    Call,
-}
 
+
+@Suppress("KotlinConstantConditions")
 internal class PermissionsManagerImpl(
     private val ctx: Context
 ) : PermissionsManager {
-
     private val pendingPermissionRequests = mutableSetOf<PermissionGroup>()
 
-    private val calendarPermissionState = MutableStateFlow(
-        checkPermissionOnce(PermissionGroup.Calendar)
-    )
+
     private val tasksPermissionState = MutableStateFlow(
         checkPermissionOnce(PermissionGroup.Tasks)
     )
-    private val contactsPermissionState = MutableStateFlow(
-        checkPermissionOnce(PermissionGroup.Contacts)
-    )
+
     private val externalStoragePermissionState = MutableStateFlow(
         checkPermissionOnce(PermissionGroup.ExternalStorage)
     )
-    private val locationPermissionState = MutableStateFlow(
-        checkPermissionOnce(PermissionGroup.Location)
+
+    private val usageStatPermissionState = MutableStateFlow(
+        checkPermissionOnce(PermissionGroup.UsageStat)
     )
+
     private val notificationsPermissionState = MutableStateFlow(false)
+
     private val accessibilityPermissionState = MutableStateFlow(false)
+
     private val appShortcutsPermissionState = MutableStateFlow(
         checkPermissionOnce(PermissionGroup.AppShortcuts)
     )
     private val manageProfilesPermissionState = MutableStateFlow(
         checkPermissionOnce(PermissionGroup.ManageProfiles)
     )
-    private val callPermissionState = MutableStateFlow(
-        checkPermissionOnce(PermissionGroup.Call)
-    )
 
-    override fun requestPermission(context: AppCompatActivity, permissionGroup: PermissionGroup) {
+
+    override fun requestPermission(ctx: AppCompatActivity, permissionGroup: PermissionGroup) {
         when (permissionGroup) {
-            PermissionGroup.Calendar -> {
-                ActivityCompat.requestPermissions(
-                    context,
-                    calendarPermissions,
-                    permissionGroup.ordinal
-                )
-            }
+
 
             PermissionGroup.Tasks -> {
                 ActivityCompat.requestPermissions(
-                    context,
+                    ctx,
                     taskPermissions,
-                    permissionGroup.ordinal
-                )
-            }
-
-            PermissionGroup.Location -> {
-                ActivityCompat.requestPermissions(
-                    context,
-                    locationPermissions,
-                    permissionGroup.ordinal
-                )
-            }
-
-            PermissionGroup.Contacts -> {
-                ActivityCompat.requestPermissions(
-                    context,
-                    contactPermissions,
                     permissionGroup.ordinal
                 )
             }
@@ -141,13 +108,13 @@ internal class PermissionsManagerImpl(
                 if (isAtLeastApiLevel(Build.VERSION_CODES.R)) {
                     val intent =
                         Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).also {
-                            it.data = "package:${context.packageName}".toUri()
+                            it.data = "package:${ctx.packageName}".toUri()
                         }
-                    context.tryStartActivity(intent)
+                    ctx.tryStartActivity(intent)
                     pendingPermissionRequests.add(PermissionGroup.ExternalStorage)
                 } else {
                     ActivityCompat.requestPermissions(
-                        context,
+                        ctx,
                         externalStoragePermissions,
                         permissionGroup.ordinal
                     )
@@ -156,7 +123,7 @@ internal class PermissionsManagerImpl(
 
             PermissionGroup.Notifications -> {
                 try {
-                    context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+                    ctx.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
                 } catch (e: ActivityNotFoundException) {
                     logE(PERMISSIONS_TAG, e) { "Failed to start notifications settings" }
                 }
@@ -166,52 +133,37 @@ internal class PermissionsManagerImpl(
             PermissionGroup.AppShortcuts -> {
                 // TODO open default launcher settings
                 if (isAtLeastApiLevel(29)) {
-                    val roleManager = context.getSystemService<RoleManager>()
-                    context.startActivityForResult(
+                    val roleManager = ctx.getSystemService<RoleManager>()
+                    ctx.startActivityForResult(
                         roleManager!!.createRequestRoleIntent(RoleManager.ROLE_HOME),
                         permissionGroup.ordinal
                     )
                 } else {
-                    context.tryStartActivity(Intent(Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS))
+                    ctx.tryStartActivity(Intent(Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS))
                 }
                 pendingPermissionRequests.add(PermissionGroup.AppShortcuts)
             }
 
             PermissionGroup.Accessibility -> {
                 try {
-                    context.tryStartActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                    ctx.tryStartActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
                     pendingPermissionRequests.add(PermissionGroup.Accessibility)
                 } catch (e: ActivityNotFoundException) {
                     logE(PERMISSIONS_TAG, e) { "Failed to start accessibility settings" }
                 }
             }
 
-            PermissionGroup.Call -> {
-                ActivityCompat.requestPermissions(
-                    context,
-                    callPermissions,
-                    permissionGroup.ordinal
-                )
+            PermissionGroup.UsageStat -> {
+                ctx.tryStartActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+                pendingPermissionRequests.add(PermissionGroup.UsageStat)
             }
         }
     }
 
     override fun checkPermissionOnce(permissionGroup: PermissionGroup): Boolean {
         return when (permissionGroup) {
-            PermissionGroup.Calendar -> {
-                calendarPermissions.all { ctx.checkPermission(it) }
-            }
-
             PermissionGroup.Tasks -> {
                 taskPermissions.all { ctx.checkPermission(it) }
-            }
-
-            PermissionGroup.Location -> {
-                locationPermissions.any { ctx.checkPermission(it) }
-            }
-
-            PermissionGroup.Contacts -> {
-                contactPermissions.all { ctx.checkPermission(it) }
             }
 
             PermissionGroup.ExternalStorage -> {
@@ -240,25 +192,26 @@ internal class PermissionsManagerImpl(
                 accessibilityPermissionState.value
             }
 
-            PermissionGroup.Call -> {
-                callPermissions.all { ctx.checkPermission(it) }
+            PermissionGroup.UsageStat -> {
+                hasUsageStatsPermission(ctx)
             }
         }
     }
 
     override fun hasPermission(permissionGroup: PermissionGroup): Flow<Boolean> {
         return when (permissionGroup) {
-            PermissionGroup.Calendar -> calendarPermissionState
             PermissionGroup.Tasks -> tasksPermissionState
-            PermissionGroup.Location -> locationPermissionState
-            PermissionGroup.Contacts -> contactsPermissionState
             PermissionGroup.ExternalStorage -> externalStoragePermissionState
             PermissionGroup.Notifications -> notificationsPermissionState
             PermissionGroup.AppShortcuts -> appShortcutsPermissionState
             PermissionGroup.Accessibility -> accessibilityPermissionState
             PermissionGroup.ManageProfiles -> manageProfilesPermissionState
-            PermissionGroup.Call -> callPermissionState
+            PermissionGroup.UsageStat -> usageStatPermissionState
         }
+    }
+
+    override suspend fun hasPermissionBlocking(permissionGroup: PermissionGroup): Boolean {
+        return hasPermission(permissionGroup).first()
     }
 
     override fun onRequestPermissionsResult(
@@ -269,16 +222,13 @@ internal class PermissionsManagerImpl(
         val permissionGroup = PermissionGroup.entries.getOrNull(requestCode) ?: return
         val granted = grantResults.all { it == PackageManager.PERMISSION_GRANTED }
         when (permissionGroup) {
-            PermissionGroup.Calendar -> calendarPermissionState.value = granted
             PermissionGroup.Tasks -> tasksPermissionState.value = granted
-            PermissionGroup.Location -> locationPermissionState.value = granted
-            PermissionGroup.Contacts -> contactsPermissionState.value = granted
             PermissionGroup.ExternalStorage -> externalStoragePermissionState.value = granted
             PermissionGroup.Notifications -> notificationsPermissionState.value = granted
             PermissionGroup.AppShortcuts -> appShortcutsPermissionState.value = granted
             PermissionGroup.Accessibility -> accessibilityPermissionState.value = granted
             PermissionGroup.ManageProfiles -> manageProfilesPermissionState.value = granted
-            PermissionGroup.Call -> callPermissionState.value = granted
+            PermissionGroup.UsageStat -> usageStatPermissionState.value = granted
         }
     }
 
@@ -286,6 +236,8 @@ internal class PermissionsManagerImpl(
         externalStoragePermissionState.value = checkPermissionOnce(PermissionGroup.ExternalStorage)
         appShortcutsPermissionState.value = checkPermissionOnce(PermissionGroup.AppShortcuts)
         manageProfilesPermissionState.value = checkPermissionOnce(PermissionGroup.ManageProfiles)
+        usageStatPermissionState.value = checkPermissionOnce(PermissionGroup.UsageStat)
+
     }
 
     override fun reportNotificationListenerState(running: Boolean) {
@@ -297,17 +249,33 @@ internal class PermissionsManagerImpl(
     }
 
     companion object {
-        private val calendarPermissions = arrayOf(Manifest.permission.READ_CALENDAR)
         private val taskPermissions = arrayOf("org.tasks.permission.READ_TASKS")
-        private val locationPermissions = arrayOf(
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-        private val contactPermissions = arrayOf(Manifest.permission.READ_CONTACTS)
         private val externalStoragePermissions = arrayOf(
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
-        private val callPermissions = arrayOf(Manifest.permission.CALL_PHONE)
+
+        private fun hasUsageStatsPermission(ctx: Context): Boolean {
+            val appOps = ctx.getSystemService(Context.APP_OPS_SERVICE) as android.app.AppOpsManager
+            val uid = android.os.Process.myUid()
+            val pkg = ctx.packageName
+
+            val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                appOps.unsafeCheckOpNoThrow(
+                    android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+                    uid,
+                    pkg
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                appOps.checkOpNoThrow(
+                    android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+                    uid,
+                    pkg
+                )
+            }
+
+            return mode == android.app.AppOpsManager.MODE_ALLOWED
+        }
     }
 }

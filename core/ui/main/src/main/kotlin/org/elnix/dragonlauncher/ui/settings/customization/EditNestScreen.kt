@@ -39,9 +39,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.messyfolder.UiCircle
-import org.elnix.dragonlauncher.common.messyfolder.showToast
-import org.elnix.dragonlauncher.common.serializables.Nest
+import org.elnix.dragonlauncher.base.model.models.UiCircle
+import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.enumsui.select.NestEditMode
 import org.elnix.dragonlauncher.enumsui.select.NestEditMode.Drag
@@ -49,7 +49,7 @@ import org.elnix.dragonlauncher.enumsui.select.NestEditMode.Haptic
 import org.elnix.dragonlauncher.enumsui.select.NestEditMode.MinAngle
 import org.elnix.dragonlauncher.enumsui.select.NestEditMode.Other
 import org.elnix.dragonlauncher.enumsui.select.NestEditMode.Radius
-import org.elnix.dragonlauncher.settings.stores.SwipeMapSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.composition.LocalNests

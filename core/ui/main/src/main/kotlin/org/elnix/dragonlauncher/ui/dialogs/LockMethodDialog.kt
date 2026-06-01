@@ -22,11 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.messyfolder.SecurityHelper
-import org.elnix.dragonlauncher.common.messyfolder.findFragmentActivity
-import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.findFragmentActivity
+import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.LockScreenViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
@@ -42,6 +41,8 @@ fun LockMethodDialog(
     onDismiss: () -> Unit
 ) {
     val ctx = LocalContext.current
+
+    val securityService = lockScreenViewModel.securityService
 
     val currentLockMethod by lockScreenViewModel.lockMethod.collectAsState()
     var showPinSetupDialog by remember { mutableStateOf(false) }
@@ -67,7 +68,7 @@ fun LockMethodDialog(
                     Spacer(Modifier.height(8.dp))
                     LockMethod.entries.forEach { method ->
 
-                        val unavailableText = if (method == LockMethod.DEVICE_UNLOCK && !SecurityHelper.isDeviceUnlockAvailable(ctx)) {
+                        val unavailableText = if (method == LockMethod.DEVICE_UNLOCK && !securityService.isDeviceUnlockAvailable(ctx)) {
                             stringResource(R.string.device_credentials_not_available)
                         } else null
 
@@ -88,8 +89,8 @@ fun LockMethodDialog(
                                 LockMethod.DEVICE_UNLOCK -> {
                                     // Test biometric authentication immediately
                                     val activity = ctx.findFragmentActivity()
-                                    if (activity != null && SecurityHelper.isDeviceUnlockAvailable(ctx)) {
-                                        SecurityHelper.showDeviceUnlockPrompt(
+                                    if (activity != null && securityService.isDeviceUnlockAvailable(ctx)) {
+                                        securityService.showDeviceUnlockPrompt(
                                             activity = activity,
                                             onSuccess = {
                                                 lockScreenViewModel.setLockScreenMethod()

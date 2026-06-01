@@ -59,7 +59,7 @@ dependencies {
     api(libs.androidx.compose.foundation)
     api(libs.androidx.compose.runtime)
     api(libs.androidx.graphics.shapes)
-
+    api(libs.androidx.activity.compose)
     api(libs.androidx.compose.animation)
 
     api(project(":core:enumsui"))

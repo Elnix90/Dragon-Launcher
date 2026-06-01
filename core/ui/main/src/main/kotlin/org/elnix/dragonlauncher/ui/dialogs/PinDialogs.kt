@@ -66,14 +66,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.RoundedPolygon
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
-import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.messyfolder.SecurityHelper
+import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.common.utils.HapticUtils.vibrate
-import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.models.LockScreenViewModel
+import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.allMaterialShapes
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
@@ -85,6 +86,7 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 fun PinUnlock(
     onDismiss: () -> Unit,
     onValidate: () -> Unit,
+    lockScreenViewModel: LockScreenViewModel = activityViewModel()
 ) {
     val haptic = LocalHapticFeedback.current
     val pinHash by PrivateSettingsStore.lockPinHash.asState()
@@ -121,7 +123,7 @@ fun PinUnlock(
             onDismiss()
         }
     ) {
-        if (SecurityHelper.verifyPin(pin, pinHash)) {
+        if (lockScreenViewModel.securityService.verifyPin(pin, pinHash)) {
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
             onValidate()
         } else {

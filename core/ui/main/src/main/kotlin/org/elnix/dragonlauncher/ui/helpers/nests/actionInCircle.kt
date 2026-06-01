@@ -13,19 +13,20 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.messyfolder.UiCircle
-import org.elnix.dragonlauncher.common.messyfolder.resolveShape
+import org.elnix.dragonlauncher.base.model.models.UiCircle
+import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.common.serializables.IconShape
-import org.elnix.dragonlauncher.common.serializables.SwipeAction
-import org.elnix.dragonlauncher.common.serializables.SwipeAction.Companion.actionColor
-import org.elnix.dragonlauncher.common.serializables.Point
-import org.elnix.dragonlauncher.common.serializables.Point.Companion.applyColorAction
-import org.elnix.dragonlauncher.common.serializables.Point.Companion.defaultSwipePointsValues
-import org.elnix.dragonlauncher.common.utils.ImageUtils.loadDrawableResAsImageBitmap
+
+.Companion.actionColor
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.applyColorAction
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
+import org.elnix.dragonlauncher.base.util.ImageUtils.loadDrawableResAsImageBitmap
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.icons.DragonCache
-import org.elnix.dragonlauncher.ui.base.cache.SwipeDrawParams
+import org.elnix.dragonlauncher.base.DragonCache
+import org.elnix.dragonlauncher.base.model.models.SwipeDrawParams
 import org.elnix.dragonlauncher.ui.helpers.customobjects.shapeToPath
+import org.elnix.dragonlauncher.ui.remembers.DrawPathCache
 
 
 fun DrawScope.actionsInCircle(
@@ -107,7 +108,7 @@ fun DrawScope.actionsInCircle(
     // Prevent overloading since the drawing is recursive
     if (depth <= maxDepth) {
 
-        if (action !is SwipeAction.OpenCircleNest || point.customIcon != null) {
+        if (action !is Action.OpenCircleNest || point.customIcon != null) {
 
 
             // if no background color provided, erases the background
@@ -120,11 +121,8 @@ fun DrawScope.actionsInCircle(
             val borderShape = borderIconShape.resolveShape()
 
 
-            /** The path is cached by (shape, size) and reused across frames to avoid
-             * re-allocating and re-computing the outline on every draw call.
-             *See [org.elnix.dragonlauncher.ui.base.cache.DrawPathCache] for eviction strategy and sizing guidance.
-             */
-            val path = drawParams.drawPathCache.getOrCompute(borderIconShape, iconSize) {
+
+            val path = DrawPathCache.getOrCompute(Pair(borderIconShape, iconSize)) {
                 shapeToPath(borderShape, iconSize)
             }
 

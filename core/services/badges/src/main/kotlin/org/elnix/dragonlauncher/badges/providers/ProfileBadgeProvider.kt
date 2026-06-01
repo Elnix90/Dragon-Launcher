@@ -6,9 +6,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import org.elnix.dragonlauncher.badges.Badge
 import org.elnix.dragonlauncher.badges.BadgeIcon
-import org.elnix.dragonlauncher.base.profiles.Profile
-import org.elnix.dragonlauncher.common.search.Application
-import org.elnix.dragonlauncher.i18n.R.drawable
+import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.serializables.Profile
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.profiles.ProfileManager
 
 class ProfileBadgeProvider(
@@ -30,11 +30,11 @@ class ProfileBadgeProvider(
 
     companion object {
         private val WorkProfile = Badge(
-            icon = BadgeIcon(drawable.enterprise_20px)
+            icon = BadgeIcon(R.drawable.enterprise)
         )
 
         private val PrivateProfile = Badge(
-            icon = BadgeIcon(drawable.encrypted_20px)
+            icon = BadgeIcon(R.drawable.encrypted)
         )
     }
 }
