@@ -1,3 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="accessibility_service_description">מאפשר ל-DragonLauncher לפתוח את לוח ההתראות, את לוח ההגדרות המהירות, לפתוח אפליקציות אחרונות ולבדוק פעילות נוכחית (עבור משתמשי שיאומי שאינם יכולים להגדיר את Dragon כמשגר ברירת המחדל מבלי לאבד את הניווט באמצעות מחוות).</string>
+    <string name="help">עזרה</string>
+    <string name="back">חזור</string>
+    <string name="reset_default_settings">אפס להגדרות ברירת מחדל</string>
+    <string name="reset_settings_in_this_tab">איפוס הגדרות ברירת מחדל בכרטיסייה זו</string>
+    <string name="ok">אוקיי</string>
+    <string name="cancel">ביטול</string>
+    <string name="do_not_remind_me_again">אל תזכיר לי שוב</string>
+    <string name="settings">הגדרות</string>
+    <string name="appearance">מראה</string>
+    <string name="appearance_tab_text">שנה הגדרות מראה</string>
+    <string name="fullscreen_app">אפליקציה במסך מלא</string>
+    <string name="app_display">תצוגת אפליקציה</string>
+    <string name="app_display_desc">שינוי הגדרות הקשורות למראה הגלובלי של האפליקציה, בהקשר של המשגר, לא קשור לצבע</string>
+    <string name="color_selector">בוחר צבעים</string>
+    <string name="debug">ניפוי באגים</string>
+    <string name="extensions">תוספים</string>
+    <string name="extensions_description">הורד ונהל תכונות נוספות עבור Dragon Launcher.</string>
+    <string name="install">התקנה</string>
+    <string name="permissions">הרשאות</string>
+    <string name="no_extensions_found">לא נמצאו סיומות ברישום.</string>
+    <string name="extension_manual_install_title">התקנה ידנית</string>
+    <string name="extension_manual_install_desc">אם אין לך תוסף התקנה, הורד את ה-APK ובחר אותו למטה להתקנה.</string>
+    <string name="select_apk">בחר APK</string>
+    <string name="language_english">אנגלית</string>
+    <string name="language_french">צרפתית</string>
+    <string name="language_german">גרמנית</string>
+    <string name="language_spanish">ספרדית</string>
+    <string name="language_hindi">הודית</string>
+    <string name="language_korean">קוריאנית</string>
+    <string name="language_portuguese">פורטוגזית</string>
+    <string name="system_default">מערכת</string>
+    <string name="choose_your_app_language">בחר את שפת האפלקציה</string>
+    <string name="version">גירסא</string>
+    <string name="export_cancelled">ייצוא בוטל</string>
+    <string name="import_cancelled">ייבוא בוטל</string>
+    <string name="backup_restore">גיבוי</string>
 </resources>
