@@ -101,22 +101,19 @@ import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.AutoSeparate
 import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.FreeMove
 import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.SnapPoints
 import org.elnix.dragonlauncher.enumsui.toggle.SelectedPointEditTools
-import org.elnix.dragonlauncher.enumsui.toggle.UndRedoEditTools
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.logging.NESTS_TAG
 import org.elnix.dragonlauncher.logging.SWIPE_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.models.utils.asState
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.autoSeparatePoints
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.freeMoveDraggedPoint
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.snapPoints
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
@@ -155,7 +152,7 @@ import kotlin.math.round
 @Suppress("AssignedValueIsNeverRead")
 @Composable
 fun PointsSettingsScreen(
-    appsViewModel: AppsViewModel = activityViewModel(),
+    drawerViewModel: DrawerViewModel = activityViewModel(),
     pointViewModel: PointViewModel = activityViewModel(),
     onAdvSettings: () -> Unit,
     onNestEdit: (nest: Int) -> Unit,
@@ -166,21 +163,21 @@ fun PointsSettingsScreen(
 
     val defaultPoint by pointViewModel.defaultPoint.collectAsState()
 
-    val iconService = appsViewModel.iconsService
+    val iconService = drawerViewModel.iconsService
 
     val scope = rememberCoroutineScope()
 
-    val pointsIconsTrigger by appsViewModel.pointsIconsCache.iconsTrigger.collectAsState()
+    val pointsIconsTrigger by drawerViewModel.pointsIconsCache.iconsTrigger.collectAsState()
     val showAdvancedEditTools by pointViewModel.showAdvancedPointTools.collectAsState()
     val showSubNestSlider by pointViewModel.showSubNestSlider.collectAsState()
-    val isInDragAroundMode by pointViewModel.isInDragAroundMode.collectAsState()
+    val isInDragAroundMode by pointViewModel.isInDragAroundMode.asState()
 
     val backgroundColor = MaterialTheme.colorScheme.background
     val primaryColor = MaterialTheme.colorScheme.primary
 
-    val snapPoints by snapPoints.asState()
-    val autoSeparatePoints by autoSeparatePoints.asState()
-    val freeMoveDraggedPoint by freeMoveDraggedPoint.asState()
+    val snapPoints by UiSettingsStore.snapPoints.asState()
+    val autoSeparatePoints by UiSettingsStore.autoSeparatePoints.asState()
+    val freeMoveDraggedPoint by UiSettingsStore.freeMoveDraggedPoint.asState()
     val appLabelOverlaySize by UiSettingsStore.appLabelOverlaySize.asState()
     val appIconOverlaySize by UiSettingsStore.appIconOverlaySize.asState()
 
@@ -892,8 +889,9 @@ fun PointsSettingsScreen(
                 ToggleAnimatedFab(
                     checked = isInDragAroundMode,
                     onCheckedChange = {
-                        val isDraggingMode = pointViewModel.toggleIsInDragAroundMode()
-                        if (isDraggingMode) {
+                        val newValue = !isInDragAroundMode
+                        pointViewModel.isInDragAroundMode.set(newValue)
+                        if (newValue) {
                             selectedPoint = null
                         }
                     },

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,7 +21,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.PointViewModel
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.models.utils.asState
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
@@ -124,8 +124,8 @@ fun SpecialSettingsTitle(
     var showBurgerMenu by remember { mutableStateOf(false) }
     val dismiss = { showBurgerMenu = false }
 
-    val showSubNestSlider by pointViewModel.showSubNestSlider.collectAsState()
-    val showAdvancedPointTools by pointViewModel.showAdvancedPointTools.collectAsState()
+    val showSubNestSlider by pointViewModel.showSubNestSlider.asState()
+    val showAdvancedPointTools by pointViewModel.showAdvancedPointTools.asState()
 
     SettingsTitleInternal(
         title = stringResource(R.string.points_settings),
@@ -161,16 +161,15 @@ fun SpecialSettingsTitle(
                         text = { stringResource(R.string.show_sub_nest_size_slider) },
                         icon = if (showSubNestSlider) R.drawable.toggle_on else R.drawable.toggle_off,
                         onClick = {
-                            pointViewModel.toggleShowSubNestSlider()
+                            pointViewModel.showSubNestSlider.set(!showSubNestSlider)
                             dismiss()
-
                         }
                     ),
                     MoreOptions(
                         text = { stringResource(R.string.show_advanced_edit_tools) },
                         icon = if (showAdvancedPointTools) R.drawable.toggle_on else R.drawable.toggle_off,
                         onClick = {
-                            pointViewModel.toggleAdvancedPointsTools()
+                            pointViewModel.showAdvancedPointTools.set(!showAdvancedPointTools)
                             dismiss()
                         }
                     ),
