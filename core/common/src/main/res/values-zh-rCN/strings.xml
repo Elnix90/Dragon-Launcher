@@ -311,4 +311,24 @@
     <string name="line_preview_snap_to_action_description">轨迹线条预览将不再自由移动，当有可对应的动作时它会直接吸附过去</string>
     <string name="show_all_actions_on_current_circle_description">选中某个动作时，同圆圈内的所有其他点也会同步显示</string>
     <string name="min_angle_to_activate">触发所需的最小角度</string>
+    <string name="app_label_overlay_size">应用标签覆盖层大小</string>
+    <string name="app_icon_overlay_size">应用图标覆盖层大小</string>
+    <string name="next">下一步</string>
+    <string name="loading_themes">正在加载主题…</string>
+    <string name="already_default_launcher">已经是默认启动器</string>
+    <string name="open_default_launcher_settings">打开默认启动器设置</string>
+    <string name="welcome_to_dragon_launcher">欢迎使用 Dragon Launcher</string>
+    <string name="fast">高效纯粹。</string>
+    <string name="powerful_gestures">强大的手势操作。</string>
+    <string name="infinite_custom">无限自定义空间</string>
+    <string name="customize_apps">自定义应用程序</string>
+    <string name="dont_customize">跳过自定义，直接开始使用 Dragon Launcher</string>
+    <string name="app_aliases">应用别名</string>
+    <string name="edit_alias">编辑别名</string>
+    <string name="alias">别名</string>
+    <string name="add_alias">添加别名</string>
+    <string name="create_alias">创建别名</string>
+    <string name="scroll_up_action">向上滚动动作</string>
+    <string name="scroll_down_action">向下滚动动作</string>
+    <string name="auto_launch_single_match">单结果时自动启动</string>
 </resources>
