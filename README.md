@@ -46,9 +46,9 @@
 The reason is likely that Dragon asks for _sensitive permissions_ - normal, that's a launcher
 
 
-
+<div align="center">
 [<img src="https://github-readme-stats.hackclub.dev/api/wakatime?username=27068&api_domain=hackatime.hackclub.com&theme=material-palenight&custom_title=Hackatime+Stats&layout=compact&cache_seconds=0&langs_count=8" alt="Wakatime stats">](https://github-readme-stats.hackclub.dev/api/wakatime?username=27068&api_domain=hackatime.hackclub.com&theme=material-palenight&custom_title=Hackatime+Stats&layout=compact&cache_seconds=0&langs_count=8)
-
+</div>
 ---
 # 🎉 Thank you very much to the stargazers !
 ---
