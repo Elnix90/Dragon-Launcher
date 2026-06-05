@@ -32,6 +32,7 @@ import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalAppItemSettings
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
+import org.elnix.dragonlauncher.ui.dialogs.AppLongPressRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
 
 
@@ -50,11 +51,11 @@ fun AppItemHorizontal(
     app: Application,
     selected: Boolean,
     onLongClick: ((Application) -> Unit)?,
-    longPressPopup: @Composable ((Application) -> Unit)?,
+    longPressPopup: Boolean,
     onClick: ((Application) -> Unit)?
 ) {
 
-    require(!((onLongClick != null) and (longPressPopup != null))) {
+    require(!((onLongClick != null) and (longPressPopup))) {
         "Long press action, or popup, or neither, but not both!"
     }
 
@@ -87,7 +88,7 @@ fun AppItemHorizontal(
                 }
                 .combinedClickable(
                     onLongClick = {
-                        if (longPressPopup != null) showLongPressPopup = true
+                        if (longPressPopup) showLongPressPopup = true
                         else onLongClick?.invoke(app)
                     },
                     onClick = { onClick?.invoke(app) }
@@ -96,7 +97,7 @@ fun AppItemHorizontal(
         ) {
 
             if (appItemSettings.showIcons) {
-                AppIcon(app, appItemSettings.maxIconSize)
+                AppIcon(app, maxSize = appItemSettings.maxIconSize)
             }
 
             if (appItemSettings.showLabels) {
@@ -111,7 +112,7 @@ fun AppItemHorizontal(
             expanded = showLongPressPopup,
             onDismissRequest = { showLongPressPopup = false }
         ) {
-            longPressPopup!!(app)
+            AppLongPressRow(app)
         }
     }
 }
@@ -121,12 +122,13 @@ fun AppItemGrid(
     app: Application,
     selected: Boolean,
     onLongClick: ((Application) -> Unit)?,
-    longPressPopup: @Composable ((Application) -> Unit)?,
+    longPressPopup: Boolean,
     onClick: ((Application) -> Unit)?
 ) {
-    require(!((onLongClick != null) and (longPressPopup != null))) {
+    require(!((onLongClick != null) and (longPressPopup))) {
         "Long press action, or popup, or neither, but not both!"
     }
+
     val appItemSettings = LocalAppItemSettings.current
 
     var showLongPressPopup by remember { mutableStateOf(false) }
@@ -149,7 +151,7 @@ fun AppItemGrid(
             }
             .combinedClickable(
                 onLongClick = {
-                    if (longPressPopup != null) showLongPressPopup = true
+                    if (longPressPopup) showLongPressPopup = true
                     else onLongClick?.invoke(app)
                 },
                 onClick = { onClick?.invoke(app) }
@@ -161,7 +163,7 @@ fun AppItemGrid(
             verticalArrangement = Arrangement.spacedBy(appItemSettings.iconSpacingVertical)
         ) {
             if (appItemSettings.showIcons) {
-                AppIcon(app, appItemSettings.maxIconSize)
+                AppIcon(app,  maxSize = appItemSettings.maxIconSize)
             }
 
             if (appItemSettings.showLabels) {
@@ -179,7 +181,7 @@ fun AppItemGrid(
             expanded = showLongPressPopup,
             onDismissRequest = { showLongPressPopup = false }
         ) {
-            longPressPopup!!(app)
+            AppLongPressRow(app)
         }
     }
 }

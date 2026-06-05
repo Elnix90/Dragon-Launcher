@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.base.model.serializables
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.elnix.dragonlauncher.base.model.serializables.Workspace.Companion.defaultWorkspaces
 
 @Serializable
 @SerialName("Workspace")
@@ -52,7 +51,4 @@ data class Workspace(
 }
 
 
-@Serializable
-data class WorkspaceState(
-    val workspaces: List<Workspace> = defaultWorkspaces,
-)
+typealias WorkspaceState = List<Workspace>

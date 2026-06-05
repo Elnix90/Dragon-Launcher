@@ -196,7 +196,6 @@
     <string name="auto_separate">자동 분리</string>
     <string name="add_widget">위젯 추가</string>
     <string name="widgets">위젯</string>
-    <string name="widgets_floating_apps">위젯 / 플로팅 앱</string>
     <string name="delete_widget">삭제 위젯</string>
     <string name="add_point">추가 점수</string>
     <string name="remove_point">제거 지점</string>

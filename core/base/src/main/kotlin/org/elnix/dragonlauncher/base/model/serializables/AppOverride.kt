@@ -28,12 +28,9 @@ data class AppOverride(
                         customCategory?.takeIf { it.isNotEmpty() } != null &&
                         aliases?.takeIf { it.isNotEmpty() } != null
             }
+
+        val defaultAppOverrides: AppOverrideState = emptyMap()
     }
 }
 
-
-@Serializable
-data class AppOverrideState(
-    val appOverrides: Map<CacheKey, AppOverride> = emptyMap(),
-)
-
+typealias AppOverrideState = Map<CacheKey, AppOverride>

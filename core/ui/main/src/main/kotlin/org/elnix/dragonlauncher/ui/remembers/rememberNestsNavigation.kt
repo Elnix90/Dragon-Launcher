@@ -1,6 +1,7 @@
-package org.elnix.dragonlauncher.common.circles
+package org.elnix.dragonlauncher.ui.remembers
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -9,15 +10,8 @@ import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.logging.NESTS_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logW
-
-data class NestNavigationState(
-    val currentNest: Nest,
-    val goBack: () -> Unit,
-    val goToNest: (Int) -> Unit,
-    val clearStack: () -> Unit
-)
-
-
+import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 /**
  * Remembers and manages navigation state between [Nest]s.
  *
@@ -38,8 +32,10 @@ data class NestNavigationState(
  */
 @Composable
 fun rememberNestNavigation(
-    nests: List<Nest>,
+    pointsViewModel: PointViewModel = activityViewModel()
 ): NestNavigationState {
+
+    val nests by pointsViewModel.nests.collectAsState()
 
     /**
      *  Navigation stack holding visited nest ids.
@@ -111,3 +107,10 @@ fun rememberNestNavigation(
         }
     )
 }
+
+data class NestNavigationState(
+    val currentNest: Nest,
+    val goBack: () -> Unit,
+    val goToNest: (Int) -> Unit,
+    val clearStack: () -> Unit
+)

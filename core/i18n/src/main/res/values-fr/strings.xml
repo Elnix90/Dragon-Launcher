@@ -198,8 +198,7 @@
     <string name="add_widget">Ajouter un widget</string>
     <string name="widgets">Widgets</string>
     <string name="edit">Édit</string>
-    <string name="widgets_floating_apps">Widgets / Applications flottantes</string>
-    <string name="floating_apps_tab_help"><![CDATA[Gérez les widgets de votre espace de travail et les applications flottantes : ajoutez-les, réorganisez-les, redimensionnez et positionnez-les.\n Ghosted signifie que le widget n\'est pas cliquable.\nLe premier plan signifie que les gestes de glissement ne sont pas enregistrés sur le widget.\nVous pouvez essayer une combinaison de ces deux pour obtenir la configuration que vous souhaitez.]]></string>
+    <string name="widgets_tab_help"><![CDATA[Gérez les widgets de votre espace de travail et les applications flottantes : ajoutez-les, réorganisez-les, redimensionnez et positionnez-les.\n Ghosted signifie que le widget n\'est pas cliquable.\nLe premier plan signifie que les gestes de glissement ne sont pas enregistrés sur le widget.\nVous pouvez essayer une combinaison de ces deux pour obtenir la configuration que vous souhaitez.]]></string>
     <string name="delete_widget">Supprimer widget</string>
     <string name="add_point">Point d’ajout</string>
     <string name="remove_point">Point de retrait</string>

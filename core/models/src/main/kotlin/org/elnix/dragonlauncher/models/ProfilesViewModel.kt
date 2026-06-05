@@ -31,6 +31,7 @@ class ProfilesViewModel @Inject constructor(
         SharingStarted.WhileSubscribed(),
         replay = 1
     )
+
     val profileStates = profiles.flatMapLatest { profiles ->
         combine(profiles.map { profileManager.getProfileState(it) }) {
             it.toList()

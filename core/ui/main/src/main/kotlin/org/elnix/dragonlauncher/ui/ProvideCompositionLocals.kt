@@ -7,33 +7,28 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
-import org.elnix.dragonlauncher.base.Constants.Logging.ICONS_TAG
-import org.elnix.dragonlauncher.base.Constants.Logging.STATUS_BAR_TAG
-import org.elnix.dragonlauncher.common.serializables.StatusBarJson
-import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
+import org.elnix.dragonlauncher.base.model.serializables.StatusBar
+import org.elnix.dragonlauncher.base.model.serializables.StatusBarJson
+import org.elnix.dragonlauncher.logging.ICONS_TAG
 import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logV
 import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
-import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
-import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalAppItemSettings
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.base.compositionslocals.ProvideCurrentTime
 import org.elnix.dragonlauncher.ui.base.compositionslocals.rememberAppItemSettings
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
-import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.composition.LocalEndLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.composition.LocalLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
-import org.elnix.dragonlauncher.ui.composition.LocalNests
-import org.elnix.dragonlauncher.ui.composition.LocalPoints
 import org.elnix.dragonlauncher.ui.composition.LocalShowLabelsInAddPointDialog
 import org.elnix.dragonlauncher.ui.composition.LocalStartLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalStatusBarElements
@@ -44,18 +39,14 @@ import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberHoldCustom
 @Composable
 fun ProvideGlobalCompositionLocals(
     appsViewModel: AppsViewModel = activityViewModel(),
+    pointsViewModel: PointViewModel = activityViewModel(),
     content: @Composable () -> Unit
 ) {
-    val ctx = LocalContext.current
+    val points by pointsViewModel.points.collectAsState()
 
     val disableHapticFeedbackGlobally by BehaviorSettingsStore.disableHapticFeedbackGlobally.asState()
 
 
-    val nests by SwipeSettingsStore.getNestsFlow(ctx).collectAsState(initial = emptyList())
-    val defaultPoint by SwipeSettingsStore.getDefaultPointFlow(ctx)
-        .collectAsState(defaultSwipePointsValues)
-
-    val points by SwipeSettingsStore.getPointsFlow(ctx).collectAsState(emptyList())
     val pointsIconCache = appsViewModel.pointsIconsCache
     LaunchedEffect(points.size) {
         logD(ICONS_TAG) { "Updating icons cache size to ${points.size}" }
@@ -66,11 +57,8 @@ fun ProvideGlobalCompositionLocals(
     val elementsJson by StatusBarJsonSettingsStore.jsonSetting.asState()
 
     val elements by remember(elementsJson) {
-
         derivedStateOf {
-            StatusBarJson.decodeStatusBarElements(elementsJson).also {
-                logV(STATUS_BAR_TAG) { "Element: $elementsJson, decoded: $it" }
-            }
+            StatusBarJson.decode<List<StatusBar>>(elementsJson) ?: emptyList()
         }
     }
 
@@ -94,11 +82,8 @@ fun ProvideGlobalCompositionLocals(
      * I know that I should carefully review what global locals I add, but until now it worked to I'll keep it that way until I notice lag
      */
     CompositionLocalProvider(
-        LocalDefaultPoint provides defaultPoint,
 
         LocalIconShape provides iconsShape,
-        LocalPoints provides points,
-        LocalNests provides nests,
         LocalStatusBarElements provides elements,
 
         LocalLineObject provides lineObjects.line,

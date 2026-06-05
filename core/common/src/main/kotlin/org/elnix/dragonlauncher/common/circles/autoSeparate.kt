@@ -1,9 +1,8 @@
 package org.elnix.dragonlauncher.common.circles
 
 import org.elnix.dragonlauncher.base.Constants.Settings.POINT_HITBOX_RADIUS_PX
-import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.models.UiCircle
-import kotlin.collections.filter
+import org.elnix.dragonlauncher.base.model.serializables.Point
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -14,7 +13,7 @@ fun minAngleGapForCircle(circleRadius: Float): Double {
 }
 
 fun autoSeparate(
-    points: MutableList<Point>,
+    points: Set<Point>,
     nestId: Int,
     circle: UiCircle?,
     draggedPoint: Point

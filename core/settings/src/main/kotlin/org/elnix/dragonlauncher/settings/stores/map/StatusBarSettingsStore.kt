@@ -2,9 +2,9 @@ package org.elnix.dragonlauncher.settings.stores.map
 
 import androidx.compose.ui.graphics.Color
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.color
-import org.elnix.dragonlauncher.settings.bases.int
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.objects.ColorSettingObject.Companion.color
+import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 object StatusBarSettingsStore : MapSettingsStore(DataStoreName.STATUS_BAR) {

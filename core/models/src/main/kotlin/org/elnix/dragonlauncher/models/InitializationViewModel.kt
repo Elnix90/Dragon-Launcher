@@ -6,9 +6,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.logging.INIT_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
@@ -49,8 +49,8 @@ class InitializationViewModel @Inject constructor(
 
 
     fun initializeSwipeSettings(
-        points: List<Point>,
-        nests: List<Nest>
+        points: Set<Point>,
+        nests: Set<Nest>
     ) {
         viewModelScope.launch{
             pointsService.set(points, nests)
@@ -64,7 +64,7 @@ class InitializationViewModel @Inject constructor(
 }
 
 
-private val defaultInitializationSetup = listOf(
+private val defaultInitializationSetup = setOf(
     Point(
         circleNumber = 0,
         angleDeg = 0.toDouble(),
@@ -84,6 +84,6 @@ private val defaultInitializationSetup = listOf(
         id = UUID.randomUUID().toString()
     )
 )
-val defaultNestsInitializationSetup = listOf(
+val defaultNestsInitializationSetup = setOf(
     Nest(0)
 )

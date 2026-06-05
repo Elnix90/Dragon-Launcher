@@ -71,7 +71,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.base.Constants
-import org.elnix.dragonlauncher.base.Constants.Logging.FONT_PROVIDER
+import org.elnix.dragonlauncher.base.FONT_PROVIDER
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
@@ -403,7 +403,7 @@ fun FontTab(onBack: () -> Unit) {
                                 contentDescription = null,
                                 modifier = Modifier.size(16.dp)
                             )
-                            Spacer(Modifier.width(6.dp))
+                            Spacer(6.dp))
                             Text(
                                 stringResource(R.string.font_catalog),
                                 fontSize = 12.sp,
@@ -434,7 +434,7 @@ fun FontTab(onBack: () -> Unit) {
                                 contentDescription = null,
                                 modifier = Modifier.size(16.dp)
                             )
-                            Spacer(Modifier.width(6.dp))
+                            Spacer(6.dp))
                             Text(
                                 stringResource(R.string.font_import),
                                 fontSize = 12.sp,
@@ -499,7 +499,7 @@ fun FontTab(onBack: () -> Unit) {
                                 painter = painterResource(R.drawable.check),
                                 contentDescription = null
                             )
-                            Spacer(Modifier.width(6.dp))
+                            Spacer(6.dp))
                             Text(
                                 stringResource(
                                     R.string.font_confirm_delete,
@@ -553,7 +553,7 @@ fun FontTab(onBack: () -> Unit) {
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    Spacer(Modifier.height(4.dp))
+                    Spacer(4.dp))
                     LinearProgressIndicator(
                         progress = { progressBase },
                         modifier = Modifier
@@ -752,7 +752,7 @@ fun FontRow(
                 tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
             )
         }
-        Spacer(Modifier.width(12.dp))
+        Spacer(12.dp))
         val fontFamily = try {
             fontNameToFont(font, ctx)
         } catch (_: Exception) {

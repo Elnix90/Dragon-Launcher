@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.compose.ui.graphics.Color
 import org.elnix.dragonlauncher.base.util.ColorUtils
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.color
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.objects.ColorSettingObject.Companion.color
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 object ColorSettingsStore : MapSettingsStore(DataStoreName.COLOR) {

@@ -12,22 +12,22 @@ import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeResId
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getFilePathFromUri
-import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.DrawerViewModel
+import org.elnix.dragonlauncher.models.PointViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.composition.LocalNests
 
 @Composable
 fun actionLabel(
     action: Action,
-    appsViewModel: AppsViewModel = activityViewModel()
+    drawerViewModel: DrawerViewModel = activityViewModel(),
+    pointsViewModel: PointViewModel = activityViewModel()
 ): String {
     val ctx = LocalContext.current
-    val nests = LocalNests.current
 
     return when (action) {
 
         is Action.LaunchApp -> {
-            val app by appsViewModel.appsRepository.findOne(action.packageName, action.profile.userHandle).collectAsState(null)
+            val app by drawerViewModel.appsRepository.findOne(action.packageName, action.profile.userHandle).collectAsState(null)
             app?.label ?: action.packageName
         }
 
@@ -41,7 +41,7 @@ fun actionLabel(
 
             val shortcutLabel = try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    appsViewModel.appsRepository.queryAppShortcuts(action.packageName)
+                    drawerViewModel.appsRepository.queryAppShortcuts(action.packageName)
                         .firstOrNull { it.id == action.shortcutId }
                         ?.shortLabel
                         ?.toString()
@@ -72,11 +72,13 @@ fun actionLabel(
         is Action.OpenFile ->
             ctx.getFilePathFromUri(action.uri.toUri())
 
-        Action.ReloadApps -> stringResource(R.string.reload_apps)
+//        Action.ReloadApps -> stringResource(R.string.reload_apps)
 
         Action.OpenRecentApps -> stringResource(R.string.recent_apps)
 
         is Action.OpenCircleNest -> {
+            val nests by pointsViewModel.nests.collectAsState()
+
             nests
                 .find { it.id == action.nestId }
                 ?.name

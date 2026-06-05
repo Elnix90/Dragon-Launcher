@@ -17,6 +17,9 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Widget
 import org.elnix.dragonlauncher.base.model.serializables.Widget.Companion.WidgetsJson
+import org.elnix.dragonlauncher.base.undoredo.UndoRedoManager
+import org.elnix.dragonlauncher.base.undoredo.UndoRedoStack
+import org.elnix.dragonlauncher.models.utils.stateFlowDelegate
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.settings.stores.array.WidgetsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
@@ -31,32 +34,52 @@ class WidgetsViewModel @Inject constructor(
     @SuppressLint("StaticFieldLeak")
     private val ctx = application.applicationContext
 
-    private val _floatingApps = MutableStateFlow<List<Widget>>(emptyList())
-    val floatingApps = _floatingApps.asStateFlow()
+    private val _widgets = MutableStateFlow<List<Widget>>(emptyList())
+    val widgets = _widgets.asStateFlow()
 
 
     val dm: DisplayMetrics = ctx.resources.displayMetrics
-    private val _cellSizeDp = MutableStateFlow(30)
-    val cellSizeDp: StateFlow<Int> = _cellSizeDp.asStateFlow()
-    val cellSizePx: StateFlow<Float> = _cellSizeDp.map { it * dm.density }.stateIn(
+    val cellSizeDp by stateFlowDelegate(UiSettingsStore.cellSizeDp)
+
+
+    val cellSizePx: StateFlow<Float> = cellSizeDp.flow.map { it * dm.density }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
-        initialValue = _cellSizeDp.value * dm.density
+        initialValue = 30 * dm.density
     )
+
     private val screenWidth = dm.widthPixels.toFloat()
     private val screenHeight = dm.heightPixels.toFloat()
     val minSize = 1.5f
 
     init {
-        loadFloatingApps()
-
-        viewModelScope.launch {
-            _cellSizeDp.value = UiSettingsStore.cellSizeDp.get(ctx)
-        }
+        loadWidgets()
         viewModelInitialized()
     }
 
-    fun addFloatingApp(action: Action, info: AppWidgetProviderInfo? = null, nestId: Int) {
+
+    private fun snapshotWidgets(): List<Widget> = _widgets.value.map { it.copy() }
+
+    val undoRedo = UndoRedoManager(
+        arrayOf(
+            UndoRedoStack(
+                snapshot = { snapshotWidgets() },
+                restore = {
+                    restoreWidgets(it)
+//                        selected = widgets.find { p -> p.id == (selected?.id ?: "") }
+                }
+            )
+        )
+    )
+
+
+    fun save() {
+        viewModelScope.launch {
+            WidgetsSettingsStore.jsonSetting.set(ctx, WidgetsJson.encode(snapshotWidgets()))
+        }
+    }
+
+    fun addWidget(action: Action, info: AppWidgetProviderInfo? = null, nestId: Int) {
 
         viewModelScope.launch {
             val appWidgetId = if (action is Action.OpenWidget) action.widgetId else null
@@ -67,54 +90,53 @@ class WidgetsViewModel @Inject constructor(
                 action = action
             )
 
-            _floatingApps.value += app
+            _widgets.value += app
 
-            centerFloatingApp(appId = app.id)
-            resetFloatingAppSize(appId = app.id, info = info)
+            centerWidget(appId = app.id)
+            resetWidgetSize(appId = app.id, info = info)
         }
     }
 
 
-    fun removeFloatingApp(id: Int, onDeleteId: (Int) -> Unit) {
+    fun removeWidget(id: Int, onDeleteId: (Int) -> Unit) {
         viewModelScope.launch {
-            _floatingApps.value = _floatingApps.value.filterNot { it.id == id }
+            _widgets.value = _widgets.value.filterNot { it.id == id }
             onDeleteId(id)
         }
     }
 
-    fun moveFloatingAppUp(appId: Int) {
-        val current = _floatingApps.value
+    fun moveWidgetUp(appId: Int) {
+        val current = _widgets.value
         val index = current.indexOfFirst { it.id == appId }
         if (index <= 0) return
 
         val moved = current.toMutableList().apply {
-            val floatingApp = removeAt(index)
-            add(index - 1, floatingApp)
+            val widget = removeAt(index)
+            add(index - 1, widget)
         }
-        _floatingApps.value = moved
+        _widgets.value = moved
     }
 
-    fun moveFloatingAppDown(appId: Int) {
-        val current = _floatingApps.value
+    fun moveWidgetDown(appId: Int) {
+        val current = _widgets.value
         val index = current.indexOfFirst { it.id == appId }
         if (index == -1 || index == current.lastIndex) return
 
         val moved = current.toMutableList().apply {
-            val floatingApp = removeAt(index)
-            add(index + 1, floatingApp)
+            val widget = removeAt(index)
+            add(index + 1, widget)
         }
-        _floatingApps.value = moved
+        _widgets.value = moved
     }
 
 
-    fun centerFloatingApp(appId: Int) {
-
+    fun centerWidget(appId: Int) {
         updateApp(appId) { app ->
-            val floatingAppWidthPx = app.spanX * cellSizePx.value
-            val floatingAppHeightPx = app.spanY * cellSizePx.value
+            val widgetWidthPx = app.spanX * cellSizePx.value
+            val widgetHeightPx = app.spanY * cellSizePx.value
 
-            val centerXPx = (screenWidth - floatingAppWidthPx) / 2f
-            val centerYPx = (screenHeight - floatingAppHeightPx) / 2f
+            val centerXPx = (screenWidth - widgetWidthPx) / 2f
+            val centerYPx = (screenHeight - widgetHeightPx) / 2f
 
             app.copy(
                 x = centerXPx / screenWidth,
@@ -124,7 +146,7 @@ class WidgetsViewModel @Inject constructor(
     }
 
 
-    fun resetFloatingAppSize(appId: Int, info: AppWidgetProviderInfo? = null) {
+    fun resetWidgetSize(appId: Int, info: AppWidgetProviderInfo? = null) {
         updateApp(appId) { app ->
             app.copy(
                 spanX = calculateSpanX(info?.minWidth?.toFloat()),
@@ -134,14 +156,13 @@ class WidgetsViewModel @Inject constructor(
         }
     }
 
-
-    fun editFloatingApp(app: Widget) {
-        val updated = _floatingApps.value.map { floatingApp ->
-            if (floatingApp.id == app.id) app
-            else floatingApp
+    fun editWidget(app: Widget) {
+        val updated = _widgets.value.map { widget ->
+            if (widget.id == app.id) app
+            else widget
         }
 
-        _floatingApps.value = updated
+        _widgets.value = updated
     }
 
 
@@ -150,54 +171,42 @@ class WidgetsViewModel @Inject constructor(
     }
 
 
-    fun restoreFloatingApps(snapshot: List<Widget>) {
-        _floatingApps.value = snapshot.map { it.copy() }
+    fun restoreWidgets(snapshot: List<Widget>) {
+        _widgets.value = snapshot.map { it.copy() }
     }
 
-    fun resetAllFloatingApps() {
-        _floatingApps.value = emptyList()
+    fun resetAllWidgets() {
+        _widgets.value = emptyList()
 
         viewModelScope.launch {
             WidgetsSettingsStore.resetAll(ctx)
         }
     }
 
-    fun updateCellSize(newCellSize: Int?) {
-        newCellSize?.let {
-            _cellSizeDp.value = newCellSize.coerceAtLeast(1)
-        } ?: run {
-            _cellSizeDp.value = 30
-        }
 
-        viewModelScope.launch {
-            UiSettingsStore.cellSizeDp.set(ctx, newCellSize)
-        }
-    }
-
-
-    /* ───────────────────────────── Internal ───────────────────────────── */
-
-    private fun updateApp(
+    private inline fun updateApp(
         appId: Int,
         block: (Widget) -> Widget
     ) {
-        val current = _floatingApps.value
+        undoRedo.applyChange {
+            val current = _widgets.value
 
-        val updatedList = current.map { app ->
-            if (app.id == appId) {
-                block(app)
-            } else {
-                app
+            val updatedList = current.map { app ->
+                if (app.id == appId) {
+                    block(app)
+                } else {
+                    app
+                }
             }
-        }
 
-        _floatingApps.value = updatedList
+            _widgets.value = updatedList
+        }
     }
 
-    private fun loadFloatingApps() {
+    private fun loadWidgets() {
         viewModelScope.launch {
-            val floatingAppsJsonString = WidgetsSettingsStore.jsonSetting.get(ctx)
-            _floatingApps.value = WidgetsJson.decode<List<Widget>>(floatingAppsJsonString) ?: emptyList()
+            val widgetsJsonString = WidgetsSettingsStore.jsonSetting.get(ctx)
+            _widgets.value = WidgetsJson.decode<List<Widget>>(widgetsJsonString) ?: emptyList()
         }
     }
 

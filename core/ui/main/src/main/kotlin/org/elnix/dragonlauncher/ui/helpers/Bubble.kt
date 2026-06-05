@@ -56,13 +56,13 @@ fun Bubble(
     ) {
         if (leadingIcon != null) {
             leadingIcon()
-            Spacer(Modifier.width(8.dp))
+            Spacer(8.dp))
         }
 
         content()
 
         if (trailingIcon != null || onDelete != null) {
-            Spacer(Modifier.width(8.dp))
+            Spacer(8.dp))
         }
 
         trailingIcon?.invoke()

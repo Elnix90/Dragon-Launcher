@@ -4,9 +4,9 @@ import org.elnix.dragonlauncher.enumsui.select.ColorPickerMode
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction
 import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.boolean
-import org.elnix.dragonlauncher.settings.bases.enum
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
+import org.elnix.dragonlauncher.settings.bases.objects.EnumSettingObject.Companion.enum
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 object ColorModesSettingsStore : MapSettingsStore(DataStoreName.COLOR_MODE) {

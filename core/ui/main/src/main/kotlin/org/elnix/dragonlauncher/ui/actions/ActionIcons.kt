@@ -1,15 +1,29 @@
 package org.elnix.dragonlauncher.ui.actions
 
+import android.graphics.Bitmap
+import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.elnix.dragonlauncher.base.cache.ActionIconCache
 import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
+import org.elnix.dragonlauncher.base.resolveShape
+import org.elnix.dragonlauncher.base.theme.LocalExtraColors
+import org.elnix.dragonlauncher.base.util.ImageUtils.createUntintedBitmap
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ui.components.ShapedLauncherIcon
+import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.drawer.ApplicationItemVM
 import org.elnix.dragonlauncher.ui.drawer.listItemViewModel
 
@@ -44,13 +58,15 @@ import org.elnix.dragonlauncher.ui.drawer.listItemViewModel
 fun AppIcon(
     app: Application,
     modifier: Modifier = Modifier,
+    maxSize: Dp? = null,
     viewModel: ApplicationItemVM = listItemViewModel(key = "search-${app.key}")
 ) {
     val badge by viewModel.badge.collectAsStateWithLifecycle(null)
     val icon by viewModel.icon.collectAsStateWithLifecycle()
 
     val maxIconSize by viewModel.iconService.maxIconSize.collectAsState(64)
-    val maxIconSizePixels = maxIconSize.dp.px.toInt()
+    val currentMaxIconSize = maxSize ?: maxIconSize.dp
+    val maxIconSizePixels = currentMaxIconSize.px.toInt()
 
     LaunchedEffect(app) {
         viewModel.init(app, maxIconSizePixels)
@@ -58,56 +74,53 @@ fun AppIcon(
 
     ShapedLauncherIcon(
         modifier = modifier,
-        maxIconSize = maxIconSize.dp,
+        maxIconSize = currentMaxIconSize,
         icon = { icon },
         badge = { badge }
     )
 }
 
 
-//@Composable
-//fun ActionIcon(
-//    action: ActionSerializable,
-//    modifier: Modifier = Modifier,
-//    size: Dp,
+
+@Composable
+fun ActionIcon(
+    action: Action,
+    modifier: Modifier = Modifier,
+    size: Dp,
 //    showLaunchAppVectorGrid: Boolean = false
-//) {
-//    val point = SwipePointSerializable.dummySwipePoint(action )
-//
-//    AppIcon(PointApp(point), size)
-//
-//
-//    val ctx = LocalContext.current
-//    val icons = LocalDrawerIconsCache.current
-//    val extraColors = LocalExtraColors.current
-//
-//    val bitmap: ImageBitmap? = when {
-//        action is ActionSerializable.LaunchApp && showLaunchAppVectorGrid ->
+) {
+
+    val ctx = LocalContext.current
+    val extraColors = LocalExtraColors.current
+
+    val intSizePx = size.px.toInt()
+
+    val bitmap: Bitmap =
+        ActionIconCache.getOrCompute(action::class) {
+
+
+//        when {
+//        action is Action.LaunchApp && showLaunchAppVectorGrid ->
 //            ctx.loadDrawableResAsBitmap(R.drawable.ic_app_grid, size, size)
 //
 //        else -> {
-//            createUntintedBitmap(
-//                icons = icons,
-//                action = action,
-//                ctx = ctx,
-//                width = size,
-//                height = size
-//            )
-//        }
-//    }
-//
-//    if (bitmap == null) return
-//
-//    Image(
-//        bitmap = bitmap,
-//        contentDescription = null,
-//        colorFilter = if (
-//            ((action !is ActionSerializable.LaunchApp) || showLaunchAppVectorGrid) &&
-//            (action !is ActionSerializable.LaunchShortcut || action.packageName.isEmpty()) &&
-//            action !is ActionSerializable.OpenDragonLauncherSettings
-//        ) ColorFilter.tint(actionColor(action, extraColors))
-//        else null,
-//        modifier = modifier
-//            .clip(PlatformShape)
-//    )
-//}
+            createUntintedBitmap(
+                action = action,
+                ctx = ctx,
+                width = intSizePx,
+                height = intSizePx
+            )
+        }
+
+    Image(
+        bitmap = bitmap.asImageBitmap(),
+        contentDescription = null,
+        colorFilter = if (
+            ((action !is Action.LaunchApp)) &&
+            (action !is Action.LaunchShortcut || action.packageName.isEmpty()) &&
+            action !is Action.OpenDragonLauncherSettings
+        ) ColorFilter.tint(action.actionColor(extraColors))
+        else null,
+        modifier = modifier.clip(LocalIconShape.current.resolveShape())
+    )
+}

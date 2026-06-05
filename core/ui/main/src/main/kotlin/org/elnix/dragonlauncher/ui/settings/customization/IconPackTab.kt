@@ -17,10 +17,10 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.util.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.actions.AppIcon
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asStateNull
 import org.elnix.dragonlauncher.ui.base.components.LazyRowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
@@ -30,14 +30,15 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 @Composable
 fun IconPackTab(
     onBack: () -> Unit,
-    appsViewModel: AppsViewModel = activityViewModel()
+    drawerViewModel: DrawerViewModel = activityViewModel()
 ) {
     val scope = rememberCoroutineScope()
 
-    val apps by appsViewModel.userApps.collectAsState(initial = emptyList())
 
-    val selectedPack by appsViewModel.selectedIconPack.collectAsState()
-    val packs by appsViewModel.iconPacksList.collectAsState()
+    val iconPackManager = drawerViewModel.iconPackManager
+    val apps by drawerViewModel.userApps.collectAsState(initial = emptyList())
+    val selectedPack by iconPackManager.selectedIconPack.collectAsState()
+    val packs by drawerViewModel.iconPacksList.collectAsState()
 
     val iconPackTint by UiSettingsStore.iconPackTint.asStateNull()
 
@@ -59,7 +60,7 @@ fun IconPackTab(
         helpText = stringResource(R.string.icon_pack_help),
         onReset = {
             scope.launch {
-                appsViewModel.clearIconPack()
+                drawerViewModel.clearIconPack()
             }
         },
         topContent = {
@@ -78,7 +79,7 @@ fun IconPackTab(
             label = stringResource(R.string.icon_pack_tint),
             currentColor = iconPackTint ?: Color.Unspecified
         ) {
-            scope.launch { appsViewModel.setIconPackTint(it.definedOrNull()) }
+            scope.launch { drawerViewModel.setIconPackTint(it.definedOrNull()) }
         }
 
         IconPackListContent(
@@ -86,16 +87,16 @@ fun IconPackTab(
             selectedPackPackage = selectedPack?.packageName,
             showClearOption = true,
             onReloadPacks = {
-                appsViewModel.loadIconPacks()
+                drawerViewModel.loadIconPacks()
             },
             onPackClick = { pack ->
                 scope.launch {
-                    appsViewModel.selectIconPack(pack)
+                    drawerViewModel.selectIconPack(pack)
                 }
             },
             onClearClick = {
                 scope.launch {
-                    appsViewModel.clearIconPack()
+                    drawerViewModel.clearIconPack()
                 }
             }
         )

@@ -13,8 +13,8 @@ import org.elnix.dragonlauncher.base.theme.ExtraColors
 @Stable
 @Immutable
 data class SwipeDrawParams(
-    val nests: List<Nest>,
-    val points: List<Point>,
+    val nests: Set<Nest>,
+    val points: Set<Point>,
     val ctx: Context,
     val defaultPoint: Point,
     val pointsIconsCache: PointIconCache,

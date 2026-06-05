@@ -5,14 +5,11 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.exclude
@@ -23,19 +20,15 @@ import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -46,7 +39,6 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -67,13 +59,12 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.base.Constants
-import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Profile.Type.Personal
 import org.elnix.dragonlauncher.base.model.serializables.Profile.Type.Private
@@ -84,24 +75,23 @@ import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.CLEAR
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.CLOSE
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.CLOSE_KB
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.Companion.isUsed
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.DISABLED
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.NONE
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.OPEN_FIRST_APP
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.OPEN_KB
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.SEARCH_WEB
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.TOGGLE_KB
-import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar.RecentlyUsed
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar.SearchBar
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar.Spacer
-import org.elnix.dragonlauncher.enumsui.toggle.isUsed
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.openSearch
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ktx.toDp
-import org.elnix.dragonlauncher.models.AppLaunchViewModel
-import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.ProfilesViewModel
+import org.elnix.dragonlauncher.models.utils.asState
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
@@ -111,100 +101,54 @@ import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
-import org.elnix.dragonlauncher.ui.dialogs.AppAliasesDialog
-import org.elnix.dragonlauncher.ui.dialogs.AppIconEditor
-import org.elnix.dragonlauncher.ui.dialogs.AppLongPressRowImpl
-import org.elnix.dragonlauncher.ui.dialogs.TextEditorDialog
 import org.elnix.dragonlauncher.ui.helpers.AppDrawerSearch
 import org.elnix.dragonlauncher.ui.helpers.AppGrid
 import org.elnix.dragonlauncher.ui.helpers.WallpaperDim
+import org.elnix.dragonlauncher.ui.helpers.WorkspaceLockedContent
 import kotlin.math.abs
 import kotlin.math.pow
 
 @SuppressLint("LocalContextGetResourceValueCall")
-@Suppress("AssignedValueIsNeverRead")
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppDrawerScreen(
-    appsViewModel: AppsViewModel = activityViewModel(),
-    appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
+    drawerViewModel: DrawerViewModel = activityViewModel(),
     profilesViewModel: ProfilesViewModel = activityViewModel(),
-    autoShowKeyboard: Boolean,
-    drawerToolbarsOrder: List<DrawerToolbar>,
-    leftAction: DrawerActions,
-    leftWeight: Float,
-    rightAction: DrawerActions,
-    rightWeight: Float,
     onRegisterHomeHandler: ((() -> Unit)?) -> Unit,
     onNavigate: (NavigationRoute) -> Unit,
     onLaunchAction: (Action) -> Unit,
     onClose: () -> Unit
 ) {
     val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
 
+    val autoLaunchSingleMatch by drawerViewModel.autoOpenSingleMatch.asState()
+    val disableAutoLaunchOnSpaceFirstChar by drawerViewModel.disableAutoLaunchOnSpaceFirstChar.asState()
+    val tapEmptySpaceToRaiseKeyboard by drawerViewModel.tapEmptySpaceAction.asState()
+    val drawerEnterAction by drawerViewModel.drawerEnterAction.asState()
+    val drawerBackAction by drawerViewModel.backDrawerAction.asState()
+    val drawerHomeAction by drawerViewModel.drawerHomeAction.asState()
+    val drawerScrollDownAction by drawerViewModel.scrollDownDrawerAction.asState()
+    val drawerScrollUpAction by drawerViewModel.scrollUpDrawerAction.asState()
+    val showSearchBar by drawerViewModel.showSearchBar.asState()
+    val showRecentlyUsedApps by drawerViewModel.showRecentlyUsedApps.asState()
+    val recentlyUsedAppsCount by drawerViewModel.recentlyUsedAppsCount.asState()
+    val autoShowKeyboard by drawerViewModel.autoShowKeyboardOnDrawer.asState()
+    val drawerToolbarsOrder by drawerViewModel.drawerToolbars.asState()
 
-    val workspacesManager = appsViewModel.workspaceManager
-    val workspaceState by workspacesManager.workspacesState.collectAsState()
-    val visibleWorkspaces = workspaceState.workspaces
-
-    val appOverridesManager = appsViewModel.appOverrideManager
-    val appOverrideState by appOverridesManager.appOverrideState.collectAsState()
-    val appOverrides = appOverrideState.appOverrides
-
-    val profiles by profilesViewModel.profiles.collectAsState(emptyList())
-    val profileStates by profilesViewModel.profileStates.collectAsState(emptyList())
-    val hasProfilesPermission by profilesViewModel.hasProfilesPermission.collectAsState(false)
-
-
-    val selectedWorkspaceId by appsViewModel.selectedWorkspaceId.collectAsState()
-    val initialIndex = visibleWorkspaces.indexOfFirst { it.id == selectedWorkspaceId }
-    val pagerState = rememberPagerState(
-        initialPage = initialIndex.coerceIn(0, (visibleWorkspaces.size - 1).coerceAtLeast(0)),
-        pageCount = { visibleWorkspaces.size }
-    )
-
-    val autoLaunchSingleMatch by DrawerSettingsStore.autoOpenSingleMatch.asState()
-    val disableAutoLaunchOnSpaceFirstChar by DrawerSettingsStore.disableAutoLaunchOnSpaceFirstChar.asState()
-
-    val tapEmptySpaceToRaiseKeyboard by DrawerSettingsStore.tapEmptySpaceAction.asState()
-    val drawerEnterAction by DrawerSettingsStore.drawerEnterAction.asState()
-    val drawerBackAction by DrawerSettingsStore.backDrawerAction.asState()
-    val drawerHomeAction by DrawerSettingsStore.drawerHomeAction.asState()
-    val drawerScrollDownAction by DrawerSettingsStore.scrollDownDrawerAction.asState()
-    val drawerScrollUpAction by DrawerSettingsStore.scrollUpDrawerAction.asState()
-
-
-    val showSearchBar by DrawerSettingsStore.showSearchBar.asState()
-
-
-    val showRecentlyUsedApps by DrawerSettingsStore.showRecentlyUsedApps.asState()
-    val recentlyUsedAppsCount by DrawerSettingsStore.recentlyUsedAppsCount.asState()
-    val recentApps by appLaunchViewModel.getRecentApps(recentlyUsedAppsCount)
-        .collectAsStateWithLifecycle(emptyList())
+    val recentApps by drawerViewModel.getRecentApps(recentlyUsedAppsCount).collectAsStateWithLifecycle(emptyList())
 
 
     var haveToLaunchFirstApp by remember { mutableStateOf(false) }
 
-    var searchQuery by remember { mutableStateOf("") }
+    var searchQuery by drawerViewModel.searchQuery
 
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
     var isSearchFocused by remember { mutableStateOf(false) }
 
-    var renameAppTarget by remember { mutableStateOf<Application?>(null) }
-    var showAliasDialog by remember { mutableStateOf<Application?>(null) }
 
-    var workspaceId by remember { mutableStateOf<String?>(null) }
-
-
-    var appTarget by remember { mutableStateOf<Application?>(null) }
-    var showMoreMenu by remember { mutableStateOf(false) }
-
-
-
-    LaunchedEffect(autoShowKeyboard) {
+    LaunchedEffect(Unit, autoShowKeyboard) {
         if (autoShowKeyboard) {
             yield()
             focusRequester.requestFocus()
@@ -212,47 +156,35 @@ fun AppDrawerScreen(
     }
 
 
+
+    val workspacesManager = drawerViewModel.workspaceManager
+    val workspaceState by workspacesManager.workspacesState.collectAsState()
+
+    val selectedWorkspaceId by drawerViewModel.selectedWorkspaceId.collectAsState()
+    val initialIndex = workspaceState.indexOfFirst { it.id == selectedWorkspaceId }
+    val pagerState = rememberPagerState(
+        initialPage = initialIndex.coerceIn(0, (workspaceState.size - 1).coerceAtLeast(0)),
+        pageCount = { workspaceState.size }
+    )
+
     /**
      * Updates the visible workspace
      */
-    LaunchedEffect(visibleWorkspaces, selectedWorkspaceId) {
-        if (visibleWorkspaces.isEmpty()) return@LaunchedEffect
+    LaunchedEffect(workspaceState, selectedWorkspaceId) {
+        if (workspaceState.isEmpty()) return@LaunchedEffect
 
-        val selectedVisible = visibleWorkspaces.any { it.id == selectedWorkspaceId }
-        val targetId = if (selectedVisible) selectedWorkspaceId else visibleWorkspaces.first().id
-        val targetIndex = visibleWorkspaces.indexOfFirst { it.id == targetId }
+        val selectedVisible = workspaceState.any { it.id == selectedWorkspaceId }
+        val targetId = if (selectedVisible) selectedWorkspaceId else workspaceState.first().id
+        val targetIndex = workspaceState.indexOfFirst { it.id == targetId }
 
         if (!selectedVisible) {
-            appsViewModel.selectWorkspace(targetId)
+            drawerViewModel.selectWorkspace(targetId)
         }
 
         if (targetIndex >= 0 && pagerState.currentPage != targetIndex) {
             pagerState.scrollToPage(targetIndex)
         }
     }
-
-    // TODO
-//    /**
-//     * Fires on workspace state change
-//     * launch the private space unlocking prompt if workspace type if private space
-//     */
-//    LaunchedEffect(pagerState.currentPage) {
-//        val newWorkspace =
-//            visibleWorkspaces.getOrNull(pagerState.currentPage) ?: return@LaunchedEffect
-//        val newWorkspaceId = newWorkspace.id
-//
-//        // Check if switching to Private Space (Android 15+)
-//        if (PrivateSpaceUtils.isPrivateSpaceSupported() &&
-//            newWorkspace.type == WorkspaceType.PRIVATE &&
-//            privateSpaceState.isLocked
-//        ) {
-//            profilesVM.onUnlockPrivateSpace()
-//        }
-//
-//        workspaceId = newWorkspaceId
-//        appsViewModel.selectWorkspace(newWorkspaceId)
-//    }
-
 
     fun closeKeyboard() {
         focusManager.clearFocus()
@@ -271,7 +203,6 @@ fun AppDrawerScreen(
             openKeyboard()
         }
     }
-
 
     fun launchDrawerAction(action: DrawerActions) {
         when (action) {
@@ -320,6 +251,7 @@ fun AppDrawerScreen(
             }
         }
     }
+
 
     // Computes the position of the spacer in the toolbars list, and deduce 2 lists:
     // one with the elements that come before, and one with those that come after
@@ -480,33 +412,8 @@ fun AppDrawerScreen(
     val pullDownPadding = if (pullDownAnimations) pullOffset else 0f
     val animatedPadding by animateDpAsState(targetValue = pullDownPadding.toDp)
 
-    @Composable
-    fun AppLongPressRow(app: Application) {
-        val cacheKey = app.key
-
-        AppLongPressRowImpl(
-            app = app,
-            onLaunch = { appLaunchViewModel.requestAppLaunch(app) },
-            onRemoveFromWorkspace = if (!app.isPrivate) {
-                {
-                    workspaceId?.let { wsId ->
-                        scope.launch {
-                            workspacesManager.removeAppFromWorkspace(
-                                id = wsId,
-                                cacheKey = cacheKey
-                            )
-                        }
-                    }
-                }
-            } else null,
-            onRenameApp = { renameAppTarget = app },
-            onChangeAppIcon = { appTarget = app },
-            onAliases = { showAliasDialog = app }
-        )
-    }
-
     val wallpaperDimDrawerScreen by UiSettingsStore.wallpaperDimDrawerScreen.asState()
-    val pullDownWallPaperDimFadeEnabled by DrawerSettingsStore.pullDownWallPaperDimFade.asState()
+    val pullDownWallPaperDimFadeEnabled by drawerViewModel.pullDownWallPaperDimFade.asState()
 
     val animatedDim by animateFloatAsState(targetValue = pullProgress)
     // Dims the wallpaper, when the user starts pulling down,
@@ -521,221 +428,136 @@ fun AppDrawerScreen(
     Box(
         modifier = Modifier
             .windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.ime))
+            .fillMaxSize()
+            .nestedScroll(nestedConnection)
+            .padding(top = animatedPadding)
+            .conditional(pullDownScaleIn) {
+                graphicsLayer {
+                    scaleX = animatedScale
+                    scaleY = animatedScale
+                }
+            }
+            .clickable(
+                enabled = tapEmptySpaceToRaiseKeyboard.isUsed,
+                indication = null,
+                interactionSource = null
+            ) {
+                toggleKeyboard()
+            }
     ) {
-        Column(
+
+        val leftDrawerAction by drawerViewModel.leftDrawerAction.asState()
+        val leftDrawerWidth by drawerViewModel.leftDrawerWidth.asState()
+
+        val rightDrawerAction by drawerViewModel.rightDrawerAction.asState()
+        val rightDrawerWidth by drawerViewModel.rightDrawerWidth.asState()
+
+        DrawerActions(leftDrawerAction, leftDrawerWidth, rightDrawerAction, rightDrawerWidth, ::launchDrawerAction)
+
+        val profiles by profilesViewModel.profiles.collectAsState(emptyList())
+        val profileStates by profilesViewModel.profileStates.collectAsState(emptyList())
+
+        HorizontalPager(
             modifier = Modifier
                 .fillMaxSize()
-                .nestedScroll(nestedConnection)
-                .padding(top = animatedPadding)
-                .conditional(pullDownScaleIn) {
-                    graphicsLayer {
-                        scaleX = animatedScale
-                        scaleY = animatedScale
-                    }
+                .padding(start = leftDrawerWidth, end = rightDrawerWidth),
+            state = pagerState,
+            key = { it.hashCode() }
+        ) { pageIndex ->
+
+            val workspace = workspaceState[pageIndex]
+
+            val workspaceProfileType = when (workspace.type) {
+                WorkspaceType.WORK -> Work
+                WorkspaceType.PRIVATE -> Private
+                else -> Personal
+            }
+
+            val workspaceProfile = when (workspaceProfileType) {
+                Personal -> profiles[0]
+                Work -> profiles[1]
+                Private -> profiles[2]
+            }
+
+            val workspaceLocked = when (workspaceProfileType) {
+                Work -> profileStates[1]!!.locked
+                Private -> profileStates[2]!!.locked
+                Personal -> false
+            }
+
+            val gridState = remember(workspace.id) { LazyGridState() }
+            val listState = remember(workspace.id) { LazyListState() }
+            val categoryGridState = remember(workspace.id) { LazyGridState() }
+
+            val apps by drawerViewModel.search(workspace).collectAsStateWithLifecycle()
+
+
+            LaunchedEffect(haveToLaunchFirstApp, apps) {
+
+                val autoLaunch =
+                    autoLaunchSingleMatch &&
+                            apps.size == 1 &&
+                            searchQuery.isNotEmpty() &&
+                            !(disableAutoLaunchOnSpaceFirstChar && searchQuery.first() == ' ')
+
+                if (haveToLaunchFirstApp || autoLaunch && apps.isNotEmpty()) {
+                    onLaunchAction(apps.first().action)
                 }
-                .clickable(
-                    enabled = tapEmptySpaceToRaiseKeyboard.isUsed(),
-                    indication = null,
-                    interactionSource = null
+            }
+
+
+            if (workspaceLocked) {
+                WorkspaceLockedContent(workspaceProfile)
+            } else {
+                AppGrid(
+                    apps = apps,
+                    gridState = gridState,
+                    paddingValues = appsContentPadding,
+                    categoryGridState = categoryGridState,
+                    listState = listState,
+                    onTopStateChange = { atTop = it },
+                    longPressPopup = true
                 ) {
-                    toggleKeyboard()
+                    onLaunchAction(it.action)
                 }
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(1f)
-            ) {
+            }
+        }
+    }
 
-                if (leftAction != DISABLED) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .weight(leftWeight.coerceIn(0.001f, 1f))
-                            .clickable(
-                                indication = null,
-                                interactionSource = null
-                            ) { launchDrawerAction(leftAction) }
-                    )
-                }
 
-                Column(modifier = Modifier.weight(1f)) {
+    /**
+     * Toolbars column, fills the whole size and sits over the apps boxes
+     */
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding()
+    ) {
 
-                    HorizontalPager(
-                        state = pagerState,
-                        key = { it.hashCode() }
-                    ) { pageIndex ->
+        var showMoreMenu by remember { mutableStateOf(false) }
 
-                        val workspace = visibleWorkspaces[pageIndex]
+        drawerToolbarsOrder.forEach { toolbar ->
+            when (toolbar) {
+                Spacer -> Spacer(Modifier.weight(1f))
 
-                        val workspaceProfileType = when (workspace.type) {
-                            WorkspaceType.WORK -> Work
-                            WorkspaceType.PRIVATE -> Private
-                            else -> Personal
+                RecentlyUsed -> {
+                    AnimatedVisibility(
+                        visible = showRecentlyUsedApps && searchQuery.isBlank() && recentApps.isNotEmpty(),
+                        modifier = Modifier.onGloballyPositioned {
+                            recentAppsHeightPx = it.size.height
                         }
+                    ) {
 
-                        val workspaceProfile = when (workspaceProfileType) {
-                            Personal -> profiles[0]
-                            Work -> profiles[1]
-                            Private -> profiles[2]
-                        }
-
-                        val workspaceLocked = when (workspaceProfileType) {
-                            Work -> profileStates[1]!!.locked
-                            Private -> profileStates[2]!!.locked
-                            Personal -> false
-                        }
-
-                        val gridState = remember(workspace.id) {
-                            LazyGridState()
-                        }
-
-                        val categoryGridState = remember(workspace.id) {
-                            LazyGridState()
-                        }
-
-                        val listState = remember(workspace.id) {
-                            LazyListState()
-                        }
-
-                        val apps by appsViewModel
-                            .appsForWorkspace(workspace)
-                            .collectAsStateWithLifecycle(emptyList())
-
-                        val filteredApps by remember(searchQuery, apps) {
-                            derivedStateOf {
-                                val trimmedSearchQuery = searchQuery.trim()
-
-                                val base = if (trimmedSearchQuery.isBlank()) apps
-                                else apps.filter { app ->
-                                    app.label.contains(trimmedSearchQuery, ignoreCase = true) ||
-
-                                            // Also search for aliases
-                                            appOverrides[app.key]?.aliases?.any {
-                                                it.contains(
-                                                    trimmedSearchQuery,
-                                                    ignoreCase = true
-                                                )
-                                            } ?: false
-                                }
-
-                                base.sortedBy { it.label.lowercase() }
-                            }
-                        }
-
-                        LaunchedEffect(haveToLaunchFirstApp, filteredApps) {
-
-                            val autoLaunch =
-                                autoLaunchSingleMatch &&
-                                        filteredApps.size == 1 &&
-                                        searchQuery.isNotEmpty() &&
-                                        !(disableAutoLaunchOnSpaceFirstChar && searchQuery.first() == ' ')
-
-                            if (haveToLaunchFirstApp || autoLaunch && filteredApps.isNotEmpty()) {
-                                onLaunchAction(filteredApps.first().action)
-                            }
-                        }
-
-
-                        if (workspaceProfileType != Personal) {
-                            if (workspaceLocked) {
-                                Column(
-                                    modifier = Modifier
-                                        .padding(12.dp)
-                                        .fillMaxWidth()
-                                        .border(
-                                            1.dp,
-                                            MaterialTheme.colorScheme.outlineVariant,
-                                            MaterialTheme.shapes.small
-                                        )
-                                        .background(
-                                            MaterialTheme.colorScheme.surfaceContainer,
-                                            MaterialTheme.shapes.small
-                                        )
-                                        .padding(vertical = 64.dp),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                ) {
-                                    Icon(
-                                        painterResource(if (workspaceProfileType == Work) R.drawable.enterprise_off else R.drawable.lock),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(48.dp),
-                                        tint = MaterialTheme.colorScheme.secondary,
-                                    )
-                                    Text(
-                                        stringResource(
-                                            if (workspaceProfileType == Work) R.string.profile_work_profile_state_locked
-                                            else R.string.profile_private_profile_state_locked
-                                        ),
-                                        modifier = Modifier.padding(top = 8.dp),
-                                        color = MaterialTheme.colorScheme.secondary,
-                                        style = MaterialTheme.typography.titleSmall,
-                                    )
-                                    if (hasProfilesPermission) {
-                                        Button(
-                                            modifier = Modifier.padding(top = 32.dp),
-                                            onClick = {
-                                                profilesViewModel.setProfileLock(workspaceProfile, false)
-                                            },
-                                            contentPadding = ButtonDefaults.TextButtonWithIconContentPadding
-                                        ) {
-                                            Icon(
-                                                painterResource(if (workspaceProfileType == Work) R.drawable.enterprise else R.drawable.lock_open),
-                                                contentDescription = null,
-                                                modifier = Modifier
-                                                    .padding(end = ButtonDefaults.IconSpacing)
-                                                    .size(ButtonDefaults.IconSize)
-                                            )
-                                            Text(
-                                                stringResource(
-                                                    if (workspaceProfileType == Work) R.string.profile_work_profile_action_unlock
-                                                    else R.string.profile_private_profile_action_unlock
-                                                )
-                                            )
-                                        }
-                                    }
-                                }
-                            } else if (hasProfilesPermission) {
-                                FilledTonalButton(
-                                    modifier = Modifier
-                                        .padding(12.dp)
-                                        .fillMaxWidth(),
-                                    onClick = {
-                                        profilesViewModel.setProfileLock(workspaceProfile, true)
-                                    },
-                                    contentPadding = ButtonDefaults.TextButtonWithIconContentPadding
-                                ) {
-                                    Icon(
-                                        painterResource(if (workspaceProfileType == Work) R.drawable.enterprise_off else R.drawable.lock),
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .padding(end = ButtonDefaults.IconSpacing)
-                                            .size(ButtonDefaults.IconSize)
-                                    )
-                                    Text(
-                                        stringResource(
-                                            if (workspaceProfileType == Work) R.string.profile_work_profile_action_lock
-                                            else R.string.profile_private_profile_action_lock
-                                        )
-                                    )
-                                }
-                            }
-                        } else {
-
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(5.dp)
+                                .settingsGroup()
+                        ) {
                             AppGrid(
-                                apps = filteredApps,
-                                gridState = gridState,
-                                paddingValues = appsContentPadding,
-                                categoryGridState = categoryGridState,
-                                listState = listState,
-                                onTopStateChange = { atTop = it },
-//                                onReload = {
-//                                    scope.launch {
-//                                        if (workspace.type == WorkspaceType.PRIVATE) appsViewModel.unlockAndReloadPrivateSpace()
-//                                        else appsViewModel.reloadApps()
-//                                    }
-//                                },
-                                longPressPopup = { app -> AppLongPressRow(app) }
+                                apps = recentApps,
+                                fillMaxSize = false,
+                                longPressPopup = true
                             ) {
                                 onLaunchAction(it.action)
                             }
@@ -743,164 +565,84 @@ fun AppDrawerScreen(
                     }
                 }
 
-                if (rightAction != DISABLED) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .weight(rightWeight.coerceIn(0.001f, 1f))
-                            .clickable(
-                                indication = null,
-                                interactionSource = null
-                            ) { launchDrawerAction(rightAction) }
-                    )
-                }
-            }
-        }
+                SearchBar -> {
+                    AnimatedVisibility(
+                        visible = showSearchBar,
+                        modifier = Modifier.onGloballyPositioned {
+                            searchBarHeightPx = it.size.height
+                        }
+                    ) {
+                        AppDrawerSearch(
+                            searchQuery = searchQuery,
+                            trailingIcon = {
+                                Box {
+                                    Icon(
+                                        painter = painterResource(R.drawable.more_vert),
+                                        contentDescription = stringResource(R.string.more),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.shapedClickable { showMoreMenu = true }
+                                    )
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .imePadding()
-        ) {
-
-            drawerToolbarsOrder.forEach { toolbar ->
-                when (toolbar) {
-                    Spacer -> Spacer(Modifier.weight(1f))
-
-                    RecentlyUsed -> {
-                        /* ───────────── Recently Used Apps section ───────────── */
-                        AnimatedVisibility(
-                            visible = showRecentlyUsedApps && searchQuery.isBlank() && recentApps.isNotEmpty(),
-                            modifier = Modifier.onGloballyPositioned {
-                                recentAppsHeightPx = it.size.height
-                            }
-                        ) {
-
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(5.dp)
-                                    .settingsGroup()
-                            ) {
-                                AppGrid(
-                                    apps = recentApps,
-                                    fillMaxSize = false,
-                                    longPressPopup = { app -> AppLongPressRow(app) }
-                                ) {
-                                    onLaunchAction(it.action)
+                                    BurgerListAction(
+                                        actions = listOf(
+                                            MoreOptions(
+                                                onClick = { onNavigate(NavigationRoute.DrawerSettings) },
+                                                icon = R.drawable.ic_action_drawer,
+                                                text = { stringResource(R.string.drawer_settings) }
+                                            )
+                                        ),
+                                        isExpanded = showMoreMenu,
+                                        onDismissRequest = { showMoreMenu = false }
+                                    )
                                 }
-                            }
-                        }
-                    }
-
-                    SearchBar -> {
-                        AnimatedVisibility(
-                            visible = showSearchBar,
-                            modifier = Modifier.onGloballyPositioned {
-                                searchBarHeightPx = it.size.height
-                            }
-                        ) {
-                            AppDrawerSearch(
-                                searchQuery = searchQuery,
-                                trailingIcon = {
-                                    Box {
-                                        Icon(
-                                            painter = painterResource(R.drawable.more_vert),
-                                            contentDescription = stringResource(R.string.more),
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            modifier = Modifier.shapedClickable { showMoreMenu = true }
-                                        )
-
-                                        BurgerListAction(
-                                            actions = listOf(
-                                                MoreOptions(
-                                                    onClick = { onNavigate(NavigationRoute.DrawerSettings) },
-                                                    icon = R.drawable.ic_action_drawer,
-                                                    text = { stringResource(R.string.drawer_settings) }
-                                                )
-                                            ),
-                                            isExpanded = showMoreMenu,
-                                            onDismissRequest = { showMoreMenu = false }
-                                        )
-                                    }
-                                },
-                                onSearchChanged = { searchQuery = it },
-                                modifier = Modifier.focusRequester(focusRequester),
-                                onEnterPressed = { launchDrawerAction(drawerEnterAction) },
-                                onFocusStateChanged = { isSearchFocused = it }
-                            )
-                        }
+                            },
+                            onSearchChanged = { searchQuery = it },
+                            modifier = Modifier.focusRequester(focusRequester),
+                            onEnterPressed = { launchDrawerAction(drawerEnterAction) },
+                            onFocusStateChanged = { isSearchFocused = it }
+                        )
                     }
                 }
             }
         }
     }
+}
 
 
+/**
+ * Drawer actions, creates left and right clickable buttons that can activate the selected [org.elnix.dragonlauncher.enumsui.toggle.DrawerActions]
+ */
+@Composable
+fun BoxScope.DrawerActions(
+    leftDrawerAction: DrawerActions,
+    leftDrawerWidth: Dp,
+    rightDrawerAction: DrawerActions,
+    rightDrawerWidth: Dp,
+    launchDrawerAction: (DrawerActions) -> Unit
+) {
 
-    if (renameAppTarget != null) {
-        val app = renameAppTarget!!
-        val cacheKey = app.key
-
-        TextEditorDialog(
-            title = { stringResource(R.string.rename) },
-            placeHolder = { app.label },
-            onDismiss = { renameAppTarget = null },
-            initialText = app.label
-        ) {
-            if (it != "") {
-                appOverridesManager.renameApp(
-                    cacheKey = cacheKey,
-                    customName = it
-                )
-            } else {
-                appOverridesManager.renameApp(cacheKey, null)
-            }
-            renameAppTarget = null
-        }
+    if (leftDrawerAction != DISABLED) {
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .fillMaxHeight()
+                .width(leftDrawerWidth)
+                .clickable(
+                    indication = null,
+                    interactionSource = null
+                ) { launchDrawerAction(leftDrawerAction) }
+        )
     }
 
-    if (appTarget != null) {
-
-        val app = appTarget!!
-        val cacheKey = app.key
-
-        val iconService = appsViewModel.iconsService
-
-        AppIconEditor(
-            app = app,
-            onReset = {
-                // Reload
-                @Suppress("UnusedFlow")
-                iconService.getAppIcon(app, true)
-            },
-            onDismiss = { appTarget = null }
-        ) { customIcon ->
-
-            scope.launch {
-                if (customIcon != null) {
-                    appOverridesManager.setAppIcon(
-                        cacheKey = cacheKey,
-                        customIcon = customIcon
-                    )
-                } else {
-                    appOverridesManager.setAppIcon(cacheKey, null)
-                }
-
-                // Reload
-                @Suppress("UnusedFlow")
-                iconService.getAppIcon(app, true)
-                appTarget = null
-            }
-        }
-    }
-
-    if (showAliasDialog != null) {
-        val app = showAliasDialog!!
-
-        AppAliasesDialog(
-            app = app,
-            onDismiss = { showAliasDialog = null }
+    if (rightDrawerAction != DISABLED) {
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(rightDrawerWidth)
+                .clickable(
+                    indication = null,
+                    interactionSource = null
+                ) { launchDrawerAction(rightDrawerAction) }
         )
     }
 }

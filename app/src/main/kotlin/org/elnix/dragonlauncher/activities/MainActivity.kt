@@ -16,7 +16,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,11 +43,7 @@ import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel
-import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.models.InitializationViewModel
-import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.models.WidgetsViewModel
-import org.elnix.dragonlauncher.permissions.PermissionsManager
 import org.elnix.dragonlauncher.receiver.FontReceiver
 import org.elnix.dragonlauncher.settings.SettingsBackupManager
 import org.elnix.dragonlauncher.settings.backupableStores
@@ -59,7 +54,6 @@ import org.elnix.dragonlauncher.theme.DragonLauncherTheme
 import org.elnix.dragonlauncher.ui.MainAppUi
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.composition.LocalWidgetsViewModel
 import org.elnix.dragonlauncher.ui.dialogs.CrashScreen
 import org.elnix.dragonlauncher.ui.widgets.LauncherWidgetHolder
 import javax.inject.Inject
@@ -70,9 +64,6 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
 
     @Inject
     private lateinit var widgetsViewModel: WidgetsViewModel
-
-    @Inject
-    private lateinit var permissionsManager: PermissionsManager
 
     companion object {
         private var GLOBAL_APPWIDGET_HOST: AppWidgetHost? = null
@@ -205,7 +196,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                 logE(WIDGET_TAG, e) { "DRAGON_FLOW: Proxy launch failed" }
                 showToast("Failed to launch configuration")
                 // Add it anyway if config fails to launch
-                widgetsViewModel.addFloatingApp(
+                widgetsViewModel.addWidget(
                     action = Action.OpenWidget(
                         widgetId,
                         info.provider.packageName,
@@ -218,7 +209,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
             }
         } else {
             logD(WIDGET_TAG) { "DRAGON_FLOW: No configuration needed, adding widget" }
-            widgetsViewModel.addFloatingApp(
+            widgetsViewModel.addWidget(
                 action = Action.OpenWidget(
                     widgetId,
                     info.provider.packageName,
@@ -242,7 +233,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
             if (resultCode == RESULT_OK && widgetId != -1) {
                 val info = widgetHolder.getAppWidgetInfo(widgetId)
                 if (info != null) {
-                    widgetsViewModel.addFloatingApp(
+                    widgetsViewModel.addWidget(
                         action = Action.OpenWidget(
                             widgetId,
                             info.provider.packageName,
@@ -328,10 +319,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
 
             if (lastStackTrace.isNullOrBlank()) {
 
-                val appsViewModel: AppsViewModel = activityViewModel()
-                val profilesViewModel: ProfilesViewModel = activityViewModel()
                 val appLifecycleViewModel: AppLifecycleViewModel = activityViewModel()
-                val initializationViewModel: InitializationViewModel = activityViewModel()
 
                 DragonLauncherTheme {
 
@@ -361,81 +349,13 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                         }
                     }
 
-
-//                    val lifecycleOwner = LocalLifecycleOwner.current
-
-
-                    // May be used in the future for some quit action / operation
-                    // DoubleBackToExit()
-
-                    // Used to visually block private space content on window quit, and if user locks his phone,
-                    // the apps are also visually blocked, since they can't be launched
-//                    DisposableEffect(lifecycleOwner) {
-//                        val observer = LifecycleEventObserver { _, event ->
-//                            if (
-//                                event == Lifecycle.Event.ON_RESUME &&
-//                                PrivateSpaceUtils.isPrivateSpaceSupported()
-//                            ) {
-//                                val locked = PrivateSpaceUtils.isPrivateSpaceLocked(ctx) ?: false
-//
-//                                // If private space is locked on return, set it unavailable on the viewmodel state
-//                                if (locked) {
-//                                    appsViewModel.setPrivateSpaceLocked()
-//                                } else { // Set it available
-//                                    scope.launch(Dispatchers.IO) {
-//                                        appsViewModel.unlockAndReloadPrivateSpace()
-//                                    }
-//                                }
-//                            }
-//                        }
-//
-//                        // Add the observer to the lifecycle
-//                        lifecycleOwner.lifecycle.addObserver(observer)
-//
-//                        onDispose {
-//                            lifecycleOwner.lifecycle.removeObserver(observer)
-//                        }
-//                    }
-
-
                     val keepScreenOn by BehaviorSettingsStore.keepScreenOn.asState()
                     val fullscreen by UiSettingsStore.fullScreen.asState()
-//                    val samsungPreferSecureFolder by PrivateSettingsStore.samsungPreferSecureFolder.asState()
 
                     val offScreenTimeout by BehaviorSettingsStore.offScreenTimeout.asState()
                     LaunchedEffect(offScreenTimeout) {
                         Companion.offScreenTimeout = offScreenTimeout
                     }
-
-
-//                    LaunchedEffect(Unit) {
-//                        profilesVM.privateSpaceUnlockRequestEvents.collect {
-//
-//                            val openPrivateSpace = {
-//                                logI(PRIVATE_SPACE_TAG) { "Using standard Android Private Space" }
-//                                ctx.startActivity(
-//                                    Intent(ctx, PrivateSpaceUnlockActivity::class.java)
-//                                )
-//                            }
-//
-//                            logI(PRIVATE_SPACE_TAG) { "Loading Samsung preference: $samsungPreferSecureFolder" }
-//                            val useSecureFolder = SamsungWorkspaceIntegration.resolveUseSecureFolder(
-//                                ctx = ctx,
-//                                preferenceEnabled = samsungPreferSecureFolder
-//                            )
-//                            logI(PRIVATE_SPACE_TAG) { "Using system: ${if (useSecureFolder) "Secure Folder" else "Private Space"}" }
-//
-//                            if (useSecureFolder) {
-//                                SamsungWorkspaceIntegration.openSecureFolder(
-//                                    ctx = ctx,
-//                                    onFallback = openPrivateSpace
-//                                )
-//                            } else {
-//                                openPrivateSpace()
-//                            }
-//                        }
-//                    }
-
 
                     val window = this@MainActivity.window
                     val controller = WindowInsetsControllerCompat(window, window.decorView)
@@ -466,23 +386,21 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                         }
                     }
 
-                    CompositionLocalProvider(LocalWidgetsViewModel provides widgetsViewModel) {
-                        MainAppUi(
-                            onBindCustomWidget = { widgetId, provider, nestId ->
-                                pendingAddNestId = nestId
-                                (ctx as MainActivity).bindWidgetFromCustomPicker(widgetId, provider)
-                            },
-                            onResetWidgetSize = { id, widgetId ->
-                                val info = appWidgetManager.getAppWidgetInfo(widgetId)
-                                widgetsViewModel.resetFloatingAppSize(id, info)
-                            },
-                            onRemoveFloatingApp = { floatingAppObject ->
-                                widgetsViewModel.removeFloatingApp(floatingAppObject.id) {
-                                    (ctx as MainActivity).deleteWidget(it)
-                                }
+                    MainAppUi(
+                        onBindCustomWidget = { widgetId, provider, nestId ->
+                            pendingAddNestId = nestId
+                            (ctx as MainActivity).bindWidgetFromCustomPicker(widgetId, provider)
+                        },
+                        onResetWidgetSize = { id, widgetId ->
+                            val info = appWidgetManager.getAppWidgetInfo(widgetId)
+                            widgetsViewModel.resetWidgetSize(id, info)
+                        },
+                        onRemoveWidget = { widgetObject ->
+                            widgetsViewModel.removeWidget(widgetObject.id) {
+                                (ctx as MainActivity).deleteWidget(it)
                             }
-                        )
-                    }
+                        }
+                    )
                 }
             } else {
                 MaterialTheme {

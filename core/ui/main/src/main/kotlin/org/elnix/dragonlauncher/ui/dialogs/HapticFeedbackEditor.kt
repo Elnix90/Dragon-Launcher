@@ -11,12 +11,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -46,19 +43,19 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
-import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.base.Constants.Logging.HAPTIC_TAG
-import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedback
-import org.elnix.dragonlauncher.common.serializables.hapticFeedbackSerializablePresets
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.pasteClipboard
 import org.elnix.dragonlauncher.common.utils.HapticUtils.performCustomHaptic
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.logging.HAPTIC_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -69,7 +66,7 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
 private data class HapticEntry(
-    val id: Long, // stable key for reorderable list
+    val id: Long,
     val isVibration: Boolean,
     val durationMs: Int
 )
@@ -196,8 +193,7 @@ fun HapticFeedbackEditor(
                         contentDescription = stringResource(R.string.copy)
                     )
                 }
-                Spacer(Modifier.height(5.dp))
-
+                Spacer(5.dp)
 
 
                 DragonSettingsGroup(R.string.presets) {
@@ -210,7 +206,7 @@ fun HapticFeedbackEditor(
                             .horizontalScroll(rememberScrollState())
                             .background(MaterialTheme.colorScheme.surfaceVariant)
                     ) {
-                        hapticFeedbackSerializablePresets.forEach { (name, preset) ->
+                        CustomHapticFeedback.allPresets.forEach { (name, preset) ->
                             DragonButton(
                                 onClick = { selectPreset(preset) }
                             ) {
@@ -235,8 +231,6 @@ fun HapticFeedbackEditor(
         },
         text = {
             DragonSettingsGroup(R.string.steps) {
-
-                // ── Add buttons ──────────────────────────────────────────────
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -282,7 +276,6 @@ fun HapticFeedbackEditor(
                     RotatingPlayIcon(enabled = entries.isNotEmpty(), onClick = ::playTest)
                 }
 
-                // ── Reorderable list ─────────────────────────────────────────
                 if (entries.isEmpty()) {
                     Box(
                         modifier = Modifier
@@ -334,7 +327,6 @@ fun HapticFeedbackEditor(
                                             .padding(horizontal = 12.dp, vertical = 8.dp),
                                         verticalArrangement = Arrangement.spacedBy(4.dp)
                                     ) {
-                                        // ── Row: checkbox · label · delete · drag ──
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
                                             modifier = Modifier.fillMaxWidth()
@@ -363,7 +355,7 @@ fun HapticFeedbackEditor(
                                                     MaterialTheme.colorScheme.secondary
                                             )
 
-                                            Spacer(Modifier.width(8.dp))
+                                            Spacer(8.dp)
 
                                             Text(
                                                 text = stringResource(if (entry.isVibration) R.string.vibration else R.string.delay),
@@ -394,7 +386,6 @@ fun HapticFeedbackEditor(
                                             )
                                         }
 
-                                        // ── Duration slider ──────────────────
                                         SliderWithLabel(
                                             label = stringResource(R.string.duration_ms),
                                             value = entry.durationMs,
@@ -460,7 +451,7 @@ private fun AddStepButton(
         modifier = modifier
     ) {
         icon()
-        Spacer(Modifier.width(6.dp))
+        Spacer(6.dp)
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall
@@ -490,7 +481,7 @@ fun HapticFeedBackEditorButtonWithPlayTest(
                 painter = painterResource(R.drawable.haptic),
                 contentDescription = stringResource(R.string.haptic_feedback_editor)
             )
-            Spacer(Modifier.width(5.dp))
+            Spacer(5.dp)
             Text("${stringResource(R.string.haptic_feedback_editor)}$titleExt")
         }
 

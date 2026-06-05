@@ -13,6 +13,7 @@ import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.base.model.DragonJson
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.AppOverride
+import org.elnix.dragonlauncher.base.model.serializables.AppOverride.Companion.defaultAppOverrides
 import org.elnix.dragonlauncher.base.model.serializables.AppOverride.Companion.isNotNullOrEmpty
 import org.elnix.dragonlauncher.base.model.serializables.AppOverrideState
 import org.elnix.dragonlauncher.base.model.serializables.CacheKey
@@ -29,25 +30,25 @@ class AppOverridesManager(
 
     private val scope = CoroutineScope(Job() + Dispatchers.IO)
 
-    private val _appOverridesState = MutableStateFlow(AppOverrideState())
+    private val _appOverridesState = MutableStateFlow(defaultAppOverrides)
     val appOverrideState = _appOverridesState.asStateFlow()
-
 
 
     init {
         scope.launch { loadAppOverrides() }
     }
+
     private suspend fun loadAppOverrides() = withContext(Dispatchers.IO) {
         try {
             val jsonString = AppOverridesSettingsStore.jsonSetting.get(ctx)
             if (jsonString.isBlank()) return@withContext
 
-            val loadedState = AppOverridesJson.decode(jsonString) ?: AppOverrideState()
+            val loadedState = AppOverridesJson.decode(jsonString) ?: defaultAppOverrides
             _appOverridesState.value = loadedState
 
         } catch (e: Exception) {
             logE(WORKSPACES_TAG, e) { "Error while loading the overrides state" }
-            _appOverridesState.value = AppOverrideState()
+            _appOverridesState.value = defaultAppOverrides
         }
     }
 
@@ -66,22 +67,21 @@ class AppOverridesManager(
 
     private inline fun updateOv(cacheKey: CacheKey, newOverride: (AppOverride) -> AppOverride?) {
         update { old ->
-            val prevOverrides = old.appOverrides
-            val prevOverride = prevOverrides[cacheKey] ?: AppOverride()
+            val prevOverride = old[cacheKey] ?: AppOverride()
             val newOverride = newOverride(prevOverride)
 
-            old.copy(
-                appOverrides = if (newOverride.isNotNullOrEmpty) {
-                    prevOverrides + (cacheKey to newOverride)
-                } else {
-                    prevOverrides - cacheKey
-                }
-            )
+            if (newOverride.isNotNullOrEmpty) {
+                old + (cacheKey to newOverride)
+            } else {
+                old - cacheKey
+            }
+
+            old
         }
     }
 
     fun getAliasesForApp(app: Application): List<String> {
-        return _appOverridesState.value.appOverrides[app.key]?.aliases ?: emptyList()
+        return _appOverridesState.value[app.key]?.aliases ?: emptyList()
     }
 
     fun addAliasToApp(alias: String, cacheKey: CacheKey) {
@@ -150,7 +150,7 @@ class AppOverridesManager(
 
 
     fun resetOverrides() {
-        _appOverridesState.value = AppOverrideState()
+        _appOverridesState.value = defaultAppOverrides
 
         scope.launch {
             AppOverridesSettingsStore.resetAll(ctx)

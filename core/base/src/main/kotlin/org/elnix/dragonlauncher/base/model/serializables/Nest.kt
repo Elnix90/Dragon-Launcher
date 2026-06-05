@@ -79,6 +79,13 @@ data class Nest(
     }
 
     companion object {
+
+        fun defaultDragDistance(id: Int): Int = when (id) {
+            -1 -> 150 // Cancel Zone (below no action activation)
+            0 -> 300  // First circle 300
+            else -> 300 + 150 * id // others: add 150 each, don't be dumb and go to 10 circles
+        }
+
         object NestJson: DragonJson<List<Nest>>()
     }
 }

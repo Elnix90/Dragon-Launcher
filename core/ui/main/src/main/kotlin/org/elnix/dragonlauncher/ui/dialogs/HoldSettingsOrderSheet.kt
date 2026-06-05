@@ -18,11 +18,13 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,14 +34,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.Constants.Logging.HOLD_TAG
-import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.base.model.DragonJson
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Companion.settingsRoutes
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeResId
-import org.elnix.dragonlauncher.common.serializables.DragonJson
 import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.logging.HOLD_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
@@ -64,7 +66,7 @@ fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val holdMenuEntries = rememberHoldMenuEntries()
+    val holdMenuEntries by rememberHoldMenuEntries()
     var menuItems: List<MenuItem> by remember {
         mutableStateOf(emptyList())
     }
@@ -360,35 +362,38 @@ fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
 //}
 //
 //
+
+
+/**
+ * Decodes the hold menu entries from the [HoldToActivateArcSettingsStore], and decode them using the [HoldMenuEntriesJson] object
+ *
+ * Applies a safe modification to the returned list:
+ *  - If the decoded value fails, it returns empty list, that'll be interpreted as directly going to the settings root.
+ *  - If the list isn't `null`, but contains things, it checks whether if the list contains at least a [NavigationRoute.PointsSettings] element, and if not adds in to the list
+ *
+ *  In the compose screen, [org.elnix.dragonlauncher.ui.MainAppUi] the list is interpreted and triggers either the popup menu
+ *  Since recently, you can no more add a single screen that is not the poins settings, because otherwise it would mean that you are locked out of settings.
+ *
+ *  @return
+ */
 @Composable
-fun rememberHoldMenuEntries(): List<NavigationRoute> {
+fun rememberHoldMenuEntries(): State<List<NavigationRoute>> {
     val holdMenuEntriesString by HoldToActivateArcSettingsStore.holdMenuEntries.asState()
 
-    return remember(holdMenuEntriesString) {
+    val state = retain(holdMenuEntriesString) {
         derivedStateOf {
-            HoldMenuEntriesJson.decode(holdMenuEntriesString)
-                .toMutableList()
-                .apply {
-                    if (NavigationRoute.PointsSettings !in this) {
-                        add(0, NavigationRoute.PointsSettings)
+            HoldMenuEntriesJson.decode<List<NavigationRoute>>(holdMenuEntriesString)
+                ?.toMutableList()
+                ?.apply {
+                    if (!this.any { it is NavigationRoute.PointsSettings }) {
+                        add(0, NavigationRoute.PointsSettings())
                     }
                 }
+                ?: emptyList()
         }
-    }.value
+    }
+    return state
 }
 
 
-object HoldMenuEntriesJson : DragonJson() {
-
-    fun decode(string: String): List<NavigationRoute> {
-        return try {
-            json.decodeFromString<List<NavigationRoute>>(string)
-        } catch (_: Exception) {
-            emptyList()
-        }
-    }
-
-    fun encode(list: List<NavigationRoute>): String {
-        return json.encodeToString(list)
-    }
-}
+private object HoldMenuEntriesJson : DragonJson<List<NavigationRoute>>()

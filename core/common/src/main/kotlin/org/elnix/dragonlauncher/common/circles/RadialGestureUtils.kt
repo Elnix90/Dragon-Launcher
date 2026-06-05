@@ -2,10 +2,10 @@ package org.elnix.dragonlauncher.common.circles
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.geometry.Offset
+import org.elnix.dragonlauncher.base.model.models.UiCircle
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.model.models.UiCircle
-import kotlin.collections.iterator
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -168,7 +168,7 @@ fun resolveLiveNestHit(
     pointerPos: Offset,
     nestedNest: Nest,
     liveNestScale: Float,
-    points: List<Point>,
+    points: Set<Point>,
     pointsActionSnapToOuterCircle: Boolean,
     graceDistancePx: Float = 0f
 ): HitResult {
@@ -177,7 +177,6 @@ fun resolveLiveNestHit(
     val dist = distFromCenter(center, pointerPos)
     val angle360 = angle360FromOffset(center, pointerPos)
 
-    /*  ─── Bounds check (Case C / F) ───  */
     graceDistancePx.takeIf { it > -1 }?.let {
         if (outerRadius > 0f && dist > outerRadius + graceDistancePx) {
             return HitResult(
@@ -250,6 +249,7 @@ fun createCirclesFromDragDistances(
  * [cos(θ)   sin(θ)]
  * [-sin(θ)  cos(θ)]
  * ```
+ * See: [Rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix)
  *
  * @return The offset in the un-rotated coordinate space
  */
@@ -268,6 +268,21 @@ inline fun Offset.undoRotation(
     )
 }
 
+/**
+ * Rotates the given offset around the origin by the given angle in degrees.
+ *
+ * A positive angle indicates a counterclockwise rotation around the right-handed 2D Cartesian
+ * coordinate system.
+ *
+ * See: [Rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix)
+ */
+@Suppress("NOTHING_TO_INLINE")
+inline fun Offset.rotateBy(angle: Float): Offset {
+    val angleInRadians = angle * (PI / 180)
+    val cos = cos(angleInRadians)
+    val sin = sin(angleInRadians)
+    return Offset((x * cos - y * sin).toFloat(), (x * sin + y * cos).toFloat())
+}
 /**
  * Reverses a scale transformation by dividing by the zoom factor.
  *

@@ -5,59 +5,50 @@ package org.elnix.dragonlauncher.base.undoredo
  * in lockstep — a single [applyChange], [undo], or [redo] call snapshots
  * and restores all registered stacks simultaneously.
  */
-class UndoRedoManager {
-    private val stacks = mutableMapOf<String, UndoRedoStack<Any?>>()
-    private val snapshots = mutableMapOf<String, () -> Any?>()
-    private val restores = mutableMapOf<String, (Any?) -> Unit>()
-
-    val canUndo get() = stacks.values.any { it.canUndo }
-    val canRedo get() = stacks.values.any { it.canRedo }
+class UndoRedoManager(
+    val stacks: Array<out UndoRedoStack<*>>
+) {
+    /**
+     * Return true if at least 1 stack can undo, used in compose to enable/disable the undo buttons
+     */
+    val canUndo get() = stacks.any { it.canUndo }
 
     /**
-     * Register a stack with a snapshot provider and a restore callback.
-     *
-     * @param key Unique identifier for this stack.
-     * @param snapshot Lambda returning the current state to snapshot.
-     * @param restore Lambda applying a restored state.
+     * Return true if at least 1 stack can redo, used in compose to enable/disable the undo buttons
      */
-    @Suppress("UNCHECKED_CAST")
-    fun <T> register(key: String, snapshot: () -> T, restore: (T) -> Unit) {
-        stacks[key] = UndoRedoStack()
-        snapshots[key] = snapshot as () -> Any?
-        restores[key] = { restore(it as T) }
-    }
+    val canRedo get() = stacks.any { it.canRedo }
 
     /** Snapshot all stacks, then run the mutation. Clears all redo histories. */
-    fun applyChange(mutator: () -> Unit) {
-        stacks.forEach { (key, stack) -> stack.push(snapshots[key]!!()) }
+    inline fun applyChange(mutator: () -> Unit) {
+        stacks.forEach { stack -> stack.push() }
         mutator()
     }
 
     fun undo() {
         if (!canUndo) return
-        stacks.forEach { (key, stack) ->
-            stack.undo(snapshots[key]!!())?.let { restores[key]!!(it) }
+        stacks.forEach { stack ->
+            stack.undo()
         }
     }
 
     fun redo() {
         if (!canRedo) return
-        stacks.forEach { (key, stack) ->
-            stack.redo(snapshots[key]!!())?.let { restores[key]!!(it) }
+        stacks.forEach { stack ->
+            stack.redo()
         }
     }
 
     fun undoAll() {
         if (!canUndo) return
-        stacks.forEach { (key, stack) ->
-            stack.undoAll(snapshots[key]!!())?.let { restores[key]!!(it) }
+        stacks.forEach { stack ->
+            stack.undoAll()
         }
     }
 
     fun redoAll() {
         if (!canRedo) return
-        stacks.forEach { (key, stack) ->
-            stack.redoAll(snapshots[key]!!())?.let { restores[key]!!(it) }
+        stacks.forEach { stack ->
+            stack.redoAll()
         }
     }
 }

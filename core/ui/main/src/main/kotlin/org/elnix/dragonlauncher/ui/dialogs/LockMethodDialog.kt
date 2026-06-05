@@ -65,7 +65,7 @@ fun LockMethodDialog(
                         color = MaterialTheme.colorScheme.onSurface.copy(0.7f)
                     )
 
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(8.dp))
                     LockMethod.entries.forEach { method ->
 
                         val unavailableText = if (method == LockMethod.DEVICE_UNLOCK && !securityService.isDeviceUnlockAvailable(ctx)) {
@@ -120,7 +120,7 @@ fun LockMethodDialog(
                                 description = unavailableText
                             )
 
-                            Spacer(Modifier.width(8.dp))
+                            Spacer(8.dp))
                             RadioButton(
                                 selected = method == currentLockMethod,
                                 onClick = ::onClick,

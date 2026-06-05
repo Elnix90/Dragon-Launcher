@@ -5,12 +5,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.Text
-import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -27,19 +26,20 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
+import org.elnix.dragonlauncher.base.model.serializables.Nest
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
+import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.common.circles.computePosition
 import org.elnix.dragonlauncher.common.circles.scaleDragDistances
-import org.elnix.dragonlauncher.base.resolveShape
-import org.elnix.dragonlauncher.base.model.serializables.Nest
-import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedback
-
-import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.common.utils.HapticUtils.performCustomHaptic
 import org.elnix.dragonlauncher.logging.SWIPE_TAG
 import org.elnix.dragonlauncher.logging.logI
-import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.DrawerViewModel
+import org.elnix.dragonlauncher.models.PointViewModel
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
@@ -49,7 +49,6 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.components.AppPreviewTitle
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
-import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.composition.LocalEndLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalStartLineObject
@@ -65,7 +64,8 @@ import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
 
 @Composable
 fun MainScreenOverlay(
-    appsViewModel: AppsViewModel = activityViewModel(),
+    drawerViewModel: DrawerViewModel = activityViewModel(),
+    pointsViewModel: PointViewModel = activityViewModel(),
     start: Offset?,
     current: Offset?,
     currentNest: Nest,
@@ -73,7 +73,7 @@ fun MainScreenOverlay(
 ) {
     val ctx = LocalContext.current
     val extraColors = LocalExtraColors.current
-    val defaultPoint = LocalDefaultPoint.current
+    val defaultPoint by pointsViewModel.defaultPoint.collectAsState()
     val disableHapticFeedbackGlobally = LocalDisableHapticFeedbackGlobally.current
 
     val lineObject = LocalLineObject.current
@@ -153,7 +153,7 @@ fun MainScreenOverlay(
         val hp = hoveredPoint ?: return@LaunchedEffect
         if (hp.cycleActions.isNullOrEmpty()) return@LaunchedEffect
         val dp = displayPoint ?: return@LaunchedEffect
-        appsViewModel.reloadPointIcon(dp)
+        drawerViewModel.iconsService.reloadPointIcon(dp)
     }
 
 
@@ -230,8 +230,6 @@ fun MainScreenOverlay(
             ?: (0..360).random()
     }
 
-    MaterialShapes.Arch.toShape()
-
     val pickedRememberShapeStart = remember(isDragging) {
         (startObject.shape ?: UiConstants.defaultStartCustomObject.shape).resolveShape()
     }
@@ -290,7 +288,7 @@ fun MainScreenOverlay(
             )
         }
 
-        val drawParams = rememberSwipeDefaultParams(allowShowIconInCenter = true)
+        val drawParams by rememberSwipeDefaultParams(allowShowIconInCenter = true)
 
         /**
          *  Main nest (lines + rings + icons) and Live Nest overlay are split so the host can

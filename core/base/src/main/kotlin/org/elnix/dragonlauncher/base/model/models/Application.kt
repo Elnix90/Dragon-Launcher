@@ -227,6 +227,8 @@ abstract class Application : Comparable<Application> {
 //                false
 //            }
 //        }
+
+        fun Application.toLaunchApp(): Action.LaunchApp = Action.LaunchApp(this)
     }
 }
 

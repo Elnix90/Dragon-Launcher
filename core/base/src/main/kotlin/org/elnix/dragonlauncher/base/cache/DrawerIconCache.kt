@@ -4,4 +4,4 @@ import org.elnix.dragonlauncher.base.DragonCache
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.model.serializables.CacheKey
 
-class IconsCache(initialMaxSize: Int) : DragonCache<CacheKey, LauncherIcon>(initialMaxSize)
+class DrawerIconCache(initialMaxSize: Int) : DragonCache<CacheKey, LauncherIcon>(initialMaxSize)

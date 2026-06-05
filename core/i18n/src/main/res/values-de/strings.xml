@@ -197,8 +197,7 @@
     <string name="add_widget">Widget hinzufügen</string>
     <string name="widgets">Widgets</string>
     <string name="edit">Bearbeitung</string>
-    <string name="widgets_floating_apps">Widgets / Schwimmende Apps</string>
-    <string name="floating_apps_tab_help">Verwalten Sie Ihre Arbeitsbereichs-Widgets und schwebenden Apps: Fügen Sie sie hinzu, ordnen Sie sie neu an, ändern Sie ihre Größe und positionieren Sie sie.\n Ghosted bedeutet, dass das Widget nicht anklickbar ist\nVordergrund bedeutet, dass die Ziehgesten nicht im Widget registriert sind\nSie können eine Kombination dieser beiden ausprobieren, um die gewünschte Konfiguration zu erreichen</string>
+    <string name="widgets_tab_help">Verwalten Sie Ihre Arbeitsbereichs-Widgets und schwebenden Apps: Fügen Sie sie hinzu, ordnen Sie sie neu an, ändern Sie ihre Größe und positionieren Sie sie.\n Ghosted bedeutet, dass das Widget nicht anklickbar ist\nVordergrund bedeutet, dass die Ziehgesten nicht im Widget registriert sind\nSie können eine Kombination dieser beiden ausprobieren, um die gewünschte Konfiguration zu erreichen</string>
     <string name="delete_widget">Widget löschen</string>
     <string name="add_point">Add Point</string>
     <string name="remove_point">Punkt entfernen</string>

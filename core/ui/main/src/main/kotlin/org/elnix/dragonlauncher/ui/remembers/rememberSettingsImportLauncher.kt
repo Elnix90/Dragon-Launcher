@@ -13,7 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.base.Constants.Logging.BACKUP_TAG
+import org.elnix.dragonlauncher.base.BACKUP_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
@@ -33,7 +33,7 @@ fun rememberSettingsImportLauncher(
 
 
     fun onError(msg: String) {
-        backupViewModel.setResult(
+        backupViewModel.result.set(
             BackupResult(
                 export = false,
                 error = true,
@@ -50,7 +50,7 @@ fun rememberSettingsImportLauncher(
         logD(BACKUP_TAG) { "File picked: $uri" }
 
         if (uri == null) {
-            backupViewModel.setResult(
+            backupViewModel.result.set(
                 BackupResult(
                     export = false,
                     error = true,

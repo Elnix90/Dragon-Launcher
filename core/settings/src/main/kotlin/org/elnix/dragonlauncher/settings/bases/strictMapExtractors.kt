@@ -1,16 +1,18 @@
 package org.elnix.dragonlauncher.settings.bases
 
 import androidx.compose.ui.graphics.Color
-import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.PointsJson
-
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.ActionJson
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.PointsJson
 import org.elnix.dragonlauncher.logging.ANGLE_LINE_TAG
 import org.elnix.dragonlauncher.logging.logE
 
 
-internal fun getBooleanStrict(
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun getBooleanStrict(
     raw: Any?,
     def: Boolean
 ): Boolean {
@@ -27,7 +29,8 @@ internal fun getBooleanStrict(
     } ?: def
 }
 
-internal fun getIntStrict(
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun getIntStrict(
     raw: Any?,
     def: Int
 ): Int {
@@ -39,7 +42,21 @@ internal fun getIntStrict(
     } ?: def
 }
 
-internal fun getFloatStrict(
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun getDpStrict(
+    raw: Any?,
+    def: Dp
+): Dp {
+    return when (raw) {
+        is Int -> raw.dp
+        is Number -> raw.toInt().dp
+        is String -> raw.toIntOrNull()?.dp
+        else -> null
+    } ?: def
+}
+
+@Suppress("NOTHING_TO_INLINE")
+internal inline  fun getFloatStrict(
     raw: Any?,
     def: Float
 ): Float {
@@ -51,7 +68,8 @@ internal fun getFloatStrict(
     } ?: def
 }
 
-internal fun getLongStrict(
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun getLongStrict(
     raw: Any?,
     def: Long
 ): Long {
@@ -64,7 +82,8 @@ internal fun getLongStrict(
 }
 
 
-internal fun getDoubleStrict(
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun getDoubleStrict(
     raw: Any?,
     def: Double
 ): Double {
@@ -76,7 +95,8 @@ internal fun getDoubleStrict(
     } ?: def
 }
 
-internal fun getStringStrict(
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun getStringStrict(
     raw: Any?,
     def: String
 ): String {
@@ -110,7 +130,8 @@ internal fun getStringStrict(
 //    }
 //}
 
-internal fun getActionStrict(
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun getActionStrict(
     raw: Any?,
     def: Action
 ): Action {
@@ -120,7 +141,8 @@ internal fun getActionStrict(
     } ?: def
 }
 
-internal fun getPointStrict(
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun getPointStrict(
     raw: Any?,
     def: Point
 ): Point {
@@ -130,7 +152,8 @@ internal fun getPointStrict(
     } ?: def
 }
 
-internal fun getStringSetStrict(
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun getStringSetStrict(
     raw: Any?,
     def: Set<String>
 ): Set<String> {
@@ -157,7 +180,8 @@ internal fun getStringSetStrict(
     } ?: def
 }
 
-internal fun getStringListStrict(
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun getStringListStrict(
     raw: Any?,
     def: List<String>
 ): List<String> {
@@ -174,7 +198,6 @@ internal fun getStringListStrict(
     }
 }
 
-
 private fun Collection<*>.flattenStrings(): List<String> = flatMap { item ->
     when (item) {
         is String -> listOf(item)
@@ -183,7 +206,8 @@ private fun Collection<*>.flattenStrings(): List<String> = flatMap { item ->
     }
 }.filter { it.isNotBlank() }
 
-internal fun <E : Enum<E>> getEnumStrict(
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun <E : Enum<E>> getEnumStrict(
     raw: Any?,
     def: E,
     enumClass: Class<E>
@@ -196,7 +220,8 @@ internal fun <E : Enum<E>> getEnumStrict(
 /**
  * Decodes a list of enum from a string, comma separated statements
  */
-internal fun <E : Enum<E>> getEnumListStrict(
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun <E : Enum<E>> getEnumListStrict(
     raw: Any?,
     def: List<E>,
     enumClass: Class<E>
@@ -222,7 +247,8 @@ internal fun <E : Enum<E>> getEnumListStrict(
 }
 
 
-internal fun getColorStrict(
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun getColorStrict(
     raw: Any?,
     def: Color
 ): Color {
@@ -241,7 +267,8 @@ internal fun getColorStrict(
     } ?: def
 }
 
-internal fun MutableMap<String, Any>.putIfNonDefault(
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun MutableMap<String, Any>.putIfNonDefault(
     key: String,
     value: Any?,
     def: Any?

@@ -9,12 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.Constants.Logging.BACKUP_TAG
+import org.elnix.dragonlauncher.logging.BACKUP_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 @Composable
 fun rememberAutoBackupLauncher(
@@ -37,7 +37,7 @@ fun rememberAutoBackupLauncher(
                     BackupSettingsStore.autoBackupUri.set(ctx, uri.toString())
                     BackupSettingsStore.autoBackupEnabled.set(ctx, true)
                 }
-                backupViewModel.setResult(
+                backupViewModel.result.set(
                     BackupResult(
                         export = true,
                         error = false,
@@ -46,7 +46,7 @@ fun rememberAutoBackupLauncher(
                 )
             } catch (e: SecurityException) {
                 // Fallback: Store non-persistable URI or notify user
-                backupViewModel.setResult(
+                backupViewModel.result.set(
                     BackupResult(
                         export = true,
                         error = true,

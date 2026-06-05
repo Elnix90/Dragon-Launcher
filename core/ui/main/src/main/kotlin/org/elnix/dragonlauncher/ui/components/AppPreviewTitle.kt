@@ -3,38 +3,32 @@ package org.elnix.dragonlauncher.ui.components
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Text
-import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.base.resolveShape
+import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
+import org.elnix.dragonlauncher.base.model.serializables.CustomIcon.Companion.getProperties
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.applyColorAction
-.Companion.actionColor
+import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
@@ -55,12 +49,9 @@ fun AppPreviewTitle(
     if (point == null) return
 
     val extraColors = LocalExtraColors.current
-    val icons = LocalPointIconsCache.current
-    val iconShape = LocalIconShape.current
 
     val label = point.customName ?: actionLabel(point.action)
 
-    val shape = point.customIcon?.shape ?: iconShape
 
 
     val alpha = remember { Animatable(initialValue = 0f) }
@@ -101,19 +92,13 @@ fun AppPreviewTitle(
 
 
                 if (showIcon) {
-
-                    icons.getOrLazyCompute(point.id) {
-                        appsViewModel.reloadPointIcon(point)
+                    appsViewModel.iconsService.pointsIconsCache.getOrLazyCompute(point.key) {
+                        appsViewModel.iconsService.reloadPointIcon(point)
                     }?.let { icon ->
-                        Image(
-                            bitmap = icon,
-                            contentDescription = null,
-                            colorFilter =
-                                if (point.applyColorAction()) ColorFilter.tint(colorAction)
-                                else null,
-                            modifier = Modifier
-                                .size(iconSize.dp)
-                                .clip(shape.resolveShape().toShape())
+                        ShapedLauncherIcon(
+                            maxIconSize = iconSize.dp,
+                            icon = { icon },
+                            shape = point.customIcon?.getProperties()?.shape ?: LocalIconShape.current
                         )
                     }
                 }

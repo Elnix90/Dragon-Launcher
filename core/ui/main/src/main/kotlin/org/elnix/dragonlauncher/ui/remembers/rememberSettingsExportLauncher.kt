@@ -13,13 +13,13 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
+import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.SettingsBackupManager
-import org.elnix.dragonlauncher.settings.bases.DatastoreProvider
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 @Composable
 fun rememberSettingsExportLauncher(
-    selectedStoresForExport: Set<DatastoreProvider>,
+    selectedStoresForExport: Set<DataStoreName>,
     backupViewModel: BackupViewModel = activityViewModel()
 ): ManagedActivityResultLauncher<String, Uri?> {
     val ctx = LocalContext.current
@@ -32,7 +32,7 @@ fun rememberSettingsExportLauncher(
     val settingsExportLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
             if (uri == null) {
-                backupViewModel.setResult(
+                backupViewModel.result.set(
                     BackupResult(
                         export = true,
                         error = true,
@@ -45,7 +45,7 @@ fun rememberSettingsExportLauncher(
             scope.launch {
                 try {
                     SettingsBackupManager.exportSettings(ctx, uri, selectedStoresForExport)
-                    backupViewModel.setResult(
+                    backupViewModel.result.set(
                         BackupResult(
                             export = true,
                             error = false,
@@ -53,7 +53,7 @@ fun rememberSettingsExportLauncher(
                         )
                     )
                 } catch (e: Exception) {
-                    backupViewModel.setResult(
+                    backupViewModel.result.set(
                         BackupResult(
                             export = true,
                             error = true,
@@ -69,7 +69,7 @@ fun rememberSettingsExportLauncher(
 
 @Composable
 fun rememberSafeSettingsExportLauncher(
-    selectedStoresForExport: Set<DatastoreProvider>
+    selectedStoresForExport: Set<DataStoreName>
 ): ManagedActivityResultLauncher<String, Uri?> {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()

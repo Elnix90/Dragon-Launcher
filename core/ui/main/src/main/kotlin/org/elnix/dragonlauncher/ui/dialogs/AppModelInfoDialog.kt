@@ -13,14 +13,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.serializables.AppModel
+import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 
 @Composable
-fun AppModelInfoDialog(
-    app: AppModel,
+fun ApplicationInfoDialog(
+    app: Application,
     onDismiss: () -> Unit
 ) {
     val ctx = LocalContext.current
@@ -28,14 +28,13 @@ fun AppModelInfoDialog(
     AlertDialog(
         text = {
             Column {
-                Text(stringResource(R.string.app_info_name, app.name)) { ctx.copyToClipboard(app.name) }
+                Text(stringResource(R.string.app_info_name, app.label)) { ctx.copyToClipboard(app.label) }
                 Text(stringResource(R.string.app_info_package_name, app.packageName)) { ctx.copyToClipboard(app.packageName) }
-                Text(stringResource(R.string.app_info_is_enabled, app.isEnabled.toString()))
                 Text(stringResource(R.string.app_info_is_system, app.isSystem.toString()))
                 Text(stringResource(R.string.app_info_is_work_profile, app.isWork.toString()))
                 Text(stringResource(R.string.app_info_is_private_profile, app.isPrivate.toString()))
                 Text(stringResource(R.string.app_info_is_launchable, app.isLaunchable.toString()))
-                Text(stringResource(R.string.app_info_user_id, app.userId.toString()))
+                Text(stringResource(R.string.app_info_user_id, app.user.hashCode()))
                 Text(stringResource(R.string.app_info_cache_key, app.key.cacheKey)) { ctx.copyToClipboard(app.key.cacheKey) }
             }
         },

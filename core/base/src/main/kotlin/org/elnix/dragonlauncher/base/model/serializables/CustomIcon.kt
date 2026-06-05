@@ -9,7 +9,20 @@ import org.elnix.dragonlauncher.base.model.serializables.AdaptifiedLegacyIcon.Co
 
 @Immutable
 @Serializable
-sealed class CustomIcon
+sealed class CustomIcon {
+    companion object {
+        fun CustomIcon.getProperties(): CustomIconProperties = when(this) {
+            is AdaptifiedLegacyIcon -> this.properties
+            is CustomActionIcon -> this.properties
+            is CustomIconPackIcon -> this.properties
+            is CustomTextIcon -> this.properties
+            is CustomThemedIcon -> this.properties
+            is DefaultPlaceholderIcon -> this.properties
+            is ForceThemedIcon -> this.properties
+            is UnmodifiedSystemDefaultIcon -> this.properties
+        }
+    }
+}
 
 
 @Immutable
@@ -97,7 +110,9 @@ data class CustomTextIcon(
 @Immutable
 @Serializable
 @SerialName("DefaultPlaceholderIcon")
-data object DefaultPlaceholderIcon: CustomIcon()
+data class DefaultPlaceholderIcon(
+    val properties: CustomIconProperties
+): CustomIcon()
 
 
 @Immutable

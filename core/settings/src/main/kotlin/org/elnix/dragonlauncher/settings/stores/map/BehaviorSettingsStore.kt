@@ -2,11 +2,11 @@ package org.elnix.dragonlauncher.settings.stores.map
 
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.boolean
-import org.elnix.dragonlauncher.settings.bases.int
+import org.elnix.dragonlauncher.settings.bases.objects.ActionSettingObject.Companion.action
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
+import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
-import org.elnix.dragonlauncher.settings.bases.action
 
 object BehaviorSettingsStore : MapSettingsStore(DataStoreName.BEHAVIOR) {
     override val ALL: List<BaseSettingObject<*, *>>

@@ -5,7 +5,10 @@ package org.elnix.dragonlauncher.base.undoredo
  *
  * @param T The snapshot type stored across all stacks.
  */
-class UndoRedoStack<T> {
+class UndoRedoStack<T>(
+    private val snapshot: () -> T,
+    private val restore: (T) -> Unit
+) {
     private var undoStack: List<T> = emptyList()
     private var redoStack: List<T> = emptyList()
 
@@ -13,49 +16,48 @@ class UndoRedoStack<T> {
     val canRedo get() = redoStack.isNotEmpty()
 
     /** Push current snapshot before a mutation. Clears redo. */
-    fun push(snapshot: T) {
-        undoStack = undoStack + snapshot
+    fun push() {
+        undoStack = undoStack + snapshot()
         redoStack = emptyList()
     }
 
     /** Pop undo, push current to redo. Returns the state to restore, or null. */
-    fun undo(current: T): T? {
-        if (!canUndo) return null
-        redoStack = redoStack + current
+    fun undo() {
+        if (!canUndo) return
+        redoStack = redoStack + undoStack.last()
         val last = undoStack.last()
         undoStack = undoStack.dropLast(1)
-        return last
+
+        restore(last)
     }
 
     /** Pop redo, push current to undo. Returns the state to restore, or null. */
-    fun redo(current: T): T? {
-        if (!canRedo) return null
-        undoStack = undoStack + current
+    fun redo() {
+        if (!canRedo) return
+        undoStack = undoStack + redoStack.last()
         val last = redoStack.last()
         redoStack = redoStack.dropLast(1)
-        return last
+
+        restore(last)
     }
 
     /** Jump to the oldest undo entry. */
-    fun undoAll(current: T): T? {
-        if (!canUndo) return null
-        redoStack = redoStack + current
+    fun undoAll() {
+        if (!canUndo) return
         val first = undoStack.first()
+        redoStack = redoStack + first
         undoStack = emptyList()
-        return first
+
+        restore(first)
     }
 
     /** Jump to the newest redo entry. */
-    fun redoAll(current: T): T? {
-        if (!canRedo) return null
-        undoStack = undoStack + current
+    fun redoAll() {
+        if (!canRedo) return
         val first = redoStack.first()
+        undoStack = undoStack + first
         redoStack = emptyList()
-        return first
-    }
 
-//    fun clearAll() {
-//        undoStack = emptyList()
-//        redoStack = emptyList()
-//    }
+        restore(first)
+    }
 }

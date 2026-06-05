@@ -3,6 +3,8 @@ package org.elnix.dragonlauncher.ui.components
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -10,9 +12,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.unit.dp
-
+import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
+import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.helpers.nests.actionsInCircle
 import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
 
@@ -22,13 +25,14 @@ fun PointPreviewCanvas(
     defaultPoint: Point,
     backgroundSurfaceColor: Color,
     modifier: Modifier = Modifier,
+    pointViewModel: PointViewModel = activityViewModel()
 ) {
-    val drawParams = rememberSwipeDefaultParams(
+    val drawParams by rememberSwipeDefaultParams(
         defaultPointSerializable = defaultPoint,
         backgroundColor = backgroundSurfaceColor
     )
 
-    val defaultPoint = LocalDefaultPoint.current
+    val defaultPoint by pointViewModel.defaultPoint.collectAsState()
 
     val height =
         when (editPoint.action) {

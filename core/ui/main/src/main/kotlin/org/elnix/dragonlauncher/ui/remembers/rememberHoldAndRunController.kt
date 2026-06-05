@@ -9,7 +9,6 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.serializables.Point
 
-/*  ─────────────  Hold & Run public state  ─────────────  */
 
 /**
  * Snapshot of Hold & Run state returned per recomposition.
@@ -23,7 +22,6 @@ data class HoldAndRunState(
     val clear: () -> Unit
 )
 
-/*  ─────────────  Controller composable  ─────────────  */
 
 /**
  * Composable controller for Hold & Run behavior.
@@ -51,8 +49,6 @@ fun rememberHoldAndRunController(
 
     var firedThisGesture by remember { mutableStateOf(false) }
 
-    /*  ─────────────  Timer  ─────────────  */
-
     LaunchedEffect(currentPoint?.id, isDragging) {
         // Always reset when the point changes or drag ends.
         firedThisGesture = false
@@ -72,8 +68,6 @@ fun rememberHoldAndRunController(
             onFire(pointToLaunch)
         }
     }
-
-    /*  ─────────────  Release helper  ─────────────  */
 
     val clear: () -> Unit = remember { { firedThisGesture = false } }
 

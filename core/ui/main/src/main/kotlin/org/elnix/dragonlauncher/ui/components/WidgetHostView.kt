@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,11 +22,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.viewinterop.AndroidView
-import org.elnix.dragonlauncher.base.resolveShape
-
-import org.elnix.dragonlauncher.common.serializables.IconShape
-
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Widget
+import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ktx.toDp
 import org.elnix.dragonlauncher.ui.actions.ActionIcon
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
@@ -104,9 +105,7 @@ fun WidgetHostView(
             }
         )
     } else {
-        val sizePx = with(density) {
-            min((widget.spanX * cellSizePx), (widget.spanY * cellSizePx)).toDp
-        }
+        val sizeDp = min((widget.spanX * cellSizePx), (widget.spanY * cellSizePx)).toDp
 
         if (widget.action !is Action.OpenCircleNest) {
             ActionIcon(
@@ -117,12 +116,11 @@ fun WidgetHostView(
                     .conditional(!blockTouches) {
                         clickable { onLaunchAction() }
                     },
-                size = sizePx
+                size = sizeDp
             )
         } else {
 
-            val sizeDp = with(LocalDensity.current) { sizePx.toDp() }
-            val drawParams = rememberSwipeDefaultParams()
+            val drawParams by rememberSwipeDefaultParams()
 
             val editPoint = Point(
                 circleNumber = 0,

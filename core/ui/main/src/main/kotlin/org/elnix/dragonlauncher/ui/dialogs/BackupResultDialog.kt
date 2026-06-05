@@ -3,41 +3,25 @@ package org.elnix.dragonlauncher.ui.dialogs
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.models.BackupViewModel
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.models.utils.asState
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 @Composable
 fun BackupResultDialog(
-    appsViewModel: AppsViewModel = activityViewModel(),
     backupViewModel: BackupViewModel = activityViewModel(),
-
 ) {
-    val scope = rememberCoroutineScope()
-    val result by backupViewModel.result.collectAsState()
+    val result by backupViewModel.result.asState()
 
-    /* ───────────── RESULT DIALOG ( IMPORT / EXPORT ) ───────────── */
     result?.let { res ->
         val isError = res.error
         val isExport = res.export
         val errorMessage = res.message
-
-        // Reload the whole viewModel data after restore
-        LaunchedEffect(res) {
-            scope.launch(Dispatchers.IO) {
-                appsViewModel.loadAll()
-            }
-        }
 
         UserValidation(
             title = when {
@@ -54,7 +38,7 @@ fun BackupResultDialog(
             titleIcon = if (isError) R.drawable.warning else R.drawable.check,
             titleColor = if (isError) MaterialTheme.colorScheme.error else Color.Green,
             copy = isError,
-            onValidate = { backupViewModel.setResult(null) }
+            onValidate = { backupViewModel.result.set(null) }
         )
     }
 }

@@ -102,8 +102,6 @@ private val TextSecondary = Color(0xFFB2BEC3)
 fun DigitalPauseScreen(
     application: Application,
     appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
-    onProceed: () -> Unit,
-    onProceedWithTimer: (Int) -> Unit = {},
     onCancel: () -> Unit
 ) {
     val ctx = LocalContext.current
@@ -119,7 +117,7 @@ fun DigitalPauseScreen(
     var countdownFinished by remember { mutableStateOf(false) }
     var currentPhraseIndex by remember { mutableIntStateOf(0) }
 
-    val hasAppUsageStatsPermission by appLaunchViewModel.hasUsageStatsPermission.collectAsState(false)
+    val hasAppUsageStatsPermission by appLaunchViewModel.hasUsageStatsPermission.collectAsState()
 
     // List of sentence to make user feel bad
     val breathingPhrases = listOf(
@@ -249,7 +247,8 @@ fun DigitalPauseScreen(
                                     showChoice = false
                                     showTimePicker = true
                                 } else {
-                                   onProceed()
+                                    appLaunchViewModel.onAppTimerServiceStarted(null)
+                                   onCancel()
                                 }
                             },
                             colors = ButtonDefaults.textButtonColors(contentColor = TextSecondary)
@@ -268,7 +267,10 @@ fun DigitalPauseScreen(
                     exit = fadeOut()
                 ) {
                     TimeLimitPickerUI(
-                        onConfirm = onProceedWithTimer,
+                        onConfirm = {
+                            appLaunchViewModel.onAppTimerServiceStarted(it)
+                            onCancel()
+                        },
                         onCancel = onCancel
                     )
                 }

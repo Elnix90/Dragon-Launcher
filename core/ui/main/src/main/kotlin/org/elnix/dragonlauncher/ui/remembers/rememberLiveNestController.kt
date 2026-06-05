@@ -3,32 +3,31 @@ package org.elnix.dragonlauncher.ui.remembers
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import kotlinx.coroutines.delay
+import org.elnix.dragonlauncher.base.model.models.UiCircle
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
-import org.elnix.dragonlauncher.base.Constants.Logging.SWIPE_TAG
-import org.elnix.dragonlauncher.base.model.models.UiCircle
 import org.elnix.dragonlauncher.common.circles.HitResult
 import org.elnix.dragonlauncher.common.circles.computePosition
 import org.elnix.dragonlauncher.common.circles.resolveLiveNestHit
 import org.elnix.dragonlauncher.common.circles.scaleDragDistances
 import org.elnix.dragonlauncher.common.circles.uiCirclesFromDragDistances
 import org.elnix.dragonlauncher.common.circles.uiCirclesFromScaledDragDistances
+import org.elnix.dragonlauncher.logging.SWIPE_TAG
 import org.elnix.dragonlauncher.logging.logD
+import org.elnix.dragonlauncher.models.PointViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
-import org.elnix.dragonlauncher.ui.composition.LocalNests
-import org.elnix.dragonlauncher.ui.composition.LocalPoints
 
-/*  ─────────────  Live Nest public state  ─────────────  */
 
 /**
  * Snapshot of Live Nest state returned per recomposition.
@@ -89,15 +88,16 @@ private class MutableReference<T>(var value: T)
 
 @Composable
 fun rememberLiveNestControllerStack(
+    pointViewModel: PointViewModel = activityViewModel(),
     isDragging: Boolean,
     rootStartPos: Offset?,
     rootNest: Nest,
     current: Offset?,
 ): List<LiveNestState> {
+    val nests by pointViewModel.nests.collectAsState()
+    val points by pointViewModel.points.collectAsState()
+    val defaultPoint by pointViewModel.defaultPoint.collectAsState()
 
-    val nests = LocalNests.current
-    val points = LocalPoints.current
-    val defaultPoint = LocalDefaultPoint.current
 
     val maxNestingDepth by UiSettingsStore.maxLiveNestsDepth.asState()
     val pointsActionSnapsToOuterCircle by BehaviorSettingsStore.pointsActionSnapsToOuterCircle.asState()

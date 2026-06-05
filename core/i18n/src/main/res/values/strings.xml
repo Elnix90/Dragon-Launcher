@@ -219,8 +219,7 @@
     <string name="add_widget">Add Widget</string>
     <string name="widgets">Widgets</string>
     <string name="edit">Edit</string>
-    <string name="widgets_floating_apps">Widgets / Floating Apps</string>
-    <string name="floating_apps_tab_help">Manage your workspace widgets and floating apps: add, reorder, resize, and position them.\n Ghosted means the widget is not clickable\nForeground means the drag gestures aren\'t registered on the widget\nYou may try a combinaison of these two to achieve the configuration you like</string>
+    <string name="widgets_tab_help">Manage your workspace widgets and floating apps: add, reorder, resize, and position them.\n Ghosted means the widget is not clickable\nForeground means the drag gestures aren\'t registered on the widget\nYou may try a combinaison of these two to achieve the configuration you like</string>
     <string name="delete_widget">Delete widget</string>
     <string name="add_point">Add Point</string>
     <string name="remove_point">Remove Point</string>
@@ -967,4 +966,6 @@
     <string name="profile_private_profile_state_locked">Private space is locked</string>
     <string name="profile_private_profile_action_unlock">Unlock</string>
     <string name="profile_private_profile_action_lock">Lock private space</string>
+    <string name="left_drawer_width">Left drawer width</string>
+    <string name="right_drawer_width">Right drawer width</string>
 </resources>

@@ -32,8 +32,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.base.Constants.Logging.ANGLE_LINE_TAG
 import org.elnix.dragonlauncher.base.model.models.AngleLineObjects
+import org.elnix.dragonlauncher.logging.ANGLE_LINE_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors

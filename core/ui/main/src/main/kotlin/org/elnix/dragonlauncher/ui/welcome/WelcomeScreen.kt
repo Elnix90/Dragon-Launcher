@@ -142,7 +142,7 @@ fun WelcomeScreen(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(Modifier.height(24.dp))
+            Spacer(24.dp))
 
             HorizontalPager(
                 state = pagerState,
@@ -223,7 +223,7 @@ fun WelcomeScreen(
                     scope.launch {
                         try {
                             SettingsBackupManager.importSettingsFromJson(ctx, json, selectedStoresForImport)
-                            backupViewModel.setResult(
+                            backupViewModel.result.set(
                                 BackupResult(
                                     export = false,
                                     error = false,
@@ -233,7 +233,7 @@ fun WelcomeScreen(
                             importJson = null
                         } catch (e: Exception) {
                             logE(BACKUP_TAG, e) { "Import Failed" }
-                            backupViewModel.setResult(
+                            backupViewModel.result.set(
                                 BackupResult(
                                     export = false,
                                     error = true,

@@ -22,9 +22,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.serializables.AppModel
+import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.asState
@@ -32,7 +32,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 
 @Composable
-fun GridSizeSlider(apps: List<AppModel>) {
+fun GridSizeSlider(apps: List<Application>) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -82,7 +82,7 @@ fun GridSizeSlider(apps: List<AppModel>) {
         ) {
             AppGrid(
                 apps = apps.shuffled().take(if (tempGridSize == 1) 3 else tempGridSize * 2),
-                longPressPopup = null,
+                longPressPopup = false,
                 onClick = null
             )
         }

@@ -54,15 +54,15 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.Constants
-import org.elnix.dragonlauncher.base.Constants.Logging.STATUS_BAR_TAG
-import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
-import org.elnix.dragonlauncher.common.serializables.StatusBarJson
-import org.elnix.dragonlauncher.common.serializables.StatusBar
-
-import org.elnix.dragonlauncher.common.serializables.allStatusBars
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
+import org.elnix.dragonlauncher.base.model.serializables.StatusBar
+import org.elnix.dragonlauncher.base.model.serializables.StatusBarJson
+import org.elnix.dragonlauncher.base.model.serializables.allStatusBars
 import org.elnix.dragonlauncher.common.utils.DateUtils.isValidDateFormat
 import org.elnix.dragonlauncher.common.utils.DateUtils.isValidTimeFormat
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.logging.STATUS_BAR_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore
@@ -82,7 +82,7 @@ import org.elnix.dragonlauncher.ui.helpers.CustomActionSelector
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
-enum class DateFormat(val pattern: String, val displayName: String) {
+private enum class DateFormat(val pattern: String, val displayName: String) {
     SHORT("MMM dd", "Short (Dec 25)"),
     MEDIUM("MMM dd, yyyy", "Medium (Dec 25, 2023)"),
     LONG("EEEE, MMMM dd, yyyy", "Long (Monday, December 25, 2023)"),
@@ -92,7 +92,7 @@ enum class DateFormat(val pattern: String, val displayName: String) {
     CUSTOM("", "Custom")
 }
 
-enum class TimeFormat(val pattern: String, val displayName: String) {
+private enum class TimeFormat(val pattern: String, val displayName: String) {
     H12("hh:mm a", "12-hour (02:30 PM)"),
     H24("HH:mm", "24-hour (14:30)"),
     H12_SECONDS("hh:mm:ss a", "12-hour with seconds (02:30:45 PM)"),
@@ -169,7 +169,7 @@ fun StatusBar(
                         )
 
                         if (element.width == -2) { // Special ID for Notch Spacer
-                            Spacer(Modifier.width(with(density) { totalCutoutWidth.toDp() }))
+                            Spacer(with(density) { totalCutoutWidth.toDp() }))
                         } else {
                             Spacer(modifier)
                         }

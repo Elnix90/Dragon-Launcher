@@ -2,6 +2,7 @@ package org.elnix.dragonlauncher.ui.remembers
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -9,13 +10,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import org.elnix.dragonlauncher.common.serializables.CycleActionStage
-
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.CycleActionStage
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.common.utils.HapticUtils.performCustomHaptic
+import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
-import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.defaultHapticFeedback
 
 /**
@@ -30,8 +32,6 @@ private fun cumulativeTriggerThresholdsMs(stages: List<CycleActionStage>): List<
         acc
     }
 }
-
-/*  ─────────────  Cycle Actions public state  ─────────────  */
 
 /**
  * Snapshot of Cycle Actions state returned per recomposition.
@@ -52,8 +52,6 @@ data class CycleActionsState(
     val clear: () -> Unit
 )
 
-/*  ─────────────  Controller composable  ─────────────  */
-
 /**
  * Composable controller that manages the Cycle Actions elapsed timer, stage derivation,
  * per-stage haptic pulses, optional loop wrap with a "Loop Over" tail, and release resolution.
@@ -70,12 +68,14 @@ data class CycleActionsState(
  */
 @Composable
 fun rememberCycleActionsController(
+    pointViewModel: PointViewModel = activityViewModel(),
     currentAction: Point?,
     isDragging: Boolean
 ): CycleActionsState {
     val ctx = LocalContext.current
+    val defaultPoint by pointViewModel.defaultPoint.collectAsState()
+
     val disableHapticFeedbackGlobally= LocalDisableHapticFeedbackGlobally.current
-    val defaultPoint = LocalDefaultPoint.current
 
     val stages: List<CycleActionStage>? = currentAction?.cycleActions
 
@@ -148,9 +148,6 @@ fun rememberCycleActionsController(
             delay(16L)
         }
     }
-
-    /*  ─────────────  Release resolution helpers  ─────────────  */
-
 
     val resolveOnRelease: () -> Action? = remember(stages) {
         {

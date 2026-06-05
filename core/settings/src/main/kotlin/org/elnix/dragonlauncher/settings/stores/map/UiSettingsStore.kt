@@ -1,13 +1,13 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.boolean
-import org.elnix.dragonlauncher.settings.bases.float
-import org.elnix.dragonlauncher.settings.bases.int
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
+import org.elnix.dragonlauncher.settings.bases.objects.FloatSettingObject.Companion.float
+import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
+import org.elnix.dragonlauncher.settings.bases.objects.StringSetSettingObject.Companion.stringSet
+import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
-import org.elnix.dragonlauncher.settings.bases.string
-import org.elnix.dragonlauncher.settings.bases.stringSet
 
 object UiSettingsStore : MapSettingsStore(DataStoreName.UI) {
 

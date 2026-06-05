@@ -128,19 +128,10 @@ object Constants {
     }
 
     object Paths {
-
-        /* Themes loader utils */
         const val THEMES_DIR = "themes"
         val imageExts = listOf("png", "jpg", "jpeg", "webp")
     }
 
-    object Actions {
-
-    }
-
-
-
-    /*  ─────────────  Links  ─────────────  */
     object URLs {
 
         const val ELNIX90_GITHUB_PROFILE_LINK = "https://github.com/Elnix90"
@@ -158,7 +149,6 @@ object Constants {
     }
 
     object Settings {
-        /*  ─────────────  Settings Screen Constants  ─────────────  */
         const val POINT_HITBOX_RADIUS_PX = 40f
         const val TOUCH_THRESHOLD_PX = 100f
         const val HOVER_POINT_DURATION = 500L

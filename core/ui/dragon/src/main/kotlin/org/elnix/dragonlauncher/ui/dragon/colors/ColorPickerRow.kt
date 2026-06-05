@@ -9,12 +9,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -45,12 +43,12 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.util.ColorUtils.randomColor
 import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.base.util.ColorUtils.toHexWithAlpha
-import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.pasteClipboard
 import org.elnix.dragonlauncher.enumsui.select.ColorPickerMode
 import org.elnix.dragonlauncher.enumsui.toggle.ColorActions
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.asState
@@ -251,7 +249,7 @@ private fun ColorPicker(
                     modifier = Modifier.weight(1f)
                 )
 
-                Spacer(Modifier.width(50.dp))
+                Spacer(50.dp)
 
                 DragonIconButton(
                     onClick = {
@@ -259,7 +257,7 @@ private fun ColorPicker(
                     },
                     colors = IconButtonDefaults.iconButtonColors(containerColor = color, contentColor = textBoxColor),
                     icon = R.drawable.copy,
-                    contentDescription = "Copy HEX"
+                    contentDescription = R.string.copy
                 )
 
                 DragonIconButton(

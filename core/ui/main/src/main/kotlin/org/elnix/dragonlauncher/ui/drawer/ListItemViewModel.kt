@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 
-class ListItemViewModelStore() {
+class ListItemViewModelStore {
     private val cache = ViewModelCache()
 
     operator fun <T: ListItemViewModel>get(key: String, modelClass: Class<T>): T {

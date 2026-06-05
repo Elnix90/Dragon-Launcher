@@ -7,19 +7,18 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.base.model.models.Application
-import org.elnix.dragonlauncher.base.model.models.ReminderMode
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.compat.PackageManagerCompat
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
@@ -32,6 +31,7 @@ import org.elnix.dragonlauncher.permissions.PermissionsManager
 import org.elnix.dragonlauncher.profiles.ProfileManager
 import org.elnix.dragonlauncher.recents.RecentsService
 import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
+import org.elnix.dragonlauncher.timer.AppTimerService
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -59,52 +59,52 @@ class AppLaunchViewModel @Inject constructor(
     val reminderMode = WellbeingSettingsStore.reminderMode.flow(ctx)
     val returnToLauncherEnabled = WellbeingSettingsStore.returnToLauncherEnabled.flow(ctx)
 
-    data class WellbeingState(
-        val socialMediaPauseEnabled: Boolean,
-        val guiltModeEnabled: Boolean,
-        val pauseDuration: Int,
-        val pausedApps: Set<String>,
-        val reminderEnabled: Boolean,
-        val reminderInterval: Int,
-        val reminderMode: ReminderMode,
-        val returnToLauncherEnabled: Boolean
+//    data class WellbeingState(
+//        val socialMediaPauseEnabled: Boolean,
+//        val guiltModeEnabled: Boolean,
+//        val pauseDuration: Int,
+//        val pausedApps: Set<String>,
+//        val reminderEnabled: Boolean,
+//        val reminderInterval: Int,
+//        val reminderMode: ReminderMode,
+//        val returnToLauncherEnabled: Boolean
+//    )
+
+//
+//    val wellbeingState: Flow<WellbeingState> = combineTransform(
+//        socialMediaPauseEnabled,
+//        guiltModeEnabled,
+//        pauseDuration,
+//        pausedApps,
+//        reminderInterval,
+//        reminderEnabled,
+//        reminderMode,
+//        returnToLauncherEnabled
+//    ) { flows ->
+//        @Suppress("UNCHECKED_CAST")
+//        WellbeingState(
+//            socialMediaPauseEnabled = flows[0] as Boolean,
+//            guiltModeEnabled = flows[1] as Boolean,
+//            pauseDuration = flows[2] as Int,
+//            pausedApps = flows[3] as Set<String>,
+//            reminderInterval = flows[4] as Int,
+//            reminderEnabled = flows[5] as Boolean,
+//            reminderMode = flows[6] as ReminderMode,
+//            returnToLauncherEnabled = flows[7] as Boolean
+//        )
+//    }
+
+    val hasUsageStatsPermission: StateFlow<Boolean> = permissionsManager.hasPermission(PermissionGroup.UsageStat).stateIn(
+        viewModelScope,
+        SharingStarted.Lazily,
+        false
     )
-
-
-    val wellbeingState: Flow<WellbeingState> = combineTransform(
-        socialMediaPauseEnabled,
-        guiltModeEnabled,
-        pauseDuration,
-        pausedApps,
-        reminderInterval,
-        reminderEnabled,
-        reminderMode,
-        returnToLauncherEnabled
-    ) { flows ->
-        @Suppress("UNCHECKED_CAST")
-        WellbeingState(
-            socialMediaPauseEnabled = flows[0] as Boolean,
-            guiltModeEnabled = flows[1] as Boolean,
-            pauseDuration = flows[2] as Int,
-            pausedApps = flows[3] as Set<String>,
-            reminderInterval = flows[4] as Int,
-            reminderEnabled = flows[5] as Boolean,
-            reminderMode = flows[6] as ReminderMode,
-            returnToLauncherEnabled = flows[7] as Boolean
-        )
-    }
-
-    val hasUsageStatsPermission: Flow<Boolean> = permissionsManager.hasPermission(PermissionGroup.UsageStat)
 
     private val _pendingAppLaunch = MutableStateFlow<Application?>(null)
     val pendingAppLaunch = _pendingAppLaunch.asStateFlow()
 
     private var currentLaunchJob: Job? = null
 
-
-    fun getRecentApps(count: Int): StateFlow<List<Application>> {
-        return recentsService.getRecentApps(count)
-    }
 
     fun requestAppLaunch(launchAction: Action.LaunchApp) {
         viewModelScope.launch {
@@ -132,16 +132,25 @@ class AppLaunchViewModel @Inject constructor(
     }
 
 
-    fun startTimer(duration: Long) {
-        TODO()
+    suspend fun startTimer(timeLimitMinutes: Int?, app: Application) {
+        AppTimerService.start(
+            ctx = ctx,
+            application = app,
+            reminderEnabled = reminderEnabled.first(),
+            reminderIntervalMinutes = reminderInterval.first(),
+            reminderMode = reminderMode.first(),
+            timeLimitMinutes = timeLimitMinutes
+        )
     }
 
-    fun onAppTimerServiceStarted(duration: Long?): Boolean {
+    fun onAppTimerServiceStarted(duration: Int?): Boolean {
         val pendingApp = _pendingAppLaunch.value
         if (pendingApp!= null) {
 
             if (duration != null) {
-                startTimer(duration)
+                viewModelScope.launch{
+                    startTimer(duration, pendingApp)
+                }
             }
 
             launchAppDirectly(pendingApp)

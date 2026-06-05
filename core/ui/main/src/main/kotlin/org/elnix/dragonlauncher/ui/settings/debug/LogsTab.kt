@@ -223,7 +223,7 @@ fun LogsTab(
                             contentDescription = "Copy Info"
                         )
                     }
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(8.dp))
                     SelectionContainer {
                         Text(
                             text = deviceDetails,

@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,65 +30,81 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.util.fastForEachIndexed
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.models.AppLaunchViewModel
+import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.ui.actions.AppIcon
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AppLongPressRowImpl(
+fun AppLongPressRow(
     app: Application,
-    onLaunch: (Application) -> Unit,
-    onRenameApp: () -> Unit,
-    onChangeAppIcon: () -> Unit,
-    onAliases: () -> Unit,
-    onRemoveFromWorkspace: (() -> Unit)? = null,
-    onAddToWorkspace: (() -> Unit)? = null
+    appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
+    appsViewModel: AppsViewModel = activityViewModel(),
 ) {
     val ctx = LocalContext.current
+    val appOverridesManager = appsViewModel.appOverrideManager
+    val workspacesManager = appsViewModel.workspaceManager
+    val selectedWorkspaceId by appsViewModel.selectedWorkspaceId.collectAsState()
+
 
     var showDetailedAppInfoDialog by remember { mutableStateOf(false) }
+
+    var showRenameDialog by remember { mutableStateOf(false) }
+    var showAliasDialog by remember { mutableStateOf(false) }
+    var showIconDialog by remember { mutableStateOf(false) }
+
 
     val entries = buildList {
         add(
             MoreOptions(
                 text = { stringResource(R.string.rename) },
                 icon = R.drawable.edit_rounded,
-                onClick = onRenameApp
+                onClick = { showRenameDialog = true }
             )
         )
         add(
             MoreOptions(
                 text = { stringResource(R.string.change_app_icon) },
                 icon = R.drawable.image,
-                onClick = onChangeAppIcon
+                onClick = { showIconDialog = true }
             )
         )
         add(
             MoreOptions(
                 text = { stringResource(R.string.app_aliases) },
                 icon = R.drawable.alternate_email,
-                onClick = onAliases
+                onClick = { showAliasDialog = true }
             )
         )
-        onAddToWorkspace?.let {
-            add(
-                MoreOptions(
-                    text = { stringResource(R.string.add_to_workspace) },
-                    icon = R.drawable.add_circle,
-                    onClick = it
-                )
+
+        add(
+            MoreOptions(
+                text = { stringResource(R.string.add_to_workspace) },
+                icon = R.drawable.add_circle,
+                onClick = {
+                    workspacesManager.removeAppFromWorkspace(
+                        id = selectedWorkspaceId,
+                        cacheKey = app.key
+                    )
+                }
             )
-        }
-        onRemoveFromWorkspace?.let {
-            add(
-                MoreOptions(
-                    text = { stringResource(R.string.remove_from_workspace) },
-                    icon = R.drawable.remove_circle,
-                    onClick = it
-                )
+        )
+
+        add(
+            MoreOptions(
+                text = { stringResource(R.string.remove_from_workspace) },
+                icon = R.drawable.remove_circle,
+                onClick = {
+                    workspacesManager.addAppToWorkspace(
+                        id = selectedWorkspaceId,
+                        cacheKey = app.key
+                    )
+                }
             )
-        }
+        )
     }
 
     Column {
@@ -122,7 +139,7 @@ fun AppLongPressRowImpl(
             shapes = MenuDefaults.groupShapes()
         ) {
             DropdownMenuItem(
-                onClick = onLaunch,//{ app.launch(ctx, null) },
+                onClick = { appLaunchViewModel.requestAppLaunch(app) },//{ app.launch(ctx, null) },
                 shape = MenuDefaults.leadingItemShape,
                 text = { Text(app.label) },
                 leadingIcon = { AppIcon(app) }
@@ -150,10 +167,64 @@ fun AppLongPressRowImpl(
 
 
         if (showDetailedAppInfoDialog) {
-            AppModelInfoDialog(app) { showDetailedAppInfoDialog = false }
+            ApplicationInfoDialog(app) { showDetailedAppInfoDialog = false }
         }
     }
 
+
+
+    if (showRenameDialog) {
+        val cacheKey = app.key
+
+        TextEditorDialog(
+            title = { stringResource(R.string.rename) },
+            placeHolder = { app.label },
+            onDismiss = { showRenameDialog = false },
+            initialText = app.label
+        ) {
+            if (it != "") {
+                appOverridesManager.renameApp(
+                    cacheKey = cacheKey,
+                    customName = it
+                )
+            } else {
+                appOverridesManager.renameApp(cacheKey, null)
+            }
+            showRenameDialog = false
+        }
+    }
+
+    if (showIconDialog) {
+        val cacheKey = app.key
+
+        val iconService = appsViewModel.iconsService
+
+        AppIconEditor(
+            app = app,
+            onReset = { iconService.reloadAppIcon(app) },
+            onDismiss = { showIconDialog = false }
+        ) { customIcon ->
+
+            if (customIcon != null) {
+                appOverridesManager.setAppIcon(
+                    cacheKey = cacheKey,
+                    customIcon = customIcon
+                )
+            } else {
+                appOverridesManager.setAppIcon(cacheKey, null)
+            }
+
+            showIconDialog = false
+           iconService.reloadAppIcon(app)
+        }
+    }
+
+    if (showAliasDialog) {
+        AppAliasesDialog(
+            app = app,
+            onDismiss = { showAliasDialog = false }
+        )
+    }
 }
 
 @Composable

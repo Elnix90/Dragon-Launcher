@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,15 +35,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Nest
-
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.models.PointViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.composition.LocalNests
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
@@ -51,23 +53,19 @@ import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
 
 @Composable
 fun NestManagementDialog(
+    pointViewModel: PointViewModel = activityViewModel(),
     onDismissRequest: () -> Unit,
     title: String? = null,
-    nests: List<Nest>? = null,
-    onNewNest: (() -> Unit)? = null,
-    onNameChange: ((id: Int, name: String) -> Unit)?,
-    onDelete: ((id: Int) -> Unit)?,
     onSelect: ((Nest) -> Unit)? = null
 ) {
-    val nests = nests ?: LocalNests.current
+    val nests by pointViewModel.nests.collectAsState()
 
-
-    var hasClickedNewNest by remember { mutableStateOf(false) }
+    var hasClickedNewNest by remember { mutableStateOf<Int?>(null) }
     val listState = rememberLazyListState()
-    LaunchedEffect(nests.size) {
-        if (hasClickedNewNest) {
-            listState.animateScrollToItem(nests.size)
-            hasClickedNewNest = false
+    LaunchedEffect(hasClickedNewNest) {
+        if (hasClickedNewNest != null) {
+            listState.animateScrollToItem(hasClickedNewNest!!)
+            hasClickedNewNest = null
         }
     }
 
@@ -88,32 +86,26 @@ fun NestManagementDialog(
                 modifier = Modifier.heightIn(max = 700.dp),
                 state = listState
             ) {
-                if (onNewNest != null) {
-                    item {
-                        DragonButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {
-                                hasClickedNewNest = true
-                                onNewNest()
-                            }
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.add_circle),
-                                contentDescription = stringResource(R.string.create_new_nest),
-                            )
-                            Spacer(15.dp)
-                            Text(stringResource(R.string.create_new_nest))
+                item {
+                    DragonButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            hasClickedNewNest = pointViewModel.pointsService.addNest()
                         }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.add_circle),
+                            contentDescription = stringResource(R.string.create_new_nest),
+                        )
+                        Spacer(15.dp)
+                        Text(stringResource(R.string.create_new_nest))
                     }
                 }
 
-                items(nests) { nest ->
+                items(nests.toList()) { nest ->
                     NestManagementItem(
                         nest = nest,
                         modifier = Modifier.animateItem(),
-                        nests = nests,
-                        onNameChange = onNameChange,
-                        onDelete = onDelete,
                         onSelect = { onSelect?.invoke(nest) }
                     )
                 }
@@ -125,20 +117,16 @@ fun NestManagementDialog(
 
 @Composable
 private fun NestManagementItem(
+    pointViewModel: PointViewModel = activityViewModel(),
     nest: Nest,
-    modifier: Modifier,
-    nests: List<Nest>?,
-    onNameChange: ((id: Int, name: String) -> Unit)?,
-    onDelete: ((id: Int) -> Unit)?,
+    modifier: Modifier
     onSelect: (() -> Unit)? = null
 ) {
     val ctx = LocalContext.current
+    val pointsService = pointViewModel.pointsService
 
-    val canEditName = onNameChange != null
-
-    val drawParams = rememberSwipeDefaultParams(
-        backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
-        nests = nests
+    val drawParams by rememberSwipeDefaultParams(
+        backgroundColor = MaterialTheme.colorScheme.surfaceVariant
     )
 
     var tempCustomName by remember { mutableStateOf(nest.name ?: "") }
@@ -205,45 +193,46 @@ private fun NestManagementItem(
                 )
             }
 
-            if (canEditName) {
-                TextField(
-                    value = tempCustomName,
-                    onValueChange = {
-                        tempCustomName = it
+            TextField(
+                value = tempCustomName,
+                onValueChange = {
+                    tempCustomName = it
 
-                        onNameChange(nest.id, it)
-                    },
-                    placeholder = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.edit_rounded),
-                                contentDescription = stringResource(R.string.custom_name)
-                            )
-                            Text(
-                                text = stringResource(R.string.custom_name),
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    },
-                    colors = AppObjectsColors.outlinedTextFieldColors(removeBorder = true),
-                    singleLine = true,
-                    modifier = Modifier
-                        .clip(DragonShape)
-                        .weight(1f)
-                )
-            }
+                    pointsService.editNest(nest.id) { nest ->
+                        nest.copy(name = it)
+                    }
+                },
+                placeholder = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.edit_rounded),
+                            contentDescription = stringResource(R.string.custom_name)
+                        )
+                        Text(
+                            text = stringResource(R.string.custom_name),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                },
+                colors = AppObjectsColors.outlinedTextFieldColors(removeBorder = true),
+                singleLine = true,
+                modifier = Modifier
+                    .clip(DragonShape)
+                    .weight(1f)
+            )
         }
 
 
-        if (onDelete != null) {
-            DragonIconButton(
-                icon = R.drawable.close,
-                contentDescription = stringResource(R.string.delete_circle_nest),
-                colors = AppObjectsColors.cancelIconButtonColors()
-            ) { onDelete(nest.id) }
+
+        DragonIconButton(
+            icon = R.drawable.close,
+            contentDescription = stringResource(R.string.delete_circle_nest),
+            colors = AppObjectsColors.cancelIconButtonColors()
+        ) {
+            pointsService.deleteNest(nest.id)
         }
     }
 }

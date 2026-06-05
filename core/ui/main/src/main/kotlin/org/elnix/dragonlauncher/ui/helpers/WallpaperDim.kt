@@ -10,7 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
 
 @Composable
 fun WallpaperDim(dimAmount: Float) {

@@ -43,10 +43,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.canhub.cropper.CropImageContract
-import com.canhub.cropper.CropImageContractOptions
-import com.canhub.cropper.CropImageOptions
-import com.canhub.cropper.CropImageView
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.CustomIcon
 import org.elnix.dragonlauncher.base.util.ColorUtils.definedOrNull
@@ -55,6 +51,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.util.ImageUtils.uriToBase64
 import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.PointViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
@@ -64,7 +61,6 @@ import org.elnix.dragonlauncher.ui.base.components.VerticalScrollIndicator
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.components.PointPreviewCanvas
-import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -78,12 +74,13 @@ import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 @Composable
 fun PointIconEditor(
     appsViewModel: AppsViewModel = activityViewModel(),
+    pointViewModel: PointViewModel = activityViewModel(),
     point: Point,
     onReset: (() -> Unit)? = null,
     onDismiss: () -> Unit,
     onPicked: (CustomIcon?) -> Unit
 ) {
-    val defaultPoint = LocalDefaultPoint.current
+    val defaultPoint by pointViewModel.defaultPoint.collectAsState()
 
     var selectedIcon by remember { mutableStateOf(point.customIcon) }
 
@@ -105,7 +102,7 @@ fun PointIconEditor(
         },
         onUpdate = {
             selectedIcon = it
-            appsViewModel.reloadPointIcon(point.copy(customIcon = selectedIcon))
+            appsViewModel.iconsService.reloadPointIcon(point.copy(customIcon = selectedIcon))
         },
         onPicked = onPicked
     )

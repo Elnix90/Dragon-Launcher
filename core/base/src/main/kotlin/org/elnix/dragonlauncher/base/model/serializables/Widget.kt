@@ -10,7 +10,7 @@ data class Widget(
     val id: Int,
     val appWidgetId: Int? = null,
     val nestId: Int?,
-    val action: Action? = null,
+    val action: Action,
     val spanX: Float = 1f,
     val spanY: Float = 1f,
     val x: Float = 0f,

@@ -34,35 +34,35 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import kotlinx.coroutines.delay
-import org.elnix.dragonlauncher.base.ktx.toDp
-import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.circles.rememberNestNavigation
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeResId
-
-import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
-
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.enabled
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
-import org.elnix.dragonlauncher.common.serializables.enabled
+import org.elnix.dragonlauncher.base.model.serializables.Widget
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeResId
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.toDp
+import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.asStateNull
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
-import org.elnix.dragonlauncher.ui.composition.LocalWidgetsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
-import org.elnix.dragonlauncher.ui.composition.LocalNests
 import org.elnix.dragonlauncher.ui.dialogs.rememberHoldMenuEntries
 import org.elnix.dragonlauncher.ui.helpers.ChargingAnimation
 import org.elnix.dragonlauncher.ui.helpers.CustomDim
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
 import org.elnix.dragonlauncher.ui.helpers.WallpaperDim
 import org.elnix.dragonlauncher.ui.remembers.rememberHoldToOpenSettings
+import org.elnix.dragonlauncher.ui.remembers.rememberNestNavigation
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 
 
@@ -70,22 +70,19 @@ import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 @Composable
 fun MainScreen(
     onNavigate: (NavigationRoute) -> Unit,
-    onLaunchAction: (Point) -> Unit
+    onLaunchAction: (Point) -> Unit,
+    widgetsViewModel: WidgetsViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
-    val nests = LocalNests.current
     val holdCustomObject = LocalHoldCustomObject.current
     val mainScreenLayers = LocalMainScreenLayers.current
-    val floatingAppsViewModel = LocalWidgetsViewModel.current
 
     var lastClickTime by remember { mutableLongStateOf(0L) }
 
-    val floatingAppObjects by floatingAppsViewModel.floatingApps.collectAsState()
+    val widgetsObjects by widgetsViewModel.widgets.collectAsState()
 
-    /* ───────────── Custom Actions ─────────────*/
     val doubleClickAction by BehaviorSettingsStore.doubleClickAction.asStateNull()
     val backAction by BehaviorSettingsStore.backAction.asStateNull()
-
     val leftPadding by BehaviorSettingsStore.leftPadding.asState()
     val rightPadding by BehaviorSettingsStore.rightPadding.asState()
     val topPadding by BehaviorSettingsStore.topPadding.asState()
@@ -111,23 +108,22 @@ fun MainScreen(
     var showDropDownMenuSettings by remember { mutableStateOf(false) }
 
 
-    /* ───────────── status bar things ───────────── */
 
     LaunchedEffect(Unit) { lastClickTime = 0 }
 
-    val nestNavigation = rememberNestNavigation(nests)
+    val nestNavigation = rememberNestNavigation()
     val nestId = nestNavigation.currentNest.id
 
-    val filteredFloatingAppObjects by remember(floatingAppObjects, nestId) {
+    val filteredWidgetObjects by remember(widgetsObjects, nestId) {
         derivedStateOf {
-            floatingAppObjects.filter { it.nestId == nestId }
+            widgetsObjects.filter { it.nestId == nestId }
         }
     }
 
 
     val dm = ctx.resources.displayMetrics
     val density = LocalDensity.current
-    val cellSizePx by floatingAppsViewModel.cellSizePx.collectAsState()
+    val cellSizePx by widgetsViewModel.cellSizePx.collectAsState()
 
 
     fun launchAction(point: Point) {
@@ -148,7 +144,7 @@ fun MainScreen(
     }
 
 
-    val holdMenuEntries = rememberHoldMenuEntries()
+    val holdMenuEntries by rememberHoldMenuEntries()
 
     val hold = rememberHoldToOpenSettings(
         onSettings = { offset ->
@@ -168,7 +164,7 @@ fun MainScreen(
 
                 else -> {
                     // If list is empty, directly navigate to settings root. Never block the user out of settings
-                    onNavigate(NavigationRoute.PointsSettings)
+                    onNavigate(NavigationRoute.PointsSettings(nestId))
                 }
             }
 
@@ -195,11 +191,8 @@ fun MainScreen(
         }
     }
 
-
-    /* Dim wallpaper system */
-    val mainBlurRadius by UiSettingsStore.wallpaperDimMainScreen.asState()
-
-    WallpaperDim(mainBlurRadius)
+    val mainDimAmount by UiSettingsStore.wallpaperDimMainScreen.asState()
+    WallpaperDim(mainDimAmount)
 
     Box(
         modifier = Modifier
@@ -228,7 +221,7 @@ fun MainScreen(
 
                         if (isInsideForegroundWidget(
                                 pos = pos,
-                                widgets = filteredFloatingAppObjects,
+                                widgets = filteredWidgetObjects,
                                 dm = dm,
                                 cellSizePx = cellSizePx
                             )
@@ -351,7 +344,6 @@ fun MainScreen(
                                 BurgerListAction(
                                     actions = actions,
                                     isExpanded = showDropDownMenuSettings,
-//                                    offset = dpOffset,
                                     onDismissRequest = {
                                         showDropDownMenuSettings = false
                                         holdOffset = null
@@ -368,34 +360,34 @@ fun MainScreen(
                     }
 
                     is MainScreenLayer.Widgets -> {
-                        filteredFloatingAppObjects.forEach { floatingAppObject ->
-                            key(floatingAppObject.id, nestId) {
+                        filteredWidgetObjects.forEach { widgetObject ->
+                            key(widgetObject.id, nestId) {
                                 WidgetHostView(
-                                    widget = floatingAppObject,
+                                    widget = widgetObject,
                                     cellSizePx = cellSizePx,
                                     modifier = Modifier
                                         .offset {
                                             IntOffset(
-                                                x = (floatingAppObject.x * dm.widthPixels).toInt(),
-                                                y = (floatingAppObject.y * dm.heightPixels).toInt()
+                                                x = (widgetObject.x * dm.widthPixels).toInt(),
+                                                y = (widgetObject.y * dm.heightPixels).toInt()
                                             )
                                         }
                                         .size(
-                                            width = (floatingAppObject.spanX * cellSizePx).toDp,
-                                            height = (floatingAppObject.spanY * cellSizePx).toDp
+                                            width = (widgetObject.spanX * cellSizePx).toDp,
+                                            height = (widgetObject.spanY * cellSizePx).toDp
                                         )
                                         .graphicsLayer {
-                                            rotationZ = floatingAppObject.angle
+                                            rotationZ = widgetObject.angle
                                             transformOrigin = TransformOrigin.Center
                                         },
                                     onLaunchAction = {
                                         launchAction(
                                             dummySwipePoint(
-                                                action = floatingAppObject.action
+                                                action = widgetObject.action
                                             )
                                         )
                                     },
-                                    blockTouches = floatingAppObject.ghosted == true
+                                    blockTouches = widgetObject.ghosted == true
                                 )
                             }
 

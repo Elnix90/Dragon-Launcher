@@ -30,8 +30,8 @@ private object ShapesCache : DragonCache<IconShape, Shape>(100)
  * Resolve an [IconShape] element to a [Shape] using caching to avoid over computation
  */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-fun IconShape?.resolveShape(): Shape {
-    val shapeToResolve = this ?: IconShape.PlatformDefault
+fun IconShape?.resolveShape(default: IconShape = IconShape.PlatformDefault): Shape {
+    val shapeToResolve = this ?: default
 
     return ShapesCache.getOrCompute(shapeToResolve) {
         when (shapeToResolve) {

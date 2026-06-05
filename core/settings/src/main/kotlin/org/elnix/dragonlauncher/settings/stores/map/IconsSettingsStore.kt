@@ -2,11 +2,11 @@ package org.elnix.dragonlauncher.settings.stores.map
 
 import androidx.compose.ui.graphics.Color
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.boolean
-import org.elnix.dragonlauncher.settings.bases.color
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
+import org.elnix.dragonlauncher.settings.bases.objects.ColorSettingObject.Companion.color
+import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
-import org.elnix.dragonlauncher.settings.bases.string
 
 object IconsSettingsStore : MapSettingsStore(DataStoreName.ICONS) {
 

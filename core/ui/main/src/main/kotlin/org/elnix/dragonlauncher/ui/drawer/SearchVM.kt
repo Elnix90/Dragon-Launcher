@@ -9,7 +9,6 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.migration.CustomInjection.inject
 import jakarta.inject.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -23,10 +22,10 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.models.ResultScore
-import org.elnix.dragonlauncher.data.customattrs.SavableSearchableRepository
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import org.elnix.dragonlauncher.permissions.PermissionGroup
 import org.elnix.dragonlauncher.permissions.PermissionsManager
@@ -34,10 +33,9 @@ import org.elnix.dragonlauncher.profiles.ProfileManager
 
 @HiltViewModel
 class SearchVM @Inject constructor(
-    private val searchableRepository: SavableSearchableRepository,
+    private val appRepository: AppRepository,
     private val permissionsManager: PermissionsManager,
     private val profileManager: ProfileManager,
-    private val searchService: SearchService
 ) : ViewModel() {
 
 //    private val fileSearchSettings: FileSearchSettings by inject()
@@ -52,9 +50,6 @@ class SearchVM @Inject constructor(
     val launchOnEnter = searchUiSettings.launchOnEnter
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
-    private val searchService: SearchService by inject()
-
-    val searchQuery = mutableStateOf("")
     val isSearchEmpty = mutableStateOf(true)
 
     val expandedCategory = mutableStateOf<SearchCategory?>(null)
@@ -181,7 +176,7 @@ class SearchVM @Inject constructor(
         searchJob = viewModelScope.launch {
             if (query.isEmpty()) {
                 val hiddenItemKeys = if (!filters.hiddenItems) {
-                    searchableRepository.getKeys(
+                    appRepository.getKeys(
                         maxVisibility = VisibilityLevel.SearchOnly,
                         includeTypes = listOf("app"),
                     )
@@ -225,7 +220,7 @@ class SearchVM @Inject constructor(
                     }
 
             } else {
-                val hiddenItemKeys = if (!filters.hiddenItems) searchableRepository.getKeys(
+                val hiddenItemKeys = if (!filters.hiddenItems) appRepository.getKeys(
                     maxVisibility = VisibilityLevel.Hidden,
                 ) else flowOf(emptyList())
                 searchService.search(
@@ -384,7 +379,7 @@ class SearchVM @Inject constructor(
     private suspend fun <T : SavableSearchable> List<T>.applyRanking(query: String): List<T> {
         if (size <= 1) return this
         val sequence = asSequence()
-        val weights = searchableRepository.getWeights(map { it.key }).first()
+        val weights = appRepository.getWeights(map { it.key }).first()
         val sorted = sequence.sortedWith { a, b ->
             val aWeight = weights[a.key] ?: 0.0
             val bWeight = weights[b.key] ?: 0.0

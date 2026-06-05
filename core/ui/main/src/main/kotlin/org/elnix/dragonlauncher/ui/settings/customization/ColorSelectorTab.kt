@@ -503,7 +503,7 @@ fun ColorSelectorTab(
                     }
 
 
-                    Spacer(Modifier.height(5.dp))
+                    Spacer(5.dp))
 
                     Text(
                         text = stringResource(it.resId),

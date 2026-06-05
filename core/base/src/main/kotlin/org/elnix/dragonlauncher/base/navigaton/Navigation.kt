@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.base.navigaton
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
-import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Backup
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Drawer
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.DrawerSettings
@@ -119,6 +118,12 @@ sealed class NavigationRoute : NavKey {
         val workspaceId: String
     ) : NavigationRoute()
 
+    @Serializable
+    data class TimerExceeded(
+        val appName: String
+    ) : NavigationRoute()
+
+
     companion object {
         val settingsRoutes: List<NavigationRoute> by lazy {
             listOf(
@@ -191,6 +196,7 @@ sealed class NavigationRoute : NavKey {
             is SettingsJson -> R.string.settings_json
             is NestEdit -> R.string.edit_nest
             is WorkspaceDetail -> R.string.workspaces
+            is TimerExceeded -> R.string.time_exceeded_title
         }
     }
 }

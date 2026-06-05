@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDefaults.actionColor
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -27,11 +28,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-
 import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
-import org.elnix.dragonlauncher.ui.actions.ActionIcon
-import org.elnix.dragonlauncher.ui.actions.actionColor
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
@@ -55,7 +55,7 @@ fun CustomActionSelector(
     var showDialog by remember { mutableStateOf(false) }
 
     val toggled = currentAction != null && currentAction != Action.None
-    val actionColor = actionColor(currentAction, extraColors).semiTransparentIfDisabled(enabled)
+    val actionColor = currentAction.actionColor(extraColors).semiTransparentIfDisabled(enabled)
 
     DragonRow(
         onClick = { showDialog = true },
@@ -84,7 +84,7 @@ fun CustomActionSelector(
                             action = currentAction,
                             modifier = Modifier.size(30.dp)
                         )
-                        Spacer(Modifier.width(5.dp))
+                        Spacer(5.dp))
 
                         Text(
                             text = actionLabel(currentAction),

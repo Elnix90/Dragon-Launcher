@@ -5,7 +5,7 @@ import org.elnix.dragonlauncher.logging.BACKUP_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
-import org.elnix.dragonlauncher.settings.bases.string
+import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
 import org.json.JSONException
 import org.json.JSONObject
 

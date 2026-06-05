@@ -36,16 +36,16 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppAliasesDialog(
     app: Application,
-    appsViewModel: AppsViewModel = activityViewModel(),
+    workspaceViewModel: DrawerViewModel = activityViewModel(),
     onDismiss: () -> Unit
 ) {
     val hapticFeedback = LocalHapticFeedback.current
@@ -53,7 +53,7 @@ fun AppAliasesDialog(
     var showAliasEditScreen by remember { mutableStateOf<String?>(null) }
     val cacheKey = app.key
 
-    val appOverridesManager = appsViewModel.appOverrideManager
+    val appOverridesManager = workspaceViewModel.appOverrideManager
     val aliases = appOverridesManager.getAliasesForApp(app)
 
 

@@ -25,7 +25,7 @@ import kotlinx.coroutines.isActive
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.common.serializables.StatusBar
-import org.elnix.dragonlauncher.common.serializables.dummyAppModel
+import org.elnix.dragonlauncher.common.serializables.dummyApplication
 import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.services.DragonNotificationListenerService
 import org.elnix.dragonlauncher.ui.activityViewModel
@@ -66,9 +66,9 @@ fun StatusBarNotifications(
     if (packageNames.isEmpty()) return
 
     val notificationsIcons = packageNames.take(maxIcons).map {
-        val dummyAppModel = dummyAppModel(it)
-        it to icons.getOrLazyCompute(dummyAppModel.key) {
-            appsViewModel.reloadAppIcon(dummyAppModel)
+        val dummyApplication = dummyApplication(it)
+        it to icons.getOrLazyCompute(dummyApplication.key) {
+            appsViewModel.reloadAppIcon(dummyApplication)
         }
     }
 

@@ -21,7 +21,8 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
-import org.elnix.dragonlauncher.base.cache.IconsCache
+import org.elnix.dragonlauncher.base.cache.DrawerIconCache
+import org.elnix.dragonlauncher.base.cache.PointIconCache
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.models.PointApp
@@ -35,7 +36,6 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomIconProperties
 import org.elnix.dragonlauncher.base.model.serializables.CustomTextIcon
 import org.elnix.dragonlauncher.base.model.serializables.DefaultPlaceholderIcon
 import org.elnix.dragonlauncher.base.model.serializables.ForceThemedIcon
-import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.UnmodifiedSystemDefaultIcon
 import org.elnix.dragonlauncher.colors.ColorService
@@ -78,12 +78,13 @@ class IconService(
     }
 
     private val scope = CoroutineScope(Job() + Dispatchers.Default)
-    /** Drawer icons cache, initialize at 200 apps */
-    private val _drawerIconsCache = IconsCache(200)
 
-    val drawerIconCache = _drawerIconsCache
+    /** Drawer icons cache, initialize at 200 apps */
+    private val _drawerIconCache = DrawerIconCache(200)
+    val drawerIconCache = _drawerIconCache
+
     /** Points icons cache, initialize at 200 apps */
-    private val _pointsIconsCache = IconsCache(200)
+    private val _pointsIconsCache = PointIconCache(200)
 
 
     val pointsIconsCache = _pointsIconsCache
@@ -94,12 +95,6 @@ class IconService(
     val defaultPoint: Flow<Point> = pointService.defaultPoint
 
     val maxIconSize = DrawerSettingsStore.maxIconSize.flow(ctx)
-
-    private val _iconShape = MutableStateFlow<IconShape?>(null)
-    fun cacheIconShape(iconShape: IconShape) {
-        _iconShape.value = iconShape
-
-    }
 
     private val iconProviders: MutableStateFlow<List<IconProvider>> = MutableStateFlow(listOf())
 
@@ -176,7 +171,7 @@ class IconService(
 
     fun getCustomAppIcon(application: Application): Flow<CustomIcon?> {
         return appOverrideManager.appOverrideState.map {
-            it.appOverrides[application.key]?.customIcon
+            it[application.key]?.customIcon
         }
     }
 
@@ -217,7 +212,7 @@ class IconService(
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getPointIcon(
         point: Point,
-        reload : Boolean = false
+        reload: Boolean = false
     ): Flow<LauncherIcon?> {
         return defaultPoint.flatMapLatest { defaultPoint ->
             val resolvedResolutionDp =
@@ -327,7 +322,7 @@ class IconService(
         }
     }
 
-    private suspend  fun getProviders(customIcon: CustomIcon?): List<IconProvider> {
+    private suspend fun getProviders(customIcon: CustomIcon?): List<IconProvider> {
         if (customIcon is UnmodifiedSystemDefaultIcon) {
             return listOf(
                 SystemIconProvider(false)

@@ -37,10 +37,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.models.AppCategory
-import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.common.utils.LifecycleUtils.waitASec
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalAppItemSettings
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -69,7 +69,7 @@ fun AppGrid(
 
     onTopStateChange: ((Boolean) -> Unit)? = null,
     onReload: (() -> Unit)? = null,
-    longPressPopup: @Composable ((Application) -> Unit)?,
+    longPressPopup: Boolean,
     onClick: ((Application) -> Unit)?
 ) {
     var openedCategory by remember { mutableStateOf<AppCategory?>(null) }
@@ -275,7 +275,7 @@ private fun CategoryGrid(
     category: AppCategory,
     apps: List<Application>,
     modifier: Modifier = Modifier,
-    longPressPopup: @Composable ((Application) -> Unit)?,
+    longPressPopup: Boolean,
     onClick: ((Application) -> Unit)?,
     onOpenCategory: () -> Unit
 ) {
@@ -314,7 +314,7 @@ private fun AppDefinedGrid(
     gridCells: Int,
     modifier: Modifier = Modifier,
     onLongClick: ((Application) -> Unit)? = null,
-    longPressPopup: @Composable ((Application) -> Unit)?,
+    longPressPopup: Boolean,
     onClick: ((Application) -> Unit)?,
 ) {
     var appIndex = 0

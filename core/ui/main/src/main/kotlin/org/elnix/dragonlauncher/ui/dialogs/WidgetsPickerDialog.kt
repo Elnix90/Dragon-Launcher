@@ -51,21 +51,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.serializables.AppModel
-import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.widgets.LauncherWidgetHolder
 
 @Composable
 fun WidgetPickerDialog(
-    appsViewModel: AppsViewModel = activityViewModel(),
+    drawerViewModel: DrawerViewModel = activityViewModel(),
     onBindCustomWidget: (Int, ComponentName) -> Unit,
     onDismiss: () -> Unit
 ) {
     val ctx = LocalContext.current
-    val apps by appsViewModel.allApps.collectAsState()
+    val apps by drawerViewModel.allApps.collectAsState()
 
     val appWidgetManager = remember { AppWidgetManager.getInstance(ctx) }
     val launcherWidgetHolder = remember(ctx) { LauncherWidgetHolder.getInstance(ctx) }
@@ -85,7 +85,7 @@ fun WidgetPickerDialog(
             widgets.filter { provider ->
                 val widgetLabel = provider.loadLabel(pm)
                 val appLabel = try {
-                    apps.find { it.packageName == provider.provider.packageName }?.name ?: ""
+                    apps.find { it.packageName == provider.provider.packageName }?.label ?: ""
                 } catch (_: Exception) {
                     ""
                 }
@@ -174,7 +174,7 @@ fun WidgetPickerDialog(
 private fun WidgetItem(
     provider: AppWidgetProviderInfo,
     launcherWidgetHolder: LauncherWidgetHolder,
-    apps: List<AppModel>,
+    apps: List<Application>,
     onBindCustomWidget: (Int, ComponentName) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -207,7 +207,7 @@ private fun WidgetItem(
             Spacer(modifier = Modifier.width(16.dp))
             Column {
                 val appLabel = try {
-                    apps.find { it.packageName == provider.provider.packageName }?.name ?: ""
+                    apps.find { it.packageName == provider.provider.packageName }?.label ?: ""
                 } catch (_: Exception) {
                     ""
                 }

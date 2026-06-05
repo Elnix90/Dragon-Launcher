@@ -196,8 +196,7 @@
     <string name="add_widget">Añadir widget</string>
     <string name="widgets">Widgets</string>
     <string name="edit">Edición</string>
-    <string name="widgets_floating_apps">Widgets / Aplicaciones flotantes</string>
-    <string name="floating_apps_tab_help">Administre los widgets y aplicaciones flotantes de su espacio de trabajo: agréguelos, reordenelos, cambie su tamaño y colóquelos.\n Fantasma significa que no se puede hacer clic en el widget\nPrimer plano significa que los gestos de arrastre no están registrados en el widget\nPuede probar una combinación de estos dos para lograr la configuración que desee</string>
+    <string name="widgets_tab_help">Administre los widgets y aplicaciones flotantes de su espacio de trabajo: agréguelos, reordenelos, cambie su tamaño y colóquelos.\n Fantasma significa que no se puede hacer clic en el widget\nPrimer plano significa que los gestos de arrastre no están registrados en el widget\nPuede probar una combinación de estos dos para lograr la configuración que desee</string>
     <string name="delete_widget">Eliminar widget</string>
     <string name="add_point">Punto de Añadir</string>
     <string name="remove_point">Punto de eliminación</string>

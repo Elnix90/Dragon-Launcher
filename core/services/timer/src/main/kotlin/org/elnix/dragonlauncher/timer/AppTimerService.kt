@@ -24,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.models.ReminderMode
 import org.elnix.dragonlauncher.common.utils.DateUtils.formatDuration
 import org.elnix.dragonlauncher.i18n.R
@@ -44,7 +45,7 @@ class AppTimerService : Service() {
     private val serviceScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     @Inject
-    private lateinit var permissionManager: PermissionsManager
+    lateinit var permissionManager: PermissionsManager
 
 
     companion object {
@@ -54,8 +55,6 @@ class AppTimerService : Service() {
         const val NOTIF_ID_REMINDER = 9002
 
         const val EXTRA_PACKAGE_NAME = "extra_package_name"
-        const val EXTRA_APP_NAME = "extra_app_name"
-
         // Reminder mode
         const val EXTRA_REMINDER_ENABLED = "extra_reminder_enabled"
         const val EXTRA_REMINDER_INTERVAL_MINUTES = "extra_reminder_interval_min"
@@ -66,24 +65,24 @@ class AppTimerService : Service() {
         const val EXTRA_TIME_LIMIT_MINUTES = "extra_time_limit_min"
 
         const val ACTION_STOP = "org.elnix.dragonlauncher.STOP_TIMER"
+        const val SHOW_LAUNCHER = "com.elnix.dragonlauncher.SHOW_LAUNCHER"
+        const val EXTRA_APP_NAME = "extra_app_name"
 
         fun start(
             ctx: Context,
-            packageName: String,
-            appName: String,
+            application: Application,
             reminderEnabled: Boolean,
             reminderIntervalMinutes: Int,
             reminderMode: ReminderMode,
-            timeLimitEnabled: Boolean,
-            timeLimitMinutes: Int
+            timeLimitMinutes: Int?
         ) {
             val intent = Intent(ctx, AppTimerService::class.java).apply {
-                putExtra(EXTRA_PACKAGE_NAME, packageName)
-                putExtra(EXTRA_APP_NAME, appName)
+                putExtra(EXTRA_PACKAGE_NAME, application.packageName)
+                putExtra(EXTRA_APP_NAME, application.label)
                 putExtra(EXTRA_REMINDER_ENABLED, reminderEnabled)
                 putExtra(EXTRA_REMINDER_INTERVAL_MINUTES, reminderIntervalMinutes)
                 putExtra(EXTRA_REMINDER_MODE, reminderMode)
-                putExtra(EXTRA_TIME_LIMIT_ENABLED, timeLimitEnabled)
+                putExtra(EXTRA_TIME_LIMIT_ENABLED, timeLimitMinutes != null)
                 putExtra(EXTRA_TIME_LIMIT_MINUTES, timeLimitMinutes)
             }
             ctx.startForegroundService(intent)
@@ -481,6 +480,12 @@ class AppTimerService : Service() {
 //            Intent.setFlags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
 //        }
 //        startActivity(intent)
+
+        val broadIntent = Intent(SHOW_LAUNCHER).apply {
+            putExtra(EXTRA_APP_NAME, appName)
+        }
+        sendBroadcast(broadIntent)
+
         val am = getSystemService(ACTIVITY_SERVICE) as ActivityManager
         am.killBackgroundProcesses(trackedPackage)
 

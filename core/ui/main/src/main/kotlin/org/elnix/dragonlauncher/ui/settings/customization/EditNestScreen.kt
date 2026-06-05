@@ -16,7 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -38,21 +38,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.base.model.models.UiCircle
-import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.base.model.serializables.Nest
-import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedback
+import org.elnix.dragonlauncher.common.circles.rotateBy
 import org.elnix.dragonlauncher.enumsui.select.NestEditMode
 import org.elnix.dragonlauncher.enumsui.select.NestEditMode.Drag
 import org.elnix.dragonlauncher.enumsui.select.NestEditMode.Haptic
 import org.elnix.dragonlauncher.enumsui.select.NestEditMode.MinAngle
 import org.elnix.dragonlauncher.enumsui.select.NestEditMode.Other
 import org.elnix.dragonlauncher.enumsui.select.NestEditMode.Radius
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.models.PointViewModel
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
-import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.composition.LocalNests
 import org.elnix.dragonlauncher.ui.defaultDragDistance
 import org.elnix.dragonlauncher.ui.defaultHapticFeedback
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedBackEditorButtonWithPlayTest
@@ -64,45 +65,25 @@ import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.helpers.nests.circlesSettingsOverlay
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
-
-
-/**
- * Rotates the given offset around the origin by the given angle in degrees.
- *
- * A positive angle indicates a counterclockwise rotation around the right-handed 2D Cartesian
- * coordinate system.
- *
- * See: [Rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix)
- */
-fun Offset.rotateBy(angle: Float): Offset {
-    val angleInRadians = angle * (PI / 180)
-    val cos = cos(angleInRadians)
-    val sin = sin(angleInRadians)
-    return Offset((x * cos - y * sin).toFloat(), (x * sin + y * cos).toFloat())
-}
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun NestEditingScreen(
     nestId: Int?,
+    pointViewModel: PointViewModel = activityViewModel(),
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val nests = LocalNests.current
+    val nests by pointViewModel.nests.collectAsState()
 
     if (nestId == null) return
     val currentNest = nests.find { it.id == nestId } ?: run {
         // The nest isn't found in the list, create a new one with this id
         scope.launch {
-            val newList = nests + Nest(id = nestId)
-            SwipeSettingsStore.saveNests(ctx, newList)
-
+            pointViewModel.addNest(Nest(id = 0))
             ctx.showToast("Saved missing nest!")
         }
 
@@ -113,7 +94,7 @@ fun NestEditingScreen(
 
     val angleColor = MaterialTheme.colorScheme.tertiary
 
-    val drawParams = rememberSwipeDefaultParams(
+    val drawParams by rememberSwipeDefaultParams(
         backgroundColor = MaterialTheme.colorScheme.background,
         forceShowAllActionsInCurrentNest = true
     )
@@ -143,26 +124,8 @@ fun NestEditingScreen(
         )
     }
 
-    var pendingNestUpdate by remember { mutableStateOf<List<Nest>?>(null) }
-
-    /**
-     * Saving system, the nests are immutable, they are saved using a pending value, that
-     * asynchronously saves the nests in the datastore
-     */
-    LaunchedEffect(pendingNestUpdate) {
-        pendingNestUpdate?.let { nests ->
-            SwipeSettingsStore.saveNests(ctx, nests)
-            pendingNestUpdate = null
-        }
-    }
-
-
     fun updateNest(block: () -> Nest) {
-        pendingNestUpdate = nests.map { nest ->
-            if (nest.id == nestId) {
-                block()
-            } else nest
-        }
+        pointViewModel.editNest(nestId, block())
     }
 
     fun commitDragDistances(state: Map<Int, Int>) {
@@ -196,10 +159,7 @@ fun NestEditingScreen(
         resetText = stringResource(R.string.reset_nest_text),
         onReset = {
             // Resets current nest to a new one, with the same id (avoids destroying it)
-            pendingNestUpdate = nests.map {
-                if (it.id == nestId) Nest(id = nestId)
-                else it
-            }
+            pointViewModel.editNest(nestId, Nest(id = nestId))
         }
     ) {
         Box(
@@ -373,9 +333,8 @@ fun NestEditingScreen(
                                 },
                                 onDragStateChange = { isDragging ->
                                     if (!isDragging) {
-                                        pendingNestUpdate = nests.map {
-                                            if (it.id == nestId) it.copy(nestRadius = tempRadius)
-                                            else it
+                                        updateNest {
+                                            currentNest.copy(nestRadius = tempRadius)
                                         }
                                     }
                                 }

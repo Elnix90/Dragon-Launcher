@@ -5,6 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import org.elnix.dragonlauncher.base.model.DragonJson
+import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.models.BluetoothADBCommands
 import org.elnix.dragonlauncher.base.model.models.DataADBCommands
 import org.elnix.dragonlauncher.base.model.models.WifiADBCommands
@@ -25,7 +26,6 @@ import org.elnix.dragonlauncher.base.theme.ExtraColors
 @Serializable
 @SerialName("Action")
 sealed class Action {
-
     @Serializable
     @SerialName("LaunchApp")
     data class LaunchApp(
@@ -34,6 +34,13 @@ sealed class Action {
         @Transient
         val timerDuration: Int? = null
     ) : Action() {
+
+        constructor(application: Application) : this(
+            application.packageName,
+            application.profile
+        )
+
+
         companion object {
             fun dummy(): OpenUrl = OpenUrl("")
         }
@@ -190,33 +197,33 @@ sealed class Action {
 
     companion object {
         fun Action?.actionColor(
-            extra: ExtraColors,
+            extraColors: ExtraColors,
             customColor: Color? = null
         ): Color =
             customColor
                 ?: when (this) {
-                    is LaunchApp, is LaunchShortcut, is OpenWidget -> extra.launchApp
-                    is OpenUrl -> extra.openUrl
-                    is OpenAppDrawer -> extra.openAppDrawer
-                    is OpenDragonLauncherSettings -> extra.launcherSettings
-                    is OpenFile -> extra.openFile
+                    is LaunchApp, is LaunchShortcut, is OpenWidget -> extraColors.launchApp
+                    is OpenUrl -> extraColors.openUrl
+                    is OpenAppDrawer -> extraColors.openAppDrawer
+                    is OpenDragonLauncherSettings -> extraColors.launcherSettings
+                    is OpenFile -> extraColors.openFile
 //                    is ReloadApps -> extra.reload
-                    is OpenCircleNest -> extra.openCircleNest
-                    is RunAdbCommand -> extra.runAdbCommand
-                    is ToggleBluetooth -> extra.toggleBluetooth
-                    is ToggleData -> extra.toggleData
-                    is ToggleWifi -> extra.toggleWifi
-                    NotificationShade -> extra.notificationShade
-                    ControlPanel -> extra.controlPanel
-                    Lock -> extra.lock
-                    OpenRecentApps -> extra.openRecentApps
-                    GoParentNest -> extra.goParentNest
+                    is OpenCircleNest -> extraColors.openCircleNest
+                    is RunAdbCommand -> extraColors.runAdbCommand
+                    is ToggleBluetooth -> extraColors.toggleBluetooth
+                    is ToggleData -> extraColors.toggleData
+                    is ToggleWifi -> extraColors.toggleWifi
+                    NotificationShade -> extraColors.notificationShade
+                    ControlPanel -> extraColors.controlPanel
+                    Lock -> extraColors.lock
+                    OpenRecentApps -> extraColors.openRecentApps
+                    GoParentNest -> extraColors.goParentNest
                     KillLauncher -> Color.Red
 
                     None, null -> Color.Unspecified
                 }
 
-        val defaultChoosableActions: Set<Action> = setOf(
+        val defaultChoosableActions: List<Action> = listOf(
             OpenCircleNest.dummy(),
             GoParentNest,
             LaunchApp.dummy(),
@@ -237,6 +244,8 @@ sealed class Action {
         )
 
         object ActionJson : DragonJson<Action>()
+
+        val actionsNumber: Int = Action::class.sealedSubclasses.size
 
     }
 }

@@ -2,54 +2,55 @@ package org.elnix.dragonlauncher.ui.remembers
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.common.serializables.IconShape
-import org.elnix.dragonlauncher.base.model.serializables.Nest
+import org.elnix.dragonlauncher.base.cache.DrawPathCache
+import org.elnix.dragonlauncher.base.model.models.SwipeDrawParams
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.DragonCache
+import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.PointViewModel
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.base.model.models.SwipeDrawParams
-import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
-import org.elnix.dragonlauncher.ui.composition.LocalNests
-import org.elnix.dragonlauncher.ui.composition.LocalPoints
 
 
 @Composable
 fun rememberSwipeDefaultParams(
     appsViewModel: AppsViewModel = activityViewModel(),
+    pointViewModel: PointViewModel = activityViewModel(),
     backgroundColor: Color? = null,
-    nests: List<Nest>? = null,
     defaultPointSerializable: Point? = null,
     forceShowAllActionsInCurrentNest: Boolean? = null,
     allowShowIconInCenter: Boolean = false
-): SwipeDrawParams {
+): MutableState<SwipeDrawParams> {
     val ctx = LocalContext.current
     val density = LocalDensity.current
 
-    val points = LocalPoints.current
-    val defaultPointSettings = LocalDefaultPoint.current
-    val nests = nests ?: LocalNests.current
-    val icons = LocalPointIconsCache.current
+    val points by pointViewModel.points.collectAsState()
+    val nests by pointViewModel.nests.collectAsState()
+    val defaultPointSettings by pointViewModel.defaultPoint.collectAsState()
+
     val iconShape = LocalIconShape.current
     val extraColors = LocalExtraColors.current
 
     val surfaceColorDraw = backgroundColor ?: Color.Unspecified
 
-    val defaultPoint = defaultPointSerializable ?: defaultPointSettings
+    val defaultPoint by remember(defaultPointSerializable, defaultPointSettings) {
+        mutableStateOf(
+            defaultPointSerializable ?: defaultPointSettings
+        )
+    }
 
     val maxNestsDepth by UiSettingsStore.maxNestsDepth.asState()
 
@@ -61,7 +62,6 @@ fun rememberSwipeDefaultParams(
     LaunchedEffect(points.size) {
         DrawPathCache.updateMaxCacheSize(points.size)
     }
-
 
     val showAppLaunchPreview by UiSettingsStore.showAppLaunchingPreview.asState()
     val showAppCirclePreview by UiSettingsStore.showCirclePreview.asState()
@@ -76,7 +76,6 @@ fun rememberSwipeDefaultParams(
         backgroundColor,
         points,
         nests,
-        icons,
         defaultPointSerializable,
         ctx,
         defaultPointSettings,
@@ -92,27 +91,27 @@ fun rememberSwipeDefaultParams(
         showAllActionsInCurrentNest,
         effectiveShowAppPreviewIconCenterStartPosition
     ) {
-        SwipeDrawParams(
-            nests = nests,
-            points = points,
-            ctx = ctx,
-            defaultPoint = defaultPoint,
-            pointsIconsCache = icons,
-            surfaceColorDraw = surfaceColorDraw,
-            extraColors = extraColors,
-            maxDepth = maxNestsDepth,
-            iconShape = iconShape,
-            subNestDefaultRadius = subNestDefaultRadiusPixels,
-            showAppCirclePreview = showAppCirclePreview,
-            showAppLaunchPreview = showAppLaunchPreview,
-            showAllActionsOnCurrentCircle = showAllActionsOnCurrentCircle,
-            showAllActionsOnCurrentNest  = showAllActionsInCurrentNest,
-            showAppPreviewIconCenterStartPosition = effectiveShowAppPreviewIconCenterStartPosition,
-            computeIcon = {
-                appsViewModel.reloadPointIcon(it)
-            }
+        mutableStateOf(
+            SwipeDrawParams(
+                nests = nests,
+                points = points,
+                ctx = ctx,
+                defaultPoint = defaultPoint,
+                pointsIconsCache = appsViewModel.pointsIconsCache,
+                surfaceColorDraw = surfaceColorDraw,
+                extraColors = extraColors,
+                maxDepth = maxNestsDepth,
+                iconShape = iconShape,
+                subNestDefaultRadius = subNestDefaultRadiusPixels,
+                showAppCirclePreview = showAppCirclePreview,
+                showAppLaunchPreview = showAppLaunchPreview,
+                showAllActionsOnCurrentCircle = showAllActionsOnCurrentCircle,
+                showAllActionsOnCurrentNest = showAllActionsInCurrentNest,
+                showAppPreviewIconCenterStartPosition = effectiveShowAppPreviewIconCenterStartPosition,
+                computeIcon = {
+                    appsViewModel.iconsService.reloadPointIcon(it)
+                }
+            )
         )
     }
 }
-
-object DrawPathCache : DragonCache<Pair<IconShape, Size>, Path>(200)

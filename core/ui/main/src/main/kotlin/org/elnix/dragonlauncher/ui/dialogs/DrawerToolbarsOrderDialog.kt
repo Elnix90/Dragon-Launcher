@@ -20,27 +20,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.base.Constants
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar
-import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.models.DrawerViewModel
+import org.elnix.dragonlauncher.models.utils.asState
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.text.TextDividerOld
 import sh.calvin.reorderable.ReorderableItem
@@ -49,30 +44,13 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun DrawerToolbarsOrderDialog(
-    onDismiss: () -> Unit,
-    onSelect: (List<DrawerToolbar>) -> Unit
+    drawerViewModel: DrawerViewModel = activityViewModel(),
+    onDismiss: () -> Unit
 ) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+    val showSearchBar by drawerViewModel.showSearchBar.asState()
+    val showRecentlyUsedApps by drawerViewModel.showRecentlyUsedApps.asState()
 
-    val showSearchBar by DrawerSettingsStore.showSearchBar.asState()
-    val showRecentlyUsedApps by DrawerSettingsStore.showRecentlyUsedApps.asState()
-
-    val selectedToolbarItemsStringSet by DrawerSettingsStore.toolbarsOrder.asState()
-    val selectedToolbarItems by remember {
-        derivedStateOf {
-            try {
-                selectedToolbarItemsStringSet.split(',').map {
-                    DrawerToolbar.valueOf(it)
-                }
-            } catch (e: Exception) {
-                logE(Constants.Logging.DRAWER_TAG, e) { "Unable to decode drawerToolbars order, using default value" }
-                DrawerToolbar.entries
-            }
-        }
-    }
-
-
+    val selectedToolbarItems by drawerViewModel.drawerToolbars.asState()
     var toolbarItems by remember { mutableStateOf(selectedToolbarItems.toMutableList()) }
 
     LaunchedEffect(toolbarItems) {
@@ -82,11 +60,9 @@ fun DrawerToolbarsOrderDialog(
         }
     }
 
-
     LaunchedEffect(selectedToolbarItems) {
         toolbarItems = selectedToolbarItems.toMutableList()
     }
-
 
     val lazyListState = rememberLazyListState()
     val reorderState = rememberReorderableLazyListState(
@@ -97,6 +73,7 @@ fun DrawerToolbarsOrderDialog(
             }
         }
     )
+
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = MaterialTheme.colorScheme.surface,
@@ -105,7 +82,8 @@ fun DrawerToolbarsOrderDialog(
             ValidateCancelButtons(
                 onCancel = onDismiss
             ) {
-                onSelect(toolbarItems)
+                drawerViewModel.drawerToolbars.set(toolbarItems)
+                onDismiss()
             }
         },
         title = { Text(stringResource(R.string.choose_action)) },
@@ -138,6 +116,7 @@ fun DrawerToolbarsOrderDialog(
                             ) {
 
                                 if (item == DrawerToolbar.Spacer) {
+                                    @Suppress("DEPRECATION")
                                     TextDividerOld(
                                         text = stringResource(item.resId),
                                         thickness = 5.dp,
@@ -153,11 +132,13 @@ fun DrawerToolbarsOrderDialog(
                                     Checkbox(
                                         checked = checked,
                                         onCheckedChange = {
-                                            scope.launch {
-                                                if (item == DrawerToolbar.RecentlyUsed) {
-                                                    DrawerSettingsStore.showRecentlyUsedApps.set(ctx, !showRecentlyUsedApps)
-                                                } else {
-                                                    DrawerSettingsStore.showSearchBar.set(ctx, !showSearchBar)
+                                            when (item) {
+                                                DrawerToolbar.RecentlyUsed -> {
+                                                    drawerViewModel.showRecentlyUsedApps.set(!showRecentlyUsedApps)
+                                                }
+
+                                                else -> {
+                                                    drawerViewModel.showSearchBar.set(!showSearchBar)
                                                 }
                                             }
                                         }

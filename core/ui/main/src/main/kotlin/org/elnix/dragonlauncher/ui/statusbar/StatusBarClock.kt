@@ -16,7 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.common.serializables.StatusBar
 
-import org.elnix.dragonlauncher.base.Constants.Logging.STATUS_BAR_TAG
+import org.elnix.dragonlauncher.base.STATUS_BAR_TAG
 import org.elnix.dragonlauncher.common.utils.DateUtils.openAlarmApp
 import org.elnix.dragonlauncher.common.utils.DateUtils.openCalendar
 import org.elnix.dragonlauncher.logging.logW

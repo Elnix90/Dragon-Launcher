@@ -39,10 +39,9 @@ import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.models.ReminderMode
 import org.elnix.dragonlauncher.enumsui.toggle.WellbeingPausedAppActions
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ktx.hasUsageStatsPermission
-import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.AppLaunchViewModel
+import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore.pausedApps
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
@@ -64,8 +63,8 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 @Composable
 fun WellbeingTab(
     onBack: () -> Unit,
-    appsViewModel: AppsViewModel = activityViewModel(),
-
+    drawerViewModel: DrawerViewModel = activityViewModel(),
+    appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
     ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -73,18 +72,20 @@ fun WellbeingTab(
     val socialMediaPauseEnabled by WellbeingSettingsStore.socialMediaPauseEnabled.asState()
     val guiltModeEnabled by WellbeingSettingsStore.guiltModeEnabled.asState()
     val pauseDuration by WellbeingSettingsStore.pauseDurationSeconds.asState()
-    val pausedApps by pausedApps.asState()
+    val pausedApps by WellbeingSettingsStore.pausedApps.asState()
+    val reminderEnabled by WellbeingSettingsStore.reminderEnabled.asState()
+    val reminderInterval by WellbeingSettingsStore.reminderIntervalMinutes.asState()
+    val reminderMode by WellbeingSettingsStore.reminderMode.asState()
+    val returnToLauncherEnabled by WellbeingSettingsStore.returnToLauncherEnabled.asState()
 
-    val allApps by appsViewModel.allApps.collectAsState(emptyList())
 
     var showAppPicker by remember { mutableStateOf(false) }
     var showPermissionDialog by remember { mutableStateOf(false) }
     var showOverlayPermissionDialog by remember { mutableStateOf(false) }
 
-    val reminderEnabled by WellbeingSettingsStore.reminderEnabled.asState()
-    val reminderInterval by WellbeingSettingsStore.reminderIntervalMinutes.asState()
-    val reminderMode by WellbeingSettingsStore.reminderMode.asState()
-    val returnToLauncherEnabled by WellbeingSettingsStore.returnToLauncherEnabled.asState()
+
+    val allApps by drawerViewModel.allApps.collectAsState()
+    val hasUsageStatsPermission by appLaunchViewModel.hasUsageStatsPermission.collectAsState()
 
     LaunchedEffect(reminderEnabled, reminderMode) {
         if (reminderEnabled && reminderMode == ReminderMode.Overlay && !Settings.canDrawOverlays(ctx)) {
@@ -121,7 +122,7 @@ fun WellbeingTab(
                         description = stringResource(R.string.guilt_mode_description),
                         enabled = true,
                     ) { newValue ->
-                        if (newValue && !ctx.hasUsageStatsPermission()) {
+                        if (newValue && hasUsageStatsPermission) {
                             showPermissionDialog = true
                         } else {
                             scope.launch {

@@ -8,15 +8,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.SnackbarDefaults.actionColor
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,27 +30,28 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.models.Application.Companion.toLaunchApp
+import org.elnix.dragonlauncher.base.model.models.BluetoothADBCommands
+import org.elnix.dragonlauncher.base.model.models.DataADBCommands
 import org.elnix.dragonlauncher.base.model.models.PointApp
+import org.elnix.dragonlauncher.base.model.models.WifiADBCommands
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
+import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.defaultChoosableActions
+import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.base.model.models.BluetoothADBCommands
-import org.elnix.dragonlauncher.base.Constants
-import org.elnix.dragonlauncher.base.Constants.Actions.defaultChoosableActions
-import org.elnix.dragonlauncher.base.model.models.DataADBCommands
-import org.elnix.dragonlauncher.common.messyfolder.PackageManagerCompat
-import org.elnix.dragonlauncher.base.model.models.WifiADBCommands
-
-.Companion.actionColor
-import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.logging.APP_LAUNCH_TAG
 import org.elnix.dragonlauncher.logging.logD
+import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.actions.ActionIcon
 import org.elnix.dragonlauncher.ui.actions.AppIcon
-import org.elnix.dragonlauncher.ui.actions.actionColor
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.composition.LocalShowLabelsInAddPointDialog
@@ -63,22 +60,22 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.dragon.text.AutoResizeableText
-import kotlin.collections.map
 
 @Suppress("AssignedValueIsNeverRead")
 @Composable
 fun AddPointDialog(
-    actions: Set<Action> = defaultChoosableActions,
-    onNewNest: (() -> Unit)? = null,
+    actions: List<Action> = defaultChoosableActions,
+    drawerViewModel: DrawerViewModel = activityViewModel(),
     onDismiss: () -> Unit,
     onActionSelected: ((Action) -> Unit)? = null,
     onMultipleActionsSelected: ((List<Action>, Boolean) -> Unit)? = null
 ) {
-    require((onActionSelected != null) xor (onMultipleActionsSelected != null))
+    require((onActionSelected != null) xor (onMultipleActionsSelected != null)) {
+        "You can either use onActionSelected or onMultipleActionsSelected but not both at the same time"
+    }
+
 
     val ctx = LocalContext.current
-    val pm = ctx.packageManager
-    val packageManagerCompat = PackageManagerCompat(pm, ctx)
     val scope = rememberCoroutineScope()
 
     var showAppPicker by remember { mutableStateOf(false) }
@@ -148,7 +145,7 @@ fun AddPointDialog(
 
                 if (actualActions.any { it is Action.LaunchApp }) {
 
-                    val dummyLaunchAppAction = Action.LaunchApp("", false, 0)
+                    val dummyLaunchAppAction = Action.LaunchApp.dummy()
                     val dummyPoint = Point.dummySwipePoint(dummyLaunchAppAction)
                     val fakeApp = PointApp(dummyPoint)
                     val color = dummyLaunchAppAction.actionColor(LocalExtraColors.current)
@@ -233,7 +230,7 @@ fun AddPointDialog(
                                 }
                             }
                         )
-                        Spacer(Modifier.height(8.dp))
+                        Spacer(8.dp)
                     }
                 }
             }
@@ -246,13 +243,13 @@ fun AddPointDialog(
             onDismiss = { showAppPicker = false },
             onAppSelected = { app ->
 
-                logD(Constants.Logging.APP_LAUNCH_TAG) { "Selected App: $app" }
+                logD(APP_LAUNCH_TAG) { "Selected App: $app" }
 
                 // Try to query shortcuts, but handle crashes gracefully
                 val list = if (promptForShortcuts) {
                     try {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                            packageManagerCompat.queryAppShortcuts(app.packageName)
+                            drawerViewModel.appsRepository.queryAppShortcuts(app.packageName)
                         } else {
                             emptyList()
                         }
@@ -270,18 +267,14 @@ fun AddPointDialog(
                     shortcuts = list
                     shortcutDialogVisible = true
                 } else {
-                    onActionPicked(
-                        Action.LaunchApp(
-                            app.packageName,
-                            app.isPrivate,
-                            app.userId ?: 0
-                        )
-                    )
+                    onActionPicked(app.toLaunchApp())
                 }
             },
             onMultipleAppsSelected = if (onMultipleActionsSelected != null) {
                 { apps, autoPlace ->
-                    val actions = apps.map { Action.LaunchApp(it.packageName, it.isPrivate, it.userId ?: 0) }
+                    val actions = apps.map {
+                        Action.LaunchApp(it.packageName, it.profile)
+                    }
                     onMultipleActionsSelected(actions, autoPlace)
                     showAppPicker = false
                 }
@@ -359,8 +352,9 @@ fun AddPointDialog(
     }
 
     if (shortcutDialogVisible && selectedApp != null) {
+        val app = selectedApp!!
         AppShortcutPickerDialog(
-            app = selectedApp!!,
+            app = app,
             shortcuts = shortcuts,
             onDismiss = { shortcutDialogVisible = false },
             onShortcutSelected = { pkg, id ->
@@ -368,13 +362,7 @@ fun AddPointDialog(
                 shortcutDialogVisible = false
             },
             onOpenApp = {
-                onActionPicked(
-                    Action.LaunchApp(
-                        selectedApp!!.packageName,
-                        selectedApp!!.isPrivate,
-                        selectedApp!!.userId ?: 0
-                    )
-                )
+                onActionPicked(app.toLaunchApp())
                 onDismiss()
             }
         )
@@ -384,9 +372,6 @@ fun AddPointDialog(
         NestManagementDialog(
             onDismissRequest = { showNestPicker = false },
             title = stringResource(R.string.pick_a_nest),
-            onNewNest = onNewNest,
-            onNameChange = null,
-            onDelete = null,
             onSelect = {
                 onActionPicked(Action.OpenCircleNest(it.id))
                 showNestPicker = false
@@ -446,7 +431,7 @@ private fun AddPointColumn(
         else -> actionLabel(action)
     }
 
-    val color = actionColor(action, extraColors)
+    val color = action.actionColor(extraColors)
 
     DragonTooltip(name) {
         Row(
@@ -462,12 +447,11 @@ private fun AddPointColumn(
         ) {
             ActionIcon(
                 action = action,
-                modifier = Modifier.size(30.dp),
-                showLaunchAppVectorGrid = true
+                size = 30.dp
             )
 
             if (showText()) {
-                Spacer(Modifier.width(5.dp))
+                Spacer(5.dp)
                 AutoResizeableText(
                     name,
                     maxLines = 2

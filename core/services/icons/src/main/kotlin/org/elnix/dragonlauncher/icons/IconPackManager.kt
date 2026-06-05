@@ -503,7 +503,5 @@ class IconPackManager(
             IconPackAppIcon(it)
         }.distinct()
     }
-
-
 }
 

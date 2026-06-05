@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.dokka)
 }
 
 kotlin {
@@ -42,7 +43,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.stringsimilarity)
-
+    implementation(libs.bundles.kotlin)
     api(libs.androidx.ui.graphics)
 
     api(project(":core:libs:material-color-utilities"))

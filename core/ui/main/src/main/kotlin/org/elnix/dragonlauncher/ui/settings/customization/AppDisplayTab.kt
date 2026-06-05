@@ -16,7 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.Constants.Logging.TAG
+import org.elnix.dragonlauncher.base.TAG
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
 import org.elnix.dragonlauncher.common.serializables.MainScreenLayerJson
 

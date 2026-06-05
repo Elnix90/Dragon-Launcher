@@ -43,8 +43,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.base.Constants.Logging.BACKUP_TAG
-import org.elnix.dragonlauncher.base.Constants.Logging.THEMES_TAG
+import org.elnix.dragonlauncher.base.BACKUP_TAG
+import org.elnix.dragonlauncher.base.THEMES_TAG
 import org.elnix.dragonlauncher.base.model.models.ThemeObject
 import org.elnix.dragonlauncher.common.loader.loadThemes
 import org.elnix.dragonlauncher.common.utils.DateUtils.today
@@ -109,7 +109,7 @@ fun ThemesTab(
                     ColorModesSettingsStore.colorTestMode.set(ctx, true)
 
                     SettingsBackupManager.importTheme(ctx, json)
-                    backupViewModel.setResult(
+                    backupViewModel.result.set(
                         BackupResult(
                             export = false,
                             error = false,
@@ -122,7 +122,7 @@ fun ThemesTab(
                     ColorSettingsStore.restoreColors(ctx)
                     ColorModesSettingsStore.colorTestMode.reset(ctx)
 
-                    backupViewModel.setResult(
+                    backupViewModel.result.set(
                         BackupResult(
                             export = false,
                             error = true,
@@ -176,7 +176,7 @@ fun ThemesTab(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(stringResource(R.string.loading_themes))
-                androidx.compose.foundation.layout.Spacer(Modifier.height(20.dp))
+                androidx.compose.foundation.layout.Spacer(20.dp))
                 LoadingIndicator()
             }
         } else {

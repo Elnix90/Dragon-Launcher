@@ -83,7 +83,7 @@ fun SettingsScaffold(
             ) {
                 if (bottomContent != null) {
                     bottomContent()
-                    Spacer(Modifier.height(5.dp))
+                    Spacer(5.dp))
                 }
 
                 if (specialSettingsTitle != null) {

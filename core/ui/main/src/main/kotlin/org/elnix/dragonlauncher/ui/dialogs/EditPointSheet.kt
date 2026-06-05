@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,24 +43,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
+import org.elnix.dragonlauncher.base.model.serializables.CycleActionStage
 import org.elnix.dragonlauncher.base.util.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.common.serializables.CycleActionStage
-.Companion.actionColor
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.enumsui.select.PointFeaturePanel
 import org.elnix.dragonlauncher.enumsui.select.SelectedUnselectedViewMode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore.defaultPoint
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.actionLabel
-import org.elnix.dragonlauncher.ui.activityViewModel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.PointPreviewCanvas
-import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
-import org.elnix.dragonlauncher.ui.composition.LocalNests
 import org.elnix.dragonlauncher.ui.defaultHapticFeedback
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
@@ -81,17 +82,14 @@ fun EditPointSheet(
     point: Point,
     isDefaultEditing: Boolean = false,
     appsViewModel: AppsViewModel = activityViewModel(),
-    /** When non-null, "Create new nest" is shown in the Live Nest nest picker (same as [AddPointDialog]). */
-    onNewNest: (() -> Unit)?,
-    onRenameNest: ((id: Int, name: String) -> Unit)?,
-    onDeleteNest: ((id: Int) -> Unit)?,
+    pointViewModel: PointViewModel = activityViewModel(),
     onDismiss: () -> Unit,
     onConfirm: (Point) -> Unit
 ) {
     val extraColors = LocalExtraColors.current
-    val defaultPoint = LocalDefaultPoint.current
 
-    val nests = LocalNests.current
+    val defaultPoint by pointViewModel.defaultPoint.collectAsState()
+    val nests by pointViewModel.nests.collectAsState()
 
     val iconService = appsViewModel.iconsService
 
@@ -103,12 +101,10 @@ fun EditPointSheet(
     var showSelectedShapePickerDialog by remember { mutableStateOf(false) }
     var showHapticFeedbackEditor by remember { mutableStateOf(false) }
 
-    /*  ─────────────  Live Nest / Cycle Actions: single expanded panel  ─────────────  */
     var expandedFeaturePanel: PointFeaturePanel? by remember { mutableStateOf(null) }
     var showLiveNestNestPicker by remember { mutableStateOf(false) }
     var showHoldAndRunActionDialog by remember { mutableStateOf(false) }
 
-    // Cycle Actions: index of the stage whose action / haptic is being edited (null = none).
     var editingCycleStageActionIndex by remember { mutableStateOf<Int?>(null) }
     var editingCycleStageHapticIndex by remember { mutableStateOf<Int?>(null) }
 
@@ -311,18 +307,15 @@ fun EditPointSheet(
                 }
 
                 AnimatedContent(expandedFeaturePanel) { expandedFeature ->
-                    @Suppress("UnusedExpression")
                     when (expandedFeature) {
                         PointFeaturePanel.LiveNest -> {
 
                             val liveNestEnabled = editPoint.liveNestTargetNestId != null
                             val targetNest = nests.find { it.id == editPoint.liveNestTargetNestId }
                             val nestLabel = targetNest?.name ?: targetNest?.let { "Nest ${it.id}" } ?: ""
-                            ""
 
                             Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                                 if (!liveNestEnabled && !isDefaultEditing) {
-                                    /*  ─── "Pick Nest" enable row — mirrors Cycle Actions "Add Stage" ───  */
                                     DragonButton(
                                         modifier = Modifier.fillMaxWidth(),
                                         onClick = { showLiveNestNestPicker = true }
@@ -337,7 +330,6 @@ fun EditPointSheet(
                                             description = stringResource(R.string.default_point_live_nest_defaults_summary)
                                         )
                                     } else {
-                                        /*  ─── Nest picker row ───  */
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
                                             horizontalArrangement = Arrangement.spacedBy(5.dp)
@@ -1068,9 +1060,6 @@ fun EditPointSheet(
         NestManagementDialog(
             onDismissRequest = { showLiveNestNestPicker = false },
             title = stringResource(R.string.pick_a_nest),
-            onNewNest = onNewNest,
-            onNameChange = onRenameNest,
-            onDelete = onDeleteNest,
             onSelect = { selectedNest ->
                 editPoint = editPoint.copy(
                     liveNestTargetNestId = selectedNest.id,

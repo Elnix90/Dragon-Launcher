@@ -2,10 +2,10 @@ package org.elnix.dragonlauncher.settings.stores.map
 
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.boolean
-import org.elnix.dragonlauncher.settings.bases.int
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
-import org.elnix.dragonlauncher.settings.bases.point
+import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
+import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
+import org.elnix.dragonlauncher.settings.bases.objects.PointSettingObject.Companion.point
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 object SwipeMapSettingsStore : MapSettingsStore(DataStoreName.SWIPE_MAP) {

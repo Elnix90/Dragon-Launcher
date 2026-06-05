@@ -91,6 +91,7 @@ dependencies {
     api(project(":core:enumsui"))
     api(project(":core:settings"))
 
+    implementation(project(":core:ktx"))
     implementation(project(":core:shizuku"))
     implementation(project(":core:logging"))
     implementation(project(":core:logging"))

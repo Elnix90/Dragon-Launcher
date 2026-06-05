@@ -130,22 +130,6 @@
             </intent-filter>
         </activity>
 
-
-        <activity
-            android:name="org.elnix.dragonlauncher.activities.DigitalPauseActivity"
-            android:enableOnBackInvokedCallback="true"
-            android:excludeFromRecents="true"
-            android:exported="false"
-            android:launchMode="singleTop"
-            android:theme="@style/DragonLauncherTheme" />
-
-        <activity
-            android:name="org.elnix.dragonlauncher.activities.TimeLimitExceededActivity"
-            android:excludeFromRecents="true"
-            android:exported="false"
-            android:launchMode="singleTop"
-            android:theme="@style/DragonLauncherTheme" />
-
         <service
             android:name="org.elnix.dragonlauncher.services.DragonNotificationListenerService"
             android:exported="false"

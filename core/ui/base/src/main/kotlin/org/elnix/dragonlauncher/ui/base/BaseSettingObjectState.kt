@@ -14,7 +14,9 @@ import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
  *
  * @param default Optional default value to use before the first emission. If null, the setting's own default is used.
  * @return A [State] holding the current value of the setting.
+ *
  */
+@Deprecated("Use the viewModel asState instead")
 @Composable
 fun <T, R> BaseSettingObject<T, R>.asState(default: T? = null): State<T> {
     val ctx = LocalContext.current
@@ -29,6 +31,7 @@ fun <T, R> BaseSettingObject<T, R>.asState(default: T? = null): State<T> {
  *
  * @return A [State] holding the current value of the setting, or null if not yet set.
  */
+@Deprecated("Use the viewModel asState instead")
 @Composable
 fun <T, R> BaseSettingObject<T, R>.asStateNull(): State<T?> {
     val ctx = LocalContext.current

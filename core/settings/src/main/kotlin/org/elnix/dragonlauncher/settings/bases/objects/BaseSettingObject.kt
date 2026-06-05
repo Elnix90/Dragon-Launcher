@@ -18,8 +18,7 @@ import org.elnix.dragonlauncher.settings.resolveDataStore
  * Abstract base class for strongly-typed settings persisted in [androidx.datastore.core.DataStore].
  *
  * Provides a consistent API for getting/setting individual settings with type-safe encoding/decoding,
- * reactive flows for UI observation, and change callbacks. Extends [AnySettingObject] for use in
- * heterogeneous collections like [org.elnix.dragonlauncher.settings.bases.stores.BaseSettingsStore.ALL].
+ * reactive flows for UI observation, and change callbacks.
  *
  * @param T The strongly-typed value type of this setting (e.g., `Boolean`, `String`, custom data class).
  * @param R The raw [Preferences.Key] value type stored in DataStore (e.g., `Boolean`, `String`).
@@ -31,33 +30,14 @@ import org.elnix.dragonlauncher.settings.resolveDataStore
  * @param decode Converts raw DataStore value → [T].
  * @param onChanged Optional callback invoked after successful set/reset operations.
  */
-class BaseSettingObject<T, R>(
-    val key: String,
-    val dataStoreName: DataStoreName,
-    val default: T,
-    private val preferenceKey: Preferences.Key<R>,
-    val encode: (T) -> R?,
-    val decode: (Any?) -> T,
-    var onChanged: (() -> Unit)?
-) : AnySettingObject {
-
-
-//    /**
-//     * Returns the current value of this setting in a type-erased form.
-//     *
-//     * This method is part of the type-erased settings API and allows heterogeneous
-//     * collections of settings to be accessed without knowing their concrete generic
-//     * type parameters at compile time.
-//     *
-//     * Internally, this simply delegates to [get], preserving the original value,
-//     * but exposes it as [Any?] so it can be used in generic containers such as
-//     * maps or lists of mixed setting types.
-//     *
-//     * @param ctx Android context used to access the underlying data store.
-//     * @return The current value of this setting, or its default value if none
-//     *         has been persisted yet.
-//     */
-//    override suspend fun getAny(ctx: Context) = get(ctx)
+sealed class BaseSettingObject<T, R> {
+    abstract val key: String
+    abstract val dataStoreName: DataStoreName
+    abstract val default: T
+    abstract val preferenceKey: Preferences.Key<R>
+    abstract val encode: (T) -> R?
+    abstract val decode: (Any?) -> T
+    abstract var onChanged: (() -> Unit)?
 
     /**
      * Sets the value of this setting using a type-erased input.
@@ -75,7 +55,7 @@ class BaseSettingObject<T, R>(
      *
      * @throws ClassCastException if [value] is not of the expected raw type [R].
      */
-    override suspend fun setAny(ctx: Context, value: Any?) {
+    suspend fun setAny(ctx: Context, value: Any?) {
         @Suppress("UNCHECKED_CAST")
         set(ctx, value as? T)
     }

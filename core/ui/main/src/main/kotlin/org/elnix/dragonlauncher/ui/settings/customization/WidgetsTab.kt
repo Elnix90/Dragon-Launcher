@@ -56,7 +56,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -66,37 +65,35 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
-import org.elnix.dragonlauncher.base.ktx.toDp
-import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.base.Constants.Logging.WIDGET_TAG
-
-import org.elnix.dragonlauncher.common.serializables.FloatingAppsJson
-import org.elnix.dragonlauncher.common.serializables.IconShape
-
-import org.elnix.dragonlauncher.base.undoredo.UndoRedoManager
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
+import org.elnix.dragonlauncher.base.model.serializables.Widget
+import org.elnix.dragonlauncher.common.circles.rotateBy
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.Center
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.ResetRotation
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.ResetZoom
-import org.elnix.dragonlauncher.enumsui.toggle.UndRedoEditTools
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsAddNestRemove
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsCenterReset
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsMoveUpDown
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsSnapping
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsUpDown
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.toDp
+import org.elnix.dragonlauncher.logging.WIDGET_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.models.WidgetsViewModel.ResizeCorner
+import org.elnix.dragonlauncher.models.utils.asState
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
-import org.elnix.dragonlauncher.settings.stores.array.WidgetsSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
-import org.elnix.dragonlauncher.ui.composition.LocalWidgetsViewModel
 import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
@@ -107,6 +104,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonColumn
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.helpers.SmallShapeRow
+import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 import kotlin.math.atan2
@@ -118,21 +116,18 @@ import kotlin.math.sin
 @Composable
 fun WidgetsTab(
     onBack: () -> Unit,
+    widgetsViewModel: WidgetsViewModel = activityViewModel(),
     onLaunchSystemWidgetPicker: (nestId: Int) -> Unit,
     onResetWidgetSize: (id: Int, widgetId: Int) -> Unit,
     onRemoveWidget: (Widget) -> Unit,
     initialNestId: Int = 0
 ) {
-    val ctx = LocalContext.current
-
-    val floatingAppsViewModel = LocalWidgetsViewModel.current
-    val cellSizePx by floatingAppsViewModel.cellSizePx.collectAsState()
-    val cellSizeDp by floatingAppsViewModel.cellSizeDp.collectAsState()
+    val cellSizePx by widgetsViewModel.cellSizePx.collectAsState()
+    val cellSizeDp by widgetsViewModel.cellSizeDp.asState()
+    val widgets by widgetsViewModel.widgets.collectAsState()
     val scope = rememberCoroutineScope()
 
     val widgetsDebugInfos by DebugSettingsStore.widgetsDebugInfo.asState()
-
-    val floatingApps by floatingAppsViewModel.floatingApps.collectAsState()
 
     var selected by remember { mutableStateOf<Widget?>(null) }
     val aWidgetIsSelected = selected != null
@@ -148,60 +143,9 @@ fun WidgetsTab(
     var isPrecisionModeActive by remember { mutableStateOf(false) }
 
 
-
-    /* ───────────────────────────────────────────────────────────────── */
-
-    fun snapshotWidgets(): List<Widget> = floatingApps.map { it.copy() }
-
-
-    val undoRedo = remember { UndoRedoManager() }
-
-    LaunchedEffect(Unit) {
-        undoRedo.register(
-            key = "floatingApps",
-            snapshot = { snapshotWidgets() },
-            restore = {
-                floatingAppsViewModel.restoreFloatingApps(it)
-                selected = floatingApps.find { p -> p.id == (selected?.id ?: "") }
-            }
-        )
-    }
-
-    fun save() {
-        scope.launch {
-            WidgetsSettingsStore.jsonSetting.set(ctx, FloatingAppsJson.encodeFloatingApps(snapshotWidgets()))
-        }
-    }
-
-    fun applyChange(mutator: () -> Unit) {
-        undoRedo.applyChange(mutator)
-        save()
-    }
-
-    fun undo() {
-        undoRedo.undo()
-        save()
-    }
-
-    fun redo() {
-        undoRedo.redo()
-        save()
-    }
-
-    fun undoAll() {
-        undoRedo.undoAll()
-        save()
-    }
-
-    fun redoAll() {
-        undoRedo.redoAll()
-        save()
-    }
-
-
-    fun removeWidget(floatingApp: Widget) {
-        onRemoveWidget(floatingApp)
-        if (selected == floatingApp) selected = null
+    fun removeWidget(widget: Widget) {
+        onRemoveWidget(widget)
+        if (selected == widget) selected = null
     }
 
     val handleBack = {
@@ -222,21 +166,14 @@ fun WidgetsTab(
     SettingsScaffold(
         title = stringResource(R.string.widgets),
         onBack = handleBack,
-        helpText = stringResource(R.string.floating_apps_tab_help),
-        onReset = {
-            scope.launch {
-                applyChange {
-                    floatingAppsViewModel.resetAllFloatingApps()
-                }
-            }
-        },
+        helpText = stringResource(R.string.widgets_tab_help),
+        onReset = { widgetsViewModel.resetAllWidgets() },
         applyPadding = false,
         scrollableContent = false,
         otherIcons = arrayOf(
             Triple(
-                {
-                    showMoreSheet = !showMoreSheet
-                }, R.drawable.more_vert,
+                { showMoreSheet = !showMoreSheet },
+                R.drawable.more_vert,
                 stringResource(R.string.more)
             )
         ),
@@ -252,49 +189,24 @@ fun WidgetsTab(
                         }
                     }
                 ) { entry ->
-                    scope.launch {
-                        when (entry) {
-                            WidgetsToolsSnapping.SnapGrid -> {
-                                snapMove = !snapMove
-                            }
+                    when (entry) {
+                        WidgetsToolsSnapping.SnapGrid -> {
+                            snapMove = !snapMove
+                        }
 
-                            WidgetsToolsSnapping.SnapResize -> {
-                                snapResize = !snapResize
-                            }
+                        WidgetsToolsSnapping.SnapResize -> {
+                            snapResize = !snapResize
+                        }
 
-                            WidgetsToolsSnapping.SnapRotation -> {
-                                snapRotation = !snapRotation
-                            }
+                        WidgetsToolsSnapping.SnapRotation -> {
+                            snapRotation = !snapRotation
                         }
                     }
+
                 }
 
                 Spacer(12.dp)
-
-                // Undo/Redo bar
-                val undoButtonEnabled = undoRedo.canUndo
-                val redoButtonEnabled = undoRedo.canRedo
-
-                MultiSelectConnectedButtonRow(
-                    entries = UndRedoEditTools.entries,
-                    enabled = {
-                        when (it) {
-                            UndRedoEditTools.UndoAll -> undoButtonEnabled
-                            UndRedoEditTools.Undo -> undoButtonEnabled
-                            UndRedoEditTools.Redo -> redoButtonEnabled
-                            UndRedoEditTools.RedoAll -> redoButtonEnabled
-                        }
-                    }
-                ) { entry ->
-                    scope.launch {
-                        when (entry) {
-                            UndRedoEditTools.UndoAll -> undoAll()
-                            UndRedoEditTools.Undo -> undo()
-                            UndRedoEditTools.Redo -> redo()
-                            UndRedoEditTools.RedoAll -> redoAll()
-                        }
-                    }
-                }
+                UndoRedoBlock(widgetsViewModel.undoRedo)
             }
 
 
@@ -314,23 +226,17 @@ fun WidgetsTab(
                         }
                     }
                 ) { entry ->
-                    scope.launch {
-                        when (entry) {
-                            WidgetsToolsAddNestRemove.Add -> {
-                                showAddDialog = true
-                            }
+                    when (entry) {
+                        WidgetsToolsAddNestRemove.Add -> {
+                            showAddDialog = true
+                        }
 
-                            WidgetsToolsAddNestRemove.Nests -> {
-                                showNestPickerDialog = true
-                            }
+                        WidgetsToolsAddNestRemove.Nests -> {
+                            showNestPickerDialog = true
+                        }
 
-                            WidgetsToolsAddNestRemove.Remove -> {
-                                selected?.let {
-                                    applyChange {
-                                        removeWidget(it)
-                                    }
-                                }
-                            }
+                        WidgetsToolsAddNestRemove.Remove -> {
+                            selected?.let { removeWidget(it) }
                         }
                     }
                 }
@@ -347,25 +253,19 @@ fun WidgetsTab(
                         checked = { true },
                         enabled = { aWidgetIsSelected }
                     ) { entry ->
-                        scope.launch {
-                            when (entry) {
-                                WidgetsToolsCenterReset.Center -> {
-                                    selected?.let {
-                                        applyChange {
-                                            floatingAppsViewModel.centerFloatingApp(it.id)
-                                        }
-                                    }
+                        when (entry) {
+                            WidgetsToolsCenterReset.Center -> {
+                                selected?.let {
+                                    widgetsViewModel.centerWidget(it.id)
                                 }
+                            }
 
-                                WidgetsToolsCenterReset.Reset -> {
-                                    selected?.let {
-                                        applyChange {
-                                            if (it.action is Action.OpenWidget) {
-                                                onResetWidgetSize(it.id, (it.action as Action.OpenWidget).widgetId)
-                                            } else {
-                                                floatingAppsViewModel.resetFloatingAppSize(it.id)
-                                            }
-                                        }
+                            WidgetsToolsCenterReset.Reset -> {
+                                selected?.let {
+                                    if (it.action is Action.OpenWidget) {
+                                        onResetWidgetSize(it.id, (it.action as Action.OpenWidget).widgetId)
+                                    } else {
+                                        widgetsViewModel.resetWidgetSize(it.id)
                                     }
                                 }
                             }
@@ -377,28 +277,26 @@ fun WidgetsTab(
                         showLabel = false,
                         checked = { true }
                     ) { entry ->
-                        scope.launch {
-                            when (entry) {
-                                WidgetsToolsUpDown.Up -> {
-                                    if (floatingApps.isNotEmpty()) {
-                                        val idx = floatingApps.indexOfFirst { it == selected }
-                                        val next = if (idx <= 0) floatingApps.last() else floatingApps[idx - 1]
-                                        selected = next
-                                    }
+                        when (entry) {
+                            WidgetsToolsUpDown.Up -> {
+                                if (widgets.isNotEmpty()) {
+                                    val idx = widgets.indexOfFirst { it == selected }
+                                    val next = if (idx <= 0) widgets.last() else widgets[idx - 1]
+                                    selected = next
                                 }
+                            }
 
-                                WidgetsToolsUpDown.Down -> {
-                                    if (floatingApps.isNotEmpty()) {
-                                        val idx = floatingApps.indexOfFirst { it == selected }
-                                        val next = if (idx == -1 || idx == floatingApps.lastIndex) floatingApps.first() else floatingApps[idx + 1]
-                                        selected = next
-                                    }
+                            WidgetsToolsUpDown.Down -> {
+                                if (widgets.isNotEmpty()) {
+                                    val idx = widgets.indexOfFirst { it == selected }
+                                    val next = if (idx == -1 || idx == widgets.lastIndex) widgets.first() else widgets[idx + 1]
+                                    selected = next
                                 }
                             }
                         }
                     }
 
-                    val upDownEnabled = aWidgetIsSelected && floatingApps.size > 1
+                    val upDownEnabled = aWidgetIsSelected && widgets.size > 1
 
                     MultiSelectConnectedButtonColumn(
                         entries = WidgetsToolsMoveUpDown.entries,
@@ -406,22 +304,17 @@ fun WidgetsTab(
                         enabled = { upDownEnabled },
                         checked = { upDownEnabled }
                     ) { entry ->
-                        scope.launch {
-                            when (entry) {
-                                WidgetsToolsMoveUpDown.MoveUp -> {
-                                    selected?.let {
-                                        applyChange {
-                                            floatingAppsViewModel.moveFloatingAppDown(it.id)
-                                        }
-                                    }
-                                }
+                        when (entry) {
+                            WidgetsToolsMoveUpDown.MoveUp -> {
+                                selected?.let {
+                                    widgetsViewModel.moveWidgetDown(it.id)
 
-                                WidgetsToolsMoveUpDown.MoveDown -> {
-                                    selected?.let {
-                                        applyChange {
-                                            floatingAppsViewModel.moveFloatingAppUp(it.id)
-                                        }
-                                    }
+                                }
+                            }
+
+                            WidgetsToolsMoveUpDown.MoveDown -> {
+                                selected?.let {
+                                    widgetsViewModel.moveWidgetUp(it.id)
                                 }
                             }
                         }
@@ -511,25 +404,19 @@ fun WidgetsTab(
                         }
                 )
 
-                floatingApps
+                widgets
                     .filter { it.nestId == nestId }
-                    .forEach { floatingApp ->
-                        DraggableFloatingApp(
-                            widgetsViewModel = floatingAppsViewModel,
-                            app = floatingApp,
+                    .forEach { widget ->
+                        DraggableWidget(
+                            widgetsViewModel = widgetsViewModel,
+                            app = widget,
                             snapRotation = { snapRotation },
                             snapMove = { snapMove },
                             snapResize = { snapResize },
-                            selected = floatingApp.id == selected?.id,
+                            selected = widget.id == selected?.id,
                             onPrecisionModeChange = { isPrecisionModeActive = it },
-                            onSelect = { selected = floatingApp },
-                            onEdit = {
-                                applyChange {
-                                    logD(WIDGET_TAG) { "applyChange\nold widget: ${floatingApp.shape}\new one: ${it.shape}" }
-
-                                    floatingAppsViewModel.editFloatingApp(it)
-                                }
-                            }
+                            onSelect = { selected = widget },
+                            onEdit = { widgetsViewModel.editWidget(it) }
                         )
                     }
             }
@@ -555,9 +442,9 @@ fun WidgetsTab(
                 }
             }
 
-            if (widgetsDebugInfos && floatingApps.isNotEmpty()) {
+            if (widgetsDebugInfos && widgets.isNotEmpty()) {
                 DragonColumnGroup {
-                    floatingApps.forEach {
+                    widgets.forEach {
                         Text(it.toString())
                     }
                 }
@@ -570,26 +457,13 @@ fun WidgetsTab(
     if (showAddDialog) {
         AddPointDialog(
             onDismiss = { showAddDialog = false },
-            actions = setOf(
-                Action.OpenWidget(0, "", ""),
-                Action.OpenCircleNest(0),
-                Action.GoParentNest,
-                Action.LaunchShortcut("", ""),
-                Action.LaunchApp("", false, 0),
-                Action.OpenUrl(""),
-                Action.OpenFile(""),
-                Action.NotificationShade,
-                Action.ControlPanel,
-                Action.OpenAppDrawer(),
-                Action.Lock,
-                Action.ReloadApps,
-                Action.OpenRecentApps,
-                Action.OpenDragonLauncherSettings()
-            ),
+            actions = Action.defaultChoosableActions.toMutableList().apply {
+                add(0, Action.OpenWidget.dummy())
+            },
             onActionSelected = { action ->
                 when (action) {
                     is Action.OpenWidget -> onLaunchSystemWidgetPicker(nestId)
-                    else -> floatingAppsViewModel.addFloatingApp(action, nestId = nestId)
+                    else -> widgetsViewModel.addWidget(action, nestId = nestId)
                 }
                 showAddDialog = false
             }
@@ -601,8 +475,8 @@ fun WidgetsTab(
         DragonModalBottomSheet(
             onDismissRequest = { showMoreSheet = false },
         ) {
-            Text("${stringResource(R.string.widget_number_total)}: ${floatingApps.size}")
-            Text("${stringResource(R.string.widget_number_nest)}: ${floatingApps.count { it.nestId == nestId }}")
+            Text("${stringResource(R.string.widget_number_total)}: ${widgets.size}")
+            Text("${stringResource(R.string.widget_number_nest)}: ${widgets.count { it.nestId == nestId }}")
             Text("${stringResource(R.string.current_nest)}: $nestId")
 
             HorizontalDivider()
@@ -652,10 +526,10 @@ fun WidgetsTab(
                 value = cellSizeDp,
                 valueRange = 1..100,
                 onReset = {
-                    floatingAppsViewModel.updateCellSize(null)
+                    widgetsViewModel.cellSizeDp.set(null)
                 },
             ) {
-                floatingAppsViewModel.updateCellSize(it)
+                widgetsViewModel.cellSizeDp.set(it)
             }
         }
     }
@@ -663,10 +537,7 @@ fun WidgetsTab(
     if (showNestPickerDialog) {
         NestManagementDialog(
             onDismissRequest = { showNestPickerDialog = false },
-            title = stringResource(R.string.pick_a_nest),
-            onDelete = null,
-            onNewNest = null,
-            onNameChange = null
+            title = stringResource(R.string.pick_a_nest)
         ) {
             logD(WIDGET_TAG) { it.toString() }
             nestId = it.id
@@ -703,7 +574,7 @@ fun WidgetsTab(
  * @param onEdit Called at the end of any drag (move, resize, rotate) with the updated [Widget].
  */
 @Composable
-private fun DraggableFloatingApp(
+private fun DraggableWidget(
     widgetsViewModel: WidgetsViewModel,
     app: Widget,
     selected: Boolean,
@@ -766,7 +637,7 @@ private fun DraggableFloatingApp(
         )
     }
 
-    fun resizeFloatingApp(corner: ResizeCorner, dxPx: Float, dyPx: Float) {
+    fun resizeWidget(corner: ResizeCorner, dxPx: Float, dyPx: Float) {
         val deltaSpanX = dxPx / cellSizePx
         val deltaSpanY = dyPx / cellSizePx
         val deltaPosX = dxPx / widthPixels
@@ -1024,7 +895,7 @@ private fun DraggableFloatingApp(
                             onDragEnd = ::commitChange
                         ) { change, dragAmount ->
                             change.consume()
-                            resizeFloatingApp(ResizeCorner.Top, 0f, dragAmount.y)
+                            resizeWidget(ResizeCorner.Top, 0f, dragAmount.y)
                         }
                     }
             ) {
@@ -1049,7 +920,7 @@ private fun DraggableFloatingApp(
                             onDragEnd = ::commitChange
                         ) { change, dragAmount ->
                             change.consume()
-                            resizeFloatingApp(ResizeCorner.Bottom, 0f, dragAmount.y)
+                            resizeWidget(ResizeCorner.Bottom, 0f, dragAmount.y)
                         }
                     }
             ) {
@@ -1074,7 +945,7 @@ private fun DraggableFloatingApp(
                             onDragEnd = ::commitChange
                         ) { change, dragAmount ->
                             change.consume()
-                            resizeFloatingApp(ResizeCorner.Left, dragAmount.x, 0f)
+                            resizeWidget(ResizeCorner.Left, dragAmount.x, 0f)
                         }
                     }
             ) {
@@ -1099,7 +970,7 @@ private fun DraggableFloatingApp(
                             onDragEnd = ::commitChange
                         ) { change, dragAmount ->
                             change.consume()
-                            resizeFloatingApp(ResizeCorner.Right, dragAmount.x, 0f)
+                            resizeWidget(ResizeCorner.Right, dragAmount.x, 0f)
                         }
                     }
             ) {

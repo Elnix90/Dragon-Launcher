@@ -60,8 +60,8 @@ import org.elnix.dragonlauncher.base.icons.TextLayer
 import org.elnix.dragonlauncher.base.icons.TintedClockLayer
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
 import org.elnix.dragonlauncher.base.icons.VectorLayer
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.resolveShape
-import org.elnix.dragonlauncher.common.serializables.IconShape
 import org.elnix.dragonlauncher.ktx.drawWithColorFilter
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalTime

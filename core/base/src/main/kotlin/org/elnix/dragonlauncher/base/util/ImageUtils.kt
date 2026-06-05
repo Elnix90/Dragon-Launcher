@@ -34,9 +34,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
 import androidx.core.graphics.withSave
+import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomIconProperties
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
-import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.logging.IMAGE_TAG
@@ -51,7 +51,6 @@ object ImageUtils {
             return BitmapFactory.decodeStream(it!!)
         }
     }
-
 
     fun loadDrawableAsBitmap(
         drawable: Drawable,
@@ -150,7 +149,6 @@ object ImageUtils {
         }
     }
 
-    @Suppress("Unused")
     fun imageBitmapToBase64(imageBitmap: ImageBitmap): String? {
         return try {
             val androidBitmap = imageBitmap.asAndroidBitmap()
@@ -162,7 +160,6 @@ object ImageUtils {
     }
 
 
-    @Suppress("Unused")
     fun blurBitmap(ctx: Context, bitmap: Bitmap, radius: Float): Bitmap {
         if (radius <= 0f) return bitmap
 
@@ -281,10 +278,10 @@ object ImageUtils {
             when (action) {
                 is Action.LaunchApp -> {
                     null
-//                    val dummyAppModel = action.toAppModel()
+//                    val dummyApplication = action.toApplication()
 //
-//                    val cacheKey = dummyAppModel.key
-//                    logD(ICONS_TAG) { "Searching in drawer cache (${icons.cacheUUID})\naction: $action\ndummyApp: $dummyAppModel\n cacheKey: $cacheKey" }
+//                    val cacheKey = dummyApplication.key
+//                    logD(ICONS_TAG) { "Searching in drawer cache (${icons.cacheUUID})\naction: $action\ndummyApp: $dummyApplication\n cacheKey: $cacheKey" }
 //
 //                    icons.getOrCompute(cacheKey) {
 //
@@ -328,7 +325,7 @@ object ImageUtils {
                 Action.Lock -> loadDrawableResAsBitmap(R.drawable.ic_action_lock, width, height)
                 is Action.OpenFile -> loadDrawableResAsBitmap(R.drawable.ic_action_open_file, width, height)
 
-                Action.ReloadApps -> loadDrawableResAsBitmap(R.drawable.ic_action_reload, width, height)
+//                Action.ReloadApps -> loadDrawableResAsBitmap(R.drawable.ic_action_reload, width, height) TODO
 
                 Action.OpenRecentApps -> loadDrawableResAsBitmap(R.drawable.ic_action_recent, width, height)
 

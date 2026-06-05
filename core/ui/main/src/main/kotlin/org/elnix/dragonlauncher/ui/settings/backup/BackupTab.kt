@@ -30,22 +30,22 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.Constants.Logging.BACKUP_TAG
-import org.elnix.dragonlauncher.ktx.getFilePathFromUri
-import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.common.utils.DateUtils.formatDateTime
 import org.elnix.dragonlauncher.common.utils.DateUtils.today
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.getFilePathFromUri
+import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.logging.BACKUP_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
+import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.SettingsBackupManager
 import org.elnix.dragonlauncher.settings.backupableStores
-import org.elnix.dragonlauncher.settings.bases.DatastoreProvider
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dialogs.ExportSettingsDialog
@@ -73,11 +73,11 @@ fun BackupTab(
 
     val autoBackupEnabled by BackupSettingsStore.autoBackupEnabled.asState()
     val autoBackupUriString by BackupSettingsStore.autoBackupUri.asState()
-    val lastBackupTime by PrivateSettingsStore.lastBackupTime.asState()
     val backupStores by BackupSettingsStore.backupStores.asState()
+    val lastBackupTime by PrivateSettingsStore.lastBackupTime.asState()
 
     val selectedStores = remember(backupStores) {
-        mutableStateMapOf<DatastoreProvider, Boolean>().apply {
+        mutableStateMapOf<DataStoreName, Boolean>().apply {
             backupableStores.forEach { put(it.key, it.value.dataStoreName.value in backupStores) }
         }
     }
@@ -103,8 +103,8 @@ fun BackupTab(
         ctx.getFilePathFromUri(uri)
     }
 
-    var selectedStoresForExport by remember { mutableStateOf(setOf<DatastoreProvider>()) }
-    var selectedStoresForImport by remember { mutableStateOf(setOf<DatastoreProvider>()) }
+    var selectedStoresForExport by remember { mutableStateOf(setOf<DataStoreName>()) }
+    var selectedStoresForImport by remember { mutableStateOf(setOf<DataStoreName>()) }
     var importJson by remember { mutableStateOf<JSONObject?>(null) }
     var showImportDialog by remember { mutableStateOf(false) }
     var showExportDialog by remember { mutableStateOf(false) }
@@ -282,7 +282,7 @@ fun BackupTab(
                                 json,
                                 selectedStoresForImport
                             )
-                            backupViewModel.setResult(
+                            backupViewModel.result.set(
                                 BackupResult(
                                     export = false,
                                     error = false,
@@ -292,7 +292,7 @@ fun BackupTab(
                             importJson = null
                         } catch (e: Exception) {
                             logE(BACKUP_TAG, e) { "Import failed" }
-                            backupViewModel.setResult(
+                            backupViewModel.result.set(
                                 BackupResult(
                                     export = false,
                                     error = true,
