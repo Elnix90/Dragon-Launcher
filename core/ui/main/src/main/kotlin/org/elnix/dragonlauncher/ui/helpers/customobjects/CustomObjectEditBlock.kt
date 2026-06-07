@@ -15,10 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject
+import org.elnix.dragonlauncher.base.model.serializables.CustomObjectBlockProperties
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.serializables.CustomGlow
-import org.elnix.dragonlauncher.common.serializables.CustomObjectBlockProperties
-import org.elnix.dragonlauncher.common.serializables.CustomObject
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
@@ -27,7 +27,7 @@ import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 @Composable
 fun EditCustomObjectBlock(
-    title: Int? = null,
+    title: Int? = null, // TODO
     editObject: CustomObject,
     default: CustomObject,
     properties: CustomObjectBlockProperties = CustomObjectBlockProperties(),

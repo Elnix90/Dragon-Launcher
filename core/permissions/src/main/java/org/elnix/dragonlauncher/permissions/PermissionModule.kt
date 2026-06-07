@@ -4,6 +4,7 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -14,7 +15,7 @@ object PermissionModule {
 
     @Provides
     @Singleton
-    fun providePermissionManager(ctx: Context): PermissionsManager {
+    fun providePermissionManager(@ApplicationContext ctx: Context): PermissionsManager {
         return PermissionsManagerImpl(ctx)
     }
 }

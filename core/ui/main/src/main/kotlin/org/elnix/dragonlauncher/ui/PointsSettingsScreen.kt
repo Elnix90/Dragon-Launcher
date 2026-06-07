@@ -168,8 +168,8 @@ fun PointsSettingsScreen(
     val scope = rememberCoroutineScope()
 
     val pointsIconsTrigger by drawerViewModel.pointsIconsCache.iconsTrigger.collectAsState()
-    val showAdvancedEditTools by pointViewModel.showAdvancedPointTools.collectAsState()
-    val showSubNestSlider by pointViewModel.showSubNestSlider.collectAsState()
+    val showAdvancedEditTools by pointViewModel.showAdvancedPointTools.asState()
+    val showSubNestSlider by pointViewModel.showSubNestSlider.asState()
     val isInDragAroundMode by pointViewModel.isInDragAroundMode.asState()
 
     val backgroundColor = MaterialTheme.colorScheme.background

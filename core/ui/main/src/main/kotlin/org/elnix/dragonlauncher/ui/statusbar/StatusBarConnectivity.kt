@@ -20,8 +20,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.serializables.StatusBar
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.getMobileDataStatus
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isAirplaneMode
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isBluetoothEnabled

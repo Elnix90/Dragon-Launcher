@@ -18,8 +18,11 @@ import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.icons.IconPackManager
 import org.elnix.dragonlauncher.icons.IconService
+import org.elnix.dragonlauncher.icons.IconSettings
 import org.elnix.dragonlauncher.models.utils.stateFlowDelegate
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
+import org.elnix.dragonlauncher.notifications.NotificationService
+import org.elnix.dragonlauncher.permissions.PermissionsManager
 import org.elnix.dragonlauncher.recents.RecentsService
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.workspaces.WorkspacesManager
@@ -34,7 +37,9 @@ class DrawerViewModel @Inject constructor(
     private val recentsService: RecentsService,
     val iconsService: IconService,
     val workspaceManager: WorkspacesManager,
-    val appOverrideManager: AppOverridesManager
+    val appOverrideManager: AppOverridesManager,
+    val permissionsManager: PermissionsManager,
+    notificationService: NotificationService
 ) : AndroidViewModel(application) {
 
     val allApps: StateFlow<List<Application>> = appsRepository.getAllApps().stateIn(
@@ -48,6 +53,8 @@ class DrawerViewModel @Inject constructor(
         list.filter { it.isLaunchable && !it.isWork && !it.isSystem && !it.isPrivate }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
+
+    val notifications = notificationService.activeNotifications
 
     fun isAppInstalled(packageName: String) = allApps.map { apps ->
         apps.any { it.packageName == packageName }
@@ -75,7 +82,7 @@ class DrawerViewModel @Inject constructor(
     fun findOne(packageName: String, userHandle: UserHandle) = appsRepository.findOne(packageName, userHandle)
 
     fun search(
-        workspace: Workspace,
+        workspace: Workspace?,
         getOnlyAdded: Boolean = false,
         getOnlyRemoved: Boolean = false
     ) = appsRepository.search(
@@ -111,6 +118,14 @@ class DrawerViewModel @Inject constructor(
     val autoShowKeyboardOnDrawer by stateFlowDelegate(DrawerSettingsStore.autoShowKeyboardOnDrawer)
     val drawerToolbars by stateFlowDelegate(DrawerSettingsStore.toolbarsOrder)
     val iconShape by stateFlowDelegate(DrawerSettingsStore.iconsShape)
+    val gridSize by stateFlowDelegate(DrawerSettingsStore.gridSize)
+    val maxIconSize by stateFlowDelegate(DrawerSettingsStore.maxIconSize)
+
+    val iconSettings = iconsService.iconSettings.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        IconSettings()
+    )
 
     fun getRecentApps(count: Int): StateFlow<List<Application>> {
         return recentsService.getRecentApps(count)
@@ -123,6 +138,11 @@ class DrawerViewModel @Inject constructor(
         SharingStarted.Lazily,
         "user"
     )
+
+
+    fun getIconPickerVM(application: Application) : IconPickerVM =
+        IconPickerVM(application, iconsService)
+
 
     init {
         viewModelInitialized()

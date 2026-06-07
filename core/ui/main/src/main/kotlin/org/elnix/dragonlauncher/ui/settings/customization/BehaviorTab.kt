@@ -27,7 +27,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.LockScreenViewModel
 import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.dialogs.LockMethodDialog

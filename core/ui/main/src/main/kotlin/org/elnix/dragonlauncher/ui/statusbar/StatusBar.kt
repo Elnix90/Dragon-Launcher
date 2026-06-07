@@ -69,6 +69,7 @@ import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.composition.LocalStatusBarElements
@@ -169,7 +170,7 @@ fun StatusBar(
                         )
 
                         if (element.width == -2) { // Special ID for Notch Spacer
-                            Spacer(with(density) { totalCutoutWidth.toDp() }))
+                            Spacer(with(density) { totalCutoutWidth.toDp() })
                         } else {
                             Spacer(modifier)
                         }

@@ -131,16 +131,6 @@
         </activity>
 
         <service
-            android:name="org.elnix.dragonlauncher.services.DragonNotificationListenerService"
-            android:exported="false"
-            android:label="@string/app_name"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
-            <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService" />
-            </intent-filter>
-        </service>
-
-        <service
             android:name="org.elnix.dragonlauncher.timer.OverlayReminderService"
             android:exported="false" />
 
@@ -150,19 +140,6 @@
             android:foregroundServiceType="specialUse" />
 
 
-        <service
-            android:name=".services.SystemControlService"
-            android:exported="false"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
-            tools:ignore="AccessibilityPolicy">
-            <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/system_control_accessibility" />
-        </service>
 
         <provider
             android:name="androidx.core.content.FileProvider"

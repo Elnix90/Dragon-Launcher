@@ -5,7 +5,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
@@ -13,20 +12,19 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.base.DragonCache
+import org.elnix.dragonlauncher.base.cache.DrawPathCache
+import org.elnix.dragonlauncher.base.model.models.SwipeDrawParams
 import org.elnix.dragonlauncher.base.model.models.UiCircle
-import org.elnix.dragonlauncher.base.resolveShape
-import org.elnix.dragonlauncher.common.serializables.IconShape
-
-.Companion.actionColor
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.applyColorAction
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
+import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.util.ImageUtils.loadDrawableResAsImageBitmap
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.base.DragonCache
-import org.elnix.dragonlauncher.base.model.models.SwipeDrawParams
 import org.elnix.dragonlauncher.ui.helpers.customobjects.shapeToPath
-import org.elnix.dragonlauncher.ui.remembers.DrawPathCache
 
 
 fun DrawScope.actionsInCircle(
@@ -187,14 +185,16 @@ fun DrawScope.actionsInCircle(
 
             if (icon != null) {
                 val colorAction = point.action.actionColor(extraColors)
-                drawImage(
-                    image = icon,
-                    dstOffset = dstOffset,
-                    dstSize = intSize,
-                    colorFilter =
-                        if (point.applyColorAction()) ColorFilter.tint(colorAction)
-                        else null
-                )
+
+                TODO()
+//                drawImage(
+//                    image = icon,
+//                    dstOffset = dstOffset,
+//                    dstSize = intSize,
+//                    colorFilter =
+//                        if (point.applyColorAction()) ColorFilter.tint(colorAction)
+//                        else null
+//                )
             }
 
         } else {

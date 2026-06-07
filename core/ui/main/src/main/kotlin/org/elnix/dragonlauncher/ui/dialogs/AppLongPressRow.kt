@@ -31,7 +31,7 @@ import androidx.compose.ui.util.fastForEachIndexed
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
-import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -42,12 +42,12 @@ import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 fun AppLongPressRow(
     app: Application,
     appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
-    appsViewModel: AppsViewModel = activityViewModel(),
+    drawerViewModel: DrawerViewModel = activityViewModel(),
 ) {
     val ctx = LocalContext.current
-    val appOverridesManager = appsViewModel.appOverrideManager
-    val workspacesManager = appsViewModel.workspaceManager
-    val selectedWorkspaceId by appsViewModel.selectedWorkspaceId.collectAsState()
+    val appOverridesManager = drawerViewModel.appOverrideManager
+    val workspacesManager = drawerViewModel.workspaceManager
+    val selectedWorkspaceId by drawerViewModel.selectedWorkspaceId.collectAsState()
 
 
     var showDetailedAppInfoDialog by remember { mutableStateOf(false) }
@@ -197,7 +197,7 @@ fun AppLongPressRow(
     if (showIconDialog) {
         val cacheKey = app.key
 
-        val iconService = appsViewModel.iconsService
+        val iconService = drawerViewModel.iconsService
 
         AppIconEditor(
             app = app,

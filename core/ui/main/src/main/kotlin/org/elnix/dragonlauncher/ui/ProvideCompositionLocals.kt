@@ -11,11 +11,11 @@ import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.base.model.serializables.StatusBarJson
 import org.elnix.dragonlauncher.logging.ICONS_TAG
 import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.models.utils.asState
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
@@ -25,6 +25,7 @@ import org.elnix.dragonlauncher.ui.base.compositionslocals.ProvideCurrentTime
 import org.elnix.dragonlauncher.ui.base.compositionslocals.rememberAppItemSettings
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalEndLineObject
+import org.elnix.dragonlauncher.ui.composition.LocalGridSize
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.composition.LocalLineObject
@@ -38,7 +39,7 @@ import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberHoldCustom
 
 @Composable
 fun ProvideGlobalCompositionLocals(
-    appsViewModel: AppsViewModel = activityViewModel(),
+    drawerViewModel: DrawerViewModel = activityViewModel(),
     pointsViewModel: PointViewModel = activityViewModel(),
     content: @Composable () -> Unit
 ) {
@@ -46,8 +47,8 @@ fun ProvideGlobalCompositionLocals(
 
     val disableHapticFeedbackGlobally by BehaviorSettingsStore.disableHapticFeedbackGlobally.asState()
 
+    val pointsIconCache = drawerViewModel.pointsIconsCache
 
-    val pointsIconCache = appsViewModel.pointsIconsCache
     LaunchedEffect(points.size) {
         logD(ICONS_TAG) { "Updating icons cache size to ${points.size}" }
         pointsIconCache.updateMaxCacheSize(points.size)
@@ -62,13 +63,8 @@ fun ProvideGlobalCompositionLocals(
         }
     }
 
-    val iconsShape by DrawerSettingsStore.iconsShape.asState()
-    // Used internally by the app view model
-    // Caches the icon shape inside to avoid having to pass the shape through each call of a reload icon
-    // Crashes if shape not defined, but as it is passed soon enough, this should be ok (never saw any crash tough)
-    LaunchedEffect(iconsShape) {
-        appsViewModel.cacheIconShape(iconsShape)
-    }
+
+    val gridSize by drawerViewModel.gridSize.asState()
 
     val lineObjects = rememberAngleLineObjects()
     val holdCustomObject = rememberHoldCustomObject()
@@ -76,6 +72,7 @@ fun ProvideGlobalCompositionLocals(
 
     val showTooltipsOnAddPointDialog by UiSettingsStore.showTooltipsOnAddPointDialog.asState()
 
+    val iconShape by drawerViewModel.iconShape.asState()
 
     /**
      * Main Composition local provider, I just for everything I can here to avoid having to import them everywhere
@@ -83,7 +80,8 @@ fun ProvideGlobalCompositionLocals(
      */
     CompositionLocalProvider(
 
-        LocalIconShape provides iconsShape,
+        LocalIconShape provides iconShape,
+        LocalGridSize provides gridSize,
         LocalStatusBarElements provides elements,
 
         LocalLineObject provides lineObjects.line,

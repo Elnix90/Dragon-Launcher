@@ -39,7 +39,7 @@ dependencies {
     ksp(libs.androidx.roomcompiler)
     api(libs.androidx.room)
 
-    implementation(libs.bundles.hilt)
+    implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
     implementation(project(":core:i18n"))

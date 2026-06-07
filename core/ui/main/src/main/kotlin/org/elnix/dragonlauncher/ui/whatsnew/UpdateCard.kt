@@ -14,10 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.base.models.serializables.Update
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import java.text.SimpleDateFormat
 import androidx.compose.ui.platform.LocalLocale
+import org.elnix.dragonlauncher.base.model.serializables.Update
 
 @Composable
 fun UpdateCard(

@@ -36,7 +36,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.commons.text)
 
-    implementation(libs.bundles.hilt)
+    implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
     implementation(project(":core:base"))

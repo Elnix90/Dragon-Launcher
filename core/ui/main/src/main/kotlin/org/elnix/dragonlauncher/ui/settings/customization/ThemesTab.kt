@@ -42,13 +42,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.base.BACKUP_TAG
-import org.elnix.dragonlauncher.base.THEMES_TAG
 import org.elnix.dragonlauncher.base.model.models.ThemeObject
 import org.elnix.dragonlauncher.common.loader.loadThemes
 import org.elnix.dragonlauncher.common.utils.DateUtils.today
 import org.elnix.dragonlauncher.enumsui.select.ExportImportTheme
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.logging.BACKUP_TAG
+import org.elnix.dragonlauncher.logging.THEMES_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
@@ -58,7 +58,7 @@ import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.settings.themeDataStores
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
@@ -176,7 +176,7 @@ fun ThemesTab(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(stringResource(R.string.loading_themes))
-                androidx.compose.foundation.layout.Spacer(20.dp))
+                Spacer(20.dp)
                 LoadingIndicator()
             }
         } else {

@@ -119,7 +119,7 @@ fun NestManagementDialog(
 private fun NestManagementItem(
     pointViewModel: PointViewModel = activityViewModel(),
     nest: Nest,
-    modifier: Modifier
+    modifier: Modifier,
     onSelect: (() -> Unit)? = null
 ) {
     val ctx = LocalContext.current

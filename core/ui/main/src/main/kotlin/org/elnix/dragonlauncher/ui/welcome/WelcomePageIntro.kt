@@ -68,7 +68,7 @@ fun WelcomePageIntro(
             modifier = Modifier.size(260.dp)
         )
 
-        Spacer(32.dp))
+        Spacer(32.dp)
 
         Text(
             stringResource(R.string.welcome_to_dragon_launcher),
@@ -85,7 +85,7 @@ fun WelcomePageIntro(
             fontStyle = FontStyle.Italic
         )
 
-        Spacer(12.dp))
+        Spacer(12.dp)
 
         Text(
             stringResource(R.string.dragon_launcher_headline),

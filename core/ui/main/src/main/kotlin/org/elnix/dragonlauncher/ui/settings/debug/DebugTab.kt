@@ -31,14 +31,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.common.utils.LifecycleUtils
+import org.elnix.dragonlauncher.common.utils.VersionsUtils.getVersionCode
+import org.elnix.dragonlauncher.common.utils.detectSystemLauncher
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
-import org.elnix.dragonlauncher.common.utils.LifecycleUtils
-import org.elnix.dragonlauncher.common.utils.PermissionsUtils.detectSystemLauncher
-import org.elnix.dragonlauncher.common.utils.VersionsUtils.getVersionCode
-import org.elnix.dragonlauncher.models.AppsViewModel
 import org.elnix.dragonlauncher.models.InitializationViewModel
 import org.elnix.dragonlauncher.services.SystemControl
 import org.elnix.dragonlauncher.settings.allStores
@@ -46,9 +44,9 @@ import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.timer.OverlayReminderService
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.dialogs.PointIconEditor
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
@@ -56,13 +54,11 @@ import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
-import org.elnix.dragonlauncher.ui.wellbeing.OverlayReminderService
 
 @Composable
 fun DebugTab(
     onNavigate: (NavigationRoute) -> Unit,
     onBack: () -> Unit,
-    appsViewModel: AppsViewModel = activityViewModel(),
     initializationViewModel: InitializationViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
@@ -369,7 +365,7 @@ fun DebugTab(
                     }
                     OverlayReminderService.show(
                         ctx,
-                        "TikTok",
+                        "(Fuck) TikTok",
                         "25 min",
                         "58 min",
                         "5 min",
@@ -453,15 +449,15 @@ fun DebugTab(
         }
     }
 
-    if (showEditAppOverrides) {
-        PointIconEditor(
-            point = dummySwipePoint(),
-            onDismiss = { showEditAppOverrides = false }
-        ) { newIcon ->
-            appsViewModel.applyIconToApps(
-                icon = newIcon
-            )
-            showEditAppOverrides = false
-        }
-    }
+//    if (showEditAppOverrides) {
+//        PointIconEditor(
+//            point = dummySwipePoint(),
+//            onDismiss = { showEditAppOverrides = false }
+//        ) { newIcon ->
+//            appsViewModel.applyIconToApps(
+//                icon = newIcon
+//            )
+//            showEditAppOverrides = false
+//        }
+//    }
 }

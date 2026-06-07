@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import org.elnix.dragonlauncher.permissions.PermissionsManager
 import javax.inject.Singleton
 
 
@@ -15,5 +16,17 @@ object NotificationsModule {
     @Singleton
     fun provideNotificationRepository(): NotificationRepository {
         return NotificationRepository()
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotificationService(
+        notificationRepository: NotificationRepository,
+        permissionManager: PermissionsManager
+    ): NotificationService {
+        return NotificationService(
+            notificationRepository = notificationRepository,
+            permissionsManager = permissionManager
+        )
     }
 }

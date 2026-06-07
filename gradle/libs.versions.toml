@@ -51,6 +51,7 @@ shizuku = "13.1.0"
 ksp = "2.3.7"
 nav3Core = "1.1.1"
 lifecycleViewmodelNav3 = "2.10.0"
+coil = "2.7.0"
 androidx-palette = "1.0.0"
 
 androidx-room = "2.8.4"
@@ -90,6 +91,10 @@ androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-ru
 androidx-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel-savedstate = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycleRuntimeKtx" }
+
+coil-core = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
+coil-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 androidx-transition = { module = "androidx.transition:transition", version.ref = "transition" }

@@ -16,18 +16,18 @@ import org.elnix.dragonlauncher.base.cache.DrawPathCache
 import org.elnix.dragonlauncher.base.model.models.SwipeDrawParams
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.models.utils.asState
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 
 
 @Composable
 fun rememberSwipeDefaultParams(
-    appsViewModel: AppsViewModel = activityViewModel(),
+    drawerViewModel: DrawerViewModel = activityViewModel(),
     pointViewModel: PointViewModel = activityViewModel(),
     backgroundColor: Color? = null,
     defaultPointSerializable: Point? = null,
@@ -41,7 +41,7 @@ fun rememberSwipeDefaultParams(
     val nests by pointViewModel.nests.collectAsState()
     val defaultPointSettings by pointViewModel.defaultPoint.collectAsState()
 
-    val iconShape = LocalIconShape.current
+    val iconShape by drawerViewModel.iconShape.asState()
     val extraColors = LocalExtraColors.current
 
     val surfaceColorDraw = backgroundColor ?: Color.Unspecified
@@ -68,8 +68,8 @@ fun rememberSwipeDefaultParams(
     val showAllActionsOnCurrentCircle by UiSettingsStore.showAllActionsOnCurrentCircle.asState()
     val showAllActionsInCurrentNestSetting by UiSettingsStore.showAllActionsOnCurrentNest.asState()
     val showAppPreviewIconCenterStartPosition by UiSettingsStore.showAppPreviewIconCenterStartPosition.asState()
-    val effectiveShowAppPreviewIconCenterStartPosition = allowShowIconInCenter && showAppPreviewIconCenterStartPosition
 
+    val effectiveShowAppPreviewIconCenterStartPosition = allowShowIconInCenter && showAppPreviewIconCenterStartPosition
     val showAllActionsInCurrentNest = forceShowAllActionsInCurrentNest ?: showAllActionsInCurrentNestSetting
 
     return remember(
@@ -97,7 +97,7 @@ fun rememberSwipeDefaultParams(
                 points = points,
                 ctx = ctx,
                 defaultPoint = defaultPoint,
-                pointsIconsCache = appsViewModel.pointsIconsCache,
+                pointsIconsCache = drawerViewModel.pointsIconsCache,
                 surfaceColorDraw = surfaceColorDraw,
                 extraColors = extraColors,
                 maxDepth = maxNestsDepth,
@@ -108,9 +108,7 @@ fun rememberSwipeDefaultParams(
                 showAllActionsOnCurrentCircle = showAllActionsOnCurrentCircle,
                 showAllActionsOnCurrentNest = showAllActionsInCurrentNest,
                 showAppPreviewIconCenterStartPosition = effectiveShowAppPreviewIconCenterStartPosition,
-                computeIcon = {
-                    appsViewModel.iconsService.reloadPointIcon(it)
-                }
+                computeIcon = { drawerViewModel.iconsService.reloadPointIcon(it) }
             )
         )
     }

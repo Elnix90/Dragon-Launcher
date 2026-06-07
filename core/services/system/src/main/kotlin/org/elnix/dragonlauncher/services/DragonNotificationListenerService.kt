@@ -64,15 +64,17 @@ class DragonNotificationListenerService : NotificationListenerService() {
             return flat.split(":").any { ComponentName.unflattenFromString(it) == cn }
         }
 
-        /**
-         * Opens the system Notification Access settings screen where the user can grant
-         * or revoke the notification listener permission for this app.
-         */
-        fun openNotificationSettings(ctx: Context) {
-            ctx.startActivity(
-                Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            )
-        }
     }
+
+}
+
+/**
+ * Opens the system Notification Access settings screen where the user can grant
+ * or revoke the notification listener permission for this app.
+ */
+fun openNotificationSettings(ctx: Context) {
+    ctx.startActivity(
+        Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    )
 }

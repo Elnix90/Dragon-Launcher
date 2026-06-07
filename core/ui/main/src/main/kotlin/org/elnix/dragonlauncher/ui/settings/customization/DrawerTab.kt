@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,7 +37,7 @@ import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.Companion.notNone
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.logging.SHAPES_TAG
 import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
@@ -63,12 +62,12 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 @Composable
 fun DrawerTab(
     onBack: () -> Unit,
-    appsViewModel: AppsViewModel = activityViewModel()
+    drawerViewModel: DrawerViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val apps by appsViewModel.userApps.collectAsState(initial = emptyList())
+    val apps by drawerViewModel.userApps.collectAsState()
 
     val leftDrawerAction by DrawerSettingsStore.leftDrawerAction.asState()
 
@@ -92,8 +91,8 @@ fun DrawerTab(
     val useCategory by DrawerSettingsStore.useCategory.asState()
 
 
-    var leftWidth by remember { mutableIntStateOf(leftDrawerWidth) }
-    var rightWidth by remember { mutableIntStateOf(rightDrawerWidth) }
+    var leftWidth by remember { mutableStateOf(leftDrawerWidth) }
+    var rightWidth by remember { mutableStateOf(rightDrawerWidth) }
 
     LaunchedEffect(leftDrawerWidth, rightDrawerWidth) {
         leftWidth = leftDrawerWidth
@@ -344,7 +343,7 @@ fun DrawerTab(
                                 modifier = Modifier
                                     .align(Alignment.CenterStart)
                                     .fillMaxHeight()
-                                    .width(leftWidth.dp)
+                                    .width(leftWidth)
                                     .background(MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(leftDrawerAction.notNone)),
                                 contentAlignment = Alignment.Center
                             ) {
@@ -365,7 +364,7 @@ fun DrawerTab(
                                 modifier = Modifier
                                     .align(Alignment.CenterEnd)
                                     .fillMaxHeight()
-                                    .width(rightWidth.dp)
+                                    .width(rightWidth)
                                     .background(MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(rightDrawerAction.notNone)),
                                 contentAlignment = Alignment.Center
                             ) {
@@ -382,7 +381,7 @@ fun DrawerTab(
 
                     SliderWithLabel(
                         label = stringResource(R.string.left_drawer_width),
-                        value = leftWidth,
+                        value = leftWidth.value.toInt(),
                         valueRange = DrawerSettingsStore.leftDrawerWidth.allowedRange as IntRange,
                         onDragStateChange = { isDragging ->
                             if (!isDragging) {
@@ -392,12 +391,12 @@ fun DrawerTab(
                             }
                         }
                     ) {
-                        leftWidth = it
+                        leftWidth = it.dp
                     }
 
                     SliderWithLabel(
                         label = stringResource(R.string.right_drawer_width),
-                        value = rightWidth,
+                        value = rightWidth.value.toInt(),
                         valueRange = DrawerSettingsStore.rightDrawerWidth.allowedRange as IntRange,
                         onDragStateChange = { isDragging ->
                             if (!isDragging) {
@@ -407,7 +406,7 @@ fun DrawerTab(
                             }
                         }
                     ) {
-                        rightWidth = it
+                        rightWidth = it.dp
                     }
                 }
             }

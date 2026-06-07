@@ -20,17 +20,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.serializables.StatusBar
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-
 @Composable
 fun StatusBarNextAlarm(
     element: StatusBar.NextAlarm,
-
     // used only for preview in settings, so I don't use the element property
     forceShowIcon: Boolean = false
 ) {

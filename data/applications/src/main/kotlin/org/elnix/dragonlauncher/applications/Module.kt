@@ -4,8 +4,8 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import jakarta.inject.Named
 import jakarta.inject.Singleton
 import org.elnix.dragonlauncher.StringNormalizer
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
@@ -17,9 +17,8 @@ import org.elnix.dragonlauncher.profiles.ProfileManager
 object ApplicationsModule {
     @Provides
     @Singleton
-    @Named("Application")
     fun provideAppRepository(
-        ctx: Context,
+        @ApplicationContext ctx: Context,
         profileManager: ProfileManager,
         packageManagerCompat: PackageManagerCompat,
         appOverridesManager: AppOverridesManager,

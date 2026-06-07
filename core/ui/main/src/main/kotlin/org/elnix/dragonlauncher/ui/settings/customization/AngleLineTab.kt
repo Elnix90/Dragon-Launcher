@@ -27,10 +27,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.model.serializables.CustomObjectBlockProperties
+import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.base.resolveShape
-import org.elnix.dragonlauncher.common.serializables.CustomObjectBlockProperties
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants
@@ -57,6 +57,8 @@ fun AngleLineTab(onBack: () -> Unit) {
     val extraColors = LocalExtraColors.current
     val scope = rememberCoroutineScope()
 
+
+    // TODO create AngleLine View model, or even better, a swipe view model that hosts all the swipe related settings
     val showLineObjectPreview by AngleLineSettingsStore.showLineObjectPreview.asState()
     val showAngleLineObjectPreview by AngleLineSettingsStore.showAngleLineObjectPreview.asState()
     val showStartObjectPreview by AngleLineSettingsStore.showStartObjectPreview.asState()

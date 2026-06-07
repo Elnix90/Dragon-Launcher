@@ -26,7 +26,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
 import org.elnix.dragonlauncher.enumsui.toggle.WorkspaceAction
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -39,15 +39,14 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
 fun WorkspaceListScreen(
-    appsViewModel: AppsViewModel = activityViewModel(),
+    drawerViewModel: DrawerViewModel = activityViewModel(),
     onOpenWorkspace: (String) -> Unit,
     onBack: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
-    val workspaceManager = appsViewModel.workspaceManager
-    val workspaceState by workspaceManager.workspacesState.collectAsState()
-    val workspaces = workspaceState.workspaces
+    val workspaceManager = drawerViewModel.workspaceManager
+    val workspaces by workspaceManager.workspacesState.collectAsState()
 
     var showCreateDialog by remember { mutableStateOf(false) }
     var renameTarget by remember { mutableStateOf<Workspace?>(null) }

@@ -16,7 +16,7 @@ import org.elnix.dragonlauncher.ui.warning.WarningManager
 fun GoogleLockingWarningDialog() {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
-    val currentVersionCode = rememberVersionCode()
+    val currentVersionCode by rememberVersionCode()
 
     val lastSeenVersionCodeGoogleLockdownWarning by PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.asState()
     val showWarning by WarningManager.showWarningDialog.collectAsStateWithLifecycle()

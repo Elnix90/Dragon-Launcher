@@ -19,6 +19,10 @@ object IconsModule {
 
     @Provides
     @Singleton
+    fun provideIconSettingsRepository(@ApplicationContext ctx: Context): IconSettingsRepository = IconSettingsRepository(ctx)
+
+    @Provides
+    @Singleton
     fun provideIconPackManager(
         @ApplicationContext ctx: Context,
         appDatabase: AppDatabase

@@ -41,6 +41,7 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.UiCircle
 import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.base.model.serializables.Nest
+import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.defaultDragDistance
 import org.elnix.dragonlauncher.common.circles.rotateBy
 import org.elnix.dragonlauncher.enumsui.select.NestEditMode
 import org.elnix.dragonlauncher.enumsui.select.NestEditMode.Drag
@@ -54,7 +55,6 @@ import org.elnix.dragonlauncher.models.PointViewModel
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.defaultDragDistance
 import org.elnix.dragonlauncher.ui.defaultHapticFeedback
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedBackEditorButtonWithPlayTest
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedbackEditor
@@ -78,12 +78,13 @@ fun NestEditingScreen(
     val scope = rememberCoroutineScope()
 
     val nests by pointViewModel.nests.collectAsState()
+    val pointService = pointViewModel.pointsService
 
     if (nestId == null) return
     val currentNest = nests.find { it.id == nestId } ?: run {
         // The nest isn't found in the list, create a new one with this id
         scope.launch {
-            pointViewModel.addNest(Nest(id = 0))
+            pointService.addNest()
             ctx.showToast("Saved missing nest!")
         }
 
@@ -125,7 +126,7 @@ fun NestEditingScreen(
     }
 
     fun updateNest(block: () -> Nest) {
-        pointViewModel.editNest(nestId, block())
+        pointService.editNest(nestId) { block() }
     }
 
     fun commitDragDistances(state: Map<Int, Int>) {
@@ -159,7 +160,7 @@ fun NestEditingScreen(
         resetText = stringResource(R.string.reset_nest_text),
         onReset = {
             // Resets current nest to a new one, with the same id (avoids destroying it)
-            pointViewModel.editNest(nestId, Nest(id = nestId))
+            pointService.editNest(nestId) { Nest(id = nestId) }
         }
     ) {
         Box(

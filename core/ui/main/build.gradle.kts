@@ -66,7 +66,8 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.timber)
     implementation(libs.bundles.kotlin)
-
+    implementation(libs.coil.core)
+    implementation(libs.coil.compose)
 
     api(libs.androidx.activity.compose)
     api(libs.androidx.activity)

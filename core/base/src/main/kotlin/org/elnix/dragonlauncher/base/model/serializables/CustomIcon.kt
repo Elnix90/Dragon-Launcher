@@ -21,6 +21,17 @@ sealed class CustomIcon {
             is ForceThemedIcon -> this.properties
             is UnmodifiedSystemDefaultIcon -> this.properties
         }
+
+        fun CustomIcon.setProperties(properties: CustomIconProperties): CustomIcon = when (this) {
+            is AdaptifiedLegacyIcon -> this.copy(properties = properties)
+            is CustomActionIcon -> this.copy(properties = properties)
+            is CustomIconPackIcon -> this.copy(properties = properties)
+            is CustomTextIcon -> this.copy(properties = properties)
+            is CustomThemedIcon -> this.copy(properties = properties)
+            is DefaultPlaceholderIcon -> this.copy(properties = properties)
+            is ForceThemedIcon -> this.copy(properties = properties)
+            is UnmodifiedSystemDefaultIcon -> this.copy(properties = properties)
+        }
     }
 }
 
@@ -30,7 +41,7 @@ sealed class CustomIcon {
 @SerialName("CustomIconPackIcon")
 data class CustomActionIcon(
     val action: Action,
-    val properties: CustomIconProperties
+    val properties: CustomIconProperties = CustomIconProperties()
 ) : CustomIcon()
 
 @Immutable
@@ -42,7 +53,7 @@ data class CustomIconPackIcon(
     val drawable: String?,
     val extras: String?,
     val allowThemed: Boolean,
-    val properties: CustomIconProperties
+    val properties: CustomIconProperties = CustomIconProperties()
 ): CustomIcon()
 
 @Immutable
@@ -54,7 +65,7 @@ data class AdaptifiedLegacyIcon(
      * The background color in ARGB format or [UnspecifiedColor] or [ThemeColor]
      */
     val bgColor: Int = UnspecifiedColor,
-    val properties: CustomIconProperties
+    val properties: CustomIconProperties = CustomIconProperties()
 ): CustomIcon() {
 
     companion object {
@@ -75,14 +86,14 @@ data class AdaptifiedLegacyIcon(
 @SerialName("CustomThemedIcon")
 data class CustomThemedIcon(
     val iconPackageName: String,
-    val properties: CustomIconProperties
+    val properties: CustomIconProperties = CustomIconProperties()
 ) : CustomIcon()
 
 @Immutable
 @Serializable
 @SerialName("ForceThemedIcon")
 data class ForceThemedIcon(
-    val properties: CustomIconProperties
+    val properties: CustomIconProperties = CustomIconProperties()
 ) : CustomIcon()
 
 /**
@@ -92,7 +103,7 @@ data class ForceThemedIcon(
 @Serializable
 @SerialName("UnmodifiedSystemDefaultIcon")
 data class UnmodifiedSystemDefaultIcon(
-    val properties: CustomIconProperties
+    val properties: CustomIconProperties = CustomIconProperties()
 ): CustomIcon()
 
 @Immutable
@@ -101,7 +112,7 @@ data class UnmodifiedSystemDefaultIcon(
 data class CustomTextIcon(
     val text: String,
     val color: Int = 0,
-    val properties: CustomIconProperties
+    val properties: CustomIconProperties = CustomIconProperties()
 ): CustomIcon()
 
 /**
@@ -111,7 +122,7 @@ data class CustomTextIcon(
 @Serializable
 @SerialName("DefaultPlaceholderIcon")
 data class DefaultPlaceholderIcon(
-    val properties: CustomIconProperties
+    val properties: CustomIconProperties = CustomIconProperties()
 ): CustomIcon()
 
 

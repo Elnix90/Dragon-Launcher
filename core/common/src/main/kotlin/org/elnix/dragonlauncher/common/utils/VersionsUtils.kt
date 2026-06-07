@@ -3,6 +3,9 @@ package org.elnix.dragonlauncher.common.utils
 import android.content.Context
 import android.os.Build
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import org.elnix.dragonlauncher.common.utils.VersionsUtils.getVersionCode
@@ -44,13 +47,13 @@ object VersionsUtils {
 
 
 @Composable
-fun rememberVersionCode(): Int {
+fun rememberVersionCode(): State<Int> {
     val ctx = LocalContext.current
-    return remember { ctx.getVersionCode() }
+    return remember { mutableIntStateOf(ctx.getVersionCode()) }
 }
 
 @Composable
-fun rememberVersionName(): String {
+fun rememberVersionName(): State<String> {
     val ctx = LocalContext.current
-    return remember { ctx.getVersionName() }
+    return remember { mutableStateOf(ctx.getVersionName()) }
 }

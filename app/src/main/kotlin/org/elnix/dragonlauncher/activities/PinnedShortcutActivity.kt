@@ -5,16 +5,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.logging.PINNED_SHORTCUTS
 import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logW
-import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
-import java.util.UUID
 
 /**
  * Activity that receives pinned shortcut requests from other apps.
@@ -73,54 +68,55 @@ class PinnedShortcutActivity : ComponentActivity() {
 
         // Add the shortcut as a new swipe point on circle 0, nest 0
         lifecycleScope.launch {
-            try {
-                val existingPoints = SwipeSettingsStore.getPoints(this@PinnedShortcutActivity)
-
-                // Check if this shortcut is already added
-                val alreadyExists = existingPoints.any { point ->
-                    val action = point.action
-                    action is Action.LaunchShortcut &&
-                            action.packageName == packageName &&
-                            action.shortcutId == shortcutId
-                }
-
-                if (alreadyExists) {
-                    showToast(
-                        getString(
-                            R.string.pinned_shortcut_already_exists,
-                            shortLabel
-                        )
-                    )
-                    finish()
-                    return@launch
-                }
-
-                // Create a new point at a random angle on circle 0
-                val angle = (0..359).random().toDouble()
-
-                val newPoint = Point(
-                    id = UUID.randomUUID().toString(),
-                    angleDeg = angle,
-                    action = Action.LaunchShortcut(packageName, shortcutId),
-                    circleNumber = 0,
-                    nestId = 0
-                )
-
-                // Save the updated points list
-                val updatedPoints = existingPoints + newPoint
-                SwipeSettingsStore.savePoints(this@PinnedShortcutActivity, updatedPoints)
-
-                logD(PINNED_SHORTCUTS) { "Shortcut added as point: $shortLabel at $angle°" }
-                showToast(
-                    getString(
-                        R.string.pinned_shortcut_added,
-                        shortLabel
-                    )
-                )
-            } catch (e: Exception) {
-                logE(PINNED_SHORTCUTS, e) { "Failed to save pinned shortcut" }
-                showToast(getString(R.string.pinned_shortcut_failed))
-            }
+            TODO()
+//            try {
+//                val existingPoints = SwipeSettingsStore.getPoints(this@PinnedShortcutActivity)
+//
+//                // Check if this shortcut is already added
+//                val alreadyExists = existingPoints.any { point ->
+//                    val action = point.action
+//                    action is Action.LaunchShortcut &&
+//                            action.packageName == packageName &&
+//                            action.shortcutId == shortcutId
+//                }
+//
+//                if (alreadyExists) {
+//                    showToast(
+//                        getString(
+//                            R.string.pinned_shortcut_already_exists,
+//                            shortLabel
+//                        )
+//                    )
+//                    finish()
+//                    return@launch
+//                }
+//
+//                // Create a new point at a random angle on circle 0
+//                val angle = (0..359).random().toDouble()
+//
+//                val newPoint = Point(
+//                    id = UUID.randomUUID().toString(),
+//                    angleDeg = angle,
+//                    action = Action.LaunchShortcut(packageName, shortcutId),
+//                    circleNumber = 0,
+//                    nestId = 0
+//                )
+//
+//                // Save the updated points list
+//                val updatedPoints = existingPoints + newPoint
+//                SwipeSettingsStore.savePoints(this@PinnedShortcutActivity, updatedPoints)
+//
+//                logD(PINNED_SHORTCUTS) { "Shortcut added as point: $shortLabel at $angle°" }
+//                showToast(
+//                    getString(
+//                        R.string.pinned_shortcut_added,
+//                        shortLabel
+//                    )
+//                )
+//            } catch (e: Exception) {
+//                logE(PINNED_SHORTCUTS, e) { "Failed to save pinned shortcut" }
+//                showToast(getString(R.string.pinned_shortcut_failed))
+//            }
 
             finish()
         }

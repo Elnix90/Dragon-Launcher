@@ -27,6 +27,10 @@ extensions.configure<LibraryExtension> {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+
+    packaging {
+        jniLibs.pickFirsts += "META-INF/gradle/incremental.annotation.processors"
+    }
 }
 
 dependencies {
@@ -65,6 +69,7 @@ dependencies {
     api(project(":core:services:timer"))
 
 
+    api(project(":data:notifications"))
     api(project(":data:applications"))
     api(project(":data:workspaces"))
     api(project(":data:appoverrides"))

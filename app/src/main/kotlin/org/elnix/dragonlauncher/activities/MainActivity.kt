@@ -15,6 +15,7 @@ import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -56,14 +57,12 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dialogs.CrashScreen
 import org.elnix.dragonlauncher.ui.widgets.LauncherWidgetHolder
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : FragmentActivity(), WidgetHostProvider {
 
 
-    @Inject
-    private lateinit var widgetsViewModel: WidgetsViewModel
+    val widgetsViewModel: WidgetsViewModel by viewModels()
 
     companion object {
         private var GLOBAL_APPWIDGET_HOST: AppWidgetHost? = null

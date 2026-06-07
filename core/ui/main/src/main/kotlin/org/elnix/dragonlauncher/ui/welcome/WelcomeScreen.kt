@@ -142,7 +142,7 @@ fun WelcomeScreen(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(24.dp))
+            Spacer(24.dp)
 
             HorizontalPager(
                 state = pagerState,

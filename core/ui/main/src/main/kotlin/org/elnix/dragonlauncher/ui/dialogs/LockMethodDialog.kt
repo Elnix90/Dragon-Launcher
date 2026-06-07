@@ -5,10 +5,7 @@ package org.elnix.dragonlauncher.ui.dialogs
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -29,6 +26,7 @@ import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.LockScreenViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
@@ -65,7 +63,7 @@ fun LockMethodDialog(
                         color = MaterialTheme.colorScheme.onSurface.copy(0.7f)
                     )
 
-                    Spacer(8.dp))
+                    Spacer(8.dp)
                     LockMethod.entries.forEach { method ->
 
                         val unavailableText = if (method == LockMethod.DEVICE_UNLOCK && !securityService.isDeviceUnlockAvailable(ctx)) {
@@ -120,7 +118,7 @@ fun LockMethodDialog(
                                 description = unavailableText
                             )
 
-                            Spacer(8.dp))
+                            Spacer(8.dp)
                             RadioButton(
                                 selected = method == currentLockMethod,
                                 onClick = ::onClick,

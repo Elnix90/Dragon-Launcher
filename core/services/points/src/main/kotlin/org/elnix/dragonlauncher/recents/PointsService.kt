@@ -94,7 +94,8 @@ internal class PointsServiceImpl(
 
     override fun addNest(circleNumber: Int): Int {
         val existingIds = _nests.value.map { it.id }.toSet()
-        var newNestId = _nests.value.minOf { it.id }
+        // Starts at index 0, and iterate trough each nests to fill the ids, and recreate the nest 0 if missing
+        var newNestId = 0 //_nests.value.minOf { it.id }
         while (newNestId in existingIds) {
             newNestId++
         }

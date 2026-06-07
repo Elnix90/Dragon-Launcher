@@ -12,9 +12,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayerJson
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
-import org.elnix.dragonlauncher.common.serializables.MainScreenLayerJson
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore

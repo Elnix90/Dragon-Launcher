@@ -16,14 +16,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.TAG
-import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
-import org.elnix.dragonlauncher.common.serializables.MainScreenLayerJson
-
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayerJson
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
@@ -32,7 +30,7 @@ import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.appLabelIcon
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.appLabelOverlaySize
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.showLaunchingAppIcon
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.showLaunchingAppLabel
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.components.AppPreviewTitle
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
@@ -50,10 +48,10 @@ import org.elnix.dragonlauncher.ui.statusbar.showChargingAnimation
 @Composable
 fun AppDisplayTab(
     onBack: (() -> Unit),
-    appsViewModel: AppsViewModel = activityViewModel()
+    drawerViewModel: DrawerViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
-    val drawerIconCache = appsViewModel.drawerIconsCache
+    val drawerIconCache = drawerViewModel.drawerIconsCache
     val scope = rememberCoroutineScope()
 
     val showLaunchingAppLabel by showLaunchingAppLabel.asState()
@@ -227,7 +225,6 @@ fun AppDisplayTab(
 
 
     if (topOverlaySettingsState.isExpanded()) {
-        logD(TAG) { "App preview shown " }
         AppPreviewTitle(
             point = dummySwipePoint(Action.OpenRecentApps).copy(
                 customName = "Preview",

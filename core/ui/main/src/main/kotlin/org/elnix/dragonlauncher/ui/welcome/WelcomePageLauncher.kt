@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ui.welcome
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import org.elnix.dragonlauncher.common.utils.rememberIsDefaultLauncher
@@ -11,7 +12,7 @@ import org.elnix.dragonlauncher.ui.helpers.GradientBigButton
 @Composable
 fun WelcomePageLauncher() {
     val ctx = LocalContext.current
-    val isDefaultLauncher = rememberIsDefaultLauncher()
+    val isDefaultLauncher by rememberIsDefaultLauncher()
 
     WelcomePagerHeader(
         title = stringResource(R.string.set_default_launcher),

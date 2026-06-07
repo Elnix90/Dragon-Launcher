@@ -29,7 +29,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.action
 import org.elnix.dragonlauncher.base.model.serializables.CustomIcon.Companion.getProperties
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
@@ -38,7 +38,7 @@ import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
 fun AppPreviewTitle(
-    appsViewModel: AppsViewModel = activityViewModel(),
+    drawerViewModel: DrawerViewModel = activityViewModel(),
     point: Point?,
     topPadding: Dp = 60.dp,
     labelSize: Int,
@@ -92,8 +92,8 @@ fun AppPreviewTitle(
 
 
                 if (showIcon) {
-                    appsViewModel.iconsService.pointsIconsCache.getOrLazyCompute(point.key) {
-                        appsViewModel.iconsService.reloadPointIcon(point)
+                    drawerViewModel.iconsService.pointsIconsCache.getOrLazyCompute(point.key) {
+                        drawerViewModel.iconsService.reloadPointIcon(point)
                     }?.let { icon ->
                         ShapedLauncherIcon(
                             maxIconSize = iconSize.dp,

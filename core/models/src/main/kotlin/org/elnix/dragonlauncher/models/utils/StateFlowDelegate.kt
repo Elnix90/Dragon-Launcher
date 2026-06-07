@@ -75,7 +75,7 @@ fun <T> AndroidViewModel.stateFlowDelegate(settingObject: BaseSettingObject<T, *
         settingObject = settingObject
     )
 
-fun <T> AndroidViewModel.stateFlowDelegate(default: T) = BasicObjectDelegate(default)
+fun <T> stateFlowDelegate(default: T) = BasicObjectDelegate(default)
 
 
 @Composable

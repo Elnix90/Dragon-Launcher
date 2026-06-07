@@ -34,7 +34,7 @@ dependencies {
     implementation(libs.androidx.palette)
     implementation(libs.bundles.androidx.lifecycle)
 
-    implementation(libs.bundles.hilt)
+    implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
     implementation(project(":core:logging"))

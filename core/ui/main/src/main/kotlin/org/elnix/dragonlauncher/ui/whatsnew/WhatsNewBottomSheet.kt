@@ -36,7 +36,7 @@ fun WhatsNewBottomSheet() {
     val scope = rememberCoroutineScope()
 
     val lastSeenVersionCodeWhatsNew by PrivateSettingsStore.lastSeenVersionCodeWhatsNew.asState()
-    val versionCode = rememberVersionCode()
+    val versionCode by rememberVersionCode()
 
     if (lastSeenVersionCodeWhatsNew >= versionCode) return
 

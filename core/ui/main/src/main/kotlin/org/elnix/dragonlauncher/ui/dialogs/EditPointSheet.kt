@@ -45,16 +45,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
 import org.elnix.dragonlauncher.base.model.serializables.CycleActionStage
-import org.elnix.dragonlauncher.base.util.ColorUtils.definedOrNull
-import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
+import org.elnix.dragonlauncher.base.theme.LocalExtraColors
+import org.elnix.dragonlauncher.base.util.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.enumsui.select.PointFeaturePanel
 import org.elnix.dragonlauncher.enumsui.select.SelectedUnselectedViewMode
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.models.AppsViewModel
+import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.PointViewModel
-import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore.defaultPoint
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
@@ -81,7 +80,7 @@ import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 fun EditPointSheet(
     point: Point,
     isDefaultEditing: Boolean = false,
-    appsViewModel: AppsViewModel = activityViewModel(),
+    drawerViewModel: DrawerViewModel = activityViewModel(),
     pointViewModel: PointViewModel = activityViewModel(),
     onDismiss: () -> Unit,
     onConfirm: (Point) -> Unit
@@ -91,7 +90,7 @@ fun EditPointSheet(
     val defaultPoint by pointViewModel.defaultPoint.collectAsState()
     val nests by pointViewModel.nests.collectAsState()
 
-    val iconService = appsViewModel.iconsService
+    val iconService = drawerViewModel.iconsService
 
 
     var editPoint by remember { mutableStateOf(point) }

@@ -32,7 +32,7 @@ extensions.configure<LibraryExtension> {
 dependencies {
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.core)
-    implementation(libs.bundles.hilt)
+    implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
     implementation(project(":core:base"))

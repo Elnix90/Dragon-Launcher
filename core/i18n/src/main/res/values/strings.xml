@@ -968,4 +968,8 @@
     <string name="profile_private_profile_action_lock">Lock private space</string>
     <string name="left_drawer_width">Left drawer width</string>
     <string name="right_drawer_width">Right drawer width</string>
+    <string name="icon_picker_filter_all_packs">All icon packs</string>
+    <string name="icon_picker_default_icon">Default</string>
+    <string name="icon_picker_suggestions">Suggestions</string>
+    <string name="icon_picker_search_icon">Search in icon packs</string>
 </resources>

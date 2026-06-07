@@ -27,9 +27,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.base.ktx.px
-import org.elnix.dragonlauncher.common.serializables.CustomObject
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.base.resolveShape
+import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawNeonGlowShapePath
 

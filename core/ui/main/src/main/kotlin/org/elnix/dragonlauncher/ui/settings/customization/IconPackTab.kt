@@ -15,16 +15,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.util.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asStateNull
 import org.elnix.dragonlauncher.ui.base.components.LazyRowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
-import org.elnix.dragonlauncher.ui.helpers.IconPackListContent
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
@@ -36,11 +32,13 @@ fun IconPackTab(
 
 
     val iconPackManager = drawerViewModel.iconPackManager
-    val apps by drawerViewModel.userApps.collectAsState(initial = emptyList())
-    val selectedPack by iconPackManager.selectedIconPack.collectAsState()
-    val packs by drawerViewModel.iconPacksList.collectAsState()
 
-    val iconPackTint by UiSettingsStore.iconPackTint.asStateNull()
+    val apps by drawerViewModel.userApps.collectAsState(initial = emptyList())
+    val packs by drawerViewModel.iconPackManager.getInstalledIconPacks().collectAsState(emptyList())
+
+    val iconSettings by drawerViewModel.iconSettings.collectAsState()
+    val selectedPack = iconSettings.iconPack
+    val iconPackTint = iconSettings.iconPackTint
 
 
     // Used to delay the grid showing up, to prevent lag
@@ -60,7 +58,8 @@ fun IconPackTab(
         helpText = stringResource(R.string.icon_pack_help),
         onReset = {
             scope.launch {
-                drawerViewModel.clearIconPack()
+                TODO()
+//                iconPackManager.
             }
         },
         topContent = {
@@ -69,7 +68,7 @@ fun IconPackTab(
                     items = apps,
                     modifier = Modifier.height(70.dp),
                 ) { app ->
-                    AppIcon(app, 56.dp)
+                    AppIcon(app, maxSize = 56.dp)
                 }
             }
         }
@@ -77,28 +76,30 @@ fun IconPackTab(
 
         ColorPickerRow(
             label = stringResource(R.string.icon_pack_tint),
-            currentColor = iconPackTint ?: Color.Unspecified
+            currentColor = Color(iconPackTint)
         ) {
-            scope.launch { drawerViewModel.setIconPackTint(it.definedOrNull()) }
+            TODO()
+//            scope.launch { drawerViewModel.setIconPackTint(it.definedOrNull()) }
         }
 
-        IconPackListContent(
-            packs = packs,
-            selectedPackPackage = selectedPack?.packageName,
-            showClearOption = true,
-            onReloadPacks = {
-                drawerViewModel.loadIconPacks()
-            },
-            onPackClick = { pack ->
-                scope.launch {
-                    drawerViewModel.selectIconPack(pack)
-                }
-            },
-            onClearClick = {
-                scope.launch {
-                    drawerViewModel.clearIconPack()
-                }
-            }
-        )
+        TODO()
+//        IconPackListContent(
+//            packs = packs,
+//            selectedPackPackage = selectedPack?.packageName,
+//            showClearOption = true,
+//            onReloadPacks = {
+//                iconPackManager.
+//            },
+//            onPackClick = { pack ->
+//                scope.launch {
+//                    drawerViewModel.selectIconPack(pack)
+//                }
+//            },
+//            onClearClick = {
+//                scope.launch {
+//                    drawerViewModel.clearIconPack()
+//                }
+//            }
+//        )
     }
 }

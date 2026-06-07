@@ -176,7 +176,7 @@ internal class AppRepositoryImpl(
         activityInfo: LauncherActivityInfo,
         profileMap: Map<Int, Profile>,
     ): Application? {
-        val applicationInfo = activityInfo.applicationInfo
+        val applicationInfo = activityInfo.applicationInfo ?: return null
 
         if (applicationInfo.packageName == ctx.packageName && !ctx.packageName.endsWith(".debug")) {
             return null

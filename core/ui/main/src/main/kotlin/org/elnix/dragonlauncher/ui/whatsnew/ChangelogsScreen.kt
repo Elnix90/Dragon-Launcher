@@ -1,15 +1,16 @@
 package org.elnix.dragonlauncher.ui.whatsnew
 
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.loader.loadChangelogs
-import org.elnix.dragonlauncher.ktx.openUrl
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.rememberVersionCode
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.openUrl
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
@@ -17,7 +18,7 @@ fun ChangelogsScreen(
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
-    val versionCode = rememberVersionCode()
+    val versionCode by rememberVersionCode()
 
     val updates by produceState(initialValue = emptyList()) {
         value = loadChangelogs(ctx, versionCode)

@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
@@ -69,19 +68,20 @@ import androidx.core.net.toUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.base.Constants
-import org.elnix.dragonlauncher.base.FONT_PROVIDER
+import org.elnix.dragonlauncher.fonts.fontNameToFont
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.logging.FONT_PROVIDER
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.fonts.fontNameToFont
 import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import java.io.File
@@ -403,7 +403,7 @@ fun FontTab(onBack: () -> Unit) {
                                 contentDescription = null,
                                 modifier = Modifier.size(16.dp)
                             )
-                            Spacer(6.dp))
+                            Spacer(6.dp)
                             Text(
                                 stringResource(R.string.font_catalog),
                                 fontSize = 12.sp,
@@ -434,7 +434,7 @@ fun FontTab(onBack: () -> Unit) {
                                 contentDescription = null,
                                 modifier = Modifier.size(16.dp)
                             )
-                            Spacer(6.dp))
+                            Spacer(6.dp)
                             Text(
                                 stringResource(R.string.font_import),
                                 fontSize = 12.sp,
@@ -499,7 +499,7 @@ fun FontTab(onBack: () -> Unit) {
                                 painter = painterResource(R.drawable.check),
                                 contentDescription = null
                             )
-                            Spacer(6.dp))
+                            Spacer(6.dp)
                             Text(
                                 stringResource(
                                     R.string.font_confirm_delete,
@@ -553,7 +553,7 @@ fun FontTab(onBack: () -> Unit) {
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    Spacer(4.dp))
+                    Spacer(4.dp)
                     LinearProgressIndicator(
                         progress = { progressBase },
                         modifier = Modifier
@@ -752,7 +752,7 @@ fun FontRow(
                 tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
             )
         }
-        Spacer(12.dp))
+        Spacer(12.dp)
         val fontFamily = try {
             fontNameToFont(font, ctx)
         } catch (_: Exception) {

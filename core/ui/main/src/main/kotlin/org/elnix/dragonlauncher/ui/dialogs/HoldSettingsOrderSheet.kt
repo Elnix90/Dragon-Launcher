@@ -380,7 +380,7 @@ fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
 fun rememberHoldMenuEntries(): State<List<NavigationRoute>> {
     val holdMenuEntriesString by HoldToActivateArcSettingsStore.holdMenuEntries.asState()
 
-    val state = retain(holdMenuEntriesString) {
+    return retain(holdMenuEntriesString) {
         derivedStateOf {
             HoldMenuEntriesJson.decode<List<NavigationRoute>>(holdMenuEntriesString)
                 ?.toMutableList()
@@ -392,7 +392,6 @@ fun rememberHoldMenuEntries(): State<List<NavigationRoute>> {
                 ?: emptyList()
         }
     }
-    return state
 }
 
 

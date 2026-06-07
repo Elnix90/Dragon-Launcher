@@ -12,9 +12,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -107,9 +105,9 @@ fun LogsTab(
     val memInfo = ActivityManager.MemoryInfo()
     am.getMemoryInfo(memInfo)
     val currentLauncher = ctx.detectSystemLauncher()
-    val isDefault = rememberIsDefaultLauncher()
-    val versionName = rememberVersionName()
-    val versionCode = rememberVersionCode()
+    val isDefault by rememberIsDefaultLauncher()
+    val versionName by rememberVersionName()
+    val versionCode by rememberVersionCode()
 
     // Build extension list by parsing the registry JSON directly (robust to field names)
     var finalExtensionText = "No extensions installed"
@@ -223,7 +221,7 @@ fun LogsTab(
                             contentDescription = "Copy Info"
                         )
                     }
-                    Spacer(8.dp))
+                    Spacer(8.dp)
                     SelectionContainer {
                         Text(
                             text = deviceDetails,

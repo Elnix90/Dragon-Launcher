@@ -1,3 +1,5 @@
+@file:Suppress("AssignedValueIsNeverRead")
+
 package org.elnix.dragonlauncher.ui
 
 import android.annotation.SuppressLint
@@ -88,7 +90,6 @@ import org.elnix.dragonlauncher.ui.drawer.AppDrawerScreen
 import org.elnix.dragonlauncher.ui.helpers.BottomBanners
 import org.elnix.dragonlauncher.ui.helpers.FpsCounterGraph
 import org.elnix.dragonlauncher.ui.helpers.LauncherSnackbarHost
-import org.elnix.dragonlauncher.ui.helpers.PrivateSpaceStateDebugDialog
 import org.elnix.dragonlauncher.ui.navigation.drawerMetadata
 import org.elnix.dragonlauncher.ui.navigation.horizontalMetadata
 import org.elnix.dragonlauncher.ui.navigation.verticalMetadata
@@ -649,7 +650,6 @@ fun MainAppUi(
     WhatsNewBottomSheet()
     BackupResultDialog()
     GoogleLockingWarningDialog()
-    PrivateSpaceStateDebugDialog()
 
 
     if (screenToUnlock != null && lockMethod == LockMethod.PIN) {
