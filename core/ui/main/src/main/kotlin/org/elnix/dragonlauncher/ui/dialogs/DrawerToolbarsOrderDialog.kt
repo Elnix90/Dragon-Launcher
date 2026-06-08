@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
-import org.elnix.dragonlauncher.models.utils.asState
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons

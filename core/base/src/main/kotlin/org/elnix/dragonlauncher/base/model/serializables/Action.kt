@@ -167,9 +167,9 @@ sealed class Action {
     @SerialName("Lock")
     object Lock : Action()
 
-//    @Serializable
-//    @SerialName("ReloadApps")
-//    object ReloadApps : Action()
+    @Serializable
+    @SerialName("ReloadApps")
+    object ReloadApps : Action()
 
     @Serializable
     @SerialName("OpenRecentApps")
@@ -207,7 +207,7 @@ sealed class Action {
                     is OpenAppDrawer -> extraColors.openAppDrawer
                     is OpenDragonLauncherSettings -> extraColors.launcherSettings
                     is OpenFile -> extraColors.openFile
-//                    is ReloadApps -> extra.reload
+                    is ReloadApps -> extraColors.reload
                     is OpenCircleNest -> extraColors.openCircleNest
                     is RunAdbCommand -> extraColors.runAdbCommand
                     is ToggleBluetooth -> extraColors.toggleBluetooth
@@ -234,7 +234,7 @@ sealed class Action {
             ControlPanel,
             OpenAppDrawer.dummy(),
             Lock,
-//            ReloadApps,
+            ReloadApps,
             OpenRecentApps,
             OpenDragonLauncherSettings.dummy(),
             RunAdbCommand.dummy(),

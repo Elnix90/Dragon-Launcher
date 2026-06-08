@@ -18,7 +18,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.PointViewModel
-import org.elnix.dragonlauncher.models.utils.asState
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel

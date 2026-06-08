@@ -66,7 +66,9 @@ abstract class Application : Comparable<Application> {
     abstract var cachedNormalizerResult: Pair<String, String>?
 
 
-    val action = Action.LaunchApp(packageName, profile)
+    val action: Action.LaunchApp
+        get() = Action.LaunchApp(packageName, profile)
+
 
     val key: CacheKey
         get() = CacheKey(componentName, user)

@@ -325,7 +325,7 @@ object ImageUtils {
                 Action.Lock -> loadDrawableResAsBitmap(R.drawable.ic_action_lock, width, height)
                 is Action.OpenFile -> loadDrawableResAsBitmap(R.drawable.ic_action_open_file, width, height)
 
-//                Action.ReloadApps -> loadDrawableResAsBitmap(R.drawable.ic_action_reload, width, height) TODO
+                Action.ReloadApps -> loadDrawableResAsBitmap(R.drawable.ic_action_reload, width, height)
 
                 Action.OpenRecentApps -> loadDrawableResAsBitmap(R.drawable.ic_action_recent, width, height)
 

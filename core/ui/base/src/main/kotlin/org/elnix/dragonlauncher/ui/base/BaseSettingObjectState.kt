@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.elnix.dragonlauncher.models.utils.StateFlowWrapper
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 
 /**
@@ -38,7 +39,6 @@ fun <T, R> BaseSettingObject<T, R>.asStateNull(): State<T?> {
     return flow(ctx).collectAsStateWithLifecycle(initialValue = null)
 }
 
-//@Composable
-//fun <T> ViewModelValue<T>.asState(): State<T> {
-//    return value.collectAsState()
-//}
+
+@Composable
+fun <T> StateFlowWrapper<T>.asState(): State<T> = this.flow.collectAsStateWithLifecycle()

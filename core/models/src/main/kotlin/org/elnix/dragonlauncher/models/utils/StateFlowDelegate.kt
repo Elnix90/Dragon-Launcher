@@ -1,10 +1,7 @@
 package org.elnix.dragonlauncher.models.utils
 
 import android.app.Application
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,22 +27,27 @@ abstract class StateFlowDelegate<T>(
         mutableFlow.value = value
     }
 
-    init {
-        loadValue()
-    }
+    private var initialized = false
 
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): StateFlowWrapper<T> =
-        StateFlowWrapper(flow) { value ->
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): StateFlowWrapper<T> {
+        if (!initialized) {
+            initialized = true
+            loadValue()
+        }
+        return StateFlowWrapper(flow) { value ->
             setValue(value ?: default)
         }
+    }
 
 //    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) = setValue(value)
 }
 
 class SettingObjectDelegate<T>(
-    private val viewModel: AndroidViewModel,
+    private val viewModelLazy: Lazy<AndroidViewModel>,
     private val settingObject: BaseSettingObject<T, *>,
 ) : StateFlowDelegate<T>(settingObject.default) {
+
+    private val viewModel: AndroidViewModel get() = viewModelLazy.value
 
     override fun loadValue() {
         viewModel.viewModelScope.launch {
@@ -71,13 +73,8 @@ class BasicObjectDelegate<T>(
 
 fun <T> AndroidViewModel.stateFlowDelegate(settingObject: BaseSettingObject<T, *>) =
     SettingObjectDelegate(
-        viewModel = this,
+        viewModelLazy = lazy { this },
         settingObject = settingObject
     )
 
 fun <T> stateFlowDelegate(default: T) = BasicObjectDelegate(default)
-
-
-@Composable
-fun <T> StateFlowWrapper<T>.asState(): State<T> = this.flow.collectAsStateWithLifecycle()
-

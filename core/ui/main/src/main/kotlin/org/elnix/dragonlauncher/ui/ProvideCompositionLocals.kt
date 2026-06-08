@@ -13,7 +13,6 @@ import org.elnix.dragonlauncher.logging.ICONS_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.PointViewModel
-import org.elnix.dragonlauncher.models.utils.asState
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore

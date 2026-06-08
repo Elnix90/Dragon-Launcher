@@ -109,7 +109,6 @@ import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.PointViewModel
-import org.elnix.dragonlauncher.models.utils.asState
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore

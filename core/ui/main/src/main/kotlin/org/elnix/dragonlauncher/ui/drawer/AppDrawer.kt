@@ -91,7 +91,6 @@ import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ktx.toDp
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.ProfilesViewModel
-import org.elnix.dragonlauncher.models.utils.asState
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel

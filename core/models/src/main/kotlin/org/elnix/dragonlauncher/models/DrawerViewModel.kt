@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
 import org.elnix.dragonlauncher.base.model.models.Application
@@ -96,6 +97,9 @@ class DrawerViewModel @Inject constructor(
         emptyList()
     )
 
+    fun reloadApps() = viewModelScope.launch {
+        appsRepository.refreshApps()
+    }
 
     val leftDrawerAction by stateFlowDelegate(DrawerSettingsStore.leftDrawerAction)
     val rightDrawerAction by stateFlowDelegate(DrawerSettingsStore.rightDrawerAction)

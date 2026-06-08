@@ -28,7 +28,7 @@ class ActionIconProvider(
 
             Action.None -> R.drawable.cancel
             Action.NotificationShade -> R.drawable.notification
-//            Action.ReloadApps -> R.drawable.ic_action_reload TODO
+            Action.ReloadApps -> R.drawable.ic_action_reload
             Action.OpenRecentApps -> R.drawable.ic_action_recent
             Action.KillLauncher -> R.drawable.ic_action_kill
             Action.GoParentNest -> R.drawable.fullscreen_exit

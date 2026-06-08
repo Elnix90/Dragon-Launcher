@@ -72,7 +72,7 @@ fun actionLabel(
         is Action.OpenFile ->
             ctx.getFilePathFromUri(action.uri.toUri())
 
-//        Action.ReloadApps -> stringResource(R.string.reload_apps)
+        Action.ReloadApps -> stringResource(R.string.reload_apps)
 
         Action.OpenRecentApps -> stringResource(R.string.recent_apps)
 

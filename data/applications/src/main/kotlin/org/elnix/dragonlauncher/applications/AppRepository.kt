@@ -46,14 +46,14 @@ import org.elnix.dragonlauncher.profiles.ProfileManager
 interface AppRepository {
     fun findOne(packageName: String, user: UserHandle): Flow<Application?>
     fun getAllApps(): Flow<ImmutableList<Application>>
-    fun getLaunchableApps(): Flow<ImmutableList<Application>>
-    fun getSystemApps(): Flow<ImmutableList<Application>>
     fun search(
         query: String,
         workspace: Workspace?, // Null means all of them
         getOnlyAdded: Boolean = false,
         getOnlyRemoved: Boolean = false
     ): Flow<ImmutableList<Application>>
+
+    suspend fun refreshApps()
 
     fun queryAppShortcuts(packageName: String): List<ShortcutInfo>
     fun loadShortcutIcon(packageName: String, shortcutId: String, widthPx: Int = 48, heightPx: Int = 48): Bitmap?
@@ -133,7 +133,7 @@ internal class AppRepositoryImpl(
     }
 
 
-    private suspend fun refreshApps() {
+    override suspend fun refreshApps() {
         mutex.withLock {
             val allApps = mutableListOf<Application>()
             val launchable = mutableListOf<Application>()
@@ -178,6 +178,12 @@ internal class AppRepositoryImpl(
     ): Application? {
         val applicationInfo = activityInfo.applicationInfo ?: return null
 
+        try {
+            activityInfo.componentName.packageName
+        } catch (_: Exception) {
+            return null
+        }
+
         if (applicationInfo.packageName == ctx.packageName && !ctx.packageName.endsWith(".debug")) {
             return null
         }
@@ -214,14 +220,6 @@ internal class AppRepositoryImpl(
 
     override fun getAllApps(): Flow<ImmutableList<Application>> {
         return installedApps.map { it.toImmutableList() }.withCustomLabels(appOverridesManager)
-    }
-
-    override fun getLaunchableApps(): Flow<ImmutableList<Application>> {
-        return launchableApps.map { it.toImmutableList() }.withCustomLabels(appOverridesManager)
-    }
-
-    override fun getSystemApps(): Flow<ImmutableList<Application>> {
-        return systemApps.map { it.toImmutableList() }.withCustomLabels(appOverridesManager)
     }
 
 
@@ -338,4 +336,10 @@ internal class AppRepositoryImpl(
 
     override fun loadShortcutIcon(packageName: String, shortcutId: String, widthPx: Int, heightPx: Int): Bitmap? =
         packageManagerCompat.loadShortcutIcon(packageName, shortcutId, widthPx, heightPx)
+
+
+    private data class TempApp(
+        val packageName: String,
+        val userHandle: UserHandle
+    )
 }

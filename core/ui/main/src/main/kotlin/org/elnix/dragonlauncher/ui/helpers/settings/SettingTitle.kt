@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.PointViewModel
-import org.elnix.dragonlauncher.models.utils.asState
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction

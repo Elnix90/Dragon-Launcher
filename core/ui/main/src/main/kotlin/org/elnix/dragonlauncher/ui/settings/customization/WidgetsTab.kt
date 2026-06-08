@@ -84,7 +84,6 @@ import org.elnix.dragonlauncher.logging.WIDGET_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.models.WidgetsViewModel.ResizeCorner
-import org.elnix.dragonlauncher.models.utils.asState
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel

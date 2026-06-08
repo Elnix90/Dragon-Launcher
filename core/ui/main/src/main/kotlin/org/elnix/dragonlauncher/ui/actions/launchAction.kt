@@ -17,12 +17,14 @@ import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.logging.TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
+import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.services.SystemControl
 
 
 internal fun launchAction(
     ctx: Context,
     appLaunchViewModel: AppLaunchViewModel,
+    drawerViewModel: DrawerViewModel,
     action: Action,
     useAccessibilityInsteadOfContextToExpandActionPanel: Boolean = true,
     onReselectFile: () -> Unit,
@@ -155,7 +157,8 @@ internal fun launchAction(
             }
         }
 
-//        Action.ReloadApps -> onReloadApps()
+        Action.ReloadApps -> drawerViewModel.reloadApps()
+
         Action.OpenRecentApps -> {
             if (!SystemControl.isServiceEnabled(ctx)) {
                 ctx.showToast("Please enable accessibility settings to use that feature")
