@@ -130,6 +130,9 @@ internal class PointsServiceImpl(
 
     override fun persist() {
         scope.launch {
+
+//            logI(POINTS_TAG) { "Persisting Swipe Settings:\nPoints = $points\nNests = $nests\nDefault Point = $defaultPoint" }
+
             val encodedPoints = PointsListJson.encode(_points.value)
             val encodedNests = NestJson.encode(_nests.value)
 

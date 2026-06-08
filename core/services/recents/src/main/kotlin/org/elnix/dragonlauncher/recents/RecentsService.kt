@@ -1,17 +1,20 @@
 package org.elnix.dragonlauncher.recents
 
 import android.content.Context
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.logging.logWtf
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 
 
@@ -31,20 +34,54 @@ internal class RecentsServiceImpl(
 
     private val _recentlyUsedPackages = MutableStateFlow<List<String>>(emptyList())
 
-    private val scope = CoroutineScope(Dispatchers.IO + Job())
+    private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
+        logWtf(exception) { "COROUTINE CRASHED: ${exception.message}" }
+    }
+
+    private val scope = CoroutineScope(
+        Dispatchers.IO + SupervisorJob() + exceptionHandler
+    )
+//    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
+    companion object {
+        init {
+            logWtf { "RecentsServiceImpl companion object loaded" }
+        }
+    }
 
     init {
+        logWtf { "RecentsServiceImpl.init() called" }
         scope.launch {
+            logWtf { "Coroutine launched" }
             loadRecentlyUsedApps()
+            logWtf { "loadRecentlyUsedApps returned" }
         }
     }
 
     private suspend fun loadRecentlyUsedApps() {
-        val json = DrawerSettingsStore.recentlyUsedPackages.get(ctx)
-        if (json.isNotEmpty()) {
+        return withContext(Dispatchers.IO) {
             try {
-                _recentlyUsedPackages.value = json.toList()
-            } catch (_: Exception) {
+                logWtf { "Getting recent apps json" }
+
+                logWtf { "DrawerSettingsStore = $DrawerSettingsStore" }
+                logWtf { "recentlyUsedAppsCount = ${DrawerSettingsStore.recentlyUsedAppsCount}" }
+                logWtf { "About to call getOrNull()" }
+
+
+                val json = DrawerSettingsStore.recentlyUsedAppsCount.get(ctx)
+
+//                val json = DrawerSettingsStore.recentlyUsedPackages.get(ctx)
+                logWtf { "Json recent apps: $json" }
+//                if (json.isNotEmpty()) {
+//                    try {
+//                        _recentlyUsedPackages.value = json.toList()
+//                    } catch (_: Exception) {
+//                        _recentlyUsedPackages.value = emptyList()
+//                    }
+//                }
+
+            } catch (e: Exception) {
+                logWtf(e) { "FATAL error in loadRecentlyUsedApps" }
                 _recentlyUsedPackages.value = emptyList()
             }
         }
@@ -55,16 +92,16 @@ internal class RecentsServiceImpl(
      * Moves it to the front if already present, trims the list to a reasonable max.
      */
     override fun touch(application: Application) {
-        val packageName = application.packageName
-        val maxStored = 30 // store more than display, user can raise the count later
-        val current = _recentlyUsedPackages.value.toMutableList()
-        current.remove(packageName)
-        current.add(0, packageName)
-        val trimmed = current.take(maxStored)
-        _recentlyUsedPackages.value = trimmed
-        scope.launch {
-            DrawerSettingsStore.recentlyUsedPackages.set(ctx, trimmed.toSet())
-        }
+//        val packageName = application.packageName
+//        val maxStored = 30 // store more than display, user can raise the count later
+//        val current = _recentlyUsedPackages.value.toMutableList()
+//        current.remove(packageName)
+//        current.add(0, packageName)
+//        val trimmed = current.take(maxStored)
+//        _recentlyUsedPackages.value = trimmed
+//        scope.launch {
+//            DrawerSettingsStore.recentlyUsedPackages.set(ctx, trimmed.toSet())
+//        }
     }
 
     /**

@@ -1,63 +1,45 @@
 package org.elnix.dragonlauncher.models
 
 import android.annotation.SuppressLint
-import android.content.pm.LauncherApps
-import android.os.Bundle
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
-import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Action
-import org.elnix.dragonlauncher.compat.PackageManagerCompat
-import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
-import org.elnix.dragonlauncher.logging.APP_LAUNCH_TAG
-import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.logging.logW
+import org.elnix.dragonlauncher.models.utils.stateFlowDelegate
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
-import org.elnix.dragonlauncher.permissions.PermissionGroup
-import org.elnix.dragonlauncher.permissions.PermissionsManager
-import org.elnix.dragonlauncher.profiles.ProfileManager
 import org.elnix.dragonlauncher.recents.RecentsService
 import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
 import org.elnix.dragonlauncher.timer.AppTimerService
 import javax.inject.Inject
-import kotlin.coroutines.cancellation.CancellationException
 
 
 @HiltViewModel
 class AppLaunchViewModel @Inject constructor(
     application: android.app.Application,
+//    permissionsManager: PermissionsManager,
     private val recentsService: RecentsService,
-    private val profileManager: ProfileManager,
-    private val permissionsManager: PermissionsManager,
-    private val packageManagerCompat: PackageManagerCompat,
-    private val appRepository: AppRepository
+//    private val profileManager: ProfileManager,
+//    private val packageManagerCompat: PackageManagerCompat,
+//    private val appRepository: AppRepository
 ) : AndroidViewModel(application) {
 
     @SuppressLint("StaticFieldLeak")
     private val ctx = application.applicationContext
 
 
-    val socialMediaPauseEnabled = WellbeingSettingsStore.socialMediaPauseEnabled.flow(ctx)
-    val guiltModeEnabled = WellbeingSettingsStore.guiltModeEnabled.flow(ctx)
-    val pauseDuration = WellbeingSettingsStore.pauseDurationSeconds.flow(ctx)
-    val pausedApps = WellbeingSettingsStore.pausedApps.flow(ctx)
-    val reminderEnabled = WellbeingSettingsStore.reminderEnabled.flow(ctx)
-    val reminderInterval = WellbeingSettingsStore.reminderIntervalMinutes.flow(ctx)
-    val reminderMode = WellbeingSettingsStore.reminderMode.flow(ctx)
-    val returnToLauncherEnabled = WellbeingSettingsStore.returnToLauncherEnabled.flow(ctx)
+    val guiltModeEnabled by stateFlowDelegate(WellbeingSettingsStore.guiltModeEnabled)
+    val pauseDuration by stateFlowDelegate(WellbeingSettingsStore.pauseDurationSeconds)
+    val returnToLauncherEnabled by stateFlowDelegate(WellbeingSettingsStore.returnToLauncherEnabled)
+
+    private val socialMediaPauseEnabled by stateFlowDelegate(WellbeingSettingsStore.socialMediaPauseEnabled)
+    private val pausedApps by stateFlowDelegate(WellbeingSettingsStore.pausedApps)
+    private val reminderEnabled by stateFlowDelegate(WellbeingSettingsStore.reminderEnabled)
+    private val reminderInterval by stateFlowDelegate(WellbeingSettingsStore.reminderIntervalMinutes)
+    private val reminderMode by stateFlowDelegate(WellbeingSettingsStore.reminderMode)
 
 //    data class WellbeingState(
 //        val socialMediaPauseEnabled: Boolean,
@@ -94,11 +76,11 @@ class AppLaunchViewModel @Inject constructor(
 //        )
 //    }
 
-    val hasUsageStatsPermission: StateFlow<Boolean> = permissionsManager.hasPermission(PermissionGroup.UsageStat).stateIn(
-        viewModelScope,
-        SharingStarted.Lazily,
-        false
-    )
+//    val hasUsageStatsPermission: StateFlow<Boolean> = permissionsManager.hasPermission(PermissionGroup.UsageStat).stateIn(
+//        viewModelScope,
+//        SharingStarted.Lazily,
+//        false
+//    )
 
     private val _pendingAppLaunch = MutableStateFlow<Application?>(null)
     val pendingAppLaunch = _pendingAppLaunch.asStateFlow()
@@ -107,28 +89,28 @@ class AppLaunchViewModel @Inject constructor(
 
 
     fun requestAppLaunch(launchAction: Action.LaunchApp) {
-        viewModelScope.launch {
-            val app: Application? = appRepository.findOne(launchAction.packageName, launchAction.profile.userHandle).first()
-            if (app != null) {
-                requestAppLaunch(app)
-            }
-        }
+//        viewModelScope.launch {
+//            val app: Application? = appRepository.findOne(launchAction.packageName, launchAction.profile.userHandle).first()
+//            if (app != null) {
+//                requestAppLaunch(app)
+//            }
+//        }
     }
 
     fun requestAppLaunch(application: Application) {
-        viewModelScope.launch{
-            val startAppTimer = combine(pausedApps, socialMediaPauseEnabled) { pausedApps, socialMediaPauseEnabled ->
-                if (!socialMediaPauseEnabled) return@combine false
-                application.packageName in pausedApps
-            }
-
-            if(startAppTimer.first()) {
-                _pendingAppLaunch.value = application
-                return@launch
-            }
-
-            launchAppWithProfileUnlock(application)
-        }
+//        viewModelScope.launch{
+//            val startAppTimer = combine(pausedApps, socialMediaPauseEnabled) { pausedApps, socialMediaPauseEnabled ->
+//                if (!socialMediaPauseEnabled) return@combine false
+//                application.packageName in pausedApps
+//            }
+//
+//            if(startAppTimer.first()) {
+//                _pendingAppLaunch.value = application
+//                return@launch
+//            }
+//
+//            launchAppWithProfileUnlock(application)
+//        }
     }
 
 
@@ -136,62 +118,62 @@ class AppLaunchViewModel @Inject constructor(
         AppTimerService.start(
             ctx = ctx,
             application = app,
-            reminderEnabled = reminderEnabled.first(),
-            reminderIntervalMinutes = reminderInterval.first(),
-            reminderMode = reminderMode.first(),
+            reminderEnabled = reminderEnabled.flow.first(),
+            reminderIntervalMinutes = reminderInterval.flow.first(),
+            reminderMode = reminderMode.flow.first(),
             timeLimitMinutes = timeLimitMinutes
         )
     }
 
     fun onAppTimerServiceStarted(duration: Int?): Boolean {
-        val pendingApp = _pendingAppLaunch.value
-        if (pendingApp!= null) {
-
-            if (duration != null) {
-                viewModelScope.launch{
-                    startTimer(duration, pendingApp)
-                }
-            }
-
-            launchAppDirectly(pendingApp)
-            return true
-        }
+//        val pendingApp = _pendingAppLaunch.value
+//        if (pendingApp!= null) {
+//
+//            if (duration != null) {
+//                viewModelScope.launch{
+//                    startTimer(duration, pendingApp)
+//                }
+//            }
+//
+//            launchAppDirectly(pendingApp)
+//            return true
+//        }
         return false
     }
 
     fun launchShortcut(action: Action.LaunchShortcut) {
-        action.takeIf { it.packageName.isNotEmpty() }?.let {
-            packageManagerCompat.launchShortcut(it.packageName, it.shortcutId)
-        }
+//        action.takeIf { it.packageName.isNotEmpty() }?.let {
+//            packageManagerCompat.launchShortcut(it.packageName, it.shortcutId)
+//        }
     }
 
     private fun launchAppWithProfileUnlock(application: Application) {
-
-        currentLaunchJob?.cancel()
-
-        currentLaunchJob = viewModelScope.launch {
-            val activeProfiles = profileManager.activeProfiles.first()
-
-            if (application.profile !in activeProfiles && isAtLeastApiLevel(28)) {
-                profileManager.unlockProfile(application.profile)
-
-                try {
-                    withTimeoutOrNull(10_000L) {
-                        profileManager.getProfileState(application.profile)
-                            .filter { it?.locked == false }
-                            .first()
-                    }?.let {
-                        launchAppDirectly(application)
-                    } ?: run {
-                        logW(APP_LAUNCH_TAG) { "Timeout expired for profile unlock" }
-                    }
-                } catch (e: CancellationException) {
-                    logE(APP_LAUNCH_TAG, e) { "App launch canceled" }
-                }
-            } else {
-                launchAppDirectly(application)
-            }
-        }
+//
+//        currentLaunchJob?.cancel()
+//
+//        currentLaunchJob = viewModelScope.launch {
+//            val activeProfiles = profileManager.activeProfiles.first()
+//
+//            if (application.profile !in activeProfiles && isAtLeastApiLevel(28)) {
+//                profileManager.unlockProfile(application.profile)
+//
+//                try {
+//                    withTimeoutOrNull(10_000L) {
+//                        profileManager.getProfileState(application.profile)
+//                            .filter { it?.locked == false }
+//                            .first()
+//                    }?.let {
+//                        launchAppDirectly(application)
+//                    } ?: run {
+//                        logW(APP_LAUNCH_TAG) { "Timeout expired for profile unlock" }
+//                    }
+//                } catch (e: CancellationException) {
+//                    logE(APP_LAUNCH_TAG, e) { "App launch canceled" }
+//                }
+//            } else {
+//                launchAppDirectly(application)
+//            }
+//        }
     }
 
 
@@ -200,49 +182,46 @@ class AppLaunchViewModel @Inject constructor(
      * Used both by launchAction and after the digital pause screen.
      */
     private fun launchAppDirectly(application: Application) {
-        val launcherApps = ctx.getSystemService(LauncherApps::class.java)
-            ?: throw AppLaunchException("LauncherApps unavailable")
-
-        val packageName = application.packageName
-
-        val activity = launcherApps
-            .getActivityList(null, application.profile.userHandle)
-            .firstOrNull { it.applicationInfo.packageName == packageName }
-            ?: throw AppLaunchException("Launcher activity not found for $packageName")
-
-        val options = Bundle()
-
-        if (isAtLeastApiLevel(31)) {
-            options.putInt("android.activity.splashScreenStyle", 1)
-        }
-
-        try {
-            launcherApps.startMainActivity(
-                activity.componentName,
-                application.profile.userHandle,
-                null,
-                options
-            )
-
-            recentsService.touch(application)
-
-        } catch (e: SecurityException) {
-            logE(APP_LAUNCH_TAG, e) { "Security error launching $packageName" }
-            throw AppLaunchException("Security error launching $packageName", e)
-        } catch (e: NullPointerException) {
-            logE(APP_LAUNCH_TAG, e) { "App component not found for $packageName" }
-            throw AppLaunchException("App component not found for $packageName", e)
-        } catch (e: Exception) {
-            logE(APP_LAUNCH_TAG, e) { "Failed to launch $packageName" }
-            throw AppLaunchException("Failed to launch $packageName", e)
-        }
+//        val launcherApps = ctx.getSystemService(LauncherApps::class.java)
+//            ?: throw AppLaunchException("LauncherApps unavailable")
+//
+//        val packageName = application.packageName
+//
+//        val activity = launcherApps
+//            .getActivityList(null, application.profile.userHandle)
+//            .firstOrNull { it.applicationInfo.packageName == packageName }
+//            ?: throw AppLaunchException("Launcher activity not found for $packageName")
+//
+//        val options = Bundle()
+//
+//        if (isAtLeastApiLevel(31)) {
+//            options.putInt("android.activity.splashScreenStyle", 1)
+//        }
+//
+//        try {
+//            launcherApps.startMainActivity(
+//                activity.componentName,
+//                application.profile.userHandle,
+//                null,
+//                options
+//            )
+//
+//            recentsService.touch(application)
+//
+//        } catch (e: SecurityException) {
+//            logE(APP_LAUNCH_TAG, e) { "Security error launching $packageName" }
+//            throw AppLaunchException("Security error launching $packageName", e)
+//        } catch (e: NullPointerException) {
+//            logE(APP_LAUNCH_TAG, e) { "App component not found for $packageName" }
+//            throw AppLaunchException("App component not found for $packageName", e)
+//        } catch (e: Exception) {
+//            logE(APP_LAUNCH_TAG, e) { "Failed to launch $packageName" }
+//            throw AppLaunchException("Failed to launch $packageName", e)
+//        }
     }
 
 
     init {
-        viewModelScope.launch {
-        }
-
         viewModelInitialized()
     }
 }

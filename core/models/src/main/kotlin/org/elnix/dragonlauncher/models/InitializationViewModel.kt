@@ -41,7 +41,7 @@ class InitializationViewModel @Inject constructor(
             val hasInitialized = PrivateSettingsStore.hasInitialized.get(ctx)
 
             if (!hasInitialized) {
-                logD(INIT_TAG) { "Initialisation not complete, initializing"}
+                logD(INIT_TAG) { "Initialisation not complete, initializing" }
                 initialize()
             }
         }
@@ -52,7 +52,9 @@ class InitializationViewModel @Inject constructor(
         points: Set<Point>,
         nests: Set<Nest>
     ) {
-        viewModelScope.launch{
+//        logI(INIT_TAG) { "Initializing:\nPoints = $points\nNests = $nests" }
+
+        viewModelScope.launch {
             pointsService.set(points, nests)
             PrivateSettingsStore.hasInitialized.set(ctx, true)
         }

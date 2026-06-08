@@ -49,7 +49,7 @@ class DragonLogViewModel @Inject constructor(
 
     private val maxRecentLogs = 50
 
-    init {
+    fun init() {
         Timber.plant(Timber.DebugTree())
 
         viewModelScope.launch {
@@ -66,7 +66,9 @@ class DragonLogViewModel @Inject constructor(
             _filterTag.value = DebugSettingsStore.filterTag.get(ctx)
             fileTree?.filterTag = filterTag.value
         }
+    }
 
+    init {
         updateLoggingState()
         viewModelInitialized()
     }

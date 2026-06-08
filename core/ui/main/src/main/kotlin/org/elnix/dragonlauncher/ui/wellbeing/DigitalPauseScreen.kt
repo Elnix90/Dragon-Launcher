@@ -52,7 +52,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -84,6 +83,7 @@ import org.elnix.dragonlauncher.common.utils.DateUtils.formatDuration
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import java.util.Calendar
 import kotlin.random.Random
@@ -107,9 +107,9 @@ fun DigitalPauseScreen(
     val ctx = LocalContext.current
     val packageName = application.packageName
 
-    val returnToLauncherEnabled by appLaunchViewModel.returnToLauncherEnabled.collectAsState(false)
-    val guiltModeEnabled by appLaunchViewModel.guiltModeEnabled.collectAsState(true)
-    val pauseDuration by appLaunchViewModel.pauseDuration.collectAsState(60)
+    val returnToLauncherEnabled by appLaunchViewModel.returnToLauncherEnabled.asState()
+    val guiltModeEnabled by appLaunchViewModel.guiltModeEnabled.asState()
+    val pauseDuration by appLaunchViewModel.pauseDuration.asState()
 
     var countdown by remember { mutableIntStateOf(pauseDuration) }
     var showChoice by remember { mutableStateOf(false) }
@@ -117,7 +117,8 @@ fun DigitalPauseScreen(
     var countdownFinished by remember { mutableStateOf(false) }
     var currentPhraseIndex by remember { mutableIntStateOf(0) }
 
-    val hasAppUsageStatsPermission by appLaunchViewModel.hasUsageStatsPermission.collectAsState()
+//    val hasUsageStatsPermission by appLaunchViewModel.hasUsageStatsPermission.collectAsState()
+    val hasUsageStatsPermission = false
 
     // List of sentence to make user feel bad
     val breathingPhrases = listOf(
@@ -129,7 +130,7 @@ fun DigitalPauseScreen(
     )
 
     val usageStats = remember(packageName, guiltModeEnabled)  {
-        if (guiltModeEnabled && hasAppUsageStatsPermission) getUsageStats(ctx, packageName) else null
+        if (guiltModeEnabled && hasUsageStatsPermission) getUsageStats(ctx, packageName) else null
     }
 
     LaunchedEffect(Unit) {
@@ -210,9 +211,9 @@ fun DigitalPauseScreen(
 
                         if (guiltModeEnabled) {
                             GlassCard(modifier = Modifier.fillMaxWidth()) {
-                                if (hasAppUsageStatsPermission && usageStats != null) {
+                                if (hasUsageStatsPermission && usageStats != null) {
                                     UsageStatsDisplay(usageStats)
-                                } else if (!hasAppUsageStatsPermission) {
+                                } else if (!hasUsageStatsPermission) {
                                     PermissionNeededContent(ctx)
                                 }
                             }

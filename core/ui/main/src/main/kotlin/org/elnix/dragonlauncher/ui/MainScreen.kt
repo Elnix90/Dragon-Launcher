@@ -396,8 +396,6 @@ fun MainScreen(
                 }
             }
         }
-
-
     }
 }
 

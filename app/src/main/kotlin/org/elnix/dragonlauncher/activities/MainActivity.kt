@@ -43,7 +43,9 @@ import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.logging.logW
+import org.elnix.dragonlauncher.logging.logWtf
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel
+import org.elnix.dragonlauncher.models.DragonLogViewModel
 import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.receiver.FontReceiver
 import org.elnix.dragonlauncher.settings.SettingsBackupManager
@@ -319,6 +321,9 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
             if (lastStackTrace.isNullOrBlank()) {
 
                 val appLifecycleViewModel: AppLifecycleViewModel = activityViewModel()
+                val dragonLogViewModel: DragonLogViewModel = activityViewModel()
+
+                dragonLogViewModel.init()
 
                 DragonLauncherTheme {
 
@@ -385,6 +390,8 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                         }
                     }
 
+                    logWtf { "Got here 1" }
+
                     MainAppUi(
                         onBindCustomWidget = { widgetId, provider, nestId ->
                             pendingAddNestId = nestId
@@ -400,6 +407,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                             }
                         }
                     )
+                    logWtf { "Got here 3" }
                 }
             } else {
                 MaterialTheme {

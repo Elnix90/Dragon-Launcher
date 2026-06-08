@@ -5,5 +5,5 @@ import org.elnix.dragonlauncher.logging.TAG
 import org.elnix.dragonlauncher.logging.logD
 
 internal fun ViewModel.viewModelInitialized() {
-    logD(TAG) { "created ${this::javaClass.name} ${System.identityHashCode(this)}" }
+    logD(TAG) { "Created viewModel '${this::class.java.name.substringAfterLast('.')}' ${System.identityHashCode(this)}" }
 }
