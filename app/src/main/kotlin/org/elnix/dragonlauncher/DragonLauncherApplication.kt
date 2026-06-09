@@ -12,6 +12,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.elnix.dragonlauncher.logging.SETTINGS_TAG
+import org.elnix.dragonlauncher.logging.logD
+import org.elnix.dragonlauncher.settings.allStores
 import org.elnix.dragonlauncher.settings.stores.map.LanguageSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 
@@ -39,6 +42,8 @@ class DragonLauncherApplication : Application() {
 
         CoroutineScope(Dispatchers.Default).launch {
 
+            initializeAllStores()
+
             val tag = LanguageSettingsStore.keyLang.get(this@DragonLauncherApplication)
             if (tag.isNotEmpty()) {
                 AppCompatDelegate.setApplicationLocales(
@@ -51,5 +56,12 @@ class DragonLauncherApplication : Application() {
     override fun onTerminate() {
         super.onTerminate()
         appScope.cancel()
+    }
+
+
+    fun initializeAllStores() {
+        allStores.forEach { (name, store) ->
+            logD(SETTINGS_TAG) { "Initialized $name: $store"}
+        }
     }
 }
