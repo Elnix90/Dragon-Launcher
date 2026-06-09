@@ -12,6 +12,7 @@ import kotlin.reflect.KProperty
 
 data class StateFlowWrapper<T>(
     val flow: StateFlow<T>,
+    val value: T,
     val set: (T?) -> Unit
 )
 
@@ -27,6 +28,8 @@ abstract class StateFlowDelegate<T>(
         mutableFlow.value = value
     }
 
+    private fun get() = mutableFlow.value
+
     private var initialized = false
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): StateFlowWrapper<T> {
@@ -34,7 +37,7 @@ abstract class StateFlowDelegate<T>(
             initialized = true
             loadValue()
         }
-        return StateFlowWrapper(flow) { value ->
+        return StateFlowWrapper(flow, get()) { value ->
             setValue(value ?: default)
         }
     }
