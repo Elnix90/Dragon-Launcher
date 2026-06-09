@@ -99,6 +99,7 @@ fun MainScreen(
     val rotationPerSecond by HoldToActivateArcSettingsStore.rotationPerSecond.asState()
 
     val rgbLoading by UiSettingsStore.rgbLoading.asState()
+    val openRootNestEachTime by BehaviorSettingsStore.openRootNestEachTime.asState()
 
 
     var start by remember { mutableStateOf<Offset?>(null) }
@@ -205,7 +206,7 @@ fun MainScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Transparent)
-            .pointerInput(Unit, nestId) {
+            .pointerInput(Unit) {
                 awaitPointerEventScope {
                     while (true) {
                         val event = awaitPointerEvent(PointerEventPass.Initial)
@@ -239,6 +240,10 @@ fun MainScreen(
 
                         start = down.position
                         current = down.position
+
+                        if (openRootNestEachTime) {
+                            nestNavigation.clearStack()
+                        }
 
                         val pointerId = down.id
 

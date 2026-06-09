@@ -3,12 +3,17 @@ package org.elnix.dragonlauncher.ui.remembers
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlin.math.acos
+import kotlin.math.sqrt
 import org.elnix.dragonlauncher.common.serializables.CircleNest
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
 import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.defaultSwipePointsValues
@@ -122,6 +127,70 @@ fun rememberLiveNestControllerStack(
     val activeLevelIndex = nestStack.indexOfLast { it.liveNestActive }
     val isAnyLiveNestActive = activeLevelIndex > 0
 
+    /* ─────────────  Fast activation: turn tracking  ───────────── */
+
+    val recentPositions = remember { mutableListOf<Offset>() }
+    var angleVersion by remember { mutableIntStateOf(0) }
+
+    var currentSnap by remember { mutableStateOf(current) }
+    SideEffect {
+        currentSnap = current
+    }
+
+    LaunchedEffect(Unit) {
+        while (isActive) {
+            val pos = currentSnap
+            if (pos != null) {
+                val last = recentPositions.lastOrNull()
+                if (last == null || sqrt(
+                        (pos.x - last.x) * (pos.x - last.x) +
+                                (pos.y - last.y) * (pos.y - last.y)
+                    ) >= 10f
+                ) {
+                    recentPositions.add(pos)
+                    if (recentPositions.size > 20) {
+                        repeat(recentPositions.size - 20) { recentPositions.removeFirst() }
+                    }
+                    angleVersion++
+                }
+            }
+            delay(16)
+        }
+    }
+
+    val hasSharpAngle = remember {
+        derivedStateOf {
+            angleVersion
+
+            val pts = recentPositions
+            val n = pts.size
+            if (n < 4) return@derivedStateOf false
+
+            val mid = n / 2
+            val v1x = pts[mid].x - pts[0].x
+            val v1y = pts[mid].y - pts[0].y
+            val v2x = pts.last().x - pts[mid].x
+            val v2y = pts.last().y - pts[mid].y
+
+            val mag1 = sqrt(v1x * v1x + v1y * v1y)
+            val mag2 = sqrt(v2x * v2x + v2y * v2y)
+            if (mag1 <= 10f || mag2 <= 10f) return@derivedStateOf false
+
+            val dot = v1x * v2x + v1y * v2y
+            val cosAngle = (dot / (mag1 * mag2)).coerceIn(-1f, 1f)
+            val turnAngle = acos(cosAngle) * 180f / kotlin.math.PI.toFloat()
+
+            val strokeLen = sqrt(
+                (pts.last().x - pts[0].x) * (pts.last().x - pts[0].x) +
+                        (pts.last().y - pts[0].y) * (pts.last().y - pts[0].y)
+            )
+
+			// Should the treshold angle be configurable? Probably
+			// Should the jitter threshold (minimum strokeLen) be configurable? Probably not?
+            turnAngle > 30f && strokeLen >= 80f
+        }
+    }
+
     val rootHit = remember(
         resetTrigger,
         isAnyLiveNestActive,
@@ -227,6 +296,8 @@ fun rememberLiveNestControllerStack(
             nestStack.forEach { level ->
                 level.liveNestCenter = null
             }
+            recentPositions.clear()
+            angleVersion++
         }
     }
 
@@ -274,7 +345,15 @@ fun rememberLiveNestControllerStack(
 
             val currentPointOffset = currentPoint.computePosition(previousLiveNestCircles, previousLiveNestCenter)
 
-            delay(delayMs)
+            val pointFastActivation = currentPoint.fastActivation ?: defaultPoint.fastActivation ?: defaultSwipePointsValues.fastActivation!!
+
+            val startTime = System.currentTimeMillis()
+            while (System.currentTimeMillis() - startTime < delayMs) {
+                if (pointFastActivation && hasSharpAngle.value) {
+                    break
+                }
+                delay(32)
+            }
 
 
             val snapToCenterPos = currentPoint.liveNestSnapsToFingerPosition ?: defaultPoint.liveNestSnapsToFingerPosition ?: defaultSwipePointsValues.liveNestSnapsToFingerPosition!!

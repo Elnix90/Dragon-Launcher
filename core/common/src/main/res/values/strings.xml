@@ -930,6 +930,10 @@
     <string name="align_end">End</string>
     <string name="create_live_nest_by_default_desc">When creating a new point, if you choose OpenCircleNest, it\'ll create the according live nest automatically</string>
     <string name="create_live_nest_by_default">Create live nest by default</string>
+    <string name="open_root_nest_each_time">Open root nest each time</string>
+    <string name="open_root_nest_each_time_desc">When enabled, the root nest is always shown when opening the launcher, regardless of which nest you last entered.</string>
+    <string name="fast_activation">Fast activation</string>
+    <string name="fast_activation_desc">When enabled, a sharp angle in your drag immediately enters the nested nest instead of waiting for the hold delay.</string>
     <string name="welcome_screen">Welcome Screen</string>
     <string name="red">Red</string>
     <string name="green">Green</string>

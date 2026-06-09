@@ -423,6 +423,18 @@ fun EditPointSheet(
                                         }
                                     }
 
+                                    SwitchRow(
+                                        state = editPoint.fastActivation ?: false,
+                                        title = stringResource(R.string.fast_activation),
+                                        description = stringResource(R.string.fast_activation_desc)
+                                    ) { on ->
+                                        editPoint = if (on) {
+                                            editPoint.copy(fastActivation = true)
+                                        } else {
+                                            editPoint.copy(fastActivation = null)
+                                        }
+                                    }
+
                                     val currentOpacity = (editPoint.liveNestMainNestOpacityPercent ?: defaultLiveNestMainNestOpacityPercent)
                                     SwitchRow(
                                         state = currentOpacity != -1,

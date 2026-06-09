@@ -180,6 +180,12 @@ data class SwipePointSerializable(
      */
     val liveNestSnapsToFingerPosition: Boolean? = null,
 
+    /**
+     * When enabled, a sharp angle in the user's drag while hovering this point
+     * immediately enters the nested nest instead of waiting for the hold delay.
+     */
+    val fastActivation: Boolean? = null,
+
     /*  ─────────────  Cycle Actions configuration  ─────────────  */
 
     /**
@@ -249,6 +255,7 @@ data class SwipePointSerializable(
             liveNestScale = 0.65f,
             liveNestGraceDistancePx = 50,
             liveNestSnapsToFingerPosition = true,
+            fastActivation = false,
             holdAndRunDelayMs = 500,
             cycleActionsLoopDelayMs = 500, // -1 = No loop
             cycleActionStageDefaultDelay = 500,

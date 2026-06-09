@@ -31,7 +31,8 @@ object BehaviorSettingsStore : MapSettingsStore() {
             this.alarmSound,
             this.vibrateOnError,
             this.offScreenTimeout,
-            this.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint
+            this.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint,
+            this.openRootNestEachTime
         )
 
     val backAction = Settings.swipeAction(
@@ -163,5 +164,11 @@ object BehaviorSettingsStore : MapSettingsStore() {
         key = "createLiveNestByDefaultWhenCreatingOpenCircleNestPoint",
         dataStoreName = UiSettingsStore.dataStoreName,
         default = true
+    )
+
+    val openRootNestEachTime = Settings.boolean(
+        key = "openRootNestEachTime",
+        dataStoreName = dataStoreName,
+        default = false
     )
 }

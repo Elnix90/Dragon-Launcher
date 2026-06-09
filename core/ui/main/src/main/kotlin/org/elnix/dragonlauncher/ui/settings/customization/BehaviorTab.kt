@@ -169,6 +169,12 @@ fun BehaviorTab(
             )
 
             SettingsSwitchRow(
+                setting = BehaviorSettingsStore.openRootNestEachTime,
+                title = stringResource(R.string.open_root_nest_each_time),
+                description = stringResource(R.string.open_root_nest_each_time_desc)
+            )
+
+            SettingsSwitchRow(
                 setting = BehaviorSettingsStore.useDifferentialLoadingForPrivateSpace,
                 title = stringResource(R.string.use_differential_loading_private_space),
                 description = stringResource(R.string.use_differential_loading_private_space_desc)
