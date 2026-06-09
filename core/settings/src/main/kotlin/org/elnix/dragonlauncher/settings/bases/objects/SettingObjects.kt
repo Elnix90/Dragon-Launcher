@@ -17,8 +17,6 @@ import org.elnix.dragonlauncher.base.model.serializables.IconShape.Companion.Ico
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.PointsJson
 import org.elnix.dragonlauncher.base.util.ColorUtils.toHexWithAlpha
-import org.elnix.dragonlauncher.logging.BACKUP_TAG
-import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.getActionStrict
 import org.elnix.dragonlauncher.settings.bases.getBooleanStrict
@@ -329,13 +327,23 @@ data class StringListSettingObject(
     override val preferenceKey: Preferences.Key<String>
         get() = stringPreferencesKey(key)
     override val encode: (List<String>) -> String?
-        get() = { list ->
-            val encoded = list.joinToString(",")
-            logI(BACKUP_TAG) { "Encoded: $encoded" }
-            encoded
-        }
+        get() = { list -> list.joinToString(",") }
     override val decode: (Any?) -> List<String>
         get() = { raw -> getStringListStrict(raw, default) }
+
+    companion object {
+        fun MapSettingsStore.stringList(
+            key: String,
+            default: List<String>,
+            onChange: (() -> Unit)? = null
+        ): StringListSettingObject =
+            StringListSettingObject(
+                key = key,
+                dataStoreName = dataStoreName,
+                default = default,
+                onChanged = onChange
+            )
+    }
 }
 
 data class EnumSettingObject<E : Enum<E>>(
