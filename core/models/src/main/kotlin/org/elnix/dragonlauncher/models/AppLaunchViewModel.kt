@@ -25,6 +25,7 @@ import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import org.elnix.dragonlauncher.logging.APP_LAUNCH_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logW
+import org.elnix.dragonlauncher.models.utils.stateFlowDelegate
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.permissions.PermissionGroup
 import org.elnix.dragonlauncher.permissions.PermissionsManager
@@ -39,9 +40,9 @@ import kotlin.coroutines.cancellation.CancellationException
 @HiltViewModel
 class AppLaunchViewModel @Inject constructor(
     application: android.app.Application,
+    permissionsManager: PermissionsManager,
     private val recentsService: RecentsService,
     private val profileManager: ProfileManager,
-    private val permissionsManager: PermissionsManager,
     private val packageManagerCompat: PackageManagerCompat,
     private val appRepository: AppRepository
 ) : AndroidViewModel(application) {
@@ -50,14 +51,15 @@ class AppLaunchViewModel @Inject constructor(
     private val ctx = application.applicationContext
 
 
-    val socialMediaPauseEnabled = WellbeingSettingsStore.socialMediaPauseEnabled.flow(ctx)
-    val guiltModeEnabled = WellbeingSettingsStore.guiltModeEnabled.flow(ctx)
-    val pauseDuration = WellbeingSettingsStore.pauseDurationSeconds.flow(ctx)
-    val pausedApps = WellbeingSettingsStore.pausedApps.flow(ctx)
-    val reminderEnabled = WellbeingSettingsStore.reminderEnabled.flow(ctx)
-    val reminderInterval = WellbeingSettingsStore.reminderIntervalMinutes.flow(ctx)
-    val reminderMode = WellbeingSettingsStore.reminderMode.flow(ctx)
-    val returnToLauncherEnabled = WellbeingSettingsStore.returnToLauncherEnabled.flow(ctx)
+    val guiltModeEnabled by stateFlowDelegate(WellbeingSettingsStore.guiltModeEnabled)
+    val pauseDuration by stateFlowDelegate(WellbeingSettingsStore.pauseDurationSeconds)
+    val returnToLauncherEnabled by stateFlowDelegate(WellbeingSettingsStore.returnToLauncherEnabled)
+
+    private val socialMediaPauseEnabled by stateFlowDelegate(WellbeingSettingsStore.socialMediaPauseEnabled)
+    private val pausedApps by stateFlowDelegate(WellbeingSettingsStore.pausedApps)
+    private val reminderEnabled by stateFlowDelegate(WellbeingSettingsStore.reminderEnabled)
+    private val reminderInterval by stateFlowDelegate(WellbeingSettingsStore.reminderIntervalMinutes)
+    private val reminderMode by stateFlowDelegate(WellbeingSettingsStore.reminderMode)
 
 //    data class WellbeingState(
 //        val socialMediaPauseEnabled: Boolean,
@@ -117,7 +119,7 @@ class AppLaunchViewModel @Inject constructor(
 
     fun requestAppLaunch(application: Application) {
         viewModelScope.launch{
-            val startAppTimer = combine(pausedApps, socialMediaPauseEnabled) { pausedApps, socialMediaPauseEnabled ->
+            val startAppTimer = combine(pausedApps.flow, socialMediaPauseEnabled.flow) { pausedApps, socialMediaPauseEnabled ->
                 if (!socialMediaPauseEnabled) return@combine false
                 application.packageName in pausedApps
             }
@@ -136,9 +138,9 @@ class AppLaunchViewModel @Inject constructor(
         AppTimerService.start(
             ctx = ctx,
             application = app,
-            reminderEnabled = reminderEnabled.first(),
-            reminderIntervalMinutes = reminderInterval.first(),
-            reminderMode = reminderMode.first(),
+            reminderEnabled = reminderEnabled.flow.first(),
+            reminderIntervalMinutes = reminderInterval.flow.first(),
+            reminderMode = reminderMode.flow.first(),
             timeLimitMinutes = timeLimitMinutes
         )
     }
@@ -240,9 +242,6 @@ class AppLaunchViewModel @Inject constructor(
 
 
     init {
-        viewModelScope.launch {
-        }
-
         viewModelInitialized()
     }
 }
@@ -252,3 +251,4 @@ class AppLaunchViewModel @Inject constructor(
  * Exception for app launch failures
  */
 class AppLaunchException(message: String, cause: Throwable? = null) : Exception(message, cause)
+

@@ -33,14 +33,14 @@ import javax.inject.Inject
 @HiltViewModel
 class DrawerViewModel @Inject constructor(
     application: android.app.Application,
-    notificationService: NotificationService,
-    private val recentsService: RecentsService,
     val iconPackManager: IconPackManager,
     val appsRepository: AppRepository,
+    private val recentsService: RecentsService,
     val iconsService: IconService,
     val workspaceManager: WorkspacesManager,
     val appOverrideManager: AppOverridesManager,
-    val permissionsManager: PermissionsManager
+    val permissionsManager: PermissionsManager,
+    notificationService: NotificationService
 ) : AndroidViewModel(application) {
 
     val allApps: StateFlow<List<Application>> = appsRepository.getAllApps().stateIn(

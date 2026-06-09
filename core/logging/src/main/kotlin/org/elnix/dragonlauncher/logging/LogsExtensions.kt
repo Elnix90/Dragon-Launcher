@@ -33,5 +33,5 @@ inline fun logWtf(tag: LogTag, throwable: Throwable? = null, message: () -> Stri
 }
 
 inline fun logWtf(throwable: Throwable? = null, message: () -> String) {
-    Timber.tag(LogTag("WTF").tag).wtf(throwable, message())
+    Timber.tag(WTF_TAG.tag).wtf(throwable, message())
 }

@@ -45,3 +45,5 @@ val INIT_TAG = LogTag("InitDebug")
 val PERMISSIONS_TAG = LogTag("PermissionsDebug")
 val SPECIAL_TAG = LogTag("SpecialDebug")
 val NOTIFICATIONS_TAG = LogTag("NotificationsDebug")
+
+val WTF_TAG = LogTag("WTF")

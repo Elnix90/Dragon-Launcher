@@ -85,8 +85,7 @@ fun WellbeingTab(
 
 
     val allApps by drawerViewModel.allApps.collectAsState()
-//    val hasUsageStatsPermission by appLaunchViewModel.hasUsageStatsPermission.collectAsState()
-    val hasUsageStatsPermission = false
+    val hasUsageStatsPermission by appLaunchViewModel.hasUsageStatsPermission.collectAsState()
 
     LaunchedEffect(reminderEnabled, reminderMode) {
         if (reminderEnabled && reminderMode == ReminderMode.Overlay && !Settings.canDrawOverlays(ctx)) {

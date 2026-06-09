@@ -13,12 +13,11 @@ import org.elnix.dragonlauncher.settings.bases.objects.EnumListSettingObject.Com
 import org.elnix.dragonlauncher.settings.bases.objects.EnumSettingObject.Companion.enum
 import org.elnix.dragonlauncher.settings.bases.objects.IconShapeSettingObject.Companion.shape
 import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
-import org.elnix.dragonlauncher.settings.bases.objects.StringSetSettingObject.Companion.stringSet
+import org.elnix.dragonlauncher.settings.bases.objects.StringListSettingObject.Companion.stringList
 import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 object DrawerSettingsStore : MapSettingsStore(DataStoreName.DRAWER) {
-
 
     override val ALL: List<BaseSettingObject<*, *>>
         get() = listOf(
@@ -221,9 +220,9 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.DRAWER) {
         allowedRange = 1..20
     )
 
-    val recentlyUsedPackages = stringSet(
-        key = "recentlyUsedPackagesSet",
-        default = emptySet()
+    val recentlyUsedPackages = stringList(
+        key = "recentlyUsedPackagesList",
+        default = emptyList()
     )
 
     val pullDownAnimations = boolean(
