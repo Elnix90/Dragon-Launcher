@@ -91,8 +91,8 @@ internal fun Context.resolveDataStore(dataStoreName: DataStoreName): DataStore<P
         ?: error("No DataStore delegate found for ${dataStoreName.value}")
 }
 
-val allStores: Map<DataStoreName, BaseSettingsStore<*, *>>
-    get() = mapOf(
+val allStores: Map<DataStoreName, BaseSettingsStore<*, *>> by lazy {
+    mapOf(
         UI to UiSettingsStore,
         ICONS to IconsSettingsStore,
         COLOR_MODE to ColorModesSettingsStore,
@@ -115,12 +115,13 @@ val allStores: Map<DataStoreName, BaseSettingsStore<*, *>>
         ANGLE_LINE to AngleLineSettingsStore,
         HOLD_TO_ACTIVATE to HoldToActivateArcSettingsStore
     )
+}
 
-val themeDataStores: Set<DataStoreName>
-    get() = setOf(UI, COLOR_MODE, COLOR, ANGLE_LINE, HOLD_TO_ACTIVATE)
+val themeDataStores: Set<DataStoreName> = setOf(UI, COLOR_MODE, COLOR, ANGLE_LINE, HOLD_TO_ACTIVATE)
 
-val backupableStores: Map<DataStoreName, BaseSettingsStore<*, *>>
-    get() = allStores.filterKeys { it.userBackup }
+val backupableStores: Map<DataStoreName, BaseSettingsStore<*, *>> by lazy {
+    allStores.filterKeys { it.userBackup }
+}
 
 
 suspend fun clearAllData(ctx: Context) = coroutineScope {
