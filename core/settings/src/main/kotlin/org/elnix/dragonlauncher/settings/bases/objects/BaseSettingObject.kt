@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.map
 import org.elnix.dragonlauncher.logging.BACKUP_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logV
-import org.elnix.dragonlauncher.logging.logWtf
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.resolveDataStore
 
@@ -76,11 +75,7 @@ sealed class BaseSettingObject<T, R> {
             .data
             .first()[preferenceKey]
 
-        logWtf { "GetORNull: Raw from store: $raw" }
-
         return raw?.let {
-            logWtf { "Raw isn't null, returning a decoded value" }
-
             try {
                 decode(it)
             } catch (e: Exception) {
@@ -97,40 +92,7 @@ sealed class BaseSettingObject<T, R> {
      * @param ctx
      * @return decoded value of settings type [T]
      */
-    suspend fun get(ctx: Context): T {
-
-        logWtf { "get() START" }
-        logWtf { "dataStoreName = $dataStoreName" }
-        logWtf { "key = $key" }
-        logWtf { "default = $default" }
-        logWtf { "default class = ${default!!::class.java}" }
-
-        val got = getOrNull(ctx)
-        logWtf { "get() after getOrNull: got=$got" }
-
-        val result = if (got != null) {
-            logWtf { "get() returning got" }
-            got
-        } else {
-            logWtf { "get() returning default=$default" }
-            default
-        }
-
-        logWtf { "get() END, result=$result" }
-        return result
-    }
-//    suspend fun get(ctx: Context): T {
-//
-//        val got = getOrNull(ctx)
-//        logWtf { "GetOrNull returned: $got" }
-//        if (got != null) {
-//            logWtf { "Returning got" }
-//            return got
-//        } else {
-//            logWtf { "Returning default, which is $default (${default!!::class.java})" }
-//            return default
-//        }
-//    }
+    suspend fun get(ctx: Context): T = getOrNull(ctx) ?: default
 
 
     /**
