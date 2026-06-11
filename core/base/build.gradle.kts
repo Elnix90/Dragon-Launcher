@@ -30,6 +30,8 @@ extensions.configure<LibraryExtension> {
 }
 
 dependencies {
+    implementation(libs.bundles.kotlin)
+
     implementation(libs.androidx.ui)
     implementation(libs.androidx.material3)
     implementation(platform(libs.androidx.compose.bom))
@@ -37,13 +39,12 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(libs.material)
     implementation(libs.androidx.palette)
-    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.graphics.shapes)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.stringsimilarity)
-    implementation(libs.bundles.kotlin)
+
     api(libs.androidx.ui.graphics)
 
     api(project(":core:libs:material-color-utilities"))

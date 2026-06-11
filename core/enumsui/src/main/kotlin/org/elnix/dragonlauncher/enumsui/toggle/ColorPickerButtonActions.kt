@@ -1,15 +1,15 @@
 package org.elnix.dragonlauncher.enumsui.toggle
 
-import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.enumsui.ToggleButtonOption
+import org.elnix.dragonlauncher.i18n.R
 
 enum class ColorPickerButtonAction(
     override val iconEnabled: Int,
     override val resId: Int? = null,
     override val iconDisabled: Int? = null
 ) : ToggleButtonOption {
-    RANDOM(R.drawable.shuffle),
-    RESET(R.drawable.reset),
-    COPY(R.drawable.copy),
-    PASTE(R.drawable.paste)
+    Random(R.drawable.shuffle),
+    Reset(R.drawable.reset),
+    Copy(R.drawable.copy),
+    Paste(R.drawable.paste)
 }

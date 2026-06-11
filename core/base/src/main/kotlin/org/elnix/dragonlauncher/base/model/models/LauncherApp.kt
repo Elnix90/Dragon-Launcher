@@ -22,7 +22,8 @@ data class LauncherApp(
     override val versionName: String?,
     override val labelOverride: String? = null,
     override val profile: Profile,
-    override val category: AppCategory
+    override val category: AppCategory,
+    override val isSuspended: Boolean
 ) : Application() {
     override val isSystem: Boolean = false
     override val isLaunchable: Boolean = true

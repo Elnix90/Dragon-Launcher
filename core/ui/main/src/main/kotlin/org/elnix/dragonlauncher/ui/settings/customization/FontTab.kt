@@ -44,6 +44,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -73,8 +74,10 @@ import org.elnix.dragonlauncher.fonts.fontNameToFont
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.logging.FONT_PROVIDER
+import org.elnix.dragonlauncher.logging.SETTINGS_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
+import org.elnix.dragonlauncher.logging.logWtf
 import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
@@ -95,6 +98,7 @@ fun FontTab(onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
 
     val globalFontName by UiSettingsStore.globalFont.asState()
+
     var refreshTrigger by remember { mutableIntStateOf(0) }
 
     val isExtensionInstalled = remember(refreshTrigger) {
@@ -637,6 +641,10 @@ fun FontTab(onBack: () -> Unit) {
 //                    }
 //                }
 
+        LaunchedEffect(globalFontName) {
+            logWtf(SETTINGS_TAG) { "Typo updated: $globalFontName" }
+        }
+
         Column {
             if (filteredLocal.isNotEmpty()) {
                 Text(
@@ -669,7 +677,9 @@ fun FontTab(onBack: () -> Unit) {
                                 else selectedFontsToDelete.add(font)
                             }
                         } else {
-                            scope.launch { UiSettingsStore.globalFont.set(ctx, font) }
+                            scope.launch {
+                                UiSettingsStore.globalFont.set(ctx, font)
+                            }
                         }
                     }
                 }

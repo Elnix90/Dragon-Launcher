@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherApps
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -45,6 +46,8 @@ abstract class Application : Comparable<Application> {
 
     abstract val isSystem: Boolean
     abstract val isLaunchable: Boolean
+
+    abstract val isSuspended: Boolean
     abstract val componentName: ComponentName
 
 
@@ -219,16 +222,16 @@ abstract class Application : Comparable<Application> {
             }
         }
 
-//        fun isSuspended(ctx: Context, packageName: String): Boolean {
-//            return try {
-//                ctx.packageManager.getApplicationInfo(
-//                    packageName,
-//                    0
-//                ).flags and ApplicationInfo.FLAG_SUSPENDED != 0
-//            } catch (e: PackageManager.NameNotFoundException) {
-//                false
-//            }
-//        }
+        fun isSuspended(ctx: Context, packageName: String): Boolean {
+            return try {
+                ctx.packageManager.getApplicationInfo(
+                    packageName,
+                    0
+                ).flags and ApplicationInfo.FLAG_SUSPENDED != 0
+            } catch (e: PackageManager.NameNotFoundException) {
+                false
+            }
+        }
 
         fun Application.toLaunchApp(): Action.LaunchApp = Action.LaunchApp(this)
     }

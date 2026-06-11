@@ -42,6 +42,7 @@ import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
+import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.dialogs.DrawerToolbarsOrderDialog
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -53,6 +54,7 @@ import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.settings.DrawerActionSelector
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
+import org.elnix.dragonlauncher.ui.dragon.settings.toIntRange
 import org.elnix.dragonlauncher.ui.helpers.GridSizeSlider
 import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
@@ -70,13 +72,11 @@ fun DrawerTab(
     val apps by drawerViewModel.userApps.collectAsState()
 
     val leftDrawerAction by DrawerSettingsStore.leftDrawerAction.asState()
-
     val rightDrawerAction by DrawerSettingsStore.rightDrawerAction.asState()
-
     val leftDrawerWidth by DrawerSettingsStore.leftDrawerWidth.asState()
     val rightDrawerWidth by DrawerSettingsStore.rightDrawerWidth.asState()
 
-    val iconsShape by DrawerSettingsStore.iconsShape.asState()
+    val iconShape = LocalIconShape.current
 
     val drawerCategorySettingsState = rememberExpandableSection(stringResource(R.string.category_settings))
     val drawerNormalSettingsState = rememberExpandableSection(stringResource(R.string.grid_settings))
@@ -84,7 +84,6 @@ fun DrawerTab(
         title = stringResource(R.string.action_settings),
         mode = ExpandableSectionMode.ModalSheet(true)
     )
-
 
     val autoLaunchSingleMatch by DrawerSettingsStore.autoOpenSingleMatch.asState()
     val showRecentlyUsed by DrawerSettingsStore.showRecentlyUsedApps.asState()
@@ -116,44 +115,26 @@ fun DrawerTab(
     ) {
 
         DragonSettingsGroup(R.string.behavior) {
-            SettingsSwitchRow(
-                setting = DrawerSettingsStore.autoOpenSingleMatch,
-                title = stringResource(R.string.auto_launch_single_match),
-                description = stringResource(R.string.auto_launch_single_match_desc),
-            )
+            SettingsSwitchRow(DrawerSettingsStore.autoOpenSingleMatch)
 
             AnimatedVisibility(autoLaunchSingleMatch) {
-                SettingsSwitchRow(
-                    setting = DrawerSettingsStore.disableAutoLaunchOnSpaceFirstChar,
-                    title = stringResource(R.string.disable_auto_launch_on_space_first_char),
-                    description = stringResource(R.string.disable_auto_launch_on_space_first_char_desc),
-                )
+                SettingsSwitchRow(DrawerSettingsStore.disableAutoLaunchOnSpaceFirstChar)
             }
 
-            SettingsSwitchRow(
-                setting = DrawerSettingsStore.autoShowKeyboardOnDrawer,
-                title = stringResource(R.string.auto_show_keyboard),
-                description = stringResource(R.string.auto_show_keyboard_desc),
-            )
+            SettingsSwitchRow(DrawerSettingsStore.autoShowKeyboardOnDrawer)
         }
 
         DragonSettingsGroup(R.string.drawer_pull_down_settings) {
-            SettingsSwitchRow(
-                setting = DrawerSettingsStore.pullDownAnimations,
-                title = stringResource(R.string.pull_down_animations),
-                description = stringResource(R.string.pull_down_animations_desc)
+            SettingsSwitchRow(DrawerSettingsStore.pullDownAnimations,
+
             )
 
-            SettingsSwitchRow(
-                setting = DrawerSettingsStore.pullDownWallPaperDimFade,
-                title = stringResource(R.string.pull_down_wallpaper_dim),
-                description = stringResource(R.string.pull_down_wallpaper_dim_desc)
+            SettingsSwitchRow(DrawerSettingsStore.pullDownWallPaperDim,
+
             )
 
-            SettingsSwitchRow(
-                setting = DrawerSettingsStore.pullDownScaleIn,
-                title = stringResource(R.string.pull_down_scale_in),
-                description = stringResource(R.string.pull_down_scale_in_desc)
+            SettingsSwitchRow(DrawerSettingsStore.pullDownScaleIn,
+
             )
 
 //                SettingsSwitchRow(
@@ -167,17 +148,11 @@ fun DrawerTab(
 
 
         DragonSettingsGroup(R.string.recently_used_apps) {
-            SettingsSwitchRow(
-                setting = DrawerSettingsStore.showRecentlyUsedApps,
-                title = stringResource(R.string.show_recently_used_apps),
-                description = stringResource(R.string.show_recently_used_apps_desc),
-            )
+            SettingsSwitchRow(DrawerSettingsStore.showRecentlyUsedApps)
 
             AnimatedVisibility(showRecentlyUsed) {
                 SettingsSlider(
                     setting = DrawerSettingsStore.recentlyUsedAppsCount,
-                    title = stringResource(R.string.recently_used_apps_count),
-                    valueRange = 1..20,
                     backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
                     modifier = Modifier
                         .settingsGroupHorizontalPadding()
@@ -192,72 +167,34 @@ fun DrawerTab(
                 icon = R.drawable._123
             ) { showToolbarsOrderDialog = true }
 
-            SettingsSwitchRow(
-                setting = DrawerSettingsStore.showAppIconsInDrawer,
-                title = stringResource(R.string.show_app_icons_in_drawer),
-                description = stringResource(R.string.show_app_icons_in_drawer_desc)
-            )
+            SettingsSwitchRow(DrawerSettingsStore.showAppIconsInDrawer)
 
-            SettingsSwitchRow(
-                setting = DrawerSettingsStore.showAppLabelInDrawer,
-                title = stringResource(R.string.show_app_labels_in_drawer),
-                description = stringResource(R.string.show_app_labels_in_drawer_desc)
-            )
+            SettingsSwitchRow(DrawerSettingsStore.showAppLabelInDrawer)
 
             ExpandableSection(drawerCategorySettingsState) {
-                SettingsSwitchRow(
-                    setting = DrawerSettingsStore.useCategory,
-                    title = stringResource(R.string.use_categories),
-                    description = stringResource(R.string.use_categories_desc)
-                )
-
-                SettingsSwitchRow(
-                    setting = DrawerSettingsStore.showCategoryName,
-                    title = stringResource(R.string.show_category_name),
-                    description = stringResource(R.string.show_category_name_desc),
-                    enabled = useCategory,
-                )
+                SettingsSwitchRow(DrawerSettingsStore.useCategory)
+                SettingsSwitchRow(DrawerSettingsStore.showCategoryName, enabled = useCategory)
 
                 SettingsSlider(
                     setting = DrawerSettingsStore.categoryGridWidth,
-                    title = stringResource(R.string.category_grid_width),
-                    valueRange = 1..4
+
                 )
 
                 SettingsSlider(
                     setting = DrawerSettingsStore.categoryGridCells,
-                    title = stringResource(R.string.category_cells),
-                    description = stringResource(R.string.category_cells),
-                    valueRange = 2..5
+
                 )
             }
 
             ExpandableSection(drawerNormalSettingsState) {
-                SettingsSlider(
-                    setting = DrawerSettingsStore.maxIconSize,
-                    description = stringResource(R.string.max_icon_size_desc),
-                    title = stringResource(R.string.max_icon_size),
-                    valueRange = 0..200
-                )
-
-                SettingsSlider(
-                    setting = DrawerSettingsStore.iconsSpacingHorizontal,
-                    title = stringResource(R.string.icons_spacing_horizontal),
-                    description = stringResource(R.string.icons_spacing_horizontal_desc),
-                    valueRange = 0..50
-                )
-
-                SettingsSlider(
-                    setting = DrawerSettingsStore.iconsSpacingVertical,
-                    title = stringResource(R.string.icons_spacing_vertical),
-                    description = stringResource(R.string.icons_spacing_vertical_desc),
-                    valueRange = 0..50
-                )
+                SettingsSlider(DrawerSettingsStore.iconSize,)
+                SettingsSlider(DrawerSettingsStore.iconsSpacingHorizontal)
+                SettingsSlider(DrawerSettingsStore.iconsSpacingVertical)
             }
 
             ShapeRow(
-                selected = iconsShape,
-                onReset = { scope.launch { DrawerSettingsStore.iconsShape.reset(ctx) } }
+                selected = iconShape,
+                onReset = { scope.launch { DrawerSettingsStore.iconShape.reset(ctx) } }
             ) { showShapePickerDialog = true }
         }
 
@@ -266,47 +203,14 @@ fun DrawerTab(
         DragonSettingsGroup(R.string.drawer_actions) {
 
             ExpandableSection(actionsSettingsState) {
-                DrawerActionSelector(
-                    settingObject = DrawerSettingsStore.leftDrawerAction,
-                    label = stringResource(R.string.left_drawer_action),
-                    allowNone = true
-                )
-
-                DrawerActionSelector(
-                    settingObject = DrawerSettingsStore.rightDrawerAction,
-                    label = stringResource(R.string.right_drawer_action),
-                    allowNone = true
-                )
-
-                DrawerActionSelector(
-                    settingObject = DrawerSettingsStore.scrollUpDrawerAction,
-                    label = stringResource(R.string.scroll_up_action),
-                )
-
-                DrawerActionSelector(
-                    settingObject = DrawerSettingsStore.scrollDownDrawerAction,
-                    label = stringResource(R.string.scroll_down_action),
-                )
-
-                DrawerActionSelector(
-                    settingObject = DrawerSettingsStore.tapEmptySpaceAction,
-                    label = stringResource(R.string.tap_empty_space_action),
-                )
-
-                DrawerActionSelector(
-                    settingObject = DrawerSettingsStore.backDrawerAction,
-                    label = stringResource(R.string.back_action),
-                )
-
-                DrawerActionSelector(
-                    settingObject = DrawerSettingsStore.drawerEnterAction,
-                    label = stringResource(R.string.drawer_enter_key_action),
-                )
-
-                DrawerActionSelector(
-                    settingObject = DrawerSettingsStore.drawerHomeAction,
-                    label = stringResource(R.string.drawer_home_action),
-                )
+                DrawerActionSelector(DrawerSettingsStore.leftDrawerAction, allowNone = true)
+                DrawerActionSelector(DrawerSettingsStore.rightDrawerAction, allowNone = true)
+                DrawerActionSelector(DrawerSettingsStore.scrollUpDrawerAction)
+                DrawerActionSelector(DrawerSettingsStore.scrollDownDrawerAction)
+                DrawerActionSelector(DrawerSettingsStore.tapEmptySpaceAction)
+                DrawerActionSelector(DrawerSettingsStore.backDrawerAction)
+                DrawerActionSelector(DrawerSettingsStore.drawerEnterAction)
+                DrawerActionSelector(DrawerSettingsStore.drawerHomeAction)
             }
 
             Row(
@@ -339,50 +243,59 @@ fun DrawerTab(
                     ) {
 
                         if (leftDrawerAction.notDisabled) {
-                            Box(
+                            Row(
                                 modifier = Modifier
                                     .align(Alignment.CenterStart)
-                                    .fillMaxHeight()
-                                    .width(leftWidth)
-                                    .background(MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(leftDrawerAction.notNone)),
-                                contentAlignment = Alignment.Center
                             ) {
-                                if (leftDrawerAction.notNone) {
-                                    Icon(
-                                        painter = painterResource(leftDrawerAction.iconEnabled),
-                                        contentDescription = stringResource(R.string.left_drawer_action),
-                                        tint = MaterialTheme.colorScheme.outline
-                                    )
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .width(leftWidth)
+                                        .background(MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(leftDrawerAction.notNone)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (leftDrawerAction.notNone) {
+                                        Icon(
+                                            painter = painterResource(leftDrawerAction.iconEnabled),
+                                            contentDescription = stringResource(R.string.left_drawer_action),
+                                            tint = MaterialTheme.colorScheme.outline
+                                        )
+                                    }
                                 }
+                                DragHandle()
                             }
-                            DragHandle()
                         }
 
                         if (rightDrawerAction.notDisabled) {
-                            DragHandle()
-                            Box(
+                            Row(
                                 modifier = Modifier
                                     .align(Alignment.CenterEnd)
-                                    .fillMaxHeight()
-                                    .width(rightWidth)
-                                    .background(MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(rightDrawerAction.notNone)),
-                                contentAlignment = Alignment.Center
                             ) {
-                                if (rightDrawerAction.notNone) {
-                                    Icon(
-                                        painter = painterResource(rightDrawerAction.iconEnabled),
-                                        contentDescription = stringResource(R.string.right_drawer_action),
-                                        tint = MaterialTheme.colorScheme.outline
-                                    )
+                                DragHandle()
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .width(rightWidth)
+                                        .background(MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(rightDrawerAction.notNone)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (rightDrawerAction.notNone) {
+                                        Icon(
+                                            painter = painterResource(rightDrawerAction.iconEnabled),
+                                            contentDescription = stringResource(R.string.right_drawer_action),
+                                            tint = MaterialTheme.colorScheme.outline
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
 
                     SliderWithLabel(
-                        label = stringResource(R.string.left_drawer_width),
+                        label = stringResource(DrawerSettingsStore.leftDrawerWidth.title!!),
                         value = leftWidth.value.toInt(),
-                        valueRange = DrawerSettingsStore.leftDrawerWidth.allowedRange as IntRange,
+                        modifier = Modifier.settingsGroupHorizontalPadding(),
+                        valueRange = DrawerSettingsStore.leftDrawerWidth.allowedRange.toIntRange(),
                         onDragStateChange = { isDragging ->
                             if (!isDragging) {
                                 scope.launch {
@@ -397,7 +310,8 @@ fun DrawerTab(
                     SliderWithLabel(
                         label = stringResource(R.string.right_drawer_width),
                         value = rightWidth.value.toInt(),
-                        valueRange = DrawerSettingsStore.rightDrawerWidth.allowedRange as IntRange,
+                        modifier = Modifier.settingsGroupHorizontalPadding(),
+                        valueRange = DrawerSettingsStore.rightDrawerWidth.allowedRange.toIntRange(),
                         onDragStateChange = { isDragging ->
                             if (!isDragging) {
                                 scope.launch {
@@ -415,12 +329,12 @@ fun DrawerTab(
 
     if (showShapePickerDialog) {
         ShapePickerDialog(
-            selected = iconsShape,
+            selected = iconShape,
             onDismiss = { showShapePickerDialog = false }
         ) {
             logD(SHAPES_TAG) { "Picked: $it" }
             scope.launch {
-                DrawerSettingsStore.iconsShape.set(ctx, it)
+                DrawerSettingsStore.iconShape.set(ctx, it)
             }
         }
     }

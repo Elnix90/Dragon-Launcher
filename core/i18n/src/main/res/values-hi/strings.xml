@@ -326,7 +326,6 @@
     <string name="guilt_mode">समय जागरूकता मोड</string>
     <string name="guilt_mode_description">ऐप्स में बिताए गए समय को प्रतिबिंबित करने में आपकी सहायता के लिए वास्तविक उपयोग आँकड़े प्रदर्शित करें</string>
     <string name="pause_duration">विराम अवधि</string>
-    <string name="pause_duration_description">जारी रखने में सक्षम होने से पहले कितनी देर तक सांस लेनी है (%d सेकंड)</string>
     <string name="paused_apps">रोके गए ऐप्स</string>
     <string name="add_app">ऐप जोड़ें</string>
     <string name="add_social_media">सभी सोशल मीडिया जोड़ें</string>
@@ -352,7 +351,6 @@
     <string name="reminder_mode_title">उपयोग अनुस्मारक</string>
     <string name="reminder_mode_description">जब आप किसी रुके हुए ऐप पर बहुत देर तक रहते हैं तो समय-समय पर अनुस्मारक प्राप्त करें</string>
     <string name="reminder_interval">अनुस्मारक अंतराल</string>
-    <string name="reminder_interval_description">मुझे हर %d मिनट में याद दिलाएं</string>
     <string name="reminder_mode_notification">अधिसूचना</string>
     <string name="reminder_mode_overlay">ऑन-स्क्रीन पॉपअप</string>
     <string name="overlay_permission_required">ओवरले अनुमति</string>

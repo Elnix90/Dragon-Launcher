@@ -62,9 +62,10 @@ abstract class BaseSettingsStore<T, B>(
      * Reads the current state of all settings in this store and returns it in the form of the store's backup type [T]
      *
      * @param ctx The Android [Context] required to access the underlying DataStore.
+     * @param forceAllKeys whether to get the settings that haven't been changed in the backup, the defaults
      * @return The aggregate state of type [T].
      */
-    abstract suspend fun getAll(ctx: Context): T
+    abstract suspend fun getAll(ctx: Context, forceAllKeys: Boolean): T
 
     /**
      * Writes the given aggregate state to all settings in this store.
@@ -80,7 +81,7 @@ abstract class BaseSettingsStore<T, B>(
      * @param ctx The Android [Context] required to access the underlying DataStore.
      * @return A [B] representing all settings in the store's type, or `null` if nothing to export.
      */
-    abstract suspend fun exportForBackup(ctx: Context): B?
+    abstract suspend fun exportForBackup(ctx: Context, forceAllKeys: Boolean): B?
 
     /**
      * Imports settings from a [B] type backup.

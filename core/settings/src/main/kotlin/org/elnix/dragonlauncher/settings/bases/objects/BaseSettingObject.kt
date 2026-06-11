@@ -1,195 +1,217 @@
-package org.elnix.dragonlauncher.settings.bases.objects
+    package org.elnix.dragonlauncher.settings.bases.objects
 
-import android.content.Context
+    import android.content.Context
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import org.elnix.dragonlauncher.logging.BACKUP_TAG
+import org.elnix.dragonlauncher.logging.SETTINGS_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logV
+import org.elnix.dragonlauncher.logging.logW
+import org.elnix.dragonlauncher.logging.logWtf
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.resolveDataStore
 
 
-/**
- * Abstract base class for strongly-typed settings persisted in [androidx.datastore.core.DataStore].
- *
- * Provides a consistent API for getting/setting individual settings with type-safe encoding/decoding,
- * reactive flows for UI observation, and change callbacks.
- *
- * @param T The strongly-typed value type of this setting (e.g., `Boolean`, `String`, custom data class).
- * @param R The raw [Preferences.Key] value type stored in DataStore (e.g., `Boolean`, `String`).
- * @param key Unique identifier for this setting.
- * @param dataStoreName Target [DataStoreName] where this setting is persisted.
- * @param default Fallback value when no persisted value exists.
- * @param preferenceKey DataStore key used for storage/retrieval.
- * @param encode Converts [T] → [R?] for DataStore persistence (returns `null` to remove setting).
- * @param decode Converts raw DataStore value → [T].
- * @param onChanged Optional callback invoked after successful set/reset operations.
- */
-sealed class BaseSettingObject<T, R> {
-    abstract val key: String
-    abstract val dataStoreName: DataStoreName
-    abstract val default: T
-    abstract val preferenceKey: Preferences.Key<R>
-    abstract val encode: (T) -> R?
-    abstract val decode: (Any?) -> T
-    abstract var onChanged: (() -> Unit)?
-
     /**
-     * Sets the value of this setting using a type-erased input.
+     * Abstract base class for strongly-typed settings persisted in [androidx.datastore.core.DataStore].
      *
-     * This method exists to support bulk operations (such as restore, import,
-     * or map-based updates) where the concrete generic type of the setting is
-     * not known at compile time.
+     * Provides a consistent API for getting/setting individual settings with type-safe encoding/decoding,
+     * reactive flows for UI observation, and change callbacks.
      *
-     * The provided [value] is first cast to the raw representation type [R],
-     * then converted into the setting's strongly-typed value using [decode],
-     * and finally persisted via [set].
-     *
-     * @param ctx Android context used to access the underlying data store.
-     * @param value The raw, type-erased value to apply to this setting.
-     *
-     * @throws ClassCastException if [value] is not of the expected raw type [R].
+     * @param TYPED The strongly-typed value type of this setting (e.g., `Boolean`, `String`, custom data class).
+     * @param ENCODED The raw [Preferences.Key] value type stored in DataStore (e.g., `Boolean`, `String`).
+     * @param key Unique identifier for this setting.
+     * @param dataStoreName Target [DataStoreName] where this setting is persisted.
+     * @param default Fallback value when no persisted value exists.
+     * @param preferenceKey DataStore key used for storage/retrieval.
+     * @param encode Converts [TYPED] → [R?] for DataStore persistence (returns `null` to remove setting).
+     * @param decode Converts raw DataStore value → [TYPED].
+     * @param onChanged Optional callback invoked after successful set/reset operations.
      */
-    suspend fun setAny(ctx: Context, value: Any?) {
-        @Suppress("UNCHECKED_CAST")
-        set(ctx, value as? T)
-    }
+    sealed class BaseSettingObject<TYPED, ENCODED> {
+        abstract val key: String
+        abstract val title: Int?
+        abstract val description: Int?
+        abstract val dataStoreName: DataStoreName
+        abstract val default: TYPED
+        abstract val preferenceKey: Preferences.Key<ENCODED>
+        abstract fun encode(value: TYPED): ENCODED?
+        abstract fun decode(raw: Any?): TYPED
+        abstract var onChanged: (() -> Unit)?
 
+    //    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    /**
-     * Get the value one shot for logic, no flow
-     * Returns null if the value is not defined (default)
-     *
-     * @param ctx
-     * @return decoded nullable value of settings type [T?]
-     */
-    suspend fun getOrNull(ctx: Context): T? {
+        private val _cachedValue: MutableStateFlow<TYPED> = MutableStateFlow(default)
+        val value: TYPED
+            get() = _cachedValue.value ?: default
 
-        val raw = ctx.applicationContext
-            .resolveDataStore(dataStoreName)
-            .data
-            .first()[preferenceKey]
+        private suspend fun loadValue(ctx: Context): TYPED {
 
-        return raw?.let {
-            try {
-                decode(it)
-            } catch (e: Exception) {
-                logE(BACKUP_TAG, e) { "FAILED decoding setting: $key" }
-                null
+            val raw: ENCODED? = ctx
+                .applicationContext
+                .resolveDataStore(dataStoreName)
+                .data
+                .first()[preferenceKey]
+
+            val decoded: TYPED = raw?.let {
+                try {
+                   decode(it)
+                } catch (e: Exception) {
+                    logE(BACKUP_TAG, e) { "FAILED decoding setting: $key" }
+                    null
+                }
+            } ?: default
+
+            logWtf(SETTINGS_TAG) { "Decoded value for $key: $decoded"}
+            requireNotNull(decoded) { "Decoded value for $key must not be null!" }
+            _cachedValue.value = decoded
+            return decoded
+        }
+
+        /**
+         * Sets the value of this setting using a type-erased input.
+         *
+         * This method exists to support bulk operations (such as restore, import,
+         * or map-based updates) where the concrete generic type of the setting is
+         * not known at compile time.
+         *
+         * The provided [value] is first cast to the raw representation type [ENCODED],
+         * then converted into the setting's strongly-typed value using [decode],
+         * and finally persisted via [set].
+         *
+         * @param ctx Android context used to access the underlying data store.
+         * @param value The raw, type-erased value to apply to this setting.
+         *
+         * @throws ClassCastException if [value] is not of the expected raw type [ENCODED].
+         */
+        suspend fun setAny(ctx: Context, value: Any?) {
+            @Suppress("UNCHECKED_CAST")
+            val value = value as? TYPED
+            if (value != null) {
+                set(ctx, value)
+            } else {
+                reset(ctx)
             }
         }
-    }
 
-
-    /**
-     * Get the value one shot for logic, no flow
-     *
-     * @param ctx
-     * @return decoded value of settings type [T]
-     */
-    suspend fun get(ctx: Context): T = getOrNull(ctx) ?: default
-
-
-    /**
-     * Get the value one shot for logic, no flow
-     *
-     * @param ctx
-     * @return decoded value of settings type [T]
-     */
-    suspend fun getEncoded(ctx: Context): R? {
-
-        val raw = ctx.applicationContext
-            .resolveDataStore(dataStoreName)
-            .data
-            .first()[preferenceKey]
-
-        // Shitty but should work
-        // After reviewing this, I find it even mores shitier,
-        // but I really don't want to touch that, as it works.
-        // if I touch this, it'll break the whole app
-        // timesIReadThisAndFearWhatIWrote = 3
-        return raw?.let {
-            try {
-                encode(decode(it))
-            } catch (e: Exception) {
-                logE(BACKUP_TAG, e) { "FAILED encoding setting: $key" }
-                null
-            }
+        init {
+            requireNotNull(default) { "StringSettingObject $key initialized with null default: $default" }
+            logWtf(SETTINGS_TAG) { "StringSettingObject $key initialized with null default: $default" }
         }
-    }
+        /**
+         * Get the value one shot for logic, no flow
+         * Returns null if the value is not defined (default)
+         *
+         * @return `T?` decoded nullable value
+         */
+        suspend fun getOrNull(ctx: Context): TYPED? {
+            val value = get(ctx)
+            return if (value != default) value else null
+        }
 
-
-    /**
-     * Outputs a flow of the value, for compose
-     *
-     * @param ctx
-     * @return [Flow] of the settings type [T]
-     */
-    fun flow(ctx: Context): Flow<T> {
-        return ctx.applicationContext
-            .resolveDataStore(dataStoreName)
-            .data
-            .map { prefs ->
-                val raw = prefs[preferenceKey]
-                raw?.let {
-                    decode(it)
-                } ?: default
+        /**
+         * Get the value one shot for logic, no flow
+         *
+         * @param ctx
+         * @return decoded value of settings type [TYPED]
+         */
+        suspend fun get(ctx: Context): TYPED =
+            _cachedValue.value ?: run {
+                error("FUCKING CACHED VALUE WAS NULLL WHYYYY")
+//                loadValue(ctx)
+                default
             }
-            .catch { e ->
-                logE(BACKUP_TAG, e) { "FAILED reading setting: $key" }
 
-                emit(default)
+        /**
+         * Returns the value encoded for the
+         *
+         * @param ctx
+         * @return decoded value of settings type [TYPED]
+         */
+        suspend fun getEncoded(ctx: Context): ENCODED? =
+            get(ctx)?.let {
+                try {
+                    encode(it)
+                } catch (e: Exception) {
+                    logE(BACKUP_TAG, e) { "FAILED encoding setting: $key" }
+                    null
+                }
             }
-    }
+
+        /**
+         * Outputs a flow of the value, for compose
+         *
+         * @return [Flow] of the settings type [TYPED]
+         */
+//        fun flow(ctx: Context): Flow<T> =
+//            _cachedValue
+//                .map { it ?: default }
+//                .distinctUntilChanged()
 
 
-    /**
-     * Saves the value in the datastore for persistence
-     *
-     * @param ctx
-     * @param value either the good type or a null, to reset
-     */
-    suspend fun set(ctx: Context, value: T?) {
-        try {
-            ctx.applicationContext
-                .resolveDataStore(dataStoreName).edit {
+        /**
+         * Returns a StateFlow that emits whenever the value changes.
+         * Load happens on first access to the flow.
+         */
+        fun flow(ctx: Context): StateFlow<TYPED> = _cachedValue.asStateFlow()
 
-                    if (value != null) {
-                        val encoded = encode(value)
-                        encoded?.let { encodedNotNull ->
-                            it[preferenceKey] = encodedNotNull
-                        } ?: it.remove(preferenceKey)
-                    } else {
-                        it.remove(preferenceKey)
-                    }
+        /**
+         * Saves the value in the datastore for persistence
+         *
+         * @param ctx
+         * @param value
+         */
+        suspend fun set(ctx: Context, value: TYPED?) {
+            try {
+                if (value == null) {
+                    logV(SETTINGS_TAG) { "Null setting received, resetting it" }
+                    reset(ctx)
+                    return
                 }
 
-            logV(BACKUP_TAG) { "Setting changed: $key" }
-            onChanged?.invoke()
+                val encoded = encode(value)
+                if (encoded == null) {
+                    logW(SETTINGS_TAG) { "FAILED to encode value, resetting it" }
+                    reset(ctx)
+                    return
+                }
 
-        } catch (e: Exception) {
-            logE(BACKUP_TAG, e) { "FAILED persisting setting: $key" }
+                ctx.resolveDataStore(dataStoreName).edit {
+                    it[preferenceKey] = encoded
+                }
+
+                logV(SETTINGS_TAG) { "Setting changed: $key" }
+
+                _cachedValue.value = value
+                onChanged?.invoke()
+
+            } catch (e: Exception) {
+                logE(BACKUP_TAG, e) { "FAILED persisting setting: $key" }
+            }
+        }
+
+
+        /**
+         * Removes the value of the [preferenceKey] from the datastore
+         * it will use the default value since nothing will be found in the datastore
+         *
+         * @param ctx
+         */
+        suspend fun reset(ctx: Context) {
+            try {
+                ctx.resolveDataStore(dataStoreName).edit {
+                    it.remove(preferenceKey)
+                }
+                _cachedValue.value = default
+                onChanged?.invoke()
+            } catch (e: Exception) {
+                logE(BACKUP_TAG, e) { "FAILED resetting setting: $key" }
+            }
         }
     }
-
-
-    /**
-     * Removes the value of the [preferenceKey] from the datastore
-     * it will use the default value since nothing will be found in the datastore
-     *
-     * @param ctx
-     */
-    suspend fun reset(ctx: Context) {
-        ctx.resolveDataStore(dataStoreName).edit {
-            it.remove(preferenceKey)
-        }
-
-        logV(BACKUP_TAG) { "Setting has been reset: $key" }
-        onChanged?.invoke()
-    }
-}

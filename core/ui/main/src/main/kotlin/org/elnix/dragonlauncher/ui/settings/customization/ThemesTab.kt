@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.ThemeObject
 import org.elnix.dragonlauncher.common.loader.loadThemes
-import org.elnix.dragonlauncher.common.utils.DateUtils.today
+import org.elnix.dragonlauncher.common.utils.DateUtils
 import org.elnix.dragonlauncher.enumsui.select.ExportImportTheme
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.logging.BACKUP_TAG
@@ -153,7 +153,7 @@ fun ThemesTab(
         ) {
             when (it) {
                 ExportImportTheme.Export -> {
-                    settingsExportLauncher.launch("dragon_launcher_theme-${today()}.json")
+                    settingsExportLauncher.launch("dragon_launcher_theme-${DateUtils.nowFormattedDateTime()}.json")
                 }
 
                 ExportImportTheme.Import -> {
@@ -209,7 +209,7 @@ fun ThemesTab(
         fun addCurrentTheme() {
 
             scope.launch {
-                val json = SettingsBackupManager.createJsonToExport(ctx, themeDataStores)
+                val json = SettingsBackupManager.createJsonToExport(ctx, themeDataStores, true)
 
                 userThemes.add(json.toString())
                 UiSettingsStore.userThemes.set(ctx, userThemes)

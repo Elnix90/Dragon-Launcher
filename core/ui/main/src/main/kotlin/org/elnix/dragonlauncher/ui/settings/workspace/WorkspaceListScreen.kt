@@ -108,7 +108,7 @@ fun WorkspaceListScreen(
                             workspace = ws,
                             isDragging = isDragging,
                             onClick = {
-                                if (ws.type != WorkspaceType.PRIVATE) {
+                                if (ws.type != WorkspaceType.Private) {
                                     onOpenWorkspace(ws.id)
                                 }
                             },
@@ -121,7 +121,7 @@ fun WorkspaceListScreen(
                                     }
 
                                     WorkspaceAction.Delete -> {
-                                        if (ws.type != WorkspaceType.PRIVATE) {
+                                        if (ws.type != WorkspaceType.Private) {
                                             showDeleteConfirm = ws
                                         }
                                     }
@@ -141,7 +141,7 @@ fun WorkspaceListScreen(
         visible = showCreateDialog,
         title = stringResource(R.string.create_workspace),
         name = nameBuffer,
-        type = WorkspaceType.CUSTOM,
+        type = WorkspaceType.Custom,
         onNameChange = { nameBuffer = it },
         onConfirm = { selectedType ->
             scope.launch { workspaceManager.createWorkspace(nameBuffer.trim(), selectedType) }

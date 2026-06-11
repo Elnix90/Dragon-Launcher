@@ -1,13 +1,8 @@
 package org.elnix.dragonlauncher.models.utils
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import kotlin.reflect.KProperty
 
 data class StateFlowWrapper<T>(
@@ -45,26 +40,7 @@ abstract class StateFlowDelegate<T>(
 //    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) = setValue(value)
 }
 
-class SettingObjectDelegate<T>(
-    private val viewModelLazy: Lazy<AndroidViewModel>,
-    private val settingObject: BaseSettingObject<T, *>,
-) : StateFlowDelegate<T>(settingObject.default) {
 
-    private val viewModel: AndroidViewModel get() = viewModelLazy.value
-
-    override fun loadValue() {
-        viewModel.viewModelScope.launch {
-            mutableFlow.value = settingObject.get(viewModel.getApplication<Application>().applicationContext)
-        }
-    }
-
-    override fun setValue(value: T) {
-        super.setValue(value)
-        viewModel.viewModelScope.launch {
-            settingObject.set(viewModel.getApplication<Application>().applicationContext, value)
-        }
-    }
-}
 
 class BasicObjectDelegate<T>(
     default: T
@@ -72,12 +48,5 @@ class BasicObjectDelegate<T>(
     override fun loadValue() { /* no-op */
     }
 }
-
-
-fun <T> AndroidViewModel.stateFlowDelegate(settingObject: BaseSettingObject<T, *>) =
-    SettingObjectDelegate(
-        viewModelLazy = lazy { this },
-        settingObject = settingObject
-    )
 
 fun <T> stateFlowDelegate(default: T) = BasicObjectDelegate(default)

@@ -30,13 +30,12 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.common.utils.DateUtils
 import org.elnix.dragonlauncher.common.utils.DateUtils.formatDateTime
-import org.elnix.dragonlauncher.common.utils.DateUtils.today
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getFilePathFromUri
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.logging.BACKUP_TAG
-import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
@@ -83,7 +82,6 @@ fun BackupTab(
     }
 
     fun save() {
-        logD(BACKUP_TAG) { "Setting: ${selectedStores.size} stores" }
         scope.launch {
             if (selectedStores.size == backupableStores.size) {
                 BackupSettingsStore.backupStores.reset(ctx)
@@ -121,8 +119,6 @@ fun BackupTab(
         }
     )
 
-
-    // ──────── UI ───────────────────────────────────────
     SettingsScaffold(
         title = ctx.getString(R.string.backup_restore),
         onBack = onBack,
@@ -149,11 +145,7 @@ fun BackupTab(
 
 
         DragonSettingsGroup(R.string.automatic_backups) {
-            SettingsSwitchRow(
-                setting = BackupSettingsStore.autoBackupEnabled,
-                title = stringResource(R.string.automatic_backups),
-                description = stringResource(R.string.auto_backup_desc)
-            ) {
+            SettingsSwitchRow(BackupSettingsStore.autoBackupEnabled) {
                 // If the user disabled the backup, also remove the uri
                 if (!it) {
                     scope.launch {
@@ -258,7 +250,7 @@ fun BackupTab(
             onConfirm = { selectedStores ->
                 showExportDialog = false
                 selectedStoresForExport = selectedStores.keys
-                settingsExportLauncher.launch("backup-${today()}.json")
+                settingsExportLauncher.launch("backup-${DateUtils.nowFormattedDateTime()}.json")
             }
         )
     }

@@ -93,28 +93,12 @@ fun StatusBarTab(
 
                 DragonSettingsGroup(
                     title = R.string.padding,
-                    contentPadding = PaddingValues(12.dp)) {
-                    SettingsSlider(
-                        setting = StatusBarSettingsStore.leftPadding,
-                        title = stringResource(R.string.left_padding),
-                        valueRange = 0..200,
-                    )
-
-                    SettingsSlider(
-                        setting = StatusBarSettingsStore.rightPadding,
-                        title = stringResource(R.string.right_padding),
-                        valueRange = 0..200,
-                    )
-                    SettingsSlider(
-                        setting = StatusBarSettingsStore.topPadding,
-                        title = stringResource(R.string.top_padding),
-                        valueRange = 0..200,
-                    )
-                    SettingsSlider(
-                        setting = StatusBarSettingsStore.bottomPadding,
-                        title = stringResource(R.string.bottom_padding),
-                        valueRange = 0..200,
-                    )
+                    contentPadding = PaddingValues(12.dp)
+                ) {
+                    SettingsSlider(StatusBarSettingsStore.leftPadding)
+                    SettingsSlider(StatusBarSettingsStore.rightPadding)
+                    SettingsSlider(StatusBarSettingsStore.topPadding)
+                    SettingsSlider(StatusBarSettingsStore.bottomPadding)
                 }
             }
         }

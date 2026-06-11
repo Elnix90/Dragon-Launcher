@@ -282,17 +282,17 @@ private fun ColorPicker(
             modifier = Modifier.height(380.dp)
         ) { page ->
             when (pickerModes[page]) {
-                ColorPickerMode.DEFAULTS -> DefaultColorPicker(
+                ColorPickerMode.Default -> DefaultColorPicker(
                     initialColor = color,
                     onColorSelected = onColorSelected
                 )
 
-                ColorPickerMode.SLIDERS -> SliderColorPicker(
+                ColorPickerMode.Slider -> SliderColorPicker(
                     actualColor = color,
                     onColorSelected = onColorSelected
                 )
 
-                ColorPickerMode.GRADIENT -> GradientColorPicker(
+                ColorPickerMode.Gradient -> GradientColorPicker(
                     initialColor = color,
                     onColorSelected = onColorSelected
                 )

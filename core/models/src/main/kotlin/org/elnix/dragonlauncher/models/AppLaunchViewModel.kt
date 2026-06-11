@@ -25,7 +25,6 @@ import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import org.elnix.dragonlauncher.logging.APP_LAUNCH_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logW
-import org.elnix.dragonlauncher.models.utils.stateFlowDelegate
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.permissions.PermissionGroup
 import org.elnix.dragonlauncher.permissions.PermissionsManager
@@ -50,16 +49,6 @@ class AppLaunchViewModel @Inject constructor(
     @SuppressLint("StaticFieldLeak")
     private val ctx = application.applicationContext
 
-
-    val guiltModeEnabled by stateFlowDelegate(WellbeingSettingsStore.guiltModeEnabled)
-    val pauseDuration by stateFlowDelegate(WellbeingSettingsStore.pauseDurationSeconds)
-    val returnToLauncherEnabled by stateFlowDelegate(WellbeingSettingsStore.returnToLauncherEnabled)
-
-    private val socialMediaPauseEnabled by stateFlowDelegate(WellbeingSettingsStore.socialMediaPauseEnabled)
-    private val pausedApps by stateFlowDelegate(WellbeingSettingsStore.pausedApps)
-    private val reminderEnabled by stateFlowDelegate(WellbeingSettingsStore.reminderEnabled)
-    private val reminderInterval by stateFlowDelegate(WellbeingSettingsStore.reminderIntervalMinutes)
-    private val reminderMode by stateFlowDelegate(WellbeingSettingsStore.reminderMode)
 
 //    data class WellbeingState(
 //        val socialMediaPauseEnabled: Boolean,
@@ -119,7 +108,7 @@ class AppLaunchViewModel @Inject constructor(
 
     fun requestAppLaunch(application: Application) {
         viewModelScope.launch{
-            val startAppTimer = combine(pausedApps.flow, socialMediaPauseEnabled.flow) { pausedApps, socialMediaPauseEnabled ->
+            val startAppTimer = combine(WellbeingSettingsStore.pausedApps.flow(ctx), WellbeingSettingsStore.socialMediaPauseEnabled.flow(ctx)) { pausedApps, socialMediaPauseEnabled ->
                 if (!socialMediaPauseEnabled) return@combine false
                 application.packageName in pausedApps
             }
@@ -138,9 +127,9 @@ class AppLaunchViewModel @Inject constructor(
         AppTimerService.start(
             ctx = ctx,
             application = app,
-            reminderEnabled = reminderEnabled.flow.first(),
-            reminderIntervalMinutes = reminderInterval.flow.first(),
-            reminderMode = reminderMode.flow.first(),
+            reminderEnabled = WellbeingSettingsStore.reminderEnabled.flow(ctx).first(),
+            reminderIntervalMinutes = WellbeingSettingsStore.reminderIntervalMinutes.flow(ctx).first(),
+            reminderMode = WellbeingSettingsStore.reminderMode.flow(ctx).first(),
             timeLimitMinutes = timeLimitMinutes
         )
     }

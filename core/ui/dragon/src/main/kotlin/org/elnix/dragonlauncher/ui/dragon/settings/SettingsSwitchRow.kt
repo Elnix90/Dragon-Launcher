@@ -11,20 +11,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 @Composable
 fun SettingsSwitchRow(
-    setting: BaseSettingObject<Boolean, Boolean>,
-    title: String,
-    description: String,
+    setting: BooleanSettingObject,
     enabled: Boolean = true,
     needValidationToEnable: Boolean = false,
     needValidationToDisable: Boolean = false,
-    confirmText: String = stringResource(R.string.are_you_sure),
+    confirmText: Int = R.string.are_you_sure,
     onCheck: ((Boolean) -> Unit)? = null
 ) {
     val ctx = LocalContext.current
@@ -54,8 +52,8 @@ fun SettingsSwitchRow(
 
     SwitchRow(
         state = tempState,
-        title = title,
-        description = description,
+        title = stringResource(setting.title!!),
+        description = stringResource(setting.description!!),
         enabled = enabled
     ) { clicked ->
         when {
@@ -67,7 +65,7 @@ fun SettingsSwitchRow(
 
     if (showConfirmPopup != null) {
         UserValidation(
-            message = confirmText,
+            message = stringResource(confirmText),
             onDismiss = { showConfirmPopup = null }
         ) {
             toggle(showConfirmPopup!!)

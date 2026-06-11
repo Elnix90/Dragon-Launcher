@@ -65,8 +65,8 @@ class ProfileManager(
         }
     }.shareIn(scope, SharingStarted.WhileSubscribed(), replay = 1)
 
-    val profiles: Flow<List<Profile>> = profileStates.map { states ->
-        states.mapNotNull { it?.profile }
+    val profiles: Flow<List<Profile?>> = profileStates.map { states ->
+        states.map { it?.profile }
     }.shareIn(scope, SharingStarted.WhileSubscribed(), replay = 1)
 
     init {

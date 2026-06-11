@@ -1,12 +1,12 @@
 package org.elnix.dragonlauncher.enumsui.select
 
-import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.enumsui.SelectButtonOption
+import org.elnix.dragonlauncher.i18n.R
 
 enum class ColorSelectorModes(
     override val resId: Int,
     override val iconResId: Int? = null
 ) : SelectButtonOption {
-    NORMAL(R.string.normal_colors),
-    CUSTOM(R.string.custom_colors)
+    Normal(R.string.normal_colors),
+    Custom(R.string.custom_colors)
 }

@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.settings.bases.stores
 import android.content.Context
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.putIfNonDefault
+import org.elnix.dragonlauncher.settings.bases.putIfNotNull
 import org.json.JSONObject
 
 /**
@@ -26,7 +27,7 @@ import org.json.JSONObject
  * - safe type coercion during restore via `BaseSettingObject.decode`
  */
 abstract class MapSettingsStore(
-    override val dataStoreName: DataStoreName
+    final override val dataStoreName: DataStoreName
 ) : BaseSettingsStore<Map<String, Any?>, JSONObject>(dataStoreName) {
 
     /**
@@ -34,10 +35,14 @@ abstract class MapSettingsStore(
      *
      * Missing keys fall back to each setting’s default value.
      */
-    override suspend fun getAll(ctx: Context): Map<String, Any> =
+    final override suspend fun getAll(ctx: Context, forceAllKeys: Boolean): Map<String, Any> =
         buildMap {
             ALL.forEach { setting ->
-                putIfNonDefault(setting.key, setting.getEncoded(ctx), setting.default)
+                if (forceAllKeys) {
+                    putIfNotNull(setting.key, setting.getEncoded(ctx))
+                } else {
+                    putIfNonDefault(setting.key, setting.getEncoded(ctx), setting.default)
+                }
             }
         }
 
@@ -49,23 +54,18 @@ abstract class MapSettingsStore(
      *
      * Unknown or missing keys are ignored.
      */
-    override suspend fun setAll(ctx: Context, value: Map<String, Any?>) {
+    final override suspend fun setAll(ctx: Context, value: Map<String, Any?>) {
         ALL.forEach { setting ->
-            val raw = value[setting.key]
-//            logI(SETTINGS_TAG) { "Raw : $raw" }
-            val typedValue = setting.decode(raw)
-
-//            logI(SETTINGS_TAG) { "Typed value : $typedValue" }
-            setting.setAny(ctx, typedValue)
+            setting.setAny(ctx, setting.decode(value[setting.key]))
         }
     }
 
     /**
      * Exports all settings into a single [JSONObject] for backup purposes.
      */
-    override suspend fun exportForBackup(ctx: Context): JSONObject? {
+    final override suspend fun exportForBackup(ctx: Context, forceAllKeys: Boolean): JSONObject? {
 
-        val json = getAll(ctx)
+        val json = getAll(ctx, forceAllKeys)
         return if (json.isNotEmpty()) {
             JSONObject(json)
         } else null
@@ -77,7 +77,7 @@ abstract class MapSettingsStore(
      * Only keys present in [ALL] are applied; unknown keys are safely ignored.
      * Each value is decoded and validated by its corresponding `BaseSettingObject`.
      */
-    override suspend fun importFromBackup(ctx: Context, json: JSONObject?) {
+    final override suspend fun importFromBackup(ctx: Context, json: JSONObject?) {
         json?.keys()?.forEach { key ->
             ALL.find { it.key == key }?.let { setting ->
                 val raw = json.opt(key)

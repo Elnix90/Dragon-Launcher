@@ -25,7 +25,7 @@ fun getSystemColorScheme(
         }
 
         darkTheme -> {
-            if (defaultTheme == DefaultThemes.AMOLED) AmoledDragonColorScheme
+            if (defaultTheme == DefaultThemes.Amoled) AmoledDragonColorScheme
             else DarkDragonColorScheme
         }
 

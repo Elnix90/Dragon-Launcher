@@ -33,11 +33,7 @@ fun WelcomePageBackup() {
         title = stringResource(R.string.enable_backup),
         icon = R.drawable.cloud_upload
     ) {
-        SettingsSwitchRow(
-            setting = BackupSettingsStore.autoBackupEnabled,
-            title = stringResource(R.string.automatic_backups),
-            description = stringResource(R.string.auto_backup_desc)
-        ) {
+        SettingsSwitchRow(BackupSettingsStore.autoBackupEnabled) {
             // If the user disabled the backup, also remove the uri
             if (!it) {
                 scope.launch {

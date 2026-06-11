@@ -75,7 +75,7 @@ import android.graphics.Shader as PlatformShader
 @Composable
 fun ShapedLauncherIcon(
     modifier: Modifier = Modifier,
-    maxIconSize: Dp,
+    size: Dp,
     icon: () -> LauncherIcon? = { null },
     badge: () -> Badge? = { null },
     shape: IconShape = LocalIconShape.current
@@ -96,7 +96,7 @@ fun ShapedLauncherIcon(
 
 
     val renderSettings = LauncherIconRenderSettings(
-        size = maxIconSize.px.toInt(),
+        size = size.px.toInt(),
         fgThemeColor = MaterialTheme.colorScheme.onPrimaryContainer.toArgb(),
         bgThemeColor = MaterialTheme.colorScheme.primaryContainer.toArgb(),
         fgTone = 90,
@@ -122,7 +122,7 @@ fun ShapedLauncherIcon(
 
     Box(
         modifier = modifier
-            .sizeIn(maxWidth = maxIconSize, maxHeight = maxIconSize)
+            .sizeIn(maxWidth = size, maxHeight = size)
     ) {
         Box(
             modifier = Modifier
@@ -134,7 +134,7 @@ fun ShapedLauncherIcon(
             if (bmp != null && ic != null) {
                 Canvas(
                     modifier = Modifier
-                        .requiredSize(maxIconSize)
+                        .requiredSize(size)
 //                        .scale(maxIconSize / defaultIconSize, TransformOrigin.Center)
                 ) {
                     val brush = BitmapShaderBrush(bmp)
@@ -189,7 +189,7 @@ fun ShapedLauncherIcon(
                         Text(
                             text = fg.text,
                             style = MaterialTheme.typography.headlineSmall.copy(
-                                fontSize = 20.sp * (maxIconSize / 48.dp)
+                                fontSize = 20.sp * (size / 48.dp)
                             ),
                             color = if (fg.color == 0) {
                                 Color(renderSettings.fgThemeColor)
@@ -207,7 +207,7 @@ fun ShapedLauncherIcon(
                             } else {
                                 Color(getTone(fg.color, renderSettings.fgTone))
                             },
-                            modifier = Modifier.size(maxIconSize / 2f),
+                            modifier = Modifier.size(size / 2f),
                         )
                     }
                     else -> {}
@@ -229,7 +229,7 @@ fun ShapedLauncherIcon(
             Surface(
                 tonalElevation = 1.dp,
                 modifier = Modifier
-                    .size(maxIconSize * 0.33f)
+                    .size(size * 0.33f)
                     .align(Alignment.BottomEnd),
                 color = MaterialTheme.colorScheme.tertiary,
                 shape = CircleShape
@@ -243,7 +243,7 @@ fun ShapedLauncherIcon(
                         CircularProgressIndicator(
                             modifier = Modifier.fillMaxSize(0.8f),
                             progress = { progress },
-                            strokeWidth = maxIconSize / 48,
+                            strokeWidth = size / 48,
                             color = MaterialTheme.colorScheme.onTertiary
                         )
                     }
@@ -254,7 +254,7 @@ fun ShapedLauncherIcon(
                         Icon(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(maxIconSize / 24),
+                                .padding(size / 24),
                             painter = painterResource(badgeIcon.iconRes),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onTertiary,
@@ -263,7 +263,7 @@ fun ShapedLauncherIcon(
                         Canvas(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(maxIconSize / 48)
+                                .padding(size / 48)
                         ) {
                             badgeIcon.drawable.setBounds(
                                 0,
@@ -281,7 +281,7 @@ fun ShapedLauncherIcon(
                             color = MaterialTheme.colorScheme.secondaryContainer,
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontSize = with(LocalDensity.current) {
-                                    maxIconSize.toSp() * 0.2f
+                                    size.toSp() * 0.2f
                                 }
                             ),
                         )

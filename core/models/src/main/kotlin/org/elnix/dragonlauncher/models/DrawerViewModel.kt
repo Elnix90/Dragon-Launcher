@@ -3,6 +3,7 @@
 package org.elnix.dragonlauncher.models
 
 import android.os.UserHandle
+import android.service.notification.StatusBarNotification
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,17 +16,18 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
+import org.elnix.dragonlauncher.badges.Badge
+import org.elnix.dragonlauncher.badges.BadgeService
+import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.icons.IconPackManager
 import org.elnix.dragonlauncher.icons.IconService
 import org.elnix.dragonlauncher.icons.IconSettings
-import org.elnix.dragonlauncher.models.utils.stateFlowDelegate
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.notifications.NotificationService
 import org.elnix.dragonlauncher.permissions.PermissionsManager
 import org.elnix.dragonlauncher.recents.RecentsService
-import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.workspaces.WorkspacesManager
 import javax.inject.Inject
 
@@ -37,6 +39,7 @@ class DrawerViewModel @Inject constructor(
     val appsRepository: AppRepository,
     private val recentsService: RecentsService,
     val iconsService: IconService,
+    val badgeService: BadgeService,
     val workspaceManager: WorkspacesManager,
     val appOverrideManager: AppOverridesManager,
     val permissionsManager: PermissionsManager,
@@ -55,7 +58,7 @@ class DrawerViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
 
-    val notifications = notificationService.activeNotifications
+    val notifications: Array<out StatusBarNotification?>? = notificationService.activeNotifications
 
     fun isAppInstalled(packageName: String) = allApps.map { apps ->
         apps.any { it.packageName == packageName }
@@ -67,8 +70,6 @@ class DrawerViewModel @Inject constructor(
 
 
     val iconPackList = iconPackManager.getInstalledIconPacks()
-    val pointsIconsCache = iconsService.pointsIconsCache
-    val drawerIconsCache = iconsService.drawerIconCache
 
     val packTint = iconsService.packTint
 //    /**
@@ -101,30 +102,6 @@ class DrawerViewModel @Inject constructor(
         appsRepository.refreshApps()
     }
 
-    val leftDrawerAction by stateFlowDelegate(DrawerSettingsStore.leftDrawerAction)
-    val rightDrawerAction by stateFlowDelegate(DrawerSettingsStore.rightDrawerAction)
-    val drawerEnterAction by stateFlowDelegate(DrawerSettingsStore.drawerEnterAction)
-    val drawerHomeAction by stateFlowDelegate(DrawerSettingsStore.drawerHomeAction)
-    val scrollUpDrawerAction by stateFlowDelegate(DrawerSettingsStore.scrollUpDrawerAction)
-    val scrollDownDrawerAction by stateFlowDelegate(DrawerSettingsStore.scrollDownDrawerAction)
-    val backDrawerAction by stateFlowDelegate(DrawerSettingsStore.backDrawerAction)
-
-    val leftDrawerWidth by stateFlowDelegate(DrawerSettingsStore.leftDrawerWidth)
-    val rightDrawerWidth by stateFlowDelegate(DrawerSettingsStore.rightDrawerWidth)
-    val showSearchBar by stateFlowDelegate(DrawerSettingsStore.showSearchBar)
-    val showRecentlyUsedApps by stateFlowDelegate(DrawerSettingsStore.showRecentlyUsedApps)
-    val recentlyUsedAppsCount by stateFlowDelegate(DrawerSettingsStore.recentlyUsedAppsCount)
-    val tapEmptySpaceAction by stateFlowDelegate(DrawerSettingsStore.tapEmptySpaceAction)
-    val disableAutoLaunchOnSpaceFirstChar by stateFlowDelegate(DrawerSettingsStore.disableAutoLaunchOnSpaceFirstChar)
-    val autoOpenSingleMatch by stateFlowDelegate(DrawerSettingsStore.autoOpenSingleMatch)
-    val pullDownWallPaperDimFade by stateFlowDelegate(DrawerSettingsStore.pullDownWallPaperDimFade)
-
-    val autoShowKeyboardOnDrawer by stateFlowDelegate(DrawerSettingsStore.autoShowKeyboardOnDrawer)
-    val drawerToolbars by stateFlowDelegate(DrawerSettingsStore.toolbarsOrder)
-    val iconShape by stateFlowDelegate(DrawerSettingsStore.iconsShape)
-    val gridSize by stateFlowDelegate(DrawerSettingsStore.gridSize)
-    val maxIconSize by stateFlowDelegate(DrawerSettingsStore.maxIconSize)
-
     val iconSettings = iconsService.iconSettings.stateIn(
         viewModelScope,
         SharingStarted.Eagerly,
@@ -144,9 +121,22 @@ class DrawerViewModel @Inject constructor(
     )
 
 
-    fun getIconPickerVM(application: Application) : IconPickerVM =
+    fun getIconPickerVM(application: Application): IconPickerVM =
         IconPickerVM(application, iconsService)
 
+
+    fun getIcon(application: Application): StateFlow<LauncherIcon?> = iconsService.getAppIcon(application).stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        null
+    )
+
+
+    fun getBadge(application: Application): StateFlow<Badge?> = badgeService.getBadge(application).stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        null
+    )
 
     init {
         viewModelInitialized()

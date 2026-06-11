@@ -19,31 +19,31 @@ data class Workspace(
             Workspace(
                 id = "user",
                 name = "User",
-                type = WorkspaceType.USER,
+                type = WorkspaceType.User,
                 appIds = setOf(CacheKey("org.elnix.dragonlauncher", 0)),
             ),
             Workspace(
                 id = "system",
                 name = "System",
-                type = WorkspaceType.SYSTEM,
+                type = WorkspaceType.System,
                 enabled = false
             ),
             Workspace(
                 id = "all",
                 name = "All",
-                type = WorkspaceType.ALL,
+                type = WorkspaceType.All,
                 enabled = false
             ),
             Workspace(
                 id = "work",
                 name = "Work",
-                type = WorkspaceType.WORK,
+                type = WorkspaceType.Work,
                 enabled = false
             ),
             Workspace(
                 id = "private",
                 name = "Private Space",
-                type = WorkspaceType.PRIVATE,
+                type = WorkspaceType.Private,
                 enabled = false
             ) // Android 15+ only
         )

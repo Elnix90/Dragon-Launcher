@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
 import org.elnix.dragonlauncher.base.model.models.AngleLineObjects
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
@@ -24,48 +25,57 @@ object AngleLineSettingsStore : MapSettingsStore(DataStoreName.ANGLE_LINE) {
             this.angleLineObjectsOrder
         )
 
-    val showLineObjectPreview = boolean(
-        key = "showLineObjectPreview",
+    val showLineObjectPreview by boolean(
+        title = R.string.show_app_line_preview,
+        description = R.string.show_app_line_preview_description,
         default = true
     )
 
-    val showAngleLineObjectPreview = boolean(
-        key = "showAngleLineObjectPreview",
+    val showAngleLineObjectPreview by boolean(
+        title = R.string.show_app_angle_preview,
+        description = R.string.show_app_angle_preview_description,
         default = false
     )
 
-    val showStartObjectPreview = boolean(
-        key = "showStartObjectPreview",
+    val showStartObjectPreview by boolean(
+        title = R.string.show_start_object_preview,
+        description = R.string.show_start_object_preview_desc,
         default = true
     )
 
-    val showEndObjectPreview = boolean(
-        key = "showEndObjectPreview",
+    val showEndObjectPreview by boolean(
+        title = R.string.show_end_object_preview,
+        description = R.string.show_end_object_preview_desc,
         default = true
     )
 
-    val lineJson = string(
-        key = "lineJson",
+    val lineJson by string(
+        title = null,
+        description = null,
         default = ""
     )
 
-    val angleLineJson = string(
-        key = "angleLineJson",
+    val angleLineJson by string(
+        title = R.string.angle_object,
+        description = null,
         default = ""
     )
 
-    val startLineJson = string(
-        key = "startLineJson",
+    val startLineJson by string(
+        title = R.string.start_object,
+        description = null,
         default = ""
     )
 
-    val endLineJson = string(
-        key = "endLineJson",
+    val endLineJson by string(
+        title = R.string.end_object,
+        description = null,
         default = ""
     )
 
-    val angleLineObjectsOrder = string(
-        key = "angleLineObjectsOrder",
+    val angleLineObjectsOrder by string(
+        title = null,
+        description = null,
         default = AngleLineObjects.entries.joinToString(",") { it.name }
     )
 }

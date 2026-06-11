@@ -295,8 +295,8 @@ fun AppPickerDialog(
                 val workspace = workspaceState[pageIndex]
 
                 val workspaceProfileType = when (workspace.type) {
-                    WorkspaceType.WORK -> Work
-                    WorkspaceType.PRIVATE -> Private
+                    WorkspaceType.Work -> Work
+                    WorkspaceType.Private -> Private
                     else -> Personal
                 }
 
@@ -314,40 +314,42 @@ fun AppPickerDialog(
 
                 val apps by drawerViewModel.search(workspace).collectAsStateWithLifecycle()
 
-                if (workspaceLocked) {
-                    WorkspaceLockedContent(workspaceProfile)
-                } else {
-                    AppGrid(
-                        apps = apps,
-                        isMultiSelectMode = isMultiSelectMode,
-//                        onReload = {
-//                            scope.launch {
-//                                if (workspace.type == WorkspaceType.PRIVATE) appsViewModel.unlockAndReloadPrivateSpace()
-//                                else appsViewModel.reloadApps()
-//                            }
-//                        },
-                        onEnterMultiSelect = { app ->
-                            isMultiSelectMode = true
-                            if (!selectedApps.contains(app.packageName)) {
-                                selectedApps.add(app.packageName)
+                when {
+                    workspaceProfile == null -> {
+                        Text("No profile found in phone")
+                    }
+
+                    workspaceLocked -> {
+                        WorkspaceLockedContent(workspaceProfile)
+                    }
+
+                    else -> {
+                        AppGrid(
+                            apps = apps,
+                            isMultiSelectMode = isMultiSelectMode,
+                            onEnterMultiSelect = { app ->
+                                isMultiSelectMode = true
+                                if (!selectedApps.contains(app.packageName)) {
+                                    selectedApps.add(app.packageName)
+                                }
+                            },
+                            onToggleSelect = { app ->
+                                if (selectedApps.contains(app.packageName)) {
+                                    selectedApps.remove(app.packageName)
+                                } else {
+                                    selectedApps.add(app.packageName)
+                                }
+                                if (selectedApps.isEmpty()) {
+                                    isMultiSelectMode = false
+                                }
+                            },
+                            longPressPopup = false,
+                            onClick = {
+                                onAppSelected(it)
+                                onDismiss()
                             }
-                        },
-                        onToggleSelect = { app ->
-                            if (selectedApps.contains(app.packageName)) {
-                                selectedApps.remove(app.packageName)
-                            } else {
-                                selectedApps.add(app.packageName)
-                            }
-                            if (selectedApps.isEmpty()) {
-                                isMultiSelectMode = false
-                            }
-                        },
-                        longPressPopup = false,
-                        onClick = {
-                            onAppSelected(it)
-                            onDismiss()
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }

@@ -111,6 +111,7 @@ import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.PointViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
@@ -166,10 +167,9 @@ fun PointsSettingsScreen(
 
     val scope = rememberCoroutineScope()
 
-    val pointsIconsTrigger by drawerViewModel.pointsIconsCache.iconsTrigger.collectAsState()
-    val showAdvancedEditTools by pointViewModel.showAdvancedPointTools.asState()
-    val showSubNestSlider by pointViewModel.showSubNestSlider.asState()
-    val isInDragAroundMode by pointViewModel.isInDragAroundMode.asState()
+    val showAdvancedEditTools by SwipeMapSettingsStore.showAdvancedPointTools.asState()
+    val showSubNestsSlider by SwipeMapSettingsStore.showSubNestsSlider.asState()
+    val isInDragAroundMode by PrivateSettingsStore.isInDragAroundMode.asState()
 
     val backgroundColor = MaterialTheme.colorScheme.background
     val primaryColor = MaterialTheme.colorScheme.primary
@@ -373,7 +373,7 @@ fun PointsSettingsScreen(
             selectedPoint = point
         }
 
-        iconService.pointsIconsCache.incrementCacheSize()
+        iconService.incrementPointCacheSize()
         iconService.reloadPointIcon(point)
     }
 
@@ -540,7 +540,6 @@ fun PointsSettingsScreen(
 
     val drawParams by remember(
         subNestDefaultRadius,
-        pointsIconsTrigger,
         points,
         nests,
         displayedFilteredPoints,
@@ -889,7 +888,9 @@ fun PointsSettingsScreen(
                     checked = isInDragAroundMode,
                     onCheckedChange = {
                         val newValue = !isInDragAroundMode
-                        pointViewModel.isInDragAroundMode.set(newValue)
+                        scope.launch {
+                            PrivateSettingsStore.isInDragAroundMode.set(ctx, newValue)
+                        }
                         if (newValue) {
                             selectedPoint = null
                         }
@@ -1396,11 +1397,9 @@ fun PointsSettingsScreen(
         }
     }
 
-    AnimatedVisibility(showSubNestSlider) {
+    AnimatedVisibility(showSubNestsSlider) {
         SettingsSlider(
             setting = SwipeMapSettingsStore.subNestDefaultRadius,
-            title = "",
-            valueRange = 0..50,
             modifier = Modifier
                 .height(50.dp)
                 .width(150.dp)
@@ -1488,7 +1487,6 @@ fun PointsSettingsScreen(
         point = selectedPoint,
         topPadding = 100.dp,
         labelSize = appLabelOverlaySize,
-        iconSize = appIconOverlaySize,
         showLabel = true,
         showIcon = true
     )

@@ -23,8 +23,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
-import org.elnix.dragonlauncher.base.cache.DrawerIconCache
-import org.elnix.dragonlauncher.base.cache.PointIconCache
+import org.elnix.dragonlauncher.base.DragonCache
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
@@ -33,7 +32,6 @@ import org.elnix.dragonlauncher.base.model.models.PointApp
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.AdaptifiedLegacyIcon
 import org.elnix.dragonlauncher.base.model.serializables.CacheKey
-import org.elnix.dragonlauncher.base.model.serializables.CustomActionIcon
 import org.elnix.dragonlauncher.base.model.serializables.CustomIcon
 import org.elnix.dragonlauncher.base.model.serializables.CustomIconPackIcon
 import org.elnix.dragonlauncher.base.model.serializables.CustomIconProperties
@@ -43,7 +41,6 @@ import org.elnix.dragonlauncher.base.model.serializables.ForceThemedIcon
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.UnmodifiedSystemDefaultIcon
 import org.elnix.dragonlauncher.colors.ColorService
-import org.elnix.dragonlauncher.icons.providers.ActionIconProvider
 import org.elnix.dragonlauncher.icons.providers.CalendarIconProvider
 import org.elnix.dragonlauncher.icons.providers.CompatIconProvider
 import org.elnix.dragonlauncher.icons.providers.CustomIconPackIconProvider
@@ -52,6 +49,7 @@ import org.elnix.dragonlauncher.icons.providers.DynamicClockIconProvider
 import org.elnix.dragonlauncher.icons.providers.IconPackIconProvider
 import org.elnix.dragonlauncher.icons.providers.IconProvider
 import org.elnix.dragonlauncher.icons.providers.PlaceholderIconProvider
+import org.elnix.dragonlauncher.icons.providers.PointIconProvider
 import org.elnix.dragonlauncher.icons.providers.SystemIconProvider
 import org.elnix.dragonlauncher.icons.providers.ThemedPlaceholderIconProvider
 import org.elnix.dragonlauncher.icons.providers.getFirstIcon
@@ -64,6 +62,13 @@ import org.elnix.dragonlauncher.logging.ICONS_TAG
 import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.recents.PointsService
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
+import kotlin.reflect.KClass
+
+private object PointIconCache : DragonCache<CacheKey, LauncherIcon>(200)
+
+private object ActionIconCache : DragonCache<KClass<out Action>, LauncherIcon>(Action.actionsNumber)
+private object DrawerIconCache : DragonCache<CacheKey, LauncherIcon>(200)
+
 
 class IconService(
     val ctx: Context,
@@ -82,25 +87,17 @@ class IconService(
     }
 
     val iconSettings = iconSettingsRepository.settings
+    val extraColors = colorService.extraColors
 
     private val scope = CoroutineScope(Job() + Dispatchers.Default)
 
-    /** Drawer icons cache, initialize at 200 apps */
-    private val _drawerIconCache = DrawerIconCache(200)
-    val drawerIconCache = _drawerIconCache
-
-    /** Points icons cache, initialize at 200 apps */
-    private val _pointsIconsCache = PointIconCache(200)
-
-
-    val pointsIconsCache = _pointsIconsCache
     private val _packTint = MutableStateFlow<Int?>(null)
 
     val packTint = _packTint.asStateFlow()
 
     val defaultPoint: Flow<Point> = pointService.defaultPoint
 
-    val maxIconSize = DrawerSettingsStore.maxIconSize.flow(ctx)
+    private val maxIconSize = DrawerSettingsStore.iconSize.flow(ctx)
 
     private val iconProviders: MutableStateFlow<List<IconProvider>> = MutableStateFlow(listOf())
 
@@ -175,6 +172,8 @@ class IconService(
         }
     }
 
+    fun getRandomAppIcon() = DrawerIconCache.getRandom()
+
     fun getCustomAppIcon(application: Application): Flow<CustomIcon?> {
         return appOverrideManager.appOverrideState.map {
             it[application.key]?.customIcon
@@ -187,8 +186,17 @@ class IconService(
     }
 
     fun reloadAllAppIcons() {
-        drawerIconCache.evictAll()
+        DrawerIconCache.evictAll()
     }
+
+    fun incrementPointCacheSize() {
+        PointIconCache.incrementCacheSize()
+    }
+
+    fun updateMaxCacheSize(newSize: Int) {
+        PointIconCache.updateMaxCacheSize(newSize)
+    }
+
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getAppIcon(
@@ -199,9 +207,10 @@ class IconService(
 
 
         return customIcon.flatMapLatest {
-            val maxIconSize = maxIconSize.first()
+            val iconSize = maxIconSize.first()
+            val size = (iconSize.value * density.density).toInt()
 
-            resolveCustomAppIcon(application, maxIconSize, reload, it)
+            resolveCustomAppIcon(application, size, reload, it)
         }
     }
 
@@ -210,9 +219,8 @@ class IconService(
         getPointIcon(point, true)
     }
 
-
     fun reloadAllPointIcons() {
-        pointsIconsCache.evictAll()
+        PointIconCache.evictAll()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -230,7 +238,7 @@ class IconService(
             // Convert dp to pixels and enforce a minimum touch-safe size.
             val size = (resolvedResolutionDp * density.density).toInt()
 
-            resolveCustomPointIcon(point, size, reload, point.customIcon)
+            resolveCustomPointIcon(point, size, reload)
         }
     }
 
@@ -251,7 +259,7 @@ class IconService(
             )
 
             var icon = if (!reload) {
-                drawerIconCache[cacheKey]
+                DrawerIconCache[cacheKey]
             } else null
 
             if (!reload && icon != null) {
@@ -265,7 +273,7 @@ class IconService(
 
             if (icon != null) {
                 icon = icon.transform(transforms)
-                drawerIconCache.compute(cacheKey) { icon }
+                DrawerIconCache.compute(cacheKey) { icon }
             }
             return@combine icon
         }
@@ -275,45 +283,55 @@ class IconService(
         point: Point,
         size: Int,
         reload: Boolean,
-        customIcon: CustomIcon?
     ): Flow<LauncherIcon?> {
-        return combine(iconProviders, transformations) { providers, transformations ->
+        return combine(iconProviders, transformations, extraColors) { providers, transformations, extraColors ->
+            val customIcon = point.customIcon
 
-            val pointKey = CacheKey(point)
-
+            /**
+             * Tries to find the icon in the point cache, and if not found, create a new one, by searching in the
+             */
             var icon = if (!reload) {
-                val pointsCacheIcon = pointsIconsCache[pointKey]
-                when (val action = point.action) {
-                    is Action.LaunchApp -> {
-                        val pointKey = CacheKey(action.packageName, action.profile.userHandle.hashCode())
-                        val key = CacheKey(
-                            cacheKey = pointKey,
-                            customIconHashCode = customIcon.hashCode(),
-                            providersHashCode = providers.hashCode(),
-                            transformationsHashcode = transformations.hashCode()
-                        )
-                        pointsCacheIcon ?: drawerIconCache[key]
-                    }
+                PointIconCache[point.key] /*?: run {
+                    when (val action = point.action) {
+                        is Action.LaunchApp -> {
+                            val pointKey = CacheKey(action.packageName, action.profile.userHandle.hashCode())
+                            val key = CacheKey(
+                                cacheKey = pointKey,
+                                customIconHashCode = customIcon.hashCode(),
+                                providersHashCode = providers.hashCode(),
+                                transformationsHashcode = transformations.hashCode()
+                            )
+                            DrawerIconCache[key]
+                        }
 
-                    is Action.LaunchShortcut -> {
-                        val pointKey = CacheKey(action.packageName, 0)
-                        val key = CacheKey(
-                            cacheKey = pointKey,
-                            customIconHashCode = customIcon.hashCode(),
-                            providersHashCode = providers.hashCode(),
-                            transformationsHashcode = transformations.hashCode()
-                        )
-                        pointsCacheIcon ?: drawerIconCache[key]
-                    }
+                        is Action.LaunchShortcut -> {
+                            val pointKey = CacheKey(action.packageName, 0)
+                            val key = CacheKey(
+                                cacheKey = pointKey,
+                                customIconHashCode = customIcon.hashCode(),
+                                providersHashCode = providers.hashCode(),
+                                transformationsHashcode = transformations.hashCode()
+                            )
+                            DrawerIconCache[key]
+                        }
 
-                    else -> pointsCacheIcon
-                }
+                        else -> null
+                    }
+                }*/
             } else null
 
             if (icon != null) {
                 return@combine icon
             }
             val pointApp = PointApp(point)
+
+
+            val pointIconProvider = PointIconProvider(
+                ctx = ctx,
+                point = point,
+                extrasColors = extraColors
+            )
+            providers.toMutableList().add(0, pointIconProvider)
 
             val provs = if (customIcon != null) getProviders(customIcon) + providers else providers
             val transforms = getTransformations(customIcon) ?: transformations
@@ -322,13 +340,13 @@ class IconService(
 
             if (icon != null) {
                 icon = icon.transform(transforms)
-                pointsIconsCache.compute(pointKey) { icon }
+                PointIconCache.compute(point.key) { icon }
             }
             return@combine icon
         }
     }
 
-    private suspend fun getProviders(customIcon: CustomIcon?): List<IconProvider> {
+    private fun getProviders(customIcon: CustomIcon?): List<IconProvider> {
         if (customIcon is UnmodifiedSystemDefaultIcon) {
             return listOf(
                 SystemIconProvider(false)
@@ -340,14 +358,6 @@ class IconService(
                     customIcon,
                     iconPackManager
                 )
-            )
-        }
-
-        if (customIcon is CustomActionIcon) {
-            val extraColors = colorService.extraColors.first()
-            return listOf(
-                // TODO when displaying the grid, pick a random app from the user list
-                ActionIconProvider(ctx, customIcon.action, extraColors)
             )
         }
 
@@ -524,7 +534,7 @@ class IconService(
 
     suspend fun searchCustomIcons(query: String, iconPack: IconPack?): List<CustomIconWithPreview> {
         val transformations = this.transformations.first()
-        val iconPackIcons = iconPackManager.searchIconPackIcon(query, iconPack).flatMap {
+        return iconPackManager.searchIconPackIcon(query, iconPack).flatMap {
             val themedIcon = if (it.themed) {
                 iconPackManager.getIcon(it.iconPack, it, true)
                     ?.transform(transformations)
@@ -566,12 +576,6 @@ class IconService(
                 }
             }
         }
-
-        return iconPackIcons
-    }
-
-    fun setCustomIcon(application: Application, icon: CustomIcon?) {
-        appOverrideManager.setAppIcon(application.key, icon)
     }
 }
 

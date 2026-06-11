@@ -330,7 +330,6 @@
     <string name="guilt_mode">Mode Conscience du Temps</string>
     <string name="guilt_mode_description">Afficher les vraies statistiques d\'utilisation pour vous aider à réfléchir au temps passé sur les apps</string>
     <string name="pause_duration">Durée de la pause</string>
-    <string name="pause_duration_description">Combien de temps respirer avant de pouvoir continuer (%d secondes)</string>
     <string name="paused_apps">Applications en pause</string>
     <string name="add_app">Ajouter une app</string>
     <string name="add_social_media">Ajouter tous les réseaux sociaux</string>
@@ -356,7 +355,6 @@
     <string name="reminder_mode_title">Rappel d\'utilisation</string>
     <string name="reminder_mode_description">Recevez des rappels périodiques lorsque vous restez trop longtemps sur une app en pause</string>
     <string name="reminder_interval">Intervalle de rappel</string>
-    <string name="reminder_interval_description">Me rappeler toutes les %d minutes</string>
     <string name="reminder_mode_notification">Notification</string>
     <string name="reminder_mode_overlay">Popup à l\'écran</string>
     <string name="overlay_permission_required">Permission de superposition</string>

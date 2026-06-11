@@ -11,6 +11,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.logging.INIT_TAG
 import org.elnix.dragonlauncher.logging.logD
+import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.recents.PointsService
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
@@ -52,7 +53,7 @@ class InitializationViewModel @Inject constructor(
         points: Set<Point>,
         nests: Set<Nest>
     ) {
-//        logI(INIT_TAG) { "Initializing:\nPoints = $points\nNests = $nests" }
+        logI(INIT_TAG) { "Initializing:\nPoints = $points\nNests = $nests" }
 
         viewModelScope.launch {
             pointsService.set(points, nests)

@@ -11,5 +11,9 @@ import org.elnix.dragonlauncher.i18n.R
 class SuspendedAppsBadgeProvider : BadgeProvider {
 
     override fun getBadge(application: Application): Flow<Badge?> =
-        flowOf(MutableBadge(icon = BadgeIcon(R.drawable.hourglass_bottom)))
+        if (application.isSuspended) {
+            flowOf(MutableBadge(icon = BadgeIcon(R.drawable.hourglass_bottom)))
+        } else {
+            flowOf(null)
+        }
 }

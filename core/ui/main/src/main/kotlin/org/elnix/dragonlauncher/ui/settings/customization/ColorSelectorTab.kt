@@ -50,11 +50,11 @@ import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.base.util.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.enumsui.select.ColorSelectorModes
 import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes
-import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.AMOLED
-import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.CUSTOM
-import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.DARK
-import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.LIGHT
-import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.SYSTEM
+import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.Amoled
+import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.Custom
+import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.Dark
+import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.Light
+import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.System
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
@@ -397,7 +397,7 @@ fun ColorSelectorTab(
 
     var showBurgerMenu by remember { mutableStateOf(false) }
 
-    var selectedCustomView by remember { mutableStateOf(ColorSelectorModes.NORMAL) }
+    var selectedCustomView by remember { mutableStateOf(ColorSelectorModes.Normal) }
 
     var showRandomColorsValidation by remember { mutableStateOf(false) }
     var showAllColorsValidation by remember { mutableStateOf(false) }
@@ -428,8 +428,8 @@ fun ColorSelectorTab(
                 .padding(12.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            DefaultThemes.entries.filter { it != AMOLED }.forEach {
-                val selected = it == defaultTheme || (it == DARK && defaultTheme == AMOLED)
+            DefaultThemes.entries.filter { it != Amoled }.forEach {
+                val selected = it == defaultTheme || (it == Dark && defaultTheme == Amoled)
 
                 Column(
                     modifier = Modifier
@@ -449,18 +449,18 @@ fun ColorSelectorTab(
                 ) {
 
                     val background = when (it) {
-                        AMOLED -> null
+                        Amoled -> null
 
-                        DARK -> Color.DarkGray
-                        LIGHT -> Color.White
-                        SYSTEM -> Brush.horizontalGradient(
+                        Dark -> Color.DarkGray
+                        Light -> Color.White
+                        System -> Brush.horizontalGradient(
                             colors = listOf(
                                 Color.White,
                                 Color.Black
                             )
                         )
 
-                        CUSTOM -> Brush.linearGradient(
+                        Custom -> Brush.linearGradient(
                             colors = listOf(
                                 Color.Red,
                                 Color.Yellow,
@@ -517,31 +517,23 @@ fun ColorSelectorTab(
 
         HorizontalDivider()
 
-        SettingsSwitchRow(
-            setting = UiSettingsStore.useCustomColorChannels,
-            title = stringResource(R.string.use_custom_color_channels),
-            description = stringResource(R.string.use_custom_color_channels_desc)
-        )
+        SettingsSwitchRow(UiSettingsStore.useCustomColorChannels)
 
-        AnimatedVisibility(selectedDefaultTheme == DARK || selectedDefaultTheme == AMOLED) {
+        AnimatedVisibility(selectedDefaultTheme == Dark || selectedDefaultTheme == Amoled) {
             SwitchRow(
-                state = selectedDefaultTheme == AMOLED,
+                state = selectedDefaultTheme == Amoled,
                 title = stringResource(R.string.amoled_theme),
                 description = stringResource(R.string.use_pure_black_background)
             ) {
                 scope.launch {
-                    ColorModesSettingsStore.defaultTheme.set(ctx, if (it) AMOLED else DARK)
+                    ColorModesSettingsStore.defaultTheme.set(ctx, if (it) Amoled else Dark)
                 }
             }
         }
 
         // Only show the dynamic colors switch when in SYSTEM view
-        AnimatedVisibility(selectedDefaultTheme == SYSTEM) {
-            SettingsSwitchRow(
-                setting = ColorModesSettingsStore.dynamicColor,
-                title = stringResource(R.string.dynamic_colors),
-                description = stringResource(R.string.dynamic_colors_desc)
-            )
+        AnimatedVisibility(selectedDefaultTheme == System) {
+            SettingsSwitchRow(ColorModesSettingsStore.dynamicColor)
         }
 
         AnimatedVisibility(colorTestMode) {
@@ -554,7 +546,7 @@ fun ColorSelectorTab(
         }
 
 
-        AnimatedVisibility(defaultTheme == CUSTOM) {
+        AnimatedVisibility(defaultTheme == Custom) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -621,7 +613,7 @@ fun ColorSelectorTab(
                         verticalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
                         when (it) {
-                            ColorSelectorModes.NORMAL -> {
+                            ColorSelectorModes.Normal -> {
 
                                 ColorsGroup(
                                     expandableSectionState = primarySectionState,
@@ -665,7 +657,7 @@ fun ColorSelectorTab(
                             }
 
 
-                            ColorSelectorModes.CUSTOM -> {
+                            ColorSelectorModes.Custom -> {
 
 
                                 SettingsColorPicker(

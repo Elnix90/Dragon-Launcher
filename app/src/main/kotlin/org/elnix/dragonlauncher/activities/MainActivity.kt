@@ -299,9 +299,11 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
 
         appWidgetHost.startListening()
 
-        var lastStackTrace by mutableStateOf(runBlocking {
-            PrivateSettingsStore.lastCrashStackTrace.getOrNull(this@MainActivity)
-        })
+        var lastStackTrace by mutableStateOf(
+            runBlocking {
+                PrivateSettingsStore.lastCrashStackTrace.getOrNull(this@MainActivity)
+            }
+        )
 
         enableEdgeToEdge()
 

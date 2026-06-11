@@ -7,6 +7,8 @@ import java.io.File
 
 
 fun fontNameToFont(name: String, ctx: Context? = null): FontFamily {
+    if (name.isBlank()) return FontFamily.Default
+
     val cleanName = name.substringBefore(" (")
     val base = when (cleanName) {
         "Serif" -> FontFamily.Serif

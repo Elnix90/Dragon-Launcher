@@ -6,7 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -14,14 +14,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject
+import org.elnix.dragonlauncher.settings.bases.objects.DpSettingObject
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 
 @Composable
 fun SettingsSlider(
-    setting: IntSettingObject,
+    setting: DpSettingObject,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.primary,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
@@ -37,7 +39,7 @@ fun SettingsSlider(
 
     val state by setting.asState()
 
-    var tempState by remember { mutableIntStateOf(state) }
+    var tempState by remember { mutableStateOf(state) }
 
     LaunchedEffect(state) { tempState = state }
 
@@ -45,8 +47,8 @@ fun SettingsSlider(
         modifier = modifier,
         label = stringResource(setting.title!!),
         description = stringResource(setting.description!!),
-        value = tempState,
-        valueRange = setting.allowedRange,
+        value = tempState.value.toInt(),
+        valueRange = setting.allowedRange.toIntRange(),
         color = color,
         enabled = enabled,
         allowTextEditValue = allowTextEditValue,
@@ -61,7 +63,9 @@ fun SettingsSlider(
             onDragStateChange?.invoke(it)
         }
     ) {
-        tempState = it
+        tempState = it.dp
         onChange?.invoke(it)
     }
 }
+
+fun ClosedRange<Dp>.toIntRange(): IntRange = IntRange(this.start.value.toInt(), this.endInclusive.value.toInt())

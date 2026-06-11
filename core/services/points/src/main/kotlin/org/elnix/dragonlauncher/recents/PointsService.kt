@@ -17,6 +17,8 @@ import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.defaultD
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.PointsListJson
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
+import org.elnix.dragonlauncher.logging.POINTS_TAG
+import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.settings.stores.array.NestsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.array.PointsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
@@ -71,6 +73,8 @@ internal class PointsServiceImpl(
                 loadNests()
                 loadDefaultPoint()
             }.await()
+
+            logI(POINTS_TAG) { "Loaded Swipe Settings:\nPoints = ${_points.value}\nNests = ${_nests.value}\nDefault Point = ${_defaultPoint.value}" }
         }
     }
 
@@ -116,7 +120,7 @@ internal class PointsServiceImpl(
     }
 
     override fun deleteNest(id: Int): Boolean {
-        val nestToDelete = _nests.value.find { it.id == id } ?: return  false
+        val nestToDelete = _nests.value.find { it.id == id } ?: return false
         _nests.value -= nestToDelete
         return true
     }
@@ -131,7 +135,6 @@ internal class PointsServiceImpl(
     override fun persist() {
         scope.launch {
 
-//            logI(POINTS_TAG) { "Persisting Swipe Settings:\nPoints = $points\nNests = $nests\nDefault Point = $defaultPoint" }
 
             val encodedPoints = PointsListJson.encode(_points.value)
             val encodedNests = NestJson.encode(_nests.value)
@@ -178,13 +181,13 @@ internal class PointsServiceImpl(
         if (resetNests) {
             _nests.value = emptySet()
         }
-        if (resetDefaultPoint){
+        if (resetDefaultPoint) {
             _defaultPoint.value = Point.defaultSwipePointsValues
         }
     }
 
     private suspend fun loadPoints() {
-        _points.value = PointsListJson.decode<Set<Point>>(PointsSettingsStore.jsonSetting.get(ctx),  emptySet())
+        _points.value = PointsListJson.decode<Set<Point>>(PointsSettingsStore.jsonSetting.get(ctx), emptySet())
     }
 
     private suspend fun loadNests() {

@@ -29,6 +29,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -66,22 +67,20 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.base.Constants
 import org.elnix.dragonlauncher.base.model.serializables.Action
-import org.elnix.dragonlauncher.base.model.serializables.Profile.Type.Personal
-import org.elnix.dragonlauncher.base.model.serializables.Profile.Type.Private
-import org.elnix.dragonlauncher.base.model.serializables.Profile.Type.Work
+import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
-import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.CLEAR
-import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.CLOSE
-import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.CLOSE_KB
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.Clear
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.Close
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.CloseKb
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.Companion.isUsed
-import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.DISABLED
-import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.NONE
-import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.OPEN_FIRST_APP
-import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.OPEN_KB
-import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.SEARCH_WEB
-import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.TOGGLE_KB
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.Disabled
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.None
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.OpenFirstApp
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.OpenKb
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.SearchWeb
+import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.ToggleKb
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar.RecentlyUsed
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar.SearchBar
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar.Spacer
@@ -89,6 +88,8 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.openSearch
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ktx.toDp
+import org.elnix.dragonlauncher.logging.WORKSPACES_TAG
+import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
@@ -120,19 +121,19 @@ fun AppDrawerScreen(
 ) {
     val ctx = LocalContext.current
 
-    val autoLaunchSingleMatch by drawerViewModel.autoOpenSingleMatch.asState()
-    val disableAutoLaunchOnSpaceFirstChar by drawerViewModel.disableAutoLaunchOnSpaceFirstChar.asState()
-    val tapEmptySpaceToRaiseKeyboard by drawerViewModel.tapEmptySpaceAction.asState()
-    val drawerEnterAction by drawerViewModel.drawerEnterAction.asState()
-    val drawerBackAction by drawerViewModel.backDrawerAction.asState()
-    val drawerHomeAction by drawerViewModel.drawerHomeAction.asState()
-    val drawerScrollDownAction by drawerViewModel.scrollDownDrawerAction.asState()
-    val drawerScrollUpAction by drawerViewModel.scrollUpDrawerAction.asState()
-    val showSearchBar by drawerViewModel.showSearchBar.asState()
-    val showRecentlyUsedApps by drawerViewModel.showRecentlyUsedApps.asState()
-    val recentlyUsedAppsCount by drawerViewModel.recentlyUsedAppsCount.asState()
-    val autoShowKeyboard by drawerViewModel.autoShowKeyboardOnDrawer.asState()
-    val drawerToolbarsOrder by drawerViewModel.drawerToolbars.asState()
+    val autoLaunchSingleMatch by DrawerSettingsStore.autoOpenSingleMatch.asState()
+    val disableAutoLaunchOnSpaceFirstChar by DrawerSettingsStore.disableAutoLaunchOnSpaceFirstChar.asState()
+    val tapEmptySpaceToRaiseKeyboard by DrawerSettingsStore.tapEmptySpaceAction.asState()
+    val drawerEnterAction by DrawerSettingsStore.drawerEnterAction.asState()
+    val drawerBackAction by DrawerSettingsStore.backDrawerAction.asState()
+    val drawerHomeAction by DrawerSettingsStore.drawerHomeAction.asState()
+    val drawerScrollDownAction by DrawerSettingsStore.scrollDownDrawerAction.asState()
+    val drawerScrollUpAction by DrawerSettingsStore.scrollUpDrawerAction.asState()
+    val showSearchBar by DrawerSettingsStore.showSearchBar.asState()
+    val showRecentlyUsedApps by DrawerSettingsStore.showRecentlyUsedApps.asState()
+    val recentlyUsedAppsCount by DrawerSettingsStore.recentlyUsedAppsCount.asState()
+    val autoShowKeyboard by DrawerSettingsStore.autoShowKeyboardOnDrawer.asState()
+    val drawerToolbarsOrder by DrawerSettingsStore.toolbarsOrder.asState()
 
     val recentApps by drawerViewModel.getRecentApps(recentlyUsedAppsCount).collectAsStateWithLifecycle(emptyList())
 
@@ -153,7 +154,6 @@ fun AppDrawerScreen(
             focusRequester.requestFocus()
         }
     }
-
 
 
     val workspacesManager = drawerViewModel.workspaceManager
@@ -205,18 +205,18 @@ fun AppDrawerScreen(
 
     fun launchDrawerAction(action: DrawerActions) {
         when (action) {
-            CLOSE -> onClose()
-            TOGGLE_KB -> toggleKeyboard()
-            CLOSE_KB -> closeKeyboard()
-            OPEN_KB -> openKeyboard()
+            Close -> onClose()
+            ToggleKb -> toggleKeyboard()
+            CloseKb -> closeKeyboard()
+            OpenKb -> openKeyboard()
 
-            CLEAR -> searchQuery = ""
-            SEARCH_WEB -> {
+            Clear -> searchQuery = ""
+            SearchWeb -> {
                 if (searchQuery.isNotBlank()) ctx.openSearch(searchQuery)
             }
 
-            OPEN_FIRST_APP -> haveToLaunchFirstApp = true
-            NONE, DISABLED -> {}
+            OpenFirstApp -> haveToLaunchFirstApp = true
+            None, Disabled -> {}
         }
     }
 
@@ -412,7 +412,7 @@ fun AppDrawerScreen(
     val animatedPadding by animateDpAsState(targetValue = pullDownPadding.toDp)
 
     val wallpaperDimDrawerScreen by UiSettingsStore.wallpaperDimDrawerScreen.asState()
-    val pullDownWallPaperDimFadeEnabled by drawerViewModel.pullDownWallPaperDimFade.asState()
+    val pullDownWallPaperDimFadeEnabled by DrawerSettingsStore.pullDownWallPaperDim.asState()
 
     val animatedDim by animateFloatAsState(targetValue = pullProgress)
     // Dims the wallpaper, when the user starts pulling down,
@@ -445,11 +445,11 @@ fun AppDrawerScreen(
             }
     ) {
 
-        val leftDrawerAction by drawerViewModel.leftDrawerAction.asState()
-        val leftDrawerWidth by drawerViewModel.leftDrawerWidth.asState()
+        val leftDrawerAction by DrawerSettingsStore.leftDrawerAction.asState()
+        val leftDrawerWidth by DrawerSettingsStore.leftDrawerWidth.asState()
 
-        val rightDrawerAction by drawerViewModel.rightDrawerAction.asState()
-        val rightDrawerWidth by drawerViewModel.rightDrawerWidth.asState()
+        val rightDrawerAction by DrawerSettingsStore.rightDrawerAction.asState()
+        val rightDrawerWidth by DrawerSettingsStore.rightDrawerWidth.asState()
 
         DrawerActions(leftDrawerAction, leftDrawerWidth, rightDrawerAction, rightDrawerWidth, ::launchDrawerAction)
 
@@ -467,21 +467,19 @@ fun AppDrawerScreen(
             val workspace = workspaceState[pageIndex]
 
             val workspaceProfileType = when (workspace.type) {
-                WorkspaceType.WORK -> Work
-                WorkspaceType.PRIVATE -> Private
-                else -> Personal
+                WorkspaceType.Work -> Profile.Type.Work
+                WorkspaceType.Private -> Profile.Type.Private
+                else -> Profile.Type.Personal
             }
 
-            val workspaceProfile = when (workspaceProfileType) {
-                Personal -> profiles[0]
-                Work -> profiles[1]
-                Private -> profiles[2]
-            }
+            logD(WORKSPACES_TAG) { "WP profiles: $profiles" }
+
+            val workspaceProfile = profiles.find { it?.type == workspaceProfileType}
 
             val workspaceLocked = when (workspaceProfileType) {
-                Work -> profileStates[1]!!.locked
-                Private -> profileStates[2]!!.locked
-                Personal -> false
+                Profile.Type.Work -> profileStates[1]?.locked ?: true
+                Profile.Type.Private -> profileStates[2]?.locked ?: true
+                Profile.Type.Personal -> false
             }
 
             val gridState = remember(workspace.id) { LazyGridState() }
@@ -505,19 +503,25 @@ fun AppDrawerScreen(
             }
 
 
-            if (workspaceLocked) {
-                WorkspaceLockedContent(workspaceProfile)
-            } else {
-                AppGrid(
-                    apps = apps,
-                    gridState = gridState,
-                    paddingValues = appsContentPadding,
-                    categoryGridState = categoryGridState,
-                    listState = listState,
-                    onTopStateChange = { atTop = it },
-                    longPressPopup = true
-                ) {
-                    onLaunchAction(it.action)
+            when {
+                workspaceProfile == null -> {
+                    Text("No profile found in phone")
+                }
+                workspaceLocked -> {
+                    WorkspaceLockedContent(workspaceProfile)
+                }
+                else -> {
+                    AppGrid(
+                        apps = apps,
+                        gridState = gridState,
+                        paddingValues = appsContentPadding,
+                        categoryGridState = categoryGridState,
+                        listState = listState,
+                        onTopStateChange = { atTop = it },
+                        longPressPopup = true
+                    ) {
+                        onLaunchAction(it.action)
+                    }
                 }
             }
         }
@@ -620,7 +624,7 @@ fun BoxScope.DrawerActions(
     launchDrawerAction: (DrawerActions) -> Unit
 ) {
 
-    if (leftDrawerAction != DISABLED) {
+    if (leftDrawerAction != Disabled) {
         Box(
             modifier = Modifier
                 .align(Alignment.CenterStart)
@@ -633,7 +637,7 @@ fun BoxScope.DrawerActions(
         )
     }
 
-    if (rightDrawerAction != DISABLED) {
+    if (rightDrawerAction != Disabled) {
         Box(
             modifier = Modifier
                 .fillMaxHeight()

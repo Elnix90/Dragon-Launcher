@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
 import androidx.compose.ui.graphics.Color
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
@@ -19,29 +20,34 @@ object IconsSettingsStore : MapSettingsStore(DataStoreName.ICONS) {
             this.adaptify
         )
 
-    val selectedIconPack = string(
-        key = "selectedIconPack",
+    val selectedIconPack by string(
+        title = R.string.icon_pack,
+        description = null,
         default = ""
     )
 
-    val iconPackTint = color(
-        key = "iconPackTint",
+    val iconPackTint by color(
+        title = R.string.icon_pack_tint,
+        description = null,
         default = Color.Unspecified
     )
 
 
-    val themedIcons = boolean(
-        key = "themedIcons",
+    val themedIcons by boolean(
+        title = R.string.themed_icons,
+        description = null,
         default = false
     )
 
-    val forceThemed = boolean(
-        key = "forceThemed",
+    val forceThemed by boolean(
+        title = R.string.force_themed,
+        description = null,
         default = false
     )
 
-    val adaptify = boolean(
-        key = "adaptify",
+    val adaptify by boolean(
+        title = R.string.adaptify,
+        description = null,
         default = false
     )
 }

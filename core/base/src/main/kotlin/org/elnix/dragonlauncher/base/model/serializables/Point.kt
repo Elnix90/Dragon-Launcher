@@ -162,6 +162,8 @@ data class Point(
 
     val key: CacheKey = CacheKey(this)
 
+    override fun toString(): String = this.id.substring(0, 8)
+
     companion object {
         fun dummySwipePoint(
             action: Action? = null,
@@ -175,7 +177,7 @@ data class Point(
                 nestId = 0
             )
 
-        val defaultSwipePointsValues = dummySwipePoint(null).copy(
+        val defaultSwipePointsValues = dummySwipePoint(null, "defaultPoint").copy(
             borderStroke = 4f,
             borderStrokeSelected = 8f,
             opacity = 1f,

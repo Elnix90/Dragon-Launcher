@@ -23,19 +23,21 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.models.DrawerViewModel
-import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.text.TextDividerOld
 import sh.calvin.reorderable.ReorderableItem
@@ -43,14 +45,14 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun DrawerToolbarsOrderDialog(
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    onDismiss: () -> Unit
-) {
-    val showSearchBar by drawerViewModel.showSearchBar.asState()
-    val showRecentlyUsedApps by drawerViewModel.showRecentlyUsedApps.asState()
+fun DrawerToolbarsOrderDialog(onDismiss: () -> Unit) {
+    val ctx = LocalContext.current
+    val scope = rememberCoroutineScope()
 
-    val selectedToolbarItems by drawerViewModel.drawerToolbars.asState()
+    val showSearchBar by DrawerSettingsStore.showSearchBar.asState()
+    val showRecentlyUsedApps by DrawerSettingsStore.showRecentlyUsedApps.asState()
+
+    val selectedToolbarItems by DrawerSettingsStore.toolbarsOrder.asState()
     var toolbarItems by remember { mutableStateOf(selectedToolbarItems.toMutableList()) }
 
     LaunchedEffect(toolbarItems) {
@@ -82,7 +84,9 @@ fun DrawerToolbarsOrderDialog(
             ValidateCancelButtons(
                 onCancel = onDismiss
             ) {
-                drawerViewModel.drawerToolbars.set(toolbarItems)
+                scope.launch {
+                    DrawerSettingsStore.toolbarsOrder.set(ctx, toolbarItems)
+                }
                 onDismiss()
             }
         },
@@ -132,13 +136,15 @@ fun DrawerToolbarsOrderDialog(
                                     Checkbox(
                                         checked = checked,
                                         onCheckedChange = {
-                                            when (item) {
-                                                DrawerToolbar.RecentlyUsed -> {
-                                                    drawerViewModel.showRecentlyUsedApps.set(!showRecentlyUsedApps)
-                                                }
+                                            scope.launch {
+                                                when (item) {
+                                                    DrawerToolbar.RecentlyUsed -> {
+                                                        DrawerSettingsStore.showRecentlyUsedApps.set(ctx, !showRecentlyUsedApps)
+                                                    }
 
-                                                else -> {
-                                                    drawerViewModel.showSearchBar.set(!showSearchBar)
+                                                    else -> {
+                                                        DrawerSettingsStore.showSearchBar.set(ctx, !showSearchBar)
+                                                    }
                                                 }
                                             }
                                         }

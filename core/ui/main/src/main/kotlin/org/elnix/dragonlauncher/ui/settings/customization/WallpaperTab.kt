@@ -22,12 +22,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
-import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.common.WallpaperHelper
-import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.base.model.models.WallpaperTarget
+import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
+import org.elnix.dragonlauncher.common.WallpaperHelper
 import org.elnix.dragonlauncher.enumsui.select.WallpaperEditMode
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
@@ -136,9 +136,8 @@ fun WallpaperTab(onBack: () -> Unit) {
 
             SliderWithLabel(
                 modifier = Modifier.padding(10.dp),
-                label = stringResource(R.string.wallpaper_dim_amount),
-                value = if (selectedView == WallpaperEditMode.Main) wallpaperDimMainScreen
-                else wallpaperDimDrawerScreen,
+                label = stringResource(UiSettingsStore.wallpaperDimMainScreen.title!!),
+                value = if (selectedView == WallpaperEditMode.Main) wallpaperDimMainScreen else wallpaperDimDrawerScreen,
                 valueRange = 0f..1f,
                 color = MaterialTheme.colorScheme.primary,
                 backgroundColor = MaterialTheme.colorScheme.surface.alphaMultiplier(0.5f),

@@ -15,13 +15,12 @@ import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.PointViewModel
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalAppItemSettings
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.base.compositionslocals.ProvideCurrentTime
-import org.elnix.dragonlauncher.ui.base.compositionslocals.rememberAppItemSettings
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalEndLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalGridSize
@@ -46,7 +45,7 @@ fun ProvideGlobalCompositionLocals(
 
     val disableHapticFeedbackGlobally by BehaviorSettingsStore.disableHapticFeedbackGlobally.asState()
 
-    val pointsIconCache = drawerViewModel.pointsIconsCache
+    val pointsIconCache = drawerViewModel.iconsService
 
     LaunchedEffect(points.size) {
         logD(ICONS_TAG) { "Updating icons cache size to ${points.size}" }
@@ -63,7 +62,7 @@ fun ProvideGlobalCompositionLocals(
     }
 
 
-    val gridSize by drawerViewModel.gridSize.asState()
+    val gridSize by DrawerSettingsStore.gridSize.asState()
 
     val lineObjects = rememberAngleLineObjects()
     val holdCustomObject = rememberHoldCustomObject()
@@ -71,7 +70,7 @@ fun ProvideGlobalCompositionLocals(
 
     val showTooltipsOnAddPointDialog by UiSettingsStore.showTooltipsOnAddPointDialog.asState()
 
-    val iconShape by drawerViewModel.iconShape.asState()
+    val iconShape by DrawerSettingsStore.iconShape.asState()
 
     /**
      * Main Composition local provider, I just for everything I can here to avoid having to import them everywhere
@@ -93,9 +92,7 @@ fun ProvideGlobalCompositionLocals(
         LocalMainScreenLayers provides layersOrder,
         LocalShowLabelsInAddPointDialog provides showTooltipsOnAddPointDialog,
 
-        LocalDisableHapticFeedbackGlobally provides disableHapticFeedbackGlobally,
-
-        LocalAppItemSettings provides rememberAppItemSettings()
+        LocalDisableHapticFeedbackGlobally provides disableHapticFeedbackGlobally
     ) {
         ProvideCurrentTime {
             content()

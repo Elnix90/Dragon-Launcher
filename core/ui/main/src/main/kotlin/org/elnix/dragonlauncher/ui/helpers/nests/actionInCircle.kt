@@ -17,7 +17,6 @@ import org.elnix.dragonlauncher.base.cache.DrawPathCache
 import org.elnix.dragonlauncher.base.model.models.SwipeDrawParams
 import org.elnix.dragonlauncher.base.model.models.UiCircle
 import org.elnix.dragonlauncher.base.model.serializables.Action
-import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
@@ -179,14 +178,13 @@ fun DrawScope.actionsInCircle(
 
 
             // The actual app icon
-            val icon = drawParams.pointsIconsCache.getOrLazyCompute(point.key) {
-                drawParams.computeIcon(point)
-            }
+//            val icon = drawParams.pointsIconsCache.getOrLazyCompute(point.key) {
+//                drawParams.computeIcon(point)
+//            }
 
-            if (icon != null) {
-                val colorAction = point.action.actionColor(extraColors)
+//            if (icon != null) {
+//                val colorAction = point.action.actionColor(extraColors)
 
-                TODO()
 //                drawImage(
 //                    image = icon,
 //                    dstOffset = dstOffset,
@@ -195,7 +193,7 @@ fun DrawScope.actionsInCircle(
 //                        if (point.applyColorAction()) ColorFilter.tint(colorAction)
 //                        else null
 //                )
-            }
+//            }
 
         } else {
             nests

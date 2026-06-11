@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.elnix.dragonlauncher.base.theme.Typography
 import org.elnix.dragonlauncher.fonts.FontService
+import org.elnix.dragonlauncher.logging.logWtf
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import javax.inject.Inject
 
@@ -27,6 +28,7 @@ class FontViewModel @Inject constructor(
 
 
     val typography: StateFlow<Typography> = fontFamily.map { fontFamily ->
+        logWtf { "Typo updated! (final)" }
         Typography.copy(
             displayLarge = Typography.displayLarge.copy(fontFamily = fontFamily),
             displayMedium = Typography.displayMedium.copy(fontFamily = fontFamily),

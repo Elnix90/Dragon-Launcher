@@ -67,7 +67,7 @@ dependencies {
     api(project(":core:services:security"))
     api(project(":core:services:compat"))
     api(project(":core:services:timer"))
-
+    api(project(":core:services:badges"))
 
     api(project(":data:notifications"))
     api(project(":data:applications"))

@@ -27,10 +27,11 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalAppItemSettings
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.dialogs.AppLongPressRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
@@ -54,12 +55,14 @@ fun AppItemHorizontal(
     longPressPopup: Boolean,
     onClick: ((Application) -> Unit)?
 ) {
-
     require(!((onLongClick != null) and (longPressPopup))) {
         "Long press action, or popup, or neither, but not both!"
     }
 
-    val appItemSettings = LocalAppItemSettings.current
+    val showAppIconsInDrawer by DrawerSettingsStore.showAppIconsInDrawer.asState()
+    val showAppLabelsInDrawer by DrawerSettingsStore.showAppLabelInDrawer.asState()
+    val horizontalAlignment by DrawerSettingsStore.horizontalAlignment.asState()
+    val iconsSpacingHorizontal by DrawerSettingsStore.iconsSpacingHorizontal.asState()
 
     var showLongPressPopup by remember { mutableStateOf(false) }
 
@@ -71,7 +74,7 @@ fun AppItemHorizontal(
         }
     ) {
 
-        val alignment = when(appItemSettings.horizontalAlignment) {
+        val alignment = when(horizontalAlignment) {
             HorizontalAlignment.Start -> Arrangement.Start
             HorizontalAlignment.Center -> Arrangement.Center
             HorizontalAlignment.End -> Arrangement.End
@@ -96,15 +99,15 @@ fun AppItemHorizontal(
                 .padding(horizontal = 6.dp)
         ) {
 
-            if (appItemSettings.showIcons) {
-                AppIcon(app, maxSize = appItemSettings.maxIconSize)
+            if (showAppIconsInDrawer) {
+                AppIcon(app)
             }
 
-            if (appItemSettings.showLabels) {
-                Spacer(appItemSettings.iconSpacingHorizontal)
+            if (showAppLabelsInDrawer) {
+                Spacer(iconsSpacingHorizontal)
                 Text(
                     text = app.label,
-                    color = appItemSettings.txtColor
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -129,7 +132,9 @@ fun AppItemGrid(
         "Long press action, or popup, or neither, but not both!"
     }
 
-    val appItemSettings = LocalAppItemSettings.current
+    val showAppIconsInDrawer by DrawerSettingsStore.showAppIconsInDrawer.asState()
+    val iconsSpacingVertical by DrawerSettingsStore.iconsSpacingVertical.asState()
+
 
     var showLongPressPopup by remember { mutableStateOf(false) }
 
@@ -160,16 +165,16 @@ fun AppItemGrid(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(appItemSettings.iconSpacingVertical)
+            verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical)
         ) {
-            if (appItemSettings.showIcons) {
-                AppIcon(app,  maxSize = appItemSettings.maxIconSize)
+            if (showAppIconsInDrawer) {
+                AppIcon(app)
             }
 
-            if (appItemSettings.showLabels) {
+            if (showAppIconsInDrawer) {
                 Text(
                     text = app.label,
-                    color = appItemSettings.txtColor,
+                    color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.labelSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis

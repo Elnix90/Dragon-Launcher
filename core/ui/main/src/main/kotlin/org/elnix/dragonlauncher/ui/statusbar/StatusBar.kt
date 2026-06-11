@@ -54,11 +54,14 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.Constants
+import org.elnix.dragonlauncher.base.model.models.DateFormat
+import org.elnix.dragonlauncher.base.model.models.TimeFormat
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.base.model.serializables.StatusBarJson
 import org.elnix.dragonlauncher.base.model.serializables.allStatusBars
+import org.elnix.dragonlauncher.common.utils.DateUtils
 import org.elnix.dragonlauncher.common.utils.DateUtils.isValidDateFormat
 import org.elnix.dragonlauncher.common.utils.DateUtils.isValidTimeFormat
 import org.elnix.dragonlauncher.i18n.R
@@ -83,25 +86,6 @@ import org.elnix.dragonlauncher.ui.helpers.CustomActionSelector
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
-private enum class DateFormat(val pattern: String, val displayName: String) {
-    SHORT("MMM dd", "Short (Dec 25)"),
-    MEDIUM("MMM dd, yyyy", "Medium (Dec 25, 2023)"),
-    LONG("EEEE, MMMM dd, yyyy", "Long (Monday, December 25, 2023)"),
-    ISO("yyyy-MM-dd", "ISO (2023-12-25)"),
-    US("MM/dd/yyyy", "US (12/25/2023)"),
-    EUROPEAN("dd/MM/yyyy", "European (25/12/2023)"),
-    CUSTOM("", "Custom")
-}
-
-private enum class TimeFormat(val pattern: String, val displayName: String) {
-    H12("hh:mm a", "12-hour (02:30 PM)"),
-    H24("HH:mm", "24-hour (14:30)"),
-    H12_SECONDS("hh:mm:ss a", "12-hour with seconds (02:30:45 PM)"),
-    H24_SECONDS("HH:mm:ss", "24-hour with seconds (14:30:45)"),
-    H12_SHORT("h:mm a", "12-hour short (2:30 PM)"),
-    H24_SHORT("H:mm", "24-hour short (14:30)"),
-    CUSTOM("", "Custom")
-}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -470,11 +454,11 @@ fun EditStatusBar() {
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    DateFormat.entries.filter { it != DateFormat.CUSTOM }.forEach { format ->
+                                    DateFormat.entries.filter { it != DateFormat.Custom }.forEach { format ->
                                         DragonButton(
                                             onClick = { updateElement(item.copy(formatter = format.pattern)) }
                                         ) {
-                                            Text(format.displayName)
+                                            Text(DateUtils.nowFormattedDate(format.format))
                                         }
                                     }
                                 }
@@ -526,7 +510,7 @@ fun EditStatusBar() {
                                         DragonButton(
                                             onClick = { updateElement(item.copy(formatter = format.pattern)) }
                                         ) {
-                                            Text(format.displayName)
+                                            Text(DateUtils.nowFormattedTime(format.format))
                                         }
                                     }
                                 }

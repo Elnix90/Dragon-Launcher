@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
 import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.objects.ActionSettingObject.Companion.action
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
@@ -30,100 +31,118 @@ object BehaviorSettingsStore : MapSettingsStore(DataStoreName.BEHAVIOR) {
             this.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint
         )
 
-    val backAction = action(
-        key = "backAction",
+    val backAction by action(
+        title = R.string.back_action,
+        description = R.string.back_action_desc,
         default = Action.None
     )
 
-    val doubleClickAction = action(
-        key = "doubleClickAction",
+    val doubleClickAction by action(
+        title = R.string.double_click_action,
+        description = R.string.double_click_action_desc,
         default = Action.OpenAppDrawer()
     )
 
-    val homeAction = action(
-        key = "homeAction",
+    val homeAction by action(
+        title = R.string.home_action,
+        description = R.string.home_action_desc,
         default = Action.OpenDragonLauncherSettings()
     )
 
-    val keepScreenOn = boolean(
-        key = "keepScreenOn",
+    val keepScreenOn by boolean(
+        title = R.string.keep_screen_on,
+        description = R.string.keep_screen_on_desc,
         default = false
     )
 
-    val leftPadding = int(
-        key = "leftPadding",
+    val leftPadding by int(
         default = 60,
+        title = R.string.left_padding,
+        description = R.string.left_padding_desc,
         allowedRange = 0..300
     )
 
-    val rightPadding = int(
-        key = "rightPadding",
+    val rightPadding by int(
         default = 60,
+        title = R.string.right_padding,
+        description = R.string.right_padding_desc,
         allowedRange = 0..300
     )
 
-    val topPadding = int(
-        key = "upPadding",
+    val topPadding by int(
         default = 80,
+        title = R.string.top_padding,
+        description = R.string.top_padding_desc,
         allowedRange = 0..300
     )
 
-    val bottomPadding = int(
-        key = "downPadding",
+    val bottomPadding by int(
         default = 100,
+        title = R.string.bottom_padding,
+        description = R.string.bottom_padding_desc,
         allowedRange = 0..300
     )
 
-    val disableHapticFeedbackGlobally = boolean(
-        key = "disableHapticFeedbackGlobally",
+    val disableHapticFeedbackGlobally by boolean(
+        title = R.string.disable_haptic_globally,
+        description = R.string.disable_haptic_globally_desc,
         default = false
     )
 
-    val pointsActionSnapsToOuterCircle = boolean(
-        key = "pointsActionSnapsToOuterCircle",
+    val pointsActionSnapsToOuterCircle by boolean(
+        title = R.string.point_action_snaps_to_outer_circle,
+        description = R.string.point_action_snaps_to_outer_circle_desc,
         default = true
     )
 
-    val superWarningMode = boolean(
-        key = "superWarningMode",
+    val superWarningMode by boolean(
+        title = R.string.super_warning_mode,
+        description = R.string.super_warning_mode_desc,
         default = false
     )
 
 
-    val vibrateOnError = boolean(
-        key = "vibrateOnError",
+    val vibrateOnError by boolean(
+        title = R.string.vibrate_on_error,
+        description = R.string.vibrate_on_error_desc,
+        default = false,
+    )
+
+    val alarmSound by boolean(
+        title = R.string.alarm_sound,
+        description = R.string.super_warning_mode_desc,
         default = false
     )
 
-    val alarmSound = boolean(
-        key = "alarmSound",
+    val metalPipesSound by boolean(
+        title = R.string.metal_pipes_sound,
+        description = R.string.metal_pipes_sound_desc,
         default = false
     )
 
-    val metalPipesSound = boolean(
-        key = "metalPipesSound",
-        default = false
-    )
-
-    val superWarningModeSound = int(
-        key = "superWarningModeSound",
+    val superWarningModeSound by int(
         default = 100,
+        title = R.string.super_warning_mode_sound,
+        description = R.string.super_warning_mode_sound_desc,
         allowedRange = 0..100
     )
 
-    val promptForShortcutsWhenAddingApp = boolean(
-        key = "promptForShortcutsWhenAddingApp",
+    val promptForShortcutsWhenAddingApp by boolean(
+        title = R.string.prompt_shortcuts_when_adding_app,
+        description = R.string.prompt_shortcuts_when_adding_app_desc,
         default = false
     )
 
-    val offScreenTimeout = int(
-        key = "offScreenTimeout",
+    val offScreenTimeout by int(
         default = 10,
+        title = R.string.off_screen_timeout,
+        description = R.string.off_screen_timeout_desc,
         allowedRange = -1..60
     )
 
-    val createLiveNestByDefaultWhenCreatingOpenCircleNestPoint = boolean(
-        key = "createLiveNestByDefaultWhenCreatingOpenCircleNestPoint",
+    val createLiveNestByDefaultWhenCreatingOpenCircleNestPoint by boolean(
+        title = R.string.create_live_nest_by_default,
+        description = R.string.create_live_nest_by_default_desc,
         default = true
     )
 }

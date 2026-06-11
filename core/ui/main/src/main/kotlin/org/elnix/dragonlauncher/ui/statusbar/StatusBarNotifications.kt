@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.statusbar
 
+import android.os.Process
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,7 +43,7 @@ fun StatusBarNotifications(
                 .clickable { openNotificationSettings(ctx) }
         )
         return
-    } else if (notifications.isEmpty()) return
+    } else if (notifications.isNullOrEmpty()) return
 
     val maxIcons = element.maxIcons
     val showMoreNotificationsIcon = notifications.size > maxIcons
@@ -52,8 +53,8 @@ fun StatusBarNotifications(
         verticalAlignment = Alignment.CenterVertically
     ) {
         notifications.take(maxIcons).forEach { notification ->
-            val pkg = notification.packageName
-            val user = notification.user
+            val pkg = notification?.packageName ?: "Unknown"
+            val user = notification?.user ?: Process.myUserHandle()
 
             val app by drawerViewModel.findOne(pkg, user).collectAsState(null)
 

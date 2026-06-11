@@ -28,14 +28,15 @@ import org.json.JSONException
  * - trades fine-grained updates for easier serialization
  */
 abstract class JsonArraySettingsStore(
-    override val dataStoreName: DataStoreName
+    final override val dataStoreName: DataStoreName
 ) : BaseSettingsStore<JSONArray?, JSONArray>(dataStoreName) {
 
     /**
      * Underlying setting that stores the JSON payload as a raw string.
      */
-    val jsonSetting = string(
-        key = "jsonSetting",
+    val jsonSetting by string(
+        title = null,
+        description = null,
         default = ""
     )
 
@@ -45,7 +46,7 @@ abstract class JsonArraySettingsStore(
     /**
      * Reads the JSON string from DataStore and parses it into a [JSONArray].
      */
-    override suspend fun getAll(ctx: Context): JSONArray? {
+    final override suspend fun getAll(ctx: Context, forceAllKeys: Boolean): JSONArray? {
         // Skips if default value provided (no changes made), keep the backup lighter
         val raw = jsonSetting.getEncoded(ctx)?.trim() ?: return null
 
@@ -58,11 +59,10 @@ abstract class JsonArraySettingsStore(
     }
 
 
-
     /**
      * Serializes and writes the provided [JSONArray] into DataStore.
      */
-    override suspend fun setAll(ctx: Context, value: JSONArray?) {
+    final override suspend fun setAll(ctx: Context, value: JSONArray?) {
         jsonSetting.set(ctx, value.toString())
     }
 
@@ -71,15 +71,15 @@ abstract class JsonArraySettingsStore(
      *
      * Since the store is already JSON-backed, this is a direct passthrough.
      */
-    override suspend fun exportForBackup(ctx: Context): JSONArray? =
-        getAll(ctx)
+    final override suspend fun exportForBackup(ctx: Context, forceAllKeys: Boolean): JSONArray? =
+        getAll(ctx, forceAllKeys)
 
     /**
      * Restores the store from a JSON backup.
      *
      * The provided [JSONArray] fully replaces the current stored value.
      */
-    override suspend fun importFromBackup(ctx: Context, json: JSONArray?) {
+    final override suspend fun importFromBackup(ctx: Context, json: JSONArray?) {
         setAll(ctx, json)
     }
 }

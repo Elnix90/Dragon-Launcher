@@ -19,10 +19,9 @@ import org.elnix.dragonlauncher.base.model.serializables.Widget
 import org.elnix.dragonlauncher.base.model.serializables.Widget.Companion.WidgetsJson
 import org.elnix.dragonlauncher.base.undoredo.UndoRedoManager
 import org.elnix.dragonlauncher.base.undoredo.UndoRedoStack
-import org.elnix.dragonlauncher.models.utils.stateFlowDelegate
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.settings.stores.array.WidgetsSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.cellSizeDp
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -39,10 +38,9 @@ class WidgetsViewModel @Inject constructor(
 
 
     val dm: DisplayMetrics = ctx.resources.displayMetrics
-    val cellSizeDp by stateFlowDelegate(UiSettingsStore.cellSizeDp)
 
 
-    val cellSizePx: StateFlow<Float> = cellSizeDp.flow.map { it * dm.density }.stateIn(
+    val cellSizePx: StateFlow<Float> = cellSizeDp.flow(ctx).map { it * dm.density }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
         initialValue = 30 * dm.density
@@ -163,11 +161,6 @@ class WidgetsViewModel @Inject constructor(
         }
 
         _widgets.value = updated
-    }
-
-
-    enum class ResizeCorner {
-        Top, Right, Left, Bottom
     }
 
 

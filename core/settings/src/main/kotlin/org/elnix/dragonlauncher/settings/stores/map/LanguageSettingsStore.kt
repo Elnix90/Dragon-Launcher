@@ -10,8 +10,9 @@ object LanguageSettingsStore : MapSettingsStore(DataStoreName.LANGUAGE) {
     override val ALL: List<BaseSettingObject<*, *>>
         get() = listOf(this.keyLang)
 
-    val keyLang = string(
-        key = "pref_app_language",
+    val keyLang by string(
+        title = null,
+        description = null,
         default = ""
     )
 }

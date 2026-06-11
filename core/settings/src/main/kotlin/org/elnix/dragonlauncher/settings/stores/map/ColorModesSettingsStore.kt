@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.settings.stores.map
 import org.elnix.dragonlauncher.enumsui.select.ColorPickerMode
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction
 import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
@@ -21,36 +22,42 @@ object ColorModesSettingsStore : MapSettingsStore(DataStoreName.COLOR_MODE) {
             this.colorTestMode
         )
 
-    val colorPickerMode = enum(
-        key = "colorPickerMode",
-        default = ColorPickerMode.DEFAULTS,
+    val colorPickerMode by enum(
+        title = null,
+        description = null,
+        default = ColorPickerMode.Default,
         enumClass = ColorPickerMode::class.java,
     )
 
-    val defaultTheme = enum(
-        key = "defaultTheme",
-        default = DefaultThemes.AMOLED,
+    val defaultTheme by enum(
+        title = null,
+        description = null,
+        default = DefaultThemes.Amoled,
         enumClass = DefaultThemes::class.java
     )
 
-    val colorPickerButtonOne = enum(
-        key = "colorPickerButton",
-        default = ColorPickerButtonAction.RANDOM,
+    val colorPickerButtonOne by enum(
+        title = null,
+        description = null,
+        default = ColorPickerButtonAction.Random,
         enumClass = ColorPickerButtonAction::class.java
     )
-    val colorPickerButtonTwo = enum(
-        key = "colorPickerButtonTwo",
-        default = ColorPickerButtonAction.COPY,
+    val colorPickerButtonTwo by enum(
+        title = null,
+        description = null,
+        default = ColorPickerButtonAction.Copy,
         enumClass = ColorPickerButtonAction::class.java
     )
 
-    val dynamicColor = boolean(
-        key = "dynamicColor",
+    val dynamicColor by boolean(
+        title = R.string.dynamic_colors,
+        description = R.string.dynamic_colors_desc,
         default = false
     )
 
-    val colorTestMode = boolean(
-        key = "colorTestMode",
+    val colorTestMode by boolean(
+        title = null,
+        description = null,
         default = false
     )
 }

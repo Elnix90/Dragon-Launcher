@@ -32,111 +32,91 @@ import org.elnix.dragonlauncher.settings.bases.getPointStrict
 import org.elnix.dragonlauncher.settings.bases.getStringListStrict
 import org.elnix.dragonlauncher.settings.bases.getStringSetStrict
 import org.elnix.dragonlauncher.settings.bases.getStringStrict
-import org.elnix.dragonlauncher.settings.bases.stores.BaseSettingsStore
+import org.elnix.dragonlauncher.settings.bases.stores.JsonArraySettingsStore
+import org.elnix.dragonlauncher.settings.bases.stores.JsonObjectSettingsStore
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
+import kotlin.properties.ReadOnlyProperty
 
 
-/**
- * Factory functions for creating typed [BaseSettingObject] instances backed by DataStore.
- *
- * This file provides convenient functions to create strongly-typed settings without
- * manually specifying generic parameters or creating dedicated subclasses for every type.
- *
- * Supported types include:
- * - Primitive types: [Boolean], [Int], [Long], [Float], [Double], [String], [Set]
- * - Enum types: any [Enum] using its name as the stored string
- * - Complex types: [Color] , [Point] and [Action], with proper encode/decode handling
- *
- * Each function returns a [BaseSettingObject] which can be used to get/set values, reset
- * the setting, or observe changes via flows.
- *
- * Example usage:
- * ```
- * val primaryColor = Settings.color(
- *     key = "primaryColor",
- *     default = Color.Purple
- * )
- *
- * val someAction = Settings.Action(
- *     key = "someAction",
- *     default = Action.OpenDragonLauncherSettings
- * )
- * ```
- */
-
-
-/**
- * Creates Boolean [BaseSettingObject]
- * stored in the datastore using the built-in [booleanPreferencesKey]
- */
 data class BooleanSettingObject(
     override val key: String,
     override val default: Boolean,
+    override val title: Int?,
+    override val description: Int?,
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?
 ) : BaseSettingObject<Boolean, Boolean>() {
+
     override val preferenceKey: Preferences.Key<Boolean>
         get() = booleanPreferencesKey(key)
-    override val encode: (Boolean) -> Boolean?
-        get() = { it }
-    override val decode: (Any?) -> Boolean
-        get() = { raw -> getBooleanStrict(raw, default) }
+
+    override fun encode(value: Boolean): Boolean = value
+    override fun decode(raw: Any?): Boolean = getBooleanStrict(raw, default)
 
     companion object {
-        fun MapSettingsStore.boolean(
-            key: String,
+        inline fun <reified T> MapSettingsStore.boolean(
+            title: Int?,
+            description: Int?,
             default: Boolean,
-            onChange: (() -> Unit)? = null
-        ): BooleanSettingObject =
-            BooleanSettingObject(
-                key = key,
-                dataStoreName = dataStoreName,
-                default = default,
-                onChanged = onChange
-            )
+            noinline onChange: (() -> Unit)? = null
+        ): ReadOnlyProperty<T, BooleanSettingObject> =
+            ReadOnlyProperty { _, property ->
+                BooleanSettingObject(
+                    key = property.name,
+                    title = title,
+                    description = description,
+                    dataStoreName = dataStoreName,
+                    default = default,
+                    onChanged = onChange
+                )
+            }
     }
 }
-
-
 
 
 data class IntSettingObject(
     override val key: String,
     override val default: Int,
+    override val title: Int?,
+    override val description: Int?,
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?,
-    val allowedRange: ClosedRange<Int>
+    val allowedRange: IntRange
 ) : BaseSettingObject<Int, Int>() {
 
     override val preferenceKey: Preferences.Key<Int>
         get() = intPreferencesKey(key)
 
-    override val encode: (Int) -> Int?
-        get() = { it }
-
-    override val decode: (Any?) -> Int
-        get() = { raw -> getIntStrict(raw, default).coerceIn(allowedRange) }
+    override fun encode(value: Int): Int = value
+    override fun decode(raw: Any?): Int = getIntStrict(raw, default).coerceIn(allowedRange)
 
     companion object {
-        fun MapSettingsStore.int(
-            key: String,
+        inline fun <reified T> MapSettingsStore.int(
+            title: Int?,
+            description: Int?,
             default: Int,
-            allowedRange: ClosedRange<Int>,
-            onChange: (() -> Unit)? = null
-        ): IntSettingObject =
-            IntSettingObject(
-                key = key,
-                dataStoreName = dataStoreName,
-                default = default,
-                allowedRange = allowedRange,
-                onChanged = onChange
-            )
+            allowedRange: IntRange,
+            noinline onChange: (() -> Unit)? = null
+        ): ReadOnlyProperty<T, IntSettingObject> =
+            ReadOnlyProperty { _, property ->
+                IntSettingObject(
+                    key = property.name,
+                    title = title,
+                    description = description,
+                    dataStoreName = dataStoreName,
+                    default = default,
+                    allowedRange = allowedRange,
+                    onChanged = onChange
+                )
+            }
     }
 }
 
 data class DpSettingObject(
     override val key: String,
     override val default: Dp,
+    override val title: Int?,
+    override val description: Int?,
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?,
     val allowedRange: ClosedRange<Dp>
@@ -145,377 +125,496 @@ data class DpSettingObject(
     override val preferenceKey: Preferences.Key<Int>
         get() = intPreferencesKey(key)
 
-    override val encode: (Dp) -> Int?
-        get() = { it.value.toInt() }
-
-    override val decode: (Any?) -> Dp
-        get() = { raw -> getDpStrict(raw, default).coerceIn(allowedRange) }
+    override fun encode(value: Dp): Int = value.value.toInt()
+    override fun decode(raw: Any?): Dp = getDpStrict(raw, default).coerceIn(allowedRange)
 
     companion object {
-        fun MapSettingsStore.dp(
-            key: String,
+        inline fun <reified T> MapSettingsStore.dp(
+            title: Int?,
+            description: Int?,
             default: Dp,
             allowedRange: ClosedRange<Dp>,
-            onChange: (() -> Unit)? = null
-        ): DpSettingObject =
-            DpSettingObject(
-                key = key,
-                dataStoreName = dataStoreName,
-                default = default,
-                allowedRange = allowedRange,
-                onChanged = onChange
-            )
+            noinline onChange: (() -> Unit)? = null
+        ): ReadOnlyProperty<T, DpSettingObject> =
+            ReadOnlyProperty { _, property ->
+                DpSettingObject(
+                    key = property.name,
+                    title = title,
+                    description = description,
+                    dataStoreName = dataStoreName,
+                    default = default,
+                    allowedRange = allowedRange,
+                    onChanged = onChange
+                )
+            }
     }
 }
-
 
 data class LongSettingObject(
     override val key: String,
     override val default: Long,
+    override val title: Int?,
+    override val description: Int?,
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?,
     val allowedRange: ClosedRange<Long>
 ) : BaseSettingObject<Long, Long>() {
+
     override val preferenceKey: Preferences.Key<Long>
         get() = longPreferencesKey(key)
-    override val encode: (Long) -> Long?
-        get() = { it }
-    override val decode: (Any?) -> Long
-        get() = { raw -> getLongStrict(raw, default).coerceIn(allowedRange) }
+
+    override fun encode(value: Long): Long = value
+    override fun decode(raw: Any?): Long = getLongStrict(raw, default).coerceIn(allowedRange)
 
     companion object {
-        fun MapSettingsStore.long(
-            key: String,
+        inline fun <reified T> MapSettingsStore.long(
+            title: Int?,
+            description: Int?,
             default: Long,
             allowedRange: ClosedRange<Long>,
-            onChange: (() -> Unit)? = null
-        ): LongSettingObject =
-            LongSettingObject(
-                key = key,
-                dataStoreName = dataStoreName,
-                default = default,
-                allowedRange = allowedRange,
-                onChanged = onChange
-            )
+            noinline onChange: (() -> Unit)? = null
+        ): ReadOnlyProperty<T, LongSettingObject> =
+            ReadOnlyProperty { _, property ->
+                LongSettingObject(
+                    key = property.name,
+                    title = title,
+                    description = description,
+                    dataStoreName = dataStoreName,
+                    default = default,
+                    allowedRange = allowedRange,
+                    onChanged = onChange
+                )
+            }
     }
 }
 
 data class FloatSettingObject(
     override val key: String,
     override val default: Float,
+    override val title: Int?,
+    override val description: Int?,
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?,
-    val allowedRange: ClosedRange<Float>
+    val allowedRange: ClosedFloatingPointRange<Float>
 ) : BaseSettingObject<Float, Float>() {
+
     override val preferenceKey: Preferences.Key<Float>
         get() = floatPreferencesKey(key)
-    override val encode: (Float) -> Float?
-        get() = { it }
-    override val decode: (Any?) -> Float
-        get() = { raw -> getFloatStrict(raw, default).coerceIn(allowedRange) }
+
+    override fun encode(value: Float): Float = value
+    override fun decode(raw: Any?): Float = getFloatStrict(raw, default).coerceIn(allowedRange)
 
     companion object {
-        fun MapSettingsStore.float(
-            key: String,
+        inline fun <reified T> MapSettingsStore.float(
+            title: Int?,
+            description: Int?,
             default: Float,
-            allowedRange: ClosedRange<Float>,
-            onChange: (() -> Unit)? = null
-        ): FloatSettingObject =
-            FloatSettingObject(
-                key = key,
-                dataStoreName = dataStoreName,
-                default = default,
-                allowedRange = allowedRange,
-                onChanged = onChange
-            )
+            allowedRange: ClosedFloatingPointRange<Float>,
+            noinline onChange: (() -> Unit)? = null
+        ): ReadOnlyProperty<T, FloatSettingObject> =
+            ReadOnlyProperty { _, property ->
+                FloatSettingObject(
+                    key = property.name,
+                    title = title,
+                    description = description,
+                    dataStoreName = dataStoreName,
+                    default = default,
+                    allowedRange = allowedRange,
+                    onChanged = onChange
+                )
+            }
     }
 }
 
 data class DoubleSettingObject(
     override val key: String,
     override val default: Double,
+    override val title: Int?,
+    override val description: Int?,
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?,
     val allowedRange: ClosedRange<Double>
 ) : BaseSettingObject<Double, Double>() {
+
     override val preferenceKey: Preferences.Key<Double>
         get() = doublePreferencesKey(key)
-    override val encode: (Double) -> Double?
-        get() = { it }
-    override val decode: (Any?) -> Double
-        get() = { raw -> getDoubleStrict(raw, default).coerceIn(allowedRange) }
+
+    override fun encode(value: Double): Double = value
+    override fun decode(raw: Any?): Double = getDoubleStrict(raw, default).coerceIn(allowedRange)
 
     companion object {
-        fun MapSettingsStore.double(
-            key: String,
+        inline fun <reified T> MapSettingsStore.double(
+            title: Int?,
+            description: Int?,
             default: Double,
             allowedRange: ClosedRange<Double>,
-            onChange: (() -> Unit)? = null
-        ): DoubleSettingObject =
-            DoubleSettingObject(
-                key = key,
-                dataStoreName = dataStoreName,
-                default = default,
-                allowedRange = allowedRange,
-                onChanged = onChange
-            )
+            noinline onChange: (() -> Unit)? = null
+        ): ReadOnlyProperty<T, DoubleSettingObject> =
+            ReadOnlyProperty { _, property ->
+                DoubleSettingObject(
+                    key = property.name,
+                    title = title,
+                    description = description,
+                    dataStoreName = dataStoreName,
+                    default = default,
+                    allowedRange = allowedRange,
+                    onChanged = onChange
+                )
+            }
     }
 }
 
 data class StringSettingObject(
     override val key: String,
     override val default: String,
+    override val title: Int?,
+    override val description: Int?,
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?
 ) : BaseSettingObject<String, String>() {
+
     override val preferenceKey: Preferences.Key<String>
         get() = stringPreferencesKey(key)
-    override val encode: (String) -> String?
-        get() = { it }
-    override val decode: (Any?) -> String
-        get() = { raw -> getStringStrict(raw, default) }
+
+    override fun encode(value: String): String = value
+    override fun decode(raw: Any?): String = getStringStrict(raw, default)
 
     companion object {
-        fun BaseSettingsStore<*, *>.string(
-            key: String,
+        inline fun <reified T> MapSettingsStore.string(
+            title: Int?,
+            description: Int?,
             default: String,
-            onChange: (() -> Unit)? = null
-        ): StringSettingObject =
-            StringSettingObject(
-                key = key,
-                dataStoreName = dataStoreName,
-                default = default,
-                onChanged = onChange
-            )
+            noinline onChange: (() -> Unit)? = null
+        ): ReadOnlyProperty<T, StringSettingObject> =
+            ReadOnlyProperty { _, property ->
+                StringSettingObject(
+                    key = property.name,
+                    title = title,
+                    description = description,
+                    dataStoreName = dataStoreName,
+                    default = default,
+                    onChanged = onChange
+                )
+            }
+
+        inline fun <reified T> JsonObjectSettingsStore.string(
+            title: Int?,
+            description: Int?,
+            default: String,
+            noinline onChange: (() -> Unit)? = null
+        ): ReadOnlyProperty<T, StringSettingObject> =
+            ReadOnlyProperty { _, property ->
+                StringSettingObject(
+                    key = property.name,
+                    title = title,
+                    description = description,
+                    dataStoreName = dataStoreName,
+                    default = default,
+                    onChanged = onChange
+                )
+            }
+
+        inline fun <reified T> JsonArraySettingsStore.string(
+            title: Int?,
+            description: Int?,
+            default: String,
+            noinline onChange: (() -> Unit)? = null
+        ): ReadOnlyProperty<T, StringSettingObject> =
+            ReadOnlyProperty { _, property ->
+                StringSettingObject(
+                    key = property.name,
+                    title = title,
+                    description = description,
+                    dataStoreName = dataStoreName,
+                    default = default,
+                    onChanged = onChange
+                )
+            }
     }
 }
 
 data class StringSetSettingObject(
     override val key: String,
     override val default: Set<String>,
+    override val title: Int?,
+    override val description: Int?,
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?
 ) : BaseSettingObject<Set<String>, Set<String>>() {
+
     override val preferenceKey: Preferences.Key<Set<String>>
         get() = stringSetPreferencesKey(key)
-    override val encode: (Set<String>) -> Set<String>?
-        get() = { it }
-    override val decode: (Any?) -> Set<String>
-        get() = { raw -> getStringSetStrict(raw, default) }
+
+    override fun encode(value: Set<String>): Set<String> = value
+    override fun decode(raw: Any?): Set<String> = getStringSetStrict(raw, default)
 
     companion object {
-        fun MapSettingsStore.stringSet(
-            key: String,
+        inline fun <reified T> MapSettingsStore.stringSet(
+            title: Int?,
+            description: Int?,
             default: Set<String>,
-            onChange: (() -> Unit)? = null
-        ): StringSetSettingObject =
-            StringSetSettingObject(
-                key = key,
-                dataStoreName = dataStoreName,
-                default = default,
-                onChanged = onChange
-            )
+            noinline onChange: (() -> Unit)? = null
+        ): ReadOnlyProperty<T, StringSetSettingObject> =
+            ReadOnlyProperty { _, property ->
+                StringSetSettingObject(
+                    key = property.name,
+                    title = title,
+                    description = description,
+                    dataStoreName = dataStoreName,
+                    default = default,
+                    onChanged = onChange
+                )
+            }
     }
 }
 
 data class StringListSettingObject(
     override val key: String,
     override val default: List<String>,
+    override val title: Int?,
+    override val description: Int?,
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?
 ) : BaseSettingObject<List<String>, String>() {
+
     override val preferenceKey: Preferences.Key<String>
         get() = stringPreferencesKey(key)
-    override val encode: (List<String>) -> String?
-        get() = { list -> list.joinToString(",") }
-    override val decode: (Any?) -> List<String>
-        get() = { raw -> getStringListStrict(raw, default) }
+
+    override fun encode(value: List<String>): String = value.joinToString(",")
+    override fun decode(raw: Any?): List<String> = getStringListStrict(raw, default)
 
     companion object {
-        fun MapSettingsStore.stringList(
-            key: String,
+        inline fun <reified T> MapSettingsStore.stringList(
+            title: Int?,
+            description: Int?,
             default: List<String>,
-            onChange: (() -> Unit)? = null
-        ): StringListSettingObject =
-            StringListSettingObject(
-                key = key,
-                dataStoreName = dataStoreName,
-                default = default,
-                onChanged = onChange
-            )
+            noinline onChange: (() -> Unit)? = null
+        ): ReadOnlyProperty<T, StringListSettingObject> =
+            ReadOnlyProperty { _, property ->
+                StringListSettingObject(
+                    key = property.name,
+                    title = title,
+                    description = description,
+                    dataStoreName = dataStoreName,
+                    default = default,
+                    onChanged = onChange
+                )
+            }
     }
 }
 
 data class EnumSettingObject<E : Enum<E>>(
     override val key: String,
     override val default: E,
+    override val title: Int?,
+    override val description: Int?,
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?,
     val enumClass: Class<E>
 ) : BaseSettingObject<E, String>() {
+
     override val preferenceKey: Preferences.Key<String>
         get() = stringPreferencesKey(key)
-    override val encode: (E) -> String?
-        get() = { it.name }
-    override val decode: (Any?) -> E
-        get() = { raw -> getEnumStrict(raw, default, enumClass) }
+
+    override fun encode(value: E): String = value.name
+    override fun decode(raw: Any?): E = getEnumStrict(raw, default, enumClass)
 
     companion object {
-        fun <E : Enum<E>> MapSettingsStore.enum(
-            key: String,
+        inline fun <reified T, E : Enum<E>> MapSettingsStore.enum(
+            title: Int?,
+            description: Int?,
             default: E,
             enumClass: Class<E>,
-            onChange: (() -> Unit)? = null
-        ): EnumSettingObject<E> =
-            EnumSettingObject(
-                key = key,
-                dataStoreName = dataStoreName,
-                default = default,
-                enumClass = enumClass,
-                onChanged = onChange
-            )
+            noinline onChange: (() -> Unit)? = null
+        ): ReadOnlyProperty<T, EnumSettingObject<E>> =
+            ReadOnlyProperty { _, property ->
+                EnumSettingObject(
+                    key = property.name,
+                    title = title,
+                    description = description,
+                    dataStoreName = dataStoreName,
+                    default = default,
+                    enumClass = enumClass,
+                    onChanged = onChange
+                )
+            }
     }
+
 }
 
 data class EnumListSettingObject<E : Enum<E>>(
     override val key: String,
     override val default: List<E>,
+    override val title: Int?,
+    override val description: Int?,
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?,
     val enumClass: Class<E>
 ) : BaseSettingObject<List<E>, String>() {
     override val preferenceKey: Preferences.Key<String>
         get() = stringPreferencesKey(key)
-    override val encode: (List<E>) -> String?
-        get() = { list -> list.joinToString(",") { it.name } }
-    override val decode: (Any?) -> List<E>
-        get() = { raw -> getEnumListStrict(raw, default, enumClass) }
+
+    override fun encode(value: List<E>): String = value.joinToString(",") { it.name }
+    override fun decode(raw: Any?): List<E> = getEnumListStrict(raw, default, enumClass)
 
     companion object {
-        fun <E : Enum<E>> MapSettingsStore.enumList(
-            key: String,
+        inline fun <reified T, E : Enum<E>> MapSettingsStore.enumList(
+            title: Int?,
+            description: Int?,
             default: List<E>,
             enumClass: Class<E>,
-            onChange: (() -> Unit)? = null
-        ): EnumListSettingObject<E> =
-            EnumListSettingObject(
-                key = key,
-                dataStoreName = dataStoreName,
-                default = default,
-                enumClass = enumClass,
-                onChanged = onChange
-            )
+            noinline onChange: (() -> Unit)? = null
+        ): ReadOnlyProperty<T, EnumListSettingObject<E>> =
+            ReadOnlyProperty { _, property ->
+                EnumListSettingObject(
+                    key = property.name,
+                    title = title,
+                    description = description,
+                    dataStoreName = dataStoreName,
+                    default = default,
+                    enumClass = enumClass,
+                    onChanged = onChange
+                )
+            }
     }
 }
 
 data class ColorSettingObject(
     override val key: String,
     override val default: Color,
+    override val title: Int?,
+    override val description: Int?,
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?
 ) : BaseSettingObject<Color, String>() {
+
     override val preferenceKey: Preferences.Key<String>
         get() = stringPreferencesKey(key)
-    override val encode: (Color) -> String?
-        get() = { it.toHexWithAlpha(false) }
-    override val decode: (Any?) -> Color
-        get() = { raw -> getColorStrict(raw, default) }
+
+    override fun encode(value: Color): String = value.toHexWithAlpha(false)
+    override fun decode(raw: Any?): Color = getColorStrict(raw, default)
 
     companion object {
-        fun MapSettingsStore.color(
-            key: String,
+        inline fun <reified T> MapSettingsStore.color(
+            title: Int?,
+            description: Int?,
             default: Color,
-            onChange: (() -> Unit)? = null
-        ): ColorSettingObject =
-            ColorSettingObject(
-                key = key,
-                dataStoreName = dataStoreName,
-                default = default,
-                onChanged = onChange
-            )
+            noinline onChange: (() -> Unit)? = null
+        ): ReadOnlyProperty<T, ColorSettingObject> =
+            ReadOnlyProperty { _, property ->
+                ColorSettingObject(
+                    key = property.name,
+                    title = title,
+                    description = description,
+                    dataStoreName = dataStoreName,
+                    default = default,
+                    onChanged = onChange
+                )
+            }
     }
 }
 
 data class ActionSettingObject(
     override val key: String,
     override val default: Action,
+    override val title: Int?,
+    override val description: Int?,
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?
 ) : BaseSettingObject<Action, String>() {
+
     override val preferenceKey: Preferences.Key<String>
         get() = stringPreferencesKey(key)
-    override val encode: (Action) -> String?
-        get() = { raw -> ActionJson.encode(raw) }
-    override val decode: (Any?) -> Action
-        get() = { raw -> getActionStrict(raw, default) }
+
+    override fun encode(value: Action): String? = ActionJson.encode(value)
+    override fun decode(raw: Any?): Action = getActionStrict(raw, default)
 
     companion object {
-        fun MapSettingsStore.action(
-            key: String,
+        inline fun <reified T> MapSettingsStore.action(
+            title: Int?,
+            description: Int?,
             default: Action,
-            onChange: (() -> Unit)? = null
-        ): ActionSettingObject =
-            ActionSettingObject(
-                key = key,
-                dataStoreName = dataStoreName,
-                default = default,
-                onChanged = onChange
-            )
+            noinline onChange: (() -> Unit)? = null
+        ): ReadOnlyProperty<T, ActionSettingObject> =
+            ReadOnlyProperty { _, property ->
+                ActionSettingObject(
+                    key = property.name,
+                    title = title,
+                    description = description,
+                    dataStoreName = dataStoreName,
+                    default = default,
+                    onChanged = onChange
+                )
+            }
     }
 }
 
 data class PointSettingObject(
     override val key: String,
     override val default: Point,
+    override val title: Int?,
+    override val description: Int?,
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?
 ) : BaseSettingObject<Point, String>() {
+
     override val preferenceKey: Preferences.Key<String>
         get() = stringPreferencesKey(key)
-    override val encode: (Point) -> String?
-        get() = { raw -> PointsJson.encode(raw) }
-    override val decode: (Any?) -> Point
-        get() = { raw -> getPointStrict(raw, default) }
+
+    override fun encode(value: Point): String? = PointsJson.encode(value)
+    override fun decode(raw: Any?): Point = getPointStrict(raw, default)
 
     companion object {
-        fun MapSettingsStore.point(
-            key: String,
+        inline fun <reified T> MapSettingsStore.point(
+            title: Int?,
+            description: Int?,
             default: Point,
-            onChange: (() -> Unit)? = null
-        ): PointSettingObject =
-            PointSettingObject(
-                key = key,
-                dataStoreName = dataStoreName,
-                default = default,
-                onChanged = onChange
-            )
+            noinline onChange: (() -> Unit)? = null
+        ): ReadOnlyProperty<T, PointSettingObject> =
+            ReadOnlyProperty { _, property ->
+                PointSettingObject(
+                    key = property.name,
+                    title = title,
+                    description = description,
+                    dataStoreName = dataStoreName,
+                    default = default,
+                    onChanged = onChange
+                )
+            }
     }
 }
 
 data class IconShapeSettingObject(
     override val key: String,
     override val default: IconShape,
+    override val title: Int?,
+    override val description: Int?,
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?
 ) : BaseSettingObject<IconShape, String>() {
+
     override val preferenceKey: Preferences.Key<String>
         get() = stringPreferencesKey(key)
-    override val encode: (IconShape) -> String?
-        get() = { value -> IconShapeJson.encode(value) }
-    override val decode: (Any?) -> IconShape
-        get() = { raw -> IconShapeJson.decode(raw, default) }
+
+    override fun encode(value: IconShape): String? = IconShapeJson.encode(value)
+    override fun decode(raw: Any?): IconShape = IconShapeJson.decode(raw, default)
 
     companion object {
-        fun MapSettingsStore.shape(
-            key: String,
+        inline fun <reified T> MapSettingsStore.shape(
+            title: Int?,
+            description: Int?,
             default: IconShape,
-            onChange: (() -> Unit)? = null
-        ): IconShapeSettingObject =
-            IconShapeSettingObject(
-                key = key,
-                dataStoreName = dataStoreName,
-                default = default,
-                onChanged = onChange
-            )
+            noinline onChange: (() -> Unit)? = null
+        ): ReadOnlyProperty<T, IconShapeSettingObject> =
+            ReadOnlyProperty { _, property ->
+                IconShapeSettingObject(
+                    key = property.name,
+                    title = title,
+                    description = description,
+                    dataStoreName = dataStoreName,
+                    default = default,
+                    onChanged = onChange
+                )
+            }
     }
 }

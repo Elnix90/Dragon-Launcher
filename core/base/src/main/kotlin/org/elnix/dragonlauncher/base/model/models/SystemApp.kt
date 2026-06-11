@@ -21,6 +21,7 @@ data class SystemApp(
     override val versionName: String?,
     override val labelOverride: String? = null,
     override val profile: Profile,
+    override val isSuspended: Boolean
 ) : Application() {
 
     override val isSystem: Boolean = true

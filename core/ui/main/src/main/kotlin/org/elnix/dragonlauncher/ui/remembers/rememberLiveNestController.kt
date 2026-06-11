@@ -20,6 +20,7 @@ import org.elnix.dragonlauncher.common.circles.resolveLiveNestHit
 import org.elnix.dragonlauncher.common.circles.scaleDragDistances
 import org.elnix.dragonlauncher.common.circles.uiCirclesFromDragDistances
 import org.elnix.dragonlauncher.common.circles.uiCirclesFromScaledDragDistances
+import org.elnix.dragonlauncher.logging.POINTS_TAG
 import org.elnix.dragonlauncher.logging.SWIPE_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.models.PointViewModel
@@ -104,9 +105,12 @@ fun rememberLiveNestControllerStack(
 
     var resetTrigger by remember { mutableIntStateOf(0) }
 
+    logD(POINTS_TAG) { maxNestingDepth.toString() }
+
     val sweepAngleStateStack: List<SweepAngleState> = remember(maxNestingDepth) {
         List(maxNestingDepth) { createSweepAngleState() }
     }
+
 
     val nestStack = remember(maxNestingDepth) {
         List(maxNestingDepth) { NestLevelState(sweepAngleState = sweepAngleStateStack[it]) }

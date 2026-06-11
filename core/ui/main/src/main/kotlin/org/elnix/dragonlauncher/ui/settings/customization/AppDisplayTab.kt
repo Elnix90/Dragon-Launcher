@@ -25,11 +25,6 @@ import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.appIconOverlaySize
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.appLabelIconOverlayTopPadding
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.appLabelOverlaySize
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.showLaunchingAppIcon
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.showLaunchingAppLabel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.components.AppPreviewTitle
@@ -51,14 +46,12 @@ fun AppDisplayTab(
     drawerViewModel: DrawerViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
-    val drawerIconCache = drawerViewModel.drawerIconsCache
     val scope = rememberCoroutineScope()
 
-    val showLaunchingAppLabel by showLaunchingAppLabel.asState()
-    val showLaunchingAppIcon by showLaunchingAppIcon.asState()
-    val appLabelIconOverlayTopPadding by appLabelIconOverlayTopPadding.asState()
-    val appLabelOverlaySize by appLabelOverlaySize.asState()
-    val appIconOverlaySize by appIconOverlaySize.asState()
+    val showLaunchingAppLabel by UiSettingsStore.showLaunchingAppLabel.asState()
+    val showLaunchingAppIcon by UiSettingsStore.showLaunchingAppIcon.asState()
+    val appLabelIconOverlayTopPadding by UiSettingsStore.appLabelIconOverlayTopPadding.asState()
+    val appLabelOverlaySize by UiSettingsStore.appLabelOverlaySize.asState()
     val showAllActionsOnCurrentCircle by UiSettingsStore.showAllActionsOnCurrentCircle.asState()
 
     val mainScreenLayers = LocalMainScreenLayers.current
@@ -66,7 +59,7 @@ fun AppDisplayTab(
     val topOverlaySettingsState = rememberExpandableSection(stringResource(R.string.app_preview_settings), mode = ExpandableSectionMode.Expandable)
 
     var demoIcon by remember(topOverlaySettingsState.isExpanded()) {
-        mutableStateOf(drawerIconCache.getRandom())
+        mutableStateOf(drawerViewModel.iconsService.getRandomAppIcon())
     }
 
     SettingsScaffold(
@@ -81,11 +74,7 @@ fun AppDisplayTab(
         }
     ) {
         DragonSettingsGroup(R.string.common_settings) {
-            SettingsSwitchRow(
-                setting = UiSettingsStore.fullScreen,
-                title = stringResource(R.string.fullscreen_app),
-                description = stringResource(R.string.fullscreen_description)
-            )
+            SettingsSwitchRow(UiSettingsStore.fullScreen)
 
             SwitchRow(
                 title = stringResource(R.string.charging_animation),
@@ -108,36 +97,18 @@ fun AppDisplayTab(
 
         ExpandableSection(topOverlaySettingsState) {
 
-            SettingsSwitchRow(
-                setting = UiSettingsStore.showLaunchingAppLabel,
-                title = stringResource(R.string.show_launching_app_label),
-                description = stringResource(R.string.show_launching_app_label_description)
-            )
-
-            SettingsSwitchRow(
-                setting = UiSettingsStore.showLaunchingAppIcon,
-                title = stringResource(R.string.show_launching_app_icon),
-                description = stringResource(R.string.show_launching_app_icon_description)
-            )
-
+            SettingsSwitchRow(UiSettingsStore.showLaunchingAppLabel)
+            SettingsSwitchRow(UiSettingsStore.showLaunchingAppIcon)
             SettingsSlider(
                 setting = UiSettingsStore.appLabelIconOverlayTopPadding,
-                title = stringResource(R.string.app_label_icon_overlay_top_padding),
-                valueRange = 0..1000,
                 color = MaterialTheme.colorScheme.primary
             )
-
             SettingsSlider(
                 setting = UiSettingsStore.appLabelOverlaySize,
-                title = stringResource(R.string.app_label_overlay_size),
-                valueRange = 0..100,
                 color = MaterialTheme.colorScheme.primary
             )
-
             SettingsSlider(
                 setting = UiSettingsStore.appIconOverlaySize,
-                title = stringResource(R.string.app_icon_overlay_size),
-                valueRange = 0..400,
                 color = MaterialTheme.colorScheme.primary
             )
         }
@@ -146,23 +117,10 @@ fun AppDisplayTab(
             title = R.string.dragging_display,
             contentPadding = PaddingValues(vertical = 12.dp)
         ) {
-            SettingsSwitchRow(
-                setting = UiSettingsStore.showAppLaunchingPreview,
-                title = stringResource(R.string.show_app_launch_preview),
-                description = stringResource(R.string.show_app_launch_preview_description)
-            )
+            SettingsSwitchRow(UiSettingsStore.showAppLaunchingPreview)
+            SettingsSwitchRow(UiSettingsStore.showCirclePreview)
 
-            SettingsSwitchRow(
-                setting = UiSettingsStore.showCirclePreview,
-                title = stringResource(R.string.show_app_circle_preview),
-                description = stringResource(R.string.show_app_circle_preview_description)
-            )
-
-            SettingsSwitchRow(
-                setting = UiSettingsStore.showAllActionsOnCurrentCircle,
-                title = stringResource(R.string.show_all_actions_on_current_circle),
-                description = stringResource(R.string.show_all_actions_on_current_circle_description)
-            ) {
+            SettingsSwitchRow(UiSettingsStore.showAllActionsOnCurrentCircle) {
                 if (!it) {
                     scope.launch {
                         UiSettingsStore.showAllActionsOnCurrentNest.set(ctx, false)
@@ -170,56 +128,19 @@ fun AppDisplayTab(
                 }
             }
 
-            SettingsSwitchRow(
-                setting = UiSettingsStore.showAllActionsOnCurrentNest,
-                enabled = showAllActionsOnCurrentCircle,
-                title = stringResource(R.string.show_all_actions_on_current_nest),
-                description = stringResource(R.string.show_all_actions_on_current_nest_desc)
-            )
-
-            SettingsSwitchRow(
-                setting = UiSettingsStore.showAppPreviewIconCenterStartPosition,
-                title = stringResource(R.string.show_app_icon_start_drag_position),
-                description = stringResource(R.string.show_app_icon_start_drag_position_description)
-            )
-
-            /* If the line is rgb (computed via the angle) or uses the line color from settings */
-            SettingsSwitchRow(
-                setting = UiSettingsStore.rgbLine,
-                title = stringResource(R.string.rgb_line_selector),
-                description = stringResource(R.string.rgb_line_selector_description)
-            )
-
-            SettingsSwitchRow(
-                setting = UiSettingsStore.linePreviewSnapToAction,
-                title = stringResource(R.string.line_preview_snap_to_action),
-                description = stringResource(R.string.line_preview_snap_to_action_description)
-            )
-
-            SettingsSwitchRow(
-                setting = UiSettingsStore.multiplyOrSubtractOpacityInLiveNests,
-                title = stringResource(R.string.multiply_or_subtract_opacity_in_live_nests),
-                description = stringResource(R.string.multiply_or_subtract_opacity_in_live_nests_desc)
-            )
+            SettingsSwitchRow(UiSettingsStore.showAllActionsOnCurrentNest, enabled = showAllActionsOnCurrentCircle)
+            SettingsSwitchRow(UiSettingsStore.showAppPreviewIconCenterStartPosition)
+            SettingsSwitchRow(UiSettingsStore.rgbLine)
+            SettingsSwitchRow(UiSettingsStore.linePreviewSnapToAction)
+            SettingsSwitchRow(UiSettingsStore.multiplyOrSubtractOpacityInLiveNests)
         }
 
         DragonSettingsGroup(
             title = R.string.depth,
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
         ) {
-            SettingsSlider(
-                setting = UiSettingsStore.maxNestsDepth,
-                title = stringResource(R.string.depth),
-                description = stringResource(R.string.depth_desc),
-                valueRange = 1..10
-            )
-
-            SettingsSlider(
-                setting = UiSettingsStore.maxLiveNestsDepth,
-                title = stringResource(R.string.live_nest_depth),
-                description = stringResource(R.string.live_nests_depth_desc),
-                valueRange = 1..10
-            )
+            SettingsSlider(UiSettingsStore.maxNestsDepth)
+            SettingsSlider(UiSettingsStore.maxLiveNestsDepth)
         }
     }
 
@@ -232,7 +153,6 @@ fun AppDisplayTab(
             ),
             topPadding = appLabelIconOverlayTopPadding.dp,
             labelSize = appLabelOverlaySize,
-            iconSize = appIconOverlaySize,
             showLabel = showLaunchingAppLabel,
             showIcon = showLaunchingAppIcon
         )

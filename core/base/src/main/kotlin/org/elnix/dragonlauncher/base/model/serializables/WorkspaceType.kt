@@ -7,15 +7,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("WorkspaceType")
 enum class WorkspaceType {
-    ALL,
-    USER,
-    SYSTEM,
-    WORK,
-    PRIVATE,
-    CUSTOM;
+    All,
+    User,
+    System,
+    Work,
+    Private,
+    Custom;
 
     companion object {
         val WorkspaceType.isPrivate: Boolean
-            get() = this == PRIVATE
+            get() = this == Private
     }
 }

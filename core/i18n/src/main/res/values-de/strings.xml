@@ -329,7 +329,6 @@
     <string name="guilt_mode">Zeitbewusstseinsmodus</string>
     <string name="guilt_mode_description">Zeigen Sie Statistiken zur tatsächlichen Nutzung an, um die in Apps verbrachte Zeit besser einzuschätzen</string>
     <string name="pause_duration">Pausendauer</string>
-    <string name="pause_duration_description">Wie lange muss man atmen, bevor man weitermachen kann (%d Sekunden)</string>
     <string name="paused_apps">Angehaltene Apps</string>
     <string name="add_app">App hinzufügen</string>
     <string name="add_social_media">Fügen Sie alle sozialen Medien hinzu</string>
@@ -355,7 +354,6 @@
     <string name="reminder_mode_title">Nutzungserinnerung</string>
     <string name="reminder_mode_description">Erhalten Sie regelmäßige Erinnerungen, wenn Sie zu lange in einer pausierten App bleiben</string>
     <string name="reminder_interval">Erinnerungsintervall</string>
-    <string name="reminder_interval_description">Erinnere mich alle %d Minuten daran</string>
     <string name="reminder_mode_notification">Benachrichtigung</string>
     <string name="reminder_mode_overlay">Popup auf dem Bildschirm</string>
     <string name="overlay_permission_required">Overlay-Berechtigung</string>

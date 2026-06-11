@@ -87,14 +87,7 @@ fun DebugTab(
         onReset = null,
         resetText = null
     ) {
-
-        SettingsSwitchRow(
-            setting = DebugSettingsStore.debugEnabled,
-            title = stringResource(R.string.activate_debug_mode),
-            description = stringResource(R.string.activate_debug_mode_desc)
-        ) {
-            scope.launch { DebugSettingsStore.debugEnabled.set(ctx, it) }
-        }
+        SettingsSwitchRow(DebugSettingsStore.debugEnabled)
 
         DragonSettingsGroup(R.string.more) {
             SettingsItem(
@@ -137,79 +130,19 @@ fun DebugTab(
                 Text(text = "Show Welcome Screen")
             }
 
-            SettingsSwitchRow(
-                setting = DebugSettingsStore.forceAppLanguageSelector,
-                title = "Force app language selector",
-                description = "Don't use the android language selector when available, always uses the app's native"
-            )
-
-            SettingsSwitchRow(
-                setting = PrivateSettingsStore.hideBetaVersionWarning,
-                title = "Hide beta version warning",
-                description = "Hides the beta version warning in top of the adv settings screen"
-            )
-
-            SettingsSwitchRow(
-                setting = PrivateSettingsStore.showSetDefaultLauncherBanner,
-                title = "Show set default launcher banner",
-                description = "If disabled, it won't appear if Dragon isn't the default launcher"
-            )
-
-            SettingsSwitchRow(
-                setting = DebugSettingsStore.showFps,
-                title = "Show FPS",
-                description = "Display a FPS graph on top of everything"
-            )
-
-            SettingsSwitchRow(
-                setting = DebugSettingsStore.showKillLauncherActionInActionPicker,
-                title = "Show the kill launcher action in action selector",
-                description = "If false, the kill launcher action is hidden"
-            )
-
-            SettingsSwitchRow(
-                setting = UiSettingsStore.doNotRemindMeAgainPinLockWarning,
-                title = "Do not remind me again Pin Lock",
-                description = "Whether to show the pin code warning when setting a pin"
-            )
+            SettingsSwitchRow(DebugSettingsStore.forceAppLanguageSelector)
+            SettingsSwitchRow(PrivateSettingsStore.hideBetaVersionWarning)
+            SettingsSwitchRow(PrivateSettingsStore.showSetDefaultLauncherBanner)
+            SettingsSwitchRow(DebugSettingsStore.showFps)
+            SettingsSwitchRow(DebugSettingsStore.showKillLauncherActionInActionPicker)
+            SettingsSwitchRow(UiSettingsStore.doNotRemindMeAgainPinLockWarning)
         }
 
         DragonSettingsGroup(R.string.debug_infos) {
-            SettingsSwitchRow(
-                setting = DebugSettingsStore.debugInfos,
-                title = stringResource(R.string.show_debug_infos),
-                description = stringResource(R.string.show_debug_infos_desc)
-            )
-
-            SettingsSwitchRow(
-                setting = DebugSettingsStore.settingsDebugInfo,
-                title = stringResource(R.string.show_debug_infos_settings),
-                description = stringResource(R.string.show_debug_infos_settings_desc)
-            )
-
-            SettingsSwitchRow(
-                setting = DebugSettingsStore.widgetsDebugInfo,
-                title = stringResource(R.string.show_debug_infos_widgets),
-                description = stringResource(R.string.show_debug_infos_widgets_desc)
-            )
-
-            SettingsSwitchRow(
-                setting = DebugSettingsStore.workspacesDebugInfo,
-                title = stringResource(R.string.show_debug_infos_workspace),
-                description = stringResource(R.string.show_debug_infos_workspace_desc)
-            )
-
-            SettingsSwitchRow(
-                setting = DebugSettingsStore.privateSpaceDebugInfo,
-                title = stringResource(R.string.private_space_debug_info),
-                description = stringResource(R.string.private_space_debug_info_desc)
-            )
-
-            SettingsSwitchRow(
-                setting = DebugSettingsStore.showDebugViewModel,
-                title = "Show viewModels debug infos",
-                description = "Displays a card that shows the hashCodes of all the view models in colors, if they change color, it is really bad, please report it to me if this is the case"
-            )
+            SettingsSwitchRow(DebugSettingsStore.debugInfos)
+            SettingsSwitchRow(DebugSettingsStore.settingsDebugInfo)
+            SettingsSwitchRow(DebugSettingsStore.widgetsDebugInfo)
+            SettingsSwitchRow(DebugSettingsStore.workspacesDebugInfo)
         }
 
         DragonSettingsGroup(R.string.package_search) {
@@ -260,17 +193,11 @@ fun DebugTab(
             title = R.string.accessibility_and_system,
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
         ) {
-            SettingsSwitchRow(
-                setting = DebugSettingsStore.useAccessibilityInsteadOfContextToExpandActionPanel,
-                title = stringResource(R.string.use_accessibility_instead_of_context),
-                description = stringResource(R.string.use_accessibility_instead_of_context_desc)
+            SettingsSwitchRow(DebugSettingsStore.useAccessibilityInsteadOfContextToExpandActionPanel,
+
             )
 
-            SettingsSwitchRow(
-                setting = DebugSettingsStore.autoRaiseDragonOnSystemLauncher,
-                title = stringResource(R.string.auto_raise_dragon_on_system_launcher),
-                description = stringResource(R.string.auto_raise_dragon_on_system_launcher_desc)
-            )
+            SettingsSwitchRow(DebugSettingsStore.autoRaiseDragonOnSystemLauncher)
 
             DragonButton(
                 onClick = { SystemControl.openServiceSettings((ctx)) },
@@ -440,11 +367,7 @@ fun DebugTab(
                     modifier = Modifier.fillMaxWidth()
                 ) { Text(text = "Re-initialize points") }
 
-                SettingsSwitchRow(
-                    setting = DebugSettingsStore.disableExtensionSignatureCheck,
-                    title = "Disable extension signature check",
-                    description = "Allow extensions not signed with the official key"
-                )
+                SettingsSwitchRow(DebugSettingsStore.disableExtensionSignatureCheck)
             }
         }
     }

@@ -26,23 +26,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
-import org.elnix.dragonlauncher.base.model.serializables.CustomIcon.Companion.getProperties
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.models.DrawerViewModel
+import org.elnix.dragonlauncher.ui.actions.PointIcon
 import org.elnix.dragonlauncher.ui.actions.actionLabel
-import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
 fun AppPreviewTitle(
-    drawerViewModel: DrawerViewModel = activityViewModel(),
     point: Point?,
     topPadding: Dp = 60.dp,
     labelSize: Int,
-    iconSize: Int,
     showLabel: Boolean,
     showIcon: Boolean
 ) {
@@ -92,15 +87,7 @@ fun AppPreviewTitle(
 
 
                 if (showIcon) {
-                    drawerViewModel.iconsService.pointsIconsCache.getOrLazyCompute(point.key) {
-                        drawerViewModel.iconsService.reloadPointIcon(point)
-                    }?.let { icon ->
-                        ShapedLauncherIcon(
-                            maxIconSize = iconSize.dp,
-                            icon = { icon },
-                            shape = point.customIcon?.getProperties()?.shape ?: LocalIconShape.current
-                        )
-                    }
+                    PointIcon(point)
                 }
 
                 if (showLabel) {

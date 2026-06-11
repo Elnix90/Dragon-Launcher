@@ -226,11 +226,8 @@ fun AngleLineTab(onBack: () -> Unit) {
     ) {
         /** Line object setting */
         ExpandableSection(lineObjectExpandableSectionState) {
-            SettingsSwitchRow(
-                setting = AngleLineSettingsStore.showLineObjectPreview,
-                title = stringResource(R.string.show_app_line_preview),
-                description = stringResource(R.string.show_app_line_preview_description)
-            )
+            SettingsSwitchRow(AngleLineSettingsStore.showLineObjectPreview)
+
             AnimatedVisibility(showLineObjectPreview) {
                 EditCustomObjectBlock(
                     editObject = mutableLineObject,
@@ -246,14 +243,7 @@ fun AngleLineTab(onBack: () -> Unit) {
 
         /** Angle Line object setting */
         ExpandableSection(angleObjectExpandableSectionState) {
-            SettingsSwitchRow(
-                setting = AngleLineSettingsStore.showAngleLineObjectPreview,
-                title = stringResource(
-                    R.string.show_app_angle_preview,
-                    if (!showAngleLineObjectPreview) stringResource(R.string.do_you_hate_it) else ""
-                ),
-                description = stringResource(R.string.show_app_angle_preview_description)
-            )
+            SettingsSwitchRow(AngleLineSettingsStore.showAngleLineObjectPreview)
 
             AnimatedVisibility(showAngleLineObjectPreview) {
                 EditCustomObjectBlock(
@@ -265,11 +255,7 @@ fun AngleLineTab(onBack: () -> Unit) {
 
         /** Start object setting */
         ExpandableSection(startObjectExpandableSectionState) {
-            SettingsSwitchRow(
-                setting = AngleLineSettingsStore.showStartObjectPreview,
-                title = stringResource(R.string.show_start_object_preview),
-                description = stringResource(R.string.show_start_object_preview_desc)
-            )
+            SettingsSwitchRow(AngleLineSettingsStore.showStartObjectPreview)
 
             AnimatedVisibility(showStartObjectPreview) {
                 EditCustomObjectBlock(
@@ -281,11 +267,7 @@ fun AngleLineTab(onBack: () -> Unit) {
 
         /** End object setting */
         ExpandableSection(endObjectExpandableSectionState) {
-            SettingsSwitchRow(
-                setting = AngleLineSettingsStore.showEndObjectPreview,
-                title = stringResource(R.string.show_end_object_preview),
-                description = stringResource(R.string.show_end_object_preview_desc)
-            )
+            SettingsSwitchRow(AngleLineSettingsStore.showEndObjectPreview)
 
             AnimatedVisibility(showEndObjectPreview) {
                 EditCustomObjectBlock(

@@ -25,7 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -64,16 +63,18 @@ import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logLevelName
 import org.elnix.dragonlauncher.models.DragonLogViewModel
 import org.elnix.dragonlauncher.services.ExtensionManager
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
-import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
+import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import java.io.File
@@ -86,10 +87,10 @@ fun LogsTab(
 ) {
     val ctx = LocalContext.current
 
-    val enableLogging by dragonLogViewModel.isLoggingEnabled.collectAsState()
-    val snackBarLogLevel by dragonLogViewModel.snackBarLogLevel.collectAsState()
-    val filesLogLevel by dragonLogViewModel.filesLogsLevel.collectAsState()
-    val filterTag by dragonLogViewModel.filterTag.collectAsState()
+    val enableLogging by DebugSettingsStore.enableLogging.asState()
+    val snackBarLogLevel by DebugSettingsStore.snackBarLogLevel.asState()
+    val filesLogLevel by DebugSettingsStore.snackBarLogLevel.asState()
+    val filterTag by DebugSettingsStore.filterTag.asState()
 
     var tempFilterTag by remember(filterTag) { mutableStateOf(filterTag) }
 
@@ -234,13 +235,7 @@ fun LogsTab(
             }
         }
 
-        SwitchRow(
-            state = enableLogging,
-            title = "Enable logging",
-            description = "Store all logs in app storage, and can be copied or exported",
-        ) {
-            dragonLogViewModel.updateEnableLogging(it)
-        }
+        SettingsSwitchRow(DebugSettingsStore.enableLogging)
 
         AnimatedVisibility(enableLogging) {
             Column(
@@ -248,7 +243,7 @@ fun LogsTab(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 SliderWithLabel(
-                    label = "Snackbar log level",
+                    label = stringResource(DebugSettingsStore.snackBarLogLevel.title!!),
                     description = snackBarLogLevel.logLevelName,
                     value = snackBarLogLevel,
                     showValue = false,
@@ -262,7 +257,7 @@ fun LogsTab(
                 }
 
                 SliderWithLabel(
-                    label = "Files log level",
+                    label = stringResource(DebugSettingsStore.filesLogLevel.title!!),
                     description = filesLogLevel.logLevelName,
                     value = filesLogLevel,
                     showValue = false,
@@ -281,9 +276,7 @@ fun LogsTab(
                         tempFilterTag = it
                         dragonLogViewModel.updateFilterTag(it)
                     },
-                    label = {
-                        Text("Filter tag")
-                    },
+                    label = { Text(stringResource(R.string.filter_tag)) },
                     colors = AppObjectsColors.outlinedTextFieldColors(),
                     modifier = Modifier.fillMaxWidth(1f)
                 )

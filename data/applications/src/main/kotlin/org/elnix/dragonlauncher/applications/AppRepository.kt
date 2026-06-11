@@ -34,12 +34,12 @@ import org.elnix.dragonlauncher.base.model.models.SystemApp
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
-import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.ALL
-import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.CUSTOM
-import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.PRIVATE
-import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.SYSTEM
-import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.USER
-import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.WORK
+import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.All
+import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.Custom
+import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.Private
+import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.System
+import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.User
+import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.Work
 import org.elnix.dragonlauncher.compat.PackageManagerCompat
 import org.elnix.dragonlauncher.profiles.ProfileManager
 
@@ -196,7 +196,8 @@ internal class AppRepositoryImpl(
             launcherActivityInfo = activityInfo,
             versionName = versionName,
             profile = profile,
-            category = category
+            category = category,
+            isSuspended = activityInfo.applicationInfo.flags and ApplicationInfo.FLAG_SUSPENDED != 0,
         )
     }
 
@@ -214,6 +215,7 @@ internal class AppRepositoryImpl(
             applicationInfo = appInfo,
             versionName = versionName,
             profile = profile,
+            isSuspended = appInfo.flags and ApplicationInfo.FLAG_SUSPENDED != 0,
         )
     }
 
@@ -267,12 +269,12 @@ internal class AppRepositoryImpl(
                 getOnlyRemoved -> apps.filter { it.key in removedAppIds }
                 else -> {
                     val base = when (workspace.type) {
-                        ALL -> apps
-                        CUSTOM -> emptyList()
-                        USER -> apps.filter { !it.isWork && !it.isPrivate && it.isLaunchable }
-                        SYSTEM -> apps.filter { it.isSystem }
-                        WORK -> apps.filter { it.isWork && it.isLaunchable }
-                        PRIVATE -> {
+                        All -> apps
+                        Custom -> emptyList()
+                        User -> apps.filter { !it.isWork && !it.isPrivate && it.isLaunchable }
+                        System -> apps.filter { it.isSystem }
+                        Work -> apps.filter { it.isWork && it.isLaunchable }
+                        Private -> {
                             apps.filter { it.isPrivate && it.isLaunchable }
                         }
                     }

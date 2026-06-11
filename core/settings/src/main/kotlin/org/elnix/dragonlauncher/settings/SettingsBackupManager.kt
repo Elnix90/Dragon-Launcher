@@ -98,7 +98,8 @@ object SettingsBackupManager {
 
     suspend fun createJsonToExport(
         ctx: Context,
-        requestedStores: Set<DataStoreName>
+        requestedStores: Set<DataStoreName>,
+        forceAllKeys: Boolean
     ): JSONObject {
         val json = JSONObject()
 
@@ -107,7 +108,7 @@ object SettingsBackupManager {
             val settingsStore = entry.value
 
             if (dataStoreName.backupKey in requestedStores.map { it.backupKey }) {
-                settingsStore.exportForBackup(ctx)?.let {
+                settingsStore.exportForBackup(ctx, forceAllKeys)?.let {
                     json.put(dataStoreName.backupKey, it)
                 }
             }
@@ -128,7 +129,7 @@ object SettingsBackupManager {
         uri: Uri,
         requestedStores: Set<DataStoreName>
     ) {
-        val json = createJsonToExport(ctx, requestedStores)
+        val json = createJsonToExport(ctx, requestedStores, false)
 
         writeJson(ctx, uri, json)
     }

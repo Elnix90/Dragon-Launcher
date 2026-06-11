@@ -36,7 +36,9 @@ import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.common.circles.computePosition
 import org.elnix.dragonlauncher.common.circles.scaleDragDistances
 import org.elnix.dragonlauncher.common.utils.HapticUtils.performCustomHaptic
+import org.elnix.dragonlauncher.logging.POINTS_TAG
 import org.elnix.dragonlauncher.logging.SWIPE_TAG
+import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.PointViewModel
@@ -106,6 +108,10 @@ fun MainScreenOverlay(
 
     // Find which level is currently active (deepest active one)
     val activeLevelIndex = liveNestControllersStack.indexOfLast { it.isActive }
+
+    logD(POINTS_TAG) { liveNestControllersStack.toString() }
+    assert(activeLevelIndex > -1)
+
     val deepestController = liveNestControllersStack[activeLevelIndex]
 
     val targetCircle = deepestController.hostPoint?.circleNumber ?: -1
@@ -405,7 +411,6 @@ fun MainScreenOverlay(
             point = displayPoint,
             topPadding = appLabelIconOverlayTopPadding.dp,
             labelSize = appLabelOverlaySize,
-            iconSize = appIconOverlaySize,
             showLabel = showLaunchingAppLabel,
             showIcon = showLaunchingAppIcon
         )

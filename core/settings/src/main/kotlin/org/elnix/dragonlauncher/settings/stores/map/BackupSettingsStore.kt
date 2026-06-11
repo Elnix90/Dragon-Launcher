@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
@@ -18,16 +19,17 @@ object BackupSettingsStore : MapSettingsStore(DataStoreName.BACKUP) {
         )
 
 
-    val autoBackupEnabled = boolean(
-        key = "autoBackupEnabled",
+    val autoBackupEnabled by boolean(
+        title = R.string.automatic_backups,
+        description = R.string.auto_backup_desc,
         default = false
     )
 
-    val autoBackupUri = string(
-        key = "autoBackupUri",
+    val autoBackupUri by string(
+        title = null,
+        description = null,
         default = ""
     )
-
 
     /**
      * Because it caused crash at runtime due to early .entries initialization
@@ -38,17 +40,18 @@ object BackupSettingsStore : MapSettingsStore(DataStoreName.BACKUP) {
             .map { it.value }
             .toSet()
 
-    val backupStores = stringSet(
-        key = "backupStores",
+    val backupStores by stringSet(
+        title = R.string.auto_backup_stores,
+        description = null,
         default = defaultBackupStores
     )
 
 
-
-    // TODO ( after  3.0.0 )
-    val numberOfBackupsToKeep = int(
-        key = "numberOfBackupsToKeep",
+    // TODO ( after  3.0.0 ) - Bruh
+    val numberOfBackupsToKeep by int(
         default = 2,
+        title = null,
+        description = null,
         allowedRange = 1..10
     )
 }

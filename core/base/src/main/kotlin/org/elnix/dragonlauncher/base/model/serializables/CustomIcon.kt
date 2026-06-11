@@ -13,7 +13,6 @@ sealed class CustomIcon {
     companion object {
         fun CustomIcon.getProperties(): CustomIconProperties = when(this) {
             is AdaptifiedLegacyIcon -> this.properties
-            is CustomActionIcon -> this.properties
             is CustomIconPackIcon -> this.properties
             is CustomTextIcon -> this.properties
             is CustomThemedIcon -> this.properties
@@ -24,7 +23,6 @@ sealed class CustomIcon {
 
         fun CustomIcon.setProperties(properties: CustomIconProperties): CustomIcon = when (this) {
             is AdaptifiedLegacyIcon -> this.copy(properties = properties)
-            is CustomActionIcon -> this.copy(properties = properties)
             is CustomIconPackIcon -> this.copy(properties = properties)
             is CustomTextIcon -> this.copy(properties = properties)
             is CustomThemedIcon -> this.copy(properties = properties)
@@ -34,15 +32,6 @@ sealed class CustomIcon {
         }
     }
 }
-
-
-@Immutable
-@Serializable
-@SerialName("CustomIconPackIcon")
-data class CustomActionIcon(
-    val action: Action,
-    val properties: CustomIconProperties = CustomIconProperties()
-) : CustomIcon()
 
 @Immutable
 @Serializable

@@ -18,25 +18,6 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.composition.LocalUseCustomColorChannels
 
-
-//@Composable
-//fun getCustomColorScheme(dynamicColor: Boolean): ColorScheme =
-//    rememberCustomColorScheme(getSystemColorScheme(SYSTEM, dynamicColor))
-//
-
-//@Composable
-//private fun getDefaultColorScheme(
-//    defaultTheme: DefaultThemes,
-//    dynamicColor: Boolean
-//): ColorScheme =
-//    when (defaultTheme) {
-//        LIGHT -> LightDragonColorScheme
-//        DARK -> DarkDragonColorScheme
-//        AMOLED -> AmoledDragonColorScheme
-//        SYSTEM -> getSystemColorScheme(defaultTheme, dynamicColor)
-//        CUSTOM -> getCustomColorScheme(dynamicColor)
-//    }
-
 @Composable
 fun DragonLauncherTheme(
     content: @Composable () -> Unit

@@ -328,7 +328,6 @@
     <string name="guilt_mode">Modo de reconocimiento de tiempo</string>
     <string name="guilt_mode_description">Muestra estadísticas de uso reales para ayudarte a reflexionar sobre el tiempo dedicado a las aplicaciones</string>
     <string name="pause_duration">Duración de la pausa</string>
-    <string name="pause_duration_description">Cuánto tiempo respirar antes de poder continuar (%d segundos)</string>
     <string name="paused_apps">Aplicaciones pausadas</string>
     <string name="add_app">Agregar aplicación</string>
     <string name="add_social_media">Agregar todas las redes sociales</string>
@@ -354,7 +353,6 @@
     <string name="reminder_mode_title">Recordatorio de uso</string>
     <string name="reminder_mode_description">Reciba recordatorios periódicos cuando permanezca demasiado tiempo en una aplicación en pausa</string>
     <string name="reminder_interval">Intervalo de recordatorio</string>
-    <string name="reminder_interval_description">Recordármelo cada %d minutos</string>
     <string name="reminder_mode_notification">Notificación</string>
     <string name="reminder_mode_overlay">Ventana emergente en pantalla</string>
     <string name="overlay_permission_required">Permiso de superposición</string>

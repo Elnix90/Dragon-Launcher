@@ -45,7 +45,6 @@ import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsSto
 import org.elnix.dragonlauncher.settings.stores.map.IconsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.LanguageSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
@@ -92,29 +91,31 @@ internal fun Context.resolveDataStore(dataStoreName: DataStoreName): DataStore<P
 }
 
 val allStores: Map<DataStoreName, BaseSettingsStore<*, *>> by lazy {
-    mapOf(
-        UI to UiSettingsStore,
-        ICONS to IconsSettingsStore,
-        COLOR_MODE to ColorModesSettingsStore,
-        COLOR to ColorSettingsStore,
-        PRIVATE_SETTINGS to PrivateSettingsStore,
-        POINTS to PointsSettingsStore,
-        NESTS to NestsSettingsStore,
-        LANGUAGE to LanguageSettingsStore,
-        DRAWER to DrawerSettingsStore,
-        DEBUG to DebugSettingsStore,
-        WORKSPACES to WorkspaceSettingsStore,
-        APP_OVERRIDES to AppOverridesSettingsStore,
-        BEHAVIOR to BehaviorSettingsStore,
-        BACKUP to BackupSettingsStore,
-        STATUS_BAR to StatusBarSettingsStore,
-        WIDGETS to WidgetsSettingsStore,
-        WELLBEING to WellbeingSettingsStore,
-        SWIPE_MAP to SwipeMapSettingsStore,
-        STATUS_BAR_JSON to StatusBarJsonSettingsStore,
-        ANGLE_LINE to AngleLineSettingsStore,
-        HOLD_TO_ACTIVATE to HoldToActivateArcSettingsStore
-    )
+    DataStoreName.entries.associateWith {
+        when(it) {
+            UI -> UiSettingsStore
+            ICONS -> IconsSettingsStore
+            COLOR_MODE -> ColorModesSettingsStore
+            COLOR -> ColorSettingsStore
+            PRIVATE_SETTINGS -> PrivateSettingsStore
+            POINTS -> PointsSettingsStore
+            NESTS -> NestsSettingsStore
+            LANGUAGE -> LanguageSettingsStore
+            DRAWER -> DrawerSettingsStore
+            DEBUG -> DebugSettingsStore
+            APP_OVERRIDES -> AppOverridesSettingsStore
+            WORKSPACES -> WorkspaceSettingsStore
+            BEHAVIOR -> BehaviorSettingsStore
+            BACKUP -> BackupSettingsStore
+            STATUS_BAR -> StatusBarJsonSettingsStore
+            WIDGETS -> WidgetsSettingsStore
+            WELLBEING -> WellbeingSettingsStore
+            SWIPE_MAP -> SwipeMapSettingsStore
+            STATUS_BAR_JSON -> StatusBarJsonSettingsStore
+            ANGLE_LINE -> AngleLineSettingsStore
+            HOLD_TO_ACTIVATE -> HoldToActivateArcSettingsStore
+        }
+    }
 }
 
 val themeDataStores: Set<DataStoreName> = setOf(UI, COLOR_MODE, COLOR, ANGLE_LINE, HOLD_TO_ACTIVATE)

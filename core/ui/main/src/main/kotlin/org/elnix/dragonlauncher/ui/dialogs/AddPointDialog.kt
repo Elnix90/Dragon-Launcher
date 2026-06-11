@@ -93,7 +93,7 @@ fun AddPointDialog(
     val showKillLauncherActionInActionPicker by DebugSettingsStore.showKillLauncherActionInActionPicker.asState()
 
     val actualActions = remember(showKillLauncherActionInActionPicker, actions) {
-        if (showKillLauncherActionInActionPicker) actions.toMutableSet().apply {
+        if (showKillLauncherActionInActionPicker) actions.toMutableList().apply {
             add(Action.KillLauncher)
         } else actions
     }

@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
 import org.elnix.dragonlauncher.base.model.models.ReminderMode
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
@@ -34,32 +35,37 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
     /**
      * Whether the social media pause feature is enabled
      */
-    val socialMediaPauseEnabled = boolean(
-        key = "SOCIAL_MEDIA_PAUSE_ENABLED",
+    val socialMediaPauseEnabled by boolean(
+        title = R.string.social_media_pause,
+        description = R.string.social_media_pause_description,
         default = false
     )
 
     /**
      * Whether to show guilt-inducing usage statistics
      */
-    val guiltModeEnabled = boolean(
-        key = "GUILT_MODE_ENABLED",
+    val guiltModeEnabled by boolean(
+        title = R.string.guilt_mode,
+        description = R.string.guilt_mode_description,
         default = false
     )
 
+    // TODO
     /**
      * Whether to show detailed usage stats (time spent yesterday, etc.)
      */
-    val showUsageStats = boolean(
-        key = "SHOW_USAGE_STATS",
+    val showUsageStats by boolean(
+        title = null,
+        description = null,
         default = true
     )
 
     /**
      * Duration of the pause countdown in seconds (default 10s)
      */
-    val pauseDurationSeconds = int(
-        key = "PAUSE_DURATION_SECONDS",
+    val pauseDurationSeconds by int(
+        title = R.string.pause_duration,
+        description = R.string.pause_duration_description,
         default = 10,
         allowedRange = 3..60
     )
@@ -68,25 +74,28 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
      * Whether the periodic reminder feature is enabled.
      * When active, the user gets reminded every X minutes that they are still on a paused app.
      */
-    val reminderEnabled = boolean(
-        key = "REMINDER_ENABLED",
+    val reminderEnabled by boolean(
+        title = R.string.reminder_mode_title,
+        description = R.string.reminder_mode_description,
         default = false
     )
 
     /**
      * How often to remind (in minutes). Default 5.
      */
-    val reminderIntervalMinutes = int(
-        key = "REMINDER_INTERVAL_MINUTES",
+    val reminderIntervalMinutes by int(
+        title = R.string.reminder_interval,
+        description = R.string.reminder_interval_description,
         default = 5,
         allowedRange = 1..30
     )
 
     /**
-     * Reminder delivery mode: "notification" or "overlay"
+     * Reminder delivery mode
      */
-    val reminderMode = enum(
-        key = "reminderMode",
+    val reminderMode by enum(
+        title = R.string.mode,
+        description = null,
         default = ReminderMode.Overlay,
         enumClass = ReminderMode::class.java
     )
@@ -94,24 +103,27 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
     /**
      * Show session time in popup overlay (time since app opened)
      */
-    val popupShowSessionTime = boolean(
-        key = "POPUP_SHOW_SESSION_TIME",
+    val popupShowSessionTime by boolean(
+        title = R.string.popup_show_session_time,
+        description = R.string.popup_show_session_time_desc,
         default = true
     )
 
     /**
      * Show today's total time in popup overlay
      */
-    val popupShowTodayTime = boolean(
-        key = "POPUP_SHOW_TODAY_TIME",
+    val popupShowTodayTime by boolean(
+        title = R.string.popup_show_today_time,
+        description = R.string.popup_show_today_time_desc,
         default = true
     )
 
     /**
      * Show remaining time before limit in popup overlay (when return to launcher enabled)
      */
-    val popupShowRemainingTime = boolean(
-        key = "POPUP_SHOW_REMAINING_TIME",
+    val popupShowRemainingTime by boolean(
+        title = R.string.popup_show_remaining_time,
+        description = R.string.popup_show_remaining_time_desc,
         default = true
     )
 
@@ -120,13 +132,15 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
      * User must set a time limit before opening a paused app; after the limit
      * they are brought back to Dragon Launcher.
      */
-    val returnToLauncherEnabled = boolean(
-        key = "RETURN_TO_LAUNCHER_ENABLED",
+    val returnToLauncherEnabled by boolean(
+        title = R.string.return_to_launcher_title,
+        description = R.string.return_to_launcher_description,
         default = false
     )
 
-    val pausedApps = stringSet(
-        key = "PAUSED_APPS_LIST",
+    val pausedApps by stringSet(
+        title = null,
+        description = null,
         default = emptySet()
     )
 }

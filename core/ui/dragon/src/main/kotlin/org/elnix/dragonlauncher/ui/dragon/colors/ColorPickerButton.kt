@@ -30,10 +30,10 @@ import org.elnix.dragonlauncher.base.util.ColorUtils.randomColor
 import org.elnix.dragonlauncher.base.util.ColorUtils.toHexWithAlpha
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction
-import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.COPY
-import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.PASTE
-import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.RANDOM
-import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.RESET
+import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Copy
+import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Paste
+import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Random
+import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Reset
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
 
@@ -64,10 +64,10 @@ private fun ColorPickerButton(
                     onLongClick = { showSelector = true }
                 ) {
                     when (button) {
-                        RANDOM -> onColorPicked(randomColor(minLuminance = 0.2f))
-                        RESET -> { onReset() }
-                        COPY -> ctx.copyToClipboard(currentColor.toHexWithAlpha())
-                        PASTE -> {
+                        Random -> onColorPicked(randomColor(minLuminance = 0.2f))
+                        Reset -> { onReset() }
+                        Copy -> ctx.copyToClipboard(currentColor.toHexWithAlpha())
+                        Paste -> {
                             val newColor = pasteColorHexFromClipboard(ctx)
                             newColor?.let { pasted ->
                                 onColorPicked(pasted)

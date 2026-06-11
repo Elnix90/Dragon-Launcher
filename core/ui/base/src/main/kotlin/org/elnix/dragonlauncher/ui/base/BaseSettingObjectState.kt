@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ui.base
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -17,11 +18,17 @@ import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
  * @return A [State] holding the current value of the setting.
  *
  */
-@Deprecated("Use the viewModel asState instead")
 @Composable
 fun <T, R> BaseSettingObject<T, R>.asState(default: T? = null): State<T> {
     val ctx = LocalContext.current
-    return flow(ctx).collectAsStateWithLifecycle(initialValue = default ?: this.default)
+    LaunchedEffect(Unit) {
+        get(ctx)
+    }
+    val state =  flow(ctx).collectAsStateWithLifecycle(initialValue = default ?: this.default)
+
+    assert(state.value != null)
+
+    return state
 }
 
 /**
@@ -32,13 +39,15 @@ fun <T, R> BaseSettingObject<T, R>.asState(default: T? = null): State<T> {
  *
  * @return A [State] holding the current value of the setting, or null if not yet set.
  */
-@Deprecated("Use the viewModel asState instead")
 @Composable
 fun <T, R> BaseSettingObject<T, R>.asStateNull(): State<T?> {
     val ctx = LocalContext.current
+    LaunchedEffect(Unit) {
+        get(ctx)
+    }
     return flow(ctx).collectAsStateWithLifecycle(initialValue = null)
 }
 
-
+@Deprecated("Use the normal asState instead")
 @Composable
 fun <T> StateFlowWrapper<T>.asState(): State<T> = this.flow.collectAsStateWithLifecycle()

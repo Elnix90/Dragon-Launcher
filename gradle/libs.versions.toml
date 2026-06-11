@@ -152,7 +152,7 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 
 
 [bundles]
-kotlin = ["kotlin-stdlib", "kotlinx-coroutines-core", "kotlinx-coroutines-android", "kotlinx-collections-immutable", "kotlinx-serialization-json", "kotlin-reflect"]
+kotlin = ["kotlin-stdlib", "kotlinx-coroutines-core", "kotlinx-coroutines-android", "kotlinx-collections-immutable", "kotlinx-serialization-json", "kotlin-reflect", "kotlinx-datetime"]
 androidx-lifecycle = ["androidx-lifecycle-viewmodel", "androidx-lifecycle-common", "androidx-lifecycle-runtime", "androidx-lifecycle-viewmodel-compose"]
 test = ["junit", "androidx-junit", "androidx-espresso-core"]
 

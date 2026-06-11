@@ -7,10 +7,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.models.utils.stateFlowDelegate
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.recents.PointsService
-import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import javax.inject.Inject
 
 /**
@@ -40,11 +38,6 @@ class PointViewModel @Inject constructor(
         SharingStarted.Eagerly,
         emptySet()
     )
-
-
-    val showSubNestSlider by stateFlowDelegate(SwipeMapSettingsStore.showSubNestsSlider)
-    val showAdvancedPointTools by stateFlowDelegate(SwipeMapSettingsStore.showAdvancedPointTools)
-    val isInDragAroundMode by stateFlowDelegate(SwipeMapSettingsStore.isInDragAroundMode)
 
     init {
         viewModelInitialized()

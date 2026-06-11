@@ -83,6 +83,7 @@ import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.common.utils.DateUtils.formatDuration
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
+import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -108,11 +109,11 @@ fun DigitalPauseScreen(
     val ctx = LocalContext.current
     val packageName = application.packageName
 
-    val returnToLauncherEnabled by appLaunchViewModel.returnToLauncherEnabled.asState()
-    val guiltModeEnabled by appLaunchViewModel.guiltModeEnabled.asState()
-    val pauseDuration by appLaunchViewModel.pauseDuration.asState()
+    val returnToLauncherEnabled by WellbeingSettingsStore.returnToLauncherEnabled.asState()
+    val guiltModeEnabled by WellbeingSettingsStore.guiltModeEnabled.asState()
+    val pauseDurationSeconds by WellbeingSettingsStore.pauseDurationSeconds.asState()
 
-    var countdown by remember { mutableIntStateOf(pauseDuration) }
+    var countdown by remember { mutableIntStateOf(pauseDurationSeconds) }
     var showChoice by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
     var countdownFinished by remember { mutableStateOf(false) }

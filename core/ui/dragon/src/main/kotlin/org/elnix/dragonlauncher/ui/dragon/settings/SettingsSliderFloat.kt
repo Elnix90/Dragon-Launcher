@@ -13,18 +13,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.objects.FloatSettingObject
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 
 @Composable
 fun SettingsSlider(
-    setting: BaseSettingObject<Float, Float>,
-    title: String,
-    valueRange: ClosedFloatingPointRange<Float>,
+    setting: FloatSettingObject,
     modifier: Modifier = Modifier,
-    description: String? = null,
     color: Color = MaterialTheme.colorScheme.primary,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     showValue: Boolean = true,
@@ -46,10 +44,10 @@ fun SettingsSlider(
 
     SliderWithLabel(
         modifier = modifier,
-        label = title,
-        description = description,
+        label = stringResource(setting.title!!),
+        description = stringResource(setting.description!!),
         value = tempState,
-        valueRange = valueRange,
+        valueRange = setting.allowedRange,
         color = color,
         enabled = enabled,
         backgroundColor = backgroundColor,

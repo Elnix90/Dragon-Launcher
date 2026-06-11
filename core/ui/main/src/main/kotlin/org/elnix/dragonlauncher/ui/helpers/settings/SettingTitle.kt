@@ -14,15 +14,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
@@ -111,7 +113,6 @@ fun SettingsTitle(
 
 @Composable
 fun SpecialSettingsTitle(
-    pointViewModel: PointViewModel = activityViewModel(),
     onSettings: () -> Unit,
     onEditDefaultPoint: () -> Unit,
     onReloadPoints: () -> Unit,
@@ -119,13 +120,16 @@ fun SpecialSettingsTitle(
     onResetPoints: () -> Unit,
     onBack: () -> Unit
 ) {
+    val ctx = LocalContext.current
+    val scope = rememberCoroutineScope()
+
     val interactionSource = rememberInteractionSource()
 
     var showBurgerMenu by remember { mutableStateOf(false) }
     val dismiss = { showBurgerMenu = false }
 
-    val showSubNestSlider by pointViewModel.showSubNestSlider.asState()
-    val showAdvancedPointTools by pointViewModel.showAdvancedPointTools.asState()
+    val showSubNestsSlider by SwipeMapSettingsStore.showSubNestsSlider.asState()
+    val showAdvancedPointTools by SwipeMapSettingsStore.showAdvancedPointTools.asState()
 
     SettingsTitleInternal(
         title = stringResource(R.string.points_settings),
@@ -159,18 +163,22 @@ fun SpecialSettingsTitle(
                     ),
                     MoreOptions(
                         text = { stringResource(R.string.show_sub_nest_size_slider) },
-                        icon = if (showSubNestSlider) R.drawable.toggle_on else R.drawable.toggle_off,
+                        icon = if (showSubNestsSlider) R.drawable.toggle_on else R.drawable.toggle_off,
                         onClick = {
-                            pointViewModel.showSubNestSlider.set(!showSubNestSlider)
-                            dismiss()
+                            scope.launch {
+                                SwipeMapSettingsStore.showSubNestsSlider.set(ctx, !showSubNestsSlider)
+                                dismiss()
+                            }
                         }
                     ),
                     MoreOptions(
                         text = { stringResource(R.string.show_advanced_edit_tools) },
                         icon = if (showAdvancedPointTools) R.drawable.toggle_on else R.drawable.toggle_off,
                         onClick = {
-                            pointViewModel.showAdvancedPointTools.set(!showAdvancedPointTools)
-                            dismiss()
+                            scope.launch {
+                                SwipeMapSettingsStore.showAdvancedPointTools.set(ctx, !showAdvancedPointTools)
+                                dismiss()
+                            }
                         }
                     ),
                     MoreOptions(

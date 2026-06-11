@@ -35,7 +35,7 @@ fun CreateOrEditWorkspaceDialog(
 ) {
     if (!visible) return
 
-    var selectedType by remember { mutableStateOf(type ?: WorkspaceType.CUSTOM) }
+    var selectedType by remember { mutableStateOf(type ?: WorkspaceType.Custom) }
 
     DragonModalBottomSheet(onDismissRequest = onDismiss) {
         Text(

@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
-import org.elnix.dragonlauncher.base.cache.PointIconCache
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
@@ -17,7 +16,6 @@ data class SwipeDrawParams(
     val points: Set<Point>,
     val ctx: Context,
     val defaultPoint: Point,
-    val pointsIconsCache: PointIconCache,
     val surfaceColorDraw: Color,
     val extraColors: ExtraColors,
     val maxDepth: Int,

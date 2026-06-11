@@ -18,7 +18,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.PointViewModel
-import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
@@ -41,7 +41,7 @@ fun rememberSwipeDefaultParams(
     val nests by pointViewModel.nests.collectAsState()
     val defaultPointSettings by pointViewModel.defaultPoint.collectAsState()
 
-    val iconShape by drawerViewModel.iconShape.asState()
+    val iconShape by DrawerSettingsStore.iconShape.asState()
     val extraColors = LocalExtraColors.current
 
     val surfaceColorDraw = backgroundColor ?: Color.Unspecified
@@ -97,7 +97,6 @@ fun rememberSwipeDefaultParams(
                 points = points,
                 ctx = ctx,
                 defaultPoint = defaultPoint,
-                pointsIconsCache = drawerViewModel.pointsIconsCache,
                 surfaceColorDraw = surfaceColorDraw,
                 extraColors = extraColors,
                 maxDepth = maxNestsDepth,

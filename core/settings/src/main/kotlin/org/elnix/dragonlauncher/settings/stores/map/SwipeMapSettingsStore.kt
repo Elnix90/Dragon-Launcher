@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
@@ -15,33 +16,31 @@ object SwipeMapSettingsStore : MapSettingsStore(DataStoreName.SWIPE_MAP) {
             this.subNestDefaultRadius,
             this.showSubNestsSlider,
             this.showAdvancedPointTools,
-            this.isInDragAroundMode,
             this.defaultPoint
         )
 
-    val subNestDefaultRadius = int(
-        key = "subNestDefaultRadius",
+    val subNestDefaultRadius by int(
+        title = R.string.empty_string,
+        description = R.string.empty_string,
         default = 35,
         allowedRange = 0..50
     )
 
-    val showSubNestsSlider = boolean(
-        key = "showSubNestsSlider",
+    val showSubNestsSlider by boolean(
+        title = R.string.show_sub_nest_size_slider,
+        description = null,
         default = false
     )
 
-    val showAdvancedPointTools = boolean(
-        key = "showAdvancedPointTools",
+    val showAdvancedPointTools by boolean(
+        title = R.string.show_advanced_edit_tools,
+        description = null,
         default = false
     )
 
-    val isInDragAroundMode = boolean(
-        key = "isInDragAroundMode",
-        default = false
-    )
-
-    val defaultPoint = point(
-        key = "defaultPoint",
+    val defaultPoint by point(
+        title = null,
+        description = null,
         default = defaultSwipePointsValues
     )
 }

@@ -56,6 +56,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -65,6 +66,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import org.elnix.dragonlauncher.base.model.models.ResizeSide
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.Widget
@@ -83,8 +85,8 @@ import org.elnix.dragonlauncher.ktx.toDp
 import org.elnix.dragonlauncher.logging.WIDGET_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.models.WidgetsViewModel
-import org.elnix.dragonlauncher.models.WidgetsViewModel.ResizeCorner
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
@@ -99,9 +101,9 @@ import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
-import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonColumn
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
+import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
 import org.elnix.dragonlauncher.ui.helpers.SmallShapeRow
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -121,8 +123,8 @@ fun WidgetsTab(
     onRemoveWidget: (Widget) -> Unit,
     initialNestId: Int = 0
 ) {
-    val cellSizePx by widgetsViewModel.cellSizePx.collectAsState()
-    val cellSizeDp by widgetsViewModel.cellSizeDp.asState()
+    val cellSizeDp by UiSettingsStore.cellSizeDp.asState()
+    val cellSizePx = cellSizeDp * LocalDensity.current.density
     val widgets by widgetsViewModel.widgets.collectAsState()
     val scope = rememberCoroutineScope()
 
@@ -519,17 +521,7 @@ fun WidgetsTab(
                 }
             }
 
-            SliderWithLabel(
-                label = stringResource(R.string.cell_size),
-                description = stringResource(R.string.cell_size_help),
-                value = cellSizeDp,
-                valueRange = 1..100,
-                onReset = {
-                    widgetsViewModel.cellSizeDp.set(null)
-                },
-            ) {
-                widgetsViewModel.cellSizeDp.set(it)
-            }
+            SettingsSlider(UiSettingsStore.cellSizeDp)
         }
     }
 
@@ -636,7 +628,7 @@ private fun DraggableWidget(
         )
     }
 
-    fun resizeWidget(corner: ResizeCorner, dxPx: Float, dyPx: Float) {
+    fun resizeWidget(corner: ResizeSide, dxPx: Float, dyPx: Float) {
         val deltaSpanX = dxPx / cellSizePx
         val deltaSpanY = dyPx / cellSizePx
         val deltaPosX = dxPx / widthPixels
@@ -651,21 +643,21 @@ private fun DraggableWidget(
 
 
         when (corner) {
-            ResizeCorner.Left -> {
+            ResizeSide.Left -> {
                 rawWidgetWidth = (rawWidgetWidth - deltaSpanX).coerceAtLeast(minSize)
                 localDeltaX = deltaPosX
             }
 
-            ResizeCorner.Right -> {
+            ResizeSide.Right -> {
                 rawWidgetWidth = (rawWidgetWidth + deltaSpanX).coerceAtLeast(minSize)
             }
 
-            ResizeCorner.Top -> {
+            ResizeSide.Top -> {
                 rawWidgetHeight = (rawWidgetHeight - deltaSpanY).coerceAtLeast(minSize)
                 localDeltaY = deltaPosY
             }
 
-            ResizeCorner.Bottom -> {
+            ResizeSide.Bottom -> {
                 rawWidgetHeight = (rawWidgetHeight + deltaSpanY).coerceAtLeast(minSize)
             }
         }
@@ -889,12 +881,12 @@ private fun DraggableWidget(
                     .size(dotSize + hitboxPadding * 2)
                     .clip(CircleShape)
                     .background(Color.Transparent)
-                    .pointerInput(ResizeCorner.Top, app.spanX, app.spanY) {
+                    .pointerInput(ResizeSide.Top, app.spanX, app.spanY) {
                         detectDragGestures(
                             onDragEnd = ::commitChange
                         ) { change, dragAmount ->
                             change.consume()
-                            resizeWidget(ResizeCorner.Top, 0f, dragAmount.y)
+                            resizeWidget(ResizeSide.Top, 0f, dragAmount.y)
                         }
                     }
             ) {
@@ -914,12 +906,12 @@ private fun DraggableWidget(
                     .size(dotSize + hitboxPadding * 2)
                     .clip(CircleShape)
                     .background(Color.Transparent)
-                    .pointerInput(ResizeCorner.Bottom, app.spanX, app.spanY) {
+                    .pointerInput(ResizeSide.Bottom, app.spanX, app.spanY) {
                         detectDragGestures(
                             onDragEnd = ::commitChange
                         ) { change, dragAmount ->
                             change.consume()
-                            resizeWidget(ResizeCorner.Bottom, 0f, dragAmount.y)
+                            resizeWidget(ResizeSide.Bottom, 0f, dragAmount.y)
                         }
                     }
             ) {
@@ -939,12 +931,12 @@ private fun DraggableWidget(
                     .size(dotSize + hitboxPadding * 2)
                     .clip(CircleShape)
                     .background(Color.Transparent)
-                    .pointerInput(ResizeCorner.Left, app.spanX, app.spanY) {
+                    .pointerInput(ResizeSide.Left, app.spanX, app.spanY) {
                         detectDragGestures(
                             onDragEnd = ::commitChange
                         ) { change, dragAmount ->
                             change.consume()
-                            resizeWidget(ResizeCorner.Left, dragAmount.x, 0f)
+                            resizeWidget(ResizeSide.Left, dragAmount.x, 0f)
                         }
                     }
             ) {
@@ -964,12 +956,12 @@ private fun DraggableWidget(
                     .size(dotSize + hitboxPadding * 2)
                     .clip(CircleShape)
                     .background(Color.Transparent)
-                    .pointerInput(ResizeCorner.Right, app.spanX, app.spanY) {
+                    .pointerInput(ResizeSide.Right, app.spanX, app.spanY) {
                         detectDragGestures(
                             onDragEnd = ::commitChange
                         ) { change, dragAmount ->
                             change.consume()
-                            resizeWidget(ResizeCorner.Right, dragAmount.x, 0f)
+                            resizeWidget(ResizeSide.Right, dragAmount.x, 0f)
                         }
                     }
             ) {

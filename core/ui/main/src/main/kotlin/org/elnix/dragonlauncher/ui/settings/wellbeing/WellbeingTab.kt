@@ -52,7 +52,6 @@ import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
@@ -70,13 +69,9 @@ fun WellbeingTab(
     val scope = rememberCoroutineScope()
 
     val socialMediaPauseEnabled by WellbeingSettingsStore.socialMediaPauseEnabled.asState()
-    val guiltModeEnabled by WellbeingSettingsStore.guiltModeEnabled.asState()
-    val pauseDuration by WellbeingSettingsStore.pauseDurationSeconds.asState()
     val pausedApps by WellbeingSettingsStore.pausedApps.asState()
     val reminderEnabled by WellbeingSettingsStore.reminderEnabled.asState()
-    val reminderInterval by WellbeingSettingsStore.reminderIntervalMinutes.asState()
     val reminderMode by WellbeingSettingsStore.reminderMode.asState()
-    val returnToLauncherEnabled by WellbeingSettingsStore.returnToLauncherEnabled.asState()
 
 
     var showAppPicker by remember { mutableStateOf(false) }
@@ -108,18 +103,12 @@ fun WellbeingTab(
     ) {
 
         DragonSettingsGroup(R.string.social_media_pause) {
-            SettingsSwitchRow(
-                setting = WellbeingSettingsStore.socialMediaPauseEnabled,
-                title = stringResource(R.string.social_media_pause),
-                description = stringResource(R.string.social_media_pause_description)
-            )
+            SettingsSwitchRow(WellbeingSettingsStore.socialMediaPauseEnabled)
 
             AnimatedVisibility(visible = socialMediaPauseEnabled) {
                 Column {
-                    SwitchRow(
-                        state = guiltModeEnabled,
-                        title = stringResource(R.string.guilt_mode),
-                        description = stringResource(R.string.guilt_mode_description),
+                    SettingsSwitchRow(
+                        WellbeingSettingsStore.guiltModeEnabled,
                         enabled = true,
                     ) { newValue ->
                         if (newValue && hasUsageStatsPermission) {
@@ -133,12 +122,7 @@ fun WellbeingTab(
 
                     SettingsSlider(
                         setting = WellbeingSettingsStore.pauseDurationSeconds,
-                        title = stringResource(R.string.pause_duration),
-                        description = stringResource(
-                            R.string.pause_duration_description,
-                            pauseDuration
-                        ),
-                        valueRange = 3..60,
+
                         modifier = Modifier.settingsGroupHorizontalPadding()
                     )
                 }
@@ -148,18 +132,12 @@ fun WellbeingTab(
 
 
         DragonSettingsGroup(R.string.reminder_mode_title) {
-            SwitchRow(
-                state = reminderEnabled,
-                title = stringResource(R.string.reminder_mode_title),
-                description = stringResource(R.string.reminder_mode_description),
+            SettingsSwitchRow(
+                WellbeingSettingsStore.reminderEnabled,
                 enabled = socialMediaPauseEnabled,
             ) { newValue ->
                 if (newValue && reminderMode == ReminderMode.Overlay && !Settings.canDrawOverlays(ctx)) {
                     showOverlayPermissionDialog = true
-                } else {
-                    scope.launch {
-                        WellbeingSettingsStore.reminderEnabled.set(ctx, newValue)
-                    }
                 }
             }
 
@@ -167,12 +145,6 @@ fun WellbeingTab(
                 Column {
                     SettingsSlider(
                         setting = WellbeingSettingsStore.reminderIntervalMinutes,
-                        title = stringResource(R.string.reminder_interval),
-                        description = stringResource(
-                            R.string.reminder_interval_description,
-                            reminderInterval
-                        ),
-                        valueRange = 1..30,
                         modifier = Modifier.settingsGroupHorizontalPadding()
                     )
                 }
@@ -193,34 +165,13 @@ fun WellbeingTab(
                 }
 
 
-                SettingsSwitchRow(
-                    setting = WellbeingSettingsStore.popupShowSessionTime,
-                    title = stringResource(R.string.popup_show_session_time),
-                    description = stringResource(R.string.popup_show_session_time_desc)
-                )
-                SettingsSwitchRow(
-                    setting = WellbeingSettingsStore.popupShowTodayTime,
-                    title = stringResource(R.string.popup_show_today_time),
-                    description = stringResource(R.string.popup_show_today_time_desc)
-                )
-                SettingsSwitchRow(
-                    setting = WellbeingSettingsStore.popupShowRemainingTime,
-                    title = stringResource(R.string.popup_show_remaining_time),
-                    description = stringResource(R.string.popup_show_remaining_time_desc)
-                )
+                SettingsSwitchRow(WellbeingSettingsStore.popupShowSessionTime,)
+                SettingsSwitchRow(WellbeingSettingsStore.popupShowTodayTime)
+                SettingsSwitchRow(WellbeingSettingsStore.popupShowRemainingTime)
             }
         }
 
-        SwitchRow(
-            state = returnToLauncherEnabled,
-            title = stringResource(R.string.return_to_launcher_title),
-            description = stringResource(R.string.return_to_launcher_description),
-            enabled = socialMediaPauseEnabled,
-        ) { newValue ->
-            scope.launch {
-                WellbeingSettingsStore.returnToLauncherEnabled.set(ctx, newValue)
-            }
-        }
+        SettingsSwitchRow(WellbeingSettingsStore.returnToLauncherEnabled, enabled = socialMediaPauseEnabled,)
 
         DragonSettingsGroup(
             title = R.string.paused_apps,

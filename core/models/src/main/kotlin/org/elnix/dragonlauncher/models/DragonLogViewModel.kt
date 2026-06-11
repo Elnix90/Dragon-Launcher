@@ -2,13 +2,11 @@ package org.elnix.dragonlauncher.models
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.logging.FileLoggingTree
 import org.elnix.dragonlauncher.logging.LOGS_TAG
@@ -28,17 +26,6 @@ class DragonLogViewModel @Inject constructor(
 
     @SuppressLint("StaticFieldLeak")
     private val ctx = application.applicationContext
-    private val _isLoggingEnabled = MutableStateFlow(true)
-    val isLoggingEnabled = _isLoggingEnabled.asStateFlow()
-
-    private val _snackBarLogLevel = MutableStateFlow(7) // No Logging
-    val snackBarLogLevel = _snackBarLogLevel.asStateFlow()
-    private val _filesLogsLevel = MutableStateFlow(Log.DEBUG)
-    val filesLogsLevel = _filesLogsLevel.asStateFlow()
-
-    private val _filterTag = MutableStateFlow("")
-    val filterTag = _filterTag.asStateFlow()
-
     private var fileTree: FileLoggingTree? = null
 
 
@@ -47,6 +34,8 @@ class DragonLogViewModel @Inject constructor(
     val alertFlow: StateFlow<LogAlert?> = _alertFlow
 
 
+    val enableLogging = DebugSettingsStore.enableLogging
+
     private val maxRecentLogs = 50
 
     fun init() {
@@ -54,17 +43,12 @@ class DragonLogViewModel @Inject constructor(
 
         viewModelScope.launch {
             fileTree = FileLoggingTree(ctx, ::onHighPriorityLog)
+            fileTree?.snackBarLogLevel = DebugSettingsStore.snackBarLogLevel.get(ctx)
+            fileTree?.filesLogsLevel = DebugSettingsStore.filesLogLevel.get(ctx)
+            fileTree?.filterTag = DebugSettingsStore.filterTag.get(ctx)
 
-            _isLoggingEnabled.value = DebugSettingsStore.enableLogging.get(ctx)
-
-            _snackBarLogLevel.value = DebugSettingsStore.snackBarLogLevel.get(ctx)
-            fileTree?.snackBarLogLevel = _snackBarLogLevel.value
-
-            _filesLogsLevel.value = DebugSettingsStore.filesLogLevel.get(ctx)
-            fileTree?.filesLogsLevel = _filesLogsLevel.value
-
-            _filterTag.value = DebugSettingsStore.filterTag.get(ctx)
-            fileTree?.filterTag = filterTag.value
+            // Trigger the load in the store
+            DebugSettingsStore.enableLogging.get(ctx)
         }
     }
 
@@ -83,9 +67,8 @@ class DragonLogViewModel @Inject constructor(
     }
 
     fun updateEnableLogging(enable: Boolean) {
-        if (_isLoggingEnabled.value == enable) return
+        if (enableLogging.value == enable) return
 
-        _isLoggingEnabled.value = enable
         viewModelScope.launch {
             DebugSettingsStore.enableLogging.set(ctx, enable)
         }
@@ -95,7 +78,6 @@ class DragonLogViewModel @Inject constructor(
 
 
     fun updateSnackBarLogLevel(newLevel: Int) {
-        _snackBarLogLevel.value = newLevel
         fileTree?.snackBarLogLevel = newLevel
         viewModelScope.launch {
             DebugSettingsStore.snackBarLogLevel.set(ctx, newLevel)
@@ -103,7 +85,6 @@ class DragonLogViewModel @Inject constructor(
     }
 
     fun updateFilesLogLevel(newLevel: Int) {
-        _filesLogsLevel.value = newLevel
         fileTree?.filesLogsLevel = newLevel
         viewModelScope.launch {
             DebugSettingsStore.filesLogLevel.set(ctx, newLevel)
@@ -111,7 +92,6 @@ class DragonLogViewModel @Inject constructor(
     }
 
     fun updateFilterTag(newTag: String) {
-        _filterTag.value = newTag
         fileTree?.filterTag = newTag
         viewModelScope.launch {
             DebugSettingsStore.filterTag.set(ctx, newTag)
@@ -121,7 +101,7 @@ class DragonLogViewModel @Inject constructor(
     private fun updateLoggingState() {
         val tree = fileTree ?: return
         val plantedTrees = Timber.forest()
-        if (_isLoggingEnabled.value) {
+        if (enableLogging.value) {
             if (tree !in plantedTrees) {
                 Timber.plant(tree)
             }

@@ -277,3 +277,13 @@ internal inline fun MutableMap<String, Any>.putIfNonDefault(
         put(key, value)
     }
 }
+
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun MutableMap<String, Any>.putIfNotNull(
+    key: String,
+    value: Any?
+) {
+    if (value != null) {
+        put(key, value)
+    }
+}

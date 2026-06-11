@@ -188,37 +188,20 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
         ) {
             SettingsSlider(
                 setting = HoldToActivateArcSettingsStore.longCLickSettingsDuration,
-                title = stringResource(R.string.long_click_settings_duration),
-                description = stringResource(R.string.long_click_settings_duration_desc),
-                valueRange = 0..5000,
                 modifier = Modifier.settingsGroupHorizontalPadding()
             )
-
             SettingsSlider(
                 setting = HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings,
-                title = stringResource(R.string.hold_delay_before_starting_long_click_settings),
-                description = stringResource(R.string.hold_delay_before_starting_long_click_settings_desc),
-                valueRange = 0..2000,
                 modifier = Modifier.settingsGroupHorizontalPadding()
             )
-
             SettingsSlider(
                 setting = HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance,
-                title = stringResource(R.string.hold_to_activate_tolerance),
-                description = stringResource(R.string.hold_to_activate_tolerance_desc),
-                valueRange = 1f..200f,
                 modifier = Modifier.settingsGroupHorizontalPadding()
             )
-
-
             SettingsSlider(
                 setting = HoldToActivateArcSettingsStore.rotationPerSecond,
-                title = stringResource(R.string.rotation_per_second),
-                description = stringResource(R.string.rotation_per_second_desc),
-                valueRange = 0f..5f,
                 modifier = Modifier.settingsGroupHorizontalPadding()
             )
-
             SettingsItem(
                 title = stringResource(R.string.edit_hold_to_activate_elements),
                 description = stringResource(R.string.edit_hold_to_activate_elements_desc),
@@ -226,18 +209,8 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
             ) {
                 showHoldSettingsOrderDialog = true
             }
-
-            SettingsSwitchRow(
-                setting = HoldToActivateArcSettingsStore.showToleranceOnMainScreen,
-                title = stringResource(R.string.show_tolerance_on_main_screen),
-                description = stringResource(R.string.show_tolerance_on_main_screen_desc),
-            )
-
-            SettingsSwitchRow(
-                setting = UiSettingsStore.rgbLoading,
-                title = stringResource(R.string.rgb_loading_settings),
-                description = stringResource(R.string.rgb_loading_description)
-            )
+            SettingsSwitchRow(HoldToActivateArcSettingsStore.showToleranceOnMainScreen)
+            SettingsSwitchRow(UiSettingsStore.rgbLoading)
         }
     }
 

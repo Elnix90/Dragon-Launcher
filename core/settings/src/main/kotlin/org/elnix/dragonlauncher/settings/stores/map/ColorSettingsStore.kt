@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.settings.stores.map
 import android.content.Context
 import androidx.compose.ui.graphics.Color
 import org.elnix.dragonlauncher.base.util.ColorUtils
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.objects.ColorSettingObject.Companion.color
@@ -80,333 +81,399 @@ object ColorSettingsStore : MapSettingsStore(DataStoreName.COLOR) {
             this.runAdbCommand
         )
 
-    val primaryColor = color(
-        key = "primary_color",
+    val primaryColor by color(
+        title = R.string.primary_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val onPrimaryColor = color(
-        key = "on_primary_color",
+    val onPrimaryColor by color(
+        title = R.string.on_primary_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val secondaryColor = color(
-        key = "secondary_color",
+    val secondaryColor by color(
+        title = R.string.secondary_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val onSecondaryColor = color(
-        key = "on_secondary_color",
+    val onSecondaryColor by color(
+        title = R.string.on_secondary_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val tertiaryColor = color(
-        key = "tertiary_color",
+    val tertiaryColor by color(
+        title = R.string.tertiary_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val onTertiaryColor = color(
-        key = "on_tertiary_color",
+    val onTertiaryColor by color(
+        title = R.string.on_tertiary_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val backgroundColor = color(
-        key = "background_color",
+    val backgroundColor by color(
+        title = R.string.background_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val onBackgroundColor = color(
-        key = "on_background_color",
+    val onBackgroundColor by color(
+        title = R.string.on_background_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val surfaceColor = color(
-        key = "surface_color",
+    val surfaceColor by color(
+        title = R.string.surface_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val onSurfaceColor = color(
-        key = "on_surface_color",
+    val onSurfaceColor by color(
+        title = R.string.on_surface_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val errorColor = color(
-        key = "error_color",
+    val errorColor by color(
+        title = R.string.error_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val onErrorColor = color(
-        key = "on_error_color",
+    val onErrorColor by color(
+        title = R.string.on_error_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val outlineColor = color(
-        key = "outline_color",
+    val outlineColor by color(
+        title = R.string.outline_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val angleLineColor = color(
-        key = "angle_line_color",
+    val angleLineColor by color(
+        title = R.string.angle_line_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val circleColor = color(
-        key = "circle_color",
+    val circleColor by color(
+        title = R.string.circle_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val primaryContainerColor = color(
-        key = "primary_container_color",
+    val primaryContainerColor by color(
+        title = R.string.primary_container_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val onPrimaryContainerColor = color(
-        key = "on_primary_container_color",
+    val onPrimaryContainerColor by color(
+        title = R.string.on_primary_container_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val inversePrimaryColor = color(
-        key = "inverse_primary_color",
+    val inversePrimaryColor by color(
+        title = R.string.inverse_primary_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val secondaryContainerColor = color(
-        key = "secondary_container_color",
+    val secondaryContainerColor by color(
+        title = R.string.secondary_container_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val onSecondaryContainerColor = color(
-        key = "on_secondary_container_color",
+    val onSecondaryContainerColor by color(
+        title = R.string.on_secondary_container_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val tertiaryContainerColor = color(
-        key = "tertiary_container_color",
+    val tertiaryContainerColor by color(
+        title = R.string.tertiary_container_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val onTertiaryContainerColor = color(
-        key = "on_tertiary_container_color",
+    val onTertiaryContainerColor by color(
+        title = R.string.on_tertiary_container_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val surfaceVariantColor = color(
-        key = "surface_variant_color",
+    val surfaceVariantColor by color(
+        title = R.string.surface_variant_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val onSurfaceVariantColor = color(
-        key = "on_surface_variant_color",
+    val onSurfaceVariantColor by color(
+        title = R.string.on_surface_variant_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val surfaceTintColor = color(
-        key = "surface_tint_color",
+    val surfaceTintColor by color(
+        title = R.string.surface_tint_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val inverseSurfaceColor = color(
-        key = "inverse_surface_color",
+    val inverseSurfaceColor by color(
+        title = R.string.inverse_surface_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val inverseOnSurfaceColor = color(
-        key = "inverse_on_surface_color",
+    val inverseOnSurfaceColor by color(
+        title = R.string.inverse_on_surface_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val errorContainerColor = color(
-        key = "error_container_color",
+    val errorContainerColor by color(
+        title = R.string.error_container_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val onErrorContainerColor = color(
-        key = "on_error_container_color",
+    val onErrorContainerColor by color(
+        title = R.string.on_error_container_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val outlineVariantColor = color(
-        key = "outline_variant_color",
+    val outlineVariantColor by color(
+        title = R.string.outline_variant_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val scrimColor = color(
-        key = "scrim_color",
+    val scrimColor by color(
+        title = R.string.scrim_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val surfaceBrightColor = color(
-        key = "surface_bright_color",
+    val surfaceBrightColor by color(
+        title = R.string.surface_bright_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val surfaceContainerColor = color(
-        key = "surface_container_color",
+    val surfaceContainerColor by color(
+        title = R.string.surface_container_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val surfaceContainerHighColor = color(
-        key = "surface_container_high_color",
+    val surfaceContainerHighColor by color(
+        title = R.string.surface_container_high_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val surfaceContainerHighestColor = color(
-        key = "surface_container_highest_color",
+    val surfaceContainerHighestColor by color(
+        title = R.string.surface_container_highest_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val surfaceContainerLowColor = color(
-        key = "surface_container_low_color",
+    val surfaceContainerLowColor by color(
+        title = R.string.surface_container_low_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val surfaceContainerLowestColor = color(
-        key = "surface_container_lowest_color",
+    val surfaceContainerLowestColor by color(
+        title = R.string.surface_container_lowest_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val surfaceDimColor = color(
-        key = "surface_dim_color",
+    val surfaceDimColor by color(
+        title = R.string.surface_dim_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val primaryFixedColor = color(
-        key = "primary_fixed_color",
+    val primaryFixedColor by color(
+        title = R.string.primary_fixed_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val primaryFixedDimColor = color(
-        key = "primary_fixed_dim_color",
+    val primaryFixedDimColor by color(
+        title = R.string.primary_fixed_dim_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val onPrimaryFixedColor = color(
-        key = "on_primary_fixed_color",
+    val onPrimaryFixedColor by color(
+        title = R.string.on_primary_fixed_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val onPrimaryFixedVariantColor = color(
-        key = "on_primary_fixed_variant_color",
+    val onPrimaryFixedVariantColor by color(
+        title = R.string.on_primary_fixed_variant_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val secondaryFixedColor = color(
-        key = "secondary_fixed_color",
+    val secondaryFixedColor by color(
+        title = R.string.secondary_fixed_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val secondaryFixedDimColor = color(
-        key = "secondary_fixed_dim_color",
+    val secondaryFixedDimColor by color(
+        title = R.string.secondary_fixed_dim_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val onSecondaryFixedColor = color(
-        key = "on_secondary_fixed_color",
+    val onSecondaryFixedColor by color(
+        title = R.string.on_secondary_fixed_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val onSecondaryFixedVariantColor = color(
-        key = "on_secondary_fixed_variant_color",
+    val onSecondaryFixedVariantColor by color(
+        title = R.string.on_secondary_fixed_variant_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val tertiaryFixedColor = color(
-        key = "tertiary_fixed_color",
+    val tertiaryFixedColor by color(
+        title = R.string.tertiary_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val tertiaryFixedDimColor = color(
-        key = "tertiary_fixed_dim_color",
+    val tertiaryFixedDimColor by color(
+        title = R.string.tertiary_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val onTertiaryFixedColor = color(
-        key = "on_tertiary_fixed_color",
+    val onTertiaryFixedColor by color(
+        title = R.string.on_tertiary_fixed_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val onTertiaryFixedVariantColor = color(
-        key = "on_tertiary_fixed_variant_color",
+    val onTertiaryFixedVariantColor by color(
+        title = R.string.on_tertiary_fixed_variant_color,
+        description = null,
         default = Color.Unspecified
     )
 
 
-    val launchAppColor = color(
-        key = "launch_app_color",
+    val launchAppColor by color(
+        title = R.string.launch_app_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val openUrlColor = color(
-        key = "open_url_color",
+    val openUrlColor by color(
+        title = R.string.open_url_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val notificationShadeColor = color(
-        key = "notification_shade_color",
+    val notificationShadeColor by color(
+        title = R.string.notification_shade_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val controlPanelColor = color(
-        key = "control_panel_color",
+    val controlPanelColor by color(
+        title = R.string.control_panel_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val openAppDrawerColor = color(
-        key = "open_app_drawer_color",
+    val openAppDrawerColor by color(
+        title = R.string.open_app_drawer_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val launcherSettingsColor = color(
-        key = "launcher_settings_color",
+    val launcherSettingsColor by color(
+        title = R.string.launcher_settings_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val lockColor = color(
-        key = "lock_color",
+    val lockColor by color(
+        title = R.string.lock_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val openFileColor = color(
-        key = "open_file_color",
+    val openFileColor by color(
+        title = R.string.open_file_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val reloadColor = color(
-        key = "reload_color",
+    val reloadColor by color(
+        title = R.string.reload_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val openRecentAppsColor = color(
-        key = "open_recent_apps",
+    val openRecentAppsColor by color(
+        title = R.string.open_recent_apps_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val openCircleNestColor = color(
-        key = "open_circle_nest",
+    val openCircleNestColor by color(
+        title = R.string.open_circle_nest_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val goParentNestColor = color(
-        key = "go_parent_nest",
+    val goParentNestColor by color(
+        title = R.string.go_parent_nest_color,
+        description = null,
         default = Color.Unspecified
     )
 
-    val toggleWifi = color(
-        key = "toggleWifi",
+    val toggleWifi by color(
+        title = R.string.toggle_wifi,
+        description = null,
         default = Color.Unspecified
     )
 
-    val toggleBluetooth = color(
-        key = "toggleBluetooth",
+    val toggleBluetooth by color(
+        title = R.string.toggle_bluetooth,
+        description = null,
         default = Color.Unspecified
     )
-    val toggleData = color(
-        key = "toggleData",
+    val toggleData by color(
+        title = R.string.toggle_mobile_data,
+        description = null,
         default = Color.Unspecified
     )
 
-    val runAdbCommand = color(
-        key = "runAdbCommand",
+    val runAdbCommand by color(
+        title = R.string.run_adb_command,
+        description = null,
         default = Color.Unspecified
     )
 

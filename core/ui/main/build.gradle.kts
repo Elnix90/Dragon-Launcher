@@ -103,6 +103,4 @@ dependencies {
     implementation(project(":data:applications"))
 
     implementation(project(":core:services:system"))
-    implementation(project(":core:services:badges"))
-    implementation(project(":core:services:icons"))
 }
