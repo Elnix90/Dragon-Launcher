@@ -12,8 +12,8 @@ import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 object ColorModesSettingsStore : MapSettingsStore(DataStoreName.COLOR_MODE) {
 
-    override val ALL: List<BaseSettingObject<*, *>>
-        get() = listOf(
+    override val ALL: List<BaseSettingObject<*, *>> by lazy {
+        listOf(
             this.colorPickerMode,
             this.defaultTheme,
             this.colorPickerButtonOne,
@@ -21,6 +21,7 @@ object ColorModesSettingsStore : MapSettingsStore(DataStoreName.COLOR_MODE) {
             this.dynamicColor,
             this.colorTestMode
         )
+    }
 
     val colorPickerMode by enum(
         title = null,

@@ -10,8 +10,8 @@ import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 object StatusBarSettingsStore : MapSettingsStore(DataStoreName.STATUS_BAR) {
 
-    override val ALL: List<BaseSettingObject<*, *>>
-        get() = listOf(
+    override val ALL: List<BaseSettingObject<*, *>> by lazy {
+        listOf(
             this.barBackgroundColor,
             this.barTextColor,
             this.leftPadding,
@@ -19,6 +19,7 @@ object StatusBarSettingsStore : MapSettingsStore(DataStoreName.STATUS_BAR) {
             this.topPadding,
             this.bottomPadding
         )
+    }
 
     val barBackgroundColor by color(
         title = R.string.status_bar_background,

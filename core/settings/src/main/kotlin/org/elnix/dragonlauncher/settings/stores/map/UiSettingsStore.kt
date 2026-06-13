@@ -12,8 +12,8 @@ import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 object UiSettingsStore : MapSettingsStore(DataStoreName.UI) {
 
-    override val ALL: List<BaseSettingObject<*, *>>
-        get() = listOf(
+    override val ALL: List<BaseSettingObject<*, *>> by lazy {
+        listOf(
             this.rgbLoading,
             this.rgbLine,
             this.showLaunchingAppLabel,
@@ -44,6 +44,7 @@ object UiSettingsStore : MapSettingsStore(DataStoreName.UI) {
             this.multiplyOrSubtractOpacityInLiveNests,
             this.doNotRemindMeAgainPinLockWarning
         )
+    }
 
     /** Use the computing of HSV color to produce a color that depends on the angle / progress */
     val rgbLoading by boolean(

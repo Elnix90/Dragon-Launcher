@@ -11,12 +11,13 @@ import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 object BackupSettingsStore : MapSettingsStore(DataStoreName.BACKUP) {
 
-    override val ALL: List<BaseSettingObject<*, *>>
-        get() = listOf(
+    override val ALL: List<BaseSettingObject<*, *>> by lazy {
+        listOf(
             this.autoBackupEnabled,
             this.autoBackupUri,
             this.backupStores
         )
+    }
 
 
     val autoBackupEnabled by boolean(

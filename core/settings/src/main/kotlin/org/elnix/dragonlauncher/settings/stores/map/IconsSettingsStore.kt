@@ -11,14 +11,15 @@ import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 object IconsSettingsStore : MapSettingsStore(DataStoreName.ICONS) {
 
-    override val ALL: List<BaseSettingObject<*, *>>
-        get() = listOf(
+    override val ALL: List<BaseSettingObject<*, *>> by lazy {
+        listOf(
             this.selectedIconPack,
             this.iconPackTint,
             this.themedIcons,
             this.forceThemed,
             this.adaptify
         )
+    }
 
     val selectedIconPack by string(
         title = R.string.icon_pack,

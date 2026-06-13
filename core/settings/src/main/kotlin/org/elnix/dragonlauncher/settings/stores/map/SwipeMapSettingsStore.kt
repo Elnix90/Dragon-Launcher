@@ -11,13 +11,14 @@ import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 object SwipeMapSettingsStore : MapSettingsStore(DataStoreName.SWIPE_MAP) {
 
-    override val ALL: List<BaseSettingObject<*, *>>
-        get() = listOf(
+    override val ALL: List<BaseSettingObject<*, *>> by lazy {
+        listOf(
             this.subNestDefaultRadius,
             this.showSubNestsSlider,
             this.showAdvancedPointTools,
             this.defaultPoint
         )
+    }
 
     val subNestDefaultRadius by int(
         title = R.string.empty_string,

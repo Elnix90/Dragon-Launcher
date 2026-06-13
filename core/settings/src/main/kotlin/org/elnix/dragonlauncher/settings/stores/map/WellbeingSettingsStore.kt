@@ -16,8 +16,8 @@ import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
  */
 object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
 
-    override val ALL: List<BaseSettingObject<*, *>>
-        get() = listOf(
+    override val ALL: List<BaseSettingObject<*, *>> by lazy {
+        listOf(
             this.socialMediaPauseEnabled,
             this.guiltModeEnabled,
             this.pauseDurationSeconds,
@@ -31,6 +31,7 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
             this.returnToLauncherEnabled,
             this.pausedApps
         )
+    }
 
     /**
      * Whether the social media pause feature is enabled

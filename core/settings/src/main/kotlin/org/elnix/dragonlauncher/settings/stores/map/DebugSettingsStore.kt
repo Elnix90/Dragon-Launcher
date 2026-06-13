@@ -11,8 +11,8 @@ import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 object DebugSettingsStore : MapSettingsStore(DataStoreName.DEBUG) {
 
-    override val ALL: List<BaseSettingObject<*, *>>
-        get() = listOf(
+    override val ALL: List<BaseSettingObject<*, *>> by lazy {
+        listOf(
             this.debugEnabled,
             this.debugInfos,
             this.settingsDebugInfo,
@@ -30,6 +30,7 @@ object DebugSettingsStore : MapSettingsStore(DataStoreName.DEBUG) {
             this.filterTag,
             this.showKillLauncherActionInActionPicker,
         )
+    }
 
     val debugEnabled by boolean(
         title = R.string.activate_debug_mode,

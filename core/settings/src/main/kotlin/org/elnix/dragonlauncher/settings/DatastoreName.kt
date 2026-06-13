@@ -90,7 +90,7 @@ internal fun Context.resolveDataStore(dataStoreName: DataStoreName): DataStore<P
         ?: error("No DataStore delegate found for ${dataStoreName.value}")
 }
 
-val allStores: Map<DataStoreName, BaseSettingsStore<*, *>> by lazy {
+val allStores: Map<DataStoreName, BaseSettingsStore<*, *>> =
     DataStoreName.entries.associateWith {
         when(it) {
             UI -> UiSettingsStore
@@ -116,7 +116,7 @@ val allStores: Map<DataStoreName, BaseSettingsStore<*, *>> by lazy {
             HOLD_TO_ACTIVATE -> HoldToActivateArcSettingsStore
         }
     }
-}
+
 
 val themeDataStores: Set<DataStoreName> = setOf(UI, COLOR_MODE, COLOR, ANGLE_LINE, HOLD_TO_ACTIVATE)
 

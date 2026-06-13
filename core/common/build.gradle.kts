@@ -49,7 +49,6 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.bundles.kotlin)
 
-    api(libs.gson)
     api(libs.androidx.activity)
     api(libs.androidx.compose.ui.unit)
     api(libs.androidx.compose.runtime)

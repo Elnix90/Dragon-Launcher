@@ -11,8 +11,8 @@ import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 object ColorSettingsStore : MapSettingsStore(DataStoreName.COLOR) {
 
-    override val ALL: List<BaseSettingObject<Color, String>>
-        get() = listOf(
+    override val ALL: List<BaseSettingObject<Color, String>> by lazy {
+        listOf(
             this.primaryColor,
             this.onPrimaryColor,
             this.primaryContainerColor,
@@ -80,6 +80,7 @@ object ColorSettingsStore : MapSettingsStore(DataStoreName.COLOR) {
             this.toggleBluetooth,
             this.runAdbCommand
         )
+    }
 
     val primaryColor by color(
         title = R.string.primary_color,

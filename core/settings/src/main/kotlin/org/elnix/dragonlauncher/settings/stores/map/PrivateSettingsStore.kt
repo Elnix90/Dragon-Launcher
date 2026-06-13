@@ -13,6 +13,23 @@ import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 object PrivateSettingsStore : MapSettingsStore(DataStoreName.PRIVATE_SETTINGS) {
 
+    override val ALL: List<BaseSettingObject<*, *>> by lazy {
+        listOf(
+            this.hasSeenWelcome,
+            this.hasInitialized,
+            this.showSetDefaultLauncherBanner,
+            this.hideBetaVersionWarning,
+            this.lastSeenVersionCodeWhatsNew,
+            this.lastSeenVersionCodeGoogleLockdownWarning,
+            this.lockPinHash,
+            this.lockMethod,
+            this.lastBackupTime,
+            this.welcomeScreenTempPage,
+            this.lastCrashStackTrace,
+            this.isInDragAroundMode
+        )
+    }
+
     val hasSeenWelcome by boolean(
         title = null,
         description = null,
@@ -93,22 +110,4 @@ object PrivateSettingsStore : MapSettingsStore(DataStoreName.PRIVATE_SETTINGS) {
         description = null,
         default = false
     )
-
-
-    override val ALL: List<BaseSettingObject<*, *>> by lazy {
-        listOf(
-            this.hasSeenWelcome,
-            this.hasInitialized,
-            this.showSetDefaultLauncherBanner,
-            this.hideBetaVersionWarning,
-            this.lastSeenVersionCodeWhatsNew,
-            this.lastSeenVersionCodeGoogleLockdownWarning,
-            this.lockPinHash,
-            this.lockMethod,
-            this.lastBackupTime,
-            this.welcomeScreenTempPage,
-            this.lastCrashStackTrace,
-            this.isInDragAroundMode
-        )
-    }
 }

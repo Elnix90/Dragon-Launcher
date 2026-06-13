@@ -20,8 +20,8 @@ import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 object DrawerSettingsStore : MapSettingsStore(DataStoreName.DRAWER) {
 
-    override val ALL: List<BaseSettingObject<*, *>>
-        get() = listOf(
+    override val ALL: List<BaseSettingObject<*, *>> by lazy {
+        listOf(
             this.autoOpenSingleMatch,
             this.disableAutoLaunchOnSpaceFirstChar,
             this.showAppIconsInDrawer,
@@ -58,6 +58,7 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.DRAWER) {
             this.pullDownScaleIn,
             this.toolbarsOrder
         )
+    }
 
     val autoOpenSingleMatch by boolean(
         title = R.string.auto_launch_single_match,

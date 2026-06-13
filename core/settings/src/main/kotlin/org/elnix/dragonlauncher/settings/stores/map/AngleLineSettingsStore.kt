@@ -10,8 +10,8 @@ import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 object AngleLineSettingsStore : MapSettingsStore(DataStoreName.ANGLE_LINE) {
 
-    override val ALL: List<BaseSettingObject<*, *>>
-        get() = listOf(
+    override val ALL: List<BaseSettingObject<*, *>> by lazy {
+        listOf(
             this.showLineObjectPreview,
             this.showAngleLineObjectPreview,
             this.showStartObjectPreview,
@@ -24,6 +24,7 @@ object AngleLineSettingsStore : MapSettingsStore(DataStoreName.ANGLE_LINE) {
 
             this.angleLineObjectsOrder
         )
+    }
 
     val showLineObjectPreview by boolean(
         title = R.string.show_app_line_preview,

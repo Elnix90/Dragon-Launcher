@@ -6,10 +6,10 @@ plugins {
     alias(libs.plugins.hilt.android) apply false
     alias(libs.plugins.ksp) apply false
 
-    alias(libs.plugins.dokka)
-    alias(libs.plugins.detekt)
+//    alias(libs.plugins.dokka)
+//    alias(libs.plugins.detekt)
 
-    id("com.autonomousapps.dependency-analysis") version "3.14.1"
+    alias(libs.plugins.dependency.analysis)
 }
 
 dependencyAnalysis {
@@ -24,5 +24,5 @@ dependencyAnalysis {
 
 subprojects {
     apply(plugin = "com.autonomousapps.dependency-analysis")
-    apply(plugin = "org.jetbrains.dokka")
+//    apply(plugin = "org.jetbrains.dokka")
 }

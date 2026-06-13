@@ -10,8 +10,8 @@ import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companio
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 object BehaviorSettingsStore : MapSettingsStore(DataStoreName.BEHAVIOR) {
-    override val ALL: List<BaseSettingObject<*, *>>
-        get() = listOf(
+    override val ALL: List<BaseSettingObject<*, *>> by lazy {
+        listOf(
             this.backAction,
             this.doubleClickAction,
             this.homeAction,
@@ -30,6 +30,7 @@ object BehaviorSettingsStore : MapSettingsStore(DataStoreName.BEHAVIOR) {
             this.offScreenTimeout,
             this.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint
         )
+    }
 
     val backAction by action(
         title = R.string.back_action,

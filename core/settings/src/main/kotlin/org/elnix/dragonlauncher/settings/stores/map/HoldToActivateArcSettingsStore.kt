@@ -11,8 +11,8 @@ import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 object HoldToActivateArcSettingsStore : MapSettingsStore(DataStoreName.HOLD_TO_ACTIVATE) {
 
-    override val ALL: List<BaseSettingObject<*, *>>
-        get() = listOf(
+    override val ALL: List<BaseSettingObject<*, *>> by lazy {
+        listOf(
             this.holdDelayBeforeStartingLongClickSettings,
             this.longCLickSettingsDuration,
             this.holdToActivateSettingsTolerance,
@@ -21,6 +21,7 @@ object HoldToActivateArcSettingsStore : MapSettingsStore(DataStoreName.HOLD_TO_A
             this.rotationPerSecond,
             this.holdMenuEntries
         )
+    }
 
     val holdDelayBeforeStartingLongClickSettings by int(
         title = R.string.hold_delay_before_starting_long_click_settings,
