@@ -8,7 +8,10 @@ import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companio
 import org.elnix.dragonlauncher.settings.bases.objects.StringSetSettingObject.Companion.stringSet
 import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
+import org.elnix.settings.SettingKey
+import org.elnix.settings.SettingStore
 
+@SettingStore
 object BackupSettingsStore : MapSettingsStore(DataStoreName.BACKUP) {
 
     override val ALL: List<BaseSettingObject<*, *>> by lazy {
@@ -20,13 +23,15 @@ object BackupSettingsStore : MapSettingsStore(DataStoreName.BACKUP) {
     }
 
 
-    val autoBackupEnabled by boolean(
+    @SettingKey
+    val autoBackupEnabled = boolean(
         title = R.string.automatic_backups,
         description = R.string.auto_backup_desc,
         default = false
     )
 
-    val autoBackupUri by string(
+    @SettingKey
+    val autoBackupUri = string(
         title = null,
         description = null,
         default = ""
@@ -41,7 +46,8 @@ object BackupSettingsStore : MapSettingsStore(DataStoreName.BACKUP) {
             .map { it.value }
             .toSet()
 
-    val backupStores by stringSet(
+    @SettingKey
+    val backupStores = stringSet(
         title = R.string.auto_backup_stores,
         description = null,
         default = defaultBackupStores
@@ -49,7 +55,8 @@ object BackupSettingsStore : MapSettingsStore(DataStoreName.BACKUP) {
 
 
     // TODO ( after  3.0.0 ) - Bruh
-    val numberOfBackupsToKeep by int(
+    @SettingKey
+    val numberOfBackupsToKeep = int(
         default = 2,
         title = null,
         description = null,

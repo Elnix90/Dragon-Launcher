@@ -9,11 +9,14 @@ import org.elnix.dragonlauncher.settings.bases.objects.EnumSettingObject.Compani
 import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
 import org.elnix.dragonlauncher.settings.bases.objects.StringSetSettingObject.Companion.stringSet
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
+import org.elnix.settings.SettingKey
+import org.elnix.settings.SettingStore
 
 /**
  * Settings store for the Digital Wellbeing feature.
  * Manages social media pause, guilt mode, and paused apps configuration.
  */
+@SettingStore
 object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
 
     override val ALL: List<BaseSettingObject<*, *>> by lazy {
@@ -36,7 +39,8 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
     /**
      * Whether the social media pause feature is enabled
      */
-    val socialMediaPauseEnabled by boolean(
+    @SettingKey
+    val socialMediaPauseEnabled = boolean(
         title = R.string.social_media_pause,
         description = R.string.social_media_pause_description,
         default = false
@@ -45,7 +49,8 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
     /**
      * Whether to show guilt-inducing usage statistics
      */
-    val guiltModeEnabled by boolean(
+    @SettingKey
+    val guiltModeEnabled = boolean(
         title = R.string.guilt_mode,
         description = R.string.guilt_mode_description,
         default = false
@@ -55,7 +60,8 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
     /**
      * Whether to show detailed usage stats (time spent yesterday, etc.)
      */
-    val showUsageStats by boolean(
+    @SettingKey
+    val showUsageStats = boolean(
         title = null,
         description = null,
         default = true
@@ -64,7 +70,8 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
     /**
      * Duration of the pause countdown in seconds (default 10s)
      */
-    val pauseDurationSeconds by int(
+    @SettingKey
+    val pauseDurationSeconds = int(
         title = R.string.pause_duration,
         description = R.string.pause_duration_description,
         default = 10,
@@ -75,7 +82,8 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
      * Whether the periodic reminder feature is enabled.
      * When active, the user gets reminded every X minutes that they are still on a paused app.
      */
-    val reminderEnabled by boolean(
+    @SettingKey
+    val reminderEnabled = boolean(
         title = R.string.reminder_mode_title,
         description = R.string.reminder_mode_description,
         default = false
@@ -84,7 +92,8 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
     /**
      * How often to remind (in minutes). Default 5.
      */
-    val reminderIntervalMinutes by int(
+    @SettingKey
+    val reminderIntervalMinutes = int(
         title = R.string.reminder_interval,
         description = R.string.reminder_interval_description,
         default = 5,
@@ -94,7 +103,8 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
     /**
      * Reminder delivery mode
      */
-    val reminderMode by enum(
+    @SettingKey
+    val reminderMode = enum(
         title = R.string.mode,
         description = null,
         default = ReminderMode.Overlay,
@@ -104,7 +114,8 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
     /**
      * Show session time in popup overlay (time since app opened)
      */
-    val popupShowSessionTime by boolean(
+    @SettingKey
+    val popupShowSessionTime = boolean(
         title = R.string.popup_show_session_time,
         description = R.string.popup_show_session_time_desc,
         default = true
@@ -113,7 +124,8 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
     /**
      * Show today's total time in popup overlay
      */
-    val popupShowTodayTime by boolean(
+    @SettingKey
+    val popupShowTodayTime = boolean(
         title = R.string.popup_show_today_time,
         description = R.string.popup_show_today_time_desc,
         default = true
@@ -122,7 +134,8 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
     /**
      * Show remaining time before limit in popup overlay (when return to launcher enabled)
      */
-    val popupShowRemainingTime by boolean(
+    @SettingKey
+    val popupShowRemainingTime = boolean(
         title = R.string.popup_show_remaining_time,
         description = R.string.popup_show_remaining_time_desc,
         default = true
@@ -133,13 +146,15 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
      * User must set a time limit before opening a paused app; after the limit
      * they are brought back to Dragon Launcher.
      */
-    val returnToLauncherEnabled by boolean(
+    @SettingKey
+    val returnToLauncherEnabled = boolean(
         title = R.string.return_to_launcher_title,
         description = R.string.return_to_launcher_description,
         default = false
     )
 
-    val pausedApps by stringSet(
+    @SettingKey
+    val pausedApps = stringSet(
         title = null,
         description = null,
         default = emptySet()

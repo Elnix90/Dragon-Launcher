@@ -34,16 +34,15 @@ abstract class JsonObjectSettingsStore(
     /**
      * Underlying setting that stores the JSON payload as a raw string.
      */
-    val jsonSetting by lazy {
-        StringSettingObject(
-            key = "jsonSetting",
-            default = "",
-            title = null,
-            description = null,
-            dataStoreName = dataStoreName,
-            onChanged = null
-        )
-    }
+    val jsonSetting = StringSettingObject(
+        key = "jsonSetting",
+        default = "",
+        title = null,
+        description = null,
+        dataStoreName = dataStoreName,
+        onChanged = null
+    )
+
 
     final override val ALL: List<BaseSettingObject<*, *>>
         get() = listOf(jsonSetting)

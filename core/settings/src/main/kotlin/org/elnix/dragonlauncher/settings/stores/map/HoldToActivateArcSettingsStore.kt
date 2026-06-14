@@ -8,7 +8,10 @@ import org.elnix.dragonlauncher.settings.bases.objects.FloatSettingObject.Compan
 import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
 import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
+import org.elnix.settings.SettingKey
+import org.elnix.settings.SettingStore
 
+@SettingStore
 object HoldToActivateArcSettingsStore : MapSettingsStore(DataStoreName.HOLD_TO_ACTIVATE) {
 
     override val ALL: List<BaseSettingObject<*, *>> by lazy {
@@ -23,47 +26,54 @@ object HoldToActivateArcSettingsStore : MapSettingsStore(DataStoreName.HOLD_TO_A
         )
     }
 
-    val holdDelayBeforeStartingLongClickSettings by int(
+    @SettingKey
+    val holdDelayBeforeStartingLongClickSettings = int(
         title = R.string.hold_delay_before_starting_long_click_settings,
         description = R.string.hold_delay_before_starting_long_click_settings_desc,
         default = 500,
         allowedRange = 0..2000
     )
 
-    val longCLickSettingsDuration by int(
+    @SettingKey
+    val longCLickSettingsDuration = int(
         title = R.string.long_click_settings_duration,
         description = R.string.long_click_settings_duration_desc,
         default = 1000,
         allowedRange = 0..5000
     )
 
-    val holdToActivateSettingsTolerance by float(
+    @SettingKey
+    val holdToActivateSettingsTolerance = float(
         title = R.string.hold_to_activate_tolerance,
         description = R.string.hold_to_activate_tolerance_desc,
         default = 24f,
         allowedRange = 1f..200f
     )
 
-    val showToleranceOnMainScreen by boolean(
+    @SettingKey
+    val showToleranceOnMainScreen = boolean(
         title = R.string.show_tolerance_on_main_screen,
         description = R.string.show_tolerance_on_main_screen_desc,
         default = false,
     )
 
-    val holdToActivateArcCustomObject by string(
+    @SettingKey
+    val holdToActivateArcCustomObject = string(
         title = null,
         description = null,
         default = "",
     )
 
-    val rotationPerSecond by float(
+    @SettingKey
+    val rotationPerSecond = float(
         title = R.string.rotation_per_second,
         description = R.string.rotation_per_second_desc,
         default = 0f,
         allowedRange = 0f..5f
     )
 
-    val holdMenuEntries by string(
+    @SettingKey
+    val holdMenuEntries = string(
         title = null,
         description = null,
         default = ""

@@ -68,6 +68,8 @@ dependency-analysis = "3.15.0"
 #dokka = "2.2.0"
 #detekt = "1.23.8"
 
+settings = "0.0.1"
+
 [libraries]
 androidx-activity = { module = "androidx.activity:activity", version.ref = "activityCompose" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
@@ -124,6 +126,7 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 lazycolumnscrollbar = { module = "com.github.nanihadesuka:LazyColumnScrollbar", version.ref = "lazycolumnscrollbar" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 material3 = { module = "androidx.compose.material3:material3" }
+settings-plugin-annotations = { group = "org.elnix.settings", name = "plugin-annotations", version.ref = "settings" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -168,3 +171,4 @@ hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndro
 dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependency-analysis" }
 #dokka = {id = "org.jetbrains.dokka", version.ref = "dokka"}
 #detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt"}
+settings = { id = "org.elnix.settings", version.ref = "settings" }

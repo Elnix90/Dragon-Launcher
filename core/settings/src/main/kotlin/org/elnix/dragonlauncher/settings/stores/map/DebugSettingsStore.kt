@@ -8,7 +8,10 @@ import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Comp
 import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
 import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
+import org.elnix.settings.SettingKey
+import org.elnix.settings.SettingStore
 
+@SettingStore
 object DebugSettingsStore : MapSettingsStore(DataStoreName.DEBUG) {
 
     override val ALL: List<BaseSettingObject<*, *>> by lazy {
@@ -32,99 +35,115 @@ object DebugSettingsStore : MapSettingsStore(DataStoreName.DEBUG) {
         )
     }
 
-    val debugEnabled by boolean(
+    @SettingKey
+    val debugEnabled = boolean(
         title = R.string.activate_debug_mode,
         description = R.string.activate_debug_mode_desc,
         default = false
     )
 
-    val debugInfos by boolean(
+    @SettingKey
+    val debugInfos = boolean(
         title = R.string.show_debug_infos,
         description = R.string.show_debug_infos_desc,
         default = false
     )
 
-    val settingsDebugInfo by boolean(
+    @SettingKey
+    val settingsDebugInfo = boolean(
         title = R.string.show_debug_infos_settings,
         description = R.string.show_debug_infos_settings_desc,
         default = false
     )
 
-    val widgetsDebugInfo by boolean(
+    @SettingKey
+    val widgetsDebugInfo = boolean(
         title = R.string.show_debug_infos_widgets,
         description = R.string.show_debug_infos_widgets_desc,
         default = false
     )
 
-    val workspacesDebugInfo by boolean(
+    @SettingKey
+    val workspacesDebugInfo = boolean(
         title = R.string.show_debug_infos_workspace,
         description = R.string.show_debug_infos_workspace_desc,
         default = false
     )
 
-    val forceAppLanguageSelector by boolean(
+    @SettingKey
+    val forceAppLanguageSelector = boolean(
         title = R.string.force_app_language_selector,
         description = R.string.force_app_language_selector_desc,
         default = false
     )
 
-    val autoRaiseDragonOnSystemLauncher by boolean(
+    @SettingKey
+    val autoRaiseDragonOnSystemLauncher = boolean(
         title = R.string.auto_raise_dragon_on_system_launcher,
         description = R.string.auto_raise_dragon_on_system_launcher_desc,
         default = false
     )
 
-    val systemLauncherPackageName by string(
+    @SettingKey
+    val systemLauncherPackageName = string(
         title = null,
         description = null,
         default = ""
     )
 
-    val useAccessibilityInsteadOfContextToExpandActionPanel by boolean(
+    @SettingKey
+    val useAccessibilityInsteadOfContextToExpandActionPanel = boolean(
         title = R.string.use_accessibility_instead_of_context,
         description = R.string.use_accessibility_instead_of_context_desc,
         default = true
     )
 
-    val enableLogging by boolean(
+    @SettingKey
+    val enableLogging = boolean(
         title = R.string.enable_logging,
         description = R.string.enable_logging_desc,
         default = true
     )
 
-    val disableExtensionSignatureCheck by boolean(
+    @SettingKey
+    val disableExtensionSignatureCheck = boolean(
         title = R.string.disable_extension_signature_check,
         description = R.string.disable_extension_signature_check_desc,
         default = false
     )
 
-    val snackBarLogLevel by int(
+    @SettingKey
+    val snackBarLogLevel = int(
         title = R.string.snackbar_log_level,
         description = null,
         default = 7, // No logs
         allowedRange = 2..7
     )
 
-    val filesLogLevel by int(
+    @SettingKey
+    val filesLogLevel = int(
         title = R.string.files_log_level,
         description = null,
         default = Log.DEBUG,
         allowedRange = 2..7
     )
 
-    val filterTag by string(
+    @SettingKey
+    val filterTag = string(
         title = R.string.filter_tag,
         description = null,
         default = ""
     )
 
-    val showFps by boolean(
+    @SettingKey
+    val showFps = boolean(
         title = R.string.show_fps,
         description = R.string.show_fps_desc,
         default = false
     )
 
-    val showKillLauncherActionInActionPicker by boolean(
+    @SettingKey
+    val showKillLauncherActionInActionPicker = boolean(
         title = R.string.show_kill_launcher_action,
         description = R.string.show_kill_launcher_action_desc,
         default = false

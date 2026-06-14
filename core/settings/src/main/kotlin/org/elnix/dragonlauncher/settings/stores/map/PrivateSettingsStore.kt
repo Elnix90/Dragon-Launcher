@@ -10,6 +10,7 @@ import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companio
 import org.elnix.dragonlauncher.settings.bases.objects.LongSettingObject.Companion.long
 import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
+import org.elnix.settings.SettingKey
 
 object PrivateSettingsStore : MapSettingsStore(DataStoreName.PRIVATE_SETTINGS) {
 
@@ -30,38 +31,44 @@ object PrivateSettingsStore : MapSettingsStore(DataStoreName.PRIVATE_SETTINGS) {
         )
     }
 
-    val hasSeenWelcome by boolean(
+    @SettingKey
+    val hasSeenWelcome = boolean(
         title = null,
         description = null,
         default = false
     )
 
-    val hasInitialized by boolean(
+    @SettingKey
+    val hasInitialized = boolean(
         title = R.string.has_initialized,
         description = null,
         default = false
     )
 
-    val showSetDefaultLauncherBanner by boolean(
+    @SettingKey
+    val showSetDefaultLauncherBanner = boolean(
         title = R.string.show_set_default_launcher_banner,
         description = R.string.show_set_default_launcher_banner_desc,
         default = true
     )
 
-    val hideBetaVersionWarning by boolean(
+    @SettingKey
+    val hideBetaVersionWarning = boolean(
         title = R.string.hide_beta_version_warning,
         description = R.string.hide_beta_version_warning_desc,
         default = false
     )
 
-    val lastSeenVersionCodeWhatsNew by int(
+    @SettingKey
+    val lastSeenVersionCodeWhatsNew = int(
         title = null,
         description = null,
         default = 0,
         allowedRange = 0..Int.MAX_VALUE
     )
 
-    val lastSeenVersionCodeGoogleLockdownWarning by int(
+    @SettingKey
+    val lastSeenVersionCodeGoogleLockdownWarning = int(
         title = null,
         description = null,
         default = 0,
@@ -69,20 +76,23 @@ object PrivateSettingsStore : MapSettingsStore(DataStoreName.PRIVATE_SETTINGS) {
     )
 
     /** Hashed PIN for settings lock (SHA-256). Empty string means no PIN set. */
-    val lockPinHash by string(
+    @SettingKey
+    val lockPinHash = string(
         title = null,
         description = null,
         default = ""
     )
 
-    val lockMethod by enum(
+    @SettingKey
+    val lockMethod = enum(
         title = null,
         description = null,
         default = LockMethod.NONE,
         enumClass = LockMethod::class.java
     )
 
-    val lastBackupTime by long(
+    @SettingKey
+    val lastBackupTime = long(
         title = null,
         description = null,
         default = System.currentTimeMillis(),
@@ -92,20 +102,23 @@ object PrivateSettingsStore : MapSettingsStore(DataStoreName.PRIVATE_SETTINGS) {
     /**
      * Used to remember the page the user left when exiting the welcome screen, and going, for example to the default launcher selection
      */
-    val welcomeScreenTempPage by int(
+    @SettingKey
+    val welcomeScreenTempPage = int(
         title = null,
         description = null,
         default = 0,
         allowedRange = 0..6,
     )
 
-    val lastCrashStackTrace by string(
+    @SettingKey
+    val lastCrashStackTrace = string(
         title = null,
         description = null,
         default = ""
     )
 
-    val isInDragAroundMode by boolean(
+    @SettingKey
+    val isInDragAroundMode = boolean(
         title = null,
         description = null,
         default = false

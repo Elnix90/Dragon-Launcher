@@ -3,6 +3,7 @@ import com.android.build.api.dsl.LibraryExtension
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.settings)
 }
 
 kotlin {
@@ -37,6 +38,8 @@ dependencies {
 
     api(libs.androidx.datastore.preferences.core)
     api(libs.kotlinx.coroutines.core)
+
+    implementation(libs.settings.plugin.annotations)
 
     implementation(project(":core:base"))
     implementation(project(":core:logging"))

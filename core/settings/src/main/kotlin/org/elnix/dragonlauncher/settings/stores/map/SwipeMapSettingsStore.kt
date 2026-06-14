@@ -8,7 +8,10 @@ import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Comp
 import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
 import org.elnix.dragonlauncher.settings.bases.objects.PointSettingObject.Companion.point
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
+import org.elnix.settings.SettingKey
+import org.elnix.settings.SettingStore
 
+@SettingStore
 object SwipeMapSettingsStore : MapSettingsStore(DataStoreName.SWIPE_MAP) {
 
     override val ALL: List<BaseSettingObject<*, *>> by lazy {
@@ -20,26 +23,30 @@ object SwipeMapSettingsStore : MapSettingsStore(DataStoreName.SWIPE_MAP) {
         )
     }
 
-    val subNestDefaultRadius by int(
+    @SettingKey
+    val subNestDefaultRadius = int(
         title = R.string.empty_string,
         description = R.string.empty_string,
         default = 35,
         allowedRange = 0..50
     )
 
-    val showSubNestsSlider by boolean(
+    @SettingKey
+    val showSubNestsSlider = boolean(
         title = R.string.show_sub_nest_size_slider,
         description = null,
         default = false
     )
 
-    val showAdvancedPointTools by boolean(
+    @SettingKey
+    val showAdvancedPointTools = boolean(
         title = R.string.show_advanced_edit_tools,
         description = null,
         default = false
     )
 
-    val defaultPoint by point(
+    @SettingKey
+    val defaultPoint = point(
         title = null,
         description = null,
         default = defaultSwipePointsValues

@@ -33,8 +33,9 @@ import org.elnix.dragonlauncher.settings.bases.getStringListStrict
 import org.elnix.dragonlauncher.settings.bases.getStringSetStrict
 import org.elnix.dragonlauncher.settings.bases.getStringStrict
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
+
+private fun String.isNotBlankKey(): String =
+    this.ifEmpty { error("Key cannot be null") }
 
 
 data class BooleanSettingObject(
@@ -51,22 +52,20 @@ data class BooleanSettingObject(
     override fun decode(raw: Any?): Boolean = getBooleanStrict(raw, default)
 
     companion object {
-        inline fun <reified T> MapSettingsStore.boolean(
+        fun MapSettingsStore.boolean(
             title: Int?,
             description: Int?,
             default: Boolean,
-            noinline onChange: (() -> Unit)? = null
-        ): ReadOnlyProperty<T, BooleanSettingObject> =
-            ReadOnlyProperty { _, property ->
-                BooleanSettingObject(
-                    key = property.name,
-                    title = title,
-                    description = description,
-                    dataStoreName = dataStoreName,
-                    default = default,
-                    onChanged = onChange
-                )
-            }
+            key: String = "",
+            onChange: (() -> Unit)? = null
+        ) = BooleanSettingObject(
+            key = key.isNotBlankKey(),
+            title = title,
+            description = description,
+            dataStoreName = dataStoreName,
+            default = default,
+            onChanged = onChange
+        )
     }
 }
 
@@ -86,24 +85,22 @@ data class IntSettingObject(
     override fun decode(raw: Any?): Int = getIntStrict(raw, default).coerceIn(allowedRange)
 
     companion object {
-        inline fun <reified T> MapSettingsStore.int(
+        fun MapSettingsStore.int(
             title: Int?,
             description: Int?,
             default: Int,
             allowedRange: IntRange,
-            noinline onChange: (() -> Unit)? = null
-        ): ReadOnlyProperty<T, IntSettingObject> =
-            ReadOnlyProperty { _, property ->
-                IntSettingObject(
-                    key = property.name,
-                    title = title,
-                    description = description,
-                    dataStoreName = dataStoreName,
-                    default = default,
-                    allowedRange = allowedRange,
-                    onChanged = onChange
-                )
-            }
+            key: String = "",
+            onChange: (() -> Unit)? = null
+        ) = IntSettingObject(
+            key = key.isNotBlankKey(),
+            title = title,
+            description = description,
+            dataStoreName = dataStoreName,
+            default = default,
+            allowedRange = allowedRange,
+            onChanged = onChange
+        )
     }
 }
 
@@ -122,24 +119,22 @@ data class DpSettingObject(
     override fun decode(raw: Any?): Dp = getDpStrict(raw, default).coerceIn(allowedRange)
 
     companion object {
-        inline fun <reified T> MapSettingsStore.dp(
+        fun MapSettingsStore.dp(
             title: Int?,
             description: Int?,
             default: Dp,
             allowedRange: ClosedRange<Dp>,
-            noinline onChange: (() -> Unit)? = null
-        ): ReadOnlyProperty<T, DpSettingObject> =
-            ReadOnlyProperty { _, property ->
-                DpSettingObject(
-                    key = property.name,
-                    title = title,
-                    description = description,
-                    dataStoreName = dataStoreName,
-                    default = default,
-                    allowedRange = allowedRange,
-                    onChanged = onChange
-                )
-            }
+            key: String = "",
+            onChange: (() -> Unit)? = null
+        ) = DpSettingObject(
+            key = key.isNotBlankKey(),
+            title = title,
+            description = description,
+            dataStoreName = dataStoreName,
+            default = default,
+            allowedRange = allowedRange,
+            onChanged = onChange
+        )
     }
 }
 
@@ -158,24 +153,22 @@ data class LongSettingObject(
     override fun decode(raw: Any?): Long = getLongStrict(raw, default).coerceIn(allowedRange)
 
     companion object {
-        inline fun <reified T> MapSettingsStore.long(
+        fun MapSettingsStore.long(
             title: Int?,
             description: Int?,
             default: Long,
             allowedRange: ClosedRange<Long>,
-            noinline onChange: (() -> Unit)? = null
-        ): ReadOnlyProperty<T, LongSettingObject> =
-            ReadOnlyProperty { _, property ->
-                LongSettingObject(
-                    key = property.name,
-                    title = title,
-                    description = description,
-                    dataStoreName = dataStoreName,
-                    default = default,
-                    allowedRange = allowedRange,
-                    onChanged = onChange
-                )
-            }
+            key: String = "",
+            onChange: (() -> Unit)? = null
+        ) = LongSettingObject(
+            key = key.isNotBlankKey(),
+            title = title,
+            description = description,
+            dataStoreName = dataStoreName,
+            default = default,
+            allowedRange = allowedRange,
+            onChanged = onChange
+        )
     }
 }
 
@@ -194,24 +187,22 @@ data class FloatSettingObject(
     override fun decode(raw: Any?): Float = getFloatStrict(raw, default).coerceIn(allowedRange)
 
     companion object {
-        inline fun <reified T> MapSettingsStore.float(
+        fun MapSettingsStore.float(
             title: Int?,
             description: Int?,
             default: Float,
             allowedRange: ClosedFloatingPointRange<Float>,
-            noinline onChange: (() -> Unit)? = null
-        ): ReadOnlyProperty<T, FloatSettingObject> =
-            ReadOnlyProperty { _, property ->
-                FloatSettingObject(
-                    key = property.name,
-                    title = title,
-                    description = description,
-                    dataStoreName = dataStoreName,
-                    default = default,
-                    allowedRange = allowedRange,
-                    onChanged = onChange
-                )
-            }
+            key: String = "",
+            onChange: (() -> Unit)? = null
+        ) = FloatSettingObject(
+            key = key.isNotBlankKey(),
+            title = title,
+            description = description,
+            dataStoreName = dataStoreName,
+            default = default,
+            allowedRange = allowedRange,
+            onChanged = onChange
+        )
     }
 }
 
@@ -230,24 +221,22 @@ data class DoubleSettingObject(
     override fun decode(raw: Any?): Double = getDoubleStrict(raw, default).coerceIn(allowedRange)
 
     companion object {
-        inline fun <reified T> MapSettingsStore.double(
+        fun MapSettingsStore.double(
             title: Int?,
             description: Int?,
             default: Double,
             allowedRange: ClosedRange<Double>,
-            noinline onChange: (() -> Unit)? = null
-        ): ReadOnlyProperty<T, DoubleSettingObject> =
-            ReadOnlyProperty { _, property ->
-                DoubleSettingObject(
-                    key = property.name,
-                    title = title,
-                    description = description,
-                    dataStoreName = dataStoreName,
-                    default = default,
-                    allowedRange = allowedRange,
-                    onChanged = onChange
-                )
-            }
+            key: String = "",
+            onChange: (() -> Unit)? = null
+        ) = DoubleSettingObject(
+            key = key.isNotBlankKey(),
+            title = title,
+            description = description,
+            dataStoreName = dataStoreName,
+            default = default,
+            allowedRange = allowedRange,
+            onChanged = onChange
+        )
     }
 }
 
@@ -265,46 +254,20 @@ data class StringSettingObject(
     override fun decode(raw: Any?): String = getStringStrict(raw, default)
 
     companion object {
-//        inline fun <reified T> MapSettingsStore.string(
-//            title: Int?,
-//            description: Int?,
-//            default: String,
-//            noinline onChange: (() -> Unit)? = null
-//        ): ReadOnlyProperty<T, StringSettingObject> =
-//            ReadOnlyProperty { _, property ->
-//                StringSettingObject(
-//                    key = property.name,
-//                    title = title,
-//                    description = description,
-//                    dataStoreName = dataStoreName,
-//                    default = default,
-//                    onChanged = onChange
-//                )
-//            }
-
-        inline fun <reified T> MapSettingsStore.string(
+        fun MapSettingsStore.string(
             title: Int?,
             description: Int?,
             default: String,
-            noinline onChange: (() -> Unit)? = null
-        ): ReadOnlyProperty<T, StringSettingObject> =
-            object : ReadOnlyProperty<T, StringSettingObject> {
-                private lateinit var instance: StringSettingObject
-
-                override fun getValue(thisRef: T, property: KProperty<*>): StringSettingObject {
-                    if (!::instance.isInitialized) {
-                        instance = StringSettingObject(
-                            key = property.name,
-                            title = title,
-                            description = description,
-                            dataStoreName = (thisRef as MapSettingsStore).dataStoreName,
-                            default = default,
-                            onChanged = onChange
-                        )
-                    }
-                    return instance
-                }
-            }
+            key: String = "",
+            onChange: (() -> Unit)? = null
+        ) = StringSettingObject(
+            key = key.isNotBlankKey(),
+            title = title,
+            description = description,
+            dataStoreName = dataStoreName,
+            default = default,
+            onChanged = onChange
+        )
     }
 }
 
@@ -323,22 +286,20 @@ data class StringSetSettingObject(
     override fun decode(raw: Any?): Set<String> = getStringSetStrict(raw, default)
 
     companion object {
-        inline fun <reified T> MapSettingsStore.stringSet(
+        fun MapSettingsStore.stringSet(
             title: Int?,
             description: Int?,
             default: Set<String>,
-            noinline onChange: (() -> Unit)? = null
-        ): ReadOnlyProperty<T, StringSetSettingObject> =
-            ReadOnlyProperty { _, property ->
-                StringSetSettingObject(
-                    key = property.name,
-                    title = title,
-                    description = description,
-                    dataStoreName = dataStoreName,
-                    default = default,
-                    onChanged = onChange
-                )
-            }
+            key: String = "",
+            onChange: (() -> Unit)? = null
+        ) = StringSetSettingObject(
+            key = key.isNotBlankKey(),
+            title = title,
+            description = description,
+            dataStoreName = dataStoreName,
+            default = default,
+            onChanged = onChange
+        )
     }
 }
 
@@ -356,24 +317,23 @@ data class StringListSettingObject(
     override fun decode(raw: Any?): List<String> = getStringListStrict(raw, default)
 
     companion object {
-        inline fun <reified T> MapSettingsStore.stringList(
+        fun MapSettingsStore.stringList(
             title: Int?,
             description: Int?,
             default: List<String>,
-            noinline onChange: (() -> Unit)? = null
-        ): ReadOnlyProperty<T, StringListSettingObject> =
-            ReadOnlyProperty { _, property ->
-                StringListSettingObject(
-                    key = property.name,
-                    title = title,
-                    description = description,
-                    dataStoreName = dataStoreName,
-                    default = default,
-                    onChanged = onChange
-                )
-            }
+            key: String = "",
+            onChange: (() -> Unit)? = null
+        ) = StringListSettingObject(
+            key = key.isNotBlankKey(),
+            title = title,
+            description = description,
+            dataStoreName = dataStoreName,
+            default = default,
+            onChanged = onChange
+        )
     }
 }
+
 
 data class EnumSettingObject<E : Enum<E>>(
     override val key: String,
@@ -390,25 +350,24 @@ data class EnumSettingObject<E : Enum<E>>(
     override fun decode(raw: Any?): E = getEnumStrict(raw, default, enumClass)
 
     companion object {
-        inline fun <reified T, E : Enum<E>> MapSettingsStore.enum(
+        fun <E : Enum<E>> MapSettingsStore.enum(
             title: Int?,
             description: Int?,
             default: E,
             enumClass: Class<E>,
-            noinline onChange: (() -> Unit)? = null
-        ): ReadOnlyProperty<T, EnumSettingObject<E>> =
-            ReadOnlyProperty { _, property ->
-                EnumSettingObject(
-                    key = property.name,
-                    title = title,
-                    description = description,
-                    dataStoreName = dataStoreName,
-                    default = default,
-                    enumClass = enumClass,
-                    onChanged = onChange
-                )
-            }
+            key: String = "",
+            onChange: (() -> Unit)? = null
+        ) = EnumSettingObject(
+            key = key.isNotBlankKey(),
+            title = title,
+            description = description,
+            dataStoreName = dataStoreName,
+            default = default,
+            enumClass = enumClass,
+            onChanged = onChange
+        )
     }
+
 
 }
 
@@ -426,25 +385,24 @@ data class EnumListSettingObject<E : Enum<E>>(
     override fun decode(raw: Any?): List<E> = getEnumListStrict(raw, default, enumClass)
 
     companion object {
-        inline fun <reified T, E : Enum<E>> MapSettingsStore.enumList(
+        fun <E : Enum<E>> MapSettingsStore.enumList(
             title: Int?,
             description: Int?,
             default: List<E>,
             enumClass: Class<E>,
-            noinline onChange: (() -> Unit)? = null
-        ): ReadOnlyProperty<T, EnumListSettingObject<E>> =
-            ReadOnlyProperty { _, property ->
-                EnumListSettingObject(
-                    key = property.name,
-                    title = title,
-                    description = description,
-                    dataStoreName = dataStoreName,
-                    default = default,
-                    enumClass = enumClass,
-                    onChanged = onChange
-                )
-            }
+            key: String = "",
+            onChange: (() -> Unit)? = null
+        ) = EnumListSettingObject(
+            key = key.isNotBlankKey(),
+            title = title,
+            description = description,
+            dataStoreName = dataStoreName,
+            default = default,
+            enumClass = enumClass,
+            onChanged = onChange
+        )
     }
+
 }
 
 data class ColorSettingObject(
@@ -461,24 +419,23 @@ data class ColorSettingObject(
     override fun decode(raw: Any?): Color = getColorStrict(raw, default)
 
     companion object {
-        inline fun <reified T> MapSettingsStore.color(
+        fun MapSettingsStore.color(
             title: Int?,
             description: Int?,
             default: Color,
-            noinline onChange: (() -> Unit)? = null
-        ): ReadOnlyProperty<T, ColorSettingObject> =
-            ReadOnlyProperty { _, property ->
-                ColorSettingObject(
-                    key = property.name,
-                    title = title,
-                    description = description,
-                    dataStoreName = dataStoreName,
-                    default = default,
-                    onChanged = onChange
-                )
-            }
+            key: String = "",
+            onChange: (() -> Unit)? = null
+        ) = ColorSettingObject(
+            key = key.takeIf { it.isNotEmpty() } ?: error("Key must not be empty"),
+            title = title,
+            description = description,
+            dataStoreName = dataStoreName,
+            default = default,
+            onChanged = onChange
+        )
     }
 }
+
 
 data class ActionSettingObject(
     override val key: String,
@@ -494,23 +451,22 @@ data class ActionSettingObject(
     override fun decode(raw: Any?): Action = getActionStrict(raw, default)
 
     companion object {
-        inline fun <reified T> MapSettingsStore.action(
+        fun MapSettingsStore.action(
             title: Int?,
             description: Int?,
             default: Action,
-            noinline onChange: (() -> Unit)? = null
-        ): ReadOnlyProperty<T, ActionSettingObject> =
-            ReadOnlyProperty { _, property ->
-                ActionSettingObject(
-                    key = property.name,
-                    title = title,
-                    description = description,
-                    dataStoreName = dataStoreName,
-                    default = default,
-                    onChanged = onChange
-                )
-            }
+            key: String = "",
+            onChange: (() -> Unit)? = null
+        ) = ActionSettingObject(
+            key = key.isNotBlankKey(),
+            title = title,
+            description = description,
+            dataStoreName = dataStoreName,
+            default = default,
+            onChanged = onChange
+        )
     }
+
 }
 
 data class PointSettingObject(
@@ -527,23 +483,22 @@ data class PointSettingObject(
     override fun decode(raw: Any?): Point = getPointStrict(raw, default)
 
     companion object {
-        inline fun <reified T> MapSettingsStore.point(
+        fun MapSettingsStore.point(
             title: Int?,
             description: Int?,
             default: Point,
-            noinline onChange: (() -> Unit)? = null
-        ): ReadOnlyProperty<T, PointSettingObject> =
-            ReadOnlyProperty { _, property ->
-                PointSettingObject(
-                    key = property.name,
-                    title = title,
-                    description = description,
-                    dataStoreName = dataStoreName,
-                    default = default,
-                    onChanged = onChange
-                )
-            }
+            key: String = "",
+            onChange: (() -> Unit)? = null
+        ) = PointSettingObject(
+            key = key.isNotBlankKey(),
+            title = title,
+            description = description,
+            dataStoreName = dataStoreName,
+            default = default,
+            onChanged = onChange
+        )
     }
+
 }
 
 data class IconShapeSettingObject(
@@ -560,21 +515,20 @@ data class IconShapeSettingObject(
     override fun decode(raw: Any?): IconShape = IconShapeJson.decode(raw, default)
 
     companion object {
-        inline fun <reified T> MapSettingsStore.shape(
+        fun MapSettingsStore.shape(
             title: Int?,
             description: Int?,
             default: IconShape,
-            noinline onChange: (() -> Unit)? = null
-        ): ReadOnlyProperty<T, IconShapeSettingObject> =
-            ReadOnlyProperty { _, property ->
-                IconShapeSettingObject(
-                    key = property.name,
-                    title = title,
-                    description = description,
-                    dataStoreName = dataStoreName,
-                    default = default,
-                    onChanged = onChange
-                )
-            }
+            key: String = "",
+            onChange: (() -> Unit)? = null
+        ) = IconShapeSettingObject(
+            key = key.isNotBlankKey(),
+            title = title,
+            description = description,
+            dataStoreName = dataStoreName,
+            default = default,
+            onChanged = onChange
+        )
     }
+
 }

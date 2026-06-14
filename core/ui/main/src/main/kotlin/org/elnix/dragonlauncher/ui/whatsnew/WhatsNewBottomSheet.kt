@@ -8,7 +8,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -24,8 +23,6 @@ import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.rememberVersionCode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.openUrl
-import org.elnix.dragonlauncher.logging.SETTINGS_TAG
-import org.elnix.dragonlauncher.logging.logWtf
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -41,9 +38,6 @@ fun WhatsNewBottomSheet() {
     val lastSeenVersionCodeWhatsNew by PrivateSettingsStore.lastSeenVersionCodeWhatsNew.asState()
     val versionCode by rememberVersionCode()
 
-    LaunchedEffect(lastSeenVersionCodeWhatsNew) {
-        logWtf(SETTINGS_TAG) { "lastSeenCodeWhatsNew :$lastSeenVersionCodeWhatsNew" }
-    }
     if (lastSeenVersionCodeWhatsNew >= versionCode) return
 
     val updates by produceState(initialValue = emptyList()) {

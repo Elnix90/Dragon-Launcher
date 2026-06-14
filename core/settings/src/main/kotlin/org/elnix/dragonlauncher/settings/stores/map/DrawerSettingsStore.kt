@@ -17,7 +17,11 @@ import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companio
 import org.elnix.dragonlauncher.settings.bases.objects.StringListSettingObject.Companion.stringList
 import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
+import org.elnix.settings.NoAll
+import org.elnix.settings.SettingKey
+import org.elnix.settings.SettingStore
 
+@SettingStore
 object DrawerSettingsStore : MapSettingsStore(DataStoreName.DRAWER) {
 
     override val ALL: List<BaseSettingObject<*, *>> by lazy {
@@ -60,234 +64,272 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.DRAWER) {
         )
     }
 
-    val autoOpenSingleMatch by boolean(
+    @SettingKey
+    val autoOpenSingleMatch = boolean(
         title = R.string.auto_launch_single_match,
         description = R.string.auto_launch_single_match_desc,
         default = true
     )
-    val disableAutoLaunchOnSpaceFirstChar by boolean(
+
+    @SettingKey
+    val disableAutoLaunchOnSpaceFirstChar = boolean(
         title = R.string.disable_auto_launch_on_space_first_char,
         description = R.string.disable_auto_launch_on_space_first_char_desc,
         default = true
     )
 
-    val showAppIconsInDrawer by boolean(
+    @SettingKey
+    val showAppIconsInDrawer = boolean(
         title = R.string.show_app_icons_in_drawer,
         description = R.string.show_app_icons_in_drawer_desc,
         default = true
     )
 
-    val showAppLabelInDrawer by boolean(
+    @SettingKey
+    val showAppLabelInDrawer = boolean(
         title = R.string.show_app_labels_in_drawer,
         description = R.string.show_app_labels_in_drawer_desc,
         default = true
     )
 
-    val autoShowKeyboardOnDrawer by boolean(
+    @SettingKey
+    val autoShowKeyboardOnDrawer = boolean(
         title = R.string.auto_show_keyboard,
         description = R.string.auto_show_keyboard_desc,
         default = true
     )
 
-    val tapEmptySpaceAction by enum(
+    @SettingKey
+    val tapEmptySpaceAction = enum(
         title = R.string.tap_empty_space_action,
         description = null,
         default = DrawerActions.Close,
         enumClass = DrawerActions::class.java
     )
 
-    val gridSize by int(
+    @SettingKey
+    val gridSize = int(
         title = R.string.grid_size,
         description = null,
         default = 6,
         allowedRange = 1..15
     )
 
-    val horizontalAlignment by enum(
+    @SettingKey
+    val horizontalAlignment = enum(
         title = null,
         description = null,
         default = HorizontalAlignment.Start,
         enumClass = HorizontalAlignment::class.java
     )
 
-    val lastWorkspaceUsed by string(
+    @SettingKey
+    val lastWorkspaceUsed = string(
         title = null,
         description = null,
         default = "",
     )
 
-    val leftDrawerAction by enum(
+    @SettingKey
+    val leftDrawerAction = enum(
         title = R.string.left_drawer_action,
         description = null,
         default = DrawerActions.defaultLeftDrawerAction,
         enumClass = DrawerActions::class.java
     )
 
-    val rightDrawerAction by enum(
+    @SettingKey
+    val rightDrawerAction = enum(
         title = R.string.right_drawer_action,
         description = null,
         default = DrawerActions.defaultRightDrawerAction,
         enumClass = DrawerActions::class.java
     )
 
-    val leftDrawerWidth by dp(
+    @SettingKey
+    val leftDrawerWidth = dp(
         title = R.string.left_drawer_width,
         description = null,
         default = 0.dp,
         allowedRange = 0.dp..300.dp
     )
 
-    val rightDrawerWidth by dp(
+    @SettingKey
+    val rightDrawerWidth = dp(
         title = R.string.right_drawer_width,
         description = null,
         default = 0.dp,
         allowedRange = 0.dp..300.dp
     )
 
-    val drawerEnterAction by enum(
+    @SettingKey
+    val drawerEnterAction = enum(
         title = R.string.drawer_enter_key_action,
         description = null,
         default = DrawerActions.defaultEnterAction,
         enumClass = DrawerActions::class.java
     )
 
-    val drawerHomeAction by enum(
+    @SettingKey
+    val drawerHomeAction = enum(
         title = R.string.home_action,
         description = R.string.home_action_desc,
         default = DrawerActions.defaultHomeAction,
         enumClass = DrawerActions::class.java
     )
 
-    val scrollDownDrawerAction by enum(
+    @SettingKey
+    val scrollDownDrawerAction = enum(
         title = R.string.scroll_down_action,
         description = null,
         default = DrawerActions.defaultScrollDownAction,
         enumClass = DrawerActions::class.java
     )
 
-    val scrollUpDrawerAction by enum(
+    @SettingKey
+    val scrollUpDrawerAction = enum(
         title = R.string.scroll_up_action,
         description = null,
         default = DrawerActions.defaultScrollUpAction,
         enumClass = DrawerActions::class.java
     )
 
-    val backDrawerAction by enum(
+    @SettingKey
+    val backDrawerAction = enum(
         title = R.string.back_action,
         description = null,
         default = DrawerActions.defaultBackAction,
         enumClass = DrawerActions::class.java
     )
 
-    val iconShape by shape(
+    @SettingKey
+    val iconShape = shape(
         title = R.string.edit_icons_shape,
         description = R.string.edit_icons_shape_desc,
         default = IconShape.PlatformDefault
     )
 
-    val iconsSpacingHorizontal by dp(
+    @SettingKey
+    val iconsSpacingHorizontal = dp(
         title = R.string.icons_spacing_horizontal,
         description = R.string.icons_spacing_horizontal_desc,
         default = 8.dp,
         allowedRange = 0.dp..50.dp
     )
 
-    val iconsSpacingVertical by dp(
+    @SettingKey
+    val iconsSpacingVertical = dp(
         title = R.string.icons_spacing_vertical,
         description = R.string.icons_spacing_vertical_desc,
         default = 8.dp,
         allowedRange = 0.dp..50.dp
 
     )
-    val iconSize by dp(
+
+    @SettingKey
+    val iconSize = dp(
         description = R.string.max_icon_size_desc,
         title = R.string.max_icon_size,
         default = 96.dp,
         allowedRange = 0.dp..200.dp
     )
 
-    val useCategory by boolean(
+    @SettingKey
+    val useCategory = boolean(
         title = R.string.use_categories,
         description = R.string.use_categories_desc,
         default = false
     )
 
-    val categoryGridWidth by int(
+    @SettingKey
+    val categoryGridWidth = int(
         title = R.string.category_grid_width,
         description = null,
         default = 3,
         allowedRange = 1..4
     )
 
-    val categoryGridCells by int(
+    @SettingKey
+    val categoryGridCells = int(
         title = R.string.category_cells,
         description = R.string.category_cells,
         default = 3,
         allowedRange = 2..5
     )
 
-    val showCategoryName by boolean(
+    @SettingKey
+    val showCategoryName = boolean(
         title = R.string.show_category_name,
         description = R.string.show_category_name_desc,
         default = true
     )
 
-    val showSearchBar by boolean(
+    @SettingKey
+    val showSearchBar = boolean(
         title = R.string.search_bar,
         description = null,
         default = true
     )
 
-    val showRecentlyUsedApps by boolean(
+    @SettingKey
+    val showRecentlyUsedApps = boolean(
         default = false,
         title = R.string.show_recently_used_apps,
         description = R.string.show_recently_used_apps_desc
     )
 
-    val recentlyUsedAppsCount by int(
+    @SettingKey
+    val recentlyUsedAppsCount = int(
         default = 5,
         title = R.string.recently_used_apps_count,
         description = R.string.recently_used_apps_count_desc,
         allowedRange = 1..20
     )
 
-    val recentlyUsedPackages by stringList(
+    @SettingKey
+    @NoAll
+    val recentlyUsedPackages = stringList(
         title = null,
         description = null,
         default = emptyList()
     )
 
-    val pullDownAnimations by boolean(
+    @SettingKey
+    val pullDownAnimations = boolean(
         title = R.string.pull_down_animations,
         description = R.string.pull_down_animations_desc,
         default = true
     )
 
-    val pullDownWallPaperDim by boolean(
+    @SettingKey
+    val pullDownWallPaperDim = boolean(
         title = R.string.pull_down_wallpaper_dim,
         description = R.string.pull_down_wallpaper_dim_desc,
         default = true
     )
 
-//    val pullDownIconFade by boolean(
+    //    @SettingKey
+//    val pullDownIconFade = boolean(
 //        title = null,
 //        description = null,
 //        default = true
 //    )
 
-    val pullDownScaleIn by boolean(
-        title = R.string.pull_down_scale_in,
-        description = R.string.pull_down_scale_in_desc,
-        default = true
-    )
+        @SettingKey
+        val pullDownScaleIn = boolean(
+            title = R.string.pull_down_scale_in,
+            description = R.string.pull_down_scale_in_desc,
+            default = true
+        )
 
-    /**
-     * The order of the search bar / recently used in drawer
-     */
-    val toolbarsOrder by enumList(
-        title = R.string.toolbars_order,
-        description = null,
-        default = DrawerToolbar.defaultDrawerToolbarOrder,
-        enumClass = DrawerToolbar::class.java
-    )
+        /**
+         * The order of the search bar / recently used in drawer
+         */
+        @SettingKey
+        val toolbarsOrder = enumList(
+            title = R.string.toolbars_order,
+            description = null,
+            default = DrawerToolbar.defaultDrawerToolbarOrder,
+            enumClass = DrawerToolbar::class.java
+        )
 }
