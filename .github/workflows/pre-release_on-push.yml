@@ -11,7 +11,7 @@ on:
       - 'gradle/**'
       - '**.kt'
       - '**.kts'
-      - '**.java'
+      - '**.kotlin'
   workflow_dispatch:
     inputs:
       disable_gradle_cache:
@@ -35,7 +35,7 @@ jobs:
           fetch-depth: 1
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-kotlin@v4
         with:
           distribution: temurin
           java-version: 21
