@@ -35,12 +35,13 @@ abstract class JsonArraySettingsStore(
      * Underlying setting that stores the JSON payload as a raw string.
      */
     val jsonSetting = StringSettingObject(
-        key = "jsonSetting",
+        key = dataStoreName.value,
         default = "",
         title = null,
         description = null,
         dataStoreName = dataStoreName,
-        onChanged = null
+        onChanged = null,
+        backupable = true
     )
 
     final override val ALL: List<BaseSettingObject<*, *>> = listOf(jsonSetting)

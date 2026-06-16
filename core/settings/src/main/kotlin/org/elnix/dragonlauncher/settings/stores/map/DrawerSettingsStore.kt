@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.settings.NoAll
 import io.github.elnix90.settings.SettingKey
 import io.github.elnix90.settings.SettingStore
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
@@ -22,7 +21,6 @@ import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 @SettingStore
 object DrawerSettingsStore : MapSettingsStore(DataStoreName.DRAWER) {
-
 
     @SettingKey
     val autoOpenSingleMatch = boolean(
@@ -247,12 +245,12 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.DRAWER) {
     )
 
     @SettingKey
-    @NoAll
     val recentlyUsedPackages = stringList(
         title = null,
         description = null,
         default = emptyList(),
-        onChange = {}
+        onChange = {},
+        backupable = false
     )
 
     @SettingKey

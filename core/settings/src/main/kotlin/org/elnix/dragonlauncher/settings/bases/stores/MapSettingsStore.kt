@@ -32,7 +32,7 @@ abstract class MapSettingsStore(
 ) : BaseSettingsStore<Map<String, Any?>, JSONObject>(dataStoreName) {
 
     /**
-     * This value is auto inferred by either the [Settings compiler plugin](https://github.com/Elnix90/Settings-Plugin)
+     * This value is auto inferred by the [Settings compiler plugin](https://github.com/Elnix90/Settings-Plugin)
      */
     override val ALL: List<BaseSettingObject<*, *>>
         get() = emptyList()
@@ -48,7 +48,7 @@ abstract class MapSettingsStore(
             ALL.forEach { setting ->
                 if (forceAllKeys) {
                     putIfNotNull(setting.key, setting.getEncoded(ctx))
-                } else {
+                } else if (setting.backupable) {
                     putIfNonDefault(setting.key, setting.getEncoded(ctx), setting.default)
                 }
             }
@@ -73,9 +73,9 @@ abstract class MapSettingsStore(
      */
     final override suspend fun exportForBackup(ctx: Context, forceAllKeys: Boolean): JSONObject? {
 
-        val json = getAll(ctx, forceAllKeys)
-        return if (json.isNotEmpty()) {
-            JSONObject(json)
+        val map = getAll(ctx, forceAllKeys)
+        return if (map.isNotEmpty()) {
+            JSONObject(map)
         } else null
     }
 
@@ -91,7 +91,6 @@ abstract class MapSettingsStore(
                 val raw = json.opt(key)
                 val typedValue = setting.decode(raw)
 
-//                logW(SETTINGS_TAG, "[IMPORT FROM BACKUP] Raw : $raw; Typed value : $typedValue")
                 setting.setAny(ctx, typedValue)
             }
         }

@@ -47,6 +47,7 @@ sealed class BaseSettingObject<TYPED, ENCODED> {
     abstract fun encode(value: TYPED): ENCODED?
     abstract fun decode(raw: Any?): TYPED
     abstract var onChanged: (() -> Unit)?
+    abstract val backupable: Boolean
 
 
     /**
