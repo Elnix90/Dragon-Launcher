@@ -247,7 +247,7 @@ fun Context.findFragmentActivity(): FragmentActivity? {
 }
 
 fun Context.openDefaultLauncherSettings() {
-    tryStartActivity(Intent(Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS))
+    tryStartActivity(Intent(Settings.ACTION_HOME_SETTINGS))
 }
 
 data class InstallSourceInfoCompat(
