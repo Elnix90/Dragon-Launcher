@@ -1,39 +1,17 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
 import android.util.Log
+import io.github.elnix90.settings.SettingKey
+import io.github.elnix90.settings.SettingStore
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
 import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
 import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
-import org.elnix.settings.SettingKey
-import org.elnix.settings.SettingStore
 
 @SettingStore
 object DebugSettingsStore : MapSettingsStore(DataStoreName.DEBUG) {
-
-    override val ALL: List<BaseSettingObject<*, *>> by lazy {
-        listOf(
-            this.debugEnabled,
-            this.debugInfos,
-            this.settingsDebugInfo,
-            this.widgetsDebugInfo,
-            this.workspacesDebugInfo,
-            this.forceAppLanguageSelector,
-            this.autoRaiseDragonOnSystemLauncher,
-            this.systemLauncherPackageName,
-            this.useAccessibilityInsteadOfContextToExpandActionPanel,
-            this.enableLogging,
-            this.disableExtensionSignatureCheck,
-            this.snackBarLogLevel,
-            this.filesLogLevel,
-            this.showFps,
-            this.filterTag,
-            this.showKillLauncherActionInActionPicker,
-        )
-    }
 
     @SettingKey
     val debugEnabled = boolean(

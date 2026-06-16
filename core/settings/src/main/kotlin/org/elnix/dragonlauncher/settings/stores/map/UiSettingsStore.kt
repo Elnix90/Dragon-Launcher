@@ -1,53 +1,18 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
+import io.github.elnix90.settings.SettingKey
+import io.github.elnix90.settings.SettingStore
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
 import org.elnix.dragonlauncher.settings.bases.objects.FloatSettingObject.Companion.float
 import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
 import org.elnix.dragonlauncher.settings.bases.objects.StringSetSettingObject.Companion.stringSet
 import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
-import org.elnix.settings.SettingKey
-import org.elnix.settings.SettingStore
 
 @SettingStore
 object UiSettingsStore : MapSettingsStore(DataStoreName.UI) {
-
-    override val ALL: List<BaseSettingObject<*, *>> by lazy {
-        listOf(
-            this.rgbLoading,
-            this.rgbLine,
-            this.showLaunchingAppLabel,
-            this.showLaunchingAppIcon,
-            this.showAppLaunchingPreview,
-            this.fullScreen,
-            this.showCirclePreview,
-            this.snapPoints,
-            this.autoSeparatePoints,
-            this.freeMoveDraggedPoint,
-            this.showAppPreviewIconCenterStartPosition,
-            this.linePreviewSnapToAction,
-            this.showAllActionsOnCurrentCircle,
-            this.showAllActionsOnCurrentNest,
-            this.appLabelIconOverlayTopPadding,
-            this.appLabelOverlaySize,
-            this.appIconOverlaySize,
-            this.wallpaperDimMainScreen,
-            this.wallpaperDimDrawerScreen,
-            this.globalFont,
-            this.maxNestsDepth,
-            this.maxLiveNestsDepth,
-            this.useCustomColorChannels,
-            this.mainScreenLayers,
-            this.cellSizeDp,
-            this.showTooltipsOnAddPointDialog,
-            this.userThemes,
-            this.multiplyOrSubtractOpacityInLiveNests,
-            this.doNotRemindMeAgainPinLockWarning
-        )
-    }
 
     /** Use the computing of HSV color to produce a color that depends on the angle / progress */
     @SettingKey

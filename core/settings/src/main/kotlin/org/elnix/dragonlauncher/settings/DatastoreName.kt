@@ -54,30 +54,29 @@ import org.elnix.dragonlauncher.settings.stores.`object`.WorkspaceSettingsStore
 
 enum class DataStoreName(
     val value: String,
-    val backupKey: String,
     val userBackup: Boolean = true
 ) {
-    UI("uiDatastore", "ui"),
-    ICONS("iconsDatastore", "icons"),
-    COLOR_MODE("colorModeDatastore", "color_mode"),
-    COLOR("colorDatastore", "color"),
-    PRIVATE_SETTINGS("privateSettingsStore", "private", false),
-    POINTS("pointsDatastore", "points"),
-    NESTS("nestsDatastore", "nests"),
-    LANGUAGE("languageDatastore", "language"),
-    DRAWER("drawerDatastore", "drawer"),
-    DEBUG("debugDatastore", "debug"),
-    APP_OVERRIDES("AppOverridesDatastore", "app_overrides"),
-    WORKSPACES("workspacesDataStore", "workspaces"),
-    BEHAVIOR("behaviorDatastore", "behavior"),
-    BACKUP("backupDatastore", "backup"),
-    STATUS_BAR("statusDatastore", "status_bar"),
-    WIDGETS("widgetsDatastore", "widgets"),
-    WELLBEING("wellbeingDatastore", "wellbeing"),
-    SWIPE_MAP("swipeMapDataStore", "swipe_map"),
-    STATUS_BAR_JSON("statusBarJsonDataStore", "status_bar_json"),
-    ANGLE_LINE("AngleLineDatastore", "angle_line"),
-    HOLD_TO_ACTIVATE("HoldTOActivateDatastore", "hold_to_activate")
+    UI("ui"),
+    ICONS("icons"),
+    COLOR_MODE("color_mode"),
+    COLOR("color"),
+    PRIVATE_SETTINGS("private", false),
+    POINTS("points"),
+    NESTS("nests"),
+    LANGUAGE("language"),
+    DRAWER("drawer"),
+    DEBUG("debug"),
+    APP_OVERRIDES("app_overrides"),
+    WORKSPACES("workspaces"),
+    BEHAVIOR("behavior"),
+    BACKUP("backup"),
+    STATUS_BAR("status_bar"),
+    WIDGETS("widgets"),
+    WELLBEING("wellbeing"),
+    SWIPE_MAP("swipe_map"),
+    STATUS_BAR_JSON("status_bar_json"),
+    ANGLE_LINE("angle_line"),
+    HOLD_TO_ACTIVATE("hold_to_activate")
 }
 
 
@@ -118,13 +117,13 @@ val allStores: Map<DataStoreName, BaseSettingsStore<*, *>> by lazy {
     }
 }
 
-
-val themeDataStores: Set<DataStoreName> = setOf(UI, COLOR_MODE, COLOR, ANGLE_LINE, HOLD_TO_ACTIVATE)
+val themeDataStores: Set<DataStoreName> by lazy {
+    setOf(UI, COLOR_MODE, COLOR, ANGLE_LINE, HOLD_TO_ACTIVATE)
+}
 
 val backupableStores: Map<DataStoreName, BaseSettingsStore<*, *>> by lazy {
     allStores.filterKeys { it.userBackup }
 }
-
 
 suspend fun clearAllData(ctx: Context) = coroutineScope {
     DataStoreName.entries.map { dataStoreName ->

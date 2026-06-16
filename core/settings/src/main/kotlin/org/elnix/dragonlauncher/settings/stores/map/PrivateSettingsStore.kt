@@ -1,35 +1,19 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
+import io.github.elnix90.settings.SettingKey
+import io.github.elnix90.settings.SettingStore
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
 import org.elnix.dragonlauncher.settings.bases.objects.EnumSettingObject.Companion.enum
 import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
 import org.elnix.dragonlauncher.settings.bases.objects.LongSettingObject.Companion.long
 import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
-import org.elnix.settings.SettingKey
 
+@SettingStore
 object PrivateSettingsStore : MapSettingsStore(DataStoreName.PRIVATE_SETTINGS) {
-
-    override val ALL: List<BaseSettingObject<*, *>> by lazy {
-        listOf(
-            this.hasSeenWelcome,
-            this.hasInitialized,
-            this.showSetDefaultLauncherBanner,
-            this.hideBetaVersionWarning,
-            this.lastSeenVersionCodeWhatsNew,
-            this.lastSeenVersionCodeGoogleLockdownWarning,
-            this.lockPinHash,
-            this.lockMethod,
-            this.lastBackupTime,
-            this.welcomeScreenTempPage,
-            this.lastCrashStackTrace,
-            this.isInDragAroundMode
-        )
-    }
 
     @SettingKey
     val hasSeenWelcome = boolean(

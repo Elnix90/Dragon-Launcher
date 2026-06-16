@@ -107,9 +107,9 @@ object SettingsBackupManager {
             val dataStoreName = entry.key
             val settingsStore = entry.value
 
-            if (dataStoreName.backupKey in requestedStores.map { it.backupKey }) {
+            if (dataStoreName.value in requestedStores.map { it.value }) {
                 settingsStore.exportForBackup(ctx, forceAllKeys)?.let {
-                    json.put(dataStoreName.backupKey, it)
+                    json.put(dataStoreName.value, it)
                 }
             }
         }
@@ -156,8 +156,8 @@ object SettingsBackupManager {
             val dataStoreName = entry.key
             val settingsStore = entry.value
 
-            val key = dataStoreName.backupKey
-            if (key in requestedStores.map { it.backupKey }) {
+            val key = dataStoreName.value
+            if (key in requestedStores.map { it.value }) {
 
                 val raw = json.opt(key) ?: return@forEach
 

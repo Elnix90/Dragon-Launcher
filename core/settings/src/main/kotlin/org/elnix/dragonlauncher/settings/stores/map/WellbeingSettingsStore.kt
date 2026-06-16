@@ -1,16 +1,15 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
+import io.github.elnix90.settings.SettingKey
+import io.github.elnix90.settings.SettingStore
 import org.elnix.dragonlauncher.base.model.models.ReminderMode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
 import org.elnix.dragonlauncher.settings.bases.objects.EnumSettingObject.Companion.enum
 import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
 import org.elnix.dragonlauncher.settings.bases.objects.StringSetSettingObject.Companion.stringSet
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
-import org.elnix.settings.SettingKey
-import org.elnix.settings.SettingStore
 
 /**
  * Settings store for the Digital Wellbeing feature.
@@ -18,23 +17,6 @@ import org.elnix.settings.SettingStore
  */
 @SettingStore
 object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
-
-    override val ALL: List<BaseSettingObject<*, *>> by lazy {
-        listOf(
-            this.socialMediaPauseEnabled,
-            this.guiltModeEnabled,
-            this.pauseDurationSeconds,
-            this.showUsageStats,
-            this.reminderEnabled,
-            this.reminderIntervalMinutes,
-            this.reminderMode,
-            this.popupShowSessionTime,
-            this.popupShowTodayTime,
-            this.popupShowRemainingTime,
-            this.returnToLauncherEnabled,
-            this.pausedApps
-        )
-    }
 
     /**
      * Whether the social media pause feature is enabled

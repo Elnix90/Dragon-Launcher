@@ -136,7 +136,7 @@ fun StoreItem(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(settingsStore.dataStoreName.backupKey)
+        Text(settingsStore.dataStoreName.value)
         Checkbox(
             checked = selected[dataStoreName] ?: true,
             onCheckedChange = null

@@ -7,9 +7,6 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.settings) apply false
 
-//    alias(libs.plugins.dokka)
-//    alias(libs.plugins.detekt)
-
     alias(libs.plugins.dependency.analysis)
 }
 
@@ -25,5 +22,4 @@ dependencyAnalysis {
 
 subprojects {
     apply(plugin = "com.autonomousapps.dependency-analysis")
-//    apply(plugin = "org.jetbrains.dokka")
 }

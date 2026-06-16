@@ -1,13 +1,15 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.settings.NoAll
+import io.github.elnix90.settings.SettingKey
+import io.github.elnix90.settings.SettingStore
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar
 import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
 import org.elnix.dragonlauncher.settings.bases.objects.DpSettingObject.Companion.dp
 import org.elnix.dragonlauncher.settings.bases.objects.EnumListSettingObject.Companion.enumList
@@ -17,52 +19,10 @@ import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companio
 import org.elnix.dragonlauncher.settings.bases.objects.StringListSettingObject.Companion.stringList
 import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
-import org.elnix.settings.NoAll
-import org.elnix.settings.SettingKey
-import org.elnix.settings.SettingStore
 
 @SettingStore
 object DrawerSettingsStore : MapSettingsStore(DataStoreName.DRAWER) {
 
-    override val ALL: List<BaseSettingObject<*, *>> by lazy {
-        listOf(
-            this.autoOpenSingleMatch,
-            this.disableAutoLaunchOnSpaceFirstChar,
-            this.showAppIconsInDrawer,
-            this.showAppLabelInDrawer,
-            this.autoShowKeyboardOnDrawer,
-            this.tapEmptySpaceAction,
-            this.gridSize,
-            this.horizontalAlignment,
-            this.lastWorkspaceUsed,
-            this.leftDrawerAction,
-            this.rightDrawerAction,
-            this.leftDrawerWidth,
-            this.rightDrawerWidth,
-            this.drawerEnterAction,
-            this.drawerHomeAction,
-            this.scrollDownDrawerAction,
-            this.scrollUpDrawerAction,
-            this.iconShape,
-            this.iconsSpacingVertical,
-            this.iconsSpacingHorizontal,
-            this.iconSize,
-            this.useCategory,
-            this.showSearchBar,
-            this.showRecentlyUsedApps,
-            this.recentlyUsedAppsCount,
-//            this.recentlyUsedPackages, // Don't put it in the ALL value, this way it won't be backup, and the onSetting changed wont trigger on new app launch
-            this.categoryGridWidth,
-            this.categoryGridCells,
-            this.showCategoryName,
-            this.backDrawerAction,
-            this.pullDownAnimations,
-            this.pullDownWallPaperDim,
-//            this.pullDownIconFade,
-            this.pullDownScaleIn,
-            this.toolbarsOrder
-        )
-    }
 
     @SettingKey
     val autoOpenSingleMatch = boolean(
@@ -291,7 +251,8 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.DRAWER) {
     val recentlyUsedPackages = stringList(
         title = null,
         description = null,
-        default = emptyList()
+        default = emptyList(),
+        onChange = {}
     )
 
     @SettingKey

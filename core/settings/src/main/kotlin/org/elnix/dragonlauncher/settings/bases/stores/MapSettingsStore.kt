@@ -2,6 +2,7 @@ package org.elnix.dragonlauncher.settings.bases.stores
 
 import android.content.Context
 import org.elnix.dragonlauncher.settings.DataStoreName
+import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.putIfNonDefault
 import org.elnix.dragonlauncher.settings.bases.putIfNotNull
 import org.json.JSONObject
@@ -29,6 +30,13 @@ import org.json.JSONObject
 abstract class MapSettingsStore(
     final override val dataStoreName: DataStoreName
 ) : BaseSettingsStore<Map<String, Any?>, JSONObject>(dataStoreName) {
+
+    /**
+     * This value is auto inferred by either the [Settings compiler plugin](https://github.com/Elnix90/Settings-Plugin)
+     */
+    override val ALL: List<BaseSettingObject<*, *>>
+        get() = emptyList()
+
 
     /**
      * Reads all settings from DataStore and returns them as a map.

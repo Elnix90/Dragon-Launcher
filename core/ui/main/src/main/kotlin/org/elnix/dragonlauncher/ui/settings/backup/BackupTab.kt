@@ -232,7 +232,7 @@ fun BackupTab(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = backupableStores[datastoreName]!!.dataStoreName.backupKey,
+                            text = backupableStores[datastoreName]!!.dataStoreName.value,
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurface
                         )

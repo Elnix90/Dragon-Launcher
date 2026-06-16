@@ -29,7 +29,7 @@ fun ImportSettingsDialog(
 
     // Filter stores that exist in backup JSON
     val availableStores = backupableStores.filter {
-        backupJson.has(it.key.backupKey) ||
+        backupJson.has(it.key.value) ||
         backupJson.has("actions") // Old actions store, for legacy support
     }
 

@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.elnix.dragonlauncher.logging.SETTINGS_TAG
 import org.elnix.dragonlauncher.logging.logD
+import org.elnix.dragonlauncher.logging.logV
 import org.elnix.dragonlauncher.settings.allStores
 import org.elnix.dragonlauncher.settings.stores.map.LanguageSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
@@ -61,7 +62,10 @@ class DragonLauncherApplication : Application() {
 
     fun initializeAllStores() {
         allStores.forEach { (name, store) ->
-            logD(SETTINGS_TAG) { "Initialized $name: $store"}
+            logD(SETTINGS_TAG) { "Initialized $name: $store" }
+            store.ALL.forEach {
+                logV(SETTINGS_TAG) { "Store:${store.dataStoreName}: ${it.key}" }
+            }
         }
     }
 }

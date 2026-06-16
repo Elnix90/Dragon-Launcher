@@ -1,32 +1,22 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
+import io.github.elnix90.settings.SettingKey
+import io.github.elnix90.settings.SettingStore
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
 import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
 import org.elnix.dragonlauncher.settings.bases.objects.PointSettingObject.Companion.point
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
-import org.elnix.settings.SettingKey
-import org.elnix.settings.SettingStore
 
 @SettingStore
 object SwipeMapSettingsStore : MapSettingsStore(DataStoreName.SWIPE_MAP) {
 
-    override val ALL: List<BaseSettingObject<*, *>> by lazy {
-        listOf(
-            this.subNestDefaultRadius,
-            this.showSubNestsSlider,
-            this.showAdvancedPointTools,
-            this.defaultPoint
-        )
-    }
-
     @SettingKey
     val subNestDefaultRadius = int(
-        title = R.string.empty_string,
-        description = R.string.empty_string,
+        title = null,
+        description = null,
         default = 35,
         allowedRange = 0..50
     )

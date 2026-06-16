@@ -1003,7 +1003,6 @@
     <string name="adaptify">Adaptify</string>
     <string name="do_not_remind_me_again_pin_lock">Do not remind me again Pin Lock</string>
     <string name="do_not_remind_me_again_pin_lock_desc">Whether to show the pin code warning when setting a pin</string>
-    <string name="empty_string"></string>
     <string name="left_padding_status_bar_desc">Left blank space on the status bar</string>
     <string name="right_padding_status_bar_desc">Right blank space on the status bar</string>
     <string name="top_padding_status_bar_desc">Those who uses that are strange</string>

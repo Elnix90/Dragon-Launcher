@@ -43,9 +43,7 @@ abstract class JsonArraySettingsStore(
         onChanged = null
     )
 
-
-    final override val ALL: List<BaseSettingObject<*, *>>
-        get() = listOf(jsonSetting)
+    final override val ALL: List<BaseSettingObject<*, *>> = listOf(jsonSetting)
 
     /**
      * Reads the JSON string from DataStore and parses it into a [JSONArray].

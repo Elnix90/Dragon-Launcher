@@ -1,33 +1,17 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
+import io.github.elnix90.settings.SettingKey
+import io.github.elnix90.settings.SettingStore
 import org.elnix.dragonlauncher.base.model.models.AngleLineObjects
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
 import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
-import org.elnix.settings.SettingKey
-import org.elnix.settings.SettingStore
+
 
 @SettingStore
 object AngleLineSettingsStore : MapSettingsStore(DataStoreName.ANGLE_LINE) {
-
-    override val ALL: List<BaseSettingObject<*, *>> by lazy {
-        listOf(
-            this.showLineObjectPreview,
-            this.showAngleLineObjectPreview,
-            this.showStartObjectPreview,
-            this.showEndObjectPreview,
-
-            this.lineJson,
-            this.angleLineJson,
-            this.startLineJson,
-            this.endLineJson,
-
-            this.angleLineObjectsOrder
-        )
-    }
 
     @SettingKey
     val showLineObjectPreview = boolean(

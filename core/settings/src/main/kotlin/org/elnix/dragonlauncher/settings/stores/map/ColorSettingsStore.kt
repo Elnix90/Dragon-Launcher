@@ -2,88 +2,17 @@ package org.elnix.dragonlauncher.settings.stores.map
 
 import android.content.Context
 import androidx.compose.ui.graphics.Color
+import io.github.elnix90.settings.SettingKey
+import io.github.elnix90.settings.SettingStore
 import org.elnix.dragonlauncher.base.util.ColorUtils
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.objects.ColorSettingObject
 import org.elnix.dragonlauncher.settings.bases.objects.ColorSettingObject.Companion.color
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
-import org.elnix.settings.SettingKey
-import org.elnix.settings.SettingStore
 
 @SettingStore
 object ColorSettingsStore : MapSettingsStore(DataStoreName.COLOR) {
-
-    override val ALL: List<BaseSettingObject<Color, String>> by lazy {
-        listOf(
-            this.primaryColor,
-            this.onPrimaryColor,
-            this.primaryContainerColor,
-            this.onPrimaryContainerColor,
-            this.inversePrimaryColor,
-            this.secondaryColor,
-            this.onSecondaryColor,
-            this.secondaryContainerColor,
-            this.onSecondaryContainerColor,
-            this.tertiaryColor,
-            this.onTertiaryColor,
-            this.tertiaryContainerColor,
-            this.onTertiaryContainerColor,
-            this.backgroundColor,
-            this.onBackgroundColor,
-            this.surfaceColor,
-            this.onSurfaceColor,
-            this.surfaceVariantColor,
-            this.onSurfaceVariantColor,
-            this.surfaceTintColor,
-            this.inverseSurfaceColor,
-            this.inverseOnSurfaceColor,
-            this.errorColor,
-            this.onErrorColor,
-            this.errorContainerColor,
-            this.onErrorContainerColor,
-            this.outlineColor,
-            this.outlineVariantColor,
-            this.scrimColor,
-            this.surfaceBrightColor,
-            this.surfaceContainerColor,
-            this.surfaceContainerHighColor,
-            this.surfaceContainerHighestColor,
-            this.surfaceContainerLowColor,
-            this.surfaceContainerLowestColor,
-            this.surfaceDimColor,
-            this.primaryFixedColor,
-            this.primaryFixedDimColor,
-            this.onPrimaryFixedColor,
-            this.onPrimaryFixedVariantColor,
-            this.secondaryFixedColor,
-            this.secondaryFixedDimColor,
-            this.onSecondaryFixedColor,
-            this.onSecondaryFixedVariantColor,
-            this.tertiaryFixedColor,
-            this.tertiaryFixedDimColor,
-            this.onTertiaryFixedColor,
-            this.onTertiaryFixedVariantColor,
-            this.angleLineColor,
-            this.circleColor,
-            this.launchAppColor,
-            this.openUrlColor,
-            this.notificationShadeColor,
-            this.controlPanelColor,
-            this.openAppDrawerColor,
-            this.launcherSettingsColor,
-            this.lockColor,
-            this.openFileColor,
-            this.reloadColor,
-            this.openRecentAppsColor,
-            this.openCircleNestColor,
-            this.goParentNestColor,
-            this.toggleWifi,
-            this.toggleData,
-            this.toggleBluetooth,
-            this.runAdbCommand
-        )
-    }
 
     @SettingKey
     val primaryColor = color(
@@ -558,7 +487,7 @@ object ColorSettingsStore : MapSettingsStore(DataStoreName.COLOR) {
     }
 
     suspend fun setAllColors(ctx: Context, color: () -> Color) {
-        ALL.forEach { it.set(ctx, color()) }
+        ALL.forEach { (it as ColorSettingObject).set(ctx, color()) }
     }
 
     // For test mode backup
@@ -567,13 +496,15 @@ object ColorSettingsStore : MapSettingsStore(DataStoreName.COLOR) {
     suspend fun backupColors(ctx: Context) {
         backupColorsMap.clear()
         ALL.forEach { setting ->
+            setting as ColorSettingObject
+
             backupColorsMap[setting.key] = setting.getOrNull(ctx)
         }
     }
 
     suspend fun restoreColors(ctx: Context) {
         backupColorsMap.forEach { (key, color) ->
-            ALL.find { it.key == key }?.set(ctx, color)
+            (ALL.find { it.key == key } as? ColorSettingObject)?.set(ctx, color)
         }
         backupColorsMap.clear()
     }

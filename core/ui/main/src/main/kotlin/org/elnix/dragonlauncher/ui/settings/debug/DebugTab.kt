@@ -318,7 +318,7 @@ fun DebugTab(
                             .padding(vertical = 4.dp)
                     ) {
                         Text(
-                            text = "Reset ${settingsStore.dataStoreName.backupKey}",
+                            text = "Reset ${settingsStore.dataStoreName.value}",
                             color = MaterialTheme.colorScheme.error
                         )
                     }
