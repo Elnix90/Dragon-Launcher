@@ -54,7 +54,7 @@ val AmoledDragonColorScheme: ColorScheme = darkColorScheme(
     onTertiaryFixed = Color.Black,
     onTertiaryFixedVariant = Color(0xFFCECECE),
 
-    error = Color(0xFFCF6679),
+    error = Color.Red,
     onError = Color.Black,
     errorContainer = Color(0xFFB81C1C),
     onErrorContainer = Color(0xFFCECECE),

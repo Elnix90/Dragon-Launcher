@@ -76,10 +76,12 @@ fun AppDisplayTab(
         DragonSettingsGroup(R.string.common_settings) {
             SettingsSwitchRow(UiSettingsStore.fullScreen)
 
+            val showChargingAnimation by showChargingAnimation()
+
             SwitchRow(
                 title = stringResource(R.string.charging_animation),
                 description = stringResource(R.string.charging_animation_desc),
-                state = showChargingAnimation()
+                state = showChargingAnimation
             ) {
                 scope.launch {
                     UiSettingsStore.mainScreenLayers.set(

@@ -32,6 +32,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -101,7 +103,7 @@ fun StatusBar(
      */
     if (WindowInsets.areStatusBarsVisible) return
 
-    val showStatusBar = showStatusBar()
+    val showStatusBar by showStatusBar()
 
 
     val statusBarBackground by StatusBarSettingsStore.barBackgroundColor.asState()
@@ -506,7 +508,7 @@ fun EditStatusBar() {
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    TimeFormat.entries.filter { it != TimeFormat.CUSTOM }.forEach { format ->
+                                    TimeFormat.entries.filter { it != TimeFormat.Custom }.forEach { format ->
                                         DragonButton(
                                             onClick = { updateElement(item.copy(formatter = format.pattern)) }
                                         ) {
@@ -694,67 +696,61 @@ fun StatusBarItem(
     element: StatusBar,
     launchAction: ((Action) -> Unit)? = null,
     previewMode: Boolean = false
-) {
-    when (element) {
-        is StatusBar.Bandwidth -> {
-            StatusBarBandwidth(element)
-        }
+) = when (element) {
+    is StatusBar.Bandwidth -> StatusBarBandwidth(element)
 
-        is StatusBar.Connectivity -> {
-            StatusBarConnectivity(
-                element = element,
-                previewMode = previewMode
-            )
-        }
+    is StatusBar.Connectivity -> StatusBarConnectivity(
+        element = element,
+        previewMode = previewMode
+    )
 
-        is StatusBar.Date -> {
-            StatusBarDate(
-                element = element,
-                onAction = launchAction,
-            )
-        }
+    is StatusBar.Date -> StatusBarDate(
+        element = element,
+        onAction = launchAction,
+    )
 
-        is StatusBar.Time -> {
-            StatusBarTime(
-                element = element,
-                onAction = launchAction,
-            )
-        }
+    is StatusBar.Time -> StatusBarTime(
+        element = element,
+        onAction = launchAction,
+    )
 
-        is StatusBar.Notifications -> {
-            StatusBarNotifications(element)
-        }
+    is StatusBar.Notifications -> StatusBarNotifications(element)
 
-        is StatusBar.Spacer -> {
-            Text(stringResource(R.string.spacer))
-        }
+    is StatusBar.Spacer -> Text(stringResource(R.string.spacer))
 
-        is StatusBar.Battery -> {
-            StatusBarBattery(element)
-        }
+    is StatusBar.Battery -> StatusBarBattery(element)
 
-        is StatusBar.NextAlarm -> {
-            StatusBarNextAlarm(element, forceShowIcon = previewMode)
+    is StatusBar.NextAlarm -> StatusBarNextAlarm(element, forceShowIcon = previewMode)
+}
+
+
+@Composable
+fun showStatusBar(): State<Boolean> {
+    val mainScreensLayers = LocalMainScreenLayers.current
+
+    return remember(mainScreensLayers) {
+        derivedStateOf {
+            val bar = mainScreensLayers
+                .find { it is MainScreenLayer.StatusBar }
+                ?: error("No status bar provided in the list")
+
+            (bar as MainScreenLayer.StatusBar).enabled
         }
     }
 }
 
 
 @Composable
-fun showStatusBar(): Boolean {
+fun showChargingAnimation(): State<Boolean> {
     val mainScreensLayers = LocalMainScreenLayers.current
 
-    return ((mainScreensLayers.find { it is MainScreenLayer.StatusBar }
-        ?: error("No status bar provided in the list")) as MainScreenLayer.StatusBar).enabled
-}
+    return remember(mainScreensLayers) {
+        derivedStateOf {
+            val charging = mainScreensLayers
+                .find { it is MainScreenLayer.ChargingAnimation }
+                ?: error("No charging animation provided in the list")
 
-
-@Composable
-fun showChargingAnimation(): Boolean {
-    val mainScreensLayers = LocalMainScreenLayers.current
-
-    return (
-            (mainScreensLayers.find { it is MainScreenLayer.ChargingAnimation } ?: error("No charging animation provided in the list"))
-                    as MainScreenLayer.ChargingAnimation
-            ).enabled
+            (charging as MainScreenLayer.ChargingAnimation).enabled
+        }
+    }
 }

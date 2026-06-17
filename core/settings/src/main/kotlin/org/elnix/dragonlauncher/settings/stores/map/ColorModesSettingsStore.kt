@@ -47,7 +47,7 @@ object ColorModesSettingsStore : MapSettingsStore(DataStoreName.COLOR_MODE) {
     )
 
     @SettingKey
-    val dynamicColor = boolean(
+    val dynamicColors = boolean(
         title = R.string.dynamic_colors,
         description = R.string.dynamic_colors_desc,
         default = false
@@ -58,5 +58,16 @@ object ColorModesSettingsStore : MapSettingsStore(DataStoreName.COLOR_MODE) {
         title = null,
         description = null,
         default = false
+    )
+
+    /**
+     * Whether to use my custom-made color schemes for objects, or the default Android colors schemes.
+     * For ex: my switch uses no borders, and other colors channels than the default one, while the android one has borders
+     * */
+    @SettingKey
+    val useCustomColorChannels = boolean(
+        title = R.string.use_custom_color_channels,
+        description = R.string.use_custom_color_channels_desc,
+        default = true
     )
 }

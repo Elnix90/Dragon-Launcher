@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.settings.bases
 
+import android.content.Context
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -9,6 +10,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.PointsJson
 import org.elnix.dragonlauncher.logging.ANGLE_LINE_TAG
 import org.elnix.dragonlauncher.logging.logE
+import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 
 
 @Suppress("NOTHING_TO_INLINE")
@@ -268,22 +270,30 @@ internal inline fun getColorStrict(
 }
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun MutableMap<String, Any>.putIfNonDefault(
-    key: String,
-    value: Any?,
-    def: Any?
+internal suspend inline fun MutableMap<String, Any>.putIfNonDefault(
+    ctx: Context,
+    settingObject: BaseSettingObject<*,*>
 ) {
-    if (value != null && value != def) {
-        put(key, value)
+    if (settingObject.isNotNullOrDefault(ctx)) {
+        put(settingObject.key, settingObject.getEncoded(ctx) as Any)
     }
 }
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun MutableMap<String, Any>.putIfNotNull(
-    key: String,
-    value: Any?
+internal suspend inline fun MutableMap<String, Any>.putIfNotNull(
+    ctx: Context,
+    settingObject: BaseSettingObject<*,*>
 ) {
+    val value = settingObject.get(ctx)
+
     if (value != null) {
-        put(key, value)
+        put(settingObject.key, settingObject.getEncoded(ctx) as Any)
     }
+}
+
+internal suspend inline fun BaseSettingObject<*, *>.isNotNullOrDefault(
+    ctx: Context,
+): Boolean {
+    val value = this.get(ctx)
+    return value != null && value != this.default
 }

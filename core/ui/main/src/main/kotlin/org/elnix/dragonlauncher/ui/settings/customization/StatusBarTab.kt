@@ -4,10 +4,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -21,8 +20,6 @@ import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
-import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSectionMode
-import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsColorPicker
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -38,10 +35,7 @@ fun StatusBarTab(
     val scope = rememberCoroutineScope()
 
     val mainScreenLayers = LocalMainScreenLayers.current
-    val showStatusBar = showStatusBar()
-
-    val paddingsSectionState = rememberExpandableSection(stringResource(R.string.padding), mode = ExpandableSectionMode.Expandable)
-
+    val showStatusBar by showStatusBar()
 
     SettingsScaffold(
         title = stringResource(R.string.status_bar),
@@ -57,7 +51,7 @@ fun StatusBarTab(
         SwitchRow(
             title = stringResource(R.string.show_status_bar),
             description = stringResource(R.string.show_status_bar_desc),
-            state = showStatusBar()
+            state = showStatusBar
         ) {
             scope.launch {
                 UiSettingsStore.mainScreenLayers.set(
@@ -76,18 +70,8 @@ fun StatusBarTab(
             Column(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-
-                SettingsColorPicker(
-                    settingObject = StatusBarSettingsStore.barBackgroundColor,
-                    label = stringResource(R.string.status_bar_background),
-                    defaultColor = Color.Transparent
-                )
-
-                SettingsColorPicker(
-                    settingObject = StatusBarSettingsStore.barTextColor,
-                    label = stringResource(R.string.status_bar_text_color),
-                    defaultColor = MaterialTheme.colorScheme.primary
-                )
+                SettingsColorPicker(StatusBarSettingsStore.barBackgroundColor)
+                SettingsColorPicker(StatusBarSettingsStore.barTextColor,)
 
                 EditStatusBar()
 

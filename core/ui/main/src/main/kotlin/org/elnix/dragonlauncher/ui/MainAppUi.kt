@@ -55,12 +55,10 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.findFragmentActivity
 import org.elnix.dragonlauncher.ktx.openUrl
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.logging.SETTINGS_TAG
 import org.elnix.dragonlauncher.logging.SHIZUKU_TAG
 import org.elnix.dragonlauncher.logging.TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.logging.logWtf
 import org.elnix.dragonlauncher.models.AppLaunchException
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel
@@ -400,7 +398,6 @@ fun MainAppUi(
 
     val hasSeenWelcome by PrivateSettingsStore.hasSeenWelcome.asStateNull()
     LaunchedEffect(hasSeenWelcome) {
-        logWtf(SETTINGS_TAG) { "hasSeenWWelcome: $hasSeenWelcome" }
         if (hasSeenWelcome == false) {
             backStack.navigate(NavigationRoute.Welcome)
         }

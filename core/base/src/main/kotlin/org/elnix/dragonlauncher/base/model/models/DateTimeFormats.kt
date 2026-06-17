@@ -122,9 +122,9 @@ enum class TimeFormat(
 ) {
     H12("hh:mm a", DateTimeFormats.time12Hour),
     H24("HH:mm", DateTimeFormats.time24Hour),
-    H12_SECONDS("hh:mm:ss a", DateTimeFormats.time12HourSeconds),
-    H24_SECONDS("HH:mm:ss", DateTimeFormats.time24HourSeconds),
-    H12_SHORT("h:mm a", DateTimeFormats.time12HourShort),
-    H24_SHORT("H:mm", DateTimeFormats.time24HourShort),
-    CUSTOM("", DateTimeFormats.time24Hour)
+    H12Seconds("hh:mm:ss a", DateTimeFormats.time12HourSeconds),
+    H24Seconds("HH:mm:ss", DateTimeFormats.time24HourSeconds),
+    H12Short("h:mm a", DateTimeFormats.time12HourShort),
+    H24Short("H:mm", DateTimeFormats.time24HourShort),
+    Custom("", DateTimeFormats.time24Hour)
 }

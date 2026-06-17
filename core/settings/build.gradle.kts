@@ -35,6 +35,7 @@ dependencies {
     implementation(libs.androidx.datastore.core)
     implementation(libs.timber)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.compose.material3)
 
     api(libs.androidx.datastore.preferences.core)
     api(libs.kotlinx.coroutines.core)

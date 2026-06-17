@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import org.elnix.dragonlauncher.logging.BACKUP_TAG
@@ -13,7 +13,6 @@ import org.elnix.dragonlauncher.logging.SETTINGS_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logV
 import org.elnix.dragonlauncher.logging.logW
-import org.elnix.dragonlauncher.logging.logWtf
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.resolveDataStore
 import kotlin.concurrent.atomics.AtomicBoolean
@@ -92,7 +91,6 @@ sealed class BaseSettingObject<TYPED, ENCODED> {
             }
         } ?: default
 
-        logWtf(SETTINGS_TAG) { "Decoded value for $key: $decoded" }
         _cachedValue.value = decoded
 
         isInitialized.store(true)
@@ -172,12 +170,12 @@ sealed class BaseSettingObject<TYPED, ENCODED> {
      */
     fun flow(ctx: Context): Flow<TYPED> =
         _cachedValue
+            .asStateFlow()
             .onStart {
                 if (isInitialized.compareAndSet(expectedValue = false, newValue = true)) {
                     loadValue(ctx)
                 }
             }
-            .distinctUntilChanged()
 
     /**
      * Saves the value in the datastore for persistence

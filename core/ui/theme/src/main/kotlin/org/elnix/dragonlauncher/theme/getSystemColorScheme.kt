@@ -6,29 +6,35 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import org.elnix.dragonlauncher.base.theme.AmoledDragonColorScheme
 import org.elnix.dragonlauncher.base.theme.DarkDragonColorScheme
 import org.elnix.dragonlauncher.base.theme.LightDragonColorScheme
-import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes
+import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
+import org.elnix.dragonlauncher.ui.base.asState
+
 
 @Composable
-fun getSystemColorScheme(
-    defaultTheme: DefaultThemes,
-    dynamicColor: Boolean
-): ColorScheme {
+fun systemColorScheme(): ColorScheme {
+    val context = LocalContext.current
     val darkTheme = isSystemInDarkTheme()
-    return when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val ctx = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(ctx) else dynamicLightColorScheme(ctx)
-        }
+    val dynamicColors by ColorModesSettingsStore.dynamicColors.asState()
 
-        darkTheme -> {
-            if (defaultTheme == DefaultThemes.Amoled) AmoledDragonColorScheme
-            else DarkDragonColorScheme
-        }
+    return remember(darkTheme, dynamicColors, context) {
+        when {
+            dynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
+                if (darkTheme) {
+                    dynamicDarkColorScheme(context)
+                } else {
+                    dynamicLightColorScheme(context)
+                }
 
-        else -> LightDragonColorScheme
+            darkTheme ->
+                DarkDragonColorScheme
+
+            else ->
+                LightDragonColorScheme
+        }
     }
 }

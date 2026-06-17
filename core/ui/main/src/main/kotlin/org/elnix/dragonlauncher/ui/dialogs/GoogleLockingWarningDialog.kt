@@ -8,7 +8,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.utils.rememberVersionCode
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
-import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.base.asStateNull
 import org.elnix.dragonlauncher.ui.warning.WarningDialog
 import org.elnix.dragonlauncher.ui.warning.WarningManager
 
@@ -18,10 +18,10 @@ fun GoogleLockingWarningDialog() {
     val scope = rememberCoroutineScope()
     val currentVersionCode by rememberVersionCode()
 
-    val lastSeenVersionCodeGoogleLockdownWarning by PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.asState()
+    val lastSeenVersionCodeGoogleLockdownWarning by PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.asStateNull()
     val showWarning by WarningManager.showWarningDialog.collectAsStateWithLifecycle()
 
-    if ((lastSeenVersionCodeGoogleLockdownWarning < currentVersionCode) && showWarning) {
+    if (lastSeenVersionCodeGoogleLockdownWarning != null && (lastSeenVersionCodeGoogleLockdownWarning!! < currentVersionCode) && showWarning) {
         WarningDialog(
             onDismissRequest = {
                 scope.launch {

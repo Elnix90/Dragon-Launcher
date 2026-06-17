@@ -5,26 +5,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.util.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
-import org.elnix.dragonlauncher.ui.base.asStateNull
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 
 @Composable
 fun SettingsColorPicker(
     settingObject: BaseSettingObject<Color, String>,
-    defaultColor: Color,
-    label: String
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val state by settingObject.asStateNull()
+    val state by settingObject.asState()
 
     ColorPickerRow(
-        label = label,
-        currentColor = state.definedOrNull() ?: defaultColor
+        label = stringResource(settingObject.title!!),
+        currentColor = state
     ) {
         scope.launch {
             settingObject.set(ctx, it)

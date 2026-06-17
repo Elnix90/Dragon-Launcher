@@ -183,17 +183,6 @@ object UiSettingsStore : MapSettingsStore(DataStoreName.UI) {
         allowedRange = 1..10
     )
 
-    /**
-     * Whether to use my custom-made color schemes for objects, or the default Android colors schemes.
-     * For ex: my switch uses no borders, and other colors channels than the default one, while the android one has borders
-     * */
-    @SettingKey
-    val useCustomColorChannels = boolean(
-        title = R.string.use_custom_color_channels,
-        description = R.string.use_custom_color_channels_desc,
-        default = true
-    )
-
     @SettingKey
     val mainScreenLayers = string(
         title = R.string.main_screen_layers,

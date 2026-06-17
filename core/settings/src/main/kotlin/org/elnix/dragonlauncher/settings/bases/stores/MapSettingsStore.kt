@@ -47,9 +47,9 @@ abstract class MapSettingsStore(
         buildMap {
             ALL.forEach { setting ->
                 if (forceAllKeys) {
-                    putIfNotNull(setting.key, setting.getEncoded(ctx))
+                    putIfNotNull(ctx, setting)
                 } else if (setting.backupable) {
-                    putIfNonDefault(setting.key, setting.getEncoded(ctx), setting.default)
+                    putIfNonDefault(ctx, setting)
                 }
             }
         }

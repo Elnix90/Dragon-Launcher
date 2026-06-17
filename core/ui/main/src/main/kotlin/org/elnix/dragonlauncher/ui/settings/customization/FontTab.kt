@@ -74,10 +74,8 @@ import org.elnix.dragonlauncher.fonts.fontNameToFont
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.logging.FONT_PROVIDER
-import org.elnix.dragonlauncher.logging.SETTINGS_TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.logging.logWtf
 import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
@@ -632,18 +630,15 @@ fun FontTab(onBack: () -> Unit) {
                     !installedFontsSnapshot.contains(name)
         }
 
-//                LaunchedEffect(isExtensionInstalled, refreshTrigger) {
-//
-//                    logD(FONT_PROVIDER) { "isExtensionInstalled: $isExtensionInstalled, refreshTrigger: $refreshTrigger, remoteFonts: $remoteFonts" }
-//
-//                    if (isExtensionInstalled && remoteFonts.isEmpty()) {
-//                        fetchRemoteFonts(clearExisting = false)
-//                    }
-//                }
+        LaunchedEffect(isExtensionInstalled, refreshTrigger) {
 
-        LaunchedEffect(globalFontName) {
-            logWtf(SETTINGS_TAG) { "Typo updated: $globalFontName" }
+            logD(FONT_PROVIDER) { "isExtensionInstalled: $isExtensionInstalled, refreshTrigger: $refreshTrigger, remoteFonts: $remoteFonts" }
+
+            if (isExtensionInstalled && remoteFonts.isEmpty()) {
+                fetchRemoteFonts(clearExisting = false)
+            }
         }
+
 
         Column {
             if (filteredLocal.isNotEmpty()) {

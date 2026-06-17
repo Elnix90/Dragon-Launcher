@@ -4,6 +4,7 @@ import android.content.Context
 import org.elnix.dragonlauncher.logging.BACKUP_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.settings.DataStoreName
+import org.elnix.dragonlauncher.settings.bases.isNotNullOrDefault
 import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
 import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject
 import org.json.JSONException
@@ -52,6 +53,8 @@ abstract class JsonObjectSettingsStore(
      */
     final override suspend fun getAll(ctx: Context, forceAllKeys: Boolean): JSONObject? {
         // Skips if default value provided (no changes made), keep the backup lighter
+        if (!jsonSetting.isNotNullOrDefault(ctx)) return null
+
         val raw = jsonSetting.getEncoded(ctx)?.trim() ?: return null
 
         return try {

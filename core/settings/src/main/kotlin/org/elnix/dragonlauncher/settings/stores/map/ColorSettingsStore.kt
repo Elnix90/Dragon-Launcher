@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.compose.ui.graphics.Color
 import io.github.elnix90.settings.SettingKey
 import io.github.elnix90.settings.SettingStore
+import org.elnix.dragonlauncher.base.theme.AmoledDragonColorScheme
+import org.elnix.dragonlauncher.base.theme.DefaultExtraColors
 import org.elnix.dragonlauncher.base.util.ColorUtils
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
@@ -18,463 +20,466 @@ object ColorSettingsStore : MapSettingsStore(DataStoreName.COLOR) {
     val primaryColor = color(
         title = R.string.primary_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.primary
     )
 
     @SettingKey
     val onPrimaryColor = color(
         title = R.string.on_primary_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.onPrimary
     )
 
     @SettingKey
     val secondaryColor = color(
         title = R.string.secondary_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.secondary
     )
 
     @SettingKey
     val onSecondaryColor = color(
         title = R.string.on_secondary_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.onSecondary
     )
 
     @SettingKey
     val tertiaryColor = color(
         title = R.string.tertiary_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.tertiary
     )
 
     @SettingKey
     val onTertiaryColor = color(
         title = R.string.on_tertiary_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.onTertiary
     )
 
     @SettingKey
     val backgroundColor = color(
         title = R.string.background_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.background
     )
 
     @SettingKey
     val onBackgroundColor = color(
         title = R.string.on_background_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.onBackground
     )
 
     @SettingKey
     val surfaceColor = color(
         title = R.string.surface_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.surface
     )
 
     @SettingKey
     val onSurfaceColor = color(
         title = R.string.on_surface_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.onSecondary
     )
 
     @SettingKey
     val errorColor = color(
         title = R.string.error_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.error
     )
 
     @SettingKey
     val onErrorColor = color(
         title = R.string.on_error_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.onError
     )
 
     @SettingKey
     val outlineColor = color(
         title = R.string.outline_color,
         description = null,
-        default = Color.Unspecified
-    )
-
-    @SettingKey
-    val angleLineColor = color(
-        title = R.string.angle_line_color,
-        description = null,
-        default = Color.Unspecified
-    )
-
-    @SettingKey
-    val circleColor = color(
-        title = R.string.circle_color,
-        description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.outline
     )
 
     @SettingKey
     val primaryContainerColor = color(
         title = R.string.primary_container_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.primaryContainer
     )
 
     @SettingKey
     val onPrimaryContainerColor = color(
         title = R.string.on_primary_container_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.onPrimaryContainer
     )
 
     @SettingKey
     val inversePrimaryColor = color(
         title = R.string.inverse_primary_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.inversePrimary
     )
 
     @SettingKey
     val secondaryContainerColor = color(
         title = R.string.secondary_container_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.secondaryContainer
     )
 
     @SettingKey
     val onSecondaryContainerColor = color(
         title = R.string.on_secondary_container_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.onSecondaryContainer
     )
 
     @SettingKey
     val tertiaryContainerColor = color(
         title = R.string.tertiary_container_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.tertiaryContainer
     )
 
     @SettingKey
     val onTertiaryContainerColor = color(
         title = R.string.on_tertiary_container_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.onTertiaryContainer
     )
 
     @SettingKey
     val surfaceVariantColor = color(
         title = R.string.surface_variant_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.surfaceVariant
     )
 
     @SettingKey
     val onSurfaceVariantColor = color(
         title = R.string.on_surface_variant_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.onSurfaceVariant
     )
 
     @SettingKey
     val surfaceTintColor = color(
         title = R.string.surface_tint_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.surfaceTint
     )
 
     @SettingKey
     val inverseSurfaceColor = color(
         title = R.string.inverse_surface_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.inverseSurface
     )
 
     @SettingKey
     val inverseOnSurfaceColor = color(
         title = R.string.inverse_on_surface_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.inverseSurface
     )
 
     @SettingKey
     val errorContainerColor = color(
         title = R.string.error_container_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.errorContainer
     )
 
     @SettingKey
     val onErrorContainerColor = color(
         title = R.string.on_error_container_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.onErrorContainer
     )
 
     @SettingKey
     val outlineVariantColor = color(
         title = R.string.outline_variant_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.outlineVariant
     )
 
     @SettingKey
     val scrimColor = color(
         title = R.string.scrim_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.scrim
     )
 
     @SettingKey
     val surfaceBrightColor = color(
         title = R.string.surface_bright_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.surfaceBright
     )
 
     @SettingKey
     val surfaceContainerColor = color(
         title = R.string.surface_container_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.surfaceContainer
     )
 
     @SettingKey
     val surfaceContainerHighColor = color(
         title = R.string.surface_container_high_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.surfaceContainerHigh
     )
 
     @SettingKey
     val surfaceContainerHighestColor = color(
         title = R.string.surface_container_highest_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.surfaceContainerHighest
     )
 
     @SettingKey
     val surfaceContainerLowColor = color(
         title = R.string.surface_container_low_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.surfaceContainerLow
     )
 
     @SettingKey
     val surfaceContainerLowestColor = color(
         title = R.string.surface_container_lowest_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.surfaceContainerLowest
     )
 
     @SettingKey
     val surfaceDimColor = color(
         title = R.string.surface_dim_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.surfaceDim
     )
 
     @SettingKey
     val primaryFixedColor = color(
         title = R.string.primary_fixed_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.primaryFixed
     )
 
     @SettingKey
     val primaryFixedDimColor = color(
         title = R.string.primary_fixed_dim_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.primaryFixedDim
     )
 
     @SettingKey
     val onPrimaryFixedColor = color(
         title = R.string.on_primary_fixed_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.onPrimaryFixed
     )
 
     @SettingKey
     val onPrimaryFixedVariantColor = color(
         title = R.string.on_primary_fixed_variant_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.onPrimaryFixed
     )
 
     @SettingKey
     val secondaryFixedColor = color(
         title = R.string.secondary_fixed_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.secondaryFixed
     )
 
     @SettingKey
     val secondaryFixedDimColor = color(
         title = R.string.secondary_fixed_dim_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.secondaryFixedDim
     )
 
     @SettingKey
     val onSecondaryFixedColor = color(
         title = R.string.on_secondary_fixed_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.onSecondaryFixed
     )
 
     @SettingKey
     val onSecondaryFixedVariantColor = color(
         title = R.string.on_secondary_fixed_variant_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.onSurfaceVariant
     )
 
     @SettingKey
     val tertiaryFixedColor = color(
         title = R.string.tertiary_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.tertiaryFixed
     )
 
     @SettingKey
     val tertiaryFixedDimColor = color(
         title = R.string.tertiary_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.tertiaryFixedDim
     )
 
     @SettingKey
     val onTertiaryFixedColor = color(
         title = R.string.on_tertiary_fixed_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.onTertiaryFixed
     )
 
     @SettingKey
     val onTertiaryFixedVariantColor = color(
         title = R.string.on_tertiary_fixed_variant_color,
         description = null,
-        default = Color.Unspecified
+        default = AmoledDragonColorScheme.onTertiaryFixedVariant
     )
 
+    
+    // Custom Colors
+
+    @SettingKey
+    val angleLineColor = color(
+        title = R.string.angle_line_color,
+        description = null,
+        default = DefaultExtraColors.angleLine
+    )
+
+    @Deprecated("Have to change that system to a per-circle selection")
+    @SettingKey
+    val circleColor = color(
+        title = R.string.circle_color,
+        description = null,
+        default = DefaultExtraColors.circle
+    )
 
     @SettingKey
     val launchAppColor = color(
         title = R.string.launch_app_color,
         description = null,
-        default = Color.Unspecified
+        default = DefaultExtraColors.launchApp
     )
 
     @SettingKey
     val openUrlColor = color(
         title = R.string.open_url_color,
         description = null,
-        default = Color.Unspecified
+        default = DefaultExtraColors.openUrl
     )
 
     @SettingKey
     val notificationShadeColor = color(
         title = R.string.notification_shade_color,
         description = null,
-        default = Color.Unspecified
+        default = DefaultExtraColors.notificationShade
     )
 
     @SettingKey
     val controlPanelColor = color(
         title = R.string.control_panel_color,
         description = null,
-        default = Color.Unspecified
+        default = DefaultExtraColors.controlPanel
     )
 
     @SettingKey
     val openAppDrawerColor = color(
         title = R.string.open_app_drawer_color,
         description = null,
-        default = Color.Unspecified
+        default = DefaultExtraColors.openAppDrawer
     )
 
     @SettingKey
     val launcherSettingsColor = color(
         title = R.string.launcher_settings_color,
         description = null,
-        default = Color.Unspecified
+        default = DefaultExtraColors.launcherSettings
     )
 
     @SettingKey
     val lockColor = color(
         title = R.string.lock_color,
         description = null,
-        default = Color.Unspecified
+        default = DefaultExtraColors.lock
     )
 
     @SettingKey
     val openFileColor = color(
         title = R.string.open_file_color,
         description = null,
-        default = Color.Unspecified
+        default = DefaultExtraColors.openFile
     )
 
     @SettingKey
     val reloadColor = color(
         title = R.string.reload_color,
         description = null,
-        default = Color.Unspecified
+        default = DefaultExtraColors.reload
     )
 
     @SettingKey
     val openRecentAppsColor = color(
         title = R.string.open_recent_apps_color,
         description = null,
-        default = Color.Unspecified
+        default = DefaultExtraColors.openRecentApps
     )
 
     @SettingKey
     val openCircleNestColor = color(
         title = R.string.open_circle_nest_color,
         description = null,
-        default = Color.Unspecified
+        default = DefaultExtraColors.openCircleNest
     )
 
     @SettingKey
     val goParentNestColor = color(
         title = R.string.go_parent_nest_color,
         description = null,
-        default = Color.Unspecified
+        default = DefaultExtraColors.goParentNest
     )
 
     @SettingKey
     val toggleWifi = color(
         title = R.string.toggle_wifi,
         description = null,
-        default = Color.Unspecified
+        default = DefaultExtraColors.toggleWifi
     )
 
     @SettingKey
     val toggleBluetooth = color(
         title = R.string.toggle_bluetooth,
         description = null,
-        default = Color.Unspecified
+        default = DefaultExtraColors.toggleBluetooth
     )
 
     @SettingKey
     val toggleData = color(
         title = R.string.toggle_mobile_data,
         description = null,
-        default = Color.Unspecified
+        default = DefaultExtraColors.toggleData
     )
 
     @SettingKey
     val runAdbCommand = color(
         title = R.string.run_adb_command,
         description = null,
-        default = Color.Unspecified
+        default = DefaultExtraColors.runAdbCommand
     )
 
 
@@ -509,3 +514,17 @@ object ColorSettingsStore : MapSettingsStore(DataStoreName.COLOR) {
         backupColorsMap.clear()
     }
 }
+
+
+
+enum class ColorGroupName(stringRes: Int) {
+    Primary(R.string.primary_colors_section)
+}
+
+
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.PROPERTY)
+annotation class ColorGroup(val groupName: ColorGroupName)
+
+
+val annotations = ColorSettingsStore::toggleWifi.annotations.filterIsInstance<ColorGroup>().firstOrNull()?.groupName

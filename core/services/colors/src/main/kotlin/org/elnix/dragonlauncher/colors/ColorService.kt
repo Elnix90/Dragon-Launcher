@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.compose.material3.ColorScheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.combineTransform
 import org.elnix.dragonlauncher.base.theme.ExtraColors
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 
@@ -134,7 +133,7 @@ internal class ColorServiceImpl(
     private val outlineVariant = ColorSettingsStore.outlineVariantColor.flow(ctx)
     private val scrim = ColorSettingsStore.scrimColor.flow(ctx)
 
-    override val colors: Flow<ColorScheme> = combineTransform(
+    override val colors: Flow<ColorScheme> = combine(
         primary,
         onPrimary,
         primaryContainer,
@@ -144,6 +143,7 @@ internal class ColorServiceImpl(
         primaryFixedDim,
         onPrimaryFixed,
         onPrimaryFixedVariant,
+
         secondary,
         onSecondary,
         secondaryContainer,
@@ -152,6 +152,7 @@ internal class ColorServiceImpl(
         secondaryFixedDim,
         onSecondaryFixed,
         onSecondaryFixedVariant,
+
         tertiary,
         onTertiary,
         tertiaryContainer,
@@ -160,6 +161,7 @@ internal class ColorServiceImpl(
         tertiaryFixedDim,
         onTertiaryFixed,
         onTertiaryFixedVariant,
+
         background,
         onBackground,
         surface,
@@ -169,6 +171,7 @@ internal class ColorServiceImpl(
         surfaceTint,
         inverseSurface,
         inverseOnSurface,
+
         surfaceBright,
         surfaceDim,
         surfaceContainer,
@@ -176,10 +179,12 @@ internal class ColorServiceImpl(
         surfaceContainerLowest,
         surfaceContainerHigh,
         surfaceContainerHighest,
+
         error,
         onError,
         errorContainer,
         onErrorContainer,
+
         outline,
         outlineVariant,
         scrim
@@ -223,22 +228,22 @@ internal class ColorServiceImpl(
             inverseSurface = colors[32],
             inverseOnSurface = colors[33],
 
-            error = colors[34],
-            onError = colors[35],
-            errorContainer = colors[36],
-            onErrorContainer = colors[37],
+            surfaceBright = colors[34],
+            surfaceDim = colors[35],
+            surfaceContainer = colors[36],
+            surfaceContainerLow = colors[37],
+            surfaceContainerLowest = colors[38],
+            surfaceContainerHigh = colors[39],
+            surfaceContainerHighest = colors[40],
 
-            outline = colors[38],
-            outlineVariant = colors[39],
-            scrim = colors[40],
+            error = colors[41],
+            onError = colors[42],
+            errorContainer = colors[43],
+            onErrorContainer = colors[44],
 
-            surfaceBright = colors[41],
-            surfaceContainer = colors[42],
-            surfaceContainerHigh = colors[43],
-            surfaceContainerHighest = colors[44],
-            surfaceContainerLow = colors[45],
-            surfaceContainerLowest = colors[46],
-            surfaceDim = colors[47],
+            outline = colors[45],
+            outlineVariant = colors[46],
+            scrim = colors[47]
         )
     }
 }
