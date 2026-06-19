@@ -49,6 +49,10 @@ data class Profile(
         val locked: Boolean = false,
     )
 
+    override fun toString(): String {
+        return "Profile(type = $type, userHandle = $userHandle, serial = $serial)"
+    }
+
     companion object {
         fun fromContext(ctx: Context): Profile {
             val userHandle = Process.myUserHandle()

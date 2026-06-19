@@ -17,8 +17,6 @@ import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.defaultD
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.PointsListJson
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
-import org.elnix.dragonlauncher.logging.POINTS_TAG
-import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.settings.stores.array.NestsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.array.PointsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
@@ -74,7 +72,7 @@ internal class PointsServiceImpl(
                 loadDefaultPoint()
             }.await()
 
-            logI(POINTS_TAG) { "Loaded Swipe Settings:\nPoints = ${_points.value}\nNests = ${_nests.value}\nDefault Point = ${_defaultPoint.value}" }
+//            logI(POINTS_TAG) { "Loaded Swipe Settings:\nPoints = ${_points.value}\nNests = ${_nests.value}\nDefault Point = ${_defaultPoint.value}" }
         }
     }
 

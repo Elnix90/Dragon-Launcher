@@ -2,7 +2,8 @@ package org.elnix.dragonlauncher.settings.bases.stores
 
 import android.content.Context
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.objects.SettingObject
+import org.json.JSONArray
 import org.json.JSONObject
 
 /**
@@ -15,39 +16,43 @@ import org.json.JSONObject
  *   - import/export for backup.
  *
  * @param T The aggregate type representing the values of the entire store.
- * @param B The aggregate type representing the backup type,I use 3 main backup types: [JSONObject], [org.json.JSONArray] and `Map<String, Any?`, which is used across the app to store conveniently data
+ * @param B The aggregate type representing the backup type,I use 2 backup types: [JSONObject], [JSONArray], which is used across the app to store conveniently data
  * @param dataStoreName Identifier of the [androidx.datastore.core.DataStore] used to persist these settings.
  *
  * ### Responsibilities
- * - Defines a list of all contained settings via [ALL].
+ * - Defines a list of all contained settings via [ALL], auto inferred by the [Settings compiler plugin](https://github.com/Elnix90/Settings-Plugin)
  * - Provides utility methods to reset all settings to their defaults.
- * - Requires concrete implementations to provide methods for reading/writing all settings
- *   at once ([getAll], [setAll]).
- * - Supports backup and restore via JSON ([exportForBackup], [importFromBackup]).
+ * - Requires concrete implementations to provide methods for reading/writing all settings at once ([getAll], [setAll]).
+ * - Supports backup and restore via ([exportForBackup], [importFromBackup]).
  *
  */
-abstract class BaseSettingsStore<T, B>(
+sealed class SettingsStore<T, B>(
     open val dataStoreName: DataStoreName
 ) {
     /**
      * Lambda use to detect if a setting was changed, and redirect them to the backup manager, in order to trigger a backup.
-     * The value is constructed by applying all [BaseSettingObject.onChanged] lambdas to this one.
-     * This way, on any settings changed, this lambda is triggered and I don't need to listed to ALL the settings in the app
+     * The value is constructed by applying all [SettingObject.onChanged] lambdas to this one.
+     * This way, on any settings changed, this lambda is triggered and I don't need to list ALL the settings in the app
      */
     var onAnySettingChanged: (() -> Unit)? = null
         set(value) {
             field = value
-            ALL.forEach { it.onChanged = value }
+            ALL.forEach {
+                // Skips settings who have their onChange already defined, in order to prevent the backup to trigger when they do
+                if (it.onChanged == null) {
+                    it.onChanged = value
+                }
+            }
         }
 
     /**
      * List of all individual settings in this store.
      *
-     * Each item must be a concrete instance of [BaseSettingObject].
+     * Each item must be a concrete instance of [SettingObject].
      * This list is used for operations like [resetAll].
      */
     @Suppress("PropertyName")
-    abstract val ALL: List<BaseSettingObject<*, *>>
+    abstract val ALL: List<SettingObject<*, *>>
 
     /**
      * Resets all settings in this store to their default values.

@@ -16,7 +16,7 @@ import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
  * Manages social media pause, guilt mode, and paused apps configuration.
  */
 @SettingStore
-object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
+object WellbeingSettingsStore : MapSettingsStore(DataStoreName.Wellbeing) {
 
     /**
      * Whether the social media pause feature is enabled
@@ -89,8 +89,7 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.WELLBEING) {
     val reminderMode = enum(
         title = R.string.mode,
         description = null,
-        default = ReminderMode.Overlay,
-        enumClass = ReminderMode::class.java
+        default = ReminderMode.Overlay
     )
 
     /**

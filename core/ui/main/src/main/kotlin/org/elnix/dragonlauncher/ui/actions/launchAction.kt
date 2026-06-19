@@ -34,57 +34,9 @@ internal fun launchAction(
 ) {
     when (action) {
 
-        is Action.LaunchApp -> {
+        is Action.LaunchApp -> appLaunchViewModel.requestAppLaunch(action)
 
-
-            appLaunchViewModel.requestAppLaunch(action)
-//            try {
-//
-//
-//
-//                logD(APP_LAUNCH_TAG) { "Launching action: $action" }
-//
-////                /*  ─────────────  1. Private Space Check ─────────────  */
-////                if (action.isPrivateSpace) {
-////                    onOpenPrivateSpaceApp(action)
-////                    return
-////                }
-//
-//                /*  ─────────────  2. Wellbeing Pause Check  ─────────────  */
-//                if (socialMediaPauseEnabled && action.packageName in pausedApps) {
-//                    val intent = Intent(ctx, DigitalPauseActivity::class.java).apply {
-//                        putExtra(DigitalPauseActivity.EXTRA_PACKAGE_NAME, action.packageName)
-//                        putExtra(DigitalPauseActivity.EXTRA_APP_NAME, appName)
-//                        putExtra(DigitalPauseActivity.EXTRA_PAUSE_DURATION, pauseDuration)
-//                        putExtra(DigitalPauseActivity.EXTRA_GUILT_MODE, guiltModeEnabled)
-//                        putExtra(DigitalPauseActivity.EXTRA_REMINDER_ENABLED, reminderEnabled)
-//                        putExtra(
-//                            DigitalPauseActivity.EXTRA_REMINDER_INTERVAL,
-//                            reminderIntervalMinutes
-//                        )
-//                        putExtra(DigitalPauseActivity.EXTRA_REMINDER_MODE, reminderMode)
-//                        putExtra(
-//                            DigitalPauseActivity.EXTRA_RETURN_TO_LAUNCHER,
-//                            returnToLauncherEnabled
-//                        )
-//                    }
-//                    digitalPauseLauncher.launch(intent)
-//                    return
-//                }
-//
-//
-//                // If app has no wellbeing checks to do; it launches directly
-//                launchAppDirectly(appsViewModel, ctx, action.packageName, action.userId ?: 0)
-//            } catch (e: AppLaunchException) {
-//                logE(APP_LAUNCH_TAG, e) { e.toString() }
-//            } catch (e: Exception) {
-//                logE(APP_LAUNCH_TAG, e) { e.toString() }
-//                e.printStackTrace()
-//            }
-        }
-
-
-        is Action.LaunchShortcut -> { appLaunchViewModel.launchShortcut(action) }
+        is Action.LaunchShortcut -> appLaunchViewModel.launchShortcut(action)
 
         is Action.OpenUrl -> {
             val i = Intent(Intent.ACTION_VIEW, action.url.toUri())
@@ -108,13 +60,9 @@ internal fun launchAction(
             } else ctx.expandQuickActionsDrawer()
         }
 
-        is Action.OpenAppDrawer -> {
-            onAppDrawer(action.workspaceId)
-        }
+        is Action.OpenAppDrawer -> onAppDrawer(action.workspaceId)
 
-        is Action.OpenDragonLauncherSettings -> {
-            onAppSettings(action.route)
-        }
+        is Action.OpenDragonLauncherSettings -> onAppSettings(action.route)
 
         Action.Lock -> {
             if (!SystemControl.isServiceEnabled(ctx)) {
@@ -169,9 +117,7 @@ internal fun launchAction(
         }
 
 
-        is Action.RunAdbCommand -> {
-            onShizukuCommand(action)
-        }
+        is Action.RunAdbCommand -> onShizukuCommand(action)
 
         is Action.ToggleBluetooth -> {
             onShizukuCommand(
@@ -212,14 +158,12 @@ internal fun launchAction(
             )
         }
 
-        Action.KillLauncher -> {
-            Process.killProcess(Process.myPid())
-        }
+        Action.KillLauncher -> Process.killProcess(Process.myPid())
 
         // Handled by the main screen / settings
         // The widget action isn't meant to be part of the choosable actions, so nothing on launch
         // None do nothing, pretty straightforward
-        is Action.OpenCircleNest, is Action.GoParentNest, is Action.OpenWidget, Action.None -> {}
+        is Action.OpenCircleNest, is Action.GoParentNest, is Action.OpenWidget, Action.None -> error("Action $action shouldn't be handled here")
     }
 }
 

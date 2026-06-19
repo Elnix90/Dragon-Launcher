@@ -47,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -88,8 +89,6 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.openSearch
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ktx.toDp
-import org.elnix.dragonlauncher.logging.WORKSPACES_TAG
-import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
@@ -472,9 +471,7 @@ fun AppDrawerScreen(
                 else -> Profile.Type.Personal
             }
 
-            logD(WORKSPACES_TAG) { "WP profiles: $profiles" }
-
-            val workspaceProfile = profiles.find { it?.type == workspaceProfileType}
+            val workspaceProfile = profiles.find { it?.type == workspaceProfileType }
 
             val workspaceLocked = when (workspaceProfileType) {
                 Profile.Type.Work -> profileStates[1]?.locked ?: true
@@ -505,11 +502,18 @@ fun AppDrawerScreen(
 
             when {
                 workspaceProfile == null -> {
-                    Text("No profile found in phone")
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("No profile found in phone", color = Color.White)
+                    }
                 }
+
                 workspaceLocked -> {
                     WorkspaceLockedContent(workspaceProfile)
                 }
+
                 else -> {
                     AppGrid(
                         apps = apps,

@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -34,6 +33,7 @@ import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
 import org.elnix.dragonlauncher.timer.AppTimerService
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Duration.Companion.milliseconds
 
 
 @HiltViewModel
@@ -167,10 +167,8 @@ class AppLaunchViewModel @Inject constructor(
                 profileManager.unlockProfile(application.profile)
 
                 try {
-                    withTimeoutOrNull(10_000L) {
-                        profileManager.getProfileState(application.profile)
-                            .filter { it?.locked == false }
-                            .first()
+                    withTimeoutOrNull(10_000L.milliseconds) {
+                        profileManager.getProfileState(application.profile).first { it?.locked == false }
                     }?.let {
                         launchAppDirectly(application)
                     } ?: run {

@@ -2,7 +2,7 @@ package org.elnix.dragonlauncher.settings.bases.stores
 
 import android.content.Context
 import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.objects.SettingObject
 import org.elnix.dragonlauncher.settings.bases.putIfNonDefault
 import org.elnix.dragonlauncher.settings.bases.putIfNotNull
 import org.json.JSONObject
@@ -14,12 +14,15 @@ import org.json.JSONObject
  * where each setting is stored under its own DataStore preference key and exposed
  * collectively as a `Map<String, Any?>`.
  *
+ * Implementation:
+ *  - Each instance of [org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore] has to be **annotated** by [io.github.elnix90.settings.SettingStore] from the [Settings compiler plugin](https://github.com/Elnix90/Settings-Plugin)
+ *  - This allows for the compiler to automatically generate the settings list [ALL].
+ *  - Each setting in the [org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore] has to be **annotated** by [io.github.elnix90.settings.SettingKey] to be able to be detected by the compiler plugin at compile time
+ *
  * Characteristics:
- * - Each entry in [ALL] represents a single persisted setting.
  * - The map key corresponds to `BaseSettingObject.key`.
  * - Values are read and written individually, not as a single blob.
- * - Import/export operates on raw values and relies on each `BaseSettingObject`
- *   to decode and validate its own type.
+ * - Import/export operates on raw values and relies on each `BaseSettingObject` to decode and validate its own type.
  * - Exports data in a [JSONObject] via [getAll]
  *
  * This design enables:
@@ -29,19 +32,18 @@ import org.json.JSONObject
  */
 abstract class MapSettingsStore(
     final override val dataStoreName: DataStoreName
-) : BaseSettingsStore<Map<String, Any?>, JSONObject>(dataStoreName) {
+) : SettingsStore<Map<String, Any?>, JSONObject>(dataStoreName) {
 
     /**
      * This value is auto inferred by the [Settings compiler plugin](https://github.com/Elnix90/Settings-Plugin)
      */
-    override val ALL: List<BaseSettingObject<*, *>>
+    override val ALL: List<SettingObject<*, *>>
         get() = emptyList()
 
 
     /**
-     * Reads all settings from DataStore and returns them as a map.
-     *
-     * Missing keys fall back to each setting’s default value.
+     * Reads all settings from the store and returns them as a map.
+     * When [forceAllKeys] **isn't** enabled, skips the value if the decoded is null
      */
     final override suspend fun getAll(ctx: Context, forceAllKeys: Boolean): Map<String, Any> =
         buildMap {

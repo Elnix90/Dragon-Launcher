@@ -30,11 +30,11 @@ fun ApplicationInfoDialog(
             Column {
                 Text(stringResource(R.string.app_info_name, app.label)) { ctx.copyToClipboard(app.label) }
                 Text(stringResource(R.string.app_info_package_name, app.packageName)) { ctx.copyToClipboard(app.packageName) }
+                Text(stringResource(R.string.profile, app.profile.toString()))
                 Text(stringResource(R.string.app_info_is_system, app.isSystem.toString()))
                 Text(stringResource(R.string.app_info_is_work_profile, app.isWork.toString()))
                 Text(stringResource(R.string.app_info_is_private_profile, app.isPrivate.toString()))
                 Text(stringResource(R.string.app_info_is_launchable, app.isLaunchable.toString()))
-                Text(stringResource(R.string.app_info_user_id, app.user.hashCode()))
                 Text(stringResource(R.string.app_info_cache_key, app.key.cacheKey)) { ctx.copyToClipboard(app.key.cacheKey) }
             }
         },

@@ -1,8 +1,8 @@
 package org.elnix.dragonlauncher.models
 
-import android.annotation.SuppressLint
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -28,18 +28,13 @@ class InitializationViewModel @Inject constructor(
     private val pointsService: PointsService,
 ) : AndroidViewModel(application) {
 
-    @SuppressLint("StaticFieldLeak")
-    private val ctx = application.applicationContext
-
-
     init {
-        checkLauncherInitialization()
         viewModelInitialized()
     }
 
     fun checkLauncherInitialization() {
         viewModelScope.launch {
-            val hasInitialized = PrivateSettingsStore.hasInitialized.get(ctx)
+            val hasInitialized = PrivateSettingsStore.hasInitialized.get(application)
 
             if (!hasInitialized) {
                 logD(INIT_TAG) { "Initialisation not complete, initializing" }
@@ -48,21 +43,21 @@ class InitializationViewModel @Inject constructor(
         }
     }
 
-
     fun initializeSwipeSettings(
         points: Set<Point>,
-        nests: Set<Nest>
+        nests: Set<Nest>,
+        defaultPoint: Point?
     ) {
         logI(INIT_TAG) { "Initializing:\nPoints = $points\nNests = $nests" }
 
         viewModelScope.launch {
-            pointsService.set(points, nests)
-            PrivateSettingsStore.hasInitialized.set(ctx, true)
+            pointsService.set(points, nests, defaultPoint)
+            PrivateSettingsStore.hasInitialized.set(application, true)
         }
     }
 
     fun initialize() {
-        initializeSwipeSettings(defaultInitializationSetup, defaultNestsInitializationSetup)
+        initializeSwipeSettings(defaultInitializationSetup, defaultNestsInitializationSetup, null)
     }
 }
 

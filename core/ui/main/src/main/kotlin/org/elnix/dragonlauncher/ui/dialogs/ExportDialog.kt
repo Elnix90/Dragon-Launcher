@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
@@ -28,17 +26,19 @@ import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons.SelectA
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.backupableStores
-import org.elnix.dragonlauncher.settings.bases.stores.BaseSettingsStore
+import org.elnix.dragonlauncher.settings.bases.stores.SettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.ui.base.components.LazyColumnWithScrollIndicator
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 
 @Composable
 fun ExportSettingsDialog(
     onDismiss: () -> Unit,
-    availableStores: Map<DataStoreName, BaseSettingsStore<*, *>> = backupableStores,
-    defaultStores: Map<DataStoreName, BaseSettingsStore<*, *>> = backupableStores,
-    onConfirm: (selectedStores: Map<DataStoreName, BaseSettingsStore<*, *>>) -> Unit
+    title: Int = R.string.select_settings_to_export,
+    availableStores: Map<DataStoreName, SettingsStore<*, *>> = backupableStores,
+    defaultStores: Map<DataStoreName, SettingsStore<*, *>> = backupableStores,
+    onConfirm: (selectedStores: Map<DataStoreName, SettingsStore<*, *>>) -> Unit
 ) {
 
     val selected = remember(availableStores) {
@@ -56,18 +56,15 @@ fun ExportSettingsDialog(
                 onConfirm(availableStores.filter { selected[it.key] == true })
             }
         },
-        title = { Text(stringResource(R.string.select_settings_to_export)) },
+        title = { Text(stringResource(title)) },
         text = {
-            LazyColumn(
-                modifier = Modifier.heightIn(max = 600.dp)
-            ) {
-                item {
-                    SelectedActionRow(selected, availableStores.size) { }
-                }
+            SelectedActionRow(selected, availableStores.size)
 
-                items(availableStores.entries.toList()) { entry ->
-                    StoreItem(selected, entry.key, entry.value)
-                }
+            LazyColumnWithScrollIndicator(
+                items = availableStores.entries.toList(),
+                modifier = Modifier.heightIn(max = 600.dp)
+            ) { entry ->
+                StoreItem(selected, entry.key, entry.value)
             }
         },
         containerColor = MaterialTheme.colorScheme.surface,
@@ -80,7 +77,7 @@ fun ExportSettingsDialog(
 fun <T> SelectedActionRow(
     selected: SnapshotStateMap<T, Boolean>,
     totalNumber: Int,
-    onAnyAction: () -> Unit
+    onAnyAction: (() -> Unit)? = null
 ) {
     MultiSelectConnectedButtonRow(
         entries = BackupSelectStoresButtons.entries,
@@ -98,21 +95,21 @@ fun <T> SelectedActionRow(
                 selected.forEach { (store, _) ->
                     selected[store] = false
                 }
-                onAnyAction()
+                onAnyAction?.invoke()
             }
 
             SelectAll -> {
                 selected.forEach { (store, _) ->
                     selected[store] = true
                 }
-                onAnyAction()
+                onAnyAction?.invoke()
             }
 
             Invert -> {
                 selected.forEach { (store, isSelected) ->
                     selected[store] = !isSelected
                 }
-                onAnyAction()
+                onAnyAction?.invoke()
             }
         }
     }
@@ -123,7 +120,7 @@ fun <T> SelectedActionRow(
 fun StoreItem(
     selected: SnapshotStateMap<DataStoreName, Boolean>,
     dataStoreName: DataStoreName,
-    settingsStore: BaseSettingsStore<*, *>
+    settingsStore: SettingsStore<*, *>
 ) {
     Row(
         modifier = Modifier
@@ -136,7 +133,7 @@ fun StoreItem(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(settingsStore.dataStoreName.value)
+        Text(settingsStore.dataStoreName.name)
         Checkbox(
             checked = selected[dataStoreName] ?: true,
             onCheckedChange = null

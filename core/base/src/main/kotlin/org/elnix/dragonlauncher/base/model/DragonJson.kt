@@ -19,6 +19,7 @@ val json = Json {
     decodeEnumsCaseInsensitive = true
     allowTrailingComma = true
 }
+
 /**
  * Abstract utility class for JSON serialization and deserialization using Kotlin's
  * `kotlinx.serialization` library. Provides type-safe, logged, and error-resilient operations
@@ -64,7 +65,10 @@ abstract class DragonJson<T> {
      */
     inline fun <reified T : Any> decode(string: Any?): T? {
         return runCatching {
-            json.decodeFromString<T>(string.toString())
+            val stringifiedString = string.toString()
+            if (stringifiedString.isEmpty()) return null
+
+            json.decodeFromString<T>(stringifiedString)
         }.onFailure { e ->
             logE(JSON_TAG, e) { "Failed to decode JSON to ${T::class.simpleName}" }
         }.getOrNull()
@@ -84,7 +88,10 @@ abstract class DragonJson<T> {
      */
     inline fun <reified T : Any> decode(string: Any?, fallback: T): T {
         return runCatching {
-            json.decodeFromString<T>(string.toString())
+            val stringifiedString = string.toString()
+            if (stringifiedString.isEmpty()) return fallback
+
+            json.decodeFromString<T>(stringifiedString)
         }.onFailure { e ->
             logE(JSON_TAG, e) { "Failed to decode JSON to ${T::class.simpleName}, returning fallback" }
         }.getOrElse { fallback }

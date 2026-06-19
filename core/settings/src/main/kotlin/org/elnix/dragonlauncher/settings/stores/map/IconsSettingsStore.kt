@@ -11,7 +11,7 @@ import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Compa
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 @SettingStore
-object IconsSettingsStore : MapSettingsStore(DataStoreName.ICONS) {
+object IconsSettingsStore : MapSettingsStore(DataStoreName.Icons) {
 
     @SettingKey
     val selectedIconPack = string(

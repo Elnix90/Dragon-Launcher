@@ -4,7 +4,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
@@ -21,9 +20,9 @@ import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.getActionStrict
 import org.elnix.dragonlauncher.settings.bases.getBooleanStrict
 import org.elnix.dragonlauncher.settings.bases.getColorStrict
-import org.elnix.dragonlauncher.settings.bases.getDoubleStrict
 import org.elnix.dragonlauncher.settings.bases.getDpStrict
 import org.elnix.dragonlauncher.settings.bases.getEnumListStrict
+import org.elnix.dragonlauncher.settings.bases.getEnumSetStrict
 import org.elnix.dragonlauncher.settings.bases.getEnumStrict
 import org.elnix.dragonlauncher.settings.bases.getFloatStrict
 import org.elnix.dragonlauncher.settings.bases.getIntStrict
@@ -34,8 +33,8 @@ import org.elnix.dragonlauncher.settings.bases.getStringSetStrict
 import org.elnix.dragonlauncher.settings.bases.getStringStrict
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
-private fun String.isNotBlankKey(): String =
-    this.ifEmpty { error("Key cannot be null") }
+val String.isNotBlankKey: String
+    get() = this.ifEmpty { error("Key cannot be null or empty") }
 
 
 data class BooleanSettingObject(
@@ -46,7 +45,7 @@ data class BooleanSettingObject(
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?,
     override val backupable: Boolean
-) : BaseSettingObject<Boolean, Boolean>() {
+) : SettingObject<Boolean, Boolean>() {
 
     override val preferenceKey: Preferences.Key<Boolean> = booleanPreferencesKey(key)
     override fun encode(value: Boolean): Boolean = value
@@ -58,15 +57,15 @@ data class BooleanSettingObject(
             description: Int?,
             default: Boolean,
             key: String = "",
-            onChange: (() -> Unit)? = null,
+            onChanged: (() -> Unit)? = null,
             backupable: Boolean = true
         ) = BooleanSettingObject(
-            key = key.isNotBlankKey(),
+            key = key.isNotBlankKey,
             title = title,
             description = description,
             dataStoreName = dataStoreName,
             default = default,
-            onChanged = onChange,
+            onChanged = onChanged,
             backupable = backupable
         )
     }
@@ -82,7 +81,7 @@ data class IntSettingObject(
     override var onChanged: (() -> Unit)?,
     override val backupable: Boolean,
     val allowedRange: IntRange
-) : BaseSettingObject<Int, Int>() {
+) : SettingObject<Int, Int>() {
 
     override val preferenceKey: Preferences.Key<Int> = intPreferencesKey(key)
     override fun encode(value: Int): Int = value
@@ -95,16 +94,16 @@ data class IntSettingObject(
             default: Int,
             allowedRange: IntRange,
             key: String = "",
-            onChange: (() -> Unit)? = null,
+            onChanged: (() -> Unit)? = null,
             backupable: Boolean = true
         ) = IntSettingObject(
-            key = key.isNotBlankKey(),
+            key = key.isNotBlankKey,
             title = title,
             description = description,
             dataStoreName = dataStoreName,
             default = default,
             allowedRange = allowedRange,
-            onChanged = onChange,
+            onChanged = onChanged,
             backupable = backupable
         )
     }
@@ -119,7 +118,7 @@ data class DpSettingObject(
     override var onChanged: (() -> Unit)?,
     override val backupable: Boolean,
     val allowedRange: ClosedRange<Dp>
-) : BaseSettingObject<Dp, Int>() {
+) : SettingObject<Dp, Int>() {
 
     override val preferenceKey: Preferences.Key<Int> = intPreferencesKey(key)
     override fun encode(value: Dp): Int = value.value.toInt()
@@ -132,16 +131,16 @@ data class DpSettingObject(
             default: Dp,
             allowedRange: ClosedRange<Dp>,
             key: String = "",
-            onChange: (() -> Unit)? = null,
+            onChanged: (() -> Unit)? = null,
             backupable: Boolean = true
         ) = DpSettingObject(
-            key = key.isNotBlankKey(),
+            key = key.isNotBlankKey,
             title = title,
             description = description,
             dataStoreName = dataStoreName,
             default = default,
             allowedRange = allowedRange,
-            onChanged = onChange,
+            onChanged = onChanged,
             backupable = backupable
         )
     }
@@ -156,7 +155,7 @@ data class LongSettingObject(
     override var onChanged: (() -> Unit)?,
     override val backupable: Boolean,
     val allowedRange: ClosedRange<Long>
-) : BaseSettingObject<Long, Long>() {
+) : SettingObject<Long, Long>() {
 
     override val preferenceKey: Preferences.Key<Long> = longPreferencesKey(key)
     override fun encode(value: Long): Long = value
@@ -169,16 +168,16 @@ data class LongSettingObject(
             default: Long,
             allowedRange: ClosedRange<Long>,
             key: String = "",
-            onChange: (() -> Unit)? = null,
+            onChanged: (() -> Unit)? = null,
             backupable: Boolean = true
         ) = LongSettingObject(
-            key = key.isNotBlankKey(),
+            key = key.isNotBlankKey,
             title = title,
             description = description,
             dataStoreName = dataStoreName,
             default = default,
             allowedRange = allowedRange,
-            onChanged = onChange,
+            onChanged = onChanged,
             backupable = backupable
         )
     }
@@ -193,7 +192,7 @@ data class FloatSettingObject(
     override var onChanged: (() -> Unit)?,
     override val backupable: Boolean,
     val allowedRange: ClosedFloatingPointRange<Float>
-) : BaseSettingObject<Float, Float>() {
+) : SettingObject<Float, Float>() {
 
     override val preferenceKey: Preferences.Key<Float> = floatPreferencesKey(key)
     override fun encode(value: Float): Float = value
@@ -206,57 +205,57 @@ data class FloatSettingObject(
             default: Float,
             allowedRange: ClosedFloatingPointRange<Float>,
             key: String = "",
-            onChange: (() -> Unit)? = null,
+            onChanged: (() -> Unit)? = null,
             backupable: Boolean = true
         ) = FloatSettingObject(
-            key = key.isNotBlankKey(),
+            key = key.isNotBlankKey,
             title = title,
             description = description,
             dataStoreName = dataStoreName,
             default = default,
             allowedRange = allowedRange,
-            onChanged = onChange,
+            onChanged = onChanged,
             backupable = backupable
         )
     }
 }
 
-data class DoubleSettingObject(
-    override val key: String,
-    override val default: Double,
-    override val title: Int?,
-    override val description: Int?,
-    override val dataStoreName: DataStoreName,
-    override var onChanged: (() -> Unit)?,
-    override val backupable: Boolean,
-    val allowedRange: ClosedRange<Double>
-) : BaseSettingObject<Double, Double>() {
-
-    override val preferenceKey: Preferences.Key<Double> = doublePreferencesKey(key)
-    override fun encode(value: Double): Double = value
-    override fun decode(raw: Any?): Double = getDoubleStrict(raw, default).coerceIn(allowedRange)
-
-    companion object {
-        fun MapSettingsStore.double(
-            title: Int?,
-            description: Int?,
-            default: Double,
-            allowedRange: ClosedRange<Double>,
-            key: String = "",
-            onChange: (() -> Unit)? = null,
-            backupable: Boolean = true
-        ) = DoubleSettingObject(
-            key = key.isNotBlankKey(),
-            title = title,
-            description = description,
-            dataStoreName = dataStoreName,
-            default = default,
-            allowedRange = allowedRange,
-            onChanged = onChange,
-            backupable = backupable
-        )
-    }
-}
+//data class DoubleSettingObject(
+//    override val key: String,
+//    override val default: Double,
+//    override val title: Int?,
+//    override val description: Int?,
+//    override val dataStoreName: DataStoreName,
+//    override var onChanged: (() -> Unit)?,
+//    override val backupable: Boolean,
+//    val allowedRange: ClosedRange<Double>
+//) : BaseSettingObject<Double, Double>() {
+//
+//    override val preferenceKey: Preferences.Key<Double> = doublePreferencesKey(key)
+//    override fun encode(value: Double): Double = value
+//    override fun decode(raw: Any?): Double = getDoubleStrict(raw, default).coerceIn(allowedRange)
+//
+//    companion object {
+//        fun MapSettingsStore.double(
+//            title: Int?,
+//            description: Int?,
+//            default: Double,
+//            allowedRange: ClosedRange<Double>,
+//            key: String = "",
+//            onChanged: (() -> Unit)? = null,
+//            backupable: Boolean = true
+//        ) = DoubleSettingObject(
+//            key = key.isNotBlankKey,
+//            title = title,
+//            description = description,
+//            dataStoreName = dataStoreName,
+//            default = default,
+//            allowedRange = allowedRange,
+//            onChanged = onChanged,
+//            backupable = backupable
+//        )
+//    }
+//}
 
 data class StringSettingObject(
     override val key: String,
@@ -266,7 +265,7 @@ data class StringSettingObject(
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?,
     override val backupable: Boolean
-) : BaseSettingObject<String, String>() {
+) : SettingObject<String, String>() {
 
     override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(key)
     override fun encode(value: String): String = value
@@ -278,15 +277,15 @@ data class StringSettingObject(
             description: Int?,
             default: String,
             key: String = "",
-            onChange: (() -> Unit)? = null,
+            onChanged: (() -> Unit)? = null,
             backupable: Boolean = true
         ) = StringSettingObject(
-            key = key.isNotBlankKey(),
+            key = key.isNotBlankKey,
             title = title,
             description = description,
             dataStoreName = dataStoreName,
             default = default,
-            onChanged = onChange,
+            onChanged = onChanged,
             backupable = backupable
         )
     }
@@ -301,7 +300,7 @@ data class StringSetSettingObject(
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?,
     override val backupable: Boolean
-) : BaseSettingObject<Set<String>, Set<String>>() {
+) : SettingObject<Set<String>, Set<String>>() {
 
     override val preferenceKey: Preferences.Key<Set<String>> = stringSetPreferencesKey(key)
     override fun encode(value: Set<String>): Set<String> = value
@@ -313,15 +312,15 @@ data class StringSetSettingObject(
             description: Int?,
             default: Set<String>,
             key: String = "",
-            onChange: (() -> Unit)? = null,
+            onChanged: (() -> Unit)? = null,
             backupable: Boolean = true
         ) = StringSetSettingObject(
-            key = key.isNotBlankKey(),
+            key = key.isNotBlankKey,
             title = title,
             description = description,
             dataStoreName = dataStoreName,
             default = default,
-            onChanged = onChange,
+            onChanged = onChanged,
             backupable = backupable
         )
     }
@@ -335,7 +334,7 @@ data class StringListSettingObject(
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?,
     override val backupable: Boolean
-) : BaseSettingObject<List<String>, String>() {
+) : SettingObject<List<String>, String>() {
 
     override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(key)
     override fun encode(value: List<String>): String = value.joinToString(",")
@@ -347,15 +346,15 @@ data class StringListSettingObject(
             description: Int?,
             default: List<String>,
             key: String = "",
-            onChange: (() -> Unit)? = null,
+            onChanged: (() -> Unit)? = null,
             backupable: Boolean = true
         ) = StringListSettingObject(
-            key = key.isNotBlankKey(),
+            key = key.isNotBlankKey,
             title = title,
             description = description,
             dataStoreName = dataStoreName,
             default = default,
-            onChanged = onChange,
+            onChanged = onChanged,
             backupable = backupable
         )
     }
@@ -371,34 +370,31 @@ data class EnumSettingObject<E : Enum<E>>(
     override var onChanged: (() -> Unit)?,
     override val backupable: Boolean,
     val enumClass: Class<E>
-) : BaseSettingObject<E, String>() {
+) : SettingObject<E, String>() {
 
     override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(key)
     override fun encode(value: E): String = value.name
     override fun decode(raw: Any?): E = getEnumStrict(raw, default, enumClass)
 
     companion object {
-        fun <E : Enum<E>> MapSettingsStore.enum(
+        inline fun <reified E : Enum<E>> MapSettingsStore.enum(
             title: Int?,
             description: Int?,
             default: E,
-            enumClass: Class<E>,
             key: String = "",
-            onChange: (() -> Unit)? = null,
+            noinline onChanged: (() -> Unit)? = null,
             backupable: Boolean = true
         ) = EnumSettingObject(
-            key = key.isNotBlankKey(),
+            key = key.isNotBlankKey,
             title = title,
             description = description,
             dataStoreName = dataStoreName,
             default = default,
-            enumClass = enumClass,
-            onChanged = onChange,
+            enumClass = E::class.java,
+            onChanged = onChanged,
             backupable = backupable
         )
     }
-
-
 }
 
 data class EnumListSettingObject<E : Enum<E>>(
@@ -410,32 +406,65 @@ data class EnumListSettingObject<E : Enum<E>>(
     override var onChanged: (() -> Unit)?,
     override val backupable: Boolean,
     val enumClass: Class<E>
-) : BaseSettingObject<List<E>, String>() {
+) : SettingObject<List<E>, String>() {
     override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(key)
     override fun encode(value: List<E>): String = value.joinToString(",") { it.name }
     override fun decode(raw: Any?): List<E> = getEnumListStrict(raw, default, enumClass)
 
     companion object {
-        fun <E : Enum<E>> MapSettingsStore.enumList(
+        inline fun <reified E : Enum<E>> MapSettingsStore.enumList(
             title: Int?,
             description: Int?,
             default: List<E>,
-            enumClass: Class<E>,
             key: String = "",
-            onChange: (() -> Unit)? = null,
+            noinline onChanged: (() -> Unit)? = null,
             backupable: Boolean = true
         ) = EnumListSettingObject(
-            key = key.isNotBlankKey(),
+            key = key.isNotBlankKey,
             title = title,
             description = description,
             dataStoreName = dataStoreName,
             default = default,
-            enumClass = enumClass,
-            onChanged = onChange,
+            enumClass = E::class.java,
+            onChanged = onChanged,
             backupable = backupable
         )
     }
+}
 
+data class EnumSetSettingObject<E : Enum<E>>(
+    override val key: String,
+    override val default: Set<E>,
+    override val title: Int?,
+    override val description: Int?,
+    override val dataStoreName: DataStoreName,
+    override var onChanged: (() -> Unit)?,
+    override val backupable: Boolean,
+    val enumClass: Class<E>
+) : SettingObject<Set<E>, Set<String>>() {
+    override val preferenceKey: Preferences.Key<Set<String>> = stringSetPreferencesKey(key)
+    override fun encode(value: Set<E>): Set<String> = value.mapTo(mutableSetOf()) { it.name }
+    override fun decode(raw: Any?): Set<E> = getEnumSetStrict(raw, default, enumClass)
+
+    companion object {
+        inline fun <reified E : Enum<E>> MapSettingsStore.enumSet(
+            title: Int?,
+            description: Int?,
+            default: Set<E>,
+            key: String = "",
+            noinline onChanged: (() -> Unit)? = null,
+            backupable: Boolean = true
+        ) = EnumSetSettingObject(
+            key = key.isNotBlankKey,
+            title = title,
+            description = description,
+            dataStoreName = dataStoreName,
+            default = default,
+            enumClass = E::class.java,
+            onChanged = onChanged,
+            backupable = backupable
+        )
+    }
 }
 
 data class ColorSettingObject(
@@ -446,7 +475,7 @@ data class ColorSettingObject(
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?,
     override val backupable: Boolean
-) : BaseSettingObject<Color, String>() {
+) : SettingObject<Color, String>() {
 
     override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(key)
     override fun encode(value: Color): String = value.toHexWithAlpha(false)
@@ -458,7 +487,7 @@ data class ColorSettingObject(
             description: Int?,
             default: Color,
             key: String = "",
-            onChange: (() -> Unit)? = null,
+            onChanged: (() -> Unit)? = null,
             backupable: Boolean = true
         ) = ColorSettingObject(
             key = key.takeIf { it.isNotEmpty() } ?: error("Key must not be empty"),
@@ -466,8 +495,9 @@ data class ColorSettingObject(
             description = description,
             dataStoreName = dataStoreName,
             default = default,
-            onChanged = onChange,
-            backupable = backupable)
+            onChanged = onChanged,
+            backupable = backupable
+        )
     }
 }
 
@@ -480,7 +510,7 @@ data class ActionSettingObject(
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?,
     override val backupable: Boolean
-) : BaseSettingObject<Action, String>() {
+) : SettingObject<Action, String>() {
 
     override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(key)
     override fun encode(value: Action): String? = ActionJson.encode(value)
@@ -492,19 +522,18 @@ data class ActionSettingObject(
             description: Int?,
             default: Action,
             key: String = "",
-            onChange: (() -> Unit)? = null,
+            onChanged: (() -> Unit)? = null,
             backupable: Boolean = true
         ) = ActionSettingObject(
-            key = key.isNotBlankKey(),
+            key = key.isNotBlankKey,
             title = title,
             description = description,
             dataStoreName = dataStoreName,
             default = default,
-            onChanged = onChange,
+            onChanged = onChanged,
             backupable = backupable
         )
     }
-
 }
 
 data class PointSettingObject(
@@ -515,7 +544,7 @@ data class PointSettingObject(
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?,
     override val backupable: Boolean
-) : BaseSettingObject<Point, String>() {
+) : SettingObject<Point, String>() {
 
     override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(key)
     override fun encode(value: Point): String? = PointsJson.encode(value)
@@ -527,19 +556,18 @@ data class PointSettingObject(
             description: Int?,
             default: Point,
             key: String = "",
-            onChange: (() -> Unit)? = null,
+            onChanged: (() -> Unit)? = null,
             backupable: Boolean = true
         ) = PointSettingObject(
-            key = key.isNotBlankKey(),
+            key = key.isNotBlankKey,
             title = title,
             description = description,
             dataStoreName = dataStoreName,
             default = default,
-            onChanged = onChange,
+            onChanged = onChanged,
             backupable = backupable
         )
     }
-
 }
 
 data class IconShapeSettingObject(
@@ -550,7 +578,7 @@ data class IconShapeSettingObject(
     override val dataStoreName: DataStoreName,
     override var onChanged: (() -> Unit)?,
     override val backupable: Boolean
-) : BaseSettingObject<IconShape, String>() {
+) : SettingObject<IconShape, String>() {
 
     override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(key)
     override fun encode(value: IconShape): String? = IconShapeJson.encode(value)
@@ -562,17 +590,16 @@ data class IconShapeSettingObject(
             description: Int?,
             default: IconShape,
             key: String = "",
-            onChange: (() -> Unit)? = null,
+            onChanged: (() -> Unit)? = null,
             backupable: Boolean = true
         ) = IconShapeSettingObject(
-            key = key.isNotBlankKey(),
+            key = key.isNotBlankKey,
             title = title,
             description = description,
             dataStoreName = dataStoreName,
             default = default,
-            onChanged = onChange,
+            onChanged = onChanged,
             backupable = backupable
         )
     }
-
 }

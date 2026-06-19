@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.models
 import android.annotation.SuppressLint
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,14 +47,13 @@ class DragonLogViewModel @Inject constructor(
             fileTree?.snackBarLogLevel = DebugSettingsStore.snackBarLogLevel.get(ctx)
             fileTree?.filesLogsLevel = DebugSettingsStore.filesLogLevel.get(ctx)
             fileTree?.filterTag = DebugSettingsStore.filterTag.get(ctx)
-
-            // Trigger the load in the store
-            DebugSettingsStore.enableLogging.get(ctx)
         }
     }
 
     init {
-        updateLoggingState()
+        viewModelScope.launch{
+            updateLoggingState()
+        }
         viewModelInitialized()
     }
 
@@ -67,13 +67,13 @@ class DragonLogViewModel @Inject constructor(
     }
 
     fun updateEnableLogging(enable: Boolean) {
-        if (enableLogging.value == enable) return
-
         viewModelScope.launch {
-            DebugSettingsStore.enableLogging.set(ctx, enable)
-        }
 
-        updateLoggingState()
+        if (enableLogging.get(application) == enable) return@launch
+
+            DebugSettingsStore.enableLogging.set(ctx, enable)
+            updateLoggingState()
+        }
     }
 
 
@@ -98,10 +98,10 @@ class DragonLogViewModel @Inject constructor(
         }
     }
 
-    private fun updateLoggingState() {
+    private suspend fun updateLoggingState() {
         val tree = fileTree ?: return
         val plantedTrees = Timber.forest()
-        if (enableLogging.value) {
+        if (enableLogging.get(application.applicationContext)) {
             if (tree !in plantedTrees) {
                 Timber.plant(tree)
             }

@@ -20,7 +20,7 @@ import org.elnix.dragonlauncher.base.model.serializables.CacheKey
 import org.elnix.dragonlauncher.base.model.serializables.CustomIcon
 import org.elnix.dragonlauncher.logging.WORKSPACES_TAG
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.settings.stores.`object`.AppOverridesSettingsStore
+import org.elnix.dragonlauncher.settings.stores.array.AppOverridesSettingsStore
 
 
 object AppOverridesJson : DragonJson<AppOverrideState>()
@@ -43,7 +43,7 @@ class AppOverridesManager(
             val jsonString = AppOverridesSettingsStore.jsonSetting.get(ctx)
             if (jsonString.isBlank()) return@withContext
 
-            val loadedState = AppOverridesJson.decode(jsonString) ?: defaultAppOverrides
+            val loadedState = AppOverridesJson.decode(jsonString, defaultAppOverrides)
             _appOverridesState.value = loadedState
 
         } catch (e: Exception) {

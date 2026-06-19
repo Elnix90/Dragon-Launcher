@@ -56,7 +56,7 @@ sealed class MainScreenLayer {
             ChargingAnimation(),
             StatusBar(),
             Widgets(),
-            CustomDim(false), // Disabled by default
+            CustomDim(),
             DragOverlay(),
             HoldToActivate()
         )

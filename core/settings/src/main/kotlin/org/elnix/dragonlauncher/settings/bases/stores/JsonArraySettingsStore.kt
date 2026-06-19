@@ -5,7 +5,7 @@ import org.elnix.dragonlauncher.logging.BACKUP_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.isNotNullOrDefault
-import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.objects.SettingObject
 import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject
 import org.json.JSONArray
 import org.json.JSONException
@@ -30,13 +30,13 @@ import org.json.JSONException
  */
 abstract class JsonArraySettingsStore(
     final override val dataStoreName: DataStoreName
-) : BaseSettingsStore<JSONArray?, JSONArray>(dataStoreName) {
+) : SettingsStore<JSONArray?, JSONArray>(dataStoreName) {
 
     /**
      * Underlying setting that stores the JSON payload as a raw string.
      */
     val jsonSetting = StringSettingObject(
-        key = dataStoreName.value,
+        key = dataStoreName.name,
         default = "",
         title = null,
         description = null,
@@ -45,7 +45,7 @@ abstract class JsonArraySettingsStore(
         backupable = true
     )
 
-    final override val ALL: List<BaseSettingObject<*, *>> = listOf(jsonSetting)
+    final override val ALL: List<SettingObject<*, *>> = listOf(jsonSetting)
 
     /**
      * Reads the JSON string from DataStore and parses it into a [JSONArray].

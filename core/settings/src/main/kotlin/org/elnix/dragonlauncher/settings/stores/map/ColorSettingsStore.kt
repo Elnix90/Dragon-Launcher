@@ -14,7 +14,7 @@ import org.elnix.dragonlauncher.settings.bases.objects.ColorSettingObject.Compan
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 @SettingStore
-object ColorSettingsStore : MapSettingsStore(DataStoreName.COLOR) {
+object ColorSettingsStore : MapSettingsStore(DataStoreName.Color) {
 
     @SettingKey
     val primaryColor = color(

@@ -44,11 +44,11 @@ import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.logging.logI
 import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel
+import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.models.DragonLogViewModel
 import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.receiver.FontReceiver
-import org.elnix.dragonlauncher.settings.SettingsBackupManager
-import org.elnix.dragonlauncher.settings.backupableStores
+import org.elnix.dragonlauncher.settings.allStores
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
@@ -323,6 +323,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
 
                 val appLifecycleViewModel: AppLifecycleViewModel = activityViewModel()
                 val dragonLogViewModel: DragonLogViewModel = activityViewModel()
+                val backupViewModel: BackupViewModel = activityViewModel()
 
                 dragonLogViewModel.init()
 
@@ -333,22 +334,12 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                     LaunchedEffect(Unit) {
                         lifecycleScope.launch(Dispatchers.Default) {
                             yield() // Wait for first frame
-                            logI(TAG) {
-                                "First frame rendered in ${System.currentTimeMillis() - startTime}ms. Starting AppsViewModel.loadAll()."
-                            }
-//                            appsViewModel.loadAll()
-                            logI(TAG) {
-                                "AppsViewModel.loadAll() finished at ${System.currentTimeMillis() - startTime}ms total."
-                            }
-
+                            logI(TAG) { "First frame rendered in ${System.currentTimeMillis() - startTime}ms." }
 
                             // All stores excepted the non-backupable ones, cause they trigger updates constantly (e.g., last backup time)
-                            backupableStores.forEach { (_, store) ->
+                            allStores.forEach { (_, store) ->
                                 store.onAnySettingChanged = {
-                                    // Schedule backup using the Settings backup manager
-                                    lifecycleScope.launch {
-                                        SettingsBackupManager.triggerBackup(this@MainActivity)
-                                    }
+                                    backupViewModel.commandBackup()
                                 }
                             }
                         }

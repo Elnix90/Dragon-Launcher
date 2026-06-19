@@ -41,7 +41,6 @@ import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Compani
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.label
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayerJson
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ktx.isNotBlankJson
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.asState
@@ -224,13 +223,10 @@ fun rememberMainScreenLayerOrder(): MutableState<List<MainScreenLayer>> {
     val orderString by UiSettingsStore.mainScreenLayers.asState()
 
     return remember(orderString) {
-        val decoded =
-            orderString
-                .takeIf { it.isNotBlankJson }
-                ?.let {
-                    MainScreenLayerJson.decode<List<MainScreenLayer>>(orderString)
-                        .takeIf { it?.size == 6 } // Ensure they have been saved
-                } ?: defaultMainScreenLayers
+        val decoded = MainScreenLayerJson
+            .decode<List<MainScreenLayer>>(orderString)
+            ?.takeIf { it.size == 6 } // Ensure they have been saved
+            ?: defaultMainScreenLayers
 
         mutableStateOf(decoded)
     }

@@ -22,7 +22,7 @@ import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
 import org.elnix.dragonlauncher.logging.WORKSPACES_TAG
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
-import org.elnix.dragonlauncher.settings.stores.`object`.WorkspaceSettingsStore
+import org.elnix.dragonlauncher.settings.stores.array.WorkspaceSettingsStore
 
 object WorkspaceJson : DragonJson<List<Workspace>>()
 
@@ -53,7 +53,7 @@ class WorkspacesManager(
             val jsonString = WorkspaceSettingsStore.jsonSetting.get(ctx)
             if (jsonString.isBlank()) return@withContext
 
-            val loadedState = WorkspaceJson.decode(jsonString) ?: defaultWorkspaces
+            val loadedState = WorkspaceJson.decode(jsonString, defaultWorkspaces)
             _workspacesState.value = loadedState
 
         } catch (e: Exception) {

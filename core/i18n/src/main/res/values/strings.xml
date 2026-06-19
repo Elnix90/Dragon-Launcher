@@ -1007,4 +1007,6 @@
     <string name="right_padding_status_bar_desc">Right blank space on the status bar</string>
     <string name="top_padding_status_bar_desc">Those who uses that are strange</string>
     <string name="bottom_padding_status_bar_desc">I would understand that a bit more than the previous one</string>
+    <string name="pick_stores_to_display">Pick Stores to display</string>
+    <string name="profile">Profile</string>
 </resources>

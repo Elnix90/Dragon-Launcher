@@ -51,7 +51,6 @@ fun AppDisplayTab(
     val showLaunchingAppLabel by UiSettingsStore.showLaunchingAppLabel.asState()
     val showLaunchingAppIcon by UiSettingsStore.showLaunchingAppIcon.asState()
     val appLabelIconOverlayTopPadding by UiSettingsStore.appLabelIconOverlayTopPadding.asState()
-    val appLabelOverlaySize by UiSettingsStore.appLabelOverlaySize.asState()
     val showAllActionsOnCurrentCircle by UiSettingsStore.showAllActionsOnCurrentCircle.asState()
 
     val mainScreenLayers = LocalMainScreenLayers.current
@@ -154,7 +153,6 @@ fun AppDisplayTab(
                 id = demoIcon?.cacheKey ?: ""
             ),
             topPadding = appLabelIconOverlayTopPadding.dp,
-            labelSize = appLabelOverlaySize,
             showLabel = showLaunchingAppLabel,
             showIcon = showLaunchingAppIcon
         )

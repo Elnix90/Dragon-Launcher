@@ -11,7 +11,7 @@ import org.elnix.dragonlauncher.settings.bases.objects.PointSettingObject.Compan
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 @SettingStore
-object SwipeMapSettingsStore : MapSettingsStore(DataStoreName.SWIPE_MAP) {
+object SwipeMapSettingsStore : MapSettingsStore(DataStoreName.Swipe) {
 
     @SettingKey
     val subNestDefaultRadius = int(

@@ -27,41 +27,77 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
  *
  * @param TYPED The strongly-typed value type of this setting (e.g., `Boolean`, `String`, custom data class).
  * @param ENCODED The raw [Preferences.Key] value type stored in DataStore (e.g., `Boolean`, `String`).
- * @param key Unique identifier for this setting.
- * @param dataStoreName Target [DataStoreName] where this setting is persisted.
- * @param default Fallback value when no persisted value exists.
- * @param preferenceKey DataStore key used for storage/retrieval.
- * @param encode Converts [TYPED] → [R?] for DataStore persistence (returns `null` to remove setting).
- * @param decode Converts raw DataStore value → [TYPED].
- * @param onChanged Optional callback invoked after successful set/reset operations.
  */
 @OptIn(ExperimentalAtomicApi::class)
-sealed class BaseSettingObject<TYPED, ENCODED> {
+sealed class SettingObject<TYPED, ENCODED> {
+    /**
+     * Unique identifier for this setting.
+     * It is auto inferred via the [SettingObject] builders functions during at compile-time via the [Settings compiler plugin](https://github.com/Elnix90/Settings-Plugin)
+     */
     abstract val key: String
+
+    /**
+     * The title of this setting.
+     * It's the ressource ID that links to an i18n string, that android resolves depending on the app language
+     * Used in Compose to automatically infer title via the property instead of manually specifying them for all settings
+     * Can be null for specific settings, that aren't meant to be directly toggled or changed in Compose
+     */
     abstract val title: Int?
+
+    /**
+     * Same as [title] but it's the description
+     */
     abstract val description: Int?
+
+    /**
+     * Target [DataStoreName] where this setting is persisted.
+     */
     abstract val dataStoreName: DataStoreName
+
+    /**
+     * Fallback value when no persisted value exists.
+     * Initial value that takes the object when first initialized
+     * @see _cachedValue
+     */
     abstract val default: TYPED
+
+    /**
+     * DataStore key used for storage/retrieval.
+     */
     abstract val preferenceKey: Preferences.Key<ENCODED>
+
+    /**
+     * Converts [TYPED] → [R?] for DataStore persistence (returns `null` to remove setting).
+     */
     abstract fun encode(value: TYPED): ENCODED?
+
+    /**
+     * Converts raw DataStore value → [TYPED].
+     */
     abstract fun decode(raw: Any?): TYPED
+
+    /**
+     * Optional callback invoked after successful set/reset operations.
+     */
     abstract var onChanged: (() -> Unit)?
+
+    /**
+     * Whether if this setting should be added to the backup or not.
+     * It is always added when the parameter `forceAllKeys` is `true` during an export
+     * @see org.elnix.dragonlauncher.settings.bases.stores.SettingsStore
+     */
     abstract val backupable: Boolean
 
 
     /**
-     * Lazy initialization to prevent early init crashes due to null values
+     * Private cache to avoid fetching value from the Datastore every time
+     * The cache initializes to the [default] provided value, and should be **loaded** when someone subscribe to the [flow], or [get] the value
+     *
+     * Initialized **lazily** because it caused crashes when tried to be accessed in early initialization time. Using the lazy shouldn't cost much and allow the parameter ([default]) to be loaded before the [MutableStateFlow] initializes
      */
-    private val _cachedValue: MutableStateFlow<TYPED> = MutableStateFlow(default)
-
-
-    /**
-     * Get the cached value, one shot, no coroutine, doesn't initialize if not already and returns the default value if not
-     */
-    @Deprecated("Collect via get or flow to initialize value")
-    val value: TYPED
-        get() = _cachedValue.value ?: default
-
+    private val _cachedValue: MutableStateFlow<TYPED> by lazy {
+        MutableStateFlow(default)
+    }
 
     /**
      * Internal value to track whether the value has been loaded from the datastore or not.
@@ -72,8 +108,7 @@ sealed class BaseSettingObject<TYPED, ENCODED> {
     /**
      * Internally loads the value from the datastore if not already
      *
-     * @param ctx
-     * @return
+     * @return [TYPED] value decoded from the Datastore
      */
     private suspend fun loadValue(ctx: Context): TYPED {
         val raw: ENCODED? = ctx
@@ -124,7 +159,7 @@ sealed class BaseSettingObject<TYPED, ENCODED> {
 
     /**
      * Get the value one shot for logic, no flow
-     * Returns null if the value is not defined (default)
+     * Returns null if the value is not defined ([default])
      *
      * @return [TYPED]? decoded nullable value
      */
@@ -141,11 +176,16 @@ sealed class BaseSettingObject<TYPED, ENCODED> {
      */
     suspend fun get(ctx: Context): TYPED {
         return if (isInitialized.compareAndSet(expectedValue = false, newValue = true)) {
-            loadValue(ctx)
+            val loaded = loadValue(ctx)
+            assert(loaded != null)
+            loaded
         } else {
-            _cachedValue.value
+            val loaded = _cachedValue.value
+            assert(loaded != null)
+            loaded
         }
     }
+
 
     /**
      * Returns the value encoded for the backup
@@ -191,6 +231,11 @@ sealed class BaseSettingObject<TYPED, ENCODED> {
                 return
             }
 
+            if (value == _cachedValue.value) {
+                logV(SETTINGS_TAG) { "Value already equals to the one in settings, no need to change" }
+                return
+            }
+
             val encoded = encode(value)
             if (encoded == null) {
                 logW(SETTINGS_TAG) { "FAILED to encode value, resetting it" }
@@ -214,8 +259,7 @@ sealed class BaseSettingObject<TYPED, ENCODED> {
 
 
     /**
-     * Removes the value of the [preferenceKey] from the datastore
-     * it will use the default value since nothing will be found in the datastore
+     * Removes the value of the [preferenceKey] from the datastore and sets its cached value to [default]
      *
      * @param ctx
      */

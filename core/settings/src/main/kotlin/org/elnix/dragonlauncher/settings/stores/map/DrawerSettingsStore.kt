@@ -20,7 +20,7 @@ import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Compa
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 @SettingStore
-object DrawerSettingsStore : MapSettingsStore(DataStoreName.DRAWER) {
+object DrawerSettingsStore : MapSettingsStore(DataStoreName.Drawer) {
 
     @SettingKey
     val autoOpenSingleMatch = boolean(
@@ -61,8 +61,7 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.DRAWER) {
     val tapEmptySpaceAction = enum(
         title = R.string.tap_empty_space_action,
         description = null,
-        default = DrawerActions.Close,
-        enumClass = DrawerActions::class.java
+        default = DrawerActions.Close
     )
 
     @SettingKey
@@ -77,8 +76,7 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.DRAWER) {
     val horizontalAlignment = enum(
         title = null,
         description = null,
-        default = HorizontalAlignment.Start,
-        enumClass = HorizontalAlignment::class.java
+        default = HorizontalAlignment.Start
     )
 
     @SettingKey
@@ -92,16 +90,14 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.DRAWER) {
     val leftDrawerAction = enum(
         title = R.string.left_drawer_action,
         description = null,
-        default = DrawerActions.defaultLeftDrawerAction,
-        enumClass = DrawerActions::class.java
+        default = DrawerActions.defaultLeftDrawerAction
     )
 
     @SettingKey
     val rightDrawerAction = enum(
         title = R.string.right_drawer_action,
         description = null,
-        default = DrawerActions.defaultRightDrawerAction,
-        enumClass = DrawerActions::class.java
+        default = DrawerActions.defaultRightDrawerAction
     )
 
     @SettingKey
@@ -124,40 +120,35 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.DRAWER) {
     val drawerEnterAction = enum(
         title = R.string.drawer_enter_key_action,
         description = null,
-        default = DrawerActions.defaultEnterAction,
-        enumClass = DrawerActions::class.java
+        default = DrawerActions.defaultEnterAction
     )
 
     @SettingKey
     val drawerHomeAction = enum(
         title = R.string.home_action,
         description = R.string.home_action_desc,
-        default = DrawerActions.defaultHomeAction,
-        enumClass = DrawerActions::class.java
+        default = DrawerActions.defaultHomeAction
     )
 
     @SettingKey
     val scrollDownDrawerAction = enum(
         title = R.string.scroll_down_action,
         description = null,
-        default = DrawerActions.defaultScrollDownAction,
-        enumClass = DrawerActions::class.java
+        default = DrawerActions.defaultScrollDownAction
     )
 
     @SettingKey
     val scrollUpDrawerAction = enum(
         title = R.string.scroll_up_action,
         description = null,
-        default = DrawerActions.defaultScrollUpAction,
-        enumClass = DrawerActions::class.java
+        default = DrawerActions.defaultScrollUpAction
     )
 
     @SettingKey
     val backDrawerAction = enum(
         title = R.string.back_action,
         description = null,
-        default = DrawerActions.defaultBackAction,
-        enumClass = DrawerActions::class.java
+        default = DrawerActions.defaultBackAction
     )
 
     @SettingKey
@@ -249,7 +240,7 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.DRAWER) {
         title = null,
         description = null,
         default = emptyList(),
-        onChange = {},
+        onChanged = {},
         backupable = false
     )
 
@@ -274,21 +265,20 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.DRAWER) {
 //        default = true
 //    )
 
-        @SettingKey
-        val pullDownScaleIn = boolean(
-            title = R.string.pull_down_scale_in,
-            description = R.string.pull_down_scale_in_desc,
-            default = true
-        )
+    @SettingKey
+    val pullDownScaleIn = boolean(
+        title = R.string.pull_down_scale_in,
+        description = R.string.pull_down_scale_in_desc,
+        default = true
+    )
 
-        /**
-         * The order of the search bar / recently used in drawer
-         */
-        @SettingKey
-        val toolbarsOrder = enumList(
-            title = R.string.toolbars_order,
-            description = null,
-            default = DrawerToolbar.defaultDrawerToolbarOrder,
-            enumClass = DrawerToolbar::class.java
-        )
+    /**
+     * The order of the search bar / recently used in drawer
+     */
+    @SettingKey
+    val toolbarsOrder = enumList(
+        title = R.string.toolbars_order,
+        description = null,
+        default = DrawerToolbar.defaultDrawerToolbarOrder
+    )
 }

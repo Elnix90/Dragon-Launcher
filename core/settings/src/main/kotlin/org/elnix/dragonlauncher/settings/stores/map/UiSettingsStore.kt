@@ -12,7 +12,7 @@ import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Compa
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 @SettingStore
-object UiSettingsStore : MapSettingsStore(DataStoreName.UI) {
+object UiSettingsStore : MapSettingsStore(DataStoreName.Ui) {
 
     /** Use the computing of HSV color to produce a color that depends on the angle / progress */
     @SettingKey

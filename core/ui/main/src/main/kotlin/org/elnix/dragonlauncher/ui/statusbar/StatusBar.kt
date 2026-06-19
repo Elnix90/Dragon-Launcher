@@ -197,7 +197,7 @@ fun EditStatusBar() {
 
         val loadedElements = StatusBarJsonSettingsStore.jsonSetting.get(ctx)
 
-        val elementsJson = StatusBarJson.decode<List<StatusBar>>(loadedElements) ?: emptyList()
+        val elementsJson = StatusBarJson.decode<List<StatusBar>>(loadedElements, emptyList())
 
         elementsJson.forEach { item ->
             elements.add(

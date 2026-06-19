@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ktx
 
 import java.net.URLDecoder
+import java.util.Locale.getDefault
 
 fun String.decodeUrl(charset: String): String? {
     return URLDecoder.decode(this, charset)
@@ -42,3 +43,25 @@ val String?.isBlankJson: Boolean
  */
 val String?.isNotBlankJson: Boolean
     get() = !isBlankJson
+
+
+val camelRegex = "(?<=[a-zA-Z])[A-Z]".toRegex()
+val snakeRegex = "_[a-zA-Z]".toRegex()
+
+fun String.camelToSnakeCase(): String {
+    return camelRegex.replace(this) {
+        "_${it.value}"
+    }.lowercase(getDefault())
+}
+
+fun String.snakeToLowerCamelCase(): String {
+    return snakeRegex.replace(this) {
+        it.value.replace("_", "")
+            .uppercase(getDefault())
+    }
+}
+
+fun String.snakeToUpperCamelCase(): String {
+    return snakeToLowerCamelCase().replaceFirstChar { if (it.isLowerCase()) it.titlecase(getDefault()) else it.toString() }
+}
+

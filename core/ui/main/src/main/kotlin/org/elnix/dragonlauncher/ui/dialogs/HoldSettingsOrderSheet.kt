@@ -382,14 +382,13 @@ fun rememberHoldMenuEntries(): State<List<NavigationRoute>> {
 
     return retain(holdMenuEntriesString) {
         derivedStateOf {
-            HoldMenuEntriesJson.decode<List<NavigationRoute>>(holdMenuEntriesString)
-                ?.toMutableList()
-                ?.apply {
+            HoldMenuEntriesJson.decode<List<NavigationRoute>>(holdMenuEntriesString, emptyList())
+                .toMutableList()
+                .apply {
                     if (!this.any { it is NavigationRoute.PointsSettings }) {
                         add(0, NavigationRoute.PointsSettings())
                     }
                 }
-                ?: emptyList()
         }
     }
 }

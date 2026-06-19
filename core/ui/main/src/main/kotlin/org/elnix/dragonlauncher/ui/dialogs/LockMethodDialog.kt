@@ -66,25 +66,25 @@ fun LockMethodDialog(
                     Spacer(8.dp)
                     LockMethod.entries.forEach { method ->
 
-                        val unavailableText = if (method == LockMethod.DEVICE_UNLOCK && !securityService.isDeviceUnlockAvailable(ctx)) {
+                        val unavailableText = if (method == LockMethod.Device && !securityService.isDeviceUnlockAvailable(ctx)) {
                             stringResource(R.string.device_credentials_not_available)
                         } else null
 
 
                         fun onClick() {
                             when (method) {
-                                LockMethod.PIN -> {
-                                    pendingLockMethod = LockMethod.PIN
+                                LockMethod.Pin -> {
+                                    pendingLockMethod = LockMethod.Pin
                                     showPinSetupDialog = true
                                 }
 
-                                LockMethod.NONE -> {
+                                LockMethod.None -> {
                                     lockScreenViewModel.removeLock()
                                     onDismiss()
 
                                 }
 
-                                LockMethod.DEVICE_UNLOCK -> {
+                                LockMethod.Device -> {
                                     // Test biometric authentication immediately
                                     val activity = ctx.findFragmentActivity()
                                     if (activity != null && securityService.isDeviceUnlockAvailable(ctx)) {

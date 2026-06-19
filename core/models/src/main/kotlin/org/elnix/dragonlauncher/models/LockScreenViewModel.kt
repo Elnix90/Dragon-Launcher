@@ -29,7 +29,7 @@ class LockScreenViewModel @Inject constructor(
     @SuppressLint("StaticFieldLeak")
     private val ctx = application.applicationContext
 
-    private val _lockMethod = MutableStateFlow(LockMethod.NONE)
+    private val _lockMethod = MutableStateFlow(LockMethod.None)
     val lockMethod = _lockMethod.asStateFlow()
 
 
@@ -63,7 +63,7 @@ class LockScreenViewModel @Inject constructor(
         viewModelScope.launch {
             val hash = securityService.hashPin(pin)
             PrivateSettingsStore.lockPinHash.set(ctx, hash)
-            PrivateSettingsStore.lockMethod.set(ctx, LockMethod.PIN)
+            PrivateSettingsStore.lockMethod.set(ctx, LockMethod.Pin)
             ctx.showToast(ctx.getString(R.string.pin_set_success))
             unlock()
         }
@@ -72,7 +72,7 @@ class LockScreenViewModel @Inject constructor(
     fun setLockScreenMethod() {
         viewModelScope.launch {
             PrivateSettingsStore.lockPinHash.reset(ctx)
-            PrivateSettingsStore.lockMethod.set(ctx, LockMethod.DEVICE_UNLOCK)
+            PrivateSettingsStore.lockMethod.set(ctx, LockMethod.Device)
             unlock()
         }
     }
@@ -102,13 +102,13 @@ class LockScreenViewModel @Inject constructor(
 
     fun requestUnlock(targetScreen: NavigationRoute) {
         when (_lockMethod.value) {
-            LockMethod.NONE -> unlock()
+            LockMethod.None -> unlock()
 
-            LockMethod.PIN -> {
+            LockMethod.Pin -> {
                 _screenToUnlock.value = targetScreen
             }
 
-            LockMethod.DEVICE_UNLOCK -> {
+            LockMethod.Device -> {
                 _screenToUnlock.value = targetScreen
             }
         }

@@ -8,12 +8,11 @@ import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
 import org.elnix.dragonlauncher.settings.bases.objects.EnumSettingObject.Companion.enum
 import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
-import org.elnix.dragonlauncher.settings.bases.objects.LongSettingObject.Companion.long
 import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 @SettingStore
-object PrivateSettingsStore : MapSettingsStore(DataStoreName.PRIVATE_SETTINGS) {
+object PrivateSettingsStore : MapSettingsStore(DataStoreName.Private) {
 
     @SettingKey
     val hasSeenWelcome = boolean(
@@ -71,16 +70,7 @@ object PrivateSettingsStore : MapSettingsStore(DataStoreName.PRIVATE_SETTINGS) {
     val lockMethod = enum(
         title = null,
         description = null,
-        default = LockMethod.NONE,
-        enumClass = LockMethod::class.java
-    )
-
-    @SettingKey
-    val lastBackupTime = long(
-        title = null,
-        description = null,
-        default = System.currentTimeMillis(),
-        allowedRange = Long.MIN_VALUE..Long.MAX_VALUE
+        default = LockMethod.None
     )
 
     /**

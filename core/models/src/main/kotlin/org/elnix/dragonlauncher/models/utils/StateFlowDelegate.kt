@@ -36,8 +36,6 @@ abstract class StateFlowDelegate<T>(
             setValue(value ?: default)
         }
     }
-
-//    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) = setValue(value)
 }
 
 

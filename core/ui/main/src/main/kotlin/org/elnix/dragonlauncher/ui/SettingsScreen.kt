@@ -100,11 +100,11 @@ fun SettingsScreen(
             }
         }
     ) {
-        if (showBetaVersionWarning) {
+        AnimatedVisibility(showBetaVersionWarning) {
             BetaVersionWarning(BetaVersionType.App)
         }
 
-        if (WarningManager.showWarning()) {
+        AnimatedVisibility(WarningManager.showWarning()) {
             WarningReminder()
         }
 

@@ -45,6 +45,7 @@ import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
+import org.elnix.dragonlauncher.models.InitializationViewModel
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.SettingsBackupManager
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
@@ -63,6 +64,7 @@ private const val pageNumber = 6
 @Composable
 fun WelcomeScreen(
     backupViewModel: BackupViewModel = activityViewModel(),
+    initializationViewModel: InitializationViewModel = activityViewModel(),
     onEnterSettings: () -> Unit,
     onEnterApp: () -> Unit
 ) {
@@ -122,11 +124,9 @@ fun WelcomeScreen(
 
     fun setHasSeen() {
         scope.launch {
-            with(PrivateSettingsStore) {
-                hasSeenWelcome.set(ctx, true)
-                // Resets the pager, that is only used to scroll to the page the user left when it re-enters the welcome screen
-                welcomeScreenTempPage.reset(ctx)
-            }
+            PrivateSettingsStore.hasSeenWelcome.set(ctx, true)
+            // Resets the pager, that is only used to scroll to the page the user left when it re-enters the welcome screen
+            PrivateSettingsStore.welcomeScreenTempPage.reset(ctx)
         }
     }
 
@@ -167,10 +167,18 @@ fun WelcomeScreen(
                     5 -> WelcomePageFinish(
                         onEnterSettings = {
                             setHasSeen()
+
+                            // Initialize only when exiting from the welcome screen, to avoid the initialization layer to override points/nests
+                            initializationViewModel.checkLauncherInitialization()
+
                             onEnterSettings()
                         },
                         onEnterApp = {
                             setHasSeen()
+
+                            // Initialize only when exiting from the welcome screen, to avoid the initialization layer to override points/nests
+                            initializationViewModel.checkLauncherInitialization()
+
                             onEnterApp()
                         }
                     )
@@ -241,6 +249,9 @@ fun WelcomeScreen(
                             )
                         }
                         setHasSeen()
+
+
+                        // Here I do not check the initialization of the launcher, as th user imports it's settings, and therefore, it is initialized!
                         onEnterApp()
                     }
                 }

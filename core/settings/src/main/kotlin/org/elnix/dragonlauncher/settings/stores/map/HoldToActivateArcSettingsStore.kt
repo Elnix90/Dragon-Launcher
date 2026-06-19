@@ -11,7 +11,7 @@ import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Compa
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 @SettingStore
-object HoldToActivateArcSettingsStore : MapSettingsStore(DataStoreName.HOLD_TO_ACTIVATE) {
+object HoldToActivateArcSettingsStore : MapSettingsStore(DataStoreName.HoldToActivate) {
 
     @SettingKey
     val holdDelayBeforeStartingLongClickSettings = int(

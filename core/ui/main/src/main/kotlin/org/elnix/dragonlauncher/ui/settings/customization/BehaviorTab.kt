@@ -55,7 +55,7 @@ fun BehaviorTab(
     val bottomPadding by BehaviorSettingsStore.bottomPadding.asState()
 
     val lockMethod by lockScreenViewModel.lockMethod.collectAsState()
-    val superWarningModeEnabled = lockMethod != LockMethod.NONE
+    val superWarningModeEnabled = lockMethod != LockMethod.None
 
     val paddingState = rememberExpandableSection(stringResource(R.string.drag_zone_padding), mode = ExpandableSectionMode.Expandable)
     val showAppPreviewOverlay = paddingState.isExpanded()
@@ -68,9 +68,9 @@ fun BehaviorTab(
 
 
     val lockDescription = when (lockMethod) {
-        LockMethod.NONE -> stringResource(R.string.lock_none)
-        LockMethod.PIN -> stringResource(R.string.lock_pin)
-        LockMethod.DEVICE_UNLOCK -> stringResource(R.string.lock_device_unlock)
+        LockMethod.None -> stringResource(R.string.lock_none)
+        LockMethod.Pin -> stringResource(R.string.lock_pin)
+        LockMethod.Device -> stringResource(R.string.lock_device_unlock)
     }
 
     SettingsScaffold(

@@ -11,7 +11,7 @@ import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companio
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 @SettingStore
-object BehaviorSettingsStore : MapSettingsStore(DataStoreName.BEHAVIOR) {
+object BehaviorSettingsStore : MapSettingsStore(DataStoreName.Behavior) {
 
     @SettingKey
     val backAction = action(

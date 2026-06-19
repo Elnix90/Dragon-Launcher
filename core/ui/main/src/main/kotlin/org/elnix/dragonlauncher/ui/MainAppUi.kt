@@ -187,7 +187,7 @@ fun MainAppUi(
             return
         }
 
-        if (screen in NavigationRoute.settingsRoutes && lockMethod != LockMethod.NONE) {
+        if (screen in NavigationRoute.settingsRoutes && lockMethod != LockMethod.None) {
             lockScreenViewModel.requestUnlock(screen)
         } else {
             go()
@@ -276,19 +276,6 @@ fun MainAppUi(
 
     fun launchAction(point: Point) {
         val action = point.action
-
-//        if (action is Action.LaunchApp) {
-//            pendingPackageToLaunch = action.packageName
-//            pendingUserIdToLaunch = action.userId ?: 0
-//            pendingAppName = point.customName ?: try {
-//                ctx.packageManager.getApplicationLabel(
-//                    ctx.packageManager.getApplicationInfo(action.packageName, 0)
-//                ).toString()
-//            } catch (_: Exception) {
-//                action.packageName
-//            }
-//        }
-
         appLifecycleViewModel.blockHomeActionsTemporarily()
 
         try {
@@ -297,43 +284,7 @@ fun MainAppUi(
                 appLaunchViewModel = appLaunchViewModel,
                 drawerViewModel = drawerViewModel,
                 action = action,
-//                pausedApps = pausedApps,
-//                socialMediaPauseEnabled = socialMediaPauseEnabled,
-//                guiltModeEnabled = guiltModeEnabled,
-//                pauseDuration = pauseDuration,
-//                reminderEnabled = reminderEnabled,
-//                reminderIntervalMinutes = reminderInterval,
-//                reminderMode = reminderMode,
-//                returnToLauncherEnabled = returnToLauncherEnabled,
-//                appName = pendingAppName ?: "",
-//                onOpenPrivateSpaceApp = { action ->
-//                    if (action !is Action.LaunchApp) return@launchAction
-//
-//                    if (privateSpaceState.value.isLocked) {
-//                        profilesViewModel.onUnlockPrivateSpace()
-//                    }
-//
-//                    scope.launch {
-//
-//                        logD(APP_LAUNCH_TAG) { "Waiting for private space to unlock before launch" }
-//
-//                        val unlocked = withTimeoutOrNull(10_000L) {
-//                            privateSpaceState
-//                                .filter { !it.isLocked }
-//                                .first()
-//                        }
-//
-//                        if (unlocked != null) {
-//                            logD(APP_LAUNCH_TAG) { "Private space unlocked, launching" }
-//                            launchAction(dummySwipePoint(action.copy(isPrivateSpace = false)))
-//                        } else {
-//                            logW(APP_LAUNCH_TAG) { "Timeout expired for private space unlock" }
-//                        }
-//                    }
-//                },
                 useAccessibilityInsteadOfContextToExpandActionPanel = useAccessibilityInsteadOfContextToExpandActionPanel,
-//                digitalPauseLauncher = digitalPauseLauncher,
-//                onReloadApps = { scope.launch { TODO()/*appsViewModel.reloadApps() */} },
                 onReselectFile = { showFilePicker = point },
                 onAppSettings = backStack::navigate,
                 onAppDrawer = { workspaceId ->
@@ -354,11 +305,8 @@ fun MainAppUi(
     }
 
     fun launchAction(action: Action) {
-        launchAction(
-            dummySwipePoint(action)
-        )
+        launchAction(dummySwipePoint(action))
     }
-
 
     // Drawer home action receiver
     var drawerHomeHandler by remember { mutableStateOf<(() -> Unit)?>(null) }
@@ -652,7 +600,7 @@ fun MainAppUi(
         GoogleLockingWarningDialog()
 
 
-        if (screenToUnlock != null && lockMethod == LockMethod.PIN) {
+        if (screenToUnlock != null && lockMethod == LockMethod.Pin) {
             PinUnlock(
                 onDismiss = {
                     lockScreenViewModel.cancelPinUnlock()
@@ -665,7 +613,7 @@ fun MainAppUi(
             )
         }
 
-        if (screenToUnlock != null && lockMethod == LockMethod.DEVICE_UNLOCK) {
+        if (screenToUnlock != null && lockMethod == LockMethod.Device) {
             LaunchedEffect(screenToUnlock) {
                 val activity = ctx.findFragmentActivity()
                 if (activity != null && securityService.isDeviceUnlockAvailable(ctx)) {

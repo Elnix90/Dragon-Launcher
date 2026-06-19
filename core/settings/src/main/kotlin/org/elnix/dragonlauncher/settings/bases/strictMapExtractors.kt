@@ -10,7 +10,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.PointsJson
 import org.elnix.dragonlauncher.logging.ANGLE_LINE_TAG
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.objects.SettingObject
 
 
 @Suppress("NOTHING_TO_INLINE")
@@ -248,6 +248,33 @@ internal inline fun <E : Enum<E>> getEnumListStrict(
     } ?: def
 }
 
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun <E : Enum<E>> getEnumSetStrict(
+    raw: Any?,
+    def: Set<E>,
+    enumClass: Class<E>
+): Set<E> {
+
+    return when (raw) {
+        is String ->
+            try {
+                raw
+                    .takeIf { it.isNotEmpty() }
+                    ?.split(",")
+                    ?.mapNotNull { elem ->
+                        enumClass.enumConstants
+                            ?.firstOrNull { it.name == elem.trim() }
+                    }.orEmpty()
+                    .toSet()
+            } catch (e: Exception) {
+                logE(ANGLE_LINE_TAG, e) { "Failed to decode enumClass $enumClass object, using default value" }
+                null
+            }
+
+        else -> null
+    } ?: def
+}
+
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun getColorStrict(
@@ -272,7 +299,7 @@ internal inline fun getColorStrict(
 @Suppress("NOTHING_TO_INLINE")
 internal suspend inline fun MutableMap<String, Any>.putIfNonDefault(
     ctx: Context,
-    settingObject: BaseSettingObject<*,*>
+    settingObject: SettingObject<*,*>
 ) {
     if (settingObject.isNotNullOrDefault(ctx)) {
         put(settingObject.key, settingObject.getEncoded(ctx) as Any)
@@ -282,7 +309,7 @@ internal suspend inline fun MutableMap<String, Any>.putIfNonDefault(
 @Suppress("NOTHING_TO_INLINE")
 internal suspend inline fun MutableMap<String, Any>.putIfNotNull(
     ctx: Context,
-    settingObject: BaseSettingObject<*,*>
+    settingObject: SettingObject<*,*>
 ) {
     val value = settingObject.get(ctx)
 
@@ -291,7 +318,7 @@ internal suspend inline fun MutableMap<String, Any>.putIfNotNull(
     }
 }
 
-internal suspend inline fun BaseSettingObject<*, *>.isNotNullOrDefault(
+internal suspend inline fun SettingObject<*, *>.isNotNullOrDefault(
     ctx: Context,
 ): Boolean {
     val value = this.get(ctx)

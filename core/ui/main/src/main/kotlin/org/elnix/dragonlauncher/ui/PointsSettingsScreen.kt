@@ -51,7 +51,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -125,13 +124,13 @@ import org.elnix.dragonlauncher.ui.components.AppPreviewTitle
 import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
 import org.elnix.dragonlauncher.ui.dialogs.EditPointSheet
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
-import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
 import org.elnix.dragonlauncher.ui.dragon.components.EditValueTextField
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
+import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.glowOverlay
 import org.elnix.dragonlauncher.ui.helpers.nests.actionsInCircle
@@ -146,10 +145,10 @@ import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.hypot
 import kotlin.math.round
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("LocalContextGetResourceValueCall")
-@Suppress("AssignedValueIsNeverRead")
 @Composable
 fun PointsSettingsScreen(
     drawerViewModel: DrawerViewModel = activityViewModel(),
@@ -177,11 +176,8 @@ fun PointsSettingsScreen(
     val snapPoints by UiSettingsStore.snapPoints.asState()
     val autoSeparatePoints by UiSettingsStore.autoSeparatePoints.asState()
     val freeMoveDraggedPoint by UiSettingsStore.freeMoveDraggedPoint.asState()
-    val appLabelOverlaySize by UiSettingsStore.appLabelOverlaySize.asState()
-    val appIconOverlaySize by UiSettingsStore.appIconOverlaySize.asState()
 
     val createLiveNestByDefaultWhenCreatingOpenCircleNestPoint by createLiveNestByDefaultWhenCreatingOpenCircleNestPoint.asState()
-    val settingsDebugInfos by DebugSettingsStore.settingsDebugInfo.asState()
 
     var center by remember { mutableStateOf(Offset.Zero) }
 
@@ -510,7 +506,7 @@ fun PointsSettingsScreen(
 
             val startDuration = System.currentTimeMillis()
             while (System.currentTimeMillis() - startDuration < Constants.Settings.HOVER_POINT_DURATION) {
-                delay(50L)
+                delay(50L.milliseconds)
             }
             ableToLaunchHoverAction = true
         }
@@ -1054,11 +1050,6 @@ fun PointsSettingsScreen(
             Box(
                 Modifier
                     .fillMaxSize()
-                    .then(
-                        if (settingsDebugInfos) {
-                            Modifier.background(Color.DarkGray.copy(0.3f))
-                        } else Modifier
-                    )
                     .pointerInput(Unit, isInDragAroundMode, nestId, filteredPoints) {
                         if (isInDragAroundMode) {
                             detectTransformGestures(true) { centroid, pan, gestureZoom, gestureRotate ->
@@ -1486,7 +1477,6 @@ fun PointsSettingsScreen(
     AppPreviewTitle(
         point = selectedPoint,
         topPadding = 100.dp,
-        labelSize = appLabelOverlaySize,
         showLabel = true,
         showIcon = true
     )
@@ -1574,26 +1564,21 @@ fun PointsSettingsScreen(
         }
     }
 
-
     /**
      * Debug Infos section
      * Shows various information about the current settings state, may be unreadable when lots of points
      */
-    if (settingsDebugInfos) {
-        DragonColumnGroup {
-            Text("isDragging: $isDragging")
-            Text("nests id: $nestId")
-            Text("current nests id: ${currentNest.id}")
-            Text("nests number: ${nests.size}")
-            Text("circle number: $circleNumber")
-            Text("currentNest size: ${currentNest.dragDistances.size}")
-            Text("circle width incr: $circlesWidthIncrement")
-            Text("current dragDistances: ${currentNest.dragDistances}")
-            Text("closest hovered point: $closestHoveredTempOffset")
-            Text("current nest: $currentNest")
-
-            selectedPoint?.let { Text(it.toString()) }
-        }
+    DebugZone(DebugSettingsStore.settingsDebugInfo) {
+        Text("isDragging: $isDragging")
+        Text("nests id: $nestId")
+        Text("current nests id: ${currentNest.id}")
+        Text("nests number: ${nests.size}")
+        Text("circle number: $circleNumber")
+        Text("currentNest size: ${currentNest.dragDistances.size}")
+        Text("circle width incr: $circlesWidthIncrement")
+        Text("current dragDistances: ${currentNest.dragDistances}")
+        Text("closest hovered point: $closestHoveredTempOffset")
+        Text("current nest: $currentNest")
+        selectedPoint?.let { Text(it.toString()) }
     }
 }
-

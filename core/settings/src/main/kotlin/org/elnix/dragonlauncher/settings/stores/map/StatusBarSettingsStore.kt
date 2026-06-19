@@ -10,7 +10,7 @@ import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companio
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 @SettingStore
-object StatusBarSettingsStore : MapSettingsStore(DataStoreName.STATUS_BAR) {
+object StatusBarSettingsStore : MapSettingsStore(DataStoreName.StatusBar) {
 
     @SettingKey
     val barBackgroundColor = color(

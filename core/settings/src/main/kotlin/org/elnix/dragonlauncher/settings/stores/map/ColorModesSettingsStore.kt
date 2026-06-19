@@ -12,38 +12,34 @@ import org.elnix.dragonlauncher.settings.bases.objects.EnumSettingObject.Compani
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 @SettingStore
-object ColorModesSettingsStore : MapSettingsStore(DataStoreName.COLOR_MODE) {
+object ColorModesSettingsStore : MapSettingsStore(DataStoreName.ColorMode) {
 
     @SettingKey
     val colorPickerMode = enum(
         title = null,
         description = null,
-        default = ColorPickerMode.Default,
-        enumClass = ColorPickerMode::class.java,
+        default = ColorPickerMode.Default
     )
 
     @SettingKey
     val defaultTheme = enum(
         title = null,
         description = null,
-        default = DefaultThemes.Amoled,
-        enumClass = DefaultThemes::class.java
+        default = DefaultThemes.Amoled
     )
 
     @SettingKey
     val colorPickerButtonOne = enum(
         title = null,
         description = null,
-        default = ColorPickerButtonAction.Random,
-        enumClass = ColorPickerButtonAction::class.java
+        default = ColorPickerButtonAction.Random
     )
 
     @SettingKey
     val colorPickerButtonTwo = enum(
         title = null,
         description = null,
-        default = ColorPickerButtonAction.Copy,
-        enumClass = ColorPickerButtonAction::class.java
+        default = ColorPickerButtonAction.Copy
     )
 
     @SettingKey

@@ -199,7 +199,7 @@ class WidgetsViewModel @Inject constructor(
     private fun loadWidgets() {
         viewModelScope.launch {
             val widgetsJsonString = WidgetsSettingsStore.jsonSetting.get(ctx)
-            _widgets.value = WidgetsJson.decode<List<Widget>>(widgetsJsonString) ?: emptyList()
+            _widgets.value = WidgetsJson.decode<List<Widget>>(widgetsJsonString, emptyList())
         }
     }
 

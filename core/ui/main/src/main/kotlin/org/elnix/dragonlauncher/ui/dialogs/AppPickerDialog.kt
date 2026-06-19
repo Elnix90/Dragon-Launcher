@@ -44,9 +44,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.base.model.models.Application
-import org.elnix.dragonlauncher.base.model.serializables.Profile.Type.Personal
-import org.elnix.dragonlauncher.base.model.serializables.Profile.Type.Private
-import org.elnix.dragonlauncher.base.model.serializables.Profile.Type.Work
+import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
@@ -295,21 +293,17 @@ fun AppPickerDialog(
                 val workspace = workspaceState[pageIndex]
 
                 val workspaceProfileType = when (workspace.type) {
-                    WorkspaceType.Work -> Work
-                    WorkspaceType.Private -> Private
-                    else -> Personal
+                    WorkspaceType.Work -> Profile.Type.Work
+                    WorkspaceType.Private -> Profile.Type.Private
+                    else -> Profile.Type.Personal
                 }
 
-                val workspaceProfile = when (workspaceProfileType) {
-                    Personal -> profiles[0]
-                    Work -> profiles[1]
-                    Private -> profiles[2]
-                }
+                val workspaceProfile = profiles.find { it?.type == workspaceProfileType}
 
                 val workspaceLocked = when (workspaceProfileType) {
-                    Work -> profileStates[1]!!.locked
-                    Private -> profileStates[2]!!.locked
-                    Personal -> false
+                    Profile.Type.Work -> profileStates[1]?.locked ?: true
+                    Profile.Type.Private -> profileStates[2]?.locked ?: true
+                    Profile.Type.Personal -> false
                 }
 
                 val apps by drawerViewModel.search(workspace).collectAsStateWithLifecycle()

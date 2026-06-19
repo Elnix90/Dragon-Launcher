@@ -3,7 +3,7 @@ import com.android.build.api.dsl.LibraryExtension
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.settings)
+    alias(libs.plugins.settings) // My plugin 🤎
 }
 
 kotlin {
@@ -40,6 +40,7 @@ dependencies {
     api(libs.androidx.datastore.preferences.core)
     api(libs.kotlinx.coroutines.core)
 
+    // My plugin 🤎
     implementation(libs.settings.plugin.annotations)
 
     implementation(project(":core:base"))

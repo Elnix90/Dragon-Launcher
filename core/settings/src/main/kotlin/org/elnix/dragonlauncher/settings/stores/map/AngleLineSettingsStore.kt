@@ -11,7 +11,7 @@ import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 
 @SettingStore
-object AngleLineSettingsStore : MapSettingsStore(DataStoreName.ANGLE_LINE) {
+object AngleLineSettingsStore : MapSettingsStore(DataStoreName.AngleLine) {
 
     @SettingKey
     val showLineObjectPreview = boolean(

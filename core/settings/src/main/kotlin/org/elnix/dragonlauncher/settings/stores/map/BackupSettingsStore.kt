@@ -5,13 +5,12 @@ import io.github.elnix90.settings.SettingStore
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
-import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
-import org.elnix.dragonlauncher.settings.bases.objects.StringSetSettingObject.Companion.stringSet
+import org.elnix.dragonlauncher.settings.bases.objects.EnumSetSettingObject.Companion.enumSet
 import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 @SettingStore
-object BackupSettingsStore : MapSettingsStore(DataStoreName.BACKUP) {
+object BackupSettingsStore : MapSettingsStore(DataStoreName.Backup) {
 
     @SettingKey
     val autoBackupEnabled = boolean(
@@ -27,29 +26,20 @@ object BackupSettingsStore : MapSettingsStore(DataStoreName.BACKUP) {
         default = ""
     )
 
-    /**
-     * Because it caused crash at runtime due to early .entries initialization
-     */
-    private val defaultBackupStores: Set<String>
-        get() = DataStoreName.entries
-            .filter { it.userBackup }
-            .map { it.value }
-            .toSet()
-
     @SettingKey
-    val backupStores = stringSet(
+    val backupStores = enumSet(
         title = R.string.auto_backup_stores,
         description = null,
-        default = defaultBackupStores
+        default = DataStoreName.entries.toSet()
     )
 
 
     // TODO ( after  3.0.0 ) - Bruh
-    @SettingKey
-    val numberOfBackupsToKeep = int(
-        default = 2,
-        title = null,
-        description = null,
-        allowedRange = 1..10
-    )
+//    @SettingKey
+//    val numberOfBackupsToKeep = int(
+//        default = 2,
+//        title = null,
+//        description = null,
+//        allowedRange = 1..10
+//    )
 }

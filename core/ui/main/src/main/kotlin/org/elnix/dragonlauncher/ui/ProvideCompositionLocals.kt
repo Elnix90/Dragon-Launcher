@@ -57,7 +57,7 @@ fun ProvideGlobalCompositionLocals(
 
     val elements by remember(elementsJson) {
         derivedStateOf {
-            StatusBarJson.decode<List<StatusBar>>(elementsJson) ?: emptyList()
+            StatusBarJson.decode<List<StatusBar>>(elementsJson, emptyList())
         }
     }
 

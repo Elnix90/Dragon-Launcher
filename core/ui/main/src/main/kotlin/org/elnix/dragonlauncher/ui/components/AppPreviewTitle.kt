@@ -13,6 +13,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,16 +29,17 @@ import androidx.compose.ui.unit.sp
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.actions.PointIcon
 import org.elnix.dragonlauncher.ui.actions.actionLabel
+import org.elnix.dragonlauncher.ui.base.asState
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("UseOfNonLambdaOffsetOverload")
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppPreviewTitle(
     point: Point?,
     topPadding: Dp = 60.dp,
-    labelSize: Int,
     showLabel: Boolean,
     showIcon: Boolean
 ) {
@@ -46,6 +48,8 @@ fun AppPreviewTitle(
     val extraColors = LocalExtraColors.current
 
     val label = point.customName ?: actionLabel(point.action)
+
+    val appLabelOverlaySize by UiSettingsStore.appLabelOverlaySize.asState()
 
 
 
@@ -95,7 +99,7 @@ fun AppPreviewTitle(
                         text = label,
                         style = TextStyle(
                             color = colorAction,
-                            fontSize = labelSize.sp,
+                            fontSize = appLabelOverlaySize.sp,
                             fontWeight = FontWeight.Bold,
                             shadow = Shadow(
                                 color = Color.Black.copy(alpha = 0.48f),

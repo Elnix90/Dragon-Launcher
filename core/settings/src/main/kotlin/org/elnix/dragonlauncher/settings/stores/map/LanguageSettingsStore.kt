@@ -7,7 +7,7 @@ import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Compa
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 @SettingStore
-object LanguageSettingsStore : MapSettingsStore(DataStoreName.LANGUAGE) {
+object LanguageSettingsStore : MapSettingsStore(DataStoreName.Language) {
 
     @SettingKey
     val keyLang = string(

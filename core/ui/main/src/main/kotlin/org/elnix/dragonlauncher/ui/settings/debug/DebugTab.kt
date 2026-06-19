@@ -139,7 +139,7 @@ fun DebugTab(
         }
 
         DragonSettingsGroup(R.string.debug_infos) {
-            SettingsSwitchRow(DebugSettingsStore.debugInfos)
+            SettingsSwitchRow(DebugSettingsStore.mainScreenDebugInfos)
             SettingsSwitchRow(DebugSettingsStore.settingsDebugInfo)
             SettingsSwitchRow(DebugSettingsStore.widgetsDebugInfo)
             SettingsSwitchRow(DebugSettingsStore.workspacesDebugInfo)
@@ -318,7 +318,7 @@ fun DebugTab(
                             .padding(vertical = 4.dp)
                     ) {
                         Text(
-                            text = "Reset ${settingsStore.dataStoreName.value}",
+                            text = "Reset ${settingsStore.dataStoreName.name}",
                             color = MaterialTheme.colorScheme.error
                         )
                     }

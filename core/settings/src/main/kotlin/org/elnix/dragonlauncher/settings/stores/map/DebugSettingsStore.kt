@@ -11,7 +11,7 @@ import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Compa
 import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 @SettingStore
-object DebugSettingsStore : MapSettingsStore(DataStoreName.DEBUG) {
+object DebugSettingsStore : MapSettingsStore(DataStoreName.Debug) {
 
     @SettingKey
     val debugEnabled = boolean(
@@ -21,7 +21,7 @@ object DebugSettingsStore : MapSettingsStore(DataStoreName.DEBUG) {
     )
 
     @SettingKey
-    val debugInfos = boolean(
+    val mainScreenDebugInfos = boolean(
         title = R.string.show_debug_infos,
         description = R.string.show_debug_infos_desc,
         default = false

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ButtonGroupScope
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
@@ -108,26 +109,40 @@ fun AppLongPressRow(
     }
 
     Column {
-        @Suppress("DEPRECATION")
         ButtonGroup(
+            overflowIndicator = { menuState -> ButtonGroupDefaults.OverflowIndicator(menuState) },
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(MenuDefaults.GroupSpacing, Alignment.CenterHorizontally),
         ) {
 
-            Button(
-                onClick = { app.openAppDetails(ctx) },
-                icon = R.drawable.settings
+            customItem(
+                buttonGroupContent = {
+                    Button(
+                        onClick = { app.openAppDetails(ctx) },
+                        icon = R.drawable.settings
+                    )
+                },
+                menuContent = {}
             )
-
-            Button(
-                onClick = { showDetailedAppInfoDialog = true },
-                icon = R.drawable.info
+            customItem(
+                buttonGroupContent = {
+                    Button(
+                        onClick = { showDetailedAppInfoDialog = true },
+                        icon = R.drawable.info
+                    )
+                },
+                menuContent = { }
             )
 
             if (!app.isPrivate) {
-                Button(
-                    onClick = { app.uninstall(ctx) },
-                    icon = R.drawable.delete_forever
+                customItem(
+                    buttonGroupContent = {
+                        Button(
+                            onClick = { app.uninstall(ctx) },
+                            icon = R.drawable.delete_forever
+                        )
+                    },
+                    menuContent = { }
                 )
             }
         }
@@ -215,7 +230,7 @@ fun AppLongPressRow(
             }
 
             showIconDialog = false
-           iconService.reloadAppIcon(app)
+            iconService.reloadAppIcon(app)
         }
     }
 

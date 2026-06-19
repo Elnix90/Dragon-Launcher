@@ -59,8 +59,7 @@ class DragonLauncherApplication : Application() {
         appScope.cancel()
     }
 
-
-    fun initializeAllStores() {
+    private fun initializeAllStores() {
         allStores.forEach { (name, store) ->
             logD(SETTINGS_TAG) { "Initialized $name: $store" }
             store.ALL.forEach {

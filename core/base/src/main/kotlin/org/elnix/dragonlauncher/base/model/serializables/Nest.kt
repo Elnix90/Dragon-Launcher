@@ -74,10 +74,10 @@ data class Nest(
     @SerialName("showAllActionsOnCurrentNest")
     val showAllActionsOnCurrentNest: Boolean? = null,
 ) {
-//    override fun toString(): String {
-//        return "Nest N°$id | contains ${dragDistances.size} circles: "//\n${dragDistances.map { "\n${it.key} to ${it.value}" }}"
-//    }
-    override fun toString(): String = "Nest N°$id"
+    override fun toString(): String {
+        return "Nest N°$id | contains ${dragDistances.size} circles: "//\n${dragDistances.map { "\n${it.key} to ${it.value}" }}"
+    }
+//    override fun toString(): String = "Nest N°$id"
 
 
 

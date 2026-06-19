@@ -5,7 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.elnix.dragonlauncher.models.utils.StateFlowWrapper
-import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
+import org.elnix.dragonlauncher.settings.bases.objects.SettingObject
 
 /**
  * Collects the current value of this setting as a Compose [State], using a default value if none is set.
@@ -18,7 +18,7 @@ import org.elnix.dragonlauncher.settings.bases.objects.BaseSettingObject
  *
  */
 @Composable
-fun <T, R> BaseSettingObject<T, R>.asState(default: T? = null): State<T> {
+fun <T, R> SettingObject<T, R>.asState(default: T? = null): State<T> {
     val ctx = LocalContext.current
     return flow(ctx).collectAsStateWithLifecycle(initialValue = default ?: this.default)
 }
@@ -32,11 +32,11 @@ fun <T, R> BaseSettingObject<T, R>.asState(default: T? = null): State<T> {
  * @return A [State] holding the current value of the setting, or null if not yet set.
  */
 @Composable
-fun <T, R> BaseSettingObject<T, R>.asStateNull(): State<T?> {
+fun <T, R> SettingObject<T, R>.asStateNull(): State<T?> {
     val ctx = LocalContext.current
     return flow(ctx).collectAsStateWithLifecycle(initialValue = null)
 }
 
-@Deprecated("Use the normal asState instead")
+
 @Composable
 fun <T> StateFlowWrapper<T>.asState(): State<T> = this.flow.collectAsStateWithLifecycle()

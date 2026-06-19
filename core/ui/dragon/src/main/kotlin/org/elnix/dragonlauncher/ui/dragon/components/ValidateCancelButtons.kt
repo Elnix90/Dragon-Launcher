@@ -5,6 +5,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -33,42 +34,55 @@ fun ValidateCancelButtons(
     val interactionSources = remember { List(2) { MutableInteractionSource() } }
 
     @Suppress("DEPRECATION")
-    ButtonGroup(Modifier.fillMaxWidth()) {
-        if(onCancel != null) {
-            OutlinedButton(
-                onClick = withHaptic(HapticFeedbackType.Reject) {
-                    onCancel()
+    ButtonGroup(
+        overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        if (onCancel != null) {
+            customItem(
+                buttonGroupContent = {
+                    OutlinedButton(
+                        onClick = withHaptic(HapticFeedbackType.Reject) {
+                            onCancel()
+                        },
+                        shapes = UiConstants.dragonShapes(),
+                        modifier = Modifier
+                            .weight(1f)
+                            .animateWidth(interactionSources[0]),
+                        interactionSource = interactionSources[0],
+                        colors = AppObjectsColors.cancelButtonColors(),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
+                    ) {
+                        AutoResizeableText(
+                            text = cancelText,
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
                 },
-                shapes = UiConstants.dragonShapes(),
-                modifier = Modifier
-                    .weight(1f)
-                    .animateWidth(interactionSources[0]),
-                interactionSource = interactionSources[0],
-                colors = AppObjectsColors.cancelButtonColors(),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
-            ) {
-                AutoResizeableText(
-                    text = cancelText,
-                    style = MaterialTheme.typography.labelLarge
-                )
-            }
-        }
-
-        Button(
-            onClick = withHaptic(HapticFeedbackType.Confirm) {
-                onConfirm()
-            },
-            enabled = validateEnabled,
-            modifier = Modifier
-                .weight(1f)
-                .animateWidth(interactionSources[1]),
-            interactionSource = interactionSources[1],
-            shapes = UiConstants.dragonShapes(),
-        ) {
-            AutoResizeableText(
-                text = validateText,
-                style = MaterialTheme.typography.labelLarge
+                menuContent = {}
             )
         }
+
+        customItem(
+            buttonGroupContent = {
+                Button(
+                    onClick = withHaptic(HapticFeedbackType.Confirm) {
+                        onConfirm()
+                    },
+                    enabled = validateEnabled,
+                    modifier = Modifier
+                        .weight(1f)
+                        .animateWidth(interactionSources[1]),
+                    interactionSource = interactionSources[1],
+                    shapes = UiConstants.dragonShapes(),
+                ) {
+                    AutoResizeableText(
+                        text = validateText,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+            },
+            menuContent = { }
+        )
     }
 }

@@ -1,13 +1,9 @@
 package org.elnix.dragonlauncher.ui
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -22,10 +18,7 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.base.model.serializables.Nest
@@ -55,7 +48,7 @@ import org.elnix.dragonlauncher.ui.composition.LocalEndLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalStartLineObject
 import org.elnix.dragonlauncher.ui.dialogs.rememberLineObjectsOrder
-import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
+import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine
 import org.elnix.dragonlauncher.ui.helpers.nests.circlesSettingsOverlay
 import org.elnix.dragonlauncher.ui.remembers.LiveNestState
@@ -84,14 +77,11 @@ fun MainScreenOverlay(
     val endObject = LocalEndLineObject.current
 
     val rgbLine by UiSettingsStore.rgbLine.asState()
-    val debugInfos by DebugSettingsStore.debugInfos.asState()
 
     val showLaunchingAppLabel by UiSettingsStore.showLaunchingAppLabel.asState()
     val showLaunchingAppIcon by UiSettingsStore.showLaunchingAppIcon.asState()
 
     val appLabelIconOverlayTopPadding by UiSettingsStore.appLabelIconOverlayTopPadding.asState()
-    val appLabelOverlaySize by UiSettingsStore.appLabelOverlaySize.asState()
-    val appIconOverlaySize by UiSettingsStore.appIconOverlaySize.asState()
 
     val linePreviewSnapToAction by UiSettingsStore.linePreviewSnapToAction.asState()
 
@@ -278,7 +268,6 @@ fun MainScreenOverlay(
 
     Box(Modifier.fillMaxSize()) {
 
-        AnimatedVisibility(debugInfos) {
             MainScreenOverlayDebugInfos(
                 hoveredPoint = hoveredPoint,
                 selectedPointPerLevel = selectedPointsPerLevel,
@@ -292,7 +281,7 @@ fun MainScreenOverlay(
                 isDragging = isDragging,
                 targetCircle = targetCircle
             )
-        }
+
 
         val drawParams by rememberSwipeDefaultParams(allowShowIconInCenter = true)
 
@@ -410,7 +399,6 @@ fun MainScreenOverlay(
         AppPreviewTitle(
             point = displayPoint,
             topPadding = appLabelIconOverlayTopPadding.dp,
-            labelSize = appLabelOverlaySize,
             showLabel = showLaunchingAppLabel,
             showIcon = showLaunchingAppIcon
         )
@@ -433,27 +421,18 @@ private fun MainScreenOverlayDebugInfos(
     targetCircle: Int
 ) {
 
-    DragonColumnGroup {
-        CompositionLocalProvider(
-            LocalContentColor provides Color.White,
-            LocalTextStyle provides TextStyle(
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
-                lineHeight = 12.sp
-            )
-        ) {
-            Text("start = ${start?.let { "%.1f, %.1f".format(it.x, it.y) } ?: "—"}")
-            Text("current = ${current?.let { "%.1f, %.1f".format(it.x, it.y) } ?: "—"}")
-            Text("sweep raw = %.1f°".format(sweepAngle))
-            Text("angle 0–360 = %.1f°".format(angle360))
-            Text("drag = $isDragging")
-            Text("activeLevel = $activeLevel")
-            Text("isAliveNestActive = $isAliveNestActive")
-            Text("target circle = $targetCircle")
-            Text("selectedPointPerLevel = ${selectedPointPerLevel.map { it?.id?.substring(0, 5) }}")
-            Text("current nest = $currentNest")
-            Text("current point = $hoveredPoint")
-        }
+    DebugZone(DebugSettingsStore.mainScreenDebugInfos) {
+        Text("start = ${start?.let { "%.1f, %.1f".format(it.x, it.y) } ?: "—"}")
+        Text("current = ${current?.let { "%.1f, %.1f".format(it.x, it.y) } ?: "—"}")
+        Text("sweep raw = %.1f°".format(sweepAngle))
+        Text("angle 0–360 = %.1f°".format(angle360))
+        Text("drag = $isDragging")
+        Text("activeLevel = $activeLevel")
+        Text("isAliveNestActive = $isAliveNestActive")
+        Text("target circle = $targetCircle")
+        Text("selectedPointPerLevel = ${selectedPointPerLevel.map { it?.id?.substring(0, 5) }}")
+        Text("current nest = $currentNest")
+        Text("current point = $hoveredPoint")
     }
 }
 
