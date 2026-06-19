@@ -35,6 +35,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.bundles.androidx.lifecycle)
     implementation(libs.androidx.biometric)
+    implementation(libs.dragon.logging)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

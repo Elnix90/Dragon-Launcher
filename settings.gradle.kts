@@ -14,7 +14,7 @@ pluginManagement {
 }
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-//    id("io.gitlab.arturbosch.detekt") version "1.23.8"
+//    id("io.gitlab.arturgpgbosch.detekt") version "1.23.8"
 //    id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
 }
 
@@ -41,7 +41,6 @@ include(":core:enumsui")
 include(":core:models")
 include(":core:base")
 include(":core:shizuku")
-include(":core:logging")
 include(":core:permissions")
 include(":core:profiles")
 

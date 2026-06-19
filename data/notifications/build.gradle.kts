@@ -32,11 +32,11 @@ dependencies {
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.core)
     implementation(libs.bundles.androidx.lifecycle)
-
+    implementation(libs.dragon.logging)
     implementation(libs.hilt.android)
+
     ksp(libs.hilt.compiler)
 
     implementation(project(":core:permissions"))
-    implementation(project(":core:logging"))
 
 }

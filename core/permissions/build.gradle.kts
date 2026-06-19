@@ -33,13 +33,13 @@ dependencies {
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.core)
     implementation(libs.androidx.appcompat)
-
+    implementation(libs.dragon.logging)
     implementation(libs.hilt.android)
     implementation(libs.hilt.core)
+
     ksp(libs.hilt.compiler)
 
     implementation(project(":core:ktx"))
     implementation(project(":core:base"))
-    implementation(project(":core:logging"))
     implementation(project(":core:common"))
 }

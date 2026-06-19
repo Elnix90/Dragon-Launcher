@@ -48,12 +48,12 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.timber)
     implementation(libs.bundles.kotlin)
+    implementation(libs.dragon.logging)
 
     api(libs.androidx.activity)
     api(libs.androidx.compose.ui.unit)
     api(libs.androidx.compose.runtime)
 
-    api(project(":core:logging"))
     api(project(":core:base"))
     api(project(":core:i18n"))
     api(project(":core:ktx"))

@@ -29,10 +29,9 @@ extensions.configure<LibraryExtension> {
 dependencies {
     implementation(libs.shizuku.api)
     implementation(libs.shizuku.provider)
-    implementation(libs.timber)
+    implementation(libs.dragon.logging)
 
     api(libs.kotlinx.coroutines.core)
 
-    implementation(project(":core:logging"))
     implementation(project(":core:common"))
 }

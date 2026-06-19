@@ -35,6 +35,7 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(libs.androidx.appcompat)
     implementation(libs.commons.text)
+    implementation(libs.dragon.logging)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

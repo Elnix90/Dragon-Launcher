@@ -43,7 +43,7 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.compose.material3)
-
+    implementation(libs.dragon.logging)
 
     implementation(libs.hilt.core)
     implementation(libs.hilt.android)
@@ -53,7 +53,6 @@ dependencies {
     api(libs.javax.inject)
 
     implementation(project(":core:settings"))
-    api(project(":core:logging"))
     api(project(":core:common"))
     api(project(":core:i18n"))
     api(project(":core:enumsui"))

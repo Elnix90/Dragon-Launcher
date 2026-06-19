@@ -36,8 +36,8 @@ dependencies {
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    implementation(libs.dragon.logging)
 
-    implementation(project(":core:logging"))
     implementation(project(":core:common"))
     implementation(project(":core:settings"))
     implementation(project(":core:base"))

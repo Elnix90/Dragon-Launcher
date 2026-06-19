@@ -30,10 +30,12 @@ import org.elnix.dragonlauncher.settings.DataStoreName.Wellbeing
 import org.elnix.dragonlauncher.settings.DataStoreName.Widgets
 import org.elnix.dragonlauncher.settings.DataStoreName.Workspaces
 import org.elnix.dragonlauncher.settings.bases.stores.SettingsStore
+import org.elnix.dragonlauncher.settings.stores.array.AppOverridesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.array.NestsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.array.PointsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.array.WidgetsSettingsStore
+import org.elnix.dragonlauncher.settings.stores.array.WorkspaceSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
@@ -48,13 +50,15 @@ import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
-import org.elnix.dragonlauncher.settings.stores.array.AppOverridesSettingsStore
-import org.elnix.dragonlauncher.settings.stores.array.WorkspaceSettingsStore
 
+interface DatastoreInterface {
+    val name: String
+    val userBackup: Boolean
+}
 
 enum class DataStoreName(
-    val userBackup: Boolean = true
-) {
+    override val userBackup: Boolean = true
+) : DatastoreInterface {
     Ui,
     Icons,
     ColorMode,

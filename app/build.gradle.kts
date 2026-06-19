@@ -140,7 +140,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
     implementation(libs.dagger)
     implementation(libs.hilt.core)
-    implementation(libs.timber)
+    implementation(libs.dragon.logging)
 
     ksp(libs.hilt.compiler)
 
@@ -152,7 +152,6 @@ dependencies {
 
     implementation(project(":core:common"))
     implementation(project(":core:models"))
-    implementation(project(":core:logging"))
     implementation(project(":core:settings"))
 
     implementation(project(":core:permissions"))

@@ -68,6 +68,7 @@ dependency-analysis = "3.15.0"
 #dokka = "2.2.0"
 #detekt = "1.23.8"
 
+logging = "1.0.0"
 settings = "1.0.1"
 
 [libraries]
@@ -127,6 +128,7 @@ lazycolumnscrollbar = { module = "com.github.nanihadesuka:LazyColumnScrollbar", 
 material = { module = "com.google.android.material:material", version.ref = "material" }
 material3 = { module = "androidx.compose.material3:material3" }
 settings-plugin-annotations = { group = "io.github.elnix90.settings", name = "plugin-annotations", version.ref = "settings" }
+dragon_logging = { group = "io.github.elnix90.logging", name = "logging", version.ref = "logging" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }

@@ -35,11 +35,11 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.compose.runtime)
+    implementation(libs.dragon.logging)
     implementation(libs.timber)
 
     api(libs.kotlinx.coroutines.core)
 
     api(project(":core:common"))
-    implementation(project(":core:logging"))
     implementation(project(":core:settings"))
 }

@@ -42,9 +42,9 @@ dependencies {
 
     // My plugin 🤎
     implementation(libs.settings.plugin.annotations)
+    implementation(libs.dragon.logging)
 
     implementation(project(":core:base"))
-    implementation(project(":core:logging"))
     api(project(":core:common"))
     api(project(":core:enumsui"))
 }

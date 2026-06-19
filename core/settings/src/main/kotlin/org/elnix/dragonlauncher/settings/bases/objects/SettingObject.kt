@@ -29,7 +29,7 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
  * @param ENCODED The raw [Preferences.Key] value type stored in DataStore (e.g., `Boolean`, `String`).
  */
 @OptIn(ExperimentalAtomicApi::class)
-sealed class SettingObject<TYPED, ENCODED> {
+abstract class SettingObject<TYPED, ENCODED> {
     /**
      * Unique identifier for this setting.
      * It is auto inferred via the [SettingObject] builders functions during at compile-time via the [Settings compiler plugin](https://github.com/Elnix90/Settings-Plugin)

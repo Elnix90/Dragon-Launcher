@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.bundles.kotlin)
     implementation(libs.coil.core)
     implementation(libs.coil.compose)
+    implementation(libs.dragon.logging)
 
     api(libs.androidx.activity.compose)
     api(libs.androidx.activity)
@@ -94,8 +95,6 @@ dependencies {
 
     implementation(project(":core:ktx"))
     implementation(project(":core:shizuku"))
-    implementation(project(":core:logging"))
-    implementation(project(":core:logging"))
     implementation(project(":core:profiles"))
 
     implementation(project(":core:permissions"))

@@ -32,7 +32,6 @@ dependencies {
     implementation(libs.bundles.kotlin)
 
     implementation(libs.androidx.ui)
-    implementation(libs.androidx.material3)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core)
@@ -43,6 +42,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.stringsimilarity)
+    implementation(libs.dragon.logging)
 
     api(libs.androidx.ui.graphics)
 
@@ -50,5 +50,4 @@ dependencies {
     api(project(":core:libs:material-shapes"))
     implementation(project(":core:ktx"))
     implementation(project(":core:i18n"))
-    implementation(project(":core:logging"))
 }

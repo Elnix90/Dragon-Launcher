@@ -40,6 +40,5 @@ dependencies {
     implementation(libs.androidx.compose.ui.unit)
     implementation(libs.androidx.ui)
     implementation(platform(libs.androidx.compose.bom))
-
-    api(project(":core:logging"))
+    implementation(libs.dragon.logging)
 }
