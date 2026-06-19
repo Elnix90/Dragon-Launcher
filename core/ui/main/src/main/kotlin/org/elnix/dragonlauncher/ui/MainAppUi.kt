@@ -59,7 +59,6 @@ import org.elnix.dragonlauncher.logging.SHIZUKU_TAG
 import org.elnix.dragonlauncher.logging.TAG
 import org.elnix.dragonlauncher.logging.logD
 import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.models.AppLaunchException
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel
 import org.elnix.dragonlauncher.models.DrawerViewModel
@@ -297,8 +296,6 @@ fun MainAppUi(
                 }
                 runShisukuCommandNotEmpty(command)
             }
-        } catch (e: AppLaunchException) {
-            logE(TAG, e) { "Failed to launch action" }
         } catch (e: Exception) {
             logE(TAG, e) { "Unknow error while launching action" }
         }

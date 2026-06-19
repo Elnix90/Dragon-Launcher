@@ -190,14 +190,16 @@ class AppLaunchViewModel @Inject constructor(
      */
     private fun launchAppDirectly(application: Application) {
         val launcherApps = ctx.getSystemService(LauncherApps::class.java)
-            ?: throw AppLaunchException("LauncherApps unavailable")
 
         val packageName = application.packageName
 
         val activity = launcherApps
             .getActivityList(null, application.profile.userHandle)
             .firstOrNull { it.applicationInfo.packageName == packageName }
-            ?: throw AppLaunchException("Launcher activity not found for $packageName")
+            ?: run {
+                logW(APP_LAUNCH_TAG) { "Launcher activity not found for $packageName" }
+                return
+            }
 
         val options = Bundle()
 
@@ -217,13 +219,10 @@ class AppLaunchViewModel @Inject constructor(
 
         } catch (e: SecurityException) {
             logE(APP_LAUNCH_TAG, e) { "Security error launching $packageName" }
-            throw AppLaunchException("Security error launching $packageName", e)
         } catch (e: NullPointerException) {
             logE(APP_LAUNCH_TAG, e) { "App component not found for $packageName" }
-            throw AppLaunchException("App component not found for $packageName", e)
         } catch (e: Exception) {
             logE(APP_LAUNCH_TAG, e) { "Failed to launch $packageName" }
-            throw AppLaunchException("Failed to launch $packageName", e)
         }
     }
 
@@ -232,10 +231,3 @@ class AppLaunchViewModel @Inject constructor(
         viewModelInitialized()
     }
 }
-
-
-/**
- * Exception for app launch failures
- */
-class AppLaunchException(message: String, cause: Throwable? = null) : Exception(message, cause)
-
