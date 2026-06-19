@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.helpers
+package org.elnix.dragonlauncher.ui.helpers.wallpaper
 
 import androidx.compose.animation.Animatable
 import androidx.compose.foundation.background

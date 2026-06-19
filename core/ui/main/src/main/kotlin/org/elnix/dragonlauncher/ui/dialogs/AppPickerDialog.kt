@@ -57,9 +57,9 @@ import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
-import org.elnix.dragonlauncher.ui.helpers.AppDrawerSearch
-import org.elnix.dragonlauncher.ui.helpers.AppGrid
-import org.elnix.dragonlauncher.ui.helpers.WorkspaceLockedContent
+import org.elnix.dragonlauncher.ui.helpers.workspace.AppDrawerSearch
+import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
+import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceLockedContent
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -153,11 +153,11 @@ fun AppPickerDialog(
                                 contentDescription = stringResource(R.string.search_apps)
                             ) { isSearchBarEnabled = true }
 
-//                            DragonIconButton(
-//                                colors = AppObjectsColors.iconButtonColors(),
-//                                icon = R.drawable.reload,
-//                                contentDescription = stringResource(R.string.reload_apps)
-//                            ) { scope.launch { appsViewModel.reloadApps() } }
+                            DragonIconButton(
+                                colors = AppObjectsColors.iconButtonColors(),
+                                icon = R.drawable.reload,
+                                contentDescription = stringResource(R.string.reload_apps)
+                            ) { scope.launch { drawerViewModel.reloadApps() } }
                         }
                     } else {
                         AppDrawerSearch(

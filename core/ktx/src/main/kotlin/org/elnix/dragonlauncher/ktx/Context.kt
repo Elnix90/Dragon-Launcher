@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ktx
 
+import android.app.Activity
 import android.app.SearchManager
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -14,6 +15,9 @@ import android.os.Looper
 import android.provider.DocumentsContract
 import android.provider.OpenableColumns
 import android.provider.Settings
+import android.view.View
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -255,3 +259,33 @@ data class InstallSourceInfoCompat(
     val initiatingPackageName: String?,
     val installingPackageName: String?
 )
+
+
+/**
+ * Hides the soft keyboard from the screen.
+ */
+fun Context.hideKeyboard() {
+    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+    val view = (this as? Activity)?.currentFocus ?: View(this)
+    imm?.hideSoftInputFromWindow(view.windowToken, 0)
+}
+
+/**
+ * Disables soft keyboard input based on user preference.
+ */
+fun Context.disableKeyboard(disableSoftKey: Boolean) {
+    val activity = this as? Activity ?: return
+    val view = activity.currentFocus ?: View(this)
+
+    val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+
+    if (disableSoftKey) {
+        imm?.hideSoftInputFromWindow(view.windowToken, 0)
+        activity.window.setFlags(
+            WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM,
+            WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
+        )
+    } else {
+        activity.window.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
+    }
+}

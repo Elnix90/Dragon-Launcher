@@ -100,10 +100,10 @@ import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
-import org.elnix.dragonlauncher.ui.helpers.AppDrawerSearch
-import org.elnix.dragonlauncher.ui.helpers.AppGrid
-import org.elnix.dragonlauncher.ui.helpers.WallpaperDim
-import org.elnix.dragonlauncher.ui.helpers.WorkspaceLockedContent
+import org.elnix.dragonlauncher.ui.helpers.workspace.AppDrawerSearch
+import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
+import org.elnix.dragonlauncher.ui.helpers.wallpaper.WallpaperDim
+import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceLockedContent
 import kotlin.math.abs
 import kotlin.math.pow
 
@@ -498,7 +498,6 @@ fun AppDrawerScreen(
                     onLaunchAction(apps.first().action)
                 }
             }
-
 
             when {
                 workspaceProfile == null -> {

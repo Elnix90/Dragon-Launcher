@@ -35,6 +35,7 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -50,7 +51,7 @@ fun IconPackListContent(
     var isLoading by remember { mutableStateOf(false) }
 
     LaunchedEffect(isLoading) {
-        delay(2000L)
+        delay(2000.milliseconds)
         isLoading = false
     }
 

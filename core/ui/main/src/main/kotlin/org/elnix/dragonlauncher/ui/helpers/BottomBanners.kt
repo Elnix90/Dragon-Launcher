@@ -21,18 +21,13 @@ import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.common.utils.rememberIsDefaultLauncher
 import org.elnix.dragonlauncher.ktx.hasUriReadWritePermission
-import org.elnix.dragonlauncher.models.PermissionsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
-import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.asStateNull
 
 @Composable
-fun BottomBanners(
-    currentRoute: NavKey,
-    permissionsViewModel: PermissionsViewModel = activityViewModel()
-) {
+fun BottomBanners(currentRoute: NavKey) {
     val ctx = LocalContext.current
 
     val showSetDefaultLauncherBanner by PrivateSettingsStore.showSetDefaultLauncherBanner.asStateNull()

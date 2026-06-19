@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.helpers
+package org.elnix.dragonlauncher.ui.helpers.privatespace
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,8 +35,6 @@ import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 fun PrivateSpaceLoadingOverlay(
     onCancel: () -> Unit,
 ) {
-
-
     // TODO make this down scrollable to dismiss
 
     Box(

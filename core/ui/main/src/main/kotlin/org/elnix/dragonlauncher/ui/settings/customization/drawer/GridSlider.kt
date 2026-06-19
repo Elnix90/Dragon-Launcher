@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.helpers
+package org.elnix.dragonlauncher.ui.settings.customization.drawer
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
@@ -30,6 +30,7 @@ import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
+import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
 
 @Composable
 fun GridSizeSlider(apps: List<Application>) {

@@ -21,21 +21,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.base.model.serializables.Profile
+import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
 import org.elnix.dragonlauncher.enumsui.select.WorkspaceViewMode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
+import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
-import org.elnix.dragonlauncher.ui.helpers.AppGrid
+import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
+import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceLockedContent
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
 fun WorkspaceDetailScreen(
     drawerViewModel: DrawerViewModel = activityViewModel(),
+    profilesViewModel: ProfilesViewModel = activityViewModel(),
     workspaceId: String,
     onBack: () -> Unit,
 ) {
@@ -76,11 +81,42 @@ fun WorkspaceDetailScreen(
                 checked = { it == selectedView }
             ) { selectedView = it }
 
-            AppGrid(
-                apps = apps.sortedBy { it.label },
-                longPressPopup = true,
-                onClick = null
-            )
+            val profiles by profilesViewModel.profiles.collectAsState(emptyList())
+            val profileStates by profilesViewModel.profileStates.collectAsState(emptyList())
+
+            val workspace = workspaceState.first { it.id == workspaceId }
+
+            val workspaceProfileType = when (workspace.type) {
+                WorkspaceType.Work -> Profile.Type.Work
+                WorkspaceType.Private -> Profile.Type.Private
+                else -> Profile.Type.Personal
+            }
+
+            val workspaceProfile = profiles.find { it?.type == workspaceProfileType }
+
+            val workspaceLocked = when (workspaceProfileType) {
+                Profile.Type.Work -> profileStates[1]?.locked ?: true
+                Profile.Type.Private -> profileStates[2]?.locked ?: true
+                Profile.Type.Personal -> false
+            }
+
+            when {
+                workspaceProfile == null -> {
+                    Text("No profile found in phone")
+                }
+
+                workspaceLocked -> {
+                    WorkspaceLockedContent(workspaceProfile)
+                }
+
+                else -> {
+                    AppGrid(
+                        apps = apps.sortedBy { it.label },
+                        longPressPopup = true,
+                        onClick = null
+                    )
+                }
+            }
         }
 
         AnimatedFab(

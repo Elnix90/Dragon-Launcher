@@ -58,9 +58,9 @@ import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.dialogs.rememberHoldMenuEntries
 import org.elnix.dragonlauncher.ui.helpers.ChargingAnimation
-import org.elnix.dragonlauncher.ui.helpers.CustomDim
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
-import org.elnix.dragonlauncher.ui.helpers.WallpaperDim
+import org.elnix.dragonlauncher.ui.helpers.wallpaper.CustomDim
+import org.elnix.dragonlauncher.ui.helpers.wallpaper.WallpaperDim
 import org.elnix.dragonlauncher.ui.remembers.rememberHoldToOpenSettings
 import org.elnix.dragonlauncher.ui.remembers.rememberNestNavigation
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar

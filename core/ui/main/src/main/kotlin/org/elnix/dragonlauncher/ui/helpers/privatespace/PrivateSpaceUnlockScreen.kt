@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.helpers
+package org.elnix.dragonlauncher.ui.helpers.privatespace
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

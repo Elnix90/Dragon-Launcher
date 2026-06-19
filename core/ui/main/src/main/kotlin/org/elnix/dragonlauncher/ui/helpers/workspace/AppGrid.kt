@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.helpers
+package org.elnix.dragonlauncher.ui.helpers.workspace
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade

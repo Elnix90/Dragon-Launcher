@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.helpers
+package org.elnix.dragonlauncher.ui.helpers.workspace
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth

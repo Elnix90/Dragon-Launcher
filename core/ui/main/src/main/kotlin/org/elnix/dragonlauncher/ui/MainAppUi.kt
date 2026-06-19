@@ -98,7 +98,7 @@ import org.elnix.dragonlauncher.ui.settings.customization.AppDisplayTab
 import org.elnix.dragonlauncher.ui.settings.customization.AppearanceTab
 import org.elnix.dragonlauncher.ui.settings.customization.BehaviorTab
 import org.elnix.dragonlauncher.ui.settings.customization.ColorSelectorTab
-import org.elnix.dragonlauncher.ui.settings.customization.DrawerTab
+import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerTab
 import org.elnix.dragonlauncher.ui.settings.customization.FontTab
 import org.elnix.dragonlauncher.ui.settings.customization.HoldToActivateArcTab
 import org.elnix.dragonlauncher.ui.settings.customization.IconPackTab

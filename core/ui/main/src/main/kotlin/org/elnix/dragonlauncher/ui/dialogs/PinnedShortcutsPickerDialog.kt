@@ -51,7 +51,7 @@ import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.helpers.AppDrawerSearch
+import org.elnix.dragonlauncher.ui.helpers.workspace.AppDrawerSearch
 
 /**
  * Represents a pinned shortcut with extra metadata for display.

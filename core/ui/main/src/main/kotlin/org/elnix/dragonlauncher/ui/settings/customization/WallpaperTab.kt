@@ -36,8 +36,8 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelector
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
-import org.elnix.dragonlauncher.ui.helpers.WallpaperDim
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
+import org.elnix.dragonlauncher.ui.helpers.wallpaper.WallpaperDim
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 
 @SuppressLint("LocalContextResourcesRead", "LocalContextGetResourceValueCall")
@@ -76,10 +76,6 @@ fun WallpaperTab(onBack: () -> Unit) {
             showTargetDialog = false
         }
     }
-
-
-    /** ───────────────────────────────────────────────────────────────── */
-
 
     SettingsScaffold(
         title = stringResource(R.string.wallpaper),
@@ -163,7 +159,6 @@ fun WallpaperTab(onBack: () -> Unit) {
         }
     }
     StatusBar(null)
-
 
 
     if (showTargetDialog && originalBitmap != null) {
