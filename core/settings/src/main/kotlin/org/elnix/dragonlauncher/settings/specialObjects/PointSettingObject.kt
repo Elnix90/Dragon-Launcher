@@ -18,7 +18,7 @@ data class PointSettingObject(
     override val settingsStore: SettingsStore<*, *>
 ) : SettingObject<Point, String>() {
 
-    override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(key)
+    override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(preferenceKeyName)
     override fun encode(value: Point): String? = Point.Companion.PointsJson.encode(value)
     override fun decode(raw: Any?): Point = Point.Companion.PointsJson.decode(raw, default)
 }

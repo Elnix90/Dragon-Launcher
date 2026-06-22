@@ -67,19 +67,28 @@ class DragonLauncherApplication : Application() {
     }
 
     private fun initializeAllStores() {
+        var totalSettings = 0
+        var totalJson = 0
+
         AllStores.forEach { store ->
+
             when (store) {
                 is JsonArraySettingsStore, is JsonObjectSettingsStore -> {
                     logI(SETTINGS_TAG) { "Initializing ${store.name} (jsonSetting)" }
+                    totalJson++
                 }
 
                 is MapSettingsStore -> {
-                    logI(SETTINGS_TAG) { "Initializing ${store.name} (${store.ALL.size} settings)" }
+                    val settingsNumber = store.ALL.size
+                    totalSettings += settingsNumber
+                    logI(SETTINGS_TAG) { "Initializing ${store.name} ($settingsNumber settings)" }
                     store.ALL.forEach {
                         logD(SETTINGS_TAG) { "    - ${it.key}" }
                     }
                 }
             }
         }
+
+        logI(SETTINGS_TAG) { "Finished initializing settings; $totalSettings different settings and $totalJson Json stores" }
     }
 }

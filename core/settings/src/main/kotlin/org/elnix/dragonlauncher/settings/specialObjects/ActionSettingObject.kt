@@ -18,7 +18,7 @@ data class ActionSettingObject(
     override val settingsStore: SettingsStore<*, *>
 ) : SettingObject<Action, String>() {
 
-    override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(key)
+    override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(preferenceKeyName)
     override fun encode(value: Action): String? = Action.Companion.ActionJson.encode(value)
     override fun decode(raw: Any?): Action = Action.Companion.ActionJson.decode(raw, default)
 }

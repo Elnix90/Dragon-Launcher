@@ -18,7 +18,7 @@ data class IconShapeSettingObject(
     override val settingsStore: SettingsStore<*, *>
 ) : SettingObject<IconShape, String>() {
 
-    override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(key)
+    override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(preferenceKeyName)
     override fun encode(value: IconShape): String? = IconShape.Companion.IconShapeJson.encode(value)
     override fun decode(raw: Any?): IconShape = IconShape.Companion.IconShapeJson.decode(raw, default)
 }

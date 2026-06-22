@@ -5,13 +5,13 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.elnix90.logging.INIT_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logI
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import io.github.elnix90.logging.INIT_TAG
-import io.github.elnix90.logging.logD
-import io.github.elnix90.logging.logI
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.recents.PointsService
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
