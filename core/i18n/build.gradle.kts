@@ -31,7 +31,9 @@ extensions.configure<LibraryExtension> {
 dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core)
-    implementation(libs.commons.text)
+    implementation(libs.commons.text) {
+        exclude(group = "javax.script")
+    }
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 }

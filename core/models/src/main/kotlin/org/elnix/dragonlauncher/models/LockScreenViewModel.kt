@@ -13,8 +13,8 @@ import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.logging.SECURITY_SERVICE
-import org.elnix.dragonlauncher.logging.logD
+import io.github.elnix90.logging.SECURITY_SERVICE
+import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.security.SecurityService
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore

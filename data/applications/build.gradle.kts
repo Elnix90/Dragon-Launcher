@@ -34,7 +34,6 @@ dependencies {
     implementation(libs.bundles.androidx.lifecycle)
     implementation(libs.androidx.core)
     implementation(libs.androidx.appcompat)
-    implementation(libs.commons.text)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

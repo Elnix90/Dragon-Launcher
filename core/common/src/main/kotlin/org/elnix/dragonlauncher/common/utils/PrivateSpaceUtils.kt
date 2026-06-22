@@ -8,11 +8,11 @@ import android.os.UserHandle
 import android.os.UserManager
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.annotation.RequiresApi
-import org.elnix.dragonlauncher.logging.PRIVATE_SPACE_UTILS
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.logging.logI
-import org.elnix.dragonlauncher.logging.logW
+import io.github.elnix90.logging.PRIVATE_SPACE_UTILS
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
+import io.github.elnix90.logging.logI
+import io.github.elnix90.logging.logW
 
 /**
  * Utility functions for managing Android 15+ Private Space.

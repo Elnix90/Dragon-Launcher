@@ -6,21 +6,22 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.elnix90.core.SettingsBackupManager.exportSettings
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.ktx.hasUriReadWritePermission
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.logging.BACKUP_TAG
-import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.logging.logI
-import org.elnix.dragonlauncher.logging.logV
-import org.elnix.dragonlauncher.logging.logW
+import io.github.elnix90.logging.BACKUP_TAG
+import io.github.elnix90.logging.logE
+import io.github.elnix90.logging.logI
+import io.github.elnix90.logging.logV
+import io.github.elnix90.logging.logW
 import org.elnix.dragonlauncher.models.utils.stateFlowDelegate
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
-import org.elnix.dragonlauncher.settings.SettingsBackupManager.exportSettings
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
+import org.elnix.dragonlauncher.settings.toSettingsStoreList
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -72,7 +73,7 @@ class BackupViewModel @Inject constructor(
             return
         }
         try {
-            exportSettings(application, uri, selectedStores)
+            exportSettings(application, uri, selectedStores.toSettingsStoreList())
             logI(BACKUP_TAG) { "Auto-backup completed!" }
         } catch (e: Throwable) {
             logE(BACKUP_TAG, e) { "Auto-backup failed" }

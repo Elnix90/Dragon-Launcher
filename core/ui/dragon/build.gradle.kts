@@ -42,7 +42,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.material3)
-    implementation(libs.material3)
 
     runtimeOnly(libs.androidx.lifecycle.process)
 
@@ -55,6 +54,9 @@ dependencies {
     implementation(libs.androidx.compose.ui.unit)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.compose.foundation)
+
+    implementation(libs.settings.core)
+    implementation(libs.settings.runtime)
 
     implementation(project(":core:ui:base"))
     implementation(project(":core:ui:theme"))

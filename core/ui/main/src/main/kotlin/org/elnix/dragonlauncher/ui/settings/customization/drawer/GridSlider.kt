@@ -27,7 +27,7 @@ import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
-import org.elnix.dragonlauncher.ui.base.asState
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid

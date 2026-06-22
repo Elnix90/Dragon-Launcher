@@ -22,10 +22,10 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
-import org.elnix.dragonlauncher.logging.SECURITY_SERVICE
-import org.elnix.dragonlauncher.logging.TAG
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.SECURITY_SERVICE
+import io.github.elnix90.logging.TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
 
 
 /**

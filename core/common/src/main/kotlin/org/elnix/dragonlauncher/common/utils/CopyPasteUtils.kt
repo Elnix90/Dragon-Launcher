@@ -9,10 +9,10 @@ import android.widget.Toast
 import androidx.core.content.FileProvider
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.logging.CONTEXT_TAG
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.logging.logW
+import io.github.elnix90.logging.CONTEXT_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
+import io.github.elnix90.logging.logW
 import java.io.File
 
 object CopyPasteUtils {

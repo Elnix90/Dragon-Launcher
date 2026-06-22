@@ -9,10 +9,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import io.github.elnix90.core.objects.EnumSettingObject
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
-import org.elnix.dragonlauncher.settings.bases.objects.EnumSettingObject
-import org.elnix.dragonlauncher.ui.base.asState
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 
 @Composable

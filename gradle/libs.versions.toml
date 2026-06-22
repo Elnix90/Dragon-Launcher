@@ -40,7 +40,6 @@ reorderable = "3.1.0"
 runtimeAnnotation = "1.11.3"
 runtimeRetain = "1.11.3"
 runtimeSaveable = "1.11.3"
-transition = "1.7.0"
 ui = "1.11.3"
 uiGraphics = "1.11.3"
 foundationLayout = "1.11.3"
@@ -68,8 +67,8 @@ dependency-analysis = "3.15.0"
 #dokka = "2.2.0"
 #detekt = "1.23.8"
 
-logging = "1.0.0"
-settings = "1.0.1"
+logging = "1.0.1"
+settings = "1.1.0"
 
 [libraries]
 androidx-activity = { module = "androidx.activity:activity", version.ref = "activityCompose" }
@@ -104,7 +103,6 @@ coil-core = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
-androidx-transition = { module = "androidx.transition:transition", version.ref = "transition" }
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -126,8 +124,9 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 lazycolumnscrollbar = { module = "com.github.nanihadesuka:LazyColumnScrollbar", version.ref = "lazycolumnscrollbar" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
-material3 = { module = "androidx.compose.material3:material3" }
-settings-plugin-annotations = { group = "io.github.elnix90.settings", name = "plugin-annotations", version.ref = "settings" }
+settings-annotations = { group = "io.github.elnix90.settings", name = "annotations", version.ref = "settings" }
+settings-core = { group = "io.github.elnix90.settings", name = "core", version.ref = "settings" }
+settings-runtime = { group = "io.github.elnix90.settings", name = "runtime", version.ref = "settings" }
 dragon_logging = { group = "io.github.elnix90.logging", name = "logging", version.ref = "logging" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
@@ -164,6 +163,7 @@ androidx-lifecycle = ["androidx-lifecycle-viewmodel", "androidx-lifecycle-common
 #test = ["junit", "androidx-junit", "androidx-espresso-core"]
 
 [plugins]
+settings = { id = "io.github.elnix90.settings", version.ref = "settings" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
@@ -173,4 +173,3 @@ hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndro
 dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependency-analysis" }
 #dokka = {id = "org.jetbrains.dokka", version.ref = "dokka"}
 #detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt"}
-settings = { id = "io.github.elnix90.settings", version.ref = "settings" }

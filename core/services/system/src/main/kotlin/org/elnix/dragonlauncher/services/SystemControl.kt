@@ -6,9 +6,9 @@ import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import androidx.annotation.RequiresApi
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.logging.ACCESSIBILITY_TAG
+import io.github.elnix90.logging.ACCESSIBILITY_TAG
 
 object SystemControl {
 

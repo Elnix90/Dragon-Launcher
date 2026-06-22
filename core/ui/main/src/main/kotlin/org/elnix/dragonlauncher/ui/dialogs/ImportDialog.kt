@@ -10,10 +10,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.core.stores.SettingsStore
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.backupableStores
-import org.elnix.dragonlauncher.settings.bases.stores.SettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.LazyColumnWithScrollIndicator
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
@@ -23,18 +22,15 @@ import org.json.JSONObject
 fun ImportSettingsDialog(
     backupJson: JSONObject,
     onDismiss: () -> Unit,
-    onConfirm: (selectedStores: Map<DataStoreName, SettingsStore<*, *>>) -> Unit
+    onConfirm: (selectedStores: Set<SettingsStore<*, *>>) -> Unit
 ) {
 
-    // Filter stores that exist in backup JSON
-    val availableStores = backupableStores.filter {
-        backupJson.has(it.key.name) ||
-                backupJson.has("actions") // Old actions store, for legacy support
-    }
+    /** Filter stores that exist in backup JSON */
+    val availableStores = backupableStores.filter { backupJson.has(it.name) }.toSet()
 
     val selected = remember(availableStores) {
-        mutableStateMapOf<DataStoreName, Boolean>().apply {
-            availableStores.forEach { put(it.key, true) }
+        mutableStateMapOf<SettingsStore<*,*>, Boolean>().apply {
+            availableStores.forEach { put(it, true) }
         }
     }
 
@@ -44,17 +40,17 @@ fun ImportSettingsDialog(
             ValidateCancelButtons(
                 onCancel = onDismiss
             ) {
-                onConfirm(availableStores.filter { selected[it.key] == true })
+                onConfirm(availableStores.filter { selected[it] == true }.toSet())
             }
         },
         title = { Text(stringResource(R.string.select_settings_to_import)) },
         text = {
             SelectedActionRow(selected, availableStores.size)
             LazyColumnWithScrollIndicator(
-                items = availableStores.entries.toList(),
+                items = availableStores.toList(),
                 modifier = Modifier.heightIn(max = 600.dp)
-            ) { entry ->
-                StoreItem(selected, entry.key, entry.value)
+            ) { store ->
+                StoreItem(selected, store)
             }
         },
         containerColor = MaterialTheme.colorScheme.surface,

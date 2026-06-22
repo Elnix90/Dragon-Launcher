@@ -8,8 +8,8 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import org.elnix.dragonlauncher.logging.PROFILES_TAG
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.PROFILES_TAG
+import io.github.elnix90.logging.logE
 
 internal object UserHandleSerializer : KSerializer<UserHandle> {
     override val descriptor: SerialDescriptor =

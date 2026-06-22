@@ -8,18 +8,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import io.github.elnix90.core.SettingsBackupManager
+import io.github.elnix90.core.stores.SettingsStore
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
-import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.SettingsBackupManager
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 @Composable
 fun rememberSettingsExportLauncher(
-    selectedStoresForExport: Set<DataStoreName>,
+    selectedStoresForExport: Set<SettingsStore<*,*>>,
     backupViewModel: BackupViewModel = activityViewModel()
 ): ManagedActivityResultLauncher<String, Uri?> {
     val ctx = LocalContext.current
@@ -69,7 +69,7 @@ fun rememberSettingsExportLauncher(
 
 @Composable
 fun rememberSafeSettingsExportLauncher(
-    selectedStoresForExport: Set<DataStoreName>
+    selectedStoresForExport: Set<SettingsStore<*,*>>
 ): ManagedActivityResultLauncher<String, Uri?> {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()

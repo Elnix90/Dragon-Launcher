@@ -9,9 +9,9 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.logging.INIT_TAG
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logI
+import io.github.elnix90.logging.INIT_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logI
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.recents.PointsService
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore

@@ -6,7 +6,7 @@
 * Option to disable auto-launch on space press
 [FIXED]
 * Delete workspace button & logic
-* BaseSettingStore & color format issues
+* BaseSettingsStore & color format issues
 * Settings UI alignment
 * Auto-backup banner persistence
 * Backup stores including private data

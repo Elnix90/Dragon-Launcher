@@ -33,11 +33,11 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.base.model.models.AngleLineObjects
-import org.elnix.dragonlauncher.logging.ANGLE_LINE_TAG
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.ANGLE_LINE_TAG
+import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.asState
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState

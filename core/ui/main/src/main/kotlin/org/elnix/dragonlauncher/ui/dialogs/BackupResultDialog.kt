@@ -8,8 +8,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.BackupViewModel
-import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 @Composable

@@ -13,8 +13,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.logging.BACKUP_TAG
-import org.elnix.dragonlauncher.logging.logD
+import io.github.elnix90.logging.BACKUP_TAG
+import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel

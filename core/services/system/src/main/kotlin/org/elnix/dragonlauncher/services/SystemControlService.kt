@@ -12,9 +12,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.logging.ACCESSIBILITY_TAG
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logW
+import io.github.elnix90.logging.ACCESSIBILITY_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logW
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 
 @SuppressLint("AccessibilityPolicy")

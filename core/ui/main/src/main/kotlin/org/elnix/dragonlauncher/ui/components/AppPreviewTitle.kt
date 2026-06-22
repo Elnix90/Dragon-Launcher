@@ -32,7 +32,7 @@ import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.actions.PointIcon
 import org.elnix.dragonlauncher.ui.actions.actionLabel
-import org.elnix.dragonlauncher.ui.base.asState
+import io.github.elnix90.runtime.asState
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

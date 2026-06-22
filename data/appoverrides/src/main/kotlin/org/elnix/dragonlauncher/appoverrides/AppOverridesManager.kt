@@ -18,8 +18,8 @@ import org.elnix.dragonlauncher.base.model.serializables.AppOverride.Companion.i
 import org.elnix.dragonlauncher.base.model.serializables.AppOverrideState
 import org.elnix.dragonlauncher.base.model.serializables.CacheKey
 import org.elnix.dragonlauncher.base.model.serializables.CustomIcon
-import org.elnix.dragonlauncher.logging.WORKSPACES_TAG
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.WORKSPACES_TAG
+import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.settings.stores.array.AppOverridesSettingsStore
 
 

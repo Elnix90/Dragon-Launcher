@@ -1,46 +1,29 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
-import io.github.elnix90.settings.SettingKey
-import io.github.elnix90.settings.SettingStore
+import io.github.elnix90.annotations.SettingKey
+import io.github.elnix90.annotations.SettingsStore
+import io.github.elnix90.core.objects.boolean
+import io.github.elnix90.core.objects.enum
+import io.github.elnix90.core.stores.MapSettingsStore
 import org.elnix.dragonlauncher.enumsui.select.ColorPickerMode
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction
 import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
-import org.elnix.dragonlauncher.settings.bases.objects.EnumSettingObject.Companion.enum
-import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
-@SettingStore
-object ColorModesSettingsStore : MapSettingsStore(DataStoreName.ColorMode) {
+@SettingsStore
+object ColorModesSettingsStore : MapSettingsStore() {
 
     @SettingKey
-    val colorPickerMode = enum(
-        title = null,
-        description = null,
-        default = ColorPickerMode.Default
-    )
+    val colorPickerMode = enum(ColorPickerMode.Default)
 
     @SettingKey
-    val defaultTheme = enum(
-        title = null,
-        description = null,
-        default = DefaultThemes.Amoled
-    )
+    val defaultTheme = enum(DefaultThemes.Amoled)
 
     @SettingKey
-    val colorPickerButtonOne = enum(
-        title = null,
-        description = null,
-        default = ColorPickerButtonAction.Random
-    )
+    val colorPickerButtonOne = enum(ColorPickerButtonAction.Random)
 
     @SettingKey
-    val colorPickerButtonTwo = enum(
-        title = null,
-        description = null,
-        default = ColorPickerButtonAction.Copy
-    )
+    val colorPickerButtonTwo = enum(ColorPickerButtonAction.Copy)
 
     @SettingKey
     val dynamicColors = boolean(
@@ -50,11 +33,7 @@ object ColorModesSettingsStore : MapSettingsStore(DataStoreName.ColorMode) {
     )
 
     @SettingKey
-    val colorTestMode = boolean(
-        title = null,
-        description = null,
-        default = false
-    )
+    val colorTestMode = boolean(false)
 
     /**
      * Whether to use my custom-made color schemes for objects, or the default Android colors schemes.

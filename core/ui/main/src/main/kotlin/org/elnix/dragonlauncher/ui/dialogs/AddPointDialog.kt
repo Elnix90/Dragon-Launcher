@@ -41,8 +41,8 @@ import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.defaul
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.logging.APP_LAUNCH_TAG
-import org.elnix.dragonlauncher.logging.logD
+import io.github.elnix90.logging.APP_LAUNCH_TAG
+import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
@@ -52,7 +52,7 @@ import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.composition.LocalShowLabelsInAddPointDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton

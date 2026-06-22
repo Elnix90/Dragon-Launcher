@@ -33,7 +33,6 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(libs.androidx.appcompat)
     implementation(libs.bundles.androidx.lifecycle)
-    implementation(libs.commons.text)
 
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.runtime.annotation)

@@ -51,4 +51,6 @@ dependencies {
     api(project(":core:base"))
     api(project(":core:enumsui"))
     implementation(project(":core:settings"))
+    implementation(libs.settings.core)
+    implementation(libs.settings.runtime)
 }

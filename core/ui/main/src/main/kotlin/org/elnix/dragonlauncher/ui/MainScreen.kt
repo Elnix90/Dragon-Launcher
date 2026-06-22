@@ -49,8 +49,8 @@ import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.asStateNull
+import io.github.elnix90.runtime.asState
+import io.github.elnix90.runtime.asStateNull
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions

@@ -44,5 +44,7 @@ dependencies {
     implementation(project(":data:notifications"))
     implementation(project(":core:permissions"))
     implementation(project(":core:settings"))
+    implementation(libs.settings.core)
+    implementation(libs.settings.runtime)
     implementation(project(":core:base"))
 }

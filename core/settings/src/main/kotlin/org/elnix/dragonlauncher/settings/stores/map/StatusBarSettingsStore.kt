@@ -1,28 +1,25 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
 import androidx.compose.ui.graphics.Color
-import io.github.elnix90.settings.SettingKey
-import io.github.elnix90.settings.SettingStore
+import io.github.elnix90.annotations.SettingKey
+import io.github.elnix90.annotations.SettingsStore
+import io.github.elnix90.core.objects.color
+import io.github.elnix90.core.objects.int
+import io.github.elnix90.core.stores.MapSettingsStore
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.ColorSettingObject.Companion.color
-import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
-import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
-@SettingStore
-object StatusBarSettingsStore : MapSettingsStore(DataStoreName.StatusBar) {
+@SettingsStore
+object StatusBarSettingsStore : MapSettingsStore() {
 
     @SettingKey
     val barBackgroundColor = color(
         title = R.string.status_bar_background,
-        description = null,
         default = Color.Transparent
     )
 
     @SettingKey
     val barTextColor = color(
         title = R.string.status_bar_text_color,
-        description = null,
         default = Color.White
     )
 

@@ -41,25 +41,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.core.SettingsBackupManager
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.ThemeObject
 import org.elnix.dragonlauncher.common.loader.loadThemes
 import org.elnix.dragonlauncher.common.utils.DateUtils
 import org.elnix.dragonlauncher.enumsui.select.ExportImportTheme
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.logging.BACKUP_TAG
-import org.elnix.dragonlauncher.logging.THEMES_TAG
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.BACKUP_TAG
+import io.github.elnix90.logging.THEMES_TAG
+import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
-import org.elnix.dragonlauncher.settings.SettingsBackupManager
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.settings.themeDataStores
+import org.elnix.dragonlauncher.settings.themeSettingsStores
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.components.BetaVersionType
@@ -73,7 +73,6 @@ import org.elnix.dragonlauncher.ui.remembers.rememberSettingsExportLauncher
 import org.elnix.dragonlauncher.ui.remembers.rememberSettingsImportLauncher
 import org.json.JSONObject
 
-@Suppress("AssignedValueIsNeverRead")
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
@@ -108,7 +107,7 @@ fun ThemesTab(
                     ColorSettingsStore.backupColors(ctx)
                     ColorModesSettingsStore.colorTestMode.set(ctx, true)
 
-                    SettingsBackupManager.importTheme(ctx, json)
+                    SettingsBackupManager.importSettingsFromJson(ctx, json, themeSettingsStores)
                     backupViewModel.result.set(
                         BackupResult(
                             export = false,
@@ -135,7 +134,7 @@ fun ThemesTab(
         }
     )
 
-    val settingsExportLauncher = rememberSettingsExportLauncher(themeDataStores)
+    val settingsExportLauncher = rememberSettingsExportLauncher(themeSettingsStores)
 
 
 
@@ -197,7 +196,7 @@ fun ThemesTab(
                                 scope.launch {
                                     ColorSettingsStore.backupColors(ctx)
                                     ColorModesSettingsStore.colorTestMode.set(ctx, true)
-                                    SettingsBackupManager.importTheme(ctx, theme.json)
+                                    SettingsBackupManager.importSettingsFromJson(ctx, theme.json, themeSettingsStores)
                                 }
                             }
                         )
@@ -209,7 +208,7 @@ fun ThemesTab(
         fun addCurrentTheme() {
 
             scope.launch {
-                val json = SettingsBackupManager.createJsonToExport(ctx, themeDataStores, true)
+                val json = SettingsBackupManager.createJsonToExport(ctx, themeSettingsStores, true)
 
                 userThemes.add(json.toString())
                 UiSettingsStore.userThemes.set(ctx, userThemes)
@@ -259,7 +258,7 @@ fun ThemesTab(
                             scope.launch {
                                 ColorSettingsStore.backupColors(ctx)
                                 ColorModesSettingsStore.colorTestMode.set(ctx, true)
-                                SettingsBackupManager.importTheme(ctx, json)
+                                SettingsBackupManager.importSettingsFromJson(ctx, json, themeSettingsStores)
                             }
                         }
                     )

@@ -67,13 +67,13 @@ import org.elnix.dragonlauncher.common.utils.DateUtils
 import org.elnix.dragonlauncher.common.utils.DateUtils.isValidDateFormat
 import org.elnix.dragonlauncher.common.utils.DateUtils.isValidTimeFormat
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.logging.STATUS_BAR_TAG
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.STATUS_BAR_TAG
+import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
-import org.elnix.dragonlauncher.ui.base.asState
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers

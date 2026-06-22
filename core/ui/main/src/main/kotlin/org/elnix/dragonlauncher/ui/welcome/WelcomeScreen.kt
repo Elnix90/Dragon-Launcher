@@ -37,17 +37,16 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import `in`.hridayan.shapeindicators.ShapeIndicatorDefaults
 import `in`.hridayan.shapeindicators.ShapeIndicatorRow
+import io.github.elnix90.core.SettingsBackupManager
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.logging.BACKUP_TAG
-import org.elnix.dragonlauncher.logging.WELCOME_TAG
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.BACKUP_TAG
+import io.github.elnix90.logging.WELCOME_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.models.InitializationViewModel
-import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.SettingsBackupManager
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
@@ -108,7 +107,6 @@ fun WelcomeScreen(
         }
     }
 
-    var selectedStoresForImport by remember { mutableStateOf(setOf<DataStoreName>()) }
     var importJson by remember { mutableStateOf<JSONObject?>(null) }
     var showImportDialog by remember { mutableStateOf(false) }
 
@@ -224,11 +222,10 @@ fun WelcomeScreen(
                 },
                 onConfirm = { selectedStores ->
                     showImportDialog = false
-                    selectedStoresForImport = selectedStores.keys
 
                     scope.launch {
                         try {
-                            SettingsBackupManager.importSettingsFromJson(ctx, json, selectedStoresForImport)
+                            SettingsBackupManager.importSettingsFromJson(ctx, json, selectedStores)
                             backupViewModel.result.set(
                                 BackupResult(
                                     export = false,
@@ -248,8 +245,8 @@ fun WelcomeScreen(
                                 )
                             )
                         }
+                        PrivateSettingsStore.hasInitialized.set(ctx, true)
                         setHasSeen()
-
 
                         // Here I do not check the initialization of the launcher, as th user imports it's settings, and therefore, it is initialized!
                         onEnterApp()

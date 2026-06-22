@@ -1,18 +1,17 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
-import io.github.elnix90.settings.SettingKey
-import io.github.elnix90.settings.SettingStore
+import io.github.elnix90.annotations.SettingKey
+import io.github.elnix90.annotations.SettingsStore
+import io.github.elnix90.core.objects.boolean
+import io.github.elnix90.core.objects.float
+import io.github.elnix90.core.objects.int
+import io.github.elnix90.core.objects.string
+import io.github.elnix90.core.objects.stringSet
+import io.github.elnix90.core.stores.MapSettingsStore
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
-import org.elnix.dragonlauncher.settings.bases.objects.FloatSettingObject.Companion.float
-import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
-import org.elnix.dragonlauncher.settings.bases.objects.StringSetSettingObject.Companion.stringSet
-import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
-import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
-@SettingStore
-object UiSettingsStore : MapSettingsStore(DataStoreName.Ui) {
+@SettingsStore
+object UiSettingsStore : MapSettingsStore() {
 
     /** Use the computing of HSV color to produce a color that depends on the angle / progress */
     @SettingKey
@@ -48,7 +47,6 @@ object UiSettingsStore : MapSettingsStore(DataStoreName.Ui) {
     @SettingKey
     val appLabelIconOverlayTopPadding = int(
         title = R.string.app_label_icon_overlay_top_padding,
-        description = null,
         default = 20,
         allowedRange = 0..1000
     )
@@ -56,7 +54,6 @@ object UiSettingsStore : MapSettingsStore(DataStoreName.Ui) {
     @SettingKey
     val appLabelOverlaySize = int(
         title = R.string.app_label_overlay_size,
-        description = null,
         default = 18,
         allowedRange = 0..100
     )
@@ -64,7 +61,6 @@ object UiSettingsStore : MapSettingsStore(DataStoreName.Ui) {
     @SettingKey
     val appIconOverlaySize = int(
         title = R.string.app_icon_overlay_size,
-        description = null,
         default = 22,
         allowedRange = 0..400
     )
@@ -80,21 +76,18 @@ object UiSettingsStore : MapSettingsStore(DataStoreName.Ui) {
     @SettingKey
     val autoSeparatePoints = boolean(
         title = R.string.auto_separate,
-        description = null,
         default = true
     )
 
     @SettingKey
     val snapPoints = boolean(
         title = R.string.snap_points,
-        description = null,
         default = true
     )
 
     @SettingKey
     val freeMoveDraggedPoint = boolean(
         title = R.string.free_move_dragged_point,
-        description = null,
         default = true
     )
 
@@ -145,7 +138,6 @@ object UiSettingsStore : MapSettingsStore(DataStoreName.Ui) {
     @SettingKey
     val wallpaperDimMainScreen = float(
         title = R.string.wallpaper_dim_amount,
-        description = null,
         default = 0f,
         allowedRange = 0f..1f
     )
@@ -153,17 +145,12 @@ object UiSettingsStore : MapSettingsStore(DataStoreName.Ui) {
     @SettingKey
     val wallpaperDimDrawerScreen = float(
         title = R.string.wallpaper_dim_amount,
-        description = null,
         default = 0f,
         allowedRange = 0f..1f
     )
 
     @SettingKey
-    val globalFont = string(
-        title = null,
-        description = null,
-        default = "Default"
-    )
+    val globalFont = string("Default")
 
     /** How far the points drawing system `actionsInCircle` draws the points */
     @SettingKey
@@ -186,7 +173,6 @@ object UiSettingsStore : MapSettingsStore(DataStoreName.Ui) {
     @SettingKey
     val mainScreenLayers = string(
         title = R.string.main_screen_layers,
-        description = null,
         default = ""
     )
 
@@ -200,17 +186,11 @@ object UiSettingsStore : MapSettingsStore(DataStoreName.Ui) {
 
     @SettingKey
     val showTooltipsOnAddPointDialog = boolean(
-        title = null,
-        description = null,
         default = true,
     )
 
     @SettingKey
-    val userThemes = stringSet(
-        title = null,
-        description = null,
-        default = emptySet()
-    )
+    val userThemes = stringSet(emptySet())
 
     @SettingKey
     val multiplyOrSubtractOpacityInLiveNests = boolean(

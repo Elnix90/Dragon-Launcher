@@ -7,9 +7,9 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.logging.PINNED_SHORTCUTS
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logW
+import io.github.elnix90.logging.PINNED_SHORTCUTS
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logW
 
 /**
  * Activity that receives pinned shortcut requests from other apps.

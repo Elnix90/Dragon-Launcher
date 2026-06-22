@@ -1,17 +1,16 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
 import android.util.Log
-import io.github.elnix90.settings.SettingKey
-import io.github.elnix90.settings.SettingStore
+import io.github.elnix90.annotations.SettingKey
+import io.github.elnix90.annotations.SettingsStore
+import io.github.elnix90.core.objects.boolean
+import io.github.elnix90.core.objects.int
+import io.github.elnix90.core.objects.string
+import io.github.elnix90.core.stores.MapSettingsStore
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
-import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
-import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
-import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
-@SettingStore
-object DebugSettingsStore : MapSettingsStore(DataStoreName.Debug) {
+@SettingsStore
+object DebugSettingsStore : MapSettingsStore() {
 
     @SettingKey
     val debugEnabled = boolean(
@@ -63,11 +62,7 @@ object DebugSettingsStore : MapSettingsStore(DataStoreName.Debug) {
     )
 
     @SettingKey
-    val systemLauncherPackageName = string(
-        title = null,
-        description = null,
-        default = ""
-    )
+    val systemLauncherPackageName = string("")
 
     @SettingKey
     val useAccessibilityInsteadOfContextToExpandActionPanel = boolean(
@@ -93,7 +88,6 @@ object DebugSettingsStore : MapSettingsStore(DataStoreName.Debug) {
     @SettingKey
     val snackBarLogLevel = int(
         title = R.string.snackbar_log_level,
-        description = null,
         default = 7, // No logs
         allowedRange = 2..7
     )
@@ -101,7 +95,6 @@ object DebugSettingsStore : MapSettingsStore(DataStoreName.Debug) {
     @SettingKey
     val filesLogLevel = int(
         title = R.string.files_log_level,
-        description = null,
         default = Log.DEBUG,
         allowedRange = 2..7
     )
@@ -109,7 +102,6 @@ object DebugSettingsStore : MapSettingsStore(DataStoreName.Debug) {
     @SettingKey
     val filterTag = string(
         title = R.string.filter_tag,
-        description = null,
         default = ""
     )
 

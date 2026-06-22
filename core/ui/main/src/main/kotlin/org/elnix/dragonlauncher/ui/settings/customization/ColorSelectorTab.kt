@@ -44,6 +44,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import io.github.elnix90.core.objects.ColorSettingObject
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.enumsui.select.ColorSelectorModes
@@ -54,13 +56,11 @@ import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.Dark
 import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.Light
 import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.System
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.bases.objects.ColorSettingObject
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
-import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
@@ -96,7 +96,7 @@ fun ColorSelectorTab(
     val errorSectionState = rememberExpandableSection(stringResource(R.string.error_colors_section))
     val outlineSectionState = rememberExpandableSection(stringResource(R.string.outline_colors_section))
     val surfaceContainerSectionState = rememberExpandableSection(stringResource(R.string.surface_container_colors_section))
-    val fixedSectionState = rememberExpandableSection(stringResource(R.string.fixed_colors_section))
+//    val fixedSectionState = rememberExpandableSection(stringResource(R.string.fixed_colors_section))
 
     var showResetValidation by remember { mutableStateOf(false) }
     var showBurgerMenu by remember { mutableStateOf(false) }

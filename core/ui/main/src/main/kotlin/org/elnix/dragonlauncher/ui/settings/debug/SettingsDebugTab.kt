@@ -19,11 +19,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.settings.AllStores
+import io.github.elnix90.core.SettingsBackupManager
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.SettingsBackupManager
-import org.elnix.dragonlauncher.settings.allStores
 import org.elnix.dragonlauncher.ui.dialogs.ExportSettingsDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -40,7 +40,7 @@ fun SettingsDebugTab(
 
     var settingsJson by remember { mutableStateOf<JSONObject?>(null) }
 
-    var selectedStores by remember { mutableStateOf(allStores) }
+    var selectedStores by remember { mutableStateOf(AllStores) }
     var showStoresDialog by remember { mutableStateOf(false) }
 
     var forceAllKeys by remember { mutableStateOf(false) }
@@ -48,7 +48,7 @@ fun SettingsDebugTab(
     fun loadSettings() {
         settingsJson = null
         scope.launch {
-            settingsJson = SettingsBackupManager.createJsonToExport(ctx, selectedStores.keys, forceAllKeys)
+            settingsJson = SettingsBackupManager.createJsonToExport(ctx, selectedStores, forceAllKeys)
         }
     }
 
@@ -111,7 +111,7 @@ fun SettingsDebugTab(
         ExportSettingsDialog(
             onDismiss = { showStoresDialog = false },
             defaultStores = selectedStores,
-            availableStores = allStores
+            availableStores = AllStores
         ) {
             selectedStores = it
             showStoresDialog = false

@@ -38,8 +38,8 @@ extensions.configure<ApplicationExtension> {
         applicationId = "org.elnix.dragonlauncher"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionName = "3.2.1"
-        versionCode = 55
+        versionName = "4.0.0"
+        versionCode = 57
     }
 
     lint {
@@ -141,9 +141,10 @@ dependencies {
     implementation(libs.dagger)
     implementation(libs.hilt.core)
     implementation(libs.dragon.logging)
+    implementation(libs.settings.core)
+    implementation(libs.settings.runtime)
 
     ksp(libs.hilt.compiler)
-
 
     implementation(project(":core:ui:base"))
     implementation(project(":core:ui:main"))

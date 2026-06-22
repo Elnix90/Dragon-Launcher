@@ -9,12 +9,12 @@ import org.elnix.dragonlauncher.base.model.DragonJson
 import org.elnix.dragonlauncher.base.model.json
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.ktx.isNotBlankJson
-import org.elnix.dragonlauncher.logging.ANGLE_LINE_TAG
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.ANGLE_LINE_TAG
+import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants
-import org.elnix.dragonlauncher.ui.base.asState
+import io.github.elnix90.runtime.asState
 
 @Composable
 private inline fun <reified T> rememberDecodedObject(

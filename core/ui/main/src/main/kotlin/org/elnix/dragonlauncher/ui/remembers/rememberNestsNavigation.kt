@@ -7,9 +7,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import org.elnix.dragonlauncher.base.model.serializables.Nest
-import org.elnix.dragonlauncher.logging.NESTS_TAG
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logW
+import io.github.elnix90.logging.NESTS_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logW
 import org.elnix.dragonlauncher.models.PointViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 /**

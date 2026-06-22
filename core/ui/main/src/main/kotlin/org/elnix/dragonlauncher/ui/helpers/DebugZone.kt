@@ -10,8 +10,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject
-import org.elnix.dragonlauncher.ui.base.asState
+import io.github.elnix90.core.objects.BooleanSettingObject
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 
 @Composable

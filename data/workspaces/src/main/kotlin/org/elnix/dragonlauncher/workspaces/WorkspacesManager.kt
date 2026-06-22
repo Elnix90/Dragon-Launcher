@@ -19,8 +19,8 @@ import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.base.model.serializables.Workspace.Companion.defaultWorkspaces
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceState
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
-import org.elnix.dragonlauncher.logging.WORKSPACES_TAG
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.WORKSPACES_TAG
+import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.array.WorkspaceSettingsStore
 

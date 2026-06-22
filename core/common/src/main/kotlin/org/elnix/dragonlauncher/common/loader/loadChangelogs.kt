@@ -4,8 +4,8 @@ import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.base.model.serializables.Update
-import org.elnix.dragonlauncher.logging.TAG
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.TAG
+import io.github.elnix90.logging.logE
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

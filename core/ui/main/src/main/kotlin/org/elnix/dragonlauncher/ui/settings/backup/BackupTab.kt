@@ -30,22 +30,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import io.github.elnix90.core.SettingsBackupManager
+import io.github.elnix90.core.stores.SettingsStore
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.utils.DateUtils
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getFilePathFromUri
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.logging.BACKUP_TAG
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.BACKUP_TAG
+import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
-import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.SettingsBackupManager
+import org.elnix.dragonlauncher.settings.AllStores
 import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
+import org.elnix.dragonlauncher.settings.toSettingsStoreList
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dialogs.ExportSettingsDialog
 import org.elnix.dragonlauncher.ui.dialogs.ImportSettingsDialog
@@ -75,9 +77,10 @@ fun BackupTab(
     val autoBackupUriString by BackupSettingsStore.autoBackupUri.asState()
     val backupStores by BackupSettingsStore.backupStores.asState()
 
+
     val selectedStores = remember(backupStores) {
-        mutableStateMapOf<DataStoreName, Boolean>().apply {
-            backupableStores.forEach { put(it.key, it.value.dataStoreName in backupStores) }
+        mutableStateMapOf<SettingsStore<*, *>, Boolean>().apply {
+            AllStores.forEach { put(it, backupStores.isEmpty() || it in backupStores.toSettingsStoreList()) }
         }
     }
 
@@ -86,7 +89,7 @@ fun BackupTab(
             if (selectedStores.size == backupableStores.size) {
                 BackupSettingsStore.backupStores.reset(ctx)
             } else {
-                BackupSettingsStore.backupStores.set(ctx, selectedStores.keys)
+                BackupSettingsStore.backupStores.set(ctx, selectedStores.keys.mapTo(mutableSetOf()) { it.name })
             }
         }
     }
@@ -97,8 +100,8 @@ fun BackupTab(
         ctx.getFilePathFromUri(uri)
     }
 
-    var selectedStoresForExport by remember { mutableStateOf(setOf<DataStoreName>()) }
-    var selectedStoresForImport by remember { mutableStateOf(setOf<DataStoreName>()) }
+    var selectedStoresForExport by remember { mutableStateOf(setOf<SettingsStore<*,*>>()) }
+    var selectedStoresForImport by remember { mutableStateOf(setOf<SettingsStore<*,*>>()) }
     var importJson by remember { mutableStateOf<JSONObject?>(null) }
     var showImportDialog by remember { mutableStateOf(false) }
     var showExportDialog by remember { mutableStateOf(false) }
@@ -215,13 +218,13 @@ fun BackupTab(
             ) {
                 SelectedActionRow(selectedStores, backupableStores.size) { save() }
 
-                selectedStores.entries.forEach { (datastoreName, isSelected) ->
+                selectedStores.entries.forEach { (settingsStore, isSelected) ->
 
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .shapedClickable {
-                                selectedStores[datastoreName] = !isSelected
+                                selectedStores[settingsStore] = !isSelected
                                 save()
                             }
                             .padding(5.dp),
@@ -229,7 +232,7 @@ fun BackupTab(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = backupableStores[datastoreName]!!.dataStoreName.name,
+                            text = settingsStore.name,
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -247,7 +250,7 @@ fun BackupTab(
             onDismiss = { showExportDialog = false },
             onConfirm = { selectedStores ->
                 showExportDialog = false
-                selectedStoresForExport = selectedStores.keys
+                selectedStoresForExport = selectedStores
                 settingsExportLauncher.launch("backup-${DateUtils.nowFormattedDateTime()}.json")
             }
         )
@@ -263,7 +266,7 @@ fun BackupTab(
                 },
                 onConfirm = { selectedStores ->
                     showImportDialog = false
-                    selectedStoresForImport = selectedStores.keys
+                    selectedStoresForImport = selectedStores
 
                     scope.launch {
                         try {

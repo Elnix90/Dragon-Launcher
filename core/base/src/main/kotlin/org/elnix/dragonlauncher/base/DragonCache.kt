@@ -3,8 +3,8 @@ package org.elnix.dragonlauncher.base
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import org.elnix.dragonlauncher.logging.ICONS_TAG
-import org.elnix.dragonlauncher.logging.logD
+import io.github.elnix90.logging.ICONS_TAG
+import io.github.elnix90.logging.logD
 import java.util.Collections
 import java.util.UUID
 

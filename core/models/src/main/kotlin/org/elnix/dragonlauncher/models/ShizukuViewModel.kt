@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.logging.TAG
-import org.elnix.dragonlauncher.logging.logD
+import io.github.elnix90.logging.TAG
+import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.shizuku.OutputLine
 import org.elnix.dragonlauncher.shizuku.ShellCommandExecutor

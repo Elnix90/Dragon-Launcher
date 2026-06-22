@@ -8,7 +8,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.utils.rememberVersionCode
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
-import org.elnix.dragonlauncher.ui.base.asStateNull
+import io.github.elnix90.runtime.asStateNull
 import org.elnix.dragonlauncher.ui.warning.WarningDialog
 import org.elnix.dragonlauncher.ui.warning.WarningManager
 

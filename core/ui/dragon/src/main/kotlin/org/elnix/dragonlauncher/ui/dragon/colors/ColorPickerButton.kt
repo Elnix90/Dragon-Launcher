@@ -35,7 +35,7 @@ import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Paste
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Random
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Reset
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
-import org.elnix.dragonlauncher.ui.base.asState
+import io.github.elnix90.runtime.asState
 
 
 @Composable

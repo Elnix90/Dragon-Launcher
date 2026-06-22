@@ -1,26 +1,25 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.settings.SettingKey
-import io.github.elnix90.settings.SettingStore
+import io.github.elnix90.annotations.SettingKey
+import io.github.elnix90.annotations.SettingsStore
+import io.github.elnix90.core.objects.boolean
+import io.github.elnix90.core.objects.dp
+import io.github.elnix90.core.objects.enum
+import io.github.elnix90.core.objects.enumList
+import io.github.elnix90.core.objects.int
+import io.github.elnix90.core.objects.string
+import io.github.elnix90.core.objects.stringList
+import io.github.elnix90.core.stores.MapSettingsStore
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar
 import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
-import org.elnix.dragonlauncher.settings.bases.objects.DpSettingObject.Companion.dp
-import org.elnix.dragonlauncher.settings.bases.objects.EnumListSettingObject.Companion.enumList
-import org.elnix.dragonlauncher.settings.bases.objects.EnumSettingObject.Companion.enum
-import org.elnix.dragonlauncher.settings.bases.objects.IconShapeSettingObject.Companion.shape
-import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
-import org.elnix.dragonlauncher.settings.bases.objects.StringListSettingObject.Companion.stringList
-import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
-import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
+import org.elnix.dragonlauncher.settings.specialObjects.shape
 
-@SettingStore
-object DrawerSettingsStore : MapSettingsStore(DataStoreName.Drawer) {
+@SettingsStore
+object DrawerSettingsStore : MapSettingsStore() {
 
     @SettingKey
     val autoOpenSingleMatch = boolean(
@@ -60,50 +59,37 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.Drawer) {
     @SettingKey
     val tapEmptySpaceAction = enum(
         title = R.string.tap_empty_space_action,
-        description = null,
         default = DrawerActions.Close
     )
 
     @SettingKey
     val gridSize = int(
         title = R.string.grid_size,
-        description = null,
         default = 6,
         allowedRange = 1..15
     )
 
     @SettingKey
-    val horizontalAlignment = enum(
-        title = null,
-        description = null,
-        default = HorizontalAlignment.Start
-    )
+    val horizontalAlignment = enum(HorizontalAlignment.Start)
 
     @SettingKey
-    val lastWorkspaceUsed = string(
-        title = null,
-        description = null,
-        default = "",
-    )
+    val lastWorkspaceUsed = string("")
 
     @SettingKey
     val leftDrawerAction = enum(
         title = R.string.left_drawer_action,
-        description = null,
         default = DrawerActions.defaultLeftDrawerAction
     )
 
     @SettingKey
     val rightDrawerAction = enum(
         title = R.string.right_drawer_action,
-        description = null,
         default = DrawerActions.defaultRightDrawerAction
     )
 
     @SettingKey
     val leftDrawerWidth = dp(
         title = R.string.left_drawer_width,
-        description = null,
         default = 0.dp,
         allowedRange = 0.dp..300.dp
     )
@@ -111,7 +97,6 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.Drawer) {
     @SettingKey
     val rightDrawerWidth = dp(
         title = R.string.right_drawer_width,
-        description = null,
         default = 0.dp,
         allowedRange = 0.dp..300.dp
     )
@@ -119,7 +104,6 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.Drawer) {
     @SettingKey
     val drawerEnterAction = enum(
         title = R.string.drawer_enter_key_action,
-        description = null,
         default = DrawerActions.defaultEnterAction
     )
 
@@ -133,21 +117,18 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.Drawer) {
     @SettingKey
     val scrollDownDrawerAction = enum(
         title = R.string.scroll_down_action,
-        description = null,
         default = DrawerActions.defaultScrollDownAction
     )
 
     @SettingKey
     val scrollUpDrawerAction = enum(
         title = R.string.scroll_up_action,
-        description = null,
         default = DrawerActions.defaultScrollUpAction
     )
 
     @SettingKey
     val backDrawerAction = enum(
         title = R.string.back_action,
-        description = null,
         default = DrawerActions.defaultBackAction
     )
 
@@ -193,7 +174,6 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.Drawer) {
     @SettingKey
     val categoryGridWidth = int(
         title = R.string.category_grid_width,
-        description = null,
         default = 3,
         allowedRange = 1..4
     )
@@ -216,7 +196,6 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.Drawer) {
     @SettingKey
     val showSearchBar = boolean(
         title = R.string.search_bar,
-        description = null,
         default = true
     )
 
@@ -237,8 +216,6 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.Drawer) {
 
     @SettingKey
     val recentlyUsedPackages = stringList(
-        title = null,
-        description = null,
         default = emptyList(),
         onChanged = {},
         backupable = false
@@ -258,12 +235,8 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.Drawer) {
         default = true
     )
 
-    //    @SettingKey
-//    val pullDownIconFade = boolean(
-//        title = null,
-//        description = null,
-//        default = true
-//    )
+//    @SettingKey
+//    val pullDownIconFade = boolean(true)
 
     @SettingKey
     val pullDownScaleIn = boolean(
@@ -278,7 +251,6 @@ object DrawerSettingsStore : MapSettingsStore(DataStoreName.Drawer) {
     @SettingKey
     val toolbarsOrder = enumList(
         title = R.string.toolbars_order,
-        description = null,
         default = DrawerToolbar.defaultDrawerToolbarOrder
     )
 }

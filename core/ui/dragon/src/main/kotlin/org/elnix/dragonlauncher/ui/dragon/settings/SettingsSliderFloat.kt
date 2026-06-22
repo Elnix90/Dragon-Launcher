@@ -14,9 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import io.github.elnix90.core.objects.FloatSettingObject
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.settings.bases.objects.FloatSettingObject
-import org.elnix.dragonlauncher.ui.base.asState
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 
 @Composable

@@ -12,7 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import org.elnix.dragonlauncher.base.theme.DarkDragonColorScheme
 import org.elnix.dragonlauncher.base.theme.LightDragonColorScheme
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
-import org.elnix.dragonlauncher.ui.base.asState
+import io.github.elnix90.runtime.asState
 
 
 @Composable

@@ -28,6 +28,13 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.elnix90.logging.TAG
+import io.github.elnix90.logging.WIDGET_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
+import io.github.elnix90.logging.logI
+import io.github.elnix90.logging.logW
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -37,27 +44,21 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.common.WidgetHostProvider
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.logging.TAG
-import org.elnix.dragonlauncher.logging.WIDGET_TAG
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.logging.logI
-import org.elnix.dragonlauncher.logging.logW
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.models.DragonLogViewModel
 import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.receiver.FontReceiver
-import org.elnix.dragonlauncher.settings.allStores
+import org.elnix.dragonlauncher.settings.AllStores
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.DragonLauncherTheme
 import org.elnix.dragonlauncher.ui.MainAppUi
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dialogs.CrashScreen
 import org.elnix.dragonlauncher.ui.widgets.LauncherWidgetHolder
+import kotlin.time.Duration.Companion.milliseconds
 
 @AndroidEntryPoint
 class MainActivity : FragmentActivity(), WidgetHostProvider {
@@ -153,7 +154,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                         return@repeat
                     }
 
-                    delay(300)
+                    delay(300.milliseconds)
                 }
 
                 if (bound) {
@@ -321,11 +322,14 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
 
             if (lastStackTrace.isNullOrBlank()) {
 
-                val appLifecycleViewModel: AppLifecycleViewModel = activityViewModel()
+
+                // Loads the logging system, do not remove or you won't have any logs!
+                @Suppress("UnusedVariable", "unused")
                 val dragonLogViewModel: DragonLogViewModel = activityViewModel()
+
+                val appLifecycleViewModel: AppLifecycleViewModel = activityViewModel()
                 val backupViewModel: BackupViewModel = activityViewModel()
 
-                dragonLogViewModel.init()
 
                 DragonLauncherTheme {
 
@@ -337,7 +341,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                             logI(TAG) { "First frame rendered in ${System.currentTimeMillis() - startTime}ms." }
 
                             // All stores excepted the non-backupable ones, cause they trigger updates constantly (e.g., last backup time)
-                            allStores.forEach { (_, store) ->
+                            AllStores.forEach { store ->
                                 store.onAnySettingChanged = {
                                     backupViewModel.commandBackup()
                                 }

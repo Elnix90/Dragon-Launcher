@@ -25,8 +25,8 @@ import org.elnix.dragonlauncher.base.model.serializables.CacheKey
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
-import org.elnix.dragonlauncher.logging.APP_LAUNCH_TAG
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.APP_LAUNCH_TAG
+import io.github.elnix90.logging.logE
 import java.io.File
 import java.text.Collator
 

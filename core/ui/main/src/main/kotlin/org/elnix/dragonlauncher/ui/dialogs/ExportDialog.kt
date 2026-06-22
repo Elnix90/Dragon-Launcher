@@ -19,14 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.core.stores.SettingsStore
 import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons
 import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons.DeselectAll
 import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons.Invert
 import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons.SelectAll
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.DataStoreName
 import org.elnix.dragonlauncher.settings.backupableStores
-import org.elnix.dragonlauncher.settings.bases.stores.SettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.LazyColumnWithScrollIndicator
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
@@ -36,14 +35,16 @@ import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 fun ExportSettingsDialog(
     onDismiss: () -> Unit,
     title: Int = R.string.select_settings_to_export,
-    availableStores: Map<DataStoreName, SettingsStore<*, *>> = backupableStores,
-    defaultStores: Map<DataStoreName, SettingsStore<*, *>> = backupableStores,
-    onConfirm: (selectedStores: Map<DataStoreName, SettingsStore<*, *>>) -> Unit
+    availableStores: Set<SettingsStore<*, *>> = backupableStores,
+    defaultStores: Set<SettingsStore<*, *>> = backupableStores,
+    onConfirm: (selectedStores: Set<SettingsStore<*, *>>) -> Unit
 ) {
 
-    val selected = remember(availableStores) {
-        mutableStateMapOf<DataStoreName, Boolean>().apply {
-            availableStores.forEach { put(it.key, it.value in defaultStores.values) }
+    val selected = remember(availableStores, defaultStores) {
+        mutableStateMapOf<SettingsStore<*, *>, Boolean>().apply {
+            availableStores.forEach { store ->
+                put(store, store in defaultStores)
+            }
         }
     }
 
@@ -53,7 +54,7 @@ fun ExportSettingsDialog(
             ValidateCancelButtons(
                 onCancel = onDismiss
             ) {
-                onConfirm(availableStores.filter { selected[it.key] == true })
+                onConfirm(selected.filterValues { it }.keys)
             }
         },
         title = { Text(stringResource(title)) },
@@ -61,10 +62,10 @@ fun ExportSettingsDialog(
             SelectedActionRow(selected, availableStores.size)
 
             LazyColumnWithScrollIndicator(
-                items = availableStores.entries.toList(),
+                items = availableStores.toList(),
                 modifier = Modifier.heightIn(max = 600.dp)
-            ) { entry ->
-                StoreItem(selected, entry.key, entry.value)
+            ) { store ->
+                StoreItem(selected, store)
             }
         },
         containerColor = MaterialTheme.colorScheme.surface,
@@ -118,8 +119,7 @@ fun <T> SelectedActionRow(
 
 @Composable
 fun StoreItem(
-    selected: SnapshotStateMap<DataStoreName, Boolean>,
-    dataStoreName: DataStoreName,
+    selected: SnapshotStateMap<SettingsStore<*,*>, Boolean>,
     settingsStore: SettingsStore<*, *>
 ) {
     Row(
@@ -128,14 +128,14 @@ fun StoreItem(
             .clip(DragonShape)
             .padding(vertical = 4.dp)
             .toggleable(
-                value = selected[dataStoreName] ?: true,
-            ) { selected[dataStoreName] = it },
+                value = selected[settingsStore] ?: true,
+            ) { selected[settingsStore] = it },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(settingsStore.dataStoreName.name)
+        Text(settingsStore.name)
         Checkbox(
-            checked = selected[dataStoreName] ?: true,
+            checked = selected[settingsStore] ?: true,
             onCheckedChange = null
         )
     }

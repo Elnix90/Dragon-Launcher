@@ -41,10 +41,10 @@ import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeRes
 import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.logging.HOLD_TAG
-import org.elnix.dragonlauncher.logging.logD
+import io.github.elnix90.logging.HOLD_TAG
+import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
-import org.elnix.dragonlauncher.ui.base.asState
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.components.VerticalScrollIndicator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
@@ -210,7 +210,7 @@ fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
             logD(HOLD_TAG) { "Saving: $saveList" }
 
             scope.launch {
-                HoldToActivateArcSettingsStore.holdMenuEntries.set(ctx, saveList)
+                HoldToActivateArcSettingsStore.holdMenuEntriesJson.set(ctx, saveList)
                 onDismiss()
             }
         }
@@ -378,7 +378,7 @@ fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
  */
 @Composable
 fun rememberHoldMenuEntries(): State<List<NavigationRoute>> {
-    val holdMenuEntriesString by HoldToActivateArcSettingsStore.holdMenuEntries.asState()
+    val holdMenuEntriesString by HoldToActivateArcSettingsStore.holdMenuEntriesJson.asState()
 
     return retain(holdMenuEntriesString) {
         derivedStateOf {

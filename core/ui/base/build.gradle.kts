@@ -41,7 +41,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.material3)
-    implementation(libs.material3)
     implementation(libs.androidx.compose.animation.core)
     implementation(libs.androidx.compose.runtime.retain)
     implementation(libs.androidx.compose.ui.unit)
@@ -52,6 +51,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.common)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
+    implementation(libs.settings.runtime)
 
 
     runtimeOnly(libs.androidx.lifecycle.process)

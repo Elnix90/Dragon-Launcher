@@ -58,8 +58,8 @@ import org.elnix.dragonlauncher.icons.transformations.LauncherIconTransformation
 import org.elnix.dragonlauncher.icons.transformations.LegacyToAdaptiveTransformation
 import org.elnix.dragonlauncher.icons.transformations.transform
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
-import org.elnix.dragonlauncher.logging.ICONS_TAG
-import org.elnix.dragonlauncher.logging.logW
+import io.github.elnix90.logging.ICONS_TAG
+import io.github.elnix90.logging.logW
 import org.elnix.dragonlauncher.recents.PointsService
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import kotlin.reflect.KClass

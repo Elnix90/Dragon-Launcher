@@ -82,14 +82,14 @@ import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsSnapping
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsUpDown
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.toDp
-import org.elnix.dragonlauncher.logging.WIDGET_TAG
-import org.elnix.dragonlauncher.logging.logD
+import io.github.elnix90.logging.WIDGET_TAG
+import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional

@@ -9,8 +9,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.base.model.serializables.StatusBarJson
-import org.elnix.dragonlauncher.logging.ICONS_TAG
-import org.elnix.dragonlauncher.logging.logD
+import io.github.elnix90.logging.ICONS_TAG
+import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.PointViewModel
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
@@ -18,7 +18,7 @@ import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.base.compositionslocals.ProvideCurrentTime
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject

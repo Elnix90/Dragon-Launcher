@@ -1,22 +1,22 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
-import io.github.elnix90.settings.SettingKey
-import io.github.elnix90.settings.SettingStore
+
+import io.github.elnix90.annotations.SettingKey
+import io.github.elnix90.annotations.SettingsStore
+import io.github.elnix90.core.objects.boolean
+import io.github.elnix90.core.objects.enum
+import io.github.elnix90.core.objects.int
+import io.github.elnix90.core.objects.stringSet
+import io.github.elnix90.core.stores.MapSettingsStore
 import org.elnix.dragonlauncher.base.model.models.ReminderMode
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
-import org.elnix.dragonlauncher.settings.bases.objects.EnumSettingObject.Companion.enum
-import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
-import org.elnix.dragonlauncher.settings.bases.objects.StringSetSettingObject.Companion.stringSet
-import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 /**
  * Settings store for the Digital Wellbeing feature.
  * Manages social media pause, guilt mode, and paused apps configuration.
  */
-@SettingStore
-object WellbeingSettingsStore : MapSettingsStore(DataStoreName.Wellbeing) {
+@SettingsStore
+object WellbeingSettingsStore : MapSettingsStore() {
 
     /**
      * Whether the social media pause feature is enabled
@@ -43,11 +43,7 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.Wellbeing) {
      * Whether to show detailed usage stats (time spent yesterday, etc.)
      */
     @SettingKey
-    val showUsageStats = boolean(
-        title = null,
-        description = null,
-        default = true
-    )
+    val showUsageStats = boolean(true)
 
     /**
      * Duration of the pause countdown in seconds (default 10s)
@@ -88,7 +84,6 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.Wellbeing) {
     @SettingKey
     val reminderMode = enum(
         title = R.string.mode,
-        description = null,
         default = ReminderMode.Overlay
     )
 
@@ -135,9 +130,5 @@ object WellbeingSettingsStore : MapSettingsStore(DataStoreName.Wellbeing) {
     )
 
     @SettingKey
-    val pausedApps = stringSet(
-        title = null,
-        description = null,
-        default = emptySet()
-    )
+    val pausedApps = stringSet(emptySet())
 }

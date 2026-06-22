@@ -11,10 +11,10 @@ import android.util.SparseArray
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import org.elnix.dragonlauncher.logging.LAUNCHER_WIDGET_HOLDER_TAG
-import org.elnix.dragonlauncher.logging.WIDGET_TAG
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.LAUNCHER_WIDGET_HOLDER_TAG
+import io.github.elnix90.logging.WIDGET_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
 import java.lang.ref.WeakReference
 
 /**

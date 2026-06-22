@@ -2,17 +2,21 @@ package org.elnix.dragonlauncher.models
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.elnix90.logging.FileLoggingTree
+import io.github.elnix90.logging.LOGS_TAG
+import io.github.elnix90.logging.LogAlert
+import io.github.elnix90.logging.LogTag
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
+import io.github.elnix90.logging.logWtf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.logging.FileLoggingTree
-import org.elnix.dragonlauncher.logging.LOGS_TAG
-import org.elnix.dragonlauncher.logging.LogAlert
-import org.elnix.dragonlauncher.logging.logE
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import timber.log.Timber
@@ -39,20 +43,26 @@ class DragonLogViewModel @Inject constructor(
 
     private val maxRecentLogs = 50
 
-    fun init() {
-        Timber.plant(Timber.DebugTree())
 
+    init {
         viewModelScope.launch {
             fileTree = FileLoggingTree(ctx, ::onHighPriorityLog)
             fileTree?.snackBarLogLevel = DebugSettingsStore.snackBarLogLevel.get(ctx)
             fileTree?.filesLogsLevel = DebugSettingsStore.filesLogLevel.get(ctx)
             fileTree?.filterTag = DebugSettingsStore.filterTag.get(ctx)
-        }
-    }
 
-    init {
-        viewModelScope.launch{
             updateLoggingState()
+
+            logD(LogTag("TEST")) { "Test log using logD" }
+
+            Log.d("TEST", "Tree count = ${Timber.forest().size}")
+
+            Timber.forest().forEach {
+                Log.d("TEST", it.javaClass.name)
+            }
+
+
+            logWtf { "Hello" }
         }
         viewModelInitialized()
     }
@@ -69,13 +79,14 @@ class DragonLogViewModel @Inject constructor(
     fun updateEnableLogging(enable: Boolean) {
         viewModelScope.launch {
 
-        if (enableLogging.get(application) == enable) return@launch
+            if (enableLogging.get(application) == enable) {
+                return@launch
+            }
 
             DebugSettingsStore.enableLogging.set(ctx, enable)
             updateLoggingState()
         }
     }
-
 
     fun updateSnackBarLogLevel(newLevel: Int) {
         fileTree?.snackBarLogLevel = newLevel
@@ -103,6 +114,8 @@ class DragonLogViewModel @Inject constructor(
         val plantedTrees = Timber.forest()
         if (enableLogging.get(application.applicationContext)) {
             if (tree !in plantedTrees) {
+
+                Log.e("TEST", "Planting $tree")
                 Timber.plant(tree)
             }
         } else {
@@ -126,7 +139,7 @@ class DragonLogViewModel @Inject constructor(
         return try {
             file.readText()
         } catch (e: Exception) {
-            logE(LOGS_TAG, e) { "Failed to read log file: ${file.absolutePath}"}
+            logE(LOGS_TAG, e) { "Failed to read log file: ${file.absolutePath}" }
             "Failed to read log file: $e"
         }
     }

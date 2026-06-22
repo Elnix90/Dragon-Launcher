@@ -1,17 +1,16 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
-import io.github.elnix90.settings.SettingKey
-import io.github.elnix90.settings.SettingStore
+import io.github.elnix90.annotations.SettingKey
+import io.github.elnix90.annotations.SettingsStore
+import io.github.elnix90.core.objects.boolean
+import io.github.elnix90.core.objects.float
+import io.github.elnix90.core.objects.int
+import io.github.elnix90.core.objects.string
+import io.github.elnix90.core.stores.MapSettingsStore
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
-import org.elnix.dragonlauncher.settings.bases.objects.FloatSettingObject.Companion.float
-import org.elnix.dragonlauncher.settings.bases.objects.IntSettingObject.Companion.int
-import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
-import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
-@SettingStore
-object HoldToActivateArcSettingsStore : MapSettingsStore(DataStoreName.HoldToActivate) {
+@SettingsStore
+object HoldToActivateArcSettingsStore : MapSettingsStore() {
 
     @SettingKey
     val holdDelayBeforeStartingLongClickSettings = int(
@@ -46,8 +45,6 @@ object HoldToActivateArcSettingsStore : MapSettingsStore(DataStoreName.HoldToAct
 
     @SettingKey
     val holdToActivateArcCustomObject = string(
-        title = null,
-        description = null,
         default = "",
     )
 
@@ -60,9 +57,5 @@ object HoldToActivateArcSettingsStore : MapSettingsStore(DataStoreName.HoldToAct
     )
 
     @SettingKey
-    val holdMenuEntries = string(
-        title = null,
-        description = null,
-        default = ""
-    )
+    val holdMenuEntriesJson = string("")
 }

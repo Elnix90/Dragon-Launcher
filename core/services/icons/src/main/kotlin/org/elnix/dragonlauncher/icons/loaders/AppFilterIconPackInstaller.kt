@@ -16,9 +16,9 @@ import org.elnix.dragonlauncher.icons.IconMask
 import org.elnix.dragonlauncher.icons.IconPack
 import org.elnix.dragonlauncher.icons.IconUpon
 import org.elnix.dragonlauncher.icons.compat.ClockIconConfig
-import org.elnix.dragonlauncher.logging.ICONS_TAG
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.ICONS_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import org.xmlpull.v1.XmlPullParserFactory

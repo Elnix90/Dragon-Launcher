@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.core.util.clearAllData
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.Constants.URLs.ELNIX90_GITHUB_PROFILE_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.EXTENSIONS_GITHUB_REPO_LINK
@@ -47,10 +48,9 @@ import org.elnix.dragonlauncher.common.utils.rememberVersionName
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.openUrl
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.settings.clearAllData
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
-import org.elnix.dragonlauncher.ui.base.asState
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.components.BetaVersionType
 import org.elnix.dragonlauncher.ui.components.BetaVersionWarning
 import org.elnix.dragonlauncher.ui.components.LocalePickerSheet

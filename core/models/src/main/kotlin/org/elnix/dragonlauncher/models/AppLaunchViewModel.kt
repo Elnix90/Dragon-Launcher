@@ -21,9 +21,9 @@ import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.compat.PackageManagerCompat
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
-import org.elnix.dragonlauncher.logging.APP_LAUNCH_TAG
-import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.logging.logW
+import io.github.elnix90.logging.APP_LAUNCH_TAG
+import io.github.elnix90.logging.logE
+import io.github.elnix90.logging.logW
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.permissions.PermissionGroup
 import org.elnix.dragonlauncher.permissions.PermissionsManager

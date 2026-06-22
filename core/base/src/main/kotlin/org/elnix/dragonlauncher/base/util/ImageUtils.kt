@@ -39,8 +39,8 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomIconProperties
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.logging.IMAGE_TAG
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.IMAGE_TAG
+import io.github.elnix90.logging.logE
 import java.io.ByteArrayOutputStream
 import kotlin.math.ceil
 

@@ -41,9 +41,9 @@ import org.elnix.dragonlauncher.icons.loaders.AppFilterIconPackInstaller
 import org.elnix.dragonlauncher.icons.loaders.GrayscaleMapIconPackInstaller
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import org.elnix.dragonlauncher.ktx.randomElementOrNull
-import org.elnix.dragonlauncher.logging.ICONS_TAG
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.ICONS_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
 import kotlin.math.roundToInt
 
 

@@ -18,8 +18,8 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.common.utils.DateUtils.openAlarmApp
 import org.elnix.dragonlauncher.common.utils.DateUtils.openCalendar
-import org.elnix.dragonlauncher.logging.STATUS_BAR_TAG
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.STATUS_BAR_TAG
+import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import java.time.LocalDate
 import java.time.LocalTime

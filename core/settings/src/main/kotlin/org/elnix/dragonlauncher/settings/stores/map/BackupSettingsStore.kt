@@ -1,16 +1,15 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
-import io.github.elnix90.settings.SettingKey
-import io.github.elnix90.settings.SettingStore
+import io.github.elnix90.annotations.SettingKey
+import io.github.elnix90.annotations.SettingsStore
+import io.github.elnix90.core.objects.boolean
+import io.github.elnix90.core.objects.string
+import io.github.elnix90.core.objects.stringSet
+import io.github.elnix90.core.stores.MapSettingsStore
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
-import org.elnix.dragonlauncher.settings.bases.objects.EnumSetSettingObject.Companion.enumSet
-import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
-import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
-@SettingStore
-object BackupSettingsStore : MapSettingsStore(DataStoreName.Backup) {
+@SettingsStore
+object BackupSettingsStore : MapSettingsStore() {
 
     @SettingKey
     val autoBackupEnabled = boolean(
@@ -21,16 +20,17 @@ object BackupSettingsStore : MapSettingsStore(DataStoreName.Backup) {
 
     @SettingKey
     val autoBackupUri = string(
-        title = null,
-        description = null,
         default = ""
     )
 
+
+    /**
+     * I use an empty set because it causes failures in runtime during the resolution of AllsStores for some reason
+     */
     @SettingKey
-    val backupStores = enumSet(
+    val backupStores = stringSet(
         title = R.string.auto_backup_stores,
-        description = null,
-        default = DataStoreName.entries.toSet()
+        default = emptySet()
     )
 
 
@@ -38,8 +38,6 @@ object BackupSettingsStore : MapSettingsStore(DataStoreName.Backup) {
 //    @SettingKey
 //    val numberOfBackupsToKeep = int(
 //        default = 2,
-//        title = null,
-//        description = null,
-//        allowedRange = 1..10
+//////        allowedRange = 1..10
 //    )
 }

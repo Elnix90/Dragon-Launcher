@@ -1,8 +1,8 @@
 package org.elnix.dragonlauncher.base.model
 
 import kotlinx.serialization.json.Json
-import org.elnix.dragonlauncher.logging.JSON_TAG
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.JSON_TAG
+import io.github.elnix90.logging.logE
 
 /**
  * A singleton [Json] instance configured with project-wide settings for JSON serialization/deserialization.

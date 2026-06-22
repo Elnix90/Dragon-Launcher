@@ -30,6 +30,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import org.elnix.dragonlauncher.settings.AllStores
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.common.utils.LifecycleUtils
@@ -39,14 +41,12 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.InitializationViewModel
 import org.elnix.dragonlauncher.services.SystemControl
-import org.elnix.dragonlauncher.settings.allStores
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.timer.OverlayReminderService
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
@@ -308,17 +308,16 @@ fun DebugTab(
 
         DragonSettingsGroup(R.string.risky) {
             ExpandableSection(storeResetSectionState) {
-                allStores.entries.forEach { entry ->
-                    val settingsStore = entry.value
+                AllStores.forEach { store ->
                     DragonButton(
-                        onClick = { scope.launch { settingsStore.resetAll(ctx) } },
+                        onClick = { scope.launch { store.resetAll(ctx) } },
                         colors = AppObjectsColors.cancelButtonColors(),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
                     ) {
                         Text(
-                            text = "Reset ${settingsStore.dataStoreName.name}",
+                            text = "Reset ${store.name}",
                             color = MaterialTheme.colorScheme.error
                         )
                     }

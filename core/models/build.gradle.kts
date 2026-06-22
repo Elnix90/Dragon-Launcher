@@ -53,6 +53,8 @@ dependencies {
     api(libs.javax.inject)
 
     implementation(project(":core:settings"))
+    implementation(libs.settings.core)
+    implementation(libs.settings.runtime)
     api(project(":core:common"))
     api(project(":core:i18n"))
     api(project(":core:enumsui"))

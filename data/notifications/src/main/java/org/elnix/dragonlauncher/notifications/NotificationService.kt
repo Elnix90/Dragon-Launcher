@@ -7,8 +7,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.logging.NOTIFICATIONS_TAG
-import org.elnix.dragonlauncher.logging.logD
+import io.github.elnix90.logging.NOTIFICATIONS_TAG
+import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.permissions.PermissionsManager
 import java.lang.ref.WeakReference
 

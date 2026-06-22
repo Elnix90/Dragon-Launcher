@@ -46,7 +46,6 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.material3)
     implementation(libs.reorderable)
-    implementation(libs.material3)
     implementation(libs.shapeindicators)
     implementation(libs.shizuku.api)
     implementation(libs.androidx.annotation)
@@ -69,6 +68,8 @@ dependencies {
     implementation(libs.coil.core)
     implementation(libs.coil.compose)
     implementation(libs.dragon.logging)
+    implementation(libs.settings.core)
+    implementation(libs.settings.runtime)
 
     api(libs.androidx.activity.compose)
     api(libs.androidx.activity)

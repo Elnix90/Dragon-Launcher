@@ -6,18 +6,21 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import dagger.hilt.android.HiltAndroidApp
+import io.github.elnix90.core.stores.JsonArraySettingsStore
+import io.github.elnix90.core.stores.JsonObjectSettingsStore
+import io.github.elnix90.core.stores.MapSettingsStore
+import io.github.elnix90.logging.SETTINGS_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.elnix.dragonlauncher.logging.SETTINGS_TAG
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logV
-import org.elnix.dragonlauncher.settings.allStores
+import org.elnix.dragonlauncher.settings.AllStores
 import org.elnix.dragonlauncher.settings.stores.map.LanguageSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
+import timber.log.Timber
 
 @HiltAndroidApp
 class DragonLauncherApplication : Application() {
@@ -35,16 +38,20 @@ class DragonLauncherApplication : Application() {
 
 
             runBlocking {
-                PrivateSettingsStore.lastCrashStackTrace.set(this@DragonLauncherApplication, throwable.stackTraceToString())
+                org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore.lastCrashStackTrace.set(
+                    this@DragonLauncherApplication,
+                    throwable.stackTraceToString()
+                )
             }
 
             defaultHandler?.uncaughtException(thread, throwable)
         }
 
+        Timber.plant(Timber.DebugTree())
+
+        initializeAllStores()
+
         CoroutineScope(Dispatchers.Default).launch {
-
-            initializeAllStores()
-
             val tag = LanguageSettingsStore.keyLang.get(this@DragonLauncherApplication)
             if (tag.isNotEmpty()) {
                 AppCompatDelegate.setApplicationLocales(
@@ -60,10 +67,18 @@ class DragonLauncherApplication : Application() {
     }
 
     private fun initializeAllStores() {
-        allStores.forEach { (name, store) ->
-            logD(SETTINGS_TAG) { "Initialized $name: $store" }
-            store.ALL.forEach {
-                logV(SETTINGS_TAG) { "Store:${store.dataStoreName}: ${it.key}" }
+        AllStores.forEach { store ->
+            when (store) {
+                is JsonArraySettingsStore, is JsonObjectSettingsStore -> {
+                    logI(SETTINGS_TAG) { "Initializing ${store.name} (jsonSetting)" }
+                }
+
+                is MapSettingsStore -> {
+                    logI(SETTINGS_TAG) { "Initializing ${store.name} (${store.ALL.size} settings)" }
+                    store.ALL.forEach {
+                        logD(SETTINGS_TAG) { "    - ${it.key}" }
+                    }
+                }
             }
         }
     }

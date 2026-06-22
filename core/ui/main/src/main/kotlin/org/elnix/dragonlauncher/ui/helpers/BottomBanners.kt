@@ -23,8 +23,8 @@ import org.elnix.dragonlauncher.common.utils.rememberIsDefaultLauncher
 import org.elnix.dragonlauncher.ktx.hasUriReadWritePermission
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
-import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.asStateNull
+import io.github.elnix90.runtime.asState
+import io.github.elnix90.runtime.asStateNull
 
 @Composable
 fun BottomBanners(currentRoute: NavKey) {

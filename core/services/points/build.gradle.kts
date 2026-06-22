@@ -42,6 +42,8 @@ dependencies {
     implementation(project(":data:applications"))
     implementation(project(":data:notifications"))
     implementation(project(":core:settings"))
+    implementation(libs.settings.core)
+    implementation(libs.settings.runtime)
     implementation(project(":core:profiles"))
     implementation(project(":core:base"))
     implementation(project(":data:applications"))

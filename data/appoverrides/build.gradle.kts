@@ -34,7 +34,6 @@ dependencies {
     implementation(libs.bundles.androidx.lifecycle)
     implementation(libs.androidx.core)
     implementation(libs.androidx.appcompat)
-    implementation(libs.commons.text)
     implementation(libs.dragon.logging)
 
     implementation(libs.hilt.android)
@@ -42,6 +41,8 @@ dependencies {
 
     implementation(project(":core:base"))
     implementation(project(":core:settings"))
+    implementation(libs.settings.core)
+    implementation(libs.settings.runtime)
     implementation(project(":core:ktx"))
     implementation(project(":core:common"))
     implementation(project(":core:profiles"))

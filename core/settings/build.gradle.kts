@@ -41,7 +41,10 @@ dependencies {
     api(libs.kotlinx.coroutines.core)
 
     // My plugin 🤎
-    implementation(libs.settings.plugin.annotations)
+    implementation(libs.settings.core)
+    implementation(libs.settings.runtime)
+    implementation(libs.settings.annotations)
+
     implementation(libs.dragon.logging)
 
     implementation(project(":core:base"))

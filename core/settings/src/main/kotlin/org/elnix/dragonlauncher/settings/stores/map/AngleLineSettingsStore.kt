@@ -1,17 +1,16 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
-import io.github.elnix90.settings.SettingKey
-import io.github.elnix90.settings.SettingStore
+import io.github.elnix90.annotations.SettingKey
+import io.github.elnix90.annotations.SettingsStore
+import io.github.elnix90.core.objects.boolean
+import io.github.elnix90.core.objects.string
+import io.github.elnix90.core.stores.MapSettingsStore
 import org.elnix.dragonlauncher.base.model.models.AngleLineObjects
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.DataStoreName
-import org.elnix.dragonlauncher.settings.bases.objects.BooleanSettingObject.Companion.boolean
-import org.elnix.dragonlauncher.settings.bases.objects.StringSettingObject.Companion.string
-import org.elnix.dragonlauncher.settings.bases.stores.MapSettingsStore
 
 
-@SettingStore
-object AngleLineSettingsStore : MapSettingsStore(DataStoreName.AngleLine) {
+@SettingsStore
+object AngleLineSettingsStore : MapSettingsStore() {
 
     @SettingKey
     val showLineObjectPreview = boolean(
@@ -42,37 +41,26 @@ object AngleLineSettingsStore : MapSettingsStore(DataStoreName.AngleLine) {
     )
 
     @SettingKey
-    val lineJson = string(
-        title = null,
-        description = null,
-        default = ""
-    )
+    val lineJson = string("")
 
     @SettingKey
     val angleLineJson = string(
-        title = R.string.angle_object,
-        description = null,
-        default = ""
+        default = "",
+        title = R.string.angle_object
     )
 
     @SettingKey
     val startLineJson = string(
-        title = R.string.start_object,
-        description = null,
-        default = ""
+        default = "",
+        title = R.string.start_object
     )
 
     @SettingKey
     val endLineJson = string(
-        title = R.string.end_object,
-        description = null,
-        default = ""
+        default = "",
+        title = R.string.end_object
     )
 
     @SettingKey
-    val angleLineObjectsOrder = string(
-        title = null,
-        description = null,
-        default = AngleLineObjects.entries.joinToString(",") { it.name }
-    )
+    val angleLineObjectsOrder = string(AngleLineObjects.entries.joinToString(",") { it.name })
 }

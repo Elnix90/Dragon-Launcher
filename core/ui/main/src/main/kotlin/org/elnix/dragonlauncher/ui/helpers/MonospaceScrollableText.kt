@@ -21,8 +21,8 @@ import my.nanihadesuka.compose.LazyColumnScrollbar
 import my.nanihadesuka.compose.ScrollbarSelectionMode
 import my.nanihadesuka.compose.ScrollbarSettings
 import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
-import org.elnix.dragonlauncher.logging.logLevel
-import org.elnix.dragonlauncher.logging.logLevelColor
+import io.github.elnix90.logging.logLevel
+import io.github.elnix90.logging.logLevelColor
 
 @Composable
 fun MonospaceScrollableText(

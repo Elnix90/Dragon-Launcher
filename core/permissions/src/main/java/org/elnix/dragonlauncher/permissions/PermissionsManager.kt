@@ -20,8 +20,8 @@ import kotlinx.coroutines.flow.first
 import org.elnix.dragonlauncher.ktx.checkPermission
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import org.elnix.dragonlauncher.ktx.tryStartActivity
-import org.elnix.dragonlauncher.logging.PERMISSIONS_TAG
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.PERMISSIONS_TAG
+import io.github.elnix90.logging.logE
 
 interface PermissionsManager {
     fun requestPermission(ctx: AppCompatActivity, permissionGroup: PermissionGroup)

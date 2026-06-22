@@ -50,9 +50,9 @@ import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.pasteClipboard
 import org.elnix.dragonlauncher.common.utils.HapticUtils.performCustomHaptic
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.logging.HAPTIC_TAG
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.HAPTIC_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.Spacer

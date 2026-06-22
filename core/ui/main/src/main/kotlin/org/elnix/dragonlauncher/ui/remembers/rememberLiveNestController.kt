@@ -20,14 +20,14 @@ import org.elnix.dragonlauncher.common.circles.resolveLiveNestHit
 import org.elnix.dragonlauncher.common.circles.scaleDragDistances
 import org.elnix.dragonlauncher.common.circles.uiCirclesFromDragDistances
 import org.elnix.dragonlauncher.common.circles.uiCirclesFromScaledDragDistances
-import org.elnix.dragonlauncher.logging.POINTS_TAG
-import org.elnix.dragonlauncher.logging.SWIPE_TAG
-import org.elnix.dragonlauncher.logging.logD
+import io.github.elnix90.logging.POINTS_TAG
+import io.github.elnix90.logging.SWIPE_TAG
+import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.models.PointViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
+import io.github.elnix90.runtime.asState
 
 
 /**

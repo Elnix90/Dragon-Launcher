@@ -11,10 +11,10 @@ import androidx.core.net.toUri
 import org.elnix.dragonlauncher.base.model.serializables.ExtensionModel
 import org.elnix.dragonlauncher.ktx.openUrl
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.logging.EXTENSION_MANAGER_TAG
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.logging.logW
+import io.github.elnix90.logging.EXTENSION_MANAGER_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
+import io.github.elnix90.logging.logW
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 
 object ExtensionManager {

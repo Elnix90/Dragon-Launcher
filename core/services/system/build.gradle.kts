@@ -42,4 +42,6 @@ dependencies {
 
     api(project(":core:common"))
     implementation(project(":core:settings"))
+    implementation(libs.settings.core)
+    implementation(libs.settings.runtime)
 }

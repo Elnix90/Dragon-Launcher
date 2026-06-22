@@ -40,6 +40,8 @@ dependencies {
 
     implementation(project(":core:common"))
     implementation(project(":core:settings"))
+    implementation(libs.settings.core)
+    implementation(libs.settings.runtime)
     implementation(project(":core:base"))
     implementation(project(":core:ktx"))
     implementation(project(":data:applications"))

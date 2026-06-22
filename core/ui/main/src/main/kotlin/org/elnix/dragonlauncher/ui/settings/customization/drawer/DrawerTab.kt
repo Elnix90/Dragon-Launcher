@@ -35,12 +35,12 @@ import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.Companion.notDisabled
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.Companion.notNone
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.logging.SHAPES_TAG
-import org.elnix.dragonlauncher.logging.logD
+import io.github.elnix90.logging.SHAPES_TAG
+import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.dialogs.DrawerToolbarsOrderDialog
