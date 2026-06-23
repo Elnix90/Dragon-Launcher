@@ -65,6 +65,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.elnix90.logging.NESTS_TAG
+import io.github.elnix90.logging.SWIPE_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.Constants
@@ -102,10 +107,6 @@ import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.SnapPoints
 import org.elnix.dragonlauncher.enumsui.toggle.SelectedPointEditTools
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
-import io.github.elnix90.logging.NESTS_TAG
-import io.github.elnix90.logging.SWIPE_TAG
-import io.github.elnix90.logging.logD
-import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.PointViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint
@@ -115,7 +116,6 @@ import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -343,9 +343,7 @@ fun PointsSettingsScreen(
      */
     fun removeLastCircle() {
         applyChange {
-
             pointService.editNest(nestId) { nest ->
-
                 val maxCircle =
                     nest.dragDistances
                         .keys
@@ -354,8 +352,7 @@ fun PointsSettingsScreen(
                         ?: return@editNest nest
 
                 nest.copy(
-                    dragDistances = nest.dragDistances +
-                            (maxCircle to defaultDragDistance(maxCircle))
+                    dragDistances = nest.dragDistances - maxCircle
                 )
             }
         }
