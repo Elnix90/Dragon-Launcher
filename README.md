@@ -45,8 +45,6 @@
 
 The reason is likely that Dragon asks for _sensitive permissions_ - normal, that's a launcher
 
-[![Video Title](https://img.youtube.com/vi/p5aKkrt4DIY/0.jpg)](https://www.youtube.com/watch?v=p5aKkrt4DIY)
-
 ---
 # 🎉 Thank you very much to the stargazers !
 ---
