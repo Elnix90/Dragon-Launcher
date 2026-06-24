@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.ContextCompat
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
-import org.elnix.dragonlauncher.base.icons.TintedIconLayer
+import org.elnix.dragonlauncher.base.icons.StaticIconLayer
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
@@ -23,10 +23,10 @@ class PointIconProvider(
             ContextCompat.getDrawable(ctx, it)
         } ?: return null
 
-        val foregroundLayer = TintedIconLayer(
+        val foregroundLayer = StaticIconLayer(
             icon = drawable,
             scale = 1f,
-            color = point.action.actionColor(extrasColors).toArgb()
+            tint = point.action.actionColor(extrasColors).toArgb()
         )
 
         return StaticLauncherIcon(

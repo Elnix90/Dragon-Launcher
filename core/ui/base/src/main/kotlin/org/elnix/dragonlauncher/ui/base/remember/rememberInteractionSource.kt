@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.base.remember
+package org.elnix.dragonlauncher.ui.base
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.Composable
