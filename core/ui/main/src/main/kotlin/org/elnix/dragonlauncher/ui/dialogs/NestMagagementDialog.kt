@@ -225,11 +225,13 @@ private fun NestManagementItem(
         }
 
 
+        val enabled = nest.id != 0
 
         DragonIconButton(
             icon = R.drawable.close,
-            contentDescription = stringResource(R.string.delete_circle_nest),
-            colors = AppObjectsColors.cancelIconButtonColors()
+            contentDescription = stringResource(if (enabled) R.string.delete_circle_nest else R.string.cannor_delete_nest_0),
+            colors = AppObjectsColors.cancelIconButtonColors(),
+            enabled = { enabled }
         ) {
             pointsViewModel.deleteNest(nest.id)
         }

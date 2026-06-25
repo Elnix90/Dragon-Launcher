@@ -1017,4 +1017,5 @@
     <string name="use_icon_tint_desc">Whether to enable or not the icon tint</string>
     <string name="no_profile_found">No profile found in phone</string>
     <string name="need_to_be_default_launcher_to_access_profile">Dragon needs to be the default launcher in order to access this profile</string>
+    <string name="cannor_delete_nest_0">Cannot delete nest 0 (main nest)</string>
 </resources>
