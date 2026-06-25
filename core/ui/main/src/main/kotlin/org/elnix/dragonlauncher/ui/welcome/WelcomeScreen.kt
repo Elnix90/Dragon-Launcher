@@ -38,12 +38,12 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import `in`.hridayan.shapeindicators.ShapeIndicatorDefaults
 import `in`.hridayan.shapeindicators.ShapeIndicatorRow
 import io.github.elnix90.core.SettingsBackupManager
-import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.i18n.R
 import io.github.elnix90.logging.BACKUP_TAG
 import io.github.elnix90.logging.WELCOME_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
+import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.models.InitializationViewModel
@@ -226,23 +226,20 @@ fun WelcomeScreen(
                     scope.launch {
                         try {
                             SettingsBackupManager.importSettingsFromJson(ctx, json, selectedStores)
-                            backupViewModel.result.set(
-                                BackupResult(
-                                    export = false,
-                                    error = false,
-                                    title = ctx.getString(R.string.import_successful)
-                                )
+                            backupViewModel.result.value = BackupResult(
+                                export = false,
+                                error = false,
+                                title = ctx.getString(R.string.import_successful)
                             )
+
                             importJson = null
                         } catch (e: Exception) {
                             logE(BACKUP_TAG, e) { "Import Failed" }
-                            backupViewModel.result.set(
-                                BackupResult(
-                                    export = false,
-                                    error = true,
-                                    title = ctx.getString(R.string.import_failed),
-                                    message = e.message ?: ""
-                                )
+                            backupViewModel.result.value = BackupResult(
+                                export = false,
+                                error = true,
+                                title = ctx.getString(R.string.import_failed),
+                                message = e.message ?: ""
                             )
                         }
                         PrivateSettingsStore.hasInitialized.set(ctx, true)

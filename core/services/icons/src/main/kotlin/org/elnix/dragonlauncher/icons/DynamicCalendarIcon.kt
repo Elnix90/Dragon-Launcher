@@ -5,11 +5,10 @@ import android.graphics.drawable.AdaptiveIconDrawable
 import androidx.core.content.res.ResourcesCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.elnix.dragonlauncher.base.icons.ColorLayer
 import org.elnix.dragonlauncher.base.icons.DynamicLauncherIcon
-import org.elnix.dragonlauncher.base.icons.StaticIconLayer
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.icons.TextLayer
+import org.elnix.dragonlauncher.base.icons.StaticIconLayer
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
 import org.elnix.dragonlauncher.icons.compat.AdaptiveIconDrawableCompat
 import org.elnix.dragonlauncher.icons.compat.toLauncherIcon
@@ -20,6 +19,7 @@ import java.time.ZoneId
 internal class DynamicCalendarIcon(
     val resources: Resources,
     val resourceIds: IntArray,
+    val tint: Int?,
     val isThemed: Boolean = false,
     private var transformations: List<LauncherIconTransformation> = emptyList(),
 ) : DynamicLauncherIcon, TransformableDynamicLauncherIcon {
@@ -34,16 +34,17 @@ internal class DynamicCalendarIcon(
 
         val adaptiveIcon = AdaptiveIconDrawableCompat.from(resources, resId)
 
-        var icon = adaptiveIcon?.toLauncherIcon(themed = isThemed)
+        var icon = adaptiveIcon?.toLauncherIcon(themed = isThemed, tint = tint)
             ?: (try {
                 val drawable = ResourcesCompat.getDrawable(resources, resId, null)
 
                 when {
-                    drawable is AdaptiveIconDrawable -> AdaptiveIconDrawableCompat.from(drawable).toLauncherIcon(themed = isThemed)
+                    drawable is AdaptiveIconDrawable -> AdaptiveIconDrawableCompat.from(drawable).toLauncherIcon(themed = isThemed, tint = tint)
                     drawable != null -> StaticLauncherIcon(
                         foregroundLayer = StaticIconLayer(
                             icon = drawable,
                             scale = 1f,
+                            tint = tint
                         ),
                         backgroundLayer = TransparentLayer,
                     )
@@ -53,8 +54,11 @@ internal class DynamicCalendarIcon(
             } catch (e: Resources.NotFoundException) {
                 null
             } ?: return@withContext StaticLauncherIcon(
-                foregroundLayer = TextLayer(day.toString()),
-                backgroundLayer = ColorLayer()
+                foregroundLayer = TextLayer(
+                    text = day.toString(),
+                    tint = tint
+                ),
+                backgroundLayer = TransparentLayer
             ))
 
         for (transformation in transformations) {

@@ -684,7 +684,6 @@
     <string name="select_icon">Select Icon</string>
 
     <string name="max_notification_icons">Max notification icons</string>
-    <string name="need_to_be_default_launcher_to_use_private_space">Need to be default launcher to use private space</string>
     <string name="use_differential_loading_private_space">Use Differential loading private space</string>
     <string name="use_differential_loading_private_space_desc">Toggle this when private apps appear in the user workspace, otherwise keep it unchecked for performances</string>
     <string name="edit_border_shape">Edit border shape</string>
@@ -1009,4 +1008,13 @@
     <string name="bottom_padding_status_bar_desc">I would understand that a bit more than the previous one</string>
     <string name="pick_stores_to_display">Pick Stores to display</string>
     <string name="profile">Profile</string>
+    <string name="themed_icons_desc">Whether or not to use material themed icons</string>
+    <string name="force_themed_icons_desc">Apply the themed icons even for those who aren\'t normally compatible</string>
+    <string name="adaptify_icons_desc">I have no idea what this option does but it was there when I copied some icons logic</string>
+    <string name="icons_tint">The tint that is applied to icons</string>
+    <string name="icons_tint_desc">Works better with some icon packs that are monochrome</string>
+    <string name="use_icon_tint">Use Icon tint</string>
+    <string name="use_icon_tint_desc">Whether to enable or not the icon tint</string>
+    <string name="no_profile_found">No profile found in phone</string>
+    <string name="need_to_be_default_launcher_to_access_profile">Dragon needs to be the default launcher in order to access this profile</string>
 </resources>

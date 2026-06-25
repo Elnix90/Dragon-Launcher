@@ -608,7 +608,6 @@
     <string name="reload">Recarga</string>
     <string name="select_icon">Seleccionar icono</string>
     <string name="max_notification_icons">Iconos de notificación al máximo</string>
-    <string name="need_to_be_default_launcher_to_use_private_space">Debe ser el launcher por defecto para usar espacio privado</string>
     <string name="use_differential_loading_private_space">Uso del espacio privado de carga diferencial</string>
     <string name="use_differential_loading_private_space_desc">Desactiva esto cuando aparezcan aplicaciones privadas en el espacio de trabajo del usuario; de lo contrario, déjalo desmarcado para el rendimiento</string>
     <string name="edit_border_shape">Editar la forma del borde</string>

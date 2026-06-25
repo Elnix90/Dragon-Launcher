@@ -3,10 +3,14 @@ package org.elnix.dragonlauncher.ui.helpers.workspace
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -34,66 +38,73 @@ fun WorkspaceLockedContent(
     val workspaceProfileType = workspaceProfile.type
 
 
-    Column(
+    Box(
         modifier = Modifier
-            .padding(12.dp)
-            .fillMaxWidth()
-            .border(
-                1.dp,
-                MaterialTheme.colorScheme.outlineVariant,
-                MaterialTheme.shapes.small
-            )
-            .background(
-                MaterialTheme.colorScheme.surfaceContainer,
-                MaterialTheme.shapes.small
-            )
-            .padding(vertical = 64.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+        contentAlignment = Alignment.Center
     ) {
-        Icon(
-            painterResource(if (workspaceProfileType == Profile.Type.Work) R.drawable.enterprise_off else R.drawable.lock),
-            contentDescription = null,
-            modifier = Modifier.size(48.dp),
-            tint = MaterialTheme.colorScheme.secondary,
-        )
-        Text(
-            stringResource(
-                if (workspaceProfileType == Profile.Type.Work) R.string.profile_work_profile_state_locked
-                else R.string.profile_private_profile_state_locked
-            ),
-            modifier = Modifier.padding(top = 8.dp),
-            color = MaterialTheme.colorScheme.secondary,
-            style = MaterialTheme.typography.titleSmall,
-        )
-        if (hasProfilesPermission) {
-            Button(
-                modifier = Modifier.padding(top = 32.dp),
-                onClick = {
-                    profilesViewModel.setProfileLock(workspaceProfile, false)
-                },
-                contentPadding = ButtonDefaults.TextButtonWithIconContentPadding
-            ) {
-                val iconRes = when(workspaceProfileType) {
-                    Profile.Type.Personal -> TODO()
-                    Profile.Type.Work -> R.drawable.enterprise
-                    Profile.Type.Private -> R.drawable.lock_open
-                }
-
-                val stringRes = when(workspaceProfileType) {
-                    Profile.Type.Personal -> TODO()
-                    Profile.Type.Work ->R.string.profile_work_profile_action_unlock
-                    Profile.Type.Private ->  R.string.profile_private_profile_action_unlock
-                }
-
-                Icon(
-                    painterResource(iconRes),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(end = ButtonDefaults.IconSpacing)
-                        .size(ButtonDefaults.IconSize)
+        Column(
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth()
+                .border(
+                    1.dp,
+                    MaterialTheme.colorScheme.outlineVariant,
+                    MaterialTheme.shapes.small
                 )
-                Text(stringResource(stringRes))
+                .background(
+                    MaterialTheme.colorScheme.surfaceContainer,
+                    MaterialTheme.shapes.small
+                )
+                .padding(vertical = 64.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Icon(
+                painterResource(if (workspaceProfileType == Profile.Type.Work) R.drawable.enterprise_off else R.drawable.lock),
+                contentDescription = null,
+                modifier = Modifier.size(48.dp),
+                tint = MaterialTheme.colorScheme.secondary,
+            )
+            Text(
+                stringResource(
+                    if (workspaceProfileType == Profile.Type.Work) R.string.profile_work_profile_state_locked
+                    else R.string.profile_private_profile_state_locked
+                ),
+                modifier = Modifier.padding(top = 8.dp),
+                color = MaterialTheme.colorScheme.secondary,
+                style = MaterialTheme.typography.titleSmall,
+            )
+            if (hasProfilesPermission) {
+                Button(
+                    modifier = Modifier.padding(top = 32.dp),
+                    onClick = {
+                        profilesViewModel.setProfileLock(workspaceProfile, false)
+                    },
+                    contentPadding = ButtonDefaults.TextButtonWithIconContentPadding
+                ) {
+                    val iconRes = when(workspaceProfileType) {
+                        Profile.Type.Personal -> TODO()
+                        Profile.Type.Work -> R.drawable.enterprise
+                        Profile.Type.Private -> R.drawable.lock_open
+                    }
+
+                    val stringRes = when(workspaceProfileType) {
+                        Profile.Type.Personal -> TODO()
+                        Profile.Type.Work ->R.string.profile_work_profile_action_unlock
+                        Profile.Type.Private ->  R.string.profile_private_profile_action_unlock
+                    }
+
+                    Icon(
+                        painterResource(iconRes),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(end = ButtonDefaults.IconSpacing)
+                            .size(ButtonDefaults.IconSize)
+                    )
+                    Text(stringResource(stringRes))
+                }
             }
         }
     }

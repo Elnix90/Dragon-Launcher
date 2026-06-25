@@ -32,7 +32,7 @@ fun StatusBarNotifications(
 
     val notifications = drawerViewModel.notifications
 
-    val hasNotificationPermission by drawerViewModel.permissionsManager.hasPermission(PermissionGroup.Notifications).collectAsState(false)
+    val hasNotificationPermission by drawerViewModel.hasPermission(PermissionGroup.Notifications).collectAsState(false)
 
     if (!hasNotificationPermission) {
         Icon(
@@ -60,7 +60,7 @@ fun StatusBarNotifications(
 
 
             app?.let {
-                AppIcon(it)
+                AppIcon(it, 10.dp)
             }
         }
 

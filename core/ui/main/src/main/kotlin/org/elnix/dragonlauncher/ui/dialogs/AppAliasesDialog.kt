@@ -39,7 +39,9 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -128,7 +130,7 @@ fun AppAliasesDialog(
                         var canDelete by remember { mutableStateOf(false) }
                         LaunchedEffect(isPressed) {
                             if (isPressed) {
-                                delay(250)
+                                delay(250.milliseconds)
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                                 canDelete = true
                             } else {
@@ -146,7 +148,7 @@ fun AppAliasesDialog(
                             modifier = Modifier.animateItem(),
                             onClick = {
                                 if (canDelete) {
-                                    appOverridesManager.removeAliasFromApp(cacheKey, alias,)
+                                    appOverridesManager.removeAliasFromApp(cacheKey, alias)
                                 } else {
                                     showAliasEditScreen = alias
                                 }

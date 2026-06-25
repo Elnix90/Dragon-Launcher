@@ -37,6 +37,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.UiCircle
 import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
@@ -51,10 +52,9 @@ import org.elnix.dragonlauncher.enumsui.select.NestEditMode.Other
 import org.elnix.dragonlauncher.enumsui.select.NestEditMode.Radius
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.defaultHapticFeedback
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedBackEditorButtonWithPlayTest
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedbackEditor
@@ -71,20 +71,19 @@ import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
 @Composable
 fun NestEditingScreen(
     nestId: Int?,
-    pointViewModel: PointViewModel = activityViewModel(),
+    pointsViewModel: PointsViewModel = activityViewModel(),
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val nests by pointViewModel.nests.collectAsState()
-    val pointService = pointViewModel.pointsService
+    val nests by pointsViewModel.nests.collectAsState()
 
     if (nestId == null) return
     val currentNest = nests.find { it.id == nestId } ?: run {
         // The nest isn't found in the list, create a new one with this id
         scope.launch {
-            pointService.addNest()
+            pointsViewModel.addNest()
             ctx.showToast("Saved missing nest!")
         }
 
@@ -126,7 +125,7 @@ fun NestEditingScreen(
     }
 
     fun updateNest(block: () -> Nest) {
-        pointService.editNest(nestId) { block() }
+        pointsViewModel.editNest(nestId) { block() }
     }
 
     fun commitDragDistances(state: Map<Int, Int>) {
@@ -160,7 +159,7 @@ fun NestEditingScreen(
         resetText = stringResource(R.string.reset_nest_text),
         onReset = {
             // Resets current nest to a new one, with the same id (avoids destroying it)
-            pointService.editNest(nestId) { Nest(id = nestId) }
+            pointsViewModel.editNest(nestId) { Nest(id = nestId) }
         }
     ) {
         Box(

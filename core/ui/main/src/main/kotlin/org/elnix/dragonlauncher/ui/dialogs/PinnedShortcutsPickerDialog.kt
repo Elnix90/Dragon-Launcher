@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.pm.LauncherApps
 import android.content.pm.ShortcutInfo
 import android.os.Process
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,8 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,16 +37,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.elnix.dragonlauncher.base.model.serializables.Action
-import org.elnix.dragonlauncher.i18n.R
-import io.github.elnix90.logging.ICONS_TAG
 import io.github.elnix90.logging.PINNED_SHORTCUTS
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
-import io.github.elnix90.logging.logW
-import org.elnix.dragonlauncher.models.DrawerViewModel
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Action.LaunchShortcut.Companion.toAction
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ui.actions.ShortcutIcon
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
-import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppDrawerSearch
 
@@ -199,7 +194,8 @@ fun PinnedShortcutsPickerDialog(
                                             onShortcutSelected(
                                                 Action.LaunchShortcut(
                                                     packageName = item.packageName,
-                                                    shortcutId = item.shortcutInfo.id
+                                                    shortcutId = item.shortcutInfo.id,
+                                                    user = item.shortcutInfo.userHandle
                                                 )
                                             )
                                         }
@@ -224,11 +220,8 @@ fun PinnedShortcutsPickerDialog(
 @Composable
 private fun ShortcutRow(
     shortcut: ShortcutInfo,
-    drawerViewModel: DrawerViewModel = activityViewModel(),
     onClick: () -> Unit
 ) {
-    val icon = drawerViewModel.appsRepository.loadShortcutIcon(shortcut.`package`, shortcut.id)
-
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -238,27 +231,7 @@ private fun ShortcutRow(
             .clickable(onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
-        if (icon != null) {
-            val bitmapPainter = remember(icon) {
-                try {
-                    BitmapPainter(icon.asImageBitmap())
-                } catch (e: Exception) {
-                    logW(ICONS_TAG, e) { "Unable to load icon via loadDrawableAsBitmap" }
-                    null
-                }
-            }
-
-            if (bitmapPainter != null) {
-                Image(
-                    painter = bitmapPainter,
-                    contentDescription = shortcut.shortLabel?.toString(),
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(DragonShape)
-                )
-                Spacer(12.dp)
-            }
-        }
+        ShortcutIcon(shortcut.toAction(), 36.dp)
 
         Column(modifier = Modifier.weight(1f)) {
             Text(

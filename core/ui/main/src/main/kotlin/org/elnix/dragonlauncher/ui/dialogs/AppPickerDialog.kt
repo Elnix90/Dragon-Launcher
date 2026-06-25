@@ -60,6 +60,7 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppDrawerSearch
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
 import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceLockedContent
+import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceUnavailableContent
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -301,16 +302,16 @@ fun AppPickerDialog(
                 val workspaceProfile = profiles.find { it?.type == workspaceProfileType}
 
                 val workspaceLocked = when (workspaceProfileType) {
-                    Profile.Type.Work -> profileStates[1]?.locked ?: true
-                    Profile.Type.Private -> profileStates[2]?.locked ?: true
                     Profile.Type.Personal -> false
+                    Profile.Type.Work -> profileStates.getOrNull(1)?.locked ?: true
+                    Profile.Type.Private -> profileStates.getOrNull(2)?.locked ?: true
                 }
 
                 val apps by drawerViewModel.search(workspace).collectAsStateWithLifecycle()
 
                 when {
                     workspaceProfile == null -> {
-                        Text("No profile found in phone")
+                        WorkspaceUnavailableContent(workspace.type)
                     }
 
                     workspaceLocked -> {

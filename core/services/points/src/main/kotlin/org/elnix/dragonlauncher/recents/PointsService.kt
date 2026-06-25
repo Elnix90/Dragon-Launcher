@@ -11,12 +11,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.NestJson
 import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.defaultDragDistance
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.PointsListJson
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
+import org.elnix.dragonlauncher.base.undoredo.UndoRedoManager
+import org.elnix.dragonlauncher.base.undoredo.UndoRedoStack
 import org.elnix.dragonlauncher.settings.stores.array.NestsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.array.PointsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
@@ -26,6 +29,8 @@ interface PointsService {
     val points: Flow<Set<Point>>
     val nests: Flow<Set<Nest>>
 
+    val undoRedo: UndoRedoManager
+
     fun addPoint(newPoint: Point)
     fun removePoint(id: String): Boolean
     fun editPoint(id: String, editedPoint: (Point) -> Point): Boolean
@@ -34,6 +39,9 @@ interface PointsService {
     fun deleteNest(id: Int): Boolean
     fun editNest(id: Int, editedNest: (Nest) -> Nest): Boolean
 
+
+    val selectedPoint: SettingFlow<Point?>
+    fun select(point: Point?)
     fun persist()
 
     /** Set the given [points], [nests] and [defaultPoint] if not null. */
@@ -63,6 +71,31 @@ internal class PointsServiceImpl(
 
     private val _nests = MutableStateFlow<Set<Nest>>(emptySet())
     override val nests: Flow<Set<Nest>> = _nests.asStateFlow()
+
+    override val selectedPoint: SettingFlow<Point?> = SettingFlow(null)
+    override fun select(point: Point?) {
+        selectedPoint.value = point
+    }
+
+
+    override val undoRedo: UndoRedoManager = UndoRedoManager(
+        arrayOf(
+            UndoRedoStack(
+                snapshot = { _points.value.map { it.copy() } },
+                restore = {
+                    set(points = it.toSet())
+                    selectedPoint.value = _points.value.find { p -> p.id == (selectedPoint.value?.id ?: "") }
+                }
+            ),
+            UndoRedoStack(
+                snapshot = { _nests.value.map { it.copy() } },
+                restore = {
+                    set(nests = it.toSet())
+                }
+            )
+        )
+    )
+
 
     init {
         scope.launch {

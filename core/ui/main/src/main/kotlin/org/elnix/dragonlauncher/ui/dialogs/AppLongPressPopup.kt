@@ -2,7 +2,6 @@
 
 package org.elnix.dragonlauncher.ui.dialogs
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.i18n.R
@@ -36,11 +36,12 @@ import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AppLongPressRow(
+fun AppLongPressPopup(
     app: Application,
     appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
     drawerViewModel: DrawerViewModel = activityViewModel(),
@@ -154,10 +155,10 @@ fun AppLongPressRow(
             shapes = MenuDefaults.groupShapes()
         ) {
             DropdownMenuItem(
-                onClick = { appLaunchViewModel.requestAppLaunch(app) },//{ app.launch(ctx, null) },
+                onClick = { appLaunchViewModel.requestAppLaunch(app) },
                 shape = MenuDefaults.leadingItemShape,
                 text = { Text(app.label) },
-                leadingIcon = { AppIcon(app) }
+                leadingIcon = { AppIcon(app, size = 35.dp) }
             )
 
             entries.fastForEachIndexed { index, option ->
@@ -196,56 +197,25 @@ fun AppLongPressRow(
             placeHolder = { app.label },
             onDismiss = { showRenameDialog = false },
             initialText = app.label
-        ) {
-            if (it != "") {
-                appOverridesManager.renameApp(
-                    cacheKey = cacheKey,
-                    customName = it
-                )
-            } else {
-                appOverridesManager.renameApp(cacheKey, null)
-            }
+        ) { newName ->
+            appOverridesManager.renameApp(
+                cacheKey = cacheKey,
+                customName = newName
+            )
             showRenameDialog = false
         }
     }
 
     if (showIconDialog) {
-        val cacheKey = app.key
-
-        val iconService = drawerViewModel.iconsService
-
-        AppIconEditor(
-            app = app,
-            onReset = { iconService.reloadAppIcon(app) },
-            onDismiss = { showIconDialog = false }
-        ) { customIcon ->
-
-            if (customIcon != null) {
-                appOverridesManager.setAppIcon(
-                    cacheKey = cacheKey,
-                    customIcon = customIcon
-                )
-            } else {
-                appOverridesManager.setAppIcon(cacheKey, null)
-            }
-
-            showIconDialog = false
-            iconService.reloadAppIcon(app)
-        }
+        AppIconEditor(app) { showIconDialog = false }
     }
 
     if (showAliasDialog) {
-        AppAliasesDialog(
-            app = app,
-            onDismiss = { showAliasDialog = false }
-        )
+        AppAliasesDialog(app) { showAliasDialog = false }
     }
 }
 
-@Composable
-fun rememberInteractionSource(): MutableInteractionSource {
-    return remember { MutableInteractionSource() }
-}
+
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

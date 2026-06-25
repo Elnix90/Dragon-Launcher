@@ -42,6 +42,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.core.SettingsBackupManager
+import io.github.elnix90.logging.BACKUP_TAG
+import io.github.elnix90.logging.THEMES_TAG
+import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.ThemeObject
@@ -49,9 +52,6 @@ import org.elnix.dragonlauncher.common.loader.loadThemes
 import org.elnix.dragonlauncher.common.utils.DateUtils
 import org.elnix.dragonlauncher.enumsui.select.ExportImportTheme
 import org.elnix.dragonlauncher.i18n.R
-import io.github.elnix90.logging.BACKUP_TAG
-import io.github.elnix90.logging.THEMES_TAG
-import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
@@ -108,12 +108,10 @@ fun ThemesTab(
                     ColorModesSettingsStore.colorTestMode.set(ctx, true)
 
                     SettingsBackupManager.importSettingsFromJson(ctx, json, themeSettingsStores)
-                    backupViewModel.result.set(
-                        BackupResult(
-                            export = false,
-                            error = false,
-                            title = ctx.getString(R.string.import_successful)
-                        )
+                    backupViewModel.result.value = BackupResult(
+                        export = false,
+                        error = false,
+                        title = ctx.getString(R.string.import_successful)
                     )
                 } catch (e: Exception) {
                     logE(BACKUP_TAG, e) { "Import failed" }
@@ -121,13 +119,11 @@ fun ThemesTab(
                     ColorSettingsStore.restoreColors(ctx)
                     ColorModesSettingsStore.colorTestMode.reset(ctx)
 
-                    backupViewModel.result.set(
-                        BackupResult(
-                            export = false,
-                            error = true,
-                            title = ctx.getString(R.string.import_failed),
-                            message = e.message ?: ""
-                        )
+                    backupViewModel.result.value = BackupResult(
+                        export = false,
+                        error = true,
+                        title = ctx.getString(R.string.import_failed),
+                        message = e.message ?: ""
                     )
                 }
             }

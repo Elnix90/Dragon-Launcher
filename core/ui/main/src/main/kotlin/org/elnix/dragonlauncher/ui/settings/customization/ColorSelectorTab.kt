@@ -487,7 +487,8 @@ fun ColorSelectorTab(
             title = {
                 ColorPickerRow(
                     currentColor = applyColor,
-                    label = stringResource(R.string.color_mode_all),
+                    description = null,
+                    title = stringResource(R.string.color_mode_all),
                     backgroundColor = MaterialTheme.colorScheme.surface.alphaMultiplier(0.7f)
                 ) { applyColor = it ?: Color.Black }
             },

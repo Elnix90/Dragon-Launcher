@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.base.model.models
 
 import android.content.ComponentName
 import android.content.Context
-import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Profile
@@ -43,12 +42,8 @@ data class PointApp(
     override var cachedNormalizerResult: Pair<String, String>? = null
 
 
-    override suspend fun loadIcon(themed: Boolean): LauncherIcon? {
-        return null
-    }
+    override suspend fun loadIcon(themed: Boolean, tint: Int?)
+    = null
 
-    override fun getStoreDetails(ctx: Context): StoreLink? {
-        // System apps don't have store links
-        return null
-    }
+    override fun getStoreDetails(ctx: Context): StoreLink? = null
 }

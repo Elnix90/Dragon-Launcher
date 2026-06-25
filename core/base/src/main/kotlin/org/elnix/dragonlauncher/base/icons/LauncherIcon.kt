@@ -69,7 +69,7 @@ data class StaticLauncherIcon(
         when(layer) {
             is ColorLayer -> {
                 val paint = Paint()
-                paint.color = if (layer.color == 0) themeColor else getTone(layer.color, tone)
+                paint.color = if (layer.tint == 0) themeColor else getTone(layer.tint, tone)
                 canvas.drawRect(Rect(0, 0, canvas.width, canvas.height), paint)
             }
             is StaticIconLayer -> {
@@ -80,21 +80,15 @@ data class StaticLauncherIcon(
                     canvas.height / 2f,
                 ) {
                     layer.icon.bounds = Rect(0, 0, canvas.width, canvas.height)
-                    layer.icon.draw(canvas)
-                }
-            }
-            is TintedIconLayer -> {
-                val color = if (layer.color == 0) themeColor else getTone(layer.color, tone)
-                canvas.withScale(
-                    layer.scale,
-                    layer.scale,
-                    canvas.width / 2f,
-                    canvas.height / 2f,
-                ) {
-                    layer.icon.bounds = Rect(0, 0, canvas.width, canvas.height)
-                    layer.icon.drawWithColorFilter(canvas,
-                        PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
-                    )
+                    if (layer.tint != null) {
+                        val color = if (layer.tint == 0) themeColor else getTone(layer.tint, tone)
+
+                        layer.icon.drawWithColorFilter(canvas,
+                            PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
+                        )
+                    } else {
+                        layer.icon.draw(canvas)
+                    }
                 }
             }
             else -> {}

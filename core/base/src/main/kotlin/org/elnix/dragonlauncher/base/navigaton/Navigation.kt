@@ -12,6 +12,7 @@ import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Widgets
 import org.elnix.dragonlauncher.i18n.R
 
 
+@Suppress("EqualsOrHashCode")
 @Serializable
 sealed class NavigationRoute : NavKey {
 
@@ -27,7 +28,9 @@ sealed class NavigationRoute : NavKey {
     @Serializable
     data class PointsSettings(
         val initialNestId: Int = 0
-    ) : NavigationRoute()
+    ) : NavigationRoute() {
+        override fun hashCode(): Int = super.hashCode()
+    }
 
     @Serializable
     data object Settings : NavigationRoute()
@@ -47,7 +50,9 @@ sealed class NavigationRoute : NavKey {
     @Serializable
     data class Widgets(
         val nestId: Int = 0
-    ) : NavigationRoute()
+    ) : NavigationRoute() {
+        override fun hashCode(): Int = super.hashCode()
+    }
 
     @Serializable
     data object IconPack : NavigationRoute()
@@ -103,7 +108,9 @@ sealed class NavigationRoute : NavKey {
     @Serializable
     data class LogsViewer(
         val filename: String
-    ) : NavigationRoute()
+    ) : NavigationRoute() {
+        override fun hashCode(): Int = super.hashCode()
+    }
 
     @Serializable
     data object SettingsJson : NavigationRoute()
@@ -111,18 +118,25 @@ sealed class NavigationRoute : NavKey {
     @Serializable
     data class NestEdit(
         val nestId: Int = 0
-    ) : NavigationRoute()
+    ) : NavigationRoute() {
+        override fun hashCode(): Int = super.hashCode()
+    }
 
     @Serializable
     data class WorkspaceDetail(
         val workspaceId: String
-    ) : NavigationRoute()
+    ) : NavigationRoute() {
+        override fun hashCode(): Int = super.hashCode()
+    }
 
     @Serializable
     data class TimerExceeded(
         val appName: String
-    ) : NavigationRoute()
+    ) : NavigationRoute() {
+        override fun hashCode(): Int = super.hashCode()
+    }
 
+    override fun hashCode(): Int = System.identityHashCode(this)
 
     companion object {
         val settingsRoutes: List<NavigationRoute> by lazy {
@@ -162,7 +176,7 @@ sealed class NavigationRoute : NavKey {
     fun routeResId(route: NavigationRoute): Int {
 
         return when (route) {
-            is Main -> R.string.points_settings
+            is Main -> R.string.main_screen
             is Drawer -> R.string.app_drawer
             is Welcome -> R.string.welcome_screen
 

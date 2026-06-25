@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.helpers.nests.actionsInCircle
 import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
@@ -25,14 +25,14 @@ fun PointPreviewCanvas(
     defaultPoint: Point,
     backgroundSurfaceColor: Color,
     modifier: Modifier = Modifier,
-    pointViewModel: PointViewModel = activityViewModel()
+    pointsViewModel: PointsViewModel = activityViewModel()
 ) {
     val drawParams by rememberSwipeDefaultParams(
         defaultPointSerializable = defaultPoint,
         backgroundColor = backgroundSurfaceColor
     )
 
-    val defaultPoint by pointViewModel.defaultPoint.collectAsState()
+    val defaultPoint by pointsViewModel.defaultPoint.collectAsState()
 
     val height =
         when (editPoint.action) {

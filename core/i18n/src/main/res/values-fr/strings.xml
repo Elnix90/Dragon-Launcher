@@ -610,7 +610,6 @@
     <string name="reload">Rechargement</string>
     <string name="select_icon">Icône de sélection</string>
     <string name="max_notification_icons">Icônes de notification maximale</string>
-    <string name="need_to_be_default_launcher_to_use_private_space">Il faut que le lanceur par défaut soit utilisé pour utiliser l’espace privé</string>
     <string name="use_differential_loading_private_space">Utiliser l’espace privé de charge différentielle</string>
     <string name="use_differential_loading_private_space_desc">Désactivez cela lorsque des applications privées apparaissent dans l’espace de travail utilisateur, sinon gardez les performances non cochées</string>
     <string name="edit_border_shape">Modifier la forme de la bordure</string>

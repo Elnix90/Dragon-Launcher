@@ -608,7 +608,6 @@
     <string name="reload">Nachladen</string>
     <string name="select_icon">Symbol auswählen</string>
     <string name="max_notification_icons">Max-Benachrichtigungssymbole</string>
-    <string name="need_to_be_default_launcher_to_use_private_space">Um privaten Speicherplatz nutzen zu können, muss der Standard-Launcher aktiviert sein</string>
     <string name="use_differential_loading_private_space">Nutzen Sie den privaten Raum mit differenzieller Beladung</string>
     <string name="use_differential_loading_private_space_desc">Schalten Sie dies um, wenn private Apps im Benutzerarbeitsbereich angezeigt werden, andernfalls lassen Sie die Option für die Leistung deaktiviert</string>
     <string name="edit_border_shape">Randform bearbeiten</string>

@@ -5,21 +5,25 @@ import android.content.pm.PackageManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
-import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.models.DummyApp.componentName
+import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.icons.compat.AdaptiveIconDrawableCompat
 import org.elnix.dragonlauncher.icons.compat.ClockIconConfig
 import org.elnix.dragonlauncher.icons.compat.toLauncherIcon
 
-class DynamicClockIconProvider(val ctx: Context, private val themed: Boolean) : IconProvider {
-    override suspend fun getIcon(application: Application, size: Int): LauncherIcon? = withContext(Dispatchers.IO) {
-        val componentName = application.componentName
+class DynamicClockIconProvider(
+    private val ctx: Context,
+    private val themed: Boolean,
+    private val tint: Int?
+) : IconProvider {
+    override suspend fun getIcon(action: Action, size: Int): LauncherIcon? = withContext(Dispatchers.IO) {
         val pm = ctx.packageManager
         val appInfo = try {
             pm.getApplicationInfo(
                 componentName.packageName,
                 PackageManager.GET_META_DATA
             )
-        } catch (e: PackageManager.NameNotFoundException) {
+        } catch (_: PackageManager.NameNotFoundException) {
             return@withContext null
         }
 
@@ -31,7 +35,7 @@ class DynamicClockIconProvider(val ctx: Context, private val themed: Boolean) : 
         if (drawableId == 0) return@withContext null
         val resources = try {
             pm.getResourcesForApplication(appInfo)
-        } catch (e: PackageManager.NameNotFoundException) {
+        } catch (_: PackageManager.NameNotFoundException) {
             return@withContext null
         }
 
@@ -74,6 +78,7 @@ class DynamicClockIconProvider(val ctx: Context, private val themed: Boolean) : 
 
         return@withContext icon.toLauncherIcon(
             themed = themed,
+            tint = tint,
             clock = clockConfig
         )
     }

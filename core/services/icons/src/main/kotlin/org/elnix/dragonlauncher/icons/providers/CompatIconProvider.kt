@@ -4,17 +4,20 @@ import android.content.Context
 import android.content.pm.PackageManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
-import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.icons.compat.AdaptiveIconDrawableCompat
 import org.elnix.dragonlauncher.icons.compat.toLauncherIcon
 
 class CompatIconProvider(
+    private val appRepository: AppRepository,
     private val ctx: Context,
     private val themed: Boolean = false,
+    private val tint: Int?
 ) : IconProvider {
-    override suspend fun getIcon(application: Application, size: Int): LauncherIcon? {
-        val component = application.componentName
+    override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
+        val component = appRepository.fromAction(action as Action.LaunchApp)?.componentName ?: return null
 
         val icon = withContext(Dispatchers.IO) {
             val activityInfo = try {
@@ -31,6 +34,6 @@ class CompatIconProvider(
             AdaptiveIconDrawableCompat.from(resources, iconRes)
         } ?: return null
 
-        return icon.toLauncherIcon(themed = themed)
+        return icon.toLauncherIcon(themed = themed, tint = tint)
     }
 }

@@ -19,8 +19,15 @@ object IconsSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    val iconPackTint = color(
-        title = R.string.icon_pack_tint,
+    val useIconTint = boolean(
+        title = R.string.use_icon_tint,
+        description = R.string.use_icon_tint_desc,
+        default = false
+    )
+
+    @SettingKey
+    val iconsTint = color(
+        title = R.string.icons_tint,
         default = Color.Unspecified
     )
 
@@ -28,18 +35,21 @@ object IconsSettingsStore : MapSettingsStore() {
     @SettingKey
     val themedIcons = boolean(
         title = R.string.themed_icons,
+        description = R.string.themed_icons_desc,
         default = false
     )
 
     @SettingKey
     val forceThemed = boolean(
         title = R.string.force_themed,
+        description = R.string.force_themed_icons_desc,
         default = false
     )
 
     @SettingKey
     val adaptify = boolean(
         title = R.string.adaptify,
+        description = R.string.adaptify_icons_desc,
         default = false
     )
 }

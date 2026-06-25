@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
 import org.elnix.dragonlauncher.enumsui.select.WorkspaceViewMode
@@ -29,13 +30,13 @@ import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
+import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
 import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceLockedContent
-import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
+import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceUnavailableContent
 
 @Composable
 fun WorkspaceDetailScreen(
@@ -95,14 +96,14 @@ fun WorkspaceDetailScreen(
             val workspaceProfile = profiles.find { it?.type == workspaceProfileType }
 
             val workspaceLocked = when (workspaceProfileType) {
-                Profile.Type.Work -> profileStates[1]?.locked ?: true
-                Profile.Type.Private -> profileStates[2]?.locked ?: true
                 Profile.Type.Personal -> false
+                Profile.Type.Work -> profileStates.getOrNull(1)?.locked ?: true
+                Profile.Type.Private -> profileStates.getOrNull(2)?.locked ?: true
             }
 
             when {
                 workspaceProfile == null -> {
-                    Text("No profile found in phone")
+                    WorkspaceUnavailableContent(workspace.type)
                 }
 
                 workspaceLocked -> {

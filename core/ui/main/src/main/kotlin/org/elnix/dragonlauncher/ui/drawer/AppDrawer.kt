@@ -29,7 +29,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -47,7 +46,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -65,6 +63,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.base.Constants
 import org.elnix.dragonlauncher.base.model.serializables.Action
@@ -94,16 +93,16 @@ import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
+import org.elnix.dragonlauncher.ui.helpers.wallpaper.WallpaperDim
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppDrawerSearch
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
-import org.elnix.dragonlauncher.ui.helpers.wallpaper.WallpaperDim
 import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceLockedContent
+import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceUnavailableContent
 import kotlin.math.abs
 import kotlin.math.pow
 
@@ -474,9 +473,9 @@ fun AppDrawerScreen(
             val workspaceProfile = profiles.find { it?.type == workspaceProfileType }
 
             val workspaceLocked = when (workspaceProfileType) {
-                Profile.Type.Work -> profileStates[1]?.locked ?: true
-                Profile.Type.Private -> profileStates[2]?.locked ?: true
                 Profile.Type.Personal -> false
+                Profile.Type.Work -> profileStates.getOrNull(1)?.locked ?: true
+                Profile.Type.Private -> profileStates.getOrNull(2)?.locked ?: true
             }
 
             val gridState = remember(workspace.id) { LazyGridState() }
@@ -501,12 +500,7 @@ fun AppDrawerScreen(
 
             when {
                 workspaceProfile == null -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("No profile found in phone", color = Color.White)
-                    }
+                    WorkspaceUnavailableContent(workspace.type)
                 }
 
                 workspaceLocked -> {

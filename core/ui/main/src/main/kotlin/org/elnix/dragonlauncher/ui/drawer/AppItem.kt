@@ -24,16 +24,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
-import org.elnix.dragonlauncher.ui.dialogs.AppLongPressRow
+import org.elnix.dragonlauncher.ui.dialogs.AppLongPressPopup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
 
 
@@ -59,6 +59,7 @@ fun AppItemHorizontal(
         "Long press action, or popup, or neither, but not both!"
     }
 
+    val appIconSize by DrawerSettingsStore.iconSize.asState()
     val showAppIconsInDrawer by DrawerSettingsStore.showAppIconsInDrawer.asState()
     val showAppLabelsInDrawer by DrawerSettingsStore.showAppLabelInDrawer.asState()
     val horizontalAlignment by DrawerSettingsStore.horizontalAlignment.asState()
@@ -100,7 +101,7 @@ fun AppItemHorizontal(
         ) {
 
             if (showAppIconsInDrawer) {
-                AppIcon(app)
+                AppIcon(app, appIconSize)
             }
 
             if (showAppLabelsInDrawer) {
@@ -115,7 +116,7 @@ fun AppItemHorizontal(
             expanded = showLongPressPopup,
             onDismissRequest = { showLongPressPopup = false }
         ) {
-            AppLongPressRow(app)
+            AppLongPressPopup(app)
         }
     }
 }
@@ -132,6 +133,7 @@ fun AppItemGrid(
         "Long press action, or popup, or neither, but not both!"
     }
 
+    val appIconSize by DrawerSettingsStore.iconSize.asState()
     val showAppIconsInDrawer by DrawerSettingsStore.showAppIconsInDrawer.asState()
     val iconsSpacingVertical by DrawerSettingsStore.iconsSpacingVertical.asState()
 
@@ -168,7 +170,7 @@ fun AppItemGrid(
             verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical)
         ) {
             if (showAppIconsInDrawer) {
-                AppIcon(app)
+                AppIcon(app, appIconSize)
             }
 
             if (showAppIconsInDrawer) {
@@ -186,7 +188,7 @@ fun AppItemGrid(
             expanded = showLongPressPopup,
             onDismissRequest = { showLongPressPopup = false }
         ) {
-            AppLongPressRow(app)
+            AppLongPressPopup(app)
         }
     }
 }

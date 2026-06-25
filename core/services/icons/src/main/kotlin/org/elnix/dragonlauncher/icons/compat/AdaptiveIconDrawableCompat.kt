@@ -9,18 +9,16 @@ import android.util.AttributeSet
 import android.util.Xml
 import android.view.InflateException
 import androidx.core.content.res.ResourcesCompat
-import org.elnix.dragonlauncher.base.icons.ClockLayer
-import org.elnix.dragonlauncher.base.icons.ClockSublayer
-import org.elnix.dragonlauncher.base.icons.ClockSublayerRole
-import org.elnix.dragonlauncher.base.icons.ColorLayer
-import org.elnix.dragonlauncher.base.icons.StaticIconLayer
-import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
-import org.elnix.dragonlauncher.base.icons.TintedClockLayer
-import org.elnix.dragonlauncher.base.icons.TintedIconLayer
-import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
-import org.elnix.dragonlauncher.ktx.skipToNextTag
 import io.github.elnix90.logging.ICONS_TAG
 import io.github.elnix90.logging.logE
+import org.elnix.dragonlauncher.base.icons.ClockSublayer
+import org.elnix.dragonlauncher.base.icons.ClockSublayerRole
+import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
+import org.elnix.dragonlauncher.base.icons.ClockLayer
+import org.elnix.dragonlauncher.base.icons.StaticIconLayer
+import org.elnix.dragonlauncher.base.icons.TransparentLayer
+import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
+import org.elnix.dragonlauncher.ktx.skipToNextTag
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 
@@ -134,7 +132,8 @@ data class AdaptiveIconDrawableCompat(
 }
 
 fun AdaptiveIconDrawableCompat.toLauncherIcon(
-    themed: Boolean = false,
+    themed: Boolean,
+    tint: Int?,
     clock: ClockIconConfig? = null,
 ): StaticLauncherIcon {
     val clockForeground = (if (themed) monochrome else foreground) as? LayerDrawable
@@ -153,14 +152,15 @@ fun AdaptiveIconDrawableCompat.toLauncherIcon(
         }
         if (themed) {
             return StaticLauncherIcon(
-                foregroundLayer = TintedClockLayer(
+                foregroundLayer = ClockLayer(
                     defaultHour = clock.defaultHour,
                     defaultMinute = clock.defaultMinute,
                     defaultSecond = clock.defaultSecond,
                     sublayers = clockLayers,
                     scale = 1.5f,
+                    tint = tint
                 ),
-                backgroundLayer = ColorLayer(),
+                backgroundLayer = TransparentLayer,
             )
         }
         return StaticLauncherIcon(
@@ -170,31 +170,36 @@ fun AdaptiveIconDrawableCompat.toLauncherIcon(
                 defaultSecond = clock.defaultSecond,
                 sublayers = clockLayers,
                 scale = 1.5f,
+                tint = tint
             ),
             backgroundLayer = StaticIconLayer(
                 icon = this.background,
                 scale = 1.5f,
+                tint = null
             )
         )
     }
 
     if (themed && this.monochrome != null) {
         return StaticLauncherIcon(
-            foregroundLayer = TintedIconLayer(
+            foregroundLayer = StaticIconLayer(
                 scale = 1.5f,
                 icon = this.monochrome,
+                tint = tint
             ),
-            backgroundLayer = ColorLayer()
+            backgroundLayer = TransparentLayer
         )
     } else {
         return StaticLauncherIcon(
             foregroundLayer = StaticIconLayer(
                 scale = 1.5f,
                 icon = this.foreground,
+                tint = tint
             ),
             backgroundLayer = StaticIconLayer(
                 scale = 1.5f,
                 icon = this.background,
+                tint = null
             )
         )
     }

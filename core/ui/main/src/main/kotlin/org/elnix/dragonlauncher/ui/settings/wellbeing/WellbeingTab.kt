@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.Constants.PackageNameLists.knownSocialMediaApps
 import org.elnix.dragonlauncher.base.model.models.Application
@@ -46,7 +47,6 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
@@ -338,7 +338,7 @@ private fun PausedAppItem(
             modifier = Modifier.weight(1f)
         ) {
 
-            AppIcon(app)
+            AppIcon(app, 30.dp)
 
             TextWithDescription(
                 text = app.label,

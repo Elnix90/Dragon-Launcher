@@ -70,6 +70,7 @@ dependencies {
     api(project(":core:services:timer"))
     api(project(":core:services:badges"))
 
+    api(project(":data:database"))
     api(project(":data:notifications"))
     api(project(":data:applications"))
     api(project(":data:workspaces"))

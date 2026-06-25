@@ -1,27 +1,11 @@
 package org.elnix.dragonlauncher.base.model.serializables
 
-import android.content.ComponentName
-import android.os.UserHandle
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.elnix.dragonlauncher.base.model.models.Application
 
 /**
- * Builds a stable cache key for an app icon entry.
- *
- * The key is composed of:
- * - the application [packageName]
- * - a [userId] identifier suffix
- *
- * Format:
- * `packageName#userId`
- *
- * If [userId] is null, `0` is used as a fallback. This ensures:
- * - consistent keys for primary user apps
- * - separation between the same package installed for different users/profiles
- *
- * Example:
- * - `com.example.app#0`
- * - `com.example.app#10`
+ * Builds a stable cache key for an app, a point or a shortcut, or anything
  */
 @JvmInline
 @Serializable
@@ -29,34 +13,15 @@ import kotlinx.serialization.Serializable
 value class CacheKey private constructor(
     val cacheKey: String
 ) {
-    init {
-        require(cacheKey.contains('#')) {
-            "Cache key needs to contain a '#' separator"
-        }
-    }
-
-    val packageName: String
-        get() = splitCacheKey().packageName
-    val userId: Int
-        get() = splitCacheKey().userId
-
-
+    /**
+     * Icon Service constructors, to retrieve icons and invalide cache when the providers or transformations changes
+     */
     constructor(
-        componentName: ComponentName,
-        userHandle: UserHandle
-    ) : this(cacheKey = "${componentName.packageName}#${userHandle.hashCode()}")
-
-    constructor(
-        packageName: String,
-        userId: Int?
-    ) : this(cacheKey = "${packageName}#${userId ?: 0}")
-
-    constructor(
-        cacheKey: CacheKey,
+        data: Any,
         customIconHashCode: Int,
         providersHashCode: Int,
         transformationsHashcode: Int
-    ) : this(cacheKey = cacheKey.cacheKey + customIconHashCode + providersHashCode + transformationsHashcode)
+    ) : this(cacheKey = data.toString() + customIconHashCode + providersHashCode + transformationsHashcode)
 
     /**
      * Point constructor, in order to store the key in the cache for points too
@@ -64,26 +29,25 @@ value class CacheKey private constructor(
      */
     constructor(
         point: Point
-    ) : this(cacheKey = "${point.id}#")
+    ) : this(cacheKey = point.id)
+
+    /**
+     * Application constructor
+     */
+    constructor(
+        app: Application
+    ) : this(cacheKey = "${app.packageName}#${app.user.hashCode()}")
+
+    constructor(
+        packageName: String,
+        userId: Int
+    ) : this(cacheKey = "$packageName#$userId")
 
 
-    private fun splitCacheKey(): SplitCacheKey {
-        return runCatching {
-            val (first, second) = cacheKey.split("#", limit = 2)
-            SplitCacheKey(first, second.toInt())
-
-        }.getOrElse {
-            // Fallback if user has still the old storage way, with no cacheKey
-            SplitCacheKey(packageName, 0)
-        }
-    }
-
-
+    /**
+     * Shortcut constructor
+     */
+    constructor(
+        shortcut: Action.LaunchShortcut
+    ) : this(cacheKey = "${shortcut.packageName}#${shortcut.user.hashCode()}#${shortcut.shortcutId}")
 }
-
-
-
-private data class SplitCacheKey(
-    val packageName: String,
-    val userId: Int
-)

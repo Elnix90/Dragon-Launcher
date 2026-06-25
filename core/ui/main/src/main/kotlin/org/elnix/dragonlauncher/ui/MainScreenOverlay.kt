@@ -19,6 +19,11 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.logging.POINTS_TAG
+import io.github.elnix90.logging.SWIPE_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logI
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.base.model.serializables.Nest
@@ -29,18 +34,13 @@ import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.common.circles.computePosition
 import org.elnix.dragonlauncher.common.circles.scaleDragDistances
 import org.elnix.dragonlauncher.common.utils.HapticUtils.performCustomHaptic
-import io.github.elnix90.logging.POINTS_TAG
-import io.github.elnix90.logging.SWIPE_TAG
-import io.github.elnix90.logging.logD
-import io.github.elnix90.logging.logI
-import org.elnix.dragonlauncher.models.DrawerViewModel
-import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.models.IconsViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.components.AppPreviewTitle
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
@@ -59,8 +59,8 @@ import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
 
 @Composable
 fun MainScreenOverlay(
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    pointsViewModel: PointViewModel = activityViewModel(),
+    iconsViewModel: IconsViewModel = activityViewModel(),
+    pointsViewModel: PointsViewModel = activityViewModel(),
     start: Offset?,
     current: Offset?,
     currentNest: Nest,
@@ -149,7 +149,7 @@ fun MainScreenOverlay(
         val hp = hoveredPoint ?: return@LaunchedEffect
         if (hp.cycleActions.isNullOrEmpty()) return@LaunchedEffect
         val dp = displayPoint ?: return@LaunchedEffect
-        drawerViewModel.iconsService.reloadPointIcon(dp)
+        iconsViewModel.reloadIcon(dp)
     }
 
 

@@ -13,21 +13,21 @@ import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeRes
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getFilePathFromUri
 import org.elnix.dragonlauncher.models.DrawerViewModel
-import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 @Composable
 fun actionLabel(
     action: Action,
     drawerViewModel: DrawerViewModel = activityViewModel(),
-    pointsViewModel: PointViewModel = activityViewModel()
+    pointsViewModel: PointsViewModel = activityViewModel()
 ): String {
     val ctx = LocalContext.current
 
     return when (action) {
 
         is Action.LaunchApp -> {
-            val app by drawerViewModel.appsRepository.findOne(action.packageName, action.profile.userHandle).collectAsState(null)
+            val app by drawerViewModel.findOne(action.packageName, action.profile.userHandle).collectAsState(null)
             app?.label ?: action.packageName
         }
 
@@ -41,7 +41,7 @@ fun actionLabel(
 
             val shortcutLabel = try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    drawerViewModel.appsRepository.queryAppShortcuts(action.packageName)
+                    drawerViewModel.queryAppShortcuts(action.packageName)
                         .firstOrNull { it.id == action.shortcutId }
                         ?.shortLabel
                         ?.toString()

@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.models.PointApp
 import org.elnix.dragonlauncher.base.model.serializables.CustomIcon
@@ -39,7 +40,9 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.util.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
-import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.models.IconsViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
@@ -49,7 +52,6 @@ import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.components.PointPreviewCanvas
 import org.elnix.dragonlauncher.ui.components.iconeditor.IconPicker
-import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
@@ -61,14 +63,14 @@ import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 @Composable
 fun PointIconEditor(
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    pointViewModel: PointViewModel = activityViewModel(),
+    iconsViewModel: IconsViewModel = activityViewModel(),
+    pointsViewModel: PointsViewModel = activityViewModel(),
     point: Point,
     onReset: (() -> Unit)? = null,
     onDismiss: () -> Unit,
     onPicked: (CustomIcon?) -> Unit
 ) {
-    val defaultPoint by pointViewModel.defaultPoint.collectAsState()
+    val defaultPoint by pointsViewModel.defaultPoint.collectAsState()
 
     var editCustomIcon by remember(point.customIcon) { mutableStateOf(point.customIcon) }
     val previewPoint = point.copy(customIcon = editCustomIcon)
@@ -90,7 +92,7 @@ fun PointIconEditor(
         },
         onUpdate = {
             editCustomIcon = it
-            drawerViewModel.iconsService.reloadPointIcon(point.copy(customIcon = editCustomIcon))
+            iconsViewModel.reloadIcon(point.copy(customIcon = editCustomIcon))
         }
     ) {
         onPicked(editCustomIcon)
@@ -99,14 +101,14 @@ fun PointIconEditor(
 
 @Composable
 fun AppIconEditor(
-    drawerViewModel: DrawerViewModel = activityViewModel(),
     app: Application,
-    onReset: (() -> Unit)? = null,
-    onDismiss: () -> Unit,
-    onPicked: (CustomIcon?) -> Unit
+    drawerViewModel: DrawerViewModel = activityViewModel(),
+    iconViewModel: IconsViewModel = activityViewModel(),
+    onDismiss: () -> Unit
 ) {
 
-    val appOverrides by drawerViewModel.appOverrideManager.appOverrideState.collectAsState()
+    val appOverrideManager = drawerViewModel.appOverrideManager
+    val appOverrides by appOverrideManager.appOverrideState.collectAsState()
     val initialCustomIcon = appOverrides[app.key]?.customIcon
 
     var editCustomIcon by remember(initialCustomIcon) { mutableStateOf(initialCustomIcon) }
@@ -115,16 +117,20 @@ fun AppIconEditor(
         application = app,
         customIcon = editCustomIcon,
         onDismiss = onDismiss,
-        onReset = onReset,
+        onReset = {
+            iconViewModel.reloadIcon(app)
+            appOverrideManager.setAppIcon(app.key, null)
+        },
         preview = {
-            AppIcon(app)
+            AppIcon(app, 56.dp)
         },
         onUpdate = {
             editCustomIcon = it
-            drawerViewModel.iconsService.reloadAppIcon(app)
+            iconViewModel.reloadIcon(app)
         }
     ) {
-        onPicked(editCustomIcon)
+        iconViewModel.reloadIcon(app)
+        appOverrideManager.setAppIcon(app.key, editCustomIcon)
     }
 }
 
@@ -211,7 +217,7 @@ private fun CustomIconPropertiesEditor(
     properties: CustomIconProperties,
     onUpdate: (CustomIconProperties) -> Unit,
 ) {
-    val defaultShape = LocalIconShape.current
+    val defultIconShape by DrawerSettingsStore.iconShape.asState()
     var showShapePickerDialog by remember { mutableStateOf(false) }
 
     DragonSettingsGroup(R.string.appearance) {
@@ -274,7 +280,8 @@ private fun CustomIconPropertiesEditor(
 
     DragonSettingsGroup(R.string.advanced) {
         ColorPickerRow(
-            label = stringResource(R.string.tint),
+            title = stringResource(R.string.tint),
+            description = null,
             currentColor = properties.tint?.let { Color(it) } ?: Color.Unspecified,
             modifier = Modifier.settingsGroupHorizontalPadding(),
         ) {
@@ -287,7 +294,7 @@ private fun CustomIconPropertiesEditor(
         }
 
         ShapeRow(
-            selected = properties.shape ?: defaultShape,
+            selected = properties.shape ?: defultIconShape,
             modifier = Modifier.settingsGroupHorizontalPadding(),
             onReset = {
                 onUpdate(
@@ -301,7 +308,7 @@ private fun CustomIconPropertiesEditor(
 
     if (showShapePickerDialog) {
         ShapePickerDialog(
-            selected = properties.shape ?: defaultShape,
+            selected = properties.shape ?: defultIconShape,
             onDismiss = { showShapePickerDialog = false }
         ) {
             onUpdate(

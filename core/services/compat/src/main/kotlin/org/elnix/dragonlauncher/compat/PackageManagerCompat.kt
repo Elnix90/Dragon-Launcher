@@ -14,13 +14,13 @@ import android.os.Process.myUserHandle
 import android.os.UserManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import org.elnix.dragonlauncher.base.util.ImageUtils.loadDrawableAsBitmap
-import org.elnix.dragonlauncher.i18n.R
 import io.github.elnix90.logging.APPS_TAG
 import io.github.elnix90.logging.ICONS_TAG
 import io.github.elnix90.logging.PM_COMPAT_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
+import org.elnix.dragonlauncher.base.util.ImageUtils.loadDrawableAsBitmap
+import org.elnix.dragonlauncher.i18n.R
 
 
 interface PackageManagerCompat {
@@ -40,7 +40,7 @@ interface PackageManagerCompat {
     fun getResourcesForApplication(packageName: String): Resources
     fun queryAppShortcuts(packageName: String): List<ShortcutInfo>
     fun launchShortcut(packageName: String, id: String)
-    fun loadShortcutIcon(packageName: String, shortcutId: String, widthPx: Int = 48, heightPx: Int = 48): Bitmap?
+    fun loadShortcutIcon(packageName: String, shortcutId: String, sizePx: Int): Bitmap?
 }
 
 class PackageManagerCompatImpl(
@@ -212,33 +212,24 @@ class PackageManagerCompatImpl(
 //    }
 
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun loadShortcutIcon(
         packageName: String,
         shortcutId: String,
-        widthPx: Int,
-        heightPx: Int
+        sizePx: Int,
     ): Bitmap? {
+        require(sizePx >= 1) {
+            "Size must be >= 1"
+        }
         try {
-            val launcherApps = ctx.getSystemService(LauncherApps::class.java) ?: return null
-            val user = myUserHandle()
-
-            val query = LauncherApps.ShortcutQuery()
-                .setPackage(packageName)
-                .setQueryFlags(
-                    LauncherApps.ShortcutQuery.FLAG_MATCH_DYNAMIC or
-                            LauncherApps.ShortcutQuery.FLAG_MATCH_MANIFEST or
-                            LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED
-                )
-
-            val shortcuts = launcherApps.getShortcuts(query, user) ?: return null
+            val shortcuts = queryAppShortcuts(packageName)
             val shortcut = shortcuts.firstOrNull { it.id == shortcutId } ?: return null
 
             val densityDpi = ctx.resources.displayMetrics.densityDpi
+            val launcherApps = ctx.getSystemService(LauncherApps::class.java) ?: return null
             val drawable = launcherApps.getShortcutIconDrawable(shortcut, densityDpi) ?: return null
 
-            val w = widthPx.coerceAtLeast(1)
-            val h = heightPx.coerceAtLeast(1)
-            return loadDrawableAsBitmap(drawable, w, h)
+            return loadDrawableAsBitmap(drawable, sizePx, sizePx)
         } catch (e: Exception) {
             logE(ICONS_TAG, e) { "Error getting the shortcut icon for $packageName" }
             e.printStackTrace()
@@ -246,7 +237,3 @@ class PackageManagerCompatImpl(
         return null
     }
 }
-
-
-
-

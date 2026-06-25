@@ -40,7 +40,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
@@ -53,12 +53,12 @@ import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
 
 @Composable
 fun NestManagementDialog(
-    pointViewModel: PointViewModel = activityViewModel(),
+    pointsViewModel: PointsViewModel = activityViewModel(),
     onDismissRequest: () -> Unit,
     title: String? = null,
     onSelect: ((Nest) -> Unit)? = null
 ) {
-    val nests by pointViewModel.nests.collectAsState()
+    val nests by pointsViewModel.nests.collectAsState()
 
     var hasClickedNewNest by remember { mutableStateOf<Int?>(null) }
     val listState = rememberLazyListState()
@@ -90,7 +90,7 @@ fun NestManagementDialog(
                     DragonButton(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            hasClickedNewNest = pointViewModel.pointsService.addNest()
+                            hasClickedNewNest = pointsViewModel.addNest()
                         }
                     ) {
                         Icon(
@@ -117,13 +117,12 @@ fun NestManagementDialog(
 
 @Composable
 private fun NestManagementItem(
-    pointViewModel: PointViewModel = activityViewModel(),
+    pointsViewModel: PointsViewModel = activityViewModel(),
     nest: Nest,
     modifier: Modifier,
     onSelect: (() -> Unit)? = null
 ) {
     val ctx = LocalContext.current
-    val pointsService = pointViewModel.pointsService
 
     val drawParams by rememberSwipeDefaultParams(
         backgroundColor = MaterialTheme.colorScheme.surfaceVariant
@@ -198,7 +197,7 @@ private fun NestManagementItem(
                 onValueChange = {
                     tempCustomName = it
 
-                    pointsService.editNest(nest.id) { nest ->
+                    pointsViewModel.editNest(nest.id) { nest ->
                         nest.copy(name = it)
                     }
                 },
@@ -232,7 +231,7 @@ private fun NestManagementItem(
             contentDescription = stringResource(R.string.delete_circle_nest),
             colors = AppObjectsColors.cancelIconButtonColors()
         ) {
-            pointsService.deleteNest(nest.id)
+            pointsViewModel.deleteNest(nest.id)
         }
     }
 }

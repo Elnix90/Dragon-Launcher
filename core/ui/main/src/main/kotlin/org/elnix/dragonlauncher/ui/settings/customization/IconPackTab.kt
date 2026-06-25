@@ -2,55 +2,42 @@ package org.elnix.dragonlauncher.ui.settings.customization
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
+import org.elnix.dragonlauncher.models.IconsViewModel
+import org.elnix.dragonlauncher.settings.stores.map.IconsSettingsStore
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.LazyRowWithScrollIndicator
-import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
+import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.dragon.settings.SettingsColorPicker
+import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
+import org.elnix.dragonlauncher.ui.helpers.IconPackListContent
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
 fun IconPackTab(
     onBack: () -> Unit,
-    drawerViewModel: DrawerViewModel = activityViewModel()
+    drawerViewModel: DrawerViewModel = activityViewModel(),
+    iconsViewModel: IconsViewModel = activityViewModel()
 ) {
+    val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-
-    val iconPackManager = drawerViewModel.iconPackManager
-
     val apps by drawerViewModel.userApps.collectAsState(initial = emptyList())
-    val packs by drawerViewModel.iconPackManager.getInstalledIconPacks().collectAsState(emptyList())
+    val packs by drawerViewModel.getInstalledIconPacks().collectAsState(emptyList())
 
-    val iconSettings by drawerViewModel.iconSettings.collectAsState()
+    val iconSettings by iconsViewModel.iconSettings.collectAsState()
     val selectedPack = iconSettings.iconPack
-    val iconPackTint = iconSettings.iconPackTint
-
-
-    // Used to delay the grid showing up, to prevent lag
-    var showPreview by remember { mutableStateOf(false) }
-
-
-    LaunchedEffect(Unit) {
-
-        // Let compose draw at least one frame before showing grid, saves display fps
-        withFrameNanos { }
-        showPreview = true
-    }
 
     SettingsScaffold(
         title = stringResource(R.string.icon_pack),
@@ -58,48 +45,49 @@ fun IconPackTab(
         helpText = stringResource(R.string.icon_pack_help),
         onReset = {
             scope.launch {
-                TODO()
-//                iconPackManager.
+                IconsSettingsStore.resetAll(ctx)
             }
         },
         topContent = {
-            if (showPreview) {
-                LazyRowWithScrollIndicator(
-                    items = apps,
-                    modifier = Modifier.height(70.dp),
-                ) { app ->
-                    AppIcon(app, size = 56.dp)
-                }
+            LazyRowWithScrollIndicator(
+                items = apps,
+                modifier = Modifier.height(70.dp),
+            ) { app ->
+                AppIcon(app, size = 56.dp)
             }
         }
     ) {
 
-        ColorPickerRow(
-            label = stringResource(R.string.icon_pack_tint),
-            currentColor = Color(iconPackTint)
-        ) {
-            TODO()
-//            scope.launch { drawerViewModel.setIconPackTint(it.definedOrNull()) }
+        Spacer(30.dp)
+
+        SettingsSwitchRow(IconsSettingsStore.useIconTint)
+
+        val useIconTint by IconsSettingsStore.useIconTint.asState()
+        SettingsColorPicker(IconsSettingsStore.iconsTint, enabled = useIconTint) {
+            iconsViewModel.reinstallAllIconPacks()
         }
 
-        TODO()
-//        IconPackListContent(
-//            packs = packs,
-//            selectedPackPackage = selectedPack?.packageName,
-//            showClearOption = true,
-//            onReloadPacks = {
-//                iconPackManager.
-//            },
-//            onPackClick = { pack ->
-//                scope.launch {
-//                    drawerViewModel.selectIconPack(pack)
-//                }
-//            },
-//            onClearClick = {
-//                scope.launch {
-//                    drawerViewModel.clearIconPack()
-//                }
-//            }
-//        )
+        SettingsSwitchRow(IconsSettingsStore.themedIcons)
+
+        val themedIcons by IconsSettingsStore.themedIcons.asState()
+        SettingsSwitchRow(IconsSettingsStore.forceThemed, enabled = themedIcons)
+
+        SettingsSwitchRow(IconsSettingsStore.adaptify)
+
+        IconPackListContent(
+            packs = packs,
+            selectedPackPackage = selectedPack,
+            showClearOption = true,
+            onPackClick = { pack ->
+                scope.launch {
+                    IconsSettingsStore.selectedIconPack.set(ctx, pack.packageName)
+                }
+            },
+            onClearClick = {
+                scope.launch {
+                    IconsSettingsStore.selectedIconPack.reset(ctx)
+                }
+            }
+        )
     }
 }

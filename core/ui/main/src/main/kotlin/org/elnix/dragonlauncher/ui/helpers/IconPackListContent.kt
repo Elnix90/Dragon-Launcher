@@ -4,7 +4,6 @@ import android.os.Process
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -29,6 +28,7 @@ import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.icons.IconPack
 import org.elnix.dragonlauncher.models.DrawerViewModel
+import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -41,10 +41,10 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun IconPackListContent(
     drawerViewModel: DrawerViewModel = activityViewModel(),
+    iconViewModel: IconsViewModel = activityViewModel(),
     packs: List<IconPack>,
     selectedPackPackage: String?,
     showClearOption: Boolean,
-    onReloadPacks: () -> Unit,
     onPackClick: (IconPack) -> Unit,
     onClearClick: () -> Unit
 ) {
@@ -75,7 +75,7 @@ fun IconPackListContent(
                     contentDescription = stringResource(R.string.reload)
                 ) {
                     isLoading = true
-                    onReloadPacks()
+                    iconViewModel.updateIconPacks()
                 }
             }
         }
@@ -83,50 +83,35 @@ fun IconPackListContent(
 
     packs.forEach { pack ->
 
-        DragonRow(
-            { onPackClick(pack) }
+        val packPkg = pack.packageName
+        val packApp by drawerViewModel.findOne(packPkg, Process.myUserHandle()).collectAsState(null)
+
+        PackItem(
+            selected = selectedPackPackage == packPkg,
+            text = pack.name,
+            description = pack.packageName,
+            onClick = { onPackClick(pack) }
         ) {
-            val packPkg = pack.packageName
-            val packApp by drawerViewModel.findOne(packPkg, Process.myUserHandle()).collectAsState(null)
-
-
-            Box(
-                Modifier.size(40.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                if (packApp != null) {
-                    AppIcon(packApp!!)
-                } else {
-                    Icon(
-                        painter = painterResource(R.drawable.palette),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-
-            Spacer(12.dp)
-
-            TextWithDescription(
-                text = pack.name,
-                description = packPkg,
-            )
-
-            Spacer()
-
-            AnimatedVisibility(selectedPackPackage == packPkg) {
+            if (packApp != null) {
+                AppIcon(packApp!!, size = 56.dp)
+            } else {
                 Icon(
-                    painter = painterResource(R.drawable.check),
+                    painter = painterResource(R.drawable.palette),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(56.dp)
                 )
             }
         }
     }
 
     if (showClearOption) {
-        DragonRow(
-            { onClearClick() }
+
+        PackItem(
+            selected = selectedPackPackage.isNullOrEmpty(),
+            text = stringResource(R.string.default_text),
+            description = stringResource(R.string.use_original_app_icon),
+            onClick = onClearClick
         ) {
             Icon(
                 painter = painterResource(R.drawable.close),
@@ -134,23 +119,38 @@ fun IconPackListContent(
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(40.dp)
             )
-            Spacer(12.dp)
+        }
+    }
+}
 
 
-            TextWithDescription(
-                text = stringResource(R.string.default_text),
-                description = stringResource(R.string.use_original_app_icon)
+@Composable
+private fun PackItem(
+    selected: Boolean,
+    text: String,
+    description: String,
+    onClick: () -> Unit,
+    icon: @Composable () -> Unit
+) {
+    DragonRow(onClick = onClick) {
+
+        icon()
+
+        Spacer(12.dp)
+
+        TextWithDescription(
+            text = text,
+            description = description,
+        )
+
+        Spacer()
+
+        AnimatedVisibility(selected) {
+            Icon(
+                painter = painterResource(R.drawable.check),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
             )
-
-            Spacer()
-
-            AnimatedVisibility(selectedPackPackage == null) {
-                Icon(
-                    painter = painterResource(R.drawable.check),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
         }
     }
 }

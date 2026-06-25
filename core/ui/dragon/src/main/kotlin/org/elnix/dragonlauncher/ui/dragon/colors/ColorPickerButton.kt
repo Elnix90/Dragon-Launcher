@@ -12,6 +12,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,9 +25,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.base.util.ColorUtils.randomColor
+import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.base.util.ColorUtils.toHexWithAlpha
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction
@@ -35,12 +38,12 @@ import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Paste
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Random
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Reset
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
-import io.github.elnix90.runtime.asState
 
 
 @Composable
 private fun ColorPickerButton(
     button: ColorPickerButtonAction,
+    enabled: Boolean,
     currentColor: Color,
     onReset: () -> Unit,
     backgroundColor: Color,
@@ -49,8 +52,12 @@ private fun ColorPickerButton(
 ) {
     val ctx = LocalContext.current
 
-
     var showSelector by remember { mutableStateOf(false) }
+    LaunchedEffect(enabled) {
+        if (!enabled) {
+            showSelector = false
+        }
+    }
 
     Box {
         Icon(
@@ -59,13 +66,17 @@ private fun ColorPickerButton(
             tint = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier
                 .clip(CircleShape)
-                .background(backgroundColor.alphaMultiplier(0.8f))
+                .background(backgroundColor.alphaMultiplier(0.8f).semiTransparentIfDisabled(enabled))
                 .combinedClickable(
+                    enabled = enabled,
                     onLongClick = { showSelector = true }
                 ) {
                     when (button) {
                         Random -> onColorPicked(randomColor(minLuminance = 0.2f))
-                        Reset -> { onReset() }
+                        Reset -> {
+                            onReset()
+                        }
+
                         Copy -> ctx.copyToClipboard(currentColor.toHexWithAlpha())
                         Paste -> {
                             val newColor = pasteColorHexFromClipboard(ctx)
@@ -114,9 +125,9 @@ private fun ColorPickerButton(
 @Composable
 fun ColorPickerButtonOne(
     currentColor: Color,
-    onReset: () -> Unit,
-
     backgroundColor: Color,
+    enabled: Boolean,
+    onReset: () -> Unit,
     onColorPicked: (Color) -> Unit
 ) {
     val ctx = LocalContext.current
@@ -126,6 +137,7 @@ fun ColorPickerButtonOne(
 
     ColorPickerButton(
         button = button,
+        enabled = enabled,
         currentColor = currentColor,
         backgroundColor = backgroundColor,
         onReset = onReset,
@@ -142,8 +154,9 @@ fun ColorPickerButtonOne(
 @Composable
 fun ColorPickerButtonTwo(
     currentColor: Color,
-    onReset: () -> Unit,
     backgroundColor: Color,
+    enabled: Boolean,
+    onReset: () -> Unit,
     onColorPicked: (Color) -> Unit
 ) {
     val ctx = LocalContext.current
@@ -153,6 +166,7 @@ fun ColorPickerButtonTwo(
 
     ColorPickerButton(
         button = button,
+        enabled = enabled,
         currentColor = currentColor,
         backgroundColor = backgroundColor,
         onReset = onReset,

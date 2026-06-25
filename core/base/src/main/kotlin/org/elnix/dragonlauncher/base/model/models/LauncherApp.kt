@@ -7,11 +7,9 @@ import android.content.pm.PackageManager
 import android.graphics.drawable.AdaptiveIconDrawable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.elnix.dragonlauncher.base.icons.ColorLayer
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.icons.StaticIconLayer
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
-import org.elnix.dragonlauncher.base.icons.TintedIconLayer
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.ktx.getInstallSource
@@ -52,7 +50,10 @@ data class LauncherApp(
         get() = componentName.packageName
 
 
-    override suspend fun loadIcon(themed: Boolean): LauncherIcon? {
+    override suspend fun loadIcon(
+        themed: Boolean,
+        tint: Int?
+    ): LauncherIcon? {
         return try {
             val icon = withContext(Dispatchers.IO) {
                 launcherActivityInfo.getIcon(0)
@@ -62,24 +63,28 @@ data class LauncherApp(
                 is AdaptiveIconDrawable -> {
                     if (themed && isAtLeastApiLevel(33) && icon.monochrome != null) {
                         StaticLauncherIcon(
-                            foregroundLayer = TintedIconLayer(
-                                scale = 1.5f,
+                            foregroundLayer = StaticIconLayer(
                                 icon = icon.monochrome!!,
+                                tint = tint,
+                                scale = 1.5f
                             ),
-                            backgroundLayer = ColorLayer()
+                            backgroundLayer = TransparentLayer
                         )
+
                     } else {
                         StaticLauncherIcon(
                             foregroundLayer = icon.foreground?.let {
                                 StaticIconLayer(
                                     icon = it,
                                     scale = 1.5f,
+                                    tint = tint
                                 )
                             } ?: TransparentLayer,
                             backgroundLayer = icon.background?.let {
                                 StaticIconLayer(
                                     icon = it,
                                     scale = 1.5f,
+                                    tint = tint
                                 )
                             } ?: TransparentLayer,
                         )
@@ -91,6 +96,7 @@ data class LauncherApp(
                         foregroundLayer = StaticIconLayer(
                             icon = icon,
                             scale = 1f,
+                            tint = tint
                         ),
                         backgroundLayer = TransparentLayer
                     )
@@ -103,12 +109,9 @@ data class LauncherApp(
 
     override fun getStoreDetails(ctx: Context): StoreLink? {
         return try {
-            val installSourceInfo = ctx.getInstallSource(componentName.packageName)
+            val installSourceInfo = ctx.getInstallSource(packageName)
 
-            getStoreLinkForInstaller(
-                installSourceInfo.initiatingPackageName,
-                componentName.packageName
-            )
+            getStoreLinkForInstaller(installSourceInfo.initiatingPackageName)
         } catch (_: PackageManager.NameNotFoundException) {
             null
         } catch (_: IllegalArgumentException) {

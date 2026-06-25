@@ -7,7 +7,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Singleton
+import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
+import org.elnix.dragonlauncher.appshortcuts.AppShortcutRepository
 import org.elnix.dragonlauncher.colors.ColorService
 import org.elnix.dragonlauncher.database.AppDatabase
 import org.elnix.dragonlauncher.recents.PointsService
@@ -33,16 +35,20 @@ object IconsModule {
     @Singleton
     fun provideIconsService(
         @ApplicationContext ctx: Context,
-        iconsPackManager: IconPackManager,
+        iconPackManager: IconPackManager,
+        iconSettingsRepository: IconSettingsRepository,
+        appRepository: AppRepository,
         appOverridesManager: AppOverridesManager,
+        shortcutRepository: AppShortcutRepository,
         pointsService: PointsService,
-        colorService: ColorService,
-        iconSettingsRepository: IconSettingsRepository
+        colorService: ColorService
     ): IconService {
         return IconService(
             ctx = ctx,
-            iconPackManager = iconsPackManager,
+            iconPackManager = iconPackManager,
             iconSettingsRepository = iconSettingsRepository,
+            appRepository = appRepository,
+            shortcutRepository = shortcutRepository,
             appOverrideManager = appOverridesManager,
             pointService = pointsService,
             colorService = colorService

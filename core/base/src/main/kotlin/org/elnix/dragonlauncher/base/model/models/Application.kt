@@ -14,19 +14,19 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
+import io.github.elnix90.logging.APP_LAUNCH_TAG
+import io.github.elnix90.logging.logE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.base.icons.ColorLayer
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
+import org.elnix.dragonlauncher.base.icons.StaticIconLayer
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
-import org.elnix.dragonlauncher.base.icons.TintedIconLayer
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CacheKey
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
-import io.github.elnix90.logging.APP_LAUNCH_TAG
-import io.github.elnix90.logging.logE
 import java.io.File
 import java.text.Collator
 
@@ -69,14 +69,15 @@ abstract class Application : Comparable<Application> {
     abstract var cachedNormalizerResult: Pair<String, String>?
 
 
-    val action: Action.LaunchApp
-        get() = Action.LaunchApp(packageName, profile)
+    val action: Action.LaunchApp by lazy {
+        Action.LaunchApp(packageName, profile)
+    }
 
+    val key: CacheKey by lazy {
+        CacheKey(this)
+    }
 
-    val key: CacheKey
-        get() = CacheKey(componentName, user)
-
-    abstract suspend fun loadIcon(themed: Boolean): LauncherIcon?
+    abstract suspend fun loadIcon(themed: Boolean, tint: Int?): LauncherIcon?
 
     fun launch(ctx: Context, options: Bundle?): Boolean {
         val launcherApps = ctx.getSystemService<LauncherApps>()!!
@@ -103,10 +104,10 @@ abstract class Application : Comparable<Application> {
 
     fun getPlaceholderIcon(ctx: Context): StaticLauncherIcon {
         return StaticLauncherIcon(
-            foregroundLayer = TintedIconLayer(
+            foregroundLayer = StaticIconLayer(
                 icon = ContextCompat.getDrawable(ctx, R.drawable.android)!!,
                 scale = 0.65f,
-                color = 0xff3dda84.toInt(),
+                tint = 0xff3dda84.toInt(),
             ),
             backgroundLayer = ColorLayer(0xff3dda84.toInt())
         )
@@ -117,7 +118,7 @@ abstract class Application : Comparable<Application> {
 
     fun uninstall(ctx: Context) {
         val intent = Intent(Intent.ACTION_DELETE)
-        intent.data = "package:${componentName.packageName}".toUri()
+        intent.data = "package:${packageName}".toUri()
         ctx.startActivity(intent)
     }
 
@@ -136,11 +137,11 @@ abstract class Application : Comparable<Application> {
         val launcherApps = ctx.getSystemService<LauncherApps>()!!
         val fileCopy = File(
             ctx.cacheDir,
-            "${componentName.packageName}-${versionName}.apk"
+            "$packageName-$versionName.apk"
         )
         withContext(Dispatchers.IO) {
             try {
-                val info = launcherApps.getApplicationInfo(componentName.packageName, 0, user)
+                val info = launcherApps.getApplicationInfo(packageName, 0, user)
                 val file = File(info.publicSourceDir)
 
                 try {
@@ -183,11 +184,9 @@ abstract class Application : Comparable<Application> {
 
     companion object {
 
-        fun getStoreLinkForInstaller(
+        fun Application.getStoreLinkForInstaller(
             installerPackage: String?,
-            packageName: String?
         ): StoreLink? {
-            if (packageName == null) return null
             return when (installerPackage) {
                 "de.amazon.mShop.android", "com.amazon.venezia" -> {
                     StoreLink(

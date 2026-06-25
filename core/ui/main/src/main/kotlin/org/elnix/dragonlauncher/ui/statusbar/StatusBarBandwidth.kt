@@ -23,6 +23,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.i18n.R
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun StatusBarBandwidth(element: StatusBar.Bandwidth) {
@@ -33,7 +34,7 @@ fun StatusBarBandwidth(element: StatusBar.Bandwidth) {
         var prevRx = TrafficStats.getTotalRxBytes()
         var prevTx = TrafficStats.getTotalTxBytes()
         while (isActive) {
-            delay(1_000L)
+            delay(1_000.milliseconds)
             val currentRx = TrafficStats.getTotalRxBytes()
             val currentTx = TrafficStats.getTotalTxBytes()
             rxSpeed = if (currentRx >= 0 && prevRx >= 0) currentRx - prevRx else 0L

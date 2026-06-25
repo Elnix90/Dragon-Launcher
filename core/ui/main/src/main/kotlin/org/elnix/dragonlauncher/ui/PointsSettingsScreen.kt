@@ -43,7 +43,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -80,8 +79,6 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.defaultDragDistance
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.base.undoredo.UndoRedoManager
-import org.elnix.dragonlauncher.base.undoredo.UndoRedoStack
 import org.elnix.dragonlauncher.common.circles.autoSeparate
 import org.elnix.dragonlauncher.common.circles.computePosition
 import org.elnix.dragonlauncher.common.circles.createCirclesFromDragDistances
@@ -107,8 +104,8 @@ import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.SnapPoints
 import org.elnix.dragonlauncher.enumsui.toggle.SelectedPointEditTools
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.models.DrawerViewModel
-import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.models.IconsViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
@@ -116,6 +113,7 @@ import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -151,8 +149,8 @@ import kotlin.time.Duration.Companion.milliseconds
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun PointsSettingsScreen(
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    pointViewModel: PointViewModel = activityViewModel(),
+    iconsViewModel: IconsViewModel = activityViewModel(),
+    pointsViewModel: PointsViewModel = activityViewModel(),
     onAdvSettings: () -> Unit,
     onNestEdit: (nest: Int) -> Unit,
     onBack: () -> Unit
@@ -160,9 +158,8 @@ fun PointsSettingsScreen(
     val ctx = LocalContext.current
     val extraColors = LocalExtraColors.current
 
-    val defaultPoint by pointViewModel.defaultPoint.collectAsState()
+    val defaultPoint by pointsViewModel.defaultPoint.collectAsState()
 
-    val iconService = drawerViewModel.iconsService
 
     val scope = rememberCoroutineScope()
 
@@ -181,18 +178,20 @@ fun PointsSettingsScreen(
 
     var center by remember { mutableStateOf(Offset.Zero) }
 
-//    val points: SnapshotStateList<Point> = remember { mutableStateListOf() }
-//    val nests: SnapshotStateList<Nest> = remember { mutableStateListOf() }
-    val pointService = pointViewModel.pointsService
-    val points by pointViewModel.points.collectAsState()
-    val nests by pointViewModel.nests.collectAsState()
-
+    val points by pointsViewModel.points.collectAsState()
+    val nests by pointsViewModel.nests.collectAsState()
+    val selectedPoint by pointsViewModel.selectedPoint.asState()
+    fun select(point: Point?) {
+        pointsViewModel.select(point)
+    }
+    fun deselect() {
+        pointsViewModel.select(null)
+    }
 
     var recomposeTrigger by remember { mutableIntStateOf(0) }
 
     val circles: SnapshotStateList<UiCircle> = remember { mutableStateListOf() }
 
-    var selectedPoint by remember { mutableStateOf<Point?>(null) }
 
     val selectedPointTempOffset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
     fun animateHomingTempOffset(home: Offset) {
@@ -262,7 +261,7 @@ fun PointsSettingsScreen(
     LaunchedEffect(Unit, nestId, nests.size) {
         if (nests.none { it.id == nestId }) {
             logD(NESTS_TAG) { "Creating missing nest $nestId" }
-            pointService.addNest(nestId)
+            pointsViewModel.addNest(nestId)
         }
     }
 
@@ -274,29 +273,7 @@ fun PointsSettingsScreen(
         }
     }
 
-//    fun reloadIcons() {
-//        appsViewModel.preloadPointIcons(points)
-//    }
-
-    val undoRedo = retain {
-        UndoRedoManager(
-            arrayOf(
-                UndoRedoStack(
-                    snapshot = { points.map { it.copy() } },
-                    restore = {
-                        pointService.set(points = it.toSet())
-                        selectedPoint = points.find { p -> p.id == (selectedPoint?.id ?: "") }
-                    }
-                ),
-                UndoRedoStack(
-                    snapshot = { nests.map { it.copy() } },
-                    restore = {
-                        pointService.set(nests = it.toSet())
-                    }
-                )
-            )
-        )
-    }
+    val undoRedo = pointsViewModel.undoRedo
 
     fun applyChange(mutator: () -> Unit) {
         undoRedo.applyChange(mutator)
@@ -315,7 +292,7 @@ fun PointsSettingsScreen(
      */
     fun addCircle() {
         applyChange {
-            pointService.editNest(nestId) { nest ->
+            pointsViewModel.editNest(nestId) { nest ->
                 val newCircleNumber =
                     nest.dragDistances
                         .keys
@@ -343,7 +320,7 @@ fun PointsSettingsScreen(
      */
     fun removeLastCircle() {
         applyChange {
-            pointService.editNest(nestId) { nest ->
+            pointsViewModel.editNest(nestId) { nest ->
                 val maxCircle =
                     nest.dragDistances
                         .keys
@@ -360,14 +337,14 @@ fun PointsSettingsScreen(
 
 
     fun addPoint(point: Point, select: Boolean = true) {
-        pointService.addPoint(point)
+        pointsViewModel.addPoint(point)
 
         if (select) {
-            selectedPoint = point
+            select(point)
         }
 
-        iconService.incrementPointCacheSize()
-        iconService.reloadPointIcon(point)
+        iconsViewModel.incrementPointCacheSize()
+        iconsViewModel.reloadIcon(point)
     }
 
     /**
@@ -460,7 +437,7 @@ fun PointsSettingsScreen(
 
     val handleBack = {
         if (isInManualPlacementMode) manualPlacementQueue = emptyList()
-        else if (selectedPoint != null) selectedPoint = null
+        else if (selectedPoint != null) deselect()
         else if (nestId != 0) nestNavigation.goBack()
         else if (isEditing) isEditing = false
         else onBack()
@@ -574,7 +551,7 @@ fun PointsSettingsScreen(
             SpecialSettingsTitle(
                 onSettings = onAdvSettings,
                 onEditDefaultPoint = { showEditDefaultPoint = true },
-                onReloadPoints = { iconService.reloadAllPointIcons() },
+                onReloadPoints = { TODO() }, // iconsViewModel.reloadAllPointIcons() },
                 onEditNest = { onNestEdit(currentNest.id) },
                 onResetPoints = { showResetPointsAndNestsDialog = true },
                 onBack = handleBack
@@ -617,13 +594,13 @@ fun PointsSettingsScreen(
 
                             GoParentNest -> {
                                 nestNavigation.goBack()
-                                selectedPoint = null
+                                deselect()
                             }
 
                             EnterNest -> {
                                 nestToGo?.let {
                                     nestNavigation.goToNest(it)
-                                    selectedPoint = null
+                                    deselect()
                                 }
                             }
                         }
@@ -885,7 +862,7 @@ fun PointsSettingsScreen(
                             PrivateSettingsStore.isInDragAroundMode.set(ctx, newValue)
                         }
                         if (newValue) {
-                            selectedPoint = null
+                            deselect()
                         }
                     },
                     minSize = 60.dp,
@@ -908,8 +885,8 @@ fun PointsSettingsScreen(
 
                         SelectedPointEditTools.Remove -> {
                             selectedPoint?.let { point ->
-                                pointService.removePoint(point.id)
-                                selectedPoint = null
+                                pointsViewModel.removePoint(point.id)
+                                deselect()
                             }
                         }
 
@@ -928,7 +905,7 @@ fun PointsSettingsScreen(
                                         newPoint
                                     )
                                 }
-                                selectedPoint = newPoint
+                                deselect()
                             }
                         }
                     }
@@ -1095,8 +1072,7 @@ fun PointsSettingsScreen(
                                         }
                                     }
 
-                                    selectedPoint =
-                                        if (best <= TOUCH_THRESHOLD_PX) closest else null
+                                    select(if (best <= TOUCH_THRESHOLD_PX) closest else null)
 
                                     selectedPoint?.let {
                                         lastSelectedCircle = it.circleNumber
@@ -1210,7 +1186,7 @@ fun PointsSettingsScreen(
                                                 // Create new nest and put both points in it at 90° and 270° (left and right)
                                                 // Tee new nest has only one circle and a Go parent nest in the top, for easier access
                                                 applyChange {
-                                                    val newNestId = pointService.addNest(1)
+                                                    val newNestId = pointsViewModel.addNest(1)
 
                                                     val newNestPoint = Point(
                                                         circleNumber = closest.circleNumber,
@@ -1358,7 +1334,7 @@ fun PointsSettingsScreen(
 
                                     logD(SWIPE_TAG) { "Best: $best, tapped: $tapped" }
 
-                                    selectedPoint =
+                                    select(
                                         if (best <= TOUCH_THRESHOLD_PX)
                                             if (selectedPoint?.id == tapped?.id) {
                                                 // Same point tapped -> if circle next, open it, else edit point
@@ -1372,6 +1348,7 @@ fun PointsSettingsScreen(
 
                                             } else tapped
                                         else null
+                                    )
 
                                     selectedPoint?.let {
                                         lastSelectedCircle = it.circleNumber
@@ -1446,15 +1423,15 @@ fun PointsSettingsScreen(
             point = editPoint,
             onDismiss = {
                 showEditDialog = null
-                iconService.reloadPointIcon(editPoint)
+                iconsViewModel.reloadIcon(editPoint)
             },
         ) { newPoint ->
-            iconService.reloadPointIcon(newPoint)
+            iconsViewModel.reloadIcon(newPoint)
 
             applyChange {
-                pointService.editPoint(newPoint.id) { newPoint }
+                pointsViewModel.editPoint(newPoint.id) { newPoint }
             }
-            selectedPoint = newPoint
+            select(newPoint)
             showEditDialog = null
         }
     }
@@ -1465,7 +1442,7 @@ fun PointsSettingsScreen(
             onDismissRequest = { showNestManagementDialog = false },
             onSelect = {
                 nestNavigation.goToNest(it.id)
-                selectedPoint = null
+                deselect()
                 showNestManagementDialog = false
             }
         )
@@ -1536,8 +1513,8 @@ fun PointsSettingsScreen(
                 showEditDefaultPoint = false
             }
         ) {
-            pointService.set(defaultPoint = it)
-            iconService.reloadAllPointIcons()
+            pointsViewModel.set(defaultPoint = it)
+            iconsViewModel.reloadAllPointsIcons()
 
             showEditDefaultPoint = false
         }
@@ -1549,13 +1526,13 @@ fun PointsSettingsScreen(
             message = stringResource(R.string.reset_all_points_desc),
             onDismiss = { showResetPointsAndNestsDialog = false }
         ) {
-            pointService.reset(
+            pointsViewModel.reset(
                 resetPoints = true,
                 resetNests = true,
                 resetDefaultPoint = true
             )
 
-            selectedPoint = null
+            deselect()
             showResetPointsAndNestsDialog = false
             showResetPointsAndNestsDialog = false
         }

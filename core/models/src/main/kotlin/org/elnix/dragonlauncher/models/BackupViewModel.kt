@@ -7,18 +7,18 @@ import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.elnix90.core.SettingsBackupManager.exportSettings
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.ktx.hasUriReadWritePermission
-import org.elnix.dragonlauncher.ktx.showToast
 import io.github.elnix90.logging.BACKUP_TAG
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logI
 import io.github.elnix90.logging.logV
 import io.github.elnix90.logging.logW
-import org.elnix.dragonlauncher.models.utils.stateFlowDelegate
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.SettingFlow
+import org.elnix.dragonlauncher.ktx.hasUriReadWritePermission
+import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.toSettingsStoreList
@@ -31,7 +31,7 @@ class BackupViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    val result by stateFlowDelegate<BackupResult?>(null)
+    val result = SettingFlow<BackupResult?>(null)
     private val _backupTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     init {

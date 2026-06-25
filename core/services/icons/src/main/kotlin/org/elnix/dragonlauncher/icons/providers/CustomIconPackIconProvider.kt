@@ -1,7 +1,7 @@
 package org.elnix.dragonlauncher.icons.providers
 
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
-import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomIconPackIcon
 import org.elnix.dragonlauncher.database.entities.IconEntity
 import org.elnix.dragonlauncher.icons.IconPackAppIcon
@@ -11,7 +11,7 @@ class CustomIconPackIconProvider(
     private val customIcon: CustomIconPackIcon,
     private val iconPackManager: IconPackManager,
 ) : IconProvider {
-    override suspend fun getIcon(application: Application, size: Int): LauncherIcon? {
+    override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
         val ent = IconEntity(
             type = customIcon.type,
             drawable = customIcon.drawable,
@@ -21,9 +21,10 @@ class CustomIconPackIconProvider(
         )
         val icon = IconPackAppIcon(ent) ?: return null
         return iconPackManager.getIcon(
-            customIcon.iconPackPackage,
-            icon,
-            customIcon.allowThemed,
+            iconPack = customIcon.iconPackPackage,
+            icon = icon,
+            tint = customIcon.tint,
+            allowThemed = customIcon.allowThemed
         )
     }
 }

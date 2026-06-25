@@ -4,14 +4,20 @@ import android.content.Context
 import android.content.pm.PackageManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
-import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.icons.DynamicCalendarIcon
 import org.elnix.dragonlauncher.ktx.obtainTypedArrayOrNull
 
-class CalendarIconProvider(val ctx: Context, val themed: Boolean): IconProvider {
-    override suspend fun getIcon(application: Application, size: Int): LauncherIcon? = withContext(Dispatchers.IO) {
-        val component = application.componentName
+class CalendarIconProvider(
+    val ctx: Context,
+    val appRepository: AppRepository,
+    val themed: Boolean,
+    val tint: Int?
+): IconProvider {
+    override suspend fun getIcon(action: Action, size: Int): LauncherIcon? = withContext(Dispatchers.IO) {
+        val component = appRepository.fromAction(action as Action.LaunchApp)?.componentName ?: return@withContext null
         val pm = ctx.packageManager
         val ai = try {
             pm.getActivityInfo(component, PackageManager.GET_META_DATA)
@@ -42,7 +48,8 @@ class CalendarIconProvider(val ctx: Context, val themed: Boolean): IconProvider 
         return@withContext DynamicCalendarIcon(
             resources = resources,
             resourceIds = drawableIds,
-            isThemed = themed
+            isThemed = themed,
+            tint = tint
         )
     }
 }

@@ -11,10 +11,9 @@ import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.models.DrawerViewModel
-import org.elnix.dragonlauncher.models.PointViewModel
-import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
+import org.elnix.dragonlauncher.models.IconsViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.components.ShapedLauncherIcon
 
 
@@ -23,29 +22,38 @@ fun PointIcon(
     point: Point,
     modifier: Modifier = Modifier,
     drawerViewModel: DrawerViewModel = activityViewModel(),
-    pointViewModel: PointViewModel = activityViewModel()
+    pointsViewModel: PointsViewModel = activityViewModel()
 ) {
+
+    val defaultPoint by pointsViewModel.defaultPoint.collectAsState()
+    val resolvedResolution =
+        point.resolution ?: defaultPoint.resolution
+        ?: point.size ?: defaultPoint.size
+        ?: Point.defaultSwipePointsValues.size!!
+
     when (val action = point.action) {
 
         is Action.LaunchApp -> {
             val app by drawerViewModel.findOne(action.packageName, action.profile.userHandle).collectAsState(null)
             if (app != null) {
-                AppIcon(app!!)
+                AppIcon(
+                    app = app!!,
+                    size = resolvedResolution.dp,
+                    modifier = modifier
+                )
             }
         }
 
         is Action.LaunchShortcut -> {
-            TODO()
+            ShortcutIcon(action, resolvedResolution.dp)
         }
 
         else -> {
-            val defaultPoint by pointViewModel.defaultPoint.collectAsState()
-            val resolvedResolution =
-                point.resolution ?: defaultPoint.resolution
-                ?: point.size ?: defaultPoint.size
-                ?: Point.defaultSwipePointsValues.size!!
-
-            ActionIcon(action, modifier, size = resolvedResolution.dp)
+            ActionIcon(
+                action = action,
+                size = resolvedResolution.dp,
+                modifier = modifier
+            )
         }
     }
 }
@@ -53,51 +61,49 @@ fun PointIcon(
 @Composable
 fun AppIcon(
     app: Application,
+    size: Dp,
     modifier: Modifier = Modifier,
-    size: Dp? = null,
-    drawerViewModel: DrawerViewModel = activityViewModel()
+    iconsViewModel: IconsViewModel = activityViewModel(),
 ) {
-    val badge by drawerViewModel.getBadge(app).collectAsStateWithLifecycle()
-    val icon by drawerViewModel.getIcon(app).collectAsStateWithLifecycle()
-
-    val iconSize by DrawerSettingsStore.iconSize.asState()
-    val currentIconSize = size ?: iconSize
+    val badge by iconsViewModel.getBadge(app).collectAsStateWithLifecycle()
+    val icon by iconsViewModel.getIcon(app).collectAsStateWithLifecycle()
 
     ShapedLauncherIcon(
         modifier = modifier,
-        size = currentIconSize,
+        size = size,
         icon = { icon },
         badge = { badge }
     )
 }
 
+@Composable
+fun ShortcutIcon(
+    shortcut: Action.LaunchShortcut,
+    size: Dp,
+    modifier: Modifier = Modifier,
+    iconsViewModel: IconsViewModel = activityViewModel(),
+) {
+    val icon by iconsViewModel.getIcon(shortcut).collectAsStateWithLifecycle()
+
+    ShapedLauncherIcon(
+        modifier = modifier,
+        size = size,
+        icon = { icon }
+    )
+}
 
 @Composable
 fun ActionIcon(
     action: Action,
-    modifier: Modifier = Modifier,
     size: Dp,
-//    showLaunchAppVectorGrid: Boolean = false
+    modifier: Modifier = Modifier,
+    iconsViewModel: IconsViewModel = activityViewModel()
 ) {
+    val icon by iconsViewModel.getIcon(action).collectAsStateWithLifecycle()
 
-//    val ctx = LocalContext.current
-//    val extraColors = LocalExtraColors.current
-//
-//    val intSizePx = size.px.toInt()
-//
-//    val launcherIcon: LauncherIcon =
-//        ActionIconCache.getOrCompute(action::class) {
-//        }
-//
-//    Image(
-//        bitmap = bitmap.asImageBitmap(),
-//        contentDescription = null,
-//        colorFilter = if (
-//            ((action !is Action.LaunchApp)) &&
-//            (action !is Action.LaunchShortcut || action.packageName.isEmpty()) &&
-//            action !is Action.OpenDragonLauncherSettings
-//        ) ColorFilter.tint(action.actionColor(extraColors))
-//        else null,
-//        modifier = modifier.clip(LocalIconShape.current.resolveShape())
-//    )
+    ShapedLauncherIcon(
+        modifier = modifier,
+        size = size,
+        icon = { icon }
+    )
 }

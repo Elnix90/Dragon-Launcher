@@ -42,6 +42,7 @@ data class CustomIconPackIcon(
     val drawable: String?,
     val extras: String?,
     val allowThemed: Boolean,
+    val tint: Int?,
     val properties: CustomIconProperties = CustomIconProperties()
 ): CustomIcon()
 

@@ -23,7 +23,7 @@ import org.elnix.dragonlauncher.common.circles.uiCirclesFromScaledDragDistances
 import io.github.elnix90.logging.POINTS_TAG
 import io.github.elnix90.logging.SWIPE_TAG
 import io.github.elnix90.logging.logD
-import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
@@ -89,15 +89,15 @@ private class MutableReference<T>(var value: T)
 
 @Composable
 fun rememberLiveNestControllerStack(
-    pointViewModel: PointViewModel = activityViewModel(),
+    pointsViewModel: PointsViewModel = activityViewModel(),
     isDragging: Boolean,
     rootStartPos: Offset?,
     rootNest: Nest,
     current: Offset?,
 ): List<LiveNestState> {
-    val nests by pointViewModel.nests.collectAsState()
-    val points by pointViewModel.points.collectAsState()
-    val defaultPoint by pointViewModel.defaultPoint.collectAsState()
+    val nests by pointsViewModel.nests.collectAsState()
+    val points by pointsViewModel.points.collectAsState()
+    val defaultPoint by pointsViewModel.defaultPoint.collectAsState()
 
 
     val maxNestingDepth by UiSettingsStore.maxLiveNestsDepth.asState()

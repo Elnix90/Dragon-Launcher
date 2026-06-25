@@ -49,4 +49,6 @@ dependencies {
     implementation(project(":data:appoverrides"))
     implementation(project(":core:services:points"))
     implementation(project(":core:services:colors"))
+    implementation(project(":core:services:compat"))
+    implementation(project(":core:services:appshortcuts"))
 }

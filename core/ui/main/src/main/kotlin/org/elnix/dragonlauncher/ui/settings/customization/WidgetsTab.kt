@@ -63,6 +63,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.elnix90.logging.WIDGET_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
@@ -82,14 +85,11 @@ import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsSnapping
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsUpDown
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.toDp
-import io.github.elnix90.logging.WIDGET_TAG
-import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
@@ -112,6 +112,7 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -459,7 +460,7 @@ fun WidgetsTab(
         AddPointDialog(
             onDismiss = { showAddDialog = false },
             actions = Action.defaultChoosableActions.toMutableList().apply {
-                add(0, Action.OpenWidget.dummy())
+                add(0, Action.OpenWidget.dummy)
             },
             onActionSelected = { action ->
                 when (action) {
@@ -728,7 +729,7 @@ private fun DraggableWidget(
                             isPrecisionMode = false
                             onSelect()
                             try {
-                                withTimeout(viewConfiguration.longPressTimeoutMillis) {
+                                withTimeout(viewConfiguration.longPressTimeoutMillis.milliseconds) {
                                     tryAwaitRelease()
                                 }
                             } catch (_: TimeoutCancellationException) {

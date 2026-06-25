@@ -52,8 +52,8 @@ import org.elnix.dragonlauncher.base.util.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.enumsui.select.PointFeaturePanel
 import org.elnix.dragonlauncher.enumsui.select.SelectedUnselectedViewMode
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.models.DrawerViewModel
-import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.models.IconsViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
@@ -80,17 +80,16 @@ import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 fun EditPointSheet(
     point: Point,
     isDefaultEditing: Boolean = false,
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    pointViewModel: PointViewModel = activityViewModel(),
+    iconsViewModel: IconsViewModel = activityViewModel(),
+    pointsViewModel: PointsViewModel = activityViewModel(),
     onDismiss: () -> Unit,
     onConfirm: (Point) -> Unit
 ) {
     val extraColors = LocalExtraColors.current
 
-    val defaultPoint by pointViewModel.defaultPoint.collectAsState()
-    val nests by pointViewModel.nests.collectAsState()
+    val defaultPoint by pointsViewModel.defaultPoint.collectAsState()
+    val nests by pointsViewModel.nests.collectAsState()
 
-    val iconService = drawerViewModel.iconsService
 
 
     var editPoint by remember { mutableStateOf(point) }
@@ -211,7 +210,7 @@ fun EditPointSheet(
         editPoint.resolution,
         editPoint.size
     ) {
-        iconService.reloadPointIcon(editPoint)
+        iconsViewModel.reloadIcon(editPoint)
     }
 
 
@@ -800,7 +799,8 @@ fun EditPointSheet(
                     )
 
                     ColorPickerRow(
-                        label = stringResource(R.string.custom_action_color),
+                        title = stringResource(R.string.custom_action_color),
+                        description = null,
                         currentColor = editPoint.customActionColor?.let { Color(it) }
                             ?: currentActionColor,
                         backgroundColor = MaterialTheme.colorScheme.surfaceVariant
@@ -863,7 +863,8 @@ fun EditPointSheet(
                                 }
 
                                 ColorPickerRow(
-                                    label = stringResource(R.string.border_color),
+                                    title = stringResource(R.string.border_color),
+                                    description = null,
                                     currentColor = editPoint.borderColor?.let { Color(it) }
                                         ?: defaultBorderColor
                                 ) { selectedColor ->
@@ -871,7 +872,8 @@ fun EditPointSheet(
                                 }
 
                                 ColorPickerRow(
-                                    label = stringResource(R.string.background_color),
+                                    title = stringResource(R.string.background_color),
+                                    description = null,
                                     currentColor = editPoint.backgroundColor?.let { Color(it) }
                                         ?: defaultBackgroundColor
                                 ) { selectedColor ->
@@ -907,7 +909,8 @@ fun EditPointSheet(
 
 
                                 ColorPickerRow(
-                                    label = stringResource(R.string.border_color_selected),
+                                    title = stringResource(R.string.border_color_selected),
+                                    description = null,
                                     currentColor = editPoint.borderColorSelected?.let { Color(it) }
                                         ?: defaultBorderColorSelected
                                 ) { selectedColor ->
@@ -917,7 +920,8 @@ fun EditPointSheet(
 
 
                                 ColorPickerRow(
-                                    label = stringResource(R.string.background_selected),
+                                    title = stringResource(R.string.background_selected),
+                                    description = null,
                                     currentColor = editPoint.backgroundColorSelected?.let { Color(it) }
                                         ?: defaultBackgroundColorSelected
                                 ) { selectedColor ->
@@ -969,7 +973,7 @@ fun EditPointSheet(
 
             val previewPoint = point.copy(customIcon = newIcon)
 
-            iconService.reloadPointIcon(previewPoint)
+            iconsViewModel.reloadIcon(previewPoint)
 
             showEditIconDialog = false
             editPoint = editPoint.copy(customIcon = newIcon)

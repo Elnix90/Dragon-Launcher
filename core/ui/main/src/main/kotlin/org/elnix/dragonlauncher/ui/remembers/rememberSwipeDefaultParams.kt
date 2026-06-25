@@ -12,23 +12,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.cache.DrawPathCache
 import org.elnix.dragonlauncher.base.model.models.SwipeDrawParams
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.models.DrawerViewModel
-import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.models.IconsViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import io.github.elnix90.runtime.asState
 
 
 @Composable
 fun rememberSwipeDefaultParams(
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    pointViewModel: PointViewModel = activityViewModel(),
+    iconsViewModel: IconsViewModel = activityViewModel(),
+    pointsViewModel: PointsViewModel = activityViewModel(),
     backgroundColor: Color? = null,
     defaultPointSerializable: Point? = null,
     forceShowAllActionsInCurrentNest: Boolean? = null,
@@ -37,9 +37,9 @@ fun rememberSwipeDefaultParams(
     val ctx = LocalContext.current
     val density = LocalDensity.current
 
-    val points by pointViewModel.points.collectAsState()
-    val nests by pointViewModel.nests.collectAsState()
-    val defaultPointSettings by pointViewModel.defaultPoint.collectAsState()
+    val points by pointsViewModel.points.collectAsState()
+    val nests by pointsViewModel.nests.collectAsState()
+    val defaultPointSettings by pointsViewModel.defaultPoint.collectAsState()
 
     val iconShape by DrawerSettingsStore.iconShape.asState()
     val extraColors = LocalExtraColors.current
@@ -107,7 +107,7 @@ fun rememberSwipeDefaultParams(
                 showAllActionsOnCurrentCircle = showAllActionsOnCurrentCircle,
                 showAllActionsOnCurrentNest = showAllActionsInCurrentNest,
                 showAppPreviewIconCenterStartPosition = effectiveShowAppPreviewIconCenterStartPosition,
-                computeIcon = { drawerViewModel.iconsService.reloadPointIcon(it) }
+                computeIcon = { iconsViewModel.reloadIcon(it) }
             )
         )
     }

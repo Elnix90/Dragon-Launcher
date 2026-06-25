@@ -2,10 +2,11 @@
 
 package org.elnix.dragonlauncher.models
 
+import android.content.pm.ShortcutInfo
 import android.os.UserHandle
 import android.service.notification.StatusBarNotification
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,16 +17,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
-import org.elnix.dragonlauncher.badges.Badge
-import org.elnix.dragonlauncher.badges.BadgeService
-import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.icons.IconPackManager
-import org.elnix.dragonlauncher.icons.IconService
-import org.elnix.dragonlauncher.icons.IconSettings
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.notifications.NotificationService
+import org.elnix.dragonlauncher.permissions.PermissionGroup
 import org.elnix.dragonlauncher.permissions.PermissionsManager
 import org.elnix.dragonlauncher.recents.RecentsService
 import org.elnix.dragonlauncher.workspaces.WorkspacesManager
@@ -34,17 +31,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DrawerViewModel @Inject constructor(
-    application: android.app.Application,
-    val iconPackManager: IconPackManager,
-    val appsRepository: AppRepository,
+    private val appsRepository: AppRepository,
     private val recentsService: RecentsService,
-    val iconsService: IconService,
-    val badgeService: BadgeService,
-    val workspaceManager: WorkspacesManager,
+    private val permissionsManager: PermissionsManager,
+    private val iconPackManager: IconPackManager,
     val appOverrideManager: AppOverridesManager,
-    val permissionsManager: PermissionsManager,
+    val workspaceManager: WorkspacesManager,
     notificationService: NotificationService
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
     val allApps: StateFlow<List<Application>> = appsRepository.getAllApps().stateIn(
         viewModelScope,
@@ -67,17 +61,6 @@ class DrawerViewModel @Inject constructor(
         SharingStarted.Lazily,
         false
     )
-
-
-    val iconPackList = iconPackManager.getInstalledIconPacks()
-
-    val packTint = iconsService.packTint
-//    /**
-//     * The list of icons available in the selected pack
-//     */
-//    private val _packIcons = MutableStateFlow<List<String>>(emptyList())
-//    val packIcons: StateFlow<List<String>> = _packIcons.asStateFlow()
-
 
     val searchQuery = mutableStateOf("")
 
@@ -102,12 +85,6 @@ class DrawerViewModel @Inject constructor(
         appsRepository.refreshApps()
     }
 
-    val iconSettings = iconsService.iconSettings.stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        IconSettings()
-    )
-
     fun getRecentApps(count: Int): StateFlow<List<Application>> {
         return recentsService.getRecentApps(count)
     }
@@ -120,23 +97,11 @@ class DrawerViewModel @Inject constructor(
         "user"
     )
 
+    fun queryAppShortcuts(packageName: String): List<ShortcutInfo> = appsRepository.queryAppShortcuts(packageName)
 
-    fun getIconPickerVM(application: Application): IconPickerVM =
-        IconPickerVM(application, iconsService)
+    fun hasPermission(permission: PermissionGroup) = permissionsManager.hasPermission(permission)
 
-
-    fun getIcon(application: Application): StateFlow<LauncherIcon?> = iconsService.getAppIcon(application).stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        null
-    )
-
-
-    fun getBadge(application: Application): StateFlow<Badge?> = badgeService.getBadge(application).stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        null
-    )
+    fun getInstalledIconPacks() = iconPackManager.getInstalledIconPacks()
 
     init {
         viewModelInitialized()

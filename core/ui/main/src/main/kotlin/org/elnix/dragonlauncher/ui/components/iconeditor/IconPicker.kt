@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.CustomIcon
@@ -51,17 +52,17 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.icons.CustomIconWithPreview
 import org.elnix.dragonlauncher.icons.IconPack
 import org.elnix.dragonlauncher.ktx.px
-import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.IconPickerVM
+import org.elnix.dragonlauncher.models.IconsViewModel
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.components.ShapedLauncherIcon
-import org.elnix.dragonlauncher.ui.composition.LocalGridSize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IconPicker(
     application: Application,
-    drawerViewModel: DrawerViewModel = activityViewModel(),
+    iconsViewModel: IconsViewModel = activityViewModel(),
     contentPadding: PaddingValues = PaddingValues(0.dp),
     onSelect: (CustomIcon?) -> Unit
 ) {
@@ -73,7 +74,7 @@ fun IconPicker(
     val scope = rememberCoroutineScope()
 
     val viewModel: IconPickerVM =
-        remember(application.key) { drawerViewModel.getIconPickerVM(application) }
+        remember(application.key) { iconsViewModel.getIconPickerVM(application) }
 
     val suggestions by remember { viewModel.getIconSuggestions(iconSizePx.toInt()) }
         .collectAsState(emptyList())
@@ -91,7 +92,7 @@ fun IconPicker(
     val installedIconPacks by viewModel.installedIconPacks.collectAsState(null)
     val packsInstalled = installedIconPacks?.isEmpty() == false
 
-    val columns = LocalGridSize.current
+    val columns by DrawerSettingsStore.gridSize.asState()
 
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
@@ -183,7 +184,7 @@ fun IconPicker(
                                 filterIconPack?.packageName?.let { pkg ->
                                     context.packageManager.getApplicationIcon(pkg)
                                 }
-                            } catch (e: PackageManager.NameNotFoundException) {
+                            } catch (_: PackageManager.NameNotFoundException) {
                                 null
                             }
                         }
@@ -283,6 +284,7 @@ fun IconPicker(
         }
     }
 }
+
 @Composable
 fun IconPreview(
     item: CustomIconWithPreview?,

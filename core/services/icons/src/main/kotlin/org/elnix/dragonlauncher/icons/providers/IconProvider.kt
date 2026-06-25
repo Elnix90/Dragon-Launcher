@@ -1,19 +1,19 @@
 package org.elnix.dragonlauncher.icons.providers
 
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
-import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.serializables.Action
 
 
 interface IconProvider {
-    suspend fun getIcon(application: Application, size: Int): LauncherIcon?
+    suspend fun getIcon(action: Action, size: Int): LauncherIcon?
 }
 
 internal suspend fun Iterable<IconProvider>.getFirstIcon(
-    application: Application,
+    action: Action,
     size: Int
 ): LauncherIcon? {
     for (provider in this) {
-        val icon = provider.getIcon(application, size)
+        val icon = provider.getIcon(action, size)
         if (icon != null) {
             return icon
         }

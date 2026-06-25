@@ -3,22 +3,23 @@ package org.elnix.dragonlauncher.icons
 import android.content.res.Resources
 import android.graphics.drawable.AdaptiveIconDrawable
 import androidx.core.content.res.ResourcesCompat
-import org.elnix.dragonlauncher.icons.transformations.LauncherIconTransformation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.elnix.dragonlauncher.base.icons.ColorLayer
 import org.elnix.dragonlauncher.base.icons.DynamicLauncherIcon
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.icons.TextLayer
-import org.elnix.dragonlauncher.base.icons.TintedIconLayer
+import org.elnix.dragonlauncher.base.icons.StaticIconLayer
+import org.elnix.dragonlauncher.base.icons.TransparentLayer
 import org.elnix.dragonlauncher.icons.compat.AdaptiveIconDrawableCompat
 import org.elnix.dragonlauncher.icons.compat.toLauncherIcon
+import org.elnix.dragonlauncher.icons.transformations.LauncherIconTransformation
 import java.time.Instant
 import java.time.ZoneId
 
 internal class ThemedDynamicCalendarIcon(
     val resources: Resources,
     val resourceIds: IntArray,
+    val tint: Int?,
     private var transformations: List<LauncherIconTransformation> = emptyList(),
 ) : DynamicLauncherIcon, TransformableDynamicLauncherIcon {
     override suspend fun getIcon(time: Long): StaticLauncherIcon = withContext(Dispatchers.IO) {
@@ -28,7 +29,7 @@ internal class ThemedDynamicCalendarIcon(
         val adaptiveIconCompat = AdaptiveIconDrawableCompat.from(resources, resId)
 
         if (adaptiveIconCompat != null) {
-            var icon = adaptiveIconCompat.toLauncherIcon(themed = true)
+            var icon = adaptiveIconCompat.toLauncherIcon(themed = true, tint = tint)
             for (transformation in transformations) {
                 icon = transformation.transform(icon)
             }
@@ -40,25 +41,30 @@ internal class ThemedDynamicCalendarIcon(
         } catch (e: Resources.NotFoundException) {
             null
         } ?: return@withContext StaticLauncherIcon(
-            foregroundLayer = TextLayer(day.toString()),
-            backgroundLayer = ColorLayer()
+            foregroundLayer = TextLayer(
+                text = day.toString(),
+                tint = tint
+            ),
+            backgroundLayer = TransparentLayer
         )
 
         var icon = when (drawable) {
             is AdaptiveIconDrawable -> StaticLauncherIcon(
-                foregroundLayer = TintedIconLayer(
+                foregroundLayer = StaticIconLayer(
                     icon = drawable.foreground,
                     scale = 1.5f,
+                    tint = tint
                 ),
-                backgroundLayer = ColorLayer()
+                backgroundLayer = TransparentLayer
             )
 
             else -> StaticLauncherIcon(
-                foregroundLayer = TintedIconLayer(
+                foregroundLayer = StaticIconLayer(
                     icon = drawable,
                     scale = 0.65f,
+                    tint = tint
                 ),
-                backgroundLayer = ColorLayer()
+                backgroundLayer = TransparentLayer
             )
         }
 

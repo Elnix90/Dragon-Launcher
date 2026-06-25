@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.WallpaperTarget
 import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
@@ -29,7 +30,6 @@ import org.elnix.dragonlauncher.enumsui.select.WallpaperEditMode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
@@ -116,7 +116,8 @@ fun WallpaperTab(onBack: () -> Unit) {
         }
 
         ColorPickerRow(
-            label = stringResource(R.string.plain_wallpaper_color),
+            title = stringResource(R.string.plain_wallpaper_color),
+            description = null,
             currentColor = plainColor
         ) {
             plainColor = it ?: Color.Black

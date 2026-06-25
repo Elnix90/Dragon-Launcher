@@ -65,6 +65,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.RoundedPolygon
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.common.utils.HapticUtils.vibrate
@@ -75,7 +76,6 @@ import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.allMaterialShapes
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
@@ -123,7 +123,7 @@ fun PinUnlock(
             onDismiss()
         }
     ) {
-        if (lockScreenViewModel.securityService.verifyPin(pin, pinHash)) {
+        if (lockScreenViewModel.verifyPin(pin, pinHash)) {
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
             onValidate()
         } else {

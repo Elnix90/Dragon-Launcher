@@ -15,6 +15,7 @@ sealed interface IconPackAppIcon: IconPackComponent {
     val activityName: String?
     val name: String?
     val themed: Boolean
+    val tint: Int?
 }
 
 data class IconBack(
@@ -63,6 +64,7 @@ data class AppIcon(
     override val activityName: String? = null,
     override val name: String? = null,
     override val themed: Boolean = false,
+    override val tint: Int? = null
 ): IconPackComponent, IconPackAppIcon {
     override fun toDatabaseEntity(): IconEntity {
         return IconEntity(
@@ -84,6 +86,7 @@ data class CalendarIcon(
     override val activityName: String? = null,
     override val name: String? = null,
     override val themed: Boolean = false,
+    override val tint: Int? = null
 ): IconPackComponent, IconPackAppIcon {
     override fun toDatabaseEntity(): IconEntity {
         return IconEntity(
@@ -106,6 +109,7 @@ data class ClockIcon(
     override val activityName: String? = null,
     override val name: String? = null,
     override val themed: Boolean,
+    override val tint: Int? = null,
     val config: ClockIconConfig,
 ): IconPackComponent, IconPackAppIcon {
     override fun toDatabaseEntity(): IconEntity {

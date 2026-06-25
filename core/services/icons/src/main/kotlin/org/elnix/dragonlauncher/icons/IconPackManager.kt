@@ -18,22 +18,21 @@ import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toDrawable
 import androidx.room.withTransaction
+import io.github.elnix90.logging.ICONS_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
-import org.elnix.dragonlauncher.base.icons.ClockLayer
 import org.elnix.dragonlauncher.base.icons.ClockSublayer
 import org.elnix.dragonlauncher.base.icons.ClockSublayerRole
-import org.elnix.dragonlauncher.base.icons.ColorLayer
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
-import org.elnix.dragonlauncher.base.icons.StaticIconLayer
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
-import org.elnix.dragonlauncher.base.icons.TintedClockLayer
-import org.elnix.dragonlauncher.base.icons.TintedIconLayer
+import org.elnix.dragonlauncher.base.icons.ClockLayer
+import org.elnix.dragonlauncher.base.icons.StaticIconLayer
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
-import org.elnix.dragonlauncher.base.util.ImageUtils.tintedWith
 import org.elnix.dragonlauncher.database.AppDatabase
 import org.elnix.dragonlauncher.icons.compat.AdaptiveIconDrawableCompat
 import org.elnix.dragonlauncher.icons.compat.toLauncherIcon
@@ -41,9 +40,6 @@ import org.elnix.dragonlauncher.icons.loaders.AppFilterIconPackInstaller
 import org.elnix.dragonlauncher.icons.loaders.GrayscaleMapIconPackInstaller
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import org.elnix.dragonlauncher.ktx.randomElementOrNull
-import io.github.elnix90.logging.ICONS_TAG
-import io.github.elnix90.logging.logD
-import io.github.elnix90.logging.logE
 import kotlin.math.roundToInt
 
 
@@ -103,8 +99,10 @@ class IconPackManager(
         iconPack: String,
         packageName: String,
         activityName: String?,
+        tint: Int?,
         allowThemed: Boolean = true
     ): LauncherIcon? = withContext(Dispatchers.IO) {
+
         val res = try {
             ctx.packageManager.getResourcesForApplication(iconPack)
         } catch (e: PackageManager.NameNotFoundException) {
@@ -118,15 +116,15 @@ class IconPackManager(
 
         when (icon) {
             is CalendarIcon -> {
-                return@withContext getIconPackCalendarIcon(icon, res, allowThemed)
+                return@withContext getIconPackCalendarIcon(icon, res, tint, allowThemed)
             }
 
             is AppIcon -> {
-                return@withContext getIconPackStaticIcon(icon, res, allowThemed)
+                return@withContext getIconPackStaticIcon(icon, res, tint, allowThemed)
             }
 
             is ClockIcon -> {
-                return@withContext getIconPackClockIcon(icon, res, allowThemed)
+                return@withContext getIconPackClockIcon(icon, res, tint, allowThemed)
             }
         }
     }
@@ -134,6 +132,7 @@ class IconPackManager(
     suspend fun getIcon(
         iconPack: String,
         icon: IconPackAppIcon,
+        tint: Int?,
         allowThemed: Boolean,
     ): LauncherIcon? = withContext(Dispatchers.IO) {
         val res = try {
@@ -144,15 +143,15 @@ class IconPackManager(
         }
         when (icon) {
             is CalendarIcon -> {
-                return@withContext getIconPackCalendarIcon(icon, res, allowThemed)
+                return@withContext getIconPackCalendarIcon(icon, res, tint, allowThemed)
             }
 
             is AppIcon -> {
-                return@withContext getIconPackStaticIcon(icon, res, allowThemed)
+                return@withContext getIconPackStaticIcon(icon, res, tint, allowThemed)
             }
 
             is ClockIcon -> {
-                return@withContext getIconPackClockIcon(icon, res, allowThemed)
+                return@withContext getIconPackClockIcon(icon, res,tint , allowThemed)
             }
         }
     }
@@ -206,6 +205,9 @@ class IconPackManager(
             return@withContext null
         }
 
+        logD(ICONS_TAG) { "Generating icon tinted with: $tint for ressources: $res"}
+
+
         if (mask != null) {
             res.getIdentifier(mask, "drawable", iconPack).takeIf { it != 0 }?.let {
                 paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
@@ -249,10 +251,12 @@ class IconPackManager(
             }
         }
 
+
         return@withContext StaticLauncherIcon(
             foregroundLayer = StaticIconLayer(
-                icon = bitmap.tintedWith(tint).toDrawable(ctx.resources),
+                icon = bitmap.toDrawable(ctx.resources),
                 scale = 1f,
+                tint = tint
             ),
             backgroundLayer = TransparentLayer
         )
@@ -291,6 +295,7 @@ class IconPackManager(
     private fun getIconPackStaticIcon(
         icon: AppIcon,
         resources: Resources,
+        tint: Int?,
         allowThemed: Boolean,
     ): LauncherIcon? {
         val resId =
@@ -299,7 +304,7 @@ class IconPackManager(
 
         val adaptiveIconCompat = AdaptiveIconDrawableCompat.from(resources, resId)
         if (adaptiveIconCompat != null) {
-            return adaptiveIconCompat.toLauncherIcon(themed = allowThemed && icon.themed)
+            return adaptiveIconCompat.toLauncherIcon(themed = allowThemed && icon.themed, tint = tint)
         }
         val drawable = try {
             ResourcesCompat.getDrawable(resources, resId, ctx.theme) ?: return null
@@ -311,30 +316,33 @@ class IconPackManager(
             themed && drawable is AdaptiveIconDrawable -> {
                 if (isAtLeastApiLevel(33) && drawable.monochrome != null) {
                     StaticLauncherIcon(
-                        foregroundLayer = TintedIconLayer(
+                        foregroundLayer = StaticIconLayer(
                             icon = drawable.monochrome!!,
                             scale = 1.5f,
+                            tint = tint
                         ),
-                        backgroundLayer = ColorLayer(),
+                        backgroundLayer = TransparentLayer,
                     )
                 } else {
                     StaticLauncherIcon(
-                        foregroundLayer = TintedIconLayer(
+                        foregroundLayer = StaticIconLayer(
                             icon = drawable.foreground,
                             scale = 1.5f,
+                            tint = tint
                         ),
-                        backgroundLayer = ColorLayer(),
+                        backgroundLayer = TransparentLayer,
                     )
                 }
             }
 
             themed -> {
                 StaticLauncherIcon(
-                    foregroundLayer = TintedIconLayer(
+                    foregroundLayer = StaticIconLayer(
                         icon = drawable,
                         scale = 0.65f,
+                        tint = tint
                     ),
-                    backgroundLayer = ColorLayer(),
+                    backgroundLayer = TransparentLayer,
                 )
             }
 
@@ -344,12 +352,14 @@ class IconPackManager(
                         StaticIconLayer(
                             icon = it,
                             scale = 1.5f,
+                            tint = tint
                         )
                     } ?: TransparentLayer,
                     backgroundLayer = drawable.background?.let {
                         StaticIconLayer(
                             icon = it,
                             scale = 1.5f,
+                            tint = tint
                         )
                     } ?: TransparentLayer,
                 )
@@ -359,7 +369,8 @@ class IconPackManager(
                 StaticLauncherIcon(
                     foregroundLayer = StaticIconLayer(
                         icon = drawable,
-                        scale = 1f
+                        scale = 1f,
+                        tint = tint
                     ),
                     backgroundLayer = TransparentLayer
                 )
@@ -371,7 +382,8 @@ class IconPackManager(
     private fun getIconPackCalendarIcon(
         icon: CalendarIcon,
         resources: Resources,
-        allowThemed: Boolean,
+        tint: Int?,
+        allowThemed: Boolean
     ): LauncherIcon? {
         val drawableIds = icon.drawables.map {
             val id = resources.getIdentifier(it, "drawable", icon.iconPack)
@@ -384,11 +396,13 @@ class IconPackManager(
             return ThemedDynamicCalendarIcon(
                 resources = resources,
                 resourceIds = drawableIds,
+                tint = tint
             )
         }
         return DynamicCalendarIcon(
             resources = resources,
             resourceIds = drawableIds,
+            tint = tint
         )
     }
 
@@ -396,6 +410,7 @@ class IconPackManager(
     private fun getIconPackClockIcon(
         icon: ClockIcon,
         resources: Resources,
+        tint: Int?,
         allowThemed: Boolean,
     ): LauncherIcon? {
         val drawableId = try {
@@ -406,7 +421,7 @@ class IconPackManager(
         }
         val adaptiveIconCompat = AdaptiveIconDrawableCompat.from(resources, drawableId)
         if (adaptiveIconCompat != null) {
-            return adaptiveIconCompat.toLauncherIcon(icon.themed && allowThemed, icon.config)
+            return adaptiveIconCompat.toLauncherIcon(themed = icon.themed && allowThemed, tint = tint, clock = icon.config)
         }
         val drawable = try {
             ResourcesCompat.getDrawable(resources, drawableId, null)
@@ -437,27 +452,29 @@ class IconPackManager(
         return when {
             themed && drawable is AdaptiveIconDrawable -> {
                 StaticLauncherIcon(
-                    foregroundLayer = TintedClockLayer(
+                    foregroundLayer = ClockLayer(
                         defaultHour = icon.config.defaultHour,
                         defaultMinute = icon.config.defaultMinute,
                         defaultSecond = icon.config.defaultSecond,
                         sublayers = layers,
                         scale = 1.5f,
+                        tint = tint
                     ),
-                    backgroundLayer = ColorLayer(),
+                    backgroundLayer = TransparentLayer,
                 )
             }
 
             themed -> {
                 StaticLauncherIcon(
-                    foregroundLayer = TintedClockLayer(
+                    foregroundLayer = ClockLayer(
                         defaultHour = icon.config.defaultHour,
                         defaultMinute = icon.config.defaultMinute,
                         defaultSecond = icon.config.defaultSecond,
                         sublayers = layers,
                         scale = 1f,
+                        tint = tint
                     ),
-                    backgroundLayer = ColorLayer(),
+                    backgroundLayer = TransparentLayer,
                 )
             }
 
@@ -469,10 +486,12 @@ class IconPackManager(
                         defaultSecond = icon.config.defaultSecond,
                         sublayers = layers,
                         scale = 1.5f,
+                        tint = tint
                     ),
                     backgroundLayer = StaticIconLayer(
                         icon = background!!,
-                        scale = 1.5f
+                        scale = 1.5f,
+                        tint = tint
                     ),
                 )
             }
@@ -485,6 +504,7 @@ class IconPackManager(
                         defaultSecond = icon.config.defaultSecond,
                         sublayers = layers,
                         scale = 1f,
+                        tint = tint
                     ),
                     backgroundLayer = TransparentLayer,
                 )

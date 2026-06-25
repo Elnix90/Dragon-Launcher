@@ -15,7 +15,7 @@ import org.elnix.dragonlauncher.base.model.serializables.CycleActionStage
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.common.utils.HapticUtils.performCustomHaptic
-import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.defaultHapticFeedback
@@ -68,12 +68,12 @@ data class CycleActionsState(
  */
 @Composable
 fun rememberCycleActionsController(
-    pointViewModel: PointViewModel = activityViewModel(),
+    pointsViewModel: PointsViewModel = activityViewModel(),
     currentAction: Point?,
     isDragging: Boolean
 ): CycleActionsState {
     val ctx = LocalContext.current
-    val defaultPoint by pointViewModel.defaultPoint.collectAsState()
+    val defaultPoint by pointsViewModel.defaultPoint.collectAsState()
 
     val disableHapticFeedbackGlobally= LocalDisableHapticFeedbackGlobally.current
 

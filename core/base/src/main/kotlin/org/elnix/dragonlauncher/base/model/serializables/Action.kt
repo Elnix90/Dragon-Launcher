@@ -1,5 +1,8 @@
 package org.elnix.dragonlauncher.base.model.serializables
 
+import android.content.pm.ShortcutInfo
+import android.os.Process
+import android.os.UserHandle
 import androidx.compose.ui.graphics.Color
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -10,6 +13,7 @@ import org.elnix.dragonlauncher.base.model.models.BluetoothADBCommands
 import org.elnix.dragonlauncher.base.model.models.DataADBCommands
 import org.elnix.dragonlauncher.base.model.models.DummyApp
 import org.elnix.dragonlauncher.base.model.models.WifiADBCommands
+import org.elnix.dragonlauncher.base.model.serializables.serializers.UserHandleSerializer
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.base.theme.ExtraColors
 import org.elnix.dragonlauncher.i18n.R
@@ -23,7 +27,7 @@ import org.elnix.dragonlauncher.i18n.R
  *  - `actionLabel`
  *  - `launchAction`
  *  - `actionColor`
- * *  - [org.elnix.dragonlauncher.base.util.ImageUtils.createUntintedBitmap]
+ *  - [org.elnix.dragonlauncher.base.util.ImageUtils.createUntintedBitmap]
  */
 @Serializable
 @SerialName("Action")
@@ -46,7 +50,7 @@ sealed class Action {
         )
 
         companion object {
-            fun dummy(): LaunchApp = LaunchApp(DummyApp())
+            val dummy: LaunchApp = LaunchApp(DummyApp)
         }
     }
 
@@ -54,12 +58,16 @@ sealed class Action {
     @SerialName("LaunchShortcut")
     data class LaunchShortcut(
         val packageName: String,
-        val shortcutId: String
+        val shortcutId: String,
+        @Serializable(UserHandleSerializer::class)
+        val user: UserHandle
     ) : Action() {
         override val drawable: Int = R.drawable.ic_action_pinned_shortcut
 
         companion object {
-            fun dummy(): LaunchShortcut = LaunchShortcut("", "")
+            val dummy: LaunchShortcut = LaunchShortcut("", "", Process.myUserHandle())
+
+            fun ShortcutInfo.toAction(): LaunchShortcut = Action.LaunchShortcut(`package`,id, userHandle)
         }
     }
 
@@ -69,7 +77,7 @@ sealed class Action {
         override val drawable: Int = R.drawable.web
 
         companion object {
-            fun dummy(): OpenUrl = OpenUrl("")
+            val dummy: OpenUrl = OpenUrl("")
         }
     }
 
@@ -81,7 +89,7 @@ sealed class Action {
     ) : Action() {
         override val drawable: Int = R.drawable.ic_action_open_file
         companion object {
-            fun dummy(): OpenFile = OpenFile("")
+            val dummy: OpenFile = OpenFile("")
         }
     }
 
@@ -93,7 +101,7 @@ sealed class Action {
     ) : Action() {
         override val drawable: Int = R.drawable.workspaces
         companion object {
-            fun dummy(): OpenAppDrawer = OpenAppDrawer("")
+            val dummy: OpenAppDrawer = OpenAppDrawer("")
         }
     }
 
@@ -104,7 +112,7 @@ sealed class Action {
     ) : Action() {
         override val drawable: Int = R.drawable.dragon_launcher_foreground
         companion object {
-            fun dummy(): OpenDragonLauncherSettings = OpenDragonLauncherSettings(NavigationRoute.PointsSettings())
+            val dummy: OpenDragonLauncherSettings = OpenDragonLauncherSettings(NavigationRoute.PointsSettings())
         }
     }
 
@@ -115,7 +123,7 @@ sealed class Action {
     ) : Action() {
         override val drawable: Int = R.drawable.nest_icon
         companion object {
-            fun dummy(): OpenCircleNest = OpenCircleNest(0)
+            val dummy: OpenCircleNest = OpenCircleNest(0)
         }
     }
 
@@ -128,7 +136,7 @@ sealed class Action {
     ) : Action() {
         override val drawable: Int = R.drawable.widgets
         companion object {
-            fun dummy(): OpenWidget = OpenWidget(0, "", "")
+            val dummy: OpenWidget = OpenWidget(0, "", "")
         }
     }
 
@@ -140,7 +148,7 @@ sealed class Action {
     ) : Action() {
         override val drawable: Int = R.drawable.wifi
         companion object {
-            fun dummy(): ToggleWifi = ToggleWifi()
+            val dummy: ToggleWifi = ToggleWifi()
         }
     }
 
@@ -152,7 +160,7 @@ sealed class Action {
     ) : Action() {
         override val drawable: Int = R.drawable.bluetooth
         companion object {
-            fun dummy(): ToggleBluetooth = ToggleBluetooth()
+            val dummy: ToggleBluetooth = ToggleBluetooth()
         }
     }
 
@@ -164,7 +172,7 @@ sealed class Action {
     ) : Action() {
         override val drawable: Int = R.drawable.cellular_icon
         companion object {
-            fun dummy(): ToggleData = ToggleData()
+            val dummy: ToggleData = ToggleData()
         }
     }
 
@@ -176,7 +184,7 @@ sealed class Action {
     ) : Action() {
         override val drawable: Int = R.drawable.adb_icon
         companion object {
-            fun dummy(): RunAdbCommand = RunAdbCommand("")
+            val dummy: RunAdbCommand = RunAdbCommand("")
         }
     }
 
@@ -257,23 +265,23 @@ sealed class Action {
                 }
 
         val defaultChoosableActions: List<Action> = listOf(
-            LaunchApp.dummy(),
-            OpenCircleNest.dummy(),
+            LaunchApp.dummy,
+            OpenCircleNest.dummy,
             GoParentNest,
-            LaunchShortcut.dummy(),
-            OpenUrl.dummy(),
-            OpenFile.dummy(),
+            LaunchShortcut.dummy,
+            OpenUrl.dummy,
+            OpenFile.dummy,
             NotificationShade,
             ControlPanel,
-            OpenAppDrawer.dummy(),
+            OpenAppDrawer.dummy,
             Lock,
             ReloadApps,
             OpenRecentApps,
-            OpenDragonLauncherSettings.dummy(),
-            RunAdbCommand.dummy(),
-            ToggleBluetooth.dummy(),
-            ToggleWifi.dummy(),
-            ToggleData.dummy()
+            OpenDragonLauncherSettings.dummy,
+            RunAdbCommand.dummy,
+            ToggleBluetooth.dummy,
+            ToggleWifi.dummy,
+            ToggleData.dummy
         )
 
         object ActionJson : DragonJson<Action>()

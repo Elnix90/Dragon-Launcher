@@ -7,25 +7,23 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import org.elnix.dragonlauncher.base.model.serializables.StatusBar
-import org.elnix.dragonlauncher.base.model.serializables.StatusBarJson
 import io.github.elnix90.logging.ICONS_TAG
 import io.github.elnix90.logging.logD
-import org.elnix.dragonlauncher.models.DrawerViewModel
-import org.elnix.dragonlauncher.models.PointViewModel
+import io.github.elnix90.runtime.asState
+import org.elnix.dragonlauncher.base.model.serializables.StatusBar
+import org.elnix.dragonlauncher.base.model.serializables.StatusBarJson
+import org.elnix.dragonlauncher.models.IconsViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.base.compositionslocals.ProvideCurrentTime
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalEndLineObject
-import org.elnix.dragonlauncher.ui.composition.LocalGridSize
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
-import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.composition.LocalLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.composition.LocalShowLabelsInAddPointDialog
@@ -37,19 +35,18 @@ import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberHoldCustom
 
 @Composable
 fun ProvideGlobalCompositionLocals(
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    pointsViewModel: PointViewModel = activityViewModel(),
+    iconsViewModel: IconsViewModel = activityViewModel(),
+    pointsViewModel: PointsViewModel = activityViewModel(),
     content: @Composable () -> Unit
 ) {
     val points by pointsViewModel.points.collectAsState()
 
     val disableHapticFeedbackGlobally by BehaviorSettingsStore.disableHapticFeedbackGlobally.asState()
 
-    val pointsIconCache = drawerViewModel.iconsService
 
     LaunchedEffect(points.size) {
         logD(ICONS_TAG) { "Updating icons cache size to ${points.size}" }
-        pointsIconCache.updateMaxCacheSize(points.size)
+        iconsViewModel.updateMaxCacheSize(points.size)
     }
 
 
@@ -62,7 +59,6 @@ fun ProvideGlobalCompositionLocals(
     }
 
 
-    val gridSize by DrawerSettingsStore.gridSize.asState()
 
     val lineObjects = rememberAngleLineObjects()
     val holdCustomObject = rememberHoldCustomObject()
@@ -78,8 +74,6 @@ fun ProvideGlobalCompositionLocals(
      */
     CompositionLocalProvider(
 
-        LocalIconShape provides iconShape,
-        LocalGridSize provides gridSize,
         LocalStatusBarElements provides elements,
 
         LocalLineObject provides lineObjects.line,

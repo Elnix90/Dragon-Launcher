@@ -40,6 +40,12 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import io.github.elnix90.logging.SHIZUKU_TAG
+import io.github.elnix90.logging.TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
+import io.github.elnix90.runtime.asState
+import io.github.elnix90.runtime.asStateNull
 import org.elnix.dragonlauncher.base.Constants.PackageNames.SHIZUKU_PACKAGE_NAME
 import org.elnix.dragonlauncher.base.Constants.URLs.URL_SHIZUKU_SITE
 import org.elnix.dragonlauncher.base.model.serializables.Action
@@ -55,15 +61,11 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.findFragmentActivity
 import org.elnix.dragonlauncher.ktx.openUrl
 import org.elnix.dragonlauncher.ktx.showToast
-import io.github.elnix90.logging.SHIZUKU_TAG
-import io.github.elnix90.logging.TAG
-import io.github.elnix90.logging.logD
-import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.LockScreenViewModel
-import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.models.ShizukuViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
@@ -73,8 +75,7 @@ import org.elnix.dragonlauncher.timer.AppTimerService.Companion.EXTRA_APP_NAME
 import org.elnix.dragonlauncher.timer.AppTimerService.Companion.SHOW_LAUNCHER
 import org.elnix.dragonlauncher.ui.actions.launchAction
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import io.github.elnix90.runtime.asState
-import io.github.elnix90.runtime.asStateNull
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.dialogs.AdbCommandInputDialog
 import org.elnix.dragonlauncher.ui.dialogs.BackupResultDialog
@@ -98,7 +99,6 @@ import org.elnix.dragonlauncher.ui.settings.customization.AppDisplayTab
 import org.elnix.dragonlauncher.ui.settings.customization.AppearanceTab
 import org.elnix.dragonlauncher.ui.settings.customization.BehaviorTab
 import org.elnix.dragonlauncher.ui.settings.customization.ColorSelectorTab
-import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerTab
 import org.elnix.dragonlauncher.ui.settings.customization.FontTab
 import org.elnix.dragonlauncher.ui.settings.customization.HoldToActivateArcTab
 import org.elnix.dragonlauncher.ui.settings.customization.IconPackTab
@@ -107,6 +107,7 @@ import org.elnix.dragonlauncher.ui.settings.customization.StatusBarTab
 import org.elnix.dragonlauncher.ui.settings.customization.ThemesTab
 import org.elnix.dragonlauncher.ui.settings.customization.WallpaperTab
 import org.elnix.dragonlauncher.ui.settings.customization.WidgetsTab
+import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerTab
 import org.elnix.dragonlauncher.ui.settings.debug.DebugTab
 import org.elnix.dragonlauncher.ui.settings.debug.LogsTab
 import org.elnix.dragonlauncher.ui.settings.debug.LogsViewerScreen
@@ -131,7 +132,7 @@ fun MainAppUi(
     lockScreenViewModel: LockScreenViewModel = activityViewModel(),
     appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
     shizukuViewModel: ShizukuViewModel = activityViewModel(),
-    pointViewModel: PointViewModel = activityViewModel(),
+    pointsViewModel: PointsViewModel = activityViewModel(),
     onBindCustomWidget: (Int, ComponentName, nestId: Int) -> Unit,
     onResetWidgetSize: (id: Int, widgetId: Int) -> Unit,
     onRemoveWidget: (Widget) -> Unit
@@ -160,10 +161,9 @@ fun MainAppUi(
         derivedStateOf { backStack.lastOrNull() ?: NavigationRoute.Main }
     }
 
-    val securityService = lockScreenViewModel.securityService
-    val isLocked by lockScreenViewModel.isLocked.collectAsState()
-    val screenToUnlock by lockScreenViewModel.screenToUnlock.collectAsState()
-    val lockMethod by lockScreenViewModel.lockMethod.collectAsState()
+    val isLocked by lockScreenViewModel.isLocked.asState()
+    val screenToUnlock by lockScreenViewModel.screenToUnlock.asState()
+    val lockMethod by PrivateSettingsStore.lockMethod.asState()
 
 
     LaunchedEffect(currentRoute) {
@@ -418,15 +418,15 @@ fun MainAppUi(
                     entry<NavigationRoute.PointsSettings>(metadata = horizontalMetadata) {
                         PointsSettingsScreen(
                             onAdvSettings = {
-                                pointViewModel.pointsService.persist()
+                                pointsViewModel.persist()
                                 backStack.navigate(NavigationRoute.Settings)
                             },
                             onNestEdit = {
-                                pointViewModel.pointsService.persist()
+                                pointsViewModel.persist()
                                 backStack.navigate(NavigationRoute.NestEdit(it))
                             },
                             onBack = {
-                                pointViewModel.pointsService.persist()
+                                pointsViewModel.persist()
                                 backStack.navigateBack()
                             }
                         )
@@ -478,7 +478,7 @@ fun MainAppUi(
                             nestId = key.nestId,
                             onBack = {
                                 backStack.navigateBack()
-                                pointViewModel.pointsService.persist()
+                                pointsViewModel.persist()
                             }
                         )
                     }
@@ -525,7 +525,7 @@ fun MainAppUi(
                 onDismiss = { showFilePicker = null },
                 onFileSelected = { newAction ->
                     val updatedPoint = currentPoint.copy(action = newAction)
-                    pointViewModel.pointsService.editPoint(currentPoint.id) { updatedPoint }
+                    pointsViewModel.editPoint(currentPoint.id) { updatedPoint }
                     showFilePicker = null
                     launchAction(updatedPoint)
                 }
@@ -600,10 +600,11 @@ fun MainAppUi(
         if (screenToUnlock != null && lockMethod == LockMethod.Pin) {
             PinUnlock(
                 onDismiss = {
-                    lockScreenViewModel.cancelPinUnlock()
+                    lockScreenViewModel.cancelUnlock()
                 },
                 onValidate = {
                     lockScreenViewModel.unlock()
+
                     backStack.remove(screenToUnlock!!)
                     backStack.add(screenToUnlock!!)
                 }
@@ -613,21 +614,22 @@ fun MainAppUi(
         if (screenToUnlock != null && lockMethod == LockMethod.Device) {
             LaunchedEffect(screenToUnlock) {
                 val activity = ctx.findFragmentActivity()
-                if (activity != null && securityService.isDeviceUnlockAvailable(ctx)) {
-                    securityService.showDeviceUnlockPrompt(
+                if (activity != null && lockScreenViewModel.isDeviceUnlockAvailable()) {
+                    lockScreenViewModel.showDeviceUnlockPrompt(
                         activity = activity,
                         onSuccess = {
                             lockScreenViewModel.unlock()
-                            backStack.navigate(screenToUnlock!!)
-                            lockScreenViewModel.cancelPinUnlock()
+
+                            backStack.remove(screenToUnlock!!)
+                            backStack.add(screenToUnlock!!)
                         },
                         onError = { msg ->
                             ctx.showToast(ctx.getString(R.string.authentication_error, msg))
-                            lockScreenViewModel.cancelPinUnlock()
+                            lockScreenViewModel.cancelUnlock()
                         },
                         onFailed = {
                             ctx.showToast(ctx.getString(R.string.authentication_failed))
-                            lockScreenViewModel.cancelPinUnlock()
+                            lockScreenViewModel.cancelUnlock()
                         }
                     )
                 }

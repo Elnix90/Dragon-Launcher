@@ -19,7 +19,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 @Composable
 fun rememberSettingsExportLauncher(
-    selectedStoresForExport: Set<SettingsStore<*,*>>,
+    selectedStoresForExport: Set<SettingsStore<*, *>>,
     backupViewModel: BackupViewModel = activityViewModel()
 ): ManagedActivityResultLauncher<String, Uri?> {
     val ctx = LocalContext.current
@@ -32,34 +32,30 @@ fun rememberSettingsExportLauncher(
     val settingsExportLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
             if (uri == null) {
-                backupViewModel.result.set(
-                    BackupResult(
-                        export = true,
-                        error = true,
-                        title = exportCancelledText
-                    )
+                backupViewModel.result.value = BackupResult(
+                    export = true,
+                    error = true,
+                    title = exportCancelledText
                 )
+
                 return@rememberLauncherForActivityResult
             }
 
             scope.launch {
                 try {
                     SettingsBackupManager.exportSettings(ctx, uri, selectedStoresForExport)
-                    backupViewModel.result.set(
-                        BackupResult(
-                            export = true,
-                            error = false,
-                            title = exportSuccessfulText
-                        )
+                    backupViewModel.result.value = BackupResult(
+                        export = true,
+                        error = false,
+                        title = exportSuccessfulText
                     )
+
                 } catch (e: Exception) {
-                    backupViewModel.result.set(
-                        BackupResult(
-                            export = true,
-                            error = true,
-                            title = exportFailedText,
-                            message = e.message ?: ""
-                        )
+                    backupViewModel.result.value = BackupResult(
+                        export = true,
+                        error = true,
+                        title = exportFailedText,
+                        message = e.message ?: ""
                     )
                 }
             }
@@ -69,7 +65,7 @@ fun rememberSettingsExportLauncher(
 
 @Composable
 fun rememberSafeSettingsExportLauncher(
-    selectedStoresForExport: Set<SettingsStore<*,*>>
+    selectedStoresForExport: Set<SettingsStore<*, *>>
 ): ManagedActivityResultLauncher<String, Uri?> {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()

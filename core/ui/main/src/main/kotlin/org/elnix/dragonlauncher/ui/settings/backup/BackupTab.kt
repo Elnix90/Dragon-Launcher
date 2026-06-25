@@ -32,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import io.github.elnix90.core.SettingsBackupManager
 import io.github.elnix90.core.stores.SettingsStore
+import io.github.elnix90.logging.BACKUP_TAG
+import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -39,8 +41,6 @@ import org.elnix.dragonlauncher.common.utils.DateUtils
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getFilePathFromUri
 import org.elnix.dragonlauncher.ktx.showToast
-import io.github.elnix90.logging.BACKUP_TAG
-import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.settings.AllStores
@@ -100,8 +100,8 @@ fun BackupTab(
         ctx.getFilePathFromUri(uri)
     }
 
-    var selectedStoresForExport by remember { mutableStateOf(setOf<SettingsStore<*,*>>()) }
-    var selectedStoresForImport by remember { mutableStateOf(setOf<SettingsStore<*,*>>()) }
+    var selectedStoresForExport by remember { mutableStateOf(setOf<SettingsStore<*, *>>()) }
+    var selectedStoresForImport by remember { mutableStateOf(setOf<SettingsStore<*, *>>()) }
     var importJson by remember { mutableStateOf<JSONObject?>(null) }
     var showImportDialog by remember { mutableStateOf(false) }
     var showExportDialog by remember { mutableStateOf(false) }
@@ -200,9 +200,9 @@ fun BackupTab(
                                 icon = R.drawable.reset,
                                 enabled = !hasTriggeredManualAutoBackup,
                                 onClick = {
-                                        backupViewModel.commandBackup()
-                                        ctx.showToast(ctx.getString(R.string.backup_triggered))
-                                        hasTriggeredManualAutoBackup = true
+                                    backupViewModel.commandBackup()
+                                    ctx.showToast(ctx.getString(R.string.backup_triggered))
+                                    hasTriggeredManualAutoBackup = true
                                 }
                             )
                         }
@@ -275,23 +275,20 @@ fun BackupTab(
                                 json,
                                 selectedStoresForImport
                             )
-                            backupViewModel.result.set(
-                                BackupResult(
-                                    export = false,
-                                    error = false,
-                                    title = ctx.getString(R.string.import_successful)
-                                )
+                            backupViewModel.result.value = BackupResult(
+                                export = false,
+                                error = false,
+                                title = ctx.getString(R.string.import_successful)
                             )
+
                             importJson = null
                         } catch (e: Exception) {
                             logE(BACKUP_TAG, e) { "Import failed" }
-                            backupViewModel.result.set(
-                                BackupResult(
-                                    export = false,
-                                    error = true,
-                                    title = ctx.getString(R.string.import_failed),
-                                    message = e.message ?: ""
-                                )
+                            backupViewModel.result.value = BackupResult(
+                                export = false,
+                                error = true,
+                                title = ctx.getString(R.string.import_failed),
+                                message = e.message ?: ""
                             )
                         }
                     }

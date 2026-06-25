@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,32 +30,31 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.logging.APP_LAUNCH_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.models.Application.Companion.toLaunchApp
 import org.elnix.dragonlauncher.base.model.models.BluetoothADBCommands
 import org.elnix.dragonlauncher.base.model.models.DataADBCommands
-import org.elnix.dragonlauncher.base.model.models.PointApp
 import org.elnix.dragonlauncher.base.model.models.WifiADBCommands
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.defaultChoosableActions
-import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Action.LaunchShortcut.Companion.toAction
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
-import io.github.elnix90.logging.APP_LAUNCH_TAG
-import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.actions.ActionIcon
-import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.base.components.VerticalScrollIndicator
 import org.elnix.dragonlauncher.ui.composition.LocalShowLabelsInAddPointDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
@@ -61,7 +62,6 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.dragon.text.AutoResizeableText
 
-@Suppress("AssignedValueIsNeverRead")
 @Composable
 fun AddPointDialog(
     actions: List<Action> = defaultChoosableActions,
@@ -145,11 +145,8 @@ fun AddPointDialog(
 
                 if (actualActions.any { it is Action.LaunchApp }) {
 
-                    val dummyLaunchAppAction = Action.LaunchApp.dummy()
-                    val dummyPoint = Point.dummySwipePoint(dummyLaunchAppAction)
-                    val fakeApp = PointApp(dummyPoint)
+                    val dummyLaunchAppAction = Action.LaunchApp.dummy
                     val color = dummyLaunchAppAction.actionColor(LocalExtraColors.current)
-
 
                     Row(
                         modifier = Modifier
@@ -162,7 +159,7 @@ fun AddPointDialog(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        AppIcon(fakeApp)
+                        ActionIcon(dummyLaunchAppAction, size = 30.dp)
                         Spacer(5.dp)
                         Text(
                             text = stringResource(R.string.open_app),
@@ -172,66 +169,71 @@ fun AddPointDialog(
                     }
                 }
 
+                val gridState = rememberLazyGridState()
 
-                LazyVerticalGrid(
-                    modifier = Modifier.clip(DragonShape),
-                    columns = GridCells.Fixed(if (showTooltipsOnAddPointDialog) 1 else 3),
-                    verticalArrangement = Arrangement.spacedBy(5.dp),
-                    horizontalArrangement = Arrangement.spacedBy(5.dp)
-                ) {
-                    // Loop through all actions
-                    items(actualActions.filterNot { it is Action.LaunchApp }) { action ->
-                        AddPointColumn(
-                            action = action,
-                            showText = { showTooltipsOnAddPointDialog },
-                            onSelected = {
-                                when (action) {
-                                    is Action.LaunchShortcut -> {
-                                        showPinnedShortcutsPicker = true
+                Box {
+                    LazyVerticalGrid(
+                        modifier = Modifier.clip(DragonShape),
+                        columns = GridCells.Fixed(if (showTooltipsOnAddPointDialog) 1 else 3),
+                        state = gridState,
+                        verticalArrangement = Arrangement.spacedBy(5.dp),
+                        horizontalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                        // Loop through all actions
+                        items(actualActions.filterNot { it is Action.LaunchApp }) { action ->
+                            AddPointColumn(
+                                action = action,
+                                showText = { showTooltipsOnAddPointDialog },
+                                onSelected = {
+                                    when (action) {
+                                        is Action.LaunchShortcut -> {
+                                            showPinnedShortcutsPicker = true
+                                        }
+
+                                        is Action.OpenAppDrawer -> {
+                                            showWorkspacePicker = true
+                                        }
+
+                                        is Action.OpenCircleNest -> {
+                                            showNestPicker = true
+                                        }
+
+                                        is Action.OpenDragonLauncherSettings -> {
+                                            showSettingsPagePicker = true
+                                        }
+
+                                        is Action.OpenFile -> {
+                                            showFilePicker = true
+                                        }
+
+                                        is Action.OpenUrl -> {
+                                            showUrlInput = true
+                                        }
+
+                                        is Action.RunAdbCommand -> {
+                                            showAdbCommandInput = true
+                                        }
+
+                                        is Action.ToggleData -> {
+                                            showDataCommandInput = true
+                                        }
+
+                                        is Action.ToggleWifi -> {
+                                            showWifiCommandInput = true
+                                        }
+
+                                        is Action.ToggleBluetooth -> {
+                                            showBluetoothCommandInput = true
+                                        }
+
+                                        else -> onActionPicked(action)
                                     }
-
-                                    is Action.OpenAppDrawer -> {
-                                        showWorkspacePicker = true
-                                    }
-
-                                    is Action.OpenCircleNest -> {
-                                        showNestPicker = true
-                                    }
-
-                                    is Action.OpenDragonLauncherSettings -> {
-                                        showSettingsPagePicker = true
-                                    }
-
-                                    is Action.OpenFile -> {
-                                        showFilePicker = true
-                                    }
-
-                                    is Action.OpenUrl -> {
-                                        showUrlInput = true
-                                    }
-
-                                    is Action.RunAdbCommand -> {
-                                        showAdbCommandInput = true
-                                    }
-
-                                    is Action.ToggleData -> {
-                                        showDataCommandInput = true
-                                    }
-
-                                    is Action.ToggleWifi -> {
-                                        showWifiCommandInput = true
-                                    }
-
-                                    is Action.ToggleBluetooth -> {
-                                        showBluetoothCommandInput = true
-                                    }
-
-                                    else -> onActionPicked(action)
                                 }
-                            }
-                        )
-                        Spacer(8.dp)
+                            )
+                            this@Column.Spacer(8.dp)
+                        }
                     }
+                    VerticalScrollIndicator(gridState.canScrollForward)
                 }
             }
         }
@@ -249,7 +251,7 @@ fun AddPointDialog(
                 val list = if (promptForShortcuts) {
                     try {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                            drawerViewModel.appsRepository.queryAppShortcuts(app.packageName)
+                            drawerViewModel.queryAppShortcuts(app.packageName)
                         } else {
                             emptyList()
                         }
@@ -357,8 +359,8 @@ fun AddPointDialog(
             app = app,
             shortcuts = shortcuts,
             onDismiss = { shortcutDialogVisible = false },
-            onShortcutSelected = { pkg, id ->
-                onActionPicked(Action.LaunchShortcut(pkg, id))
+            onShortcutSelected = { shortcut ->
+                onActionPicked(shortcut.toAction())
                 shortcutDialogVisible = false
             },
             onOpenApp = {

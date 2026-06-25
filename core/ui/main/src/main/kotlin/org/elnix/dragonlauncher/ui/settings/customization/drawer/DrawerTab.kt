@@ -30,19 +30,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.logging.SHAPES_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.Companion.notDisabled
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.Companion.notNone
 import org.elnix.dragonlauncher.i18n.R
-import io.github.elnix90.logging.SHAPES_TAG
-import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
-import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.dialogs.DrawerToolbarsOrderDialog
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -75,7 +74,7 @@ fun DrawerTab(
     val leftDrawerWidth by DrawerSettingsStore.leftDrawerWidth.asState()
     val rightDrawerWidth by DrawerSettingsStore.rightDrawerWidth.asState()
 
-    val iconShape = LocalIconShape.current
+    val iconShape by DrawerSettingsStore.iconShape.asState()
 
     val drawerCategorySettingsState = rememberExpandableSection(stringResource(R.string.category_settings))
     val drawerNormalSettingsState = rememberExpandableSection(stringResource(R.string.grid_settings))
@@ -173,16 +172,7 @@ fun DrawerTab(
             ExpandableSection(drawerCategorySettingsState) {
                 SettingsSwitchRow(DrawerSettingsStore.useCategory)
                 SettingsSwitchRow(DrawerSettingsStore.showCategoryName, enabled = useCategory)
-
-                SettingsSlider(
-                    setting = DrawerSettingsStore.categoryGridWidth,
-
-                )
-
-                SettingsSlider(
-                    setting = DrawerSettingsStore.categoryGridCells,
-
-                )
+                SettingsSlider(DrawerSettingsStore.categoryGridCells)
             }
 
             ExpandableSection(drawerNormalSettingsState) {

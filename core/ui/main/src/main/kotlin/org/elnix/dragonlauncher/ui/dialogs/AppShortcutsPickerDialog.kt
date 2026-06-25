@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.ui.dialogs
 
 import android.content.pm.ShortcutInfo
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,17 +25,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.serializables.Action.LaunchShortcut.Companion.toAction
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.actions.AppIcon
+import org.elnix.dragonlauncher.ui.actions.ShortcutIcon
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
-import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppDrawerSearch
 
@@ -53,13 +50,10 @@ private fun ShortcutInfo.matchesAppShortcutSearch(appName: String, q: String): B
 fun AppShortcutPickerDialog(
     app: Application,
     shortcuts: List<ShortcutInfo>,
-    drawerViewModel: DrawerViewModel = activityViewModel(),
     onDismiss: () -> Unit,
-    onShortcutSelected: (packageName: String, shortcutId: String) -> Unit,
+    onShortcutSelected: (shortcut: ShortcutInfo) -> Unit,
     onOpenApp: () -> Unit
 ) {
-    val appRepository = drawerViewModel.appsRepository
-
     val appName = app.label
     var searchQuery by remember { mutableStateOf("") }
 
@@ -127,38 +121,20 @@ fun AppShortcutPickerDialog(
                     }
                 } else {
                     filteredShortcuts.forEach { shortcut ->
-                        val icon = appRepository.loadShortcutIcon(shortcut.`package`, shortcut.id)
-
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(DragonShape)
                                 .clickable {
-                                    onShortcutSelected(shortcut.`package`, shortcut.id)
+                                    onShortcutSelected(shortcut)
                                 }
                                 .padding(8.dp)
                         ) {
-                            if (icon != null) {
-                                val bitmapPainter = remember(icon) {
-                                    try {
-                                        BitmapPainter(icon.asImageBitmap())
-                                    } catch (_: Exception) {
-                                        null
-                                    }
-                                }
-
-                                if (bitmapPainter != null) {
-                                    Image(
-                                        painter = bitmapPainter,
-                                        contentDescription = shortcut.shortLabel?.toString(),
-                                        modifier = Modifier
-                                            .size(32.dp)
-                                            .clip(DragonShape)
-                                    )
-                                    Spacer(8.dp)
-                                }
-                            }
+                            ShortcutIcon(
+                                shortcut = shortcut.toAction(),
+                                size = 35.dp
+                            )
                             Text(
                                 text = shortcut.shortLabel?.toString() ?: "Unnamed",
                                 style = MaterialTheme.typography.bodyLarge
@@ -181,7 +157,7 @@ fun AppShortcutPickerDialog(
                             .padding(8.dp)
                     ) {
 
-                        AppIcon(app)
+                        AppIcon(app, size = 30.dp)
                         Spacer(8.dp)
 
                         Text(

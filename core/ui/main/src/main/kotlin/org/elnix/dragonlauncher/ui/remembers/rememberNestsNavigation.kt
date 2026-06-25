@@ -10,7 +10,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Nest
 import io.github.elnix90.logging.NESTS_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logW
-import org.elnix.dragonlauncher.models.PointViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 /**
  * Remembers and manages navigation state between [Nest]s.
@@ -32,7 +32,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
  */
 @Composable
 fun rememberNestNavigation(
-    pointsViewModel: PointViewModel = activityViewModel()
+    pointsViewModel: PointsViewModel = activityViewModel()
 ): NestNavigationState {
 
     val nests by pointsViewModel.nests.collectAsState()

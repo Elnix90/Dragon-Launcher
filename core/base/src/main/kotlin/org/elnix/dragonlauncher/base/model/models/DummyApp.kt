@@ -5,7 +5,7 @@ import android.content.Context
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 
-class DummyApp : Application() {
+object DummyApp : Application() {
     override val isSystem: Boolean = false
     override val isLaunchable: Boolean = true
     override val isSuspended: Boolean = false
@@ -28,7 +28,7 @@ class DummyApp : Application() {
      */
     override var cachedNormalizerResult: Pair<String, String>? = null
 
-    override suspend fun loadIcon(themed: Boolean): LauncherIcon? = null
+    override suspend fun loadIcon(themed: Boolean, tint: Int?): LauncherIcon? = null
 
     override fun getStoreDetails(ctx: Context): StoreLink? = null
 }

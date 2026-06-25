@@ -20,11 +20,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +41,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.util.ColorUtils.randomColor
 import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
@@ -51,7 +54,6 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
@@ -60,11 +62,13 @@ import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
+import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ColorPickerRow(
-    label: String,
+    title: String,
+    description: String?,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     currentColor: Color,
@@ -82,12 +86,16 @@ fun ColorPickerRow(
         enabled = enabled,
         onClick = { showPicker = true }
     ) {
-        Text(
-            text = label,
-            color = MaterialTheme.colorScheme.onSurface.semiTransparentIfDisabled(enabled),
-            style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier.weight(1f),
-        )
+
+        CompositionLocalProvider(
+            LocalContentColor provides MaterialTheme.colorScheme.onSurface.semiTransparentIfDisabled(enabled)
+        ) {
+            TextWithDescription(
+                text = title,
+                description = description,
+                modifier = Modifier.weight(1f)
+            )
+        }
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -96,15 +104,17 @@ fun ColorPickerRow(
 
             ColorPickerButtonOne(
                 currentColor = currentColor,
-                onReset = { onColorPicked(null) },
                 backgroundColor = backgroundColor,
+                enabled = enabled,
+                onReset = { onColorPicked(null) },
                 onColorPicked = onColorPicked
             )
 
             ColorPickerButtonTwo(
                 currentColor = currentColor,
-                onReset = { onColorPicked(null) },
                 backgroundColor = backgroundColor,
+                enabled = enabled,
+                onReset = { onColorPicked(null) },
                 onColorPicked = onColorPicked
             )
 
@@ -139,7 +149,7 @@ fun ColorPickerRow(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = label,
+                        text = title,
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.titleMediumEmphasized
                     )

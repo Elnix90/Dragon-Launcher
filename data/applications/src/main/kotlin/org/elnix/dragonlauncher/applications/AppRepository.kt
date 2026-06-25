@@ -31,6 +31,7 @@ import org.elnix.dragonlauncher.base.model.models.Application.Companion.getPacka
 import org.elnix.dragonlauncher.base.model.models.LauncherApp
 import org.elnix.dragonlauncher.base.model.models.ResultScore
 import org.elnix.dragonlauncher.base.model.models.SystemApp
+import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
@@ -55,8 +56,10 @@ interface AppRepository {
 
     suspend fun refreshApps()
 
+    suspend fun fromAction(action: Action.LaunchApp): Application?
+
     fun queryAppShortcuts(packageName: String): List<ShortcutInfo>
-    fun loadShortcutIcon(packageName: String, shortcutId: String, widthPx: Int = 48, heightPx: Int = 48): Bitmap?
+    fun loadShortcutIcon(packageName: String, shortcutId: String, sizePx: Int = 48): Bitmap?
 }
 
 internal class AppRepositoryImpl(
@@ -237,6 +240,13 @@ internal class AppRepositoryImpl(
         // TODO add custom label
     }
 
+    override suspend fun fromAction(action: Action.LaunchApp): Application? =
+        installedApps
+            .first()
+            .firstOrNull {
+                it.packageName == action.packageName && it.profile == action.profile
+            }
+
     /**
      * Returns a filtered and sorted list of apps for the specified workspace as a reactive Flow.
      *
@@ -336,12 +346,6 @@ internal class AppRepositoryImpl(
     override fun queryAppShortcuts(packageName: String): List<ShortcutInfo> =
         packageManagerCompat.queryAppShortcuts(packageName)
 
-    override fun loadShortcutIcon(packageName: String, shortcutId: String, widthPx: Int, heightPx: Int): Bitmap? =
-        packageManagerCompat.loadShortcutIcon(packageName, shortcutId, widthPx, heightPx)
-
-
-    private data class TempApp(
-        val packageName: String,
-        val userHandle: UserHandle
-    )
+    override fun loadShortcutIcon(packageName: String, shortcutId: String, sizePx: Int): Bitmap? =
+        packageManagerCompat.loadShortcutIcon(packageName, shortcutId, sizePx)
 }

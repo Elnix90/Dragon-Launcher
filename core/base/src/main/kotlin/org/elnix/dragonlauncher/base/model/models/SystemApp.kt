@@ -6,11 +6,9 @@ import android.content.pm.ApplicationInfo
 import android.graphics.drawable.AdaptiveIconDrawable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.elnix.dragonlauncher.base.icons.ColorLayer
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
-import org.elnix.dragonlauncher.base.icons.StaticIconLayer
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
-import org.elnix.dragonlauncher.base.icons.TintedIconLayer
+import org.elnix.dragonlauncher.base.icons.StaticIconLayer
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
@@ -52,7 +50,7 @@ data class SystemApp(
     override val category: AppCategory = AppCategory.Other
 
 
-    override suspend fun loadIcon(themed: Boolean): LauncherIcon? {
+    override suspend fun loadIcon(themed: Boolean, tint: Int?): LauncherIcon? {
         return try {
             val icon = withContext(Dispatchers.IO) {
                 applicationInfo.loadIcon(ctx.packageManager)
@@ -62,11 +60,12 @@ data class SystemApp(
                 is AdaptiveIconDrawable -> {
                     if (themed && isAtLeastApiLevel(33) && icon.monochrome != null) {
                         StaticLauncherIcon(
-                            foregroundLayer = TintedIconLayer(
+                            foregroundLayer = StaticIconLayer(
                                 scale = 1.5f,
                                 icon = icon.monochrome!!,
+                                tint = tint
                             ),
-                            backgroundLayer = ColorLayer()
+                            backgroundLayer = TransparentLayer
                         )
                     } else {
                         StaticLauncherIcon(
@@ -74,12 +73,14 @@ data class SystemApp(
                                 StaticIconLayer(
                                     icon = it,
                                     scale = 1.5f,
+                                    tint = tint
                                 )
                             } ?: TransparentLayer,
                             backgroundLayer = icon.background?.let {
                                 StaticIconLayer(
                                     icon = it,
                                     scale = 1.5f,
+                                    tint = tint
                                 )
                             } ?: TransparentLayer,
                         )
@@ -91,6 +92,7 @@ data class SystemApp(
                         foregroundLayer = StaticIconLayer(
                             icon = icon,
                             scale = 1f,
+                            tint = tint
                         ),
                         backgroundLayer = TransparentLayer
                     )

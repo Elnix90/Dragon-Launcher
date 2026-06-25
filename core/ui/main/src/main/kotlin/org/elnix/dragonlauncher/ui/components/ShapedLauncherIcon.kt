@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.badges.Badge
 import org.elnix.dragonlauncher.badges.BadgeIcon
 import org.elnix.dragonlauncher.base.icons.ClockLayer
@@ -57,15 +58,13 @@ import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.icons.LauncherIconRenderSettings
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.icons.TextLayer
-import org.elnix.dragonlauncher.base.icons.TintedClockLayer
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
 import org.elnix.dragonlauncher.base.icons.VectorLayer
-import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ktx.drawWithColorFilter
 import org.elnix.dragonlauncher.ktx.px
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalTime
-import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import palettes.TonalPalette
 import java.time.Instant
 import java.time.ZoneId
@@ -77,12 +76,12 @@ fun ShapedLauncherIcon(
     modifier: Modifier = Modifier,
     size: Dp,
     icon: () -> LauncherIcon? = { null },
-    badge: () -> Badge? = { null },
-    shape: IconShape = LocalIconShape.current
+    badge: () -> Badge? = { null }
 ) {
-
     val icon = icon()
-    val shape = shape.resolveShape()
+
+    val iconShape by DrawerSettingsStore.iconShape.asState()
+    val shape = iconShape.resolveShape()
 
     var currentIcon by remember(icon) {
         mutableStateOf(
@@ -125,8 +124,7 @@ fun ShapedLauncherIcon(
             .sizeIn(maxWidth = size, maxHeight = size)
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             val bmp = currentBitmap
@@ -150,9 +148,9 @@ fun ShapedLauncherIcon(
                         drawOutline(outline, brush)
                     }
                 }
+
                 // Background layer is always static layer, color layer, or transparent layer
-                val fg = ic.foregroundLayer
-                when (fg) {
+                when (val fg = ic.foregroundLayer) {
                     is ClockLayer -> {
                         ClockLayer(
                             modifier = Modifier
@@ -163,24 +161,10 @@ fun ShapedLauncherIcon(
                             defaultHour = fg.defaultHour,
                             defaultSecond = fg.defaultSecond,
                             scale = fg.scale,
-                            tintColor = null,
-                        )
-                    }
-
-                    is TintedClockLayer -> {
-                        ClockLayer(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(shape),
-                            sublayers = fg.sublayers,
-                            defaultMinute = fg.defaultMinute,
-                            defaultHour = fg.defaultHour,
-                            defaultSecond = fg.defaultSecond,
-                            scale = fg.scale,
-                            tintColor = if (fg.color == 0) {
+                            tintColor = if (fg.tint == 0) {
                                 Color(renderSettings.fgThemeColor)
                             } else {
-                                Color(getTone(fg.color, renderSettings.fgTone))
+                                Color(getTone(fg.tint ?: 0, renderSettings.fgTone))
                             },
                         )
                     }
@@ -191,10 +175,10 @@ fun ShapedLauncherIcon(
                             style = MaterialTheme.typography.headlineSmall.copy(
                                 fontSize = 20.sp * (size / 48.dp)
                             ),
-                            color = if (fg.color == 0) {
+                            color = if (fg.tint == 0) {
                                 Color(renderSettings.fgThemeColor)
                             } else {
-                                Color(getTone(fg.color, renderSettings.fgTone))
+                                Color(getTone(fg.tint ?: 0, renderSettings.fgTone))
                             },
                         )
                     }
@@ -202,10 +186,10 @@ fun ShapedLauncherIcon(
                     is VectorLayer -> {
                         Icon(
                             painter = painterResource(fg.icon), contentDescription = null,
-                            tint = if (fg.color == 0) {
+                            tint = if (fg.tint == 0) {
                                 Color(renderSettings.fgThemeColor)
                             } else {
-                                Color(getTone(fg.color, renderSettings.fgTone))
+                                Color(getTone(fg.tint ?: 0, renderSettings.fgTone))
                             },
                             modifier = Modifier.size(size / 2f),
                         )

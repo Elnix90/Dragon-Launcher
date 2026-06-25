@@ -10,7 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,11 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.findFragmentActivity
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.LockScreenViewModel
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -31,7 +32,6 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
-@Suppress("VariableNeverRead")
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun LockMethodDialog(
@@ -40,9 +40,7 @@ fun LockMethodDialog(
 ) {
     val ctx = LocalContext.current
 
-    val securityService = lockScreenViewModel.securityService
-
-    val currentLockMethod by lockScreenViewModel.lockMethod.collectAsState()
+    val currentLockMethod by PrivateSettingsStore.lockMethod.asState()
     var showPinSetupDialog by remember { mutableStateOf(false) }
     var pendingLockMethod by remember { mutableStateOf<LockMethod?>(null) }
 
@@ -66,7 +64,7 @@ fun LockMethodDialog(
                     Spacer(8.dp)
                     LockMethod.entries.forEach { method ->
 
-                        val unavailableText = if (method == LockMethod.Device && !securityService.isDeviceUnlockAvailable(ctx)) {
+                        val unavailableText = if (method == LockMethod.Device && !lockScreenViewModel.isDeviceUnlockAvailable()) {
                             stringResource(R.string.device_credentials_not_available)
                         } else null
 
@@ -87,8 +85,8 @@ fun LockMethodDialog(
                                 LockMethod.Device -> {
                                     // Test biometric authentication immediately
                                     val activity = ctx.findFragmentActivity()
-                                    if (activity != null && securityService.isDeviceUnlockAvailable(ctx)) {
-                                        securityService.showDeviceUnlockPrompt(
+                                    if (activity != null && lockScreenViewModel.isDeviceUnlockAvailable()) {
+                                        lockScreenViewModel.showDeviceUnlockPrompt(
                                             activity = activity,
                                             onSuccess = {
                                                 lockScreenViewModel.setLockScreenMethod()

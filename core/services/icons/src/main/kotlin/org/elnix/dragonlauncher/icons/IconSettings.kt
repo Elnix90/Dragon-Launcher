@@ -11,21 +11,28 @@ class IconSettingsRepository(
     ctx: Context
 ) {
     private val selectedIconPack: Flow<String> = IconsSettingsStore.selectedIconPack.flow(ctx)
-    private val iconPackTint: Flow<Color> = IconsSettingsStore.iconPackTint.flow(ctx)
+    private val useIconTint: Flow<Boolean> = IconsSettingsStore.useIconTint.flow(ctx)
+    private val iconTint: Flow<Color> = IconsSettingsStore.iconsTint.flow(ctx)
     private val themedIcons: Flow<Boolean> = IconsSettingsStore.themedIcons.flow(ctx)
     private val forceThemed: Flow<Boolean> = IconsSettingsStore.forceThemed.flow(ctx)
     private val adaptify: Flow<Boolean> = IconsSettingsStore.adaptify.flow(ctx)
 
+    private val tintFlow: Flow<Color?> = combine(useIconTint, iconTint) { use, tint ->
+        if (use) {
+            tint
+        } else null
+    }
+
     val settings: Flow<IconSettings> = combine(
         selectedIconPack,
-        iconPackTint,
+        tintFlow,
         themedIcons,
         forceThemed,
         adaptify
     ) { pack, tint, themed, force, adapt ->
         IconSettings(
             iconPack = pack,
-            iconPackTint = tint.toArgb(),
+            iconsTint = tint?.toArgb(),
             themedIcons = themed,
             forceThemed = force,
             adaptify = adapt
@@ -35,7 +42,7 @@ class IconSettingsRepository(
 
 data class IconSettings(
     val iconPack: String? = null,
-    val iconPackTint: Int = 0,
+    val iconsTint: Int? = null,
     val themedIcons: Boolean = false,
     val forceThemed: Boolean = false,
     val adaptify: Boolean = false,
