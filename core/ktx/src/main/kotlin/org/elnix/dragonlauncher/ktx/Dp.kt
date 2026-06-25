@@ -12,13 +12,13 @@ import androidx.compose.ui.unit.Dp
  * the current density from [LocalDensity], making it convenient to use dp-based
  * dimensions with APIs that expect pixel values.
  */
-inline val Dp.px: Float
+public inline val Dp.px: Float
     @Composable
     get() = value * LocalDensity.current.density
 
 
 /** Create a [Dp] using an [Float], using local density for consistent results across different density devices */
 @Stable
-inline val Float.toDp: Dp
+public inline val Float.toDp: Dp
     @Composable
     get() = with(LocalDensity.current) { this@toDp.toDp() }

@@ -2,11 +2,11 @@ package org.elnix.dragonlauncher.models
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.elnix90.core.objects.BooleanSettingObject
 import io.github.elnix90.logging.FileLoggingTree
 import io.github.elnix90.logging.LOGS_TAG
 import io.github.elnix90.logging.LogAlert
@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import javax.inject.Inject
 
 @HiltViewModel
-class DragonLogViewModel @Inject constructor(
+public class DragonLogViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
@@ -33,10 +33,10 @@ class DragonLogViewModel @Inject constructor(
 
     private val recentLogs = ConcurrentLinkedQueue<LogAlert>()
     private val _alertFlow = MutableStateFlow<LogAlert?>(null)
-    val alertFlow: StateFlow<LogAlert?> = _alertFlow
+    public val alertFlow: StateFlow<LogAlert?> = _alertFlow
 
 
-    val enableLogging = DebugSettingsStore.enableLogging
+    private val enableLogging: BooleanSettingObject = DebugSettingsStore.enableLogging
 
     private val maxRecentLogs = 50
 
@@ -62,7 +62,7 @@ class DragonLogViewModel @Inject constructor(
         _alertFlow.value = alert
     }
 
-    fun updateEnableLogging(enable: Boolean) {
+    public fun updateEnableLogging(enable: Boolean) {
         viewModelScope.launch {
 
             if (enableLogging.get(application) == enable) {
@@ -74,21 +74,21 @@ class DragonLogViewModel @Inject constructor(
         }
     }
 
-    fun updateSnackBarLogLevel(newLevel: Int) {
+    public fun updateSnackBarLogLevel(newLevel: Int) {
         fileTree?.snackBarLogLevel = newLevel
         viewModelScope.launch {
             DebugSettingsStore.snackBarLogLevel.set(ctx, newLevel)
         }
     }
 
-    fun updateFilesLogLevel(newLevel: Int) {
+    public fun updateFilesLogLevel(newLevel: Int) {
         fileTree?.filesLogsLevel = newLevel
         viewModelScope.launch {
             DebugSettingsStore.filesLogLevel.set(ctx, newLevel)
         }
     }
 
-    fun updateFilterTag(newTag: String) {
+    public fun updateFilterTag(newTag: String) {
         fileTree?.filterTag = newTag
         viewModelScope.launch {
             DebugSettingsStore.filterTag.set(ctx, newTag)
@@ -100,8 +100,6 @@ class DragonLogViewModel @Inject constructor(
         val plantedTrees = Timber.forest()
         if (enableLogging.get(application.applicationContext)) {
             if (tree !in plantedTrees) {
-
-                Log.e("TEST", "Planting $tree")
                 Timber.plant(tree)
             }
         } else {
@@ -111,17 +109,17 @@ class DragonLogViewModel @Inject constructor(
         }
     }
 
-    fun getAllLogFiles(): List<File> {
+    public fun getAllLogFiles(): List<File> {
         return fileTree?.getAllLogFiles() ?: emptyList()
     }
 
-    fun clearLogs() {
+    public fun clearLogs() {
         fileTree?.clearAllLogs()
         recentLogs.clear()
         _alertFlow.value = null
     }
 
-    fun readLogFile(file: File): String {
+    public fun readLogFile(file: File): String {
         return try {
             file.readText()
         } catch (e: Exception) {
@@ -130,7 +128,7 @@ class DragonLogViewModel @Inject constructor(
         }
     }
 
-    fun deleteLogFile(file: File) {
+    public fun deleteLogFile(file: File) {
         try {
             file.delete()
         } catch (e: Exception) {

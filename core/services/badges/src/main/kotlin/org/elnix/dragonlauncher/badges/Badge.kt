@@ -3,25 +3,25 @@ package org.elnix.dragonlauncher.badges
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 
-sealed interface BadgeIcon {
+public sealed interface BadgeIcon {
     @JvmInline
-    value class Drawable(val drawable: android.graphics.drawable.Drawable): BadgeIcon
+    public value class Drawable(public val drawable: android.graphics.drawable.Drawable): BadgeIcon
 
     @JvmInline
-    value class Vector(@param:DrawableRes val iconRes: Int): BadgeIcon
+    public value class Vector(@param:DrawableRes public val iconRes: Int): BadgeIcon
 }
 
-fun BadgeIcon(drawable: Drawable): BadgeIcon = BadgeIcon.Drawable(drawable)
+public fun BadgeIcon(drawable: Drawable): BadgeIcon = BadgeIcon.Drawable(drawable)
 
-fun BadgeIcon(@DrawableRes iconRes: Int): BadgeIcon = BadgeIcon.Vector(iconRes)
+public fun BadgeIcon(@DrawableRes iconRes: Int): BadgeIcon = BadgeIcon.Vector(iconRes)
 
-interface Badge {
-    val number: Int?
-    val progress: Float?
-    val icon: BadgeIcon?
+public interface Badge {
+    public val number: Int?
+    public val progress: Float?
+    public val icon: BadgeIcon?
 }
 
-fun Badge(
+public fun Badge(
     number: Int? = null,
     progress: Float? = null,
     icon: BadgeIcon? = null
@@ -33,7 +33,7 @@ internal data class MutableBadge(
     override var icon: BadgeIcon? = null
 ): Badge
 
-fun Collection<Badge>.combine(): Badge? {
+public fun Collection<Badge>.combine(): Badge? {
     if (isEmpty()) return null
     val badge = MutableBadge()
     var progresses = 0

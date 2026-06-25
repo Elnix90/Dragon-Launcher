@@ -11,11 +11,11 @@ import androidx.compose.ui.platform.LocalContext
 import org.elnix.dragonlauncher.common.utils.VersionsUtils.getVersionCode
 import org.elnix.dragonlauncher.common.utils.VersionsUtils.getVersionName
 
-object VersionsUtils {
+public object VersionsUtils {
     /**
      * @return the current app version code (e.g. `46`)
      */
-    fun Context.getVersionCode(): Int =
+    public fun Context.getVersionCode(): Int =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             packageManager.getPackageInfo(packageName, 0).longVersionCode.toInt()
         } else {
@@ -26,13 +26,13 @@ object VersionsUtils {
     /**
      * @return the current app version name (e.g. `2.7.0-Glowel`)
      */
-    fun Context.getVersionName(): String =
+    public fun Context.getVersionName(): String =
         packageManager.getPackageInfo(packageName, 0).versionName ?: "unknown"
 
     /**
      * @return the current app version name and code formatted (e.g. `2.7.0-Glowel (46)`)
      */
-    fun Context.getVersionNameAndCode(): String =
+    public fun Context.getVersionNameAndCode(): String =
         "${getVersionName()} (${getVersionCode()})"
 
     /**
@@ -41,19 +41,19 @@ object VersionsUtils {
      *
      * @return [Boolean] whether the build is a beta or not
      */
-    fun Context.isBetaVersion(): Boolean =
+    public fun Context.isBetaVersion(): Boolean =
         getVersionName().contains("beta")
 }
 
 
 @Composable
-fun rememberVersionCode(): State<Int> {
+public fun rememberVersionCode(): State<Int> {
     val ctx = LocalContext.current
     return remember { mutableIntStateOf(ctx.getVersionCode()) }
 }
 
 @Composable
-fun rememberVersionName(): State<String> {
+public fun rememberVersionName(): State<String> {
     val ctx = LocalContext.current
     return remember { mutableStateOf(ctx.getVersionName()) }
 }

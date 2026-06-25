@@ -2,6 +2,8 @@ package org.elnix.dragonlauncher.settings.stores.map
 
 import io.github.elnix90.annotations.SettingKey
 import io.github.elnix90.annotations.SettingsStore
+import io.github.elnix90.core.objects.BooleanSettingObject
+import io.github.elnix90.core.objects.StringSettingObject
 import io.github.elnix90.core.objects.boolean
 import io.github.elnix90.core.objects.string
 import io.github.elnix90.core.stores.MapSettingsStore
@@ -10,57 +12,57 @@ import org.elnix.dragonlauncher.i18n.R
 
 
 @SettingsStore
-object AngleLineSettingsStore : MapSettingsStore() {
+public object AngleLineSettingsStore : MapSettingsStore() {
 
     @SettingKey
-    val showLineObjectPreview = boolean(
+    public val showLineObjectPreview: BooleanSettingObject = boolean(
         title = R.string.show_app_line_preview,
         description = R.string.show_app_line_preview_description,
         default = true
     )
 
     @SettingKey
-    val showAngleLineObjectPreview = boolean(
+    public val showAngleLineObjectPreview: BooleanSettingObject = boolean(
         title = R.string.show_app_angle_preview,
         description = R.string.show_app_angle_preview_description,
         default = false
     )
 
     @SettingKey
-    val showStartObjectPreview = boolean(
+    public val showStartObjectPreview: BooleanSettingObject = boolean(
         title = R.string.show_start_object_preview,
         description = R.string.show_start_object_preview_desc,
         default = true
     )
 
     @SettingKey
-    val showEndObjectPreview = boolean(
+    public val showEndObjectPreview: BooleanSettingObject = boolean(
         title = R.string.show_end_object_preview,
         description = R.string.show_end_object_preview_desc,
         default = true
     )
 
     @SettingKey
-    val lineJson = string("")
+    public val lineJson: StringSettingObject = string("")
 
     @SettingKey
-    val angleLineJson = string(
+    public val angleLineJson: StringSettingObject = string(
         default = "",
         title = R.string.angle_object
     )
 
     @SettingKey
-    val startLineJson = string(
+    public val startLineJson: StringSettingObject = string(
         default = "",
         title = R.string.start_object
     )
 
     @SettingKey
-    val endLineJson = string(
+    public val endLineJson: StringSettingObject = string(
         default = "",
         title = R.string.end_object
     )
 
     @SettingKey
-    val angleLineObjectsOrder = string(AngleLineObjects.entries.joinToString(",") { it.name })
+    public val angleLineObjectsOrder: StringSettingObject = string(AngleLineObjects.entries.joinToString(",") { it.name })
 }

@@ -7,21 +7,18 @@ import android.os.Handler
 import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
 import androidx.compose.runtime.mutableStateOf
+import io.github.elnix90.logging.ACCESSIBILITY_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logW
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import io.github.elnix90.logging.ACCESSIBILITY_TAG
-import io.github.elnix90.logging.logD
-import io.github.elnix90.logging.logW
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 
 @SuppressLint("AccessibilityPolicy")
-class SystemControlService : AccessibilityService() {
-
-
-//    private var lastForegroundPackage: String? = null
+public class SystemControlService : AccessibilityService() {
 
     private var systemLauncher: String? = null
     private var autoRaiseEnabled = false
@@ -147,7 +144,7 @@ class SystemControlService : AccessibilityService() {
         logD(ACCESSIBILITY_TAG) { "Service ready - Gestures & window monitoring enabled" }
     }
 
-    fun openNotificationShade() {
+    public fun openNotificationShade() {
         performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS)
     }
 
@@ -155,7 +152,7 @@ class SystemControlService : AccessibilityService() {
 //        performGlobalAction(GLOBAL_ACTION_QUICK_SETTINGS)
 //    }
 
-    fun openRecentApps() {
+    public fun openRecentApps() {
         performGlobalAction(GLOBAL_ACTION_RECENTS)
     }
 
@@ -190,8 +187,8 @@ class SystemControlService : AccessibilityService() {
         }
     }
 
-    companion object {
-        var INSTANCE: SystemControlService? = null
+    public companion object {
+        public var INSTANCE: SystemControlService? = null
         private const val DEBOUNCE_DELAY_MS = 500L
         private var lastLaunchTime = 0L
         private val isSwitching = mutableStateOf(false)

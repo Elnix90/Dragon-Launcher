@@ -34,7 +34,7 @@ internal data class ProfileWithState(
     val state: Profile.State,
 )
 
-class ProfileManager(
+public class ProfileManager(
     private val ctx: Context,
     private val permissionsManager: PermissionsManager,
 ) {
@@ -59,13 +59,13 @@ class ProfileManager(
     /**
      * List of profiles that are active and unlocked.
      */
-    val activeProfiles: Flow<List<Profile>> = profileStates.map { states ->
+    public val activeProfiles: Flow<List<Profile>> = profileStates.map { states ->
         states.mapNotNull {
             if (it?.state?.locked != false) null else it.profile
         }
     }.shareIn(scope, SharingStarted.WhileSubscribed(), replay = 1)
 
-    val profiles: Flow<List<Profile?>> = profileStates.map { states ->
+    public val profiles: Flow<List<Profile?>> = profileStates.map { states ->
         states.map { it?.profile }
     }.shareIn(scope, SharingStarted.WhileSubscribed(), replay = 1)
 
@@ -136,13 +136,13 @@ class ProfileManager(
         }
     }
 
-    fun getProfile(userHandle: UserHandle): Flow<Profile?> {
+    public fun getProfile(userHandle: UserHandle): Flow<Profile?> {
         return profileStates.map {
             it.find { it?.profile?.userHandle == userHandle }?.profile
         }
     }
 
-    fun getProfileState(profile: Profile?): Flow<Profile.State?> {
+    public fun getProfileState(profile: Profile?): Flow<Profile.State?> {
         return profileStates.map { profiles ->
             profiles.find { it?.profile == profile }?.state
         }
@@ -168,12 +168,12 @@ class ProfileManager(
     }
 
     @RequiresApi(28)
-    fun unlockProfile(profile: Profile) {
+    public fun unlockProfile(profile: Profile) {
         userManager.requestQuietModeEnabled(false, profile.userHandle)
     }
 
     @RequiresApi(28)
-    fun lockProfile(profile: Profile) {
+    public fun lockProfile(profile: Profile) {
         userManager.requestQuietModeEnabled(true, profile.userHandle)
     }
 }

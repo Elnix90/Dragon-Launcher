@@ -8,7 +8,7 @@ import io.github.elnix90.core.stores.SettingsStore
 import io.github.elnix90.core.util.isNotBlankKey
 import org.elnix.dragonlauncher.base.model.serializables.Point
 
-data class PointSettingObject(
+public data class PointSettingObject(
     override val key: String,
     override val default: Point,
     override val title: Int?,
@@ -23,14 +23,14 @@ data class PointSettingObject(
     override fun decode(raw: Any?): Point = Point.Companion.PointsJson.decode(raw, default)
 }
 
-fun MapSettingsStore.point(
+public fun MapSettingsStore.point(
     default: Point,
     title: Int? = null,
     description: Int? = null,
     key: String = "",
     onChanged: (() -> Unit)? = null,
     backupable: Boolean = true
-) = PointSettingObject(
+): PointSettingObject = PointSettingObject(
     key = key.isNotBlankKey,
     title = title,
     description = description,

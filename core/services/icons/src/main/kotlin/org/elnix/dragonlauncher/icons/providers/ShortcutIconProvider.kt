@@ -16,7 +16,7 @@ import org.elnix.dragonlauncher.base.icons.TransparentLayer
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 
-class ShortcutIconProvider(
+internal class ShortcutIconProvider(
     private val ctx: Context,
     private val shortcutRepository: AppShortcutRepository,
     private val themed: Boolean,

@@ -2,13 +2,13 @@ package org.elnix.dragonlauncher.base.model.models
 
 import org.elnix.dragonlauncher.i18n.R
 
-interface ADBCommands {
-    val commandEnable: String
-    val commandDisable: String
-    val resId: Int
+public interface ADBCommands {
+    public val commandEnable: String
+    public val commandDisable: String
+    public val resId: Int
 }
 
-enum class BluetoothADBCommands(
+public enum class BluetoothADBCommands(
     override val commandEnable: String,
     override val commandDisable: String,
     override val resId: Int
@@ -35,7 +35,7 @@ enum class BluetoothADBCommands(
     )
 }
 
-enum class WifiADBCommands(
+public enum class WifiADBCommands(
     override val commandEnable: String,
     override val commandDisable: String,
     override val resId: Int
@@ -47,7 +47,7 @@ enum class WifiADBCommands(
     )
 }
 
-enum class DataADBCommands(
+public enum class DataADBCommands(
     override val commandEnable: String,
     override val commandDisable: String,
     override val resId: Int

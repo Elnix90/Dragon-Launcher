@@ -13,7 +13,7 @@ import org.elnix.dragonlauncher.base.model.DragonJson
 @Immutable
 @Serializable
 @SerialName("Nest")
-data class Nest(
+public data class Nest(
     /**
      *  By default, the id 0 is the first nest that is available,
      *  I'll try to make the old system importable, to avoid breaking changes like empty actions circle
@@ -81,14 +81,14 @@ data class Nest(
 
 
 
-    companion object {
+    public companion object {
 
-        fun defaultDragDistance(id: Int): Int = when (id) {
+        public fun defaultDragDistance(id: Int): Int = when (id) {
             -1 -> 150 // Cancel Zone (below no action activation)
             0 -> 300  // First circle 300
             else -> 300 + 150 * id // others: add 150 each, don't be dumb and go to 10 circles
         }
 
-        object NestJson: DragonJson<List<Nest>>()
+        public object NestJson: DragonJson<List<Nest>>()
     }
 }

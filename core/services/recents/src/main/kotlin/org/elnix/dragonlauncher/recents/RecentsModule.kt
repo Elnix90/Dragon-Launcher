@@ -12,7 +12,7 @@ import org.elnix.dragonlauncher.applications.AppRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
-object RecentsModule {
+internal object RecentsModule {
 
     @Provides
     @Singleton

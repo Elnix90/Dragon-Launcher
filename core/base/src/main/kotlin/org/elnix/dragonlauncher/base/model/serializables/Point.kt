@@ -10,7 +10,7 @@ import java.util.UUID
 @Immutable
 @Serializable
 @SerialName("Point")
-data class Point(
+public data class Point(
 
     /** Index of the circle (ring) this swipe point belongs to. */
     var circleNumber: Int,
@@ -164,11 +164,11 @@ data class Point(
 
     override fun toString(): String = this.id.substring(0, 8)
 
-    companion object {
-        fun dummySwipePoint(
+    public companion object {
+        public fun dummySwipePoint(
             action: Action? = null,
             id: String? = null
-        ) =
+        ): Point =
             Point(
                 circleNumber = 0,
                 angleDeg = 0.0,
@@ -177,7 +177,7 @@ data class Point(
                 nestId = 0
             )
 
-        val defaultSwipePointsValues = dummySwipePoint(null, "defaultPoint").copy(
+        public val defaultSwipePointsValues: Point = dummySwipePoint(null, "defaultPoint").copy(
             borderStroke = 4f,
             borderStrokeSelected = 8f,
             opacity = 1f,
@@ -195,7 +195,7 @@ data class Point(
             liveNestMainNestOpacityPercent = 50
         )
 
-        fun Point.applyColorAction(): Boolean = (
+        public fun Point.applyColorAction(): Boolean = (
                 action !is Action.LaunchApp &&
                         action !is Action.LaunchShortcut &&
                         action !is Action.OpenDragonLauncherSettings
@@ -205,7 +205,7 @@ data class Point(
                 customIcon == null
 
 
-        object PointsListJson: DragonJson<List<Point>>()
-        object PointsJson: DragonJson<Point>()
+        public object PointsListJson: DragonJson<List<Point>>()
+        public object PointsJson: DragonJson<Point>()
     }
 }

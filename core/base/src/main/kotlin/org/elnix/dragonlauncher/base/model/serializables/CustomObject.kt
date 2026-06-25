@@ -8,7 +8,7 @@ import org.elnix.dragonlauncher.base.model.serializables.serializers.ColorSerial
 
 @Serializable
 @SerialName("CustomObject")
-data class CustomObject(
+public data class CustomObject(
     val stroke: Float? = null,
     @Serializable(with = ColorSerializer::class)
     val color: Color? = null,
@@ -20,7 +20,7 @@ data class CustomObject(
 )
 
 @Serializable
-data class CustomGlow(
+public data class CustomGlow(
     @Serializable(with = ColorSerializer::class)
     val color: Color? = null,
     val radius: Float? = null
@@ -28,7 +28,7 @@ data class CustomGlow(
 
 
 
-data class CustomObjectBlockProperties(
+public data class CustomObjectBlockProperties(
     val allowStrokeCustomization: Boolean = true,
     val allowColorCustomization: Boolean = true,
     val allowShapeCustomization: Boolean = true,

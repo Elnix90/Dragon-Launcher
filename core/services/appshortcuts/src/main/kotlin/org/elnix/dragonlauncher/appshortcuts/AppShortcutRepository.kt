@@ -29,7 +29,7 @@ import org.elnix.dragonlauncher.permissions.PermissionGroup
 import org.elnix.dragonlauncher.permissions.PermissionsManager
 import org.elnix.dragonlauncher.profiles.ProfileManager
 
-interface AppShortcutRepository {
+public interface AppShortcutRepository {
 
 //    fun findMany(
 //        componentName: ComponentName? = null,
@@ -41,11 +41,11 @@ interface AppShortcutRepository {
 //        limit: Int = 5,
 //    ): Flow<ImmutableList<ShortcutInfo>>
 
-    fun search(query: String): Flow<ImmutableList<ShortcutInfo>>
+    public fun search(query: String): Flow<ImmutableList<ShortcutInfo>>
 
-    suspend fun fromAction(action: Action.LaunchShortcut): ShortcutInfo?
+    public suspend fun fromAction(action: Action.LaunchShortcut): ShortcutInfo?
 
-    suspend fun getShortcutsConfigActivities(): List<AppShortcutConfigActivity>
+    public suspend fun getShortcutsConfigActivities(): List<AppShortcutConfigActivity>
 }
 
 internal class AppShortcutRepositoryImpl(

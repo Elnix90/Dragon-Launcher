@@ -54,8 +54,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
+import io.github.elnix90.logging.STATUS_BAR_TAG
+import io.github.elnix90.logging.logE
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.Constants
 import org.elnix.dragonlauncher.base.model.models.DateFormat
 import org.elnix.dragonlauncher.base.model.models.TimeFormat
 import org.elnix.dragonlauncher.base.model.serializables.Action
@@ -67,13 +69,10 @@ import org.elnix.dragonlauncher.common.utils.DateUtils
 import org.elnix.dragonlauncher.common.utils.DateUtils.isValidDateFormat
 import org.elnix.dragonlauncher.common.utils.DateUtils.isValidTimeFormat
 import org.elnix.dragonlauncher.i18n.R
-import io.github.elnix90.logging.STATUS_BAR_TAG
-import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
@@ -681,7 +680,7 @@ fun EditStatusBar() {
     DragonButton(
         onClick = {
             scope.launch {
-                StatusBarJsonSettingsStore.jsonSetting.set(ctx, Constants.Settings.STATUS_BAR_TEMPLATE)
+                TODO()
                 load()
             }
         }

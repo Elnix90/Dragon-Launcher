@@ -10,10 +10,10 @@ import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.ktx.showToast
 import io.github.elnix90.logging.ACCESSIBILITY_TAG
 
-object SystemControl {
+public object SystemControl {
 
 
-    fun isServiceEnabled(ctx: Context): Boolean {
+    public fun isServiceEnabled(ctx: Context): Boolean {
         val enabled = Settings.Secure.getString(
             ctx.contentResolver,
             Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
@@ -22,7 +22,7 @@ object SystemControl {
         return enabled.contains(ctx.packageName)
     }
 
-    fun openServiceSettings(ctx: Context) {
+    public fun openServiceSettings(ctx: Context) {
         ctx.startActivity(
             Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -32,16 +32,16 @@ object SystemControl {
     /**
      * Called by SystemControlService.onCreate() to store a static instance.
      */
-    fun attachInstance(service: SystemControlService) {
+    public fun attachInstance(service: SystemControlService) {
         SystemControlService.INSTANCE = service
     }
 
-    fun expandNotifications() {
+    public fun expandNotifications() {
         SystemControlService.INSTANCE?.openNotificationShade()
     }
 
 
-    fun expandQuickSettings(ctx: Context) {
+    public fun expandQuickSettings(ctx: Context) {
         try {
             val statusBarService = ctx.getSystemService("statusbar")
             val statusBarManagerClass = Class.forName("android.app.StatusBarManager")
@@ -56,7 +56,7 @@ object SystemControl {
 
 
     @RequiresApi(Build.VERSION_CODES.P)
-    fun lockScreen(ctx: Context) {
+    public fun lockScreen(ctx: Context) {
         if (!isServiceEnabled(ctx)) {
             openServiceSettings(ctx)
             return
@@ -66,7 +66,7 @@ object SystemControl {
         )
     }
 
-    fun openRecentApps(ctx: Context) {
+    public fun openRecentApps(ctx: Context) {
         if (!isServiceEnabled(ctx)) {
             ctx.showToast("Please enable accessibility settings to use that feature")
             openServiceSettings(ctx)
@@ -76,7 +76,7 @@ object SystemControl {
     }
 
 
-    fun launchDragon(ctx: Context) {
+    public fun launchDragon(ctx: Context) {
         val intent = Intent(Intent.ACTION_MAIN).apply {
             addCategory(Intent.CATEGORY_HOME)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP

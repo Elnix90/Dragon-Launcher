@@ -12,7 +12,7 @@ import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.permissions.PermissionsManager
 import java.lang.ref.WeakReference
 
-class NotificationService(
+public class NotificationService(
     private val notificationRepository: NotificationRepository,
     private val permissionsManager: PermissionsManager
 ) : NotificationListenerService() {
@@ -90,7 +90,7 @@ class NotificationService(
         logD(NOTIFICATIONS_TAG) { "Notification listener disconnected" }
     }
 
-    companion object {
+    public companion object {
         private var instance: WeakReference<NotificationService>? = null
         internal fun getInstance(): NotificationService? {
             return instance?.get()

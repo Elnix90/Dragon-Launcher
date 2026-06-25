@@ -11,7 +11,7 @@ import org.elnix.dragonlauncher.icons.compat.AdaptiveIconDrawableCompat
 import org.elnix.dragonlauncher.icons.compat.ClockIconConfig
 import org.elnix.dragonlauncher.icons.compat.toLauncherIcon
 
-class DynamicClockIconProvider(
+internal class DynamicClockIconProvider(
     private val ctx: Context,
     private val themed: Boolean,
     private val tint: Int?

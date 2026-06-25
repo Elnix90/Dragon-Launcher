@@ -10,7 +10,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.icons.compat.AdaptiveIconDrawableCompat
 import org.elnix.dragonlauncher.icons.compat.toLauncherIcon
 
-class CompatIconProvider(
+internal class CompatIconProvider(
     private val appRepository: AppRepository,
     private val ctx: Context,
     private val themed: Boolean = false,

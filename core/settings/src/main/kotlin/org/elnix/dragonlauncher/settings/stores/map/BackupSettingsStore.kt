@@ -2,6 +2,9 @@ package org.elnix.dragonlauncher.settings.stores.map
 
 import io.github.elnix90.annotations.SettingKey
 import io.github.elnix90.annotations.SettingsStore
+import io.github.elnix90.core.objects.BooleanSettingObject
+import io.github.elnix90.core.objects.StringSetSettingObject
+import io.github.elnix90.core.objects.StringSettingObject
 import io.github.elnix90.core.objects.boolean
 import io.github.elnix90.core.objects.string
 import io.github.elnix90.core.objects.stringSet
@@ -9,17 +12,17 @@ import io.github.elnix90.core.stores.MapSettingsStore
 import org.elnix.dragonlauncher.i18n.R
 
 @SettingsStore
-object BackupSettingsStore : MapSettingsStore() {
+public object BackupSettingsStore : MapSettingsStore() {
 
     @SettingKey
-    val autoBackupEnabled = boolean(
+    public val autoBackupEnabled: BooleanSettingObject = boolean(
         title = R.string.automatic_backups,
         description = R.string.auto_backup_desc,
         default = false
     )
 
     @SettingKey
-    val autoBackupUri = string(
+    public val autoBackupUri: StringSettingObject = string(
         default = ""
     )
 
@@ -28,7 +31,7 @@ object BackupSettingsStore : MapSettingsStore() {
      * I use an empty set because it causes failures in runtime during the resolution of AllsStores for some reason
      */
     @SettingKey
-    val backupStores = stringSet(
+    public val backupStores: StringSetSettingObject = stringSet(
         title = R.string.auto_backup_stores,
         default = emptySet()
     )

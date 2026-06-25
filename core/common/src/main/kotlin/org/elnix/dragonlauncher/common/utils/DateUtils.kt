@@ -23,8 +23,8 @@ import java.time.format.DateTimeFormatter
 import kotlin.time.Clock
 import kotlin.time.Instant
 
-object DateUtils {
-    fun Context.openAlarmApp2(): Boolean {
+public object DateUtils {
+    public fun Context.openAlarmApp2(): Boolean {
         val pm = this.packageManager
 
         // 1. Official alarm UI
@@ -100,7 +100,7 @@ object DateUtils {
         return false
     }
 
-    fun Context.openAlarmApp() {
+    public fun Context.openAlarmApp() {
         val pm = this.packageManager
 
         // Try official alarm actions in priority order
@@ -127,7 +127,7 @@ object DateUtils {
     }
 
 
-    fun Context.openCalendar() {
+    public fun Context.openCalendar() {
         try {
             val calendarUri = CalendarContract.CONTENT_URI
                 .buildUpon()
@@ -174,7 +174,7 @@ object DateUtils {
      *
      * @return [String] formatted as [defaultDateTimeFormatter]
      */
-    fun Long.formatDateTime(format: DateTimeFormat<LocalDateTime> = defaultDateTimeFormatter): String {
+    public fun Long.formatDateTime(format: DateTimeFormat<LocalDateTime> = defaultDateTimeFormatter): String {
         val instant = Instant.fromEpochMilliseconds(this)
         val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
         return localDateTime.format(format)
@@ -186,7 +186,7 @@ object DateUtils {
      * @param format the datetime format to apply
      * @return [String] the current datetime formatted according to the specified format
      */
-    fun nowFormattedDateTime(format: DateTimeFormat<LocalDateTime> = defaultDateTimeFormatter): String {
+    public fun nowFormattedDateTime(format: DateTimeFormat<LocalDateTime> = defaultDateTimeFormatter): String {
         val instant = Clock.System.now()
         val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
         return localDateTime.format(format)
@@ -198,7 +198,7 @@ object DateUtils {
      * @param format the time format to apply (default: 24-hour with seconds)
      * @return [String] the current time formatted according to the specified format
      */
-    fun nowFormattedTime(format: DateTimeFormat<kotlinx.datetime.LocalTime> = DateTimeFormats.time24HourSeconds): String {
+    public fun nowFormattedTime(format: DateTimeFormat<kotlinx.datetime.LocalTime> = DateTimeFormats.time24HourSeconds): String {
         val instant = Clock.System.now()
         val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
         return localDateTime.time.format(format)
@@ -210,7 +210,7 @@ object DateUtils {
      * @param format the date format to apply (default: European format)
      * @return [String] the current date formatted according to the specified format
      */
-    fun nowFormattedDate(format: DateTimeFormat<kotlinx.datetime.LocalDate> = DateTimeFormats.dateEu): String {
+    public fun nowFormattedDate(format: DateTimeFormat<kotlinx.datetime.LocalDate> = DateTimeFormats.dateEu): String {
         val instant = Clock.System.now()
         val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
         return localDateTime.date.format(format)
@@ -223,7 +223,7 @@ object DateUtils {
      *
      * @return [String] the formatted duration
      */
-    fun Long.formatDuration(): String {
+    public fun Long.formatDuration(): String {
         return when {
             this >= 60 -> {
                 val hours = this / 60
@@ -235,7 +235,7 @@ object DateUtils {
         }
     }
 
-    fun isValidTimeFormat(formatter: String): Boolean = try {
+    public fun isValidTimeFormat(formatter: String): Boolean = try {
         val timeFormatter = DateTimeFormatter.ofPattern(formatter)
         val now = LocalTime.now()
         now.format(timeFormatter)
@@ -245,7 +245,7 @@ object DateUtils {
         false
     }
 
-    fun isValidDateFormat(formatter: String): Boolean = try {
+    public fun isValidDateFormat(formatter: String): Boolean = try {
         val dateFormatter = DateTimeFormatter.ofPattern(formatter)
         val today = LocalDate.now()
         today.format(dateFormatter)

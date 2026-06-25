@@ -33,6 +33,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import io.github.elnix90.runtime.asState
+import io.github.elnix90.runtime.asStateNull
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
@@ -49,8 +51,7 @@ import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import io.github.elnix90.runtime.asState
-import io.github.elnix90.runtime.asStateNull
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
@@ -79,7 +80,7 @@ fun MainScreen(
 
     var lastClickTime by remember { mutableLongStateOf(0L) }
 
-    val widgetsObjects by widgetsViewModel.widgets.collectAsState()
+    val widgetsObjects by widgetsViewModel.widgets.asState()
 
     val doubleClickAction by BehaviorSettingsStore.doubleClickAction.asStateNull()
     val backAction by BehaviorSettingsStore.backAction.asStateNull()

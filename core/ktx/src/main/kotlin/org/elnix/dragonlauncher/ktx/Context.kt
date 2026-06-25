@@ -33,7 +33,7 @@ import io.github.elnix90.logging.logE
  * @param message Can be a String, StringRes Int, or null
  * @param duration Toast duration ([Toast.LENGTH_SHORT] or [Toast.LENGTH_LONG])
  */
-fun Context.showToast(
+public fun Context.showToast(
     message: Any?,
     duration: Int = Toast.LENGTH_SHORT
 ) {
@@ -63,7 +63,7 @@ fun Context.showToast(
 }
 
 
-fun Context.openUrl(url: String) {
+public fun Context.openUrl(url: String) {
     if (url.isEmpty()) return
     val intent = Intent(Intent.ACTION_VIEW)
     intent.data = url.toUri()
@@ -71,13 +71,13 @@ fun Context.openUrl(url: String) {
 }
 
 
-fun Context.openSearch(query: String) {
+public fun Context.openSearch(query: String) {
     val intent = Intent(Intent.ACTION_WEB_SEARCH)
     intent.putExtra(SearchManager.QUERY, query)
     startActivity(intent)
 }
 
-fun Context.expandQuickActionsDrawer() {
+public fun Context.expandQuickActionsDrawer() {
     try {
         //  (Android 12+)
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -103,7 +103,7 @@ fun Context.expandQuickActionsDrawer() {
 }
 
 
-fun Context.getFilePathFromUri(uri: Uri): String {
+public fun Context.getFilePathFromUri(uri: Uri): String {
     // 1. Try SAF document path reconstruction
     if (DocumentsContract.isDocumentUri(this, uri)) {
         val docId = DocumentsContract.getDocumentId(uri)
@@ -141,12 +141,12 @@ private fun Context.getUriDisplayName(uri: Uri): String? {
 }
 
 
-fun Context.hasUriReadPermission(uri: Uri): Boolean {
+public fun Context.hasUriReadPermission(uri: Uri): Boolean {
     val perms = contentResolver.persistedUriPermissions
     return perms.any { it.uri == uri && it.isReadPermission }
 }
 
-fun Context.hasUriReadWritePermission(uri: Uri): Boolean {
+public fun Context.hasUriReadWritePermission(uri: Uri): Boolean {
     val perms = contentResolver.persistedUriPermissions
     return perms.any { perm ->
         perm.uri == uri &&
@@ -178,19 +178,16 @@ fun Context.hasUriReadWritePermission(uri: Uri): Boolean {
 //    return mode == AppOpsManager.MODE_ALLOWED
 //}
 
-val Context.dp: Float
+public val Context.dp: Float
     get() = resources.displayMetrics.density
 
 
-val Context.sp: Float
-    get() = resources.displayMetrics.scaledDensity
-
-fun Context.checkPermission(permission: String): Boolean {
+public fun Context.checkPermission(permission: String): Boolean {
     return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 }
 
 
-fun Context.tryStartActivity(intent: Intent, bundle: Bundle? = null): Boolean {
+public fun Context.tryStartActivity(intent: Intent, bundle: Bundle? = null): Boolean {
     return try {
         startActivity(intent, bundle)
         true
@@ -202,7 +199,7 @@ fun Context.tryStartActivity(intent: Intent, bundle: Bundle? = null): Boolean {
 }
 
 
-fun Context.getInstallSource(
+public fun Context.getInstallSource(
     packageName: String
 ): InstallSourceInfoCompat {
     val pm = this.packageManager
@@ -227,7 +224,7 @@ fun Context.getInstallSource(
  * Walks up the Context wrapper chain to find the hosting FragmentActivity.
  * Compose's `LocalContext.current` may be wrapped by ContextThemeWrapper or similar.
  */
-fun Context.findFragmentActivity(): FragmentActivity? {
+public fun Context.findFragmentActivity(): FragmentActivity? {
     var ctx: Context? = this
     var depth = 0
     while (ctx != null && depth < 20) { // Prevent infinite loops
@@ -250,11 +247,11 @@ fun Context.findFragmentActivity(): FragmentActivity? {
     return null
 }
 
-fun Context.openDefaultLauncherSettings() {
+public fun Context.openDefaultLauncherSettings() {
     tryStartActivity(Intent(Settings.ACTION_HOME_SETTINGS))
 }
 
-data class InstallSourceInfoCompat(
+public data class InstallSourceInfoCompat(
     val originatingPackageName: String?,
     val initiatingPackageName: String?,
     val installingPackageName: String?
@@ -264,7 +261,7 @@ data class InstallSourceInfoCompat(
 /**
  * Hides the soft keyboard from the screen.
  */
-fun Context.hideKeyboard() {
+public fun Context.hideKeyboard() {
     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
     val view = (this as? Activity)?.currentFocus ?: View(this)
     imm?.hideSoftInputFromWindow(view.windowToken, 0)
@@ -273,7 +270,7 @@ fun Context.hideKeyboard() {
 /**
  * Disables soft keyboard input based on user preference.
  */
-fun Context.disableKeyboard(disableSoftKey: Boolean) {
+public fun Context.disableKeyboard(disableSoftKey: Boolean) {
     val activity = this as? Activity ?: return
     val view = activity.currentFocus ?: View(this)
 

@@ -10,40 +10,40 @@ import org.elnix.dragonlauncher.i18n.R
 
 @Serializable
 @SerialName("MainScreenLayer")
-sealed class MainScreenLayer {
+public sealed class MainScreenLayer {
     @Serializable
     @SerialName("ChargingAnimation")
-    data class ChargingAnimation(
+    public data class ChargingAnimation(
         val enabled: Boolean = true
     ) : MainScreenLayer()
 
     @Serializable
     @SerialName("Widgets")
-    data class Widgets(
+    public data class Widgets(
         val enabled: Boolean = true
     ) : MainScreenLayer()
 
     @Serializable
     @SerialName("StatusBar")
-    data class StatusBar(
+    public data class StatusBar(
         val enabled: Boolean = true
     ) : MainScreenLayer()
 
     @Serializable
     @SerialName("DragOverlay")
-    data class DragOverlay(
+    public data class DragOverlay(
         val enabled: Boolean = true
     ) : MainScreenLayer()
 
     @Serializable
     @SerialName("HoldToActivate")
-    data class HoldToActivate(
+    public data class HoldToActivate(
         val enabled: Boolean = true
     ) : MainScreenLayer()
 
     @Serializable
     @SerialName("CustomDim")
-    data class CustomDim(
+    public data class CustomDim(
         val enabled: Boolean = true,
         /** How powerful the fim is */
         val dimAmount: Float = 0.5f,
@@ -51,8 +51,8 @@ sealed class MainScreenLayer {
         val showAfter: Int = 1000
     ) : MainScreenLayer()
 
-    companion object {
-        val defaultMainScreenLayers: List<MainScreenLayer> = listOf(
+    public companion object {
+        public val defaultMainScreenLayers: List<MainScreenLayer> = listOf(
             ChargingAnimation(),
             StatusBar(),
             Widgets(),
@@ -61,7 +61,7 @@ sealed class MainScreenLayer {
             HoldToActivate()
         )
 
-        val MainScreenLayer.label: String
+        public val MainScreenLayer.label: String
             @Composable
             get() = stringResource(
                 when (this) {
@@ -74,7 +74,7 @@ sealed class MainScreenLayer {
                 }
             )
 
-        val MainScreenLayer.enabled: Boolean
+        public val MainScreenLayer.enabled: Boolean
             get() = when (this) {
                 is ChargingAnimation -> enabled
                 is DragOverlay -> enabled
@@ -85,7 +85,7 @@ sealed class MainScreenLayer {
             }
 
 
-        fun MainScreenLayer.copyWithEnabled(enabled: Boolean): MainScreenLayer = when (this) {
+        public fun MainScreenLayer.copyWithEnabled(enabled: Boolean): MainScreenLayer = when (this) {
             is ChargingAnimation -> copy(enabled = enabled)
             is DragOverlay -> copy(enabled = enabled)
             is HoldToActivate -> copy(enabled = enabled)
@@ -98,4 +98,4 @@ sealed class MainScreenLayer {
     }
 }
 
-object MainScreenLayerJson : DragonJson<List<MainScreenLayer>>()
+public object MainScreenLayerJson : DragonJson<List<MainScreenLayer>>()

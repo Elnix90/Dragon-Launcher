@@ -18,10 +18,10 @@ import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 
 // TODO track correctly app launches in recent apps profile aware
 
-interface RecentsService {
+public interface RecentsService {
 
-    fun touch(application: Application)
-    fun getRecentApps(count: Int): StateFlow<List<Application>>
+    public fun touch(application: Application)
+    public fun getRecentApps(count: Int): StateFlow<List<Application>>
 }
 
 

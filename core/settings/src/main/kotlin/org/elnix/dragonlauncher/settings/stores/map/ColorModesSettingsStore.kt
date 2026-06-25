@@ -2,6 +2,8 @@ package org.elnix.dragonlauncher.settings.stores.map
 
 import io.github.elnix90.annotations.SettingKey
 import io.github.elnix90.annotations.SettingsStore
+import io.github.elnix90.core.objects.BooleanSettingObject
+import io.github.elnix90.core.objects.EnumSettingObject
 import io.github.elnix90.core.objects.boolean
 import io.github.elnix90.core.objects.enum
 import io.github.elnix90.core.stores.MapSettingsStore
@@ -11,36 +13,36 @@ import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes
 import org.elnix.dragonlauncher.i18n.R
 
 @SettingsStore
-object ColorModesSettingsStore : MapSettingsStore() {
+public object ColorModesSettingsStore : MapSettingsStore() {
 
     @SettingKey
-    val colorPickerMode = enum(ColorPickerMode.Default)
+    public val colorPickerMode: EnumSettingObject<ColorPickerMode> = enum(ColorPickerMode.Default)
 
     @SettingKey
-    val defaultTheme = enum(DefaultThemes.Amoled)
+    public val defaultTheme: EnumSettingObject<DefaultThemes> = enum(DefaultThemes.Amoled)
 
     @SettingKey
-    val colorPickerButtonOne = enum(ColorPickerButtonAction.Random)
+    public val colorPickerButtonOne: EnumSettingObject<ColorPickerButtonAction> = enum(ColorPickerButtonAction.Random)
 
     @SettingKey
-    val colorPickerButtonTwo = enum(ColorPickerButtonAction.Copy)
+    public val colorPickerButtonTwo: EnumSettingObject<ColorPickerButtonAction> = enum(ColorPickerButtonAction.Copy)
 
     @SettingKey
-    val dynamicColors = boolean(
+    public val dynamicColors: BooleanSettingObject = boolean(
         title = R.string.dynamic_colors,
         description = R.string.dynamic_colors_desc,
         default = false
     )
 
     @SettingKey
-    val colorTestMode = boolean(false)
+    public val colorTestMode: BooleanSettingObject = boolean(false)
 
     /**
      * Whether to use my custom-made color schemes for objects, or the default Android colors schemes.
      * For ex: my switch uses no borders, and other colors channels than the default one, while the android one has borders
      * */
     @SettingKey
-    val useCustomColorChannels = boolean(
+    public val useCustomColorChannels: BooleanSettingObject = boolean(
         title = R.string.use_custom_color_channels,
         description = R.string.use_custom_color_channels_desc,
         default = true

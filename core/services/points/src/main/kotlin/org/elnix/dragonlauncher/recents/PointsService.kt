@@ -24,34 +24,34 @@ import org.elnix.dragonlauncher.settings.stores.array.NestsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.array.PointsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 
-interface PointsService {
-    val defaultPoint: Flow<Point>
-    val points: Flow<Set<Point>>
-    val nests: Flow<Set<Nest>>
+public interface PointsService {
+    public val defaultPoint: Flow<Point>
+    public val points: Flow<Set<Point>>
+    public val nests: Flow<Set<Nest>>
 
-    val undoRedo: UndoRedoManager
+    public val undoRedo: UndoRedoManager
 
-    fun addPoint(newPoint: Point)
-    fun removePoint(id: String): Boolean
-    fun editPoint(id: String, editedPoint: (Point) -> Point): Boolean
+    public fun addPoint(newPoint: Point)
+    public fun removePoint(id: String): Boolean
+    public fun editPoint(id: String, editedPoint: (Point) -> Point): Boolean
 
-    fun addNest(circleNumber: Int = 3): Int
-    fun deleteNest(id: Int): Boolean
-    fun editNest(id: Int, editedNest: (Nest) -> Nest): Boolean
+    public fun addNest(circleNumber: Int = 3): Int
+    public fun deleteNest(id: Int): Boolean
+    public fun editNest(id: Int, editedNest: (Nest) -> Nest): Boolean
 
 
-    val selectedPoint: SettingFlow<Point?>
-    fun select(point: Point?)
-    fun persist()
+    public val selectedPoint: SettingFlow<Point?>
+    public fun select(point: Point?)
+    public fun persist()
 
     /** Set the given [points], [nests] and [defaultPoint] if not null. */
-    fun set(
+    public fun set(
         points: Set<Point>? = null,
         nests: Set<Nest>? = null,
         defaultPoint: Point? = null
     )
 
-    fun reset(
+    public fun reset(
         resetPoints: Boolean = false,
         resetNests: Boolean = false,
         resetDefaultPoint: Boolean = false

@@ -15,7 +15,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.ktx.getInstallSource
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 
-data class LauncherApp(
+public data class LauncherApp(
     private val launcherActivityInfo: LauncherActivityInfo,
     override val versionName: String?,
     override val labelOverride: String? = null,

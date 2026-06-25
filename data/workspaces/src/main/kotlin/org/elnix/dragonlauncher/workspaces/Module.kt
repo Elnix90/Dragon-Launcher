@@ -10,7 +10,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object WorkspaceManagerModule {
+internal object WorkspaceManagerModule {
 
     @Provides
     @Singleton

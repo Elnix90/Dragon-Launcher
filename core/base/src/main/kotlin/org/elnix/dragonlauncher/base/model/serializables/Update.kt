@@ -2,7 +2,7 @@ package org.elnix.dragonlauncher.base.model.serializables
 
 import java.util.Date
 
-data class Update(
+public data class Update(
     val versionCode: Int,
     val versionName: String,
     val date: Date,

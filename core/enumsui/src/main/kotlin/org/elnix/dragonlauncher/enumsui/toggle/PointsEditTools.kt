@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.enumsui.toggle
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.enumsui.ToggleButtonOption
 
-enum class PointsEditTools(
+public enum class PointsEditTools(
     override val resId: Int,
     override val iconEnabled: Int,
     override val iconDisabled: Int

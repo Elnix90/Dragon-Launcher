@@ -7,36 +7,36 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import org.elnix.dragonlauncher.i18n.R
 import io.github.elnix90.logging.SECURITY_SERVICE
 import io.github.elnix90.logging.logD
+import org.elnix.dragonlauncher.i18n.R
 import java.security.MessageDigest
 
 
-interface SecurityService {
+public interface SecurityService {
 
     /**
      * Hashes a PIN using SHA-256.
      */
-    fun hashPin(pin: String): String
+    public fun hashPin(pin: String): String
 
 
     /**
      * Verifies a PIN against a stored hash.
      */
-    fun verifyPin(pin: String, storedHash: String): Boolean
+    public fun verifyPin(pin: String, storedHash: String): Boolean
 
     /**
      * Checks if device unlock (biometric or device credentials) is available.
      */
-    fun isDeviceUnlockAvailable(ctx: Context): Boolean
+    public fun isDeviceUnlockAvailable(ctx: Context): Boolean
 
 
     /**
      * Shows a device unlock prompt that supports biometric (fingerprint/face)
      * with automatic fallback to device credentials (PIN/pattern/password).
      */
-    fun showDeviceUnlockPrompt(
+    public fun showDeviceUnlockPrompt(
         activity: FragmentActivity,
         onSuccess: () -> Unit,
         onError: (String) -> Unit,

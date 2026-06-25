@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.enumsui.toggle
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.enumsui.ToggleButtonOption
 
-enum class MoveAroundTools(
+public enum class MoveAroundTools(
     override val resId: Int?,
     override val iconEnabled: Int? = null,
     override val iconDisabled: Int? = null

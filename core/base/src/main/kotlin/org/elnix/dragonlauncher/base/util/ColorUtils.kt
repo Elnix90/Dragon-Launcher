@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.toArgb
 import kotlin.math.abs
 import kotlin.random.Random
 
-object ColorUtils {
+public object ColorUtils {
 
     /**
      * Returns this [Color] only if it is explicitly defined.
@@ -18,7 +18,7 @@ object ColorUtils {
      *
      * @return this color if defined, or `null` if it is `null` or `Color.Unspecified`
      */
-    fun Color?.definedOrNull(): Color? =
+    public fun Color?.definedOrNull(): Color? =
         this.takeIf { it != Color.Unspecified }
 
 
@@ -49,7 +49,7 @@ object ColorUtils {
      * @param multiplier factor applied to the current alpha value
      * @return a copy of this color with the adjusted alpha
      */
-    fun Color.alphaMultiplier(multiplier: Float): Color =
+    public fun Color.alphaMultiplier(multiplier: Float): Color =
         copy(alpha = alpha * multiplier)
 
     /**
@@ -62,16 +62,16 @@ object ColorUtils {
      * @param enabled whether the color should remain fully effective
      * @return this color, or a version with its alpha halved when disabled
      */
-    fun Color.semiTransparentIfDisabled(enabled: Boolean): Color =
+    public fun Color.semiTransparentIfDisabled(enabled: Boolean): Color =
         if (enabled) this else alphaMultiplier(0.5f)
 
 
     /** Utility: convert Color → #AARRGGBB */
-    fun Color?.toHexWithAlpha(prefix: Boolean = true): String =
+    public fun Color?.toHexWithAlpha(prefix: Boolean = true): String =
         "${if (prefix) "#" else ""}%08X".format(this?.toArgb())
 
 
-    fun randomColor(
+    public fun randomColor(
         minLuminance: Float = 0f,
         maxLuminance: Float = 1f,
         alpha: Boolean = false

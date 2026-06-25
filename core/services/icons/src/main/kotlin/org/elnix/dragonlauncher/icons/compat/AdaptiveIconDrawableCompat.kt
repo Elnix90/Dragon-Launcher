@@ -11,11 +11,11 @@ import android.view.InflateException
 import androidx.core.content.res.ResourcesCompat
 import io.github.elnix90.logging.ICONS_TAG
 import io.github.elnix90.logging.logE
+import org.elnix.dragonlauncher.base.icons.ClockLayer
 import org.elnix.dragonlauncher.base.icons.ClockSublayer
 import org.elnix.dragonlauncher.base.icons.ClockSublayerRole
-import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
-import org.elnix.dragonlauncher.base.icons.ClockLayer
 import org.elnix.dragonlauncher.base.icons.StaticIconLayer
+import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import org.elnix.dragonlauncher.ktx.skipToNextTag
@@ -23,7 +23,7 @@ import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 
 
-data class AdaptiveIconDrawableCompat(
+internal data class AdaptiveIconDrawableCompat(
     val background: Drawable,
     val foreground: Drawable,
     val monochrome: Drawable?,
@@ -131,7 +131,7 @@ data class AdaptiveIconDrawableCompat(
     }
 }
 
-fun AdaptiveIconDrawableCompat.toLauncherIcon(
+internal fun AdaptiveIconDrawableCompat.toLauncherIcon(
     themed: Boolean,
     tint: Int?,
     clock: ClockIconConfig? = null,
@@ -205,7 +205,7 @@ fun AdaptiveIconDrawableCompat.toLauncherIcon(
     }
 }
 
-data class ClockIconConfig(
+public data class ClockIconConfig(
     val hourLayer: Int,
     val minuteLayer: Int,
     val secondLayer: Int,

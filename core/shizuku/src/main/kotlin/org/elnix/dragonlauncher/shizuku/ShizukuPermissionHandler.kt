@@ -5,11 +5,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import rikka.shizuku.Shizuku
 
-class ShizukuPermissionHandler {
+public class ShizukuPermissionHandler {
 
     private val _permissionGranted: MutableStateFlow<Boolean> =
         MutableStateFlow(getInitialPermissionState())
-    val permissionGranted: StateFlow<Boolean> get() = _permissionGranted
+    public val permissionGranted: StateFlow<Boolean> get() = _permissionGranted
 
     private var permissionListener: Shizuku.OnRequestPermissionResultListener
 
@@ -27,7 +27,7 @@ class ShizukuPermissionHandler {
 
 //    fun hasPermission(): Boolean = getInitialPermissionState()
 
-    fun requestPermission() {
+    public fun requestPermission() {
         if (!Shizuku.pingBinder()) return
         Shizuku.addRequestPermissionResultListener(permissionListener)
         Shizuku.requestPermission(0)

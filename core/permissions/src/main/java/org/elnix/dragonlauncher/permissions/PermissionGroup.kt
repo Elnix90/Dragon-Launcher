@@ -1,6 +1,6 @@
 package org.elnix.dragonlauncher.permissions
 
-enum class PermissionGroup {
+public enum class PermissionGroup {
     Tasks,
     ExternalStorage,
     Notifications,

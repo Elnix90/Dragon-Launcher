@@ -20,16 +20,16 @@ import org.elnix.dragonlauncher.database.entities.SavedSearchableEntity
     ], version = 32, exportSchema = true
 )
 @TypeConverters(ComponentNameConverter::class)
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun iconDao(): IconDao
+public abstract class AppDatabase : RoomDatabase() {
+    public abstract fun iconDao(): IconDao
 //    abstract fun searchableDao(): SearchableDao
 //
 //    abstract fun backupDao(): BackupRestoreDao
 //    abstract fun customAttrsDao(): CustomAttrsDao
 
-    companion object {
+    public companion object {
         private var _instance: AppDatabase? = null
-        fun getInstance(context: Context): AppDatabase {
+        public fun getInstance(context: Context): AppDatabase {
             val instance = _instance
                 ?: Room
                     .databaseBuilder(context.applicationContext, AppDatabase::class.java, "room")

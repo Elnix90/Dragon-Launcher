@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.collectLatest
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
 import org.elnix.dragonlauncher.base.model.models.Application
 
-fun Flow<ImmutableList<Application>>.withCustomLabels(
+public fun Flow<ImmutableList<Application>>.withCustomLabels(
     appOverridesManager: AppOverridesManager
 ): Flow<ImmutableList<Application>> = channelFlow {
     this@withCustomLabels.collectLatest { items ->

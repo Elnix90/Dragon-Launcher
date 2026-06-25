@@ -4,4 +4,4 @@ import io.github.elnix90.annotations.SettingsStore
 import io.github.elnix90.core.stores.JsonArraySettingsStore
 
 @SettingsStore
-object PointsSettingsStore : JsonArraySettingsStore()
+public object PointsSettingsStore : JsonArraySettingsStore()

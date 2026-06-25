@@ -8,7 +8,7 @@ import android.service.notification.NotificationListenerService.Ranking
 import android.service.notification.StatusBarNotification
 import androidx.core.app.NotificationCompat
 
-data class Notification(
+public data class Notification(
     val id: Int,
     val key: String,
     val packageName: String,
@@ -22,7 +22,7 @@ data class Notification(
     val flags: Int = 0,
     val contentIntent: PendingIntent?,
 ) {
-    constructor(
+    public constructor(
         sbn: StatusBarNotification,
         ranking: Ranking
     ) : this(
@@ -40,7 +40,7 @@ data class Notification(
         contentIntent = sbn.notification.contentIntent,
     )
 
-    constructor(
+    public constructor(
         notification: Notification,
         ranking: Ranking,
     ) : this(

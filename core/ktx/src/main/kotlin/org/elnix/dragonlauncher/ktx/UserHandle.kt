@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.UserHandle
 import android.os.UserManager
 
-fun UserHandle.getSerialNumber(context: Context): Long {
-    val userManager = context.getSystemService(Context.USER_SERVICE) as UserManager
+public fun UserHandle.getSerialNumber(ctx: Context): Long {
+    val userManager = ctx.getSystemService(Context.USER_SERVICE) as UserManager
     return userManager.getSerialNumberForUser(this)
 }

@@ -4,7 +4,7 @@ import org.elnix.dragonlauncher.enumsui.ToggleButtonOption
 import org.elnix.dragonlauncher.i18n.R
 
 
-enum class DrawerActions(
+public enum class DrawerActions(
     override val resId: Int,
     override val iconEnabled: Int,
     override val iconDisabled: Int? = null
@@ -19,22 +19,22 @@ enum class DrawerActions(
     None(R.string.none, R.drawable.circle),
     Disabled(R.string.disabled, R.drawable.disabled_by_default);
 
-    companion object {
-        val defaultLeftDrawerAction = Disabled
-        val defaultRightDrawerAction = Disabled
-        val defaultEnterAction = Clear
-        val defaultHomeAction = Close
-        val defaultScrollDownAction = Close
-        val defaultScrollUpAction = CloseKb
-        val defaultBackAction = Close
+    public companion object {
+        public val defaultLeftDrawerAction: DrawerActions = Disabled
+        public val defaultRightDrawerAction: DrawerActions = Disabled
+        public val defaultEnterAction: DrawerActions = Clear
+        public val defaultHomeAction: DrawerActions = Close
+        public val defaultScrollDownAction: DrawerActions = Close
+        public val defaultScrollUpAction: DrawerActions = CloseKb
+        public val defaultBackAction: DrawerActions = Close
 
 
-        inline val DrawerActions.isUsed: Boolean
+        public inline val DrawerActions.isUsed: Boolean
             get() = notNone && notDisabled
 
-        inline val DrawerActions.notNone: Boolean
+        public inline val DrawerActions.notNone: Boolean
             get() = this != None
-        inline val DrawerActions.notDisabled: Boolean
+        public inline val DrawerActions.notDisabled: Boolean
             get() = this != Disabled
     }
 }

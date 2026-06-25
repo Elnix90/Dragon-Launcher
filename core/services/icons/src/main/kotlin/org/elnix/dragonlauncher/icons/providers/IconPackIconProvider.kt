@@ -14,7 +14,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.icons.IconPack
 import org.elnix.dragonlauncher.icons.IconPackManager
 
-class IconPackIconProvider(
+internal class IconPackIconProvider(
     private val appRepository: AppRepository,
     private val ctx: Context,
     private val iconPack: IconPack,

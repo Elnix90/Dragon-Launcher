@@ -9,7 +9,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object I18nModule {
+internal object I18nModule {
     @Provides
     @Singleton
     fun provideCompatStringNormalizer(): StringNormalizer =

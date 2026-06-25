@@ -16,7 +16,7 @@ import kotlinx.serialization.Serializable
  *                      Null falls back to the point's own haptic setting.
  */
 @Serializable
-data class CycleActionStage(
+public data class CycleActionStage(
     val triggerTimeMs: Int,
     val action: Action,
     val hapticFeedback: CustomHapticFeedback? = null

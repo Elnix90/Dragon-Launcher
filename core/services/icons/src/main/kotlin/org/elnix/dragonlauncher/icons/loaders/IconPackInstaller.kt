@@ -5,10 +5,10 @@ import org.elnix.dragonlauncher.database.AppDatabase
 import org.elnix.dragonlauncher.icons.IconPack
 import org.elnix.dragonlauncher.icons.IconPackComponent
 
-abstract class IconPackInstaller(
+internal abstract class IconPackInstaller(
     private val database: AppDatabase,
 ) {
-    suspend fun install(iconPack: IconPack) {
+    public suspend fun install(iconPack: IconPack) {
         var pack = iconPack
         val dao = database.iconDao()
         database.withTransaction {
@@ -34,18 +34,18 @@ abstract class IconPackInstaller(
         }
     }
 
-    abstract suspend fun IconPackInstallerScope.buildIconPack(iconPack: IconPack)
+    public abstract suspend fun IconPackInstallerScope.buildIconPack(iconPack: IconPack)
 
-    abstract fun getInstalledIconPacks(): List<IconPack>
+    public abstract fun getInstalledIconPacks(): List<IconPack>
 
-    suspend fun isInstalledAndUpToDate(iconPack: IconPack): Boolean {
+    public suspend fun isInstalledAndUpToDate(iconPack: IconPack): Boolean {
         val dao = database.iconDao()
         val installed = dao.getIconPack(iconPack.packageName)?.let { IconPack(it) } ?: return false
         return installed.version == iconPack.version
     }
 }
 
-interface IconPackInstallerScope {
-    suspend fun addIcon(icon: IconPackComponent)
-    suspend fun updatePackInfo(update: (IconPack) -> IconPack)
+public interface IconPackInstallerScope {
+    public suspend fun addIcon(icon: IconPackComponent)
+    public suspend fun updatePackInfo(update: (IconPack) -> IconPack)
 }

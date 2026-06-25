@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.base.model.serializables
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
 import androidx.graphics.shapes.CornerRounding
+import androidx.graphics.shapes.RoundedPolygon
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.DragonJson
@@ -10,184 +11,184 @@ import org.elnix.dragonlauncher.base.model.serializables.serializers.CornerRound
 
 @Serializable
 @SerialName("IconShape")
-sealed class IconShape {
+public sealed class IconShape {
 
     @Serializable
     @SerialName("PlatformDefault")
-    object PlatformDefault : IconShape()
+    public object PlatformDefault : IconShape()
 
     @Serializable
     @SerialName("Circle")
-    object Circle : IconShape()
+    public object Circle : IconShape()
 
     @Serializable
     @SerialName("Square")
-    object Square : IconShape()
+    public object Square : IconShape()
 
     @Serializable
     @SerialName("RoundedSquare")
-    object RoundedSquare : IconShape()
+    public object RoundedSquare : IconShape()
 
 
     @Serializable
     @SerialName("Squircle")
-    object Squircle : IconShape()
+    public object Squircle : IconShape()
 
     @Serializable
     @SerialName("Hexagon")
-    object Hexagon : IconShape()
+    public object Hexagon : IconShape()
 
 
     @Serializable
     @SerialName("Teardrop")
-    object Teardrop : IconShape()
+    public object Teardrop : IconShape()
 
     @Serializable
     @SerialName("Pebble")
-    object Pebble : IconShape()
+    public object Pebble : IconShape()
 
     @Serializable
     @SerialName("EasterEgg")
-    object EasterEgg : IconShape()
+    public object EasterEgg : IconShape()
 
     @Serializable
     @SerialName("Slanted")
-    object Slanted : IconShape()
+    public object Slanted : IconShape()
 
     @Serializable
     @SerialName("Arch")
-    object Arch : IconShape()
+    public object Arch : IconShape()
 
     @Serializable
     @SerialName("Fan")
-    object Fan : IconShape()
+    public object Fan : IconShape()
 
     @Serializable
     @SerialName("Arrow")
-    object Arrow : IconShape()
+    public object Arrow : IconShape()
 
     @Serializable
     @SerialName("SemiCircle")
-    object SemiCircle : IconShape()
+    public object SemiCircle : IconShape()
 
     @Serializable
     @SerialName("Oval")
-    object Oval : IconShape()
+    public object Oval : IconShape()
 
     @Serializable
     @SerialName("Pill")
-    object Pill : IconShape()
+    public object Pill : IconShape()
 
     @Serializable
     @SerialName("Triangle")
-    object Triangle : IconShape()
+    public object Triangle : IconShape()
 
     @Serializable
     @SerialName("Diamond")
-    object Diamond : IconShape()
+    public object Diamond : IconShape()
 
     @Serializable
     @SerialName("ClamShell")
-    object ClamShell : IconShape()
+    public object ClamShell : IconShape()
 
     @Serializable
     @SerialName("Pentagon")
-    object Pentagon : IconShape()
+    public object Pentagon : IconShape()
 
     @Serializable
     @SerialName("Gem")
-    object Gem : IconShape()
+    public object Gem : IconShape()
 
     @Serializable
     @SerialName("VerySunny")
-    object VerySunny : IconShape()
+    public object VerySunny : IconShape()
 
     @Serializable
     @SerialName("Sunny")
-    object Sunny : IconShape()
+    public object Sunny : IconShape()
 
     @Serializable
     @SerialName("Cookie4Sided")
-    object Cookie4Sided : IconShape()
+    public object Cookie4Sided : IconShape()
 
     @Serializable
     @SerialName("Cookie6Sided")
-    object Cookie6Sided : IconShape()
+    public object Cookie6Sided : IconShape()
 
     @Serializable
     @SerialName("Cookie7Sided")
-    object Cookie7Sided : IconShape()
+    public object Cookie7Sided : IconShape()
 
     @Serializable
     @SerialName("Cookie9Sided")
-    object Cookie9Sided : IconShape()
+    public object Cookie9Sided : IconShape()
 
     @Serializable
     @SerialName("Cookie12Sided")
-    object Cookie12Sided : IconShape()
+    public object Cookie12Sided : IconShape()
 
     @Serializable
     @SerialName("Ghostish")
-    object Ghostish : IconShape()
+    public object Ghostish : IconShape()
 
     @Serializable
     @SerialName("Clover4Leaf")
-    object Clover4Leaf : IconShape()
+    public object Clover4Leaf : IconShape()
 
     @Serializable
     @SerialName("Clover8Leaf")
-    object Clover8Leaf : IconShape()
+    public object Clover8Leaf : IconShape()
 
     @Serializable
     @SerialName("Burst")
-    object Burst : IconShape()
+    public object Burst : IconShape()
 
     @Serializable
     @SerialName("SoftBurst")
-    object SoftBurst : IconShape()
+    public object SoftBurst : IconShape()
 
     @Serializable
     @SerialName("Boom")
-    object Boom : IconShape()
+    public object Boom : IconShape()
 
     @Serializable
     @SerialName("SoftBoom")
-    object SoftBoom : IconShape()
+    public object SoftBoom : IconShape()
 
     @Serializable
     @SerialName("Flower")
-    object Flower : IconShape()
+    public object Flower : IconShape()
 
     @Serializable
     @SerialName("Puffy")
-    object Puffy : IconShape()
+    public object Puffy : IconShape()
 
     @Serializable
     @SerialName("PuffyDiamond")
-    object PuffyDiamond : IconShape()
+    public object PuffyDiamond : IconShape()
 
     @Serializable
     @SerialName("PixelCircle")
-    object PixelCircle : IconShape()
+    public object PixelCircle : IconShape()
 
     @Serializable
     @SerialName("PixelTriangle")
-    object PixelTriangle : IconShape()
+    public object PixelTriangle : IconShape()
 
     @Serializable
     @SerialName("Bun")
-    object Bun : IconShape()
+    public object Bun : IconShape()
 
     @Serializable
     @SerialName("Heart")
-    object Heart : IconShape()
+    public object Heart : IconShape()
     @Serializable
     @SerialName("Random")
-    object Random : IconShape()
+    public object Random : IconShape()
 
     @Serializable
     @SerialName("Custom")
-    data class Custom(
+    public data class Custom(
         val numVertices: Int,
         val radius: Float = 1f,
         val centerX: Float = 0f,
@@ -199,10 +200,10 @@ sealed class IconShape {
         val perVertexRounding: List<CornerRounding>? = null
         ) : IconShape()
 
-    companion object {
+    public companion object {
 
         @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-        val allMaterialShapes = listOf(
+        public val allMaterialShapes: List<RoundedPolygon> = listOf(
             MaterialShapes.Circle,
             MaterialShapes.Square,
             MaterialShapes.Slanted,
@@ -240,7 +241,7 @@ sealed class IconShape {
             MaterialShapes.Heart
         )
 
-        val allShapes = listOf(
+        public val allShapes: List<IconShape> = listOf(
             PlatformDefault,
             Circle,
             Square,
@@ -280,8 +281,8 @@ sealed class IconShape {
             Random
         )
 
-        val allShapesWithoutRandom = allShapes.filterNot { it == Random }
+        public val allShapesWithoutRandom: List<IconShape> = allShapes.filterNot { it == Random }
 
-        object IconShapeJson: DragonJson<IconShape>()
+        public object IconShapeJson: DragonJson<IconShape>()
     }
 }

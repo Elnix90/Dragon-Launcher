@@ -1,14 +1,14 @@
 package org.elnix.dragonlauncher.shizuku
 
+import io.github.elnix90.logging.SHIZUKU_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
+import io.github.elnix90.logging.logW
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import io.github.elnix90.logging.SHIZUKU_TAG
-import io.github.elnix90.logging.logD
-import io.github.elnix90.logging.logE
-import io.github.elnix90.logging.logW
 import rikka.shizuku.Shizuku
 import rikka.shizuku.ShizukuRemoteProcess
 import java.io.BufferedReader
@@ -16,7 +16,7 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.io.InterruptedIOException
 
-class ShellCommandExecutor {
+public class ShellCommandExecutor {
     private var currentProcess: Process? = null
     private var shizukuProcess: ShizukuRemoteProcess? = null
     private var currentDir = "/storage/emulated/0/"
@@ -128,7 +128,7 @@ class ShellCommandExecutor {
 //    }.flowOn(Dispatchers.IO)
 
     @Suppress("DEPRECATION")
-    fun runShizuku(commandText: String): Flow<OutputLine> = flow {
+    public fun runShizuku(commandText: String): Flow<OutputLine> = flow {
         val actualCommand = handleCdCommand(commandText)
 
         logD(SHIZUKU_TAG) { "Executing shizuku command: $commandText" }
@@ -197,7 +197,7 @@ class ShellCommandExecutor {
     }
         .flowOn(Dispatchers.IO)
 
-    fun stop() {
+    public fun stop() {
         currentProcess?.destroy()
         currentProcess = null
         shizukuProcess?.destroy()

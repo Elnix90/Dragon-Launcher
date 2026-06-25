@@ -2,7 +2,7 @@ package org.elnix.dragonlauncher.base.model.models
 
 import android.content.pm.ApplicationInfo
 
-enum class AppCategory {
+public enum class AppCategory {
     Games,
     Audio,
     Video,
@@ -14,8 +14,8 @@ enum class AppCategory {
     Accessibility,
     Other;
 
-    companion object {
-        fun mapSystemCategoryToSection(category: Int): AppCategory {
+    public companion object {
+        public fun mapSystemCategoryToSection(category: Int): AppCategory {
             return when (category) {
                 ApplicationInfo.CATEGORY_GAME -> Games
 
@@ -36,7 +36,7 @@ enum class AppCategory {
             }
         }
 
-        fun mapAppToSection(app: ApplicationInfo): AppCategory =
+        public fun mapAppToSection(app: ApplicationInfo): AppCategory =
             mapSystemCategoryToSection(app.category)
     }
 }

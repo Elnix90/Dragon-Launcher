@@ -13,292 +13,292 @@ import org.elnix.dragonlauncher.base.util.ColorUtils
 import org.elnix.dragonlauncher.i18n.R
 
 @SettingsStore
-object ColorSettingsStore : MapSettingsStore() {
+public object ColorSettingsStore : MapSettingsStore() {
 
     @SettingKey
-    val primaryColor = color(
+    public val primaryColor: ColorSettingObject = color(
         title = R.string.primary_color,
         default = AmoledDragonColorScheme.primary
     )
 
     @SettingKey
-    val onPrimaryColor = color(
+    public val onPrimaryColor: ColorSettingObject = color(
         title = R.string.on_primary_color,
         default = AmoledDragonColorScheme.onPrimary
     )
 
     @SettingKey
-    val secondaryColor = color(
+    public val secondaryColor: ColorSettingObject = color(
         title = R.string.secondary_color,
         default = AmoledDragonColorScheme.secondary
     )
 
     @SettingKey
-    val onSecondaryColor = color(
+    public val onSecondaryColor: ColorSettingObject = color(
         title = R.string.on_secondary_color,
         default = AmoledDragonColorScheme.onSecondary
     )
 
     @SettingKey
-    val tertiaryColor = color(
+    public val tertiaryColor: ColorSettingObject = color(
         title = R.string.tertiary_color,
         default = AmoledDragonColorScheme.tertiary
     )
 
     @SettingKey
-    val onTertiaryColor = color(
+    public val onTertiaryColor: ColorSettingObject = color(
         title = R.string.on_tertiary_color,
         default = AmoledDragonColorScheme.onTertiary
     )
 
     @SettingKey
-    val backgroundColor = color(
+    public val backgroundColor: ColorSettingObject = color(
         title = R.string.background_color,
         default = AmoledDragonColorScheme.background
     )
 
     @SettingKey
-    val onBackgroundColor = color(
+    public val onBackgroundColor: ColorSettingObject = color(
         title = R.string.on_background_color,
         default = AmoledDragonColorScheme.onBackground
     )
 
     @SettingKey
-    val surfaceColor = color(
+    public val surfaceColor: ColorSettingObject = color(
         title = R.string.surface_color,
         default = AmoledDragonColorScheme.surface
     )
 
     @SettingKey
-    val onSurfaceColor = color(
+    public val onSurfaceColor: ColorSettingObject = color(
         title = R.string.on_surface_color,
         default = AmoledDragonColorScheme.onSecondary
     )
 
     @SettingKey
-    val errorColor = color(
+    public val errorColor: ColorSettingObject = color(
         title = R.string.error_color,
         default = AmoledDragonColorScheme.error
     )
 
     @SettingKey
-    val onErrorColor = color(
+    public val onErrorColor: ColorSettingObject = color(
         title = R.string.on_error_color,
         default = AmoledDragonColorScheme.onError
     )
 
     @SettingKey
-    val outlineColor = color(
+    public val outlineColor: ColorSettingObject = color(
         title = R.string.outline_color,
         default = AmoledDragonColorScheme.outline
     )
 
     @SettingKey
-    val primaryContainerColor = color(
+    public val primaryContainerColor: ColorSettingObject = color(
         title = R.string.primary_container_color,
         default = AmoledDragonColorScheme.primaryContainer
     )
 
     @SettingKey
-    val onPrimaryContainerColor = color(
+    public val onPrimaryContainerColor: ColorSettingObject = color(
         title = R.string.on_primary_container_color,
         default = AmoledDragonColorScheme.onPrimaryContainer
     )
 
     @SettingKey
-    val inversePrimaryColor = color(
+    public val inversePrimaryColor: ColorSettingObject = color(
         title = R.string.inverse_primary_color,
         default = AmoledDragonColorScheme.inversePrimary
     )
 
     @SettingKey
-    val secondaryContainerColor = color(
+    public val secondaryContainerColor: ColorSettingObject = color(
         title = R.string.secondary_container_color,
         default = AmoledDragonColorScheme.secondaryContainer
     )
 
     @SettingKey
-    val onSecondaryContainerColor = color(
+    public val onSecondaryContainerColor: ColorSettingObject = color(
         title = R.string.on_secondary_container_color,
         default = AmoledDragonColorScheme.onSecondaryContainer
     )
 
     @SettingKey
-    val tertiaryContainerColor = color(
+    public val tertiaryContainerColor: ColorSettingObject = color(
         title = R.string.tertiary_container_color,
         default = AmoledDragonColorScheme.tertiaryContainer
     )
 
     @SettingKey
-    val onTertiaryContainerColor = color(
+    public val onTertiaryContainerColor: ColorSettingObject = color(
         title = R.string.on_tertiary_container_color,
         default = AmoledDragonColorScheme.onTertiaryContainer
     )
 
     @SettingKey
-    val surfaceVariantColor = color(
+    public val surfaceVariantColor: ColorSettingObject = color(
         title = R.string.surface_variant_color,
         default = AmoledDragonColorScheme.surfaceVariant
     )
 
     @SettingKey
-    val onSurfaceVariantColor = color(
+    public val onSurfaceVariantColor: ColorSettingObject = color(
         title = R.string.on_surface_variant_color,
         default = AmoledDragonColorScheme.onSurfaceVariant
     )
 
     @SettingKey
-    val surfaceTintColor = color(
+    public val surfaceTintColor: ColorSettingObject = color(
         title = R.string.surface_tint_color,
         default = AmoledDragonColorScheme.surfaceTint
     )
 
     @SettingKey
-    val inverseSurfaceColor = color(
+    public val inverseSurfaceColor: ColorSettingObject = color(
         title = R.string.inverse_surface_color,
         default = AmoledDragonColorScheme.inverseSurface
     )
 
     @SettingKey
-    val inverseOnSurfaceColor = color(
+    public val inverseOnSurfaceColor: ColorSettingObject = color(
         title = R.string.inverse_on_surface_color,
         default = AmoledDragonColorScheme.inverseSurface
     )
 
     @SettingKey
-    val errorContainerColor = color(
+    public val errorContainerColor: ColorSettingObject = color(
         title = R.string.error_container_color,
         default = AmoledDragonColorScheme.errorContainer
     )
 
     @SettingKey
-    val onErrorContainerColor = color(
+    public val onErrorContainerColor: ColorSettingObject = color(
         title = R.string.on_error_container_color,
         default = AmoledDragonColorScheme.onErrorContainer
     )
 
     @SettingKey
-    val outlineVariantColor = color(
+    public val outlineVariantColor: ColorSettingObject = color(
         title = R.string.outline_variant_color,
         default = AmoledDragonColorScheme.outlineVariant
     )
 
     @SettingKey
-    val scrimColor = color(
+    public val scrimColor: ColorSettingObject = color(
         title = R.string.scrim_color,
         default = AmoledDragonColorScheme.scrim
     )
 
     @SettingKey
-    val surfaceBrightColor = color(
+    public val surfaceBrightColor: ColorSettingObject = color(
         title = R.string.surface_bright_color,
         default = AmoledDragonColorScheme.surfaceBright
     )
 
     @SettingKey
-    val surfaceContainerColor = color(
+    public val surfaceContainerColor: ColorSettingObject = color(
         title = R.string.surface_container_color,
         default = AmoledDragonColorScheme.surfaceContainer
     )
 
     @SettingKey
-    val surfaceContainerHighColor = color(
+    public val surfaceContainerHighColor: ColorSettingObject = color(
         title = R.string.surface_container_high_color,
         default = AmoledDragonColorScheme.surfaceContainerHigh
     )
 
     @SettingKey
-    val surfaceContainerHighestColor = color(
+    public val surfaceContainerHighestColor: ColorSettingObject = color(
         title = R.string.surface_container_highest_color,
         default = AmoledDragonColorScheme.surfaceContainerHighest
     )
 
     @SettingKey
-    val surfaceContainerLowColor = color(
+    public val surfaceContainerLowColor: ColorSettingObject = color(
         title = R.string.surface_container_low_color,
         default = AmoledDragonColorScheme.surfaceContainerLow
     )
 
     @SettingKey
-    val surfaceContainerLowestColor = color(
+    public val surfaceContainerLowestColor: ColorSettingObject = color(
         title = R.string.surface_container_lowest_color,
         default = AmoledDragonColorScheme.surfaceContainerLowest
     )
 
     @SettingKey
-    val surfaceDimColor = color(
+    public val surfaceDimColor: ColorSettingObject = color(
         title = R.string.surface_dim_color,
         default = AmoledDragonColorScheme.surfaceDim
     )
 
     @SettingKey
-    val primaryFixedColor = color(
+    public val primaryFixedColor: ColorSettingObject = color(
         title = R.string.primary_fixed_color,
         default = AmoledDragonColorScheme.primaryFixed
     )
 
     @SettingKey
-    val primaryFixedDimColor = color(
+    public val primaryFixedDimColor: ColorSettingObject = color(
         title = R.string.primary_fixed_dim_color,
         default = AmoledDragonColorScheme.primaryFixedDim
     )
 
     @SettingKey
-    val onPrimaryFixedColor = color(
+    public val onPrimaryFixedColor: ColorSettingObject = color(
         title = R.string.on_primary_fixed_color,
         default = AmoledDragonColorScheme.onPrimaryFixed
     )
 
     @SettingKey
-    val onPrimaryFixedVariantColor = color(
+    public val onPrimaryFixedVariantColor: ColorSettingObject = color(
         title = R.string.on_primary_fixed_variant_color,
         default = AmoledDragonColorScheme.onPrimaryFixed
     )
 
     @SettingKey
-    val secondaryFixedColor = color(
+    public val secondaryFixedColor: ColorSettingObject = color(
         title = R.string.secondary_fixed_color,
         default = AmoledDragonColorScheme.secondaryFixed
     )
 
     @SettingKey
-    val secondaryFixedDimColor = color(
+    public val secondaryFixedDimColor: ColorSettingObject = color(
         title = R.string.secondary_fixed_dim_color,
         default = AmoledDragonColorScheme.secondaryFixedDim
     )
 
     @SettingKey
-    val onSecondaryFixedColor = color(
+    public val onSecondaryFixedColor: ColorSettingObject = color(
         title = R.string.on_secondary_fixed_color,
         default = AmoledDragonColorScheme.onSecondaryFixed
     )
 
     @SettingKey
-    val onSecondaryFixedVariantColor = color(
+    public val onSecondaryFixedVariantColor: ColorSettingObject = color(
         title = R.string.on_secondary_fixed_variant_color,
         default = AmoledDragonColorScheme.onSurfaceVariant
     )
 
     @SettingKey
-    val tertiaryFixedColor = color(
+    public val tertiaryFixedColor: ColorSettingObject = color(
         title = R.string.tertiary_color,
         default = AmoledDragonColorScheme.tertiaryFixed
     )
 
     @SettingKey
-    val tertiaryFixedDimColor = color(
+    public val tertiaryFixedDimColor: ColorSettingObject = color(
         title = R.string.tertiary_color,
         default = AmoledDragonColorScheme.tertiaryFixedDim
     )
 
     @SettingKey
-    val onTertiaryFixedColor = color(
+    public val onTertiaryFixedColor: ColorSettingObject = color(
         title = R.string.on_tertiary_fixed_color,
         default = AmoledDragonColorScheme.onTertiaryFixed
     )
 
     @SettingKey
-    val onTertiaryFixedVariantColor = color(
+    public val onTertiaryFixedVariantColor: ColorSettingObject = color(
         title = R.string.on_tertiary_fixed_variant_color,
         default = AmoledDragonColorScheme.onTertiaryFixedVariant
     )
@@ -307,131 +307,131 @@ object ColorSettingsStore : MapSettingsStore() {
     // Custom Colors
 
     @SettingKey
-    val angleLineColor = color(
+    public val angleLineColor: ColorSettingObject = color(
         title = R.string.angle_line_color,
         default = DefaultExtraColors.angleLine
     )
 
     @Deprecated("Have to change that system to a per-circle selection")
     @SettingKey
-    val circleColor = color(
+    public val circleColor: ColorSettingObject = color(
         title = R.string.circle_color,
         default = DefaultExtraColors.circle
     )
 
     @SettingKey
-    val launchAppColor = color(
+    public val launchAppColor: ColorSettingObject = color(
         title = R.string.launch_app_color,
         default = DefaultExtraColors.launchApp
     )
 
     @SettingKey
-    val openUrlColor = color(
+    public val openUrlColor: ColorSettingObject = color(
         title = R.string.open_url_color,
         default = DefaultExtraColors.openUrl
     )
 
     @SettingKey
-    val notificationShadeColor = color(
+    public val notificationShadeColor: ColorSettingObject = color(
         title = R.string.notification_shade_color,
         default = DefaultExtraColors.notificationShade
     )
 
     @SettingKey
-    val controlPanelColor = color(
+    public val controlPanelColor: ColorSettingObject = color(
         title = R.string.control_panel_color,
         default = DefaultExtraColors.controlPanel
     )
 
     @SettingKey
-    val openAppDrawerColor = color(
+    public val openAppDrawerColor: ColorSettingObject = color(
         title = R.string.open_app_drawer_color,
         default = DefaultExtraColors.openAppDrawer
     )
 
     @SettingKey
-    val launcherSettingsColor = color(
+    public val launcherSettingsColor: ColorSettingObject = color(
         title = R.string.launcher_settings_color,
         default = DefaultExtraColors.launcherSettings
     )
 
     @SettingKey
-    val lockColor = color(
+    public val lockColor: ColorSettingObject = color(
         title = R.string.lock_color,
         default = DefaultExtraColors.lock
     )
 
     @SettingKey
-    val openFileColor = color(
+    public val openFileColor: ColorSettingObject = color(
         title = R.string.open_file_color,
         default = DefaultExtraColors.openFile
     )
 
     @SettingKey
-    val reloadColor = color(
+    public val reloadColor: ColorSettingObject = color(
         title = R.string.reload_color,
         default = DefaultExtraColors.reload
     )
 
     @SettingKey
-    val openRecentAppsColor = color(
+    public val openRecentAppsColor: ColorSettingObject = color(
         title = R.string.open_recent_apps_color,
         default = DefaultExtraColors.openRecentApps
     )
 
     @SettingKey
-    val openCircleNestColor = color(
+    public val openCircleNestColor: ColorSettingObject = color(
         title = R.string.open_circle_nest_color,
         default = DefaultExtraColors.openCircleNest
     )
 
     @SettingKey
-    val goParentNestColor = color(
+    public val goParentNestColor: ColorSettingObject = color(
         title = R.string.go_parent_nest_color,
         default = DefaultExtraColors.goParentNest
     )
 
     @SettingKey
-    val toggleWifi = color(
+    public val toggleWifi: ColorSettingObject = color(
         title = R.string.toggle_wifi,
         default = DefaultExtraColors.toggleWifi
     )
 
     @SettingKey
-    val toggleBluetooth = color(
+    public val toggleBluetooth: ColorSettingObject = color(
         title = R.string.toggle_bluetooth,
         default = DefaultExtraColors.toggleBluetooth
     )
 
     @SettingKey
-    val toggleData = color(
+    public val toggleData: ColorSettingObject = color(
         title = R.string.toggle_mobile_data,
         default = DefaultExtraColors.toggleData
     )
 
     @SettingKey
-    val runAdbCommand = color(
+    public val runAdbCommand: ColorSettingObject = color(
         title = R.string.run_adb_command,
         default = DefaultExtraColors.runAdbCommand
     )
 
 
-    suspend fun setAllRandomColors(ctx: Context) {
+    public suspend fun setAllRandomColors(ctx: Context) {
         setAllColors(ctx) { ColorUtils.randomColor() }
     }
 
-    suspend fun setAllSameColors(ctx: Context, color: Color) {
+    public suspend fun setAllSameColors(ctx: Context, color: Color) {
         setAllColors(ctx) { color }
     }
 
-    suspend fun setAllColors(ctx: Context, color: () -> Color) {
+    public suspend fun setAllColors(ctx: Context, color: () -> Color) {
         ALL.forEach { (it as ColorSettingObject).set(ctx, color()) }
     }
 
     // For test mode backup
     private val backupColorsMap = mutableMapOf<String, Color?>()
 
-    suspend fun backupColors(ctx: Context) {
+    public suspend fun backupColors(ctx: Context) {
         backupColorsMap.clear()
         ALL.forEach { setting ->
             setting as ColorSettingObject
@@ -440,7 +440,7 @@ object ColorSettingsStore : MapSettingsStore() {
         }
     }
 
-    suspend fun restoreColors(ctx: Context) {
+    public suspend fun restoreColors(ctx: Context) {
         backupColorsMap.forEach { (key, color) ->
             (ALL.find { it.key == key } as? ColorSettingObject)?.set(ctx, color)
         }

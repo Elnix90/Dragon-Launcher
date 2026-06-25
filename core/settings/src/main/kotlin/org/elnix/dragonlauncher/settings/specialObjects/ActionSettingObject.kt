@@ -8,7 +8,7 @@ import io.github.elnix90.core.stores.SettingsStore
 import io.github.elnix90.core.util.isNotBlankKey
 import org.elnix.dragonlauncher.base.model.serializables.Action
 
-data class ActionSettingObject(
+public data class ActionSettingObject(
     override val key: String,
     override val default: Action,
     override val title: Int?,
@@ -23,14 +23,14 @@ data class ActionSettingObject(
     override fun decode(raw: Any?): Action = Action.Companion.ActionJson.decode(raw, default)
 }
 
-fun MapSettingsStore.action(
+public fun MapSettingsStore.action(
     default: Action,
     title: Int? = null,
     description: Int? = null,
     key: String = "",
     onChanged: (() -> Unit)? = null,
     backupable: Boolean = true
-) = ActionSettingObject(
+): ActionSettingObject = ActionSettingObject(
     key = key.isNotBlankKey,
     title = title,
     description = description,

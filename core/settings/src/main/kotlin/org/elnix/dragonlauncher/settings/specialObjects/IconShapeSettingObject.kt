@@ -8,7 +8,7 @@ import io.github.elnix90.core.stores.SettingsStore
 import io.github.elnix90.core.util.isNotBlankKey
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 
-data class IconShapeSettingObject(
+public data class IconShapeSettingObject(
     override val key: String,
     override val default: IconShape,
     override val title: Int?,
@@ -23,14 +23,14 @@ data class IconShapeSettingObject(
     override fun decode(raw: Any?): IconShape = IconShape.Companion.IconShapeJson.decode(raw, default)
 }
 
-fun MapSettingsStore.shape(
+public fun MapSettingsStore.shape(
     default: IconShape,
     title: Int? = null,
     description: Int? = null,
     key: String = "",
     onChanged: (() -> Unit)? = null,
     backupable: Boolean = true
-) = IconShapeSettingObject(
+): IconShapeSettingObject = IconShapeSettingObject(
     key = key.isNotBlankKey,
     title = title,
     description = description,

@@ -8,8 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import io.github.elnix90.logging.TAG
-import io.github.elnix90.logging.logD
+import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.shizuku.OutputLine
 import org.elnix.dragonlauncher.shizuku.ShellCommandExecutor
@@ -18,45 +17,44 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class ShizukuViewModel @Inject constructor(
+public class ShizukuViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
     private val shellCommandExecutor = ShellCommandExecutor()
     private val shizukuPermissionHandler = ShizukuPermissionHandler()
 
-    private val _output = MutableStateFlow<OutputLine?>(null)
-    val outputValue = _output.asStateFlow()
+    public val outputValue: SettingFlow<OutputLine?> = SettingFlow(null)
 
     private val _showUnavailable = MutableStateFlow(false)
-    val showUnavailable = _showUnavailable.asStateFlow()
+    public val showUnavailable: StateFlow<Boolean> = _showUnavailable.asStateFlow()
 
 
-    fun clearOutput() {
-        _output.value = null
+    public fun clearOutput() {
+        outputValue.value = null
     }
 
-    fun shizukuPermissionState(): StateFlow<Boolean> {
+    public fun shizukuPermissionState(): StateFlow<Boolean> {
         return shizukuPermissionHandler.permissionGranted
     }
 
-    fun requestShizukuPermission() {
+    public fun requestShizukuPermission() {
         return shizukuPermissionHandler.requestPermission()
     }
 
-    fun executeShizukuCommand(command: String) {
+    public fun executeShizukuCommand(command: String) {
         viewModelScope.launch {
             shellCommandExecutor.runShizuku(command)
                 .collect { outputLine ->
-                    _output.value = outputLine
+                    outputValue.value = outputLine
                 }
         }
     }
 
-    fun setUnavailable() {
+    public fun setUnavailable() {
         _showUnavailable.value = true
     }
 
-    fun dismissUnavailableDialog() {
+    public fun dismissUnavailableDialog() {
         _showUnavailable.value = false
     }
 

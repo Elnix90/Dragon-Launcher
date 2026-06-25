@@ -2,6 +2,11 @@ package org.elnix.dragonlauncher.settings.stores.map
 
 import io.github.elnix90.annotations.SettingKey
 import io.github.elnix90.annotations.SettingsStore
+import io.github.elnix90.core.objects.BooleanSettingObject
+import io.github.elnix90.core.objects.FloatSettingObject
+import io.github.elnix90.core.objects.IntSettingObject
+import io.github.elnix90.core.objects.StringSetSettingObject
+import io.github.elnix90.core.objects.StringSettingObject
 import io.github.elnix90.core.objects.boolean
 import io.github.elnix90.core.objects.float
 import io.github.elnix90.core.objects.int
@@ -11,11 +16,11 @@ import io.github.elnix90.core.stores.MapSettingsStore
 import org.elnix.dragonlauncher.i18n.R
 
 @SettingsStore
-object UiSettingsStore : MapSettingsStore() {
+public object UiSettingsStore : MapSettingsStore() {
 
     /** Use the computing of HSV color to produce a color that depends on the angle / progress */
     @SettingKey
-    val rgbLoading = boolean(
+    public val rgbLoading: BooleanSettingObject = boolean(
         title = R.string.rgb_loading_settings,
         description = R.string.rgb_loading_description,
         default = true
@@ -23,7 +28,7 @@ object UiSettingsStore : MapSettingsStore() {
 
     /** Use the computing of HSV color to produce a color that depends on the angle / progress */
     @SettingKey
-    val rgbLine = boolean(
+    public val rgbLine: BooleanSettingObject = boolean(
         title = R.string.rgb_line_selector,
         description = R.string.rgb_line_selector_description,
         default = true
@@ -31,42 +36,42 @@ object UiSettingsStore : MapSettingsStore() {
 
     /** Overlay on top of the screen */
     @SettingKey
-    val showLaunchingAppLabel = boolean(
+    public val showLaunchingAppLabel: BooleanSettingObject = boolean(
         title = R.string.show_launching_app_label,
         description = R.string.show_launching_app_label_description,
         default = true,
     )
 
     @SettingKey
-    val showLaunchingAppIcon = boolean(
+    public val showLaunchingAppIcon: BooleanSettingObject = boolean(
         title = R.string.show_launching_app_icon,
         description = R.string.show_launching_app_icon_description,
         default = true
     )
 
     @SettingKey
-    val appLabelIconOverlayTopPadding = int(
+    public val appLabelIconOverlayTopPadding: IntSettingObject = int(
         title = R.string.app_label_icon_overlay_top_padding,
         default = 20,
         allowedRange = 0..1000
     )
 
     @SettingKey
-    val appLabelOverlaySize = int(
+    public val appLabelOverlaySize: IntSettingObject = int(
         title = R.string.app_label_overlay_size,
         default = 18,
         allowedRange = 0..100
     )
 
     @SettingKey
-    val appIconOverlaySize = int(
+    public val appIconOverlaySize: IntSettingObject = int(
         title = R.string.app_icon_overlay_size,
         default = 22,
         allowedRange = 0..400
     )
 
     @SettingKey
-    val fullScreen = boolean(
+    public val fullScreen: BooleanSettingObject = boolean(
         title = R.string.fullscreen_app,
         description = R.string.fullscreen_description,
         default = false
@@ -74,40 +79,40 @@ object UiSettingsStore : MapSettingsStore() {
 
     /** Whether if the points are separated automatically to avoid overlapping when moving them in the circle */
     @SettingKey
-    val autoSeparatePoints = boolean(
+    public val autoSeparatePoints: BooleanSettingObject = boolean(
         title = R.string.auto_separate,
         default = true
     )
 
     @SettingKey
-    val snapPoints = boolean(
+    public val snapPoints: BooleanSettingObject = boolean(
         title = R.string.snap_points,
         default = true
     )
 
     @SettingKey
-    val freeMoveDraggedPoint = boolean(
+    public val freeMoveDraggedPoint: BooleanSettingObject = boolean(
         title = R.string.free_move_dragged_point,
         default = true
     )
 
     /** Global setting, can be changed individually for each nest */
     @SettingKey
-    val showCirclePreview = boolean(
+    public val showCirclePreview: BooleanSettingObject = boolean(
         title = R.string.show_app_circle_preview,
         description = R.string.show_app_circle_preview_description,
         default = true
     )
 
     @SettingKey
-    val showAppPreviewIconCenterStartPosition = boolean(
+    public val showAppPreviewIconCenterStartPosition: BooleanSettingObject = boolean(
         title = R.string.show_app_icon_start_drag_position,
         description = R.string.show_app_icon_start_drag_position_description,
         default = false
     )
 
     @SettingKey
-    val linePreviewSnapToAction = boolean(
+    public val linePreviewSnapToAction: BooleanSettingObject = boolean(
         title = R.string.line_preview_snap_to_action,
         description = R.string.line_preview_snap_to_action_description,
         default = false
@@ -115,46 +120,46 @@ object UiSettingsStore : MapSettingsStore() {
 
     /** Show the current selected app on drag in the main screen / show them all on the circle */
     @SettingKey
-    val showAppLaunchingPreview = boolean(
+    public val showAppLaunchingPreview: BooleanSettingObject = boolean(
         title = R.string.show_app_launch_preview,
         description = R.string.show_app_launch_preview_description,
         default = true
     )
 
     @SettingKey
-    val showAllActionsOnCurrentCircle = boolean(
+    public val showAllActionsOnCurrentCircle: BooleanSettingObject = boolean(
         title = R.string.show_all_actions_on_current_circle,
         description = R.string.show_all_actions_on_current_circle_description,
         default = true
     )
 
     @SettingKey
-    val showAllActionsOnCurrentNest = boolean(
+    public val showAllActionsOnCurrentNest: BooleanSettingObject = boolean(
         title = R.string.show_all_actions_on_current_nest,
         description = R.string.show_all_actions_on_current_nest_desc,
         default = false
     )
 
     @SettingKey
-    val wallpaperDimMainScreen = float(
+    public val wallpaperDimMainScreen: FloatSettingObject = float(
         title = R.string.wallpaper_dim_amount,
         default = 0f,
         allowedRange = 0f..1f
     )
 
     @SettingKey
-    val wallpaperDimDrawerScreen = float(
+    public val wallpaperDimDrawerScreen: FloatSettingObject = float(
         title = R.string.wallpaper_dim_amount,
         default = 0f,
         allowedRange = 0f..1f
     )
 
     @SettingKey
-    val globalFont = string("Default")
+    public val globalFont: StringSettingObject = string("Default")
 
     /** How far the points drawing system `actionsInCircle` draws the points */
     @SettingKey
-    val maxNestsDepth = int(
+    public val maxNestsDepth: IntSettingObject = int(
         title = R.string.depth,
         description = R.string.depth_desc,
         default = 2,
@@ -163,7 +168,7 @@ object UiSettingsStore : MapSettingsStore() {
 
     /** How many sub live nests can be drawn at once */
     @SettingKey
-    val maxLiveNestsDepth = int(
+    public val maxLiveNestsDepth: IntSettingObject = int(
         title = R.string.live_nest_depth,
         description = R.string.live_nests_depth_desc,
         default = 5,
@@ -171,13 +176,13 @@ object UiSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    val mainScreenLayers = string(
+    public val mainScreenLayers: StringSettingObject = string(
         title = R.string.main_screen_layers,
         default = ""
     )
 
     @SettingKey
-    val cellSizeDp = int(
+    public val cellSizeDp: IntSettingObject = int(
         title = R.string.cell_size,
         description = R.string.cell_size_help,
         default = 30,
@@ -185,22 +190,22 @@ object UiSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    val showTooltipsOnAddPointDialog = boolean(
+    public val showTooltipsOnAddPointDialog: BooleanSettingObject = boolean(
         default = true,
     )
 
     @SettingKey
-    val userThemes = stringSet(emptySet())
+    public val userThemes: StringSetSettingObject = stringSet(emptySet())
 
     @SettingKey
-    val multiplyOrSubtractOpacityInLiveNests = boolean(
+    public val multiplyOrSubtractOpacityInLiveNests: BooleanSettingObject = boolean(
         title = R.string.multiply_or_subtract_opacity_in_live_nests,
         description = R.string.multiply_or_subtract_opacity_in_live_nests_desc,
         default = true
     )
 
     @SettingKey
-    val doNotRemindMeAgainPinLockWarning = boolean(
+    public val doNotRemindMeAgainPinLockWarning: BooleanSettingObject = boolean(
         title = R.string.do_not_remind_me_again_pin_lock,
         description = R.string.do_not_remind_me_again_pin_lock_desc,
         default = false

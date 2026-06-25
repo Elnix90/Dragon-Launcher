@@ -5,6 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.XmlResourceParser
+import io.github.elnix90.logging.ICONS_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.database.AppDatabase
@@ -16,16 +19,13 @@ import org.elnix.dragonlauncher.icons.IconMask
 import org.elnix.dragonlauncher.icons.IconPack
 import org.elnix.dragonlauncher.icons.IconUpon
 import org.elnix.dragonlauncher.icons.compat.ClockIconConfig
-import io.github.elnix90.logging.ICONS_TAG
-import io.github.elnix90.logging.logD
-import io.github.elnix90.logging.logE
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import org.xmlpull.v1.XmlPullParserFactory
 import java.io.IOException
 import java.io.Reader
 
-class AppFilterIconPackInstaller(
+internal class AppFilterIconPackInstaller(
     private val ctx: Context,
     database: AppDatabase,
 ) : IconPackInstaller(database) {

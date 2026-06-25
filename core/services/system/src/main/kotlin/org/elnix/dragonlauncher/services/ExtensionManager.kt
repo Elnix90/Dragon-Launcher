@@ -17,14 +17,14 @@ import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logW
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 
-object ExtensionManager {
+public object ExtensionManager {
 
-    fun installExtension(ctx: Context, extension: ExtensionModel) {
+    public fun installExtension(ctx: Context, extension: ExtensionModel) {
         ctx.openUrl(extension.downloadUrl)
     }
 
 
-    fun installApk(ctx: Context, uri: Uri) {
+    public fun installApk(ctx: Context, uri: Uri) {
         try {
             if (!ctx.packageManager.canRequestPackageInstalls()) {
                 val intent = Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
@@ -47,7 +47,7 @@ object ExtensionManager {
         }
     }
 
-    fun isExtensionInstalled(ctx: Context, packageNameOrId: String): Boolean {
+    public fun isExtensionInstalled(ctx: Context, packageNameOrId: String): Boolean {
         logD(EXTENSION_MANAGER_TAG) { "Checking extension installed for: $packageNameOrId" }
 
         val disableSigCheck = kotlinx.coroutines.runBlocking {

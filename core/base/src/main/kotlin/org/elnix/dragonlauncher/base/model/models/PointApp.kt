@@ -6,7 +6,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 
-data class PointApp(
+public data class PointApp(
     private val point: Point
 ) : Application() {
 
@@ -42,8 +42,7 @@ data class PointApp(
     override var cachedNormalizerResult: Pair<String, String>? = null
 
 
-    override suspend fun loadIcon(themed: Boolean, tint: Int?)
-    = null
+    override suspend fun loadIcon(themed: Boolean, tint: Int?): Nothing? = null
 
     override fun getStoreDetails(ctx: Context): StoreLink? = null
 }

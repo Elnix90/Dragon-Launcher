@@ -1,8 +1,8 @@
 package org.elnix.dragonlauncher.base.model
 
-import kotlinx.serialization.json.Json
 import io.github.elnix90.logging.JSON_TAG
 import io.github.elnix90.logging.logE
+import kotlinx.serialization.json.Json
 
 /**
  * A singleton [Json] instance configured with project-wide settings for JSON serialization/deserialization.
@@ -11,7 +11,7 @@ import io.github.elnix90.logging.logE
  * access via the inline functions in [DragonJson]. Always prefer using [DragonJson.encode] and
  * [DragonJson.decode] for type-safe and logged operations.
  */
-val json = Json {
+public val json: Json = Json {
     explicitNulls = false
     ignoreUnknownKeys = true
     prettyPrint = true
@@ -33,7 +33,7 @@ val json = Json {
  * @param T The generic type associated with the JSON operations (not strictly enforced due to inline functions).
  * @constructor Creates an empty [DragonJson] instance. Subclasses can extend this for custom logic.
  */
-abstract class DragonJson<T> {
+public abstract class DragonJson<T> {
 
     /**
      * Encodes a Kotlin object to a JSON string.
@@ -45,7 +45,7 @@ abstract class DragonJson<T> {
      * @return The JSON string representation of [value], or `null` if encoding fails.
      * @see json
      */
-    inline fun <reified T : Any> encode(value: T): String? {
+    public inline fun <reified T : Any> encode(value: T): String? {
         return runCatching {
             json.encodeToString(value)
         }.onFailure { e ->
@@ -63,7 +63,7 @@ abstract class DragonJson<T> {
      * @return The deserialized object of type [T], or `null` if decoding fails.
      * @see json
      */
-    inline fun <reified T : Any> decode(string: Any?): T? {
+    public inline fun <reified T : Any> decode(string: Any?): T? {
         return runCatching {
             val stringifiedString = string.toString()
             if (stringifiedString.isEmpty()) return null
@@ -86,7 +86,7 @@ abstract class DragonJson<T> {
      * @return The deserialized object of type [T], or [fallback] if decoding fails.
      * @see json
      */
-    inline fun <reified T : Any> decode(string: Any?, fallback: T): T {
+    public inline fun <reified T : Any> decode(string: Any?, fallback: T): T {
         return runCatching {
             val stringifiedString = string.toString()
             if (stringifiedString.isEmpty()) return fallback

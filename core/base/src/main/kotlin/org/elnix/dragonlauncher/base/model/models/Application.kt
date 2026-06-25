@@ -30,35 +30,35 @@ import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import java.io.File
 import java.text.Collator
 
-abstract class Application : Comparable<Application> {
+public abstract class Application : Comparable<Application> {
 
-    abstract val label: String
-    abstract val labelOverride: String?
-    abstract fun overrideLabel(label: String): Application
+    public abstract val label: String
+    public abstract val labelOverride: String?
+    public abstract fun overrideLabel(label: String): Application
 
-    abstract val category: AppCategory
+    public abstract val category: AppCategory
 
-    abstract val profile: Profile
-    val userSerialNumber: Long
+    public abstract val profile: Profile
+    public val userSerialNumber: Long
         get() = profile.serial
-    val user: UserHandle
+    public val user: UserHandle
         get() = profile.userHandle
 
-    abstract val isSystem: Boolean
-    abstract val isLaunchable: Boolean
+    public abstract val isSystem: Boolean
+    public abstract val isLaunchable: Boolean
 
-    abstract val isSuspended: Boolean
-    abstract val componentName: ComponentName
+    public abstract val isSuspended: Boolean
+    public abstract val componentName: ComponentName
 
 
-    abstract val packageName: String
+    public abstract val packageName: String
 
-    abstract val versionName: String?
+    public abstract val versionName: String?
 
-    val isPrivate: Boolean
+    public val isPrivate: Boolean
         get() = profile.type == Profile.Type.Private
 
-    val isWork: Boolean
+    public val isWork: Boolean
         get() = profile.type == Profile.Type.Work
 
     /**
@@ -66,20 +66,20 @@ abstract class Application : Comparable<Application> {
      * First string is the normalizer ID
      * Second string is the normalized label
      */
-    abstract var cachedNormalizerResult: Pair<String, String>?
+    public abstract var cachedNormalizerResult: Pair<String, String>?
 
 
-    val action: Action.LaunchApp by lazy {
+    public val action: Action.LaunchApp by lazy {
         Action.LaunchApp(packageName, profile)
     }
 
-    val key: CacheKey by lazy {
+    public val key: CacheKey by lazy {
         CacheKey(this)
     }
 
-    abstract suspend fun loadIcon(themed: Boolean, tint: Int?): LauncherIcon?
+    public abstract suspend fun loadIcon(themed: Boolean, tint: Int?): LauncherIcon?
 
-    fun launch(ctx: Context, options: Bundle?): Boolean {
+    public fun launch(ctx: Context, options: Bundle?): Boolean {
         val launcherApps = ctx.getSystemService<LauncherApps>()!!
         if (isAtLeastApiLevel(31)) {
             options?.putInt("android.activity.splashScreenStyle", 1)
@@ -102,7 +102,7 @@ abstract class Application : Comparable<Application> {
     }
 
 
-    fun getPlaceholderIcon(ctx: Context): StaticLauncherIcon {
+    public fun getPlaceholderIcon(ctx: Context): StaticLauncherIcon {
         return StaticLauncherIcon(
             foregroundLayer = StaticIconLayer(
                 icon = ContextCompat.getDrawable(ctx, R.drawable.android)!!,
@@ -114,15 +114,15 @@ abstract class Application : Comparable<Application> {
     }
 
 
-    abstract fun getStoreDetails(ctx: Context): StoreLink?
+    public abstract fun getStoreDetails(ctx: Context): StoreLink?
 
-    fun uninstall(ctx: Context) {
+    public fun uninstall(ctx: Context) {
         val intent = Intent(Intent.ACTION_DELETE)
         intent.data = "package:${packageName}".toUri()
         ctx.startActivity(intent)
     }
 
-    fun openAppDetails(ctx: Context) {
+    public fun openAppDetails(ctx: Context) {
         val launcherApps = ctx.getSystemService<LauncherApps>()!!
 
         launcherApps.startAppDetailsActivity(
@@ -133,7 +133,7 @@ abstract class Application : Comparable<Application> {
         )
     }
 
-    suspend fun shareApkFile(ctx: Context) {
+    public suspend fun shareApkFile(ctx: Context) {
         val launcherApps = ctx.getSystemService<LauncherApps>()!!
         val fileCopy = File(
             ctx.cacheDir,
@@ -167,7 +167,7 @@ abstract class Application : Comparable<Application> {
     }
 
 
-    fun getActivityInfo(ctx: Context): ActivityInfo? {
+    public fun getActivityInfo(ctx: Context): ActivityInfo? {
         return try {
             ctx.packageManager.getActivityInfo(componentName, 0)
         } catch (_: PackageManager.NameNotFoundException) {
@@ -182,9 +182,9 @@ abstract class Application : Comparable<Application> {
             .compare(label1, label2)
     }
 
-    companion object {
+    public companion object {
 
-        fun Application.getStoreLinkForInstaller(
+        public fun Application.getStoreLinkForInstaller(
             installerPackage: String?,
         ): StoreLink? {
             return when (installerPackage) {
@@ -213,7 +213,7 @@ abstract class Application : Comparable<Application> {
             }
         }
 
-        fun getPackageVersionName(ctx: Context, packageName: String): String? {
+        public fun getPackageVersionName(ctx: Context, packageName: String): String? {
             return try {
                 ctx.packageManager.getPackageInfo(packageName, 0).versionName
             } catch (_: PackageManager.NameNotFoundException) {
@@ -221,22 +221,22 @@ abstract class Application : Comparable<Application> {
             }
         }
 
-        fun isSuspended(ctx: Context, packageName: String): Boolean {
+        public fun isSuspended(ctx: Context, packageName: String): Boolean {
             return try {
                 ctx.packageManager.getApplicationInfo(
                     packageName,
                     0
                 ).flags and ApplicationInfo.FLAG_SUSPENDED != 0
-            } catch (e: PackageManager.NameNotFoundException) {
+            } catch (_: PackageManager.NameNotFoundException) {
                 false
             }
         }
 
-        fun Application.toLaunchApp(): Action.LaunchApp = Action.LaunchApp(this)
+        public fun Application.toLaunchApp(): Action.LaunchApp = Action.LaunchApp(this)
     }
 }
 
-data class StoreLink(
+public data class StoreLink(
     val label: String,
     val url: String
 )

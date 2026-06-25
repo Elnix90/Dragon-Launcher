@@ -16,9 +16,9 @@ import org.elnix.dragonlauncher.ktx.drawWithColorFilter
 import palettes.TonalPalette
 import java.lang.ref.WeakReference
 
-sealed interface LauncherIcon
+public sealed interface LauncherIcon
 
-data class LauncherIconRenderSettings(
+public data class LauncherIconRenderSettings(
     val size: Int,
     val fgThemeColor: Int,
     val bgThemeColor: Int,
@@ -26,7 +26,7 @@ data class LauncherIconRenderSettings(
     val bgTone: Int,
 )
 
-data class StaticLauncherIcon(
+public data class StaticLauncherIcon(
     val foregroundLayer: LauncherIconLayer,
     val backgroundLayer: LauncherIconLayer,
 ) : LauncherIcon {
@@ -34,14 +34,14 @@ data class StaticLauncherIcon(
     private var cachedRenderSettings: LauncherIconRenderSettings? = null
     private var renderSemaphore = Semaphore(1)
 
-    fun getCachedBitmap(settings: LauncherIconRenderSettings): Bitmap? {
+    public fun getCachedBitmap(settings: LauncherIconRenderSettings): Bitmap? {
         return if (cachedRenderSettings == settings) cachedBitmap?.get() else null
     }
 
     /**
      * Render this icon to a bitmap.
      */
-    suspend fun render(settings: LauncherIconRenderSettings): Bitmap {
+    public suspend fun render(settings: LauncherIconRenderSettings): Bitmap {
         val cachedBmp = cachedBitmap?.get()
         if (cachedRenderSettings == settings && cachedBmp != null) return cachedBmp
         val bmp = withContext(Dispatchers.Default) {
@@ -102,6 +102,6 @@ data class StaticLauncherIcon(
     }
 }
 
-interface DynamicLauncherIcon : LauncherIcon {
-    suspend fun getIcon(time: Long): StaticLauncherIcon
+public interface DynamicLauncherIcon : LauncherIcon {
+    public suspend fun getIcon(time: Long): StaticLauncherIcon
 }

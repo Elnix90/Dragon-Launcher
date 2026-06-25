@@ -9,9 +9,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.createBitmap
 
-class WallpaperHelper(private val ctx: Context) {
+public class WallpaperHelper(private val ctx: Context) {
 
-    fun setWallpaper(bitmap: Bitmap, flags: Int = WallpaperManager.FLAG_SYSTEM): Boolean {
+    public fun setWallpaper(bitmap: Bitmap, flags: Int = WallpaperManager.FLAG_SYSTEM): Boolean {
         return try {
             val wallpaperManager = WallpaperManager.getInstance(ctx)
 
@@ -39,7 +39,7 @@ class WallpaperHelper(private val ctx: Context) {
     }
 
 
-   fun createPlainWallpaperBitmap(ctx: Context, color: Color): Bitmap {
+   public fun createPlainWallpaperBitmap(ctx: Context, color: Color): Bitmap {
         val displayMetrics = ctx.resources.displayMetrics
         val width = displayMetrics.widthPixels
         val height = displayMetrics.heightPixels

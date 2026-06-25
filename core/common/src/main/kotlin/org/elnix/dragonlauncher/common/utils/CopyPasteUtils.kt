@@ -15,7 +15,7 @@ import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logW
 import java.io.File
 
-object CopyPasteUtils {
+public object CopyPasteUtils {
 
     /**
      * Shares content via Intent.ACTION_SEND. Handles both file-based and text-based sharing
@@ -27,7 +27,7 @@ object CopyPasteUtils {
      * @param mimeType The MIME type (default: "text/plain").
      * @param chooserTitle The title shown in the share chooser.
      */
-    fun Context.shareContent(
+    public fun Context.shareContent(
         uri: Uri? = null,
         text: String? = null,
         subject: String = "Share",
@@ -65,7 +65,7 @@ object CopyPasteUtils {
      * @param filename The name of the file to create.
      * @return A pair of (File in cache, FileProvider Uri) or null if creation failed.
      */
-    fun Context.createShareableTextFile(
+    public fun Context.createShareableTextFile(
         text: String,
         filename: String = "share_${System.currentTimeMillis()}.txt"
     ): Pair<File, Uri>? {
@@ -92,7 +92,7 @@ object CopyPasteUtils {
      * @param sourceFile The file to copy to cache.
      * @return A pair of (File in cache, FileProvider Uri) or null if creation failed.
      */
-    fun Context.createShareableFile(sourceFile: File): Pair<File, Uri>? {
+    public fun Context.createShareableFile(sourceFile: File): Pair<File, Uri>? {
         return try {
             val cacheDir = cacheDir
             val shareFile = File(cacheDir, sourceFile.name)
@@ -111,7 +111,7 @@ object CopyPasteUtils {
         }
     }
 
-    fun Context.copyToClipboard(text: String, maxSize: Int = 500 * 1024) {
+    public fun Context.copyToClipboard(text: String, maxSize: Int = 500 * 1024) {
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
         if (text.length > maxSize) {
@@ -144,7 +144,7 @@ object CopyPasteUtils {
     }
 
 
-    fun Context.pasteClipboard(): String? {
+    public fun Context.pasteClipboard(): String? {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = clipboard.primaryClip ?: return null
         if (clip.itemCount == 0) return null

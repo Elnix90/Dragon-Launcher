@@ -15,19 +15,19 @@ import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import javax.inject.Inject
 
 @HiltViewModel
-class ColorsViewModel @Inject constructor(colorService: ColorService) : ViewModel() {
+public class ColorsViewModel @Inject constructor(colorService: ColorService) : ViewModel() {
 
     init {
         viewModelInitialized()
     }
 
-    val colorscheme: StateFlow<ColorScheme> = colorService.colors.stateIn(
+    public val colorscheme: StateFlow<ColorScheme> = colorService.colors.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
         initialValue = AmoledDragonColorScheme
     )
 
-    val extraColors: StateFlow<ExtraColors> = colorService.extraColors.stateIn(
+    public val extraColors: StateFlow<ExtraColors> = colorService.extraColors.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
         initialValue = DefaultExtraColors

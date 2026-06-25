@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "Searchable")
-data class SavedSearchableEntity(
+public data class SavedSearchableEntity(
         @PrimaryKey val key: String,
         val type: String,
         @ColumnInfo(name = "searchable") val serializedSearchable: String,
@@ -15,14 +15,14 @@ data class SavedSearchableEntity(
         @ColumnInfo(defaultValue = "0.0") val weight: Double
 )
 
-data class SavedSearchableUpdatePinEntity(
+public data class SavedSearchableUpdatePinEntity(
         val key: String,
         val type: String,
         @ColumnInfo(name = "searchable") val serializedSearchable: String,
         val pinPosition: Int? = null,
 )
 
-data class SavedSearchableUpdateContentEntity(
+public data class SavedSearchableUpdateContentEntity(
         val key: String,
         val type: String,
         @ColumnInfo(name = "searchable") val serializedSearchable: String,

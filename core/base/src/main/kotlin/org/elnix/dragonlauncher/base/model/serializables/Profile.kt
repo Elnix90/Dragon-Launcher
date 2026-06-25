@@ -10,7 +10,7 @@ import org.elnix.dragonlauncher.ktx.getSerialNumber
 
 @Serializable
 @SerialName("Profile")
-data class Profile(
+public data class Profile(
     val type: Type,
     @Serializable(with = UserHandleSerializer::class)
     val userHandle: UserHandle,
@@ -28,7 +28,7 @@ data class Profile(
         return userHandle.hashCode()
     }
 
-    enum class Type {
+    public enum class Type {
         /**
          * The default profile.
          */
@@ -45,7 +45,7 @@ data class Profile(
         Private,
     }
 
-    data class State(
+    public data class State(
         val locked: Boolean = false,
     )
 
@@ -53,13 +53,13 @@ data class Profile(
         return "Profile(type = $type, userHandle = $userHandle, serial = $serial)"
     }
 
-    companion object {
-        fun fromContext(ctx: Context): Profile {
+    public companion object {
+        public fun fromContext(ctx: Context): Profile {
             val userHandle = Process.myUserHandle()
             val serial = userHandle.getSerialNumber(ctx)
             return Profile(Type.Personal, userHandle, serial)
         }
 
-        fun dummy(): Profile = Profile(Type.Personal, Process.myUserHandle(), 0L)
+        public fun dummy(): Profile = Profile(Type.Personal, Process.myUserHandle(), 0L)
     }
 }

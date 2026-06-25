@@ -1,20 +1,21 @@
 package org.elnix.dragonlauncher.base
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import io.github.elnix90.logging.ICONS_TAG
 import io.github.elnix90.logging.logD
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import java.util.Collections
 import java.util.UUID
 
-abstract class DragonCache <K,V> (initialMaxSize: Int) {
+public abstract class DragonCache <K,V> (initialMaxSize: Int) {
     private var maxSize = initialMaxSize
 
-    val cacheUUID: UUID = UUID.randomUUID()
+    public val cacheUUID: UUID = UUID.randomUUID()
 
     private val _iconsTrigger = MutableStateFlow(0)
-    val iconsTrigger = _iconsTrigger.asStateFlow()
+    public val iconsTrigger: StateFlow<Int> = _iconsTrigger.asStateFlow()
 
     /**
      * Updates the maximum number of cached entries.
@@ -22,11 +23,11 @@ abstract class DragonCache <K,V> (initialMaxSize: Int) {
      *
      * @param newSize The new maximum entry count.
      */
-    fun updateMaxCacheSize(newSize: Int) {
+    public fun updateMaxCacheSize(newSize: Int) {
         maxSize = newSize
     }
 
-    fun incrementCacheSize(increment: Int = 1) {
+    public fun incrementCacheSize(increment: Int = 1) {
         maxSize += increment
     }
 
@@ -41,7 +42,7 @@ abstract class DragonCache <K,V> (initialMaxSize: Int) {
     )
 
 
-    operator fun get(key: K): V? = icons[key]
+    public operator fun get(key: K): V? = icons[key]
 
 
     /**
@@ -52,7 +53,7 @@ abstract class DragonCache <K,V> (initialMaxSize: Int) {
      * @param compute the function block used to compute the icon, it returns [androidx.compose.ui.graphics.ImageBitmap]
      * @return [androidx.compose.ui.graphics.ImageBitmap] the actual icon, not null
      */
-    fun getOrCompute(
+    public fun getOrCompute(
         key: K,
         compute: () -> V
     ): V =
@@ -69,7 +70,7 @@ abstract class DragonCache <K,V> (initialMaxSize: Int) {
      * @param compute the function block used to compute the icon, it returns [androidx.compose.ui.graphics.ImageBitmap]
      * @return [androidx.compose.ui.graphics.ImageBitmap] the actual icon, not null
      */
-    fun getOrLazyCompute(
+    public fun getOrLazyCompute(
         key: K,
         compute: () -> Unit
     ): V? {
@@ -82,20 +83,20 @@ abstract class DragonCache <K,V> (initialMaxSize: Int) {
     }
 
     /*** Compute simply a new icon, don't return it */
-    fun compute(key: K, compute: () -> V) {
+    public fun compute(key: K, compute: () -> V) {
         _iconsTrigger.update { it + 1 }
         icons[key] = compute()
     }
 
-    fun getRandom(): K? = if (icons.isNotEmpty()) {
+    public fun getRandom(): K? = if (icons.isNotEmpty()) {
         icons.keys.random()
     } else null
 
-    fun evict(key: K) {
+    public fun evict(key: K) {
         icons.remove(key)
     }
 
-    fun evictAll() {
+    public fun evictAll() {
         icons.clear()
     }
 
@@ -103,5 +104,5 @@ abstract class DragonCache <K,V> (initialMaxSize: Int) {
      * The current number of entries held in the cache.
      * Useful for debugging or logging cache pressure.
      */
-    val size: Int = icons.size
+    public val size: Int = icons.size
 }

@@ -11,7 +11,7 @@ import org.elnix.dragonlauncher.profiles.ProfileManager
 
 @Module
 @InstallIn(SingletonComponent::class)
-object BadgeModule {
+internal object BadgeModule {
 
     @Provides
     @Singleton

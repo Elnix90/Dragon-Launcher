@@ -44,15 +44,15 @@ import io.github.elnix90.logging.logE
 import java.io.ByteArrayOutputStream
 import kotlin.math.ceil
 
-object ImageUtils {
+public object ImageUtils {
 
-    fun loadBitmap(ctx: Context, uri: Uri): Bitmap {
+    public fun loadBitmap(ctx: Context, uri: Uri): Bitmap {
         ctx.contentResolver.openInputStream(uri).use {
             return BitmapFactory.decodeStream(it!!)
         }
     }
 
-    fun loadDrawableAsBitmap(
+    public fun loadDrawableAsBitmap(
         drawable: Drawable,
         width: Int,
         height: Int,
@@ -101,7 +101,7 @@ object ImageUtils {
         } ?: bitmap
     }
 
-    fun cropCenterSquare(src: Bitmap): Bitmap {
+    public fun cropCenterSquare(src: Bitmap): Bitmap {
         val size = minOf(src.width, src.height)
         val left = (src.width - size) / 2
         val top = (src.height - size) / 2
@@ -109,11 +109,11 @@ object ImageUtils {
         return Bitmap.createBitmap(src, left, top, size, size)
     }
 
-    fun resize(src: Bitmap, size: Int): Bitmap =
+    public fun resize(src: Bitmap, size: Int): Bitmap =
         src.scale(size, size)
 
 
-    fun base64ToImageBitmap(base64: String?): ImageBitmap? {
+    public fun base64ToImageBitmap(base64: String?): ImageBitmap? {
         return try {
             base64?.let {
                 val bytes = Base64.decode(it, Base64.DEFAULT)
@@ -136,7 +136,7 @@ object ImageUtils {
         }
     }
 
-    fun uriToBase64(ctx: Context, uri: Uri): String? {
+    public fun uriToBase64(ctx: Context, uri: Uri): String? {
         return try {
             val bmp = loadBitmap(ctx, uri)
                 .let(ImageUtils::cropCenterSquare)
@@ -149,7 +149,7 @@ object ImageUtils {
         }
     }
 
-    fun imageBitmapToBase64(imageBitmap: ImageBitmap): String? {
+    public fun imageBitmapToBase64(imageBitmap: ImageBitmap): String? {
         return try {
             val androidBitmap = imageBitmap.asAndroidBitmap()
             bitmapToBase64(androidBitmap)
@@ -160,7 +160,7 @@ object ImageUtils {
     }
 
 
-    fun blurBitmap(ctx: Context, bitmap: Bitmap, radius: Float): Bitmap {
+    public fun blurBitmap(ctx: Context, bitmap: Bitmap, radius: Float): Bitmap {
         if (radius <= 0f) return bitmap
 
         val scaleFactor = (25f - radius) / 25f.coerceAtLeast(0.1f)
@@ -189,7 +189,7 @@ object ImageUtils {
     }
 
 
-    fun textToBitmap(
+    public fun textToBitmap(
         text: String,
         sizePx: Int,
         color: Int = 0xFFFFFFFF.toInt()
@@ -220,7 +220,7 @@ object ImageUtils {
         return bitmap.asImageBitmap()
     }
 
-    fun Bitmap.tintedWith(color: Int?): Bitmap {
+    public fun Bitmap.tintedWith(color: Int?): Bitmap {
         if (color == null) return this
         val bitmap = createBitmap(width, height)
         val canvas = Canvas(bitmap)
@@ -234,7 +234,7 @@ object ImageUtils {
         return bitmap
     }
 
-    fun createDefaultBitmap(
+    public fun createDefaultBitmap(
         width: Int,
         height: Int
     ): Bitmap {
@@ -244,7 +244,7 @@ object ImageUtils {
         return bitmap
     }
 
-    fun Context.loadDrawableResAsBitmap(
+    public fun Context.loadDrawableResAsBitmap(
         resId: Int,
         width: Int,
         height: Int
@@ -256,7 +256,7 @@ object ImageUtils {
     }
 
 
-    fun Context.loadDrawableResAsImageBitmap(
+    public fun Context.loadDrawableResAsImageBitmap(
         resId: Int,
         width: Int,
         height: Int
@@ -268,7 +268,7 @@ object ImageUtils {
     }
 
 
-    fun createUntintedBitmap(
+    public fun createUntintedBitmap(
         action: Action,
         ctx: Context,
         width: Int,
@@ -349,7 +349,7 @@ object ImageUtils {
         }
     }
 
-    fun resolveCustomIconProperties(
+    public fun resolveCustomIconProperties(
         base: Bitmap,
         properties: CustomIconProperties,
         sizePx: Int,

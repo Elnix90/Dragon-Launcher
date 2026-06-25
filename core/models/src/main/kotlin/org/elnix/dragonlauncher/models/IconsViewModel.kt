@@ -23,69 +23,69 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class IconsViewModel @Inject constructor(
+public class IconsViewModel @Inject constructor(
     private val iconsService: IconService,
     private val badgeService: BadgeService,
     private val iconSettingsRepository: IconSettingsRepository
 ) : ViewModel() {
 
 
-    val iconSettings = iconSettingsRepository.settings.stateIn(
+    public val iconSettings: StateFlow<IconSettings> = iconSettingsRepository.settings.stateIn(
         viewModelScope,
         SharingStarted.Eagerly,
         IconSettings()
     )
 
 
-    fun getIconPickerVM(application: Application): IconPickerVM =
+    public fun getIconPickerVM(application: Application): IconPickerVM =
         IconPickerVM(application, iconsService)
 
 
-    fun getIcon(application: Application): StateFlow<LauncherIcon?> = iconsService.getAppIcon(application).stateIn(
+    public fun getIcon(application: Application): StateFlow<LauncherIcon?> = iconsService.getAppIcon(application).stateIn(
         viewModelScope,
         SharingStarted.Eagerly,
         null
     )
 
-    fun getBadge(application: Application): StateFlow<Badge?> = badgeService.getBadge(application).stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        null
-    )
-
-
-
-    fun getIcon(point: Point): StateFlow<LauncherIcon?> = iconsService.getPointIcon(point).stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        null
-    )
-
-    fun getIcon(shortcut: Action.LaunchShortcut): StateFlow<LauncherIcon?> = iconsService.getShortcutIcon(shortcut).stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        null
-    )
-
-    fun getIcon(action: Action): StateFlow<LauncherIcon?> = iconsService.getActionIcon(action).stateIn(
+    public fun getBadge(application: Application): StateFlow<Badge?> = badgeService.getBadge(application).stateIn(
         viewModelScope,
         SharingStarted.Eagerly,
         null
     )
 
 
-    fun reloadIcon(app: Application) = iconsService.reloadAppIcon(app)
-    fun reloadIcon(point: Point) = iconsService.reloadPointIcon(point)
-    fun reloadIcon(shortcut: Action.LaunchShortcut) = iconsService.reloadShortcutIcon(shortcut)
+
+    public fun getIcon(point: Point): StateFlow<LauncherIcon?> = iconsService.getPointIcon(point).stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        null
+    )
+
+    public fun getIcon(shortcut: Action.LaunchShortcut): StateFlow<LauncherIcon?> = iconsService.getShortcutIcon(shortcut).stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        null
+    )
+
+    public fun getIcon(action: Action): StateFlow<LauncherIcon?> = iconsService.getActionIcon(action).stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        null
+    )
+
+
+    public fun reloadIcon(app: Application): Unit = iconsService.reloadAppIcon(app)
+    public fun reloadIcon(point: Point): Unit = iconsService.reloadPointIcon(point)
+    public fun reloadIcon(shortcut: Action.LaunchShortcut): Unit = iconsService.reloadShortcutIcon(shortcut)
 
 
 
-    fun updateMaxCacheSize(newSize: Int) = iconsService.updateMaxCacheSize(newSize)
-    fun reloadAllPointsIcons() = iconsService.reloadAllPointIcons()
-    fun incrementPointCacheSize() = iconsService.incrementPointCacheSize()
+    public fun updateMaxCacheSize(newSize: Int): Unit = iconsService.updateMaxCacheSize(newSize)
+    public fun reloadAllPointsIcons(): Unit = iconsService.reloadAllPointIcons()
+    public fun incrementPointCacheSize(): Unit = iconsService.incrementPointCacheSize()
 
-    fun reinstallAllIconPacks() = iconsService.reinstallAllIconPacks()
-    fun updateIconPacks() = iconsService.requestIconPackListUpdate()
+    public fun reinstallAllIconPacks(): Unit = iconsService.reinstallAllIconPacks()
+    public fun updateIconPacks(): Unit = iconsService.requestIconPackListUpdate()
 
 
     init {

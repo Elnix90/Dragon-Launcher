@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.enumsui.select
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.enumsui.ToggleButtonOption
 
-enum class NestEditMode(
+public enum class NestEditMode(
     override val resId: Int,
     override val iconEnabled: Int,
     override val iconDisabled: Int? = null

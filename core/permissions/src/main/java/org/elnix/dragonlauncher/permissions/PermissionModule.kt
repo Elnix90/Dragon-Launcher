@@ -11,7 +11,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object PermissionModule {
+internal object PermissionModule {
 
     @Provides
     @Singleton

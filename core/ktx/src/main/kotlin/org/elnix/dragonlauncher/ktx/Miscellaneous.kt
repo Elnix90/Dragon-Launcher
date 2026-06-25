@@ -4,7 +4,7 @@ import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast
 import org.json.JSONObject
 
-fun jsonObjectOf(vararg pairs: Pair<String, Any?>): JSONObject {
+public fun jsonObjectOf(vararg pairs: Pair<String, Any?>): JSONObject {
     val json = JSONObject()
     for ((k, v) in pairs) {
         when (v) {
@@ -21,16 +21,6 @@ fun jsonObjectOf(vararg pairs: Pair<String, Any?>): JSONObject {
 }
 
 @ChecksSdkIntAtLeast(parameter = 0)
-fun isAtLeastApiLevel(apiLevel: Int): Boolean {
+public fun isAtLeastApiLevel(apiLevel: Int): Boolean {
     return Build.VERSION.SDK_INT >= apiLevel
-}
-
-inline fun <reified T> Any?.castTo(): T {
-    @Suppress("UNCHECKED_CAST")
-    return this as T
-}
-
-inline fun <reified T> Any?.castToOrNull(): T? {
-    @Suppress("UNCHECKED_CAST")
-    return this as? T
 }

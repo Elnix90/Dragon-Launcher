@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import org.elnix.dragonlauncher.badges.Badge
 import org.elnix.dragonlauncher.base.model.models.Application
 
-interface BadgeProvider {
+internal interface BadgeProvider {
     /**
      * This must emit a value as soon as possible because the
      * BadgeRepository is waiting for values from every provider.

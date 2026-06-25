@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.FontFamily
 import java.io.File
 
 
-fun fontNameToFont(name: String, ctx: Context? = null): FontFamily {
+public fun fontNameToFont(name: String, ctx: Context? = null): FontFamily {
     if (name.isBlank()) return FontFamily.Default
 
     val cleanName = name.substringBefore(" (")

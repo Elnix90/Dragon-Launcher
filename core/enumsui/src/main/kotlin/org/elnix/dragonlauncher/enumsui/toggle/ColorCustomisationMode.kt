@@ -4,7 +4,7 @@ import org.elnix.dragonlauncher.enumsui.ToggleButtonOption
 import org.elnix.dragonlauncher.i18n.R
 
 
-enum class DefaultThemes(
+public enum class DefaultThemes(
     override val resId: Int,
     override val iconEnabled: Int? = null,
     override val iconDisabled: Int? = null

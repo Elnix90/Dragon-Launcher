@@ -7,7 +7,7 @@ import org.elnix.dragonlauncher.database.entities.IconEntity
 import org.elnix.dragonlauncher.icons.IconPackAppIcon
 import org.elnix.dragonlauncher.icons.IconPackManager
 
-class CustomIconPackIconProvider(
+internal class CustomIconPackIconProvider(
     private val customIcon: CustomIconPackIcon,
     private val iconPackManager: IconPackManager,
 ) : IconProvider {

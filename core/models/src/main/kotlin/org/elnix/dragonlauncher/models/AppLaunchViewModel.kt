@@ -6,6 +6,9 @@ import android.os.Bundle
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.elnix90.logging.APP_LAUNCH_TAG
+import io.github.elnix90.logging.logE
+import io.github.elnix90.logging.logW
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,9 +24,6 @@ import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.compat.PackageManagerCompat
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
-import io.github.elnix90.logging.APP_LAUNCH_TAG
-import io.github.elnix90.logging.logE
-import io.github.elnix90.logging.logW
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.permissions.PermissionGroup
 import org.elnix.dragonlauncher.permissions.PermissionsManager
@@ -37,7 +37,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 
 @HiltViewModel
-class AppLaunchViewModel @Inject constructor(
+public class AppLaunchViewModel @Inject constructor(
     application: android.app.Application,
     permissionsManager: PermissionsManager,
     private val recentsService: RecentsService,
@@ -85,19 +85,19 @@ class AppLaunchViewModel @Inject constructor(
 //        )
 //    }
 
-    val hasUsageStatsPermission: StateFlow<Boolean> = permissionsManager.hasPermission(PermissionGroup.UsageStat).stateIn(
+    public val hasUsageStatsPermission: StateFlow<Boolean> = permissionsManager.hasPermission(PermissionGroup.UsageStat).stateIn(
         viewModelScope,
         SharingStarted.Lazily,
         false
     )
 
     private val _pendingAppLaunch = MutableStateFlow<Application?>(null)
-    val pendingAppLaunch = _pendingAppLaunch.asStateFlow()
+    public val pendingAppLaunch: StateFlow<Application?> = _pendingAppLaunch.asStateFlow()
 
     private var currentLaunchJob: Job? = null
 
 
-    fun requestAppLaunch(launchAction: Action.LaunchApp) {
+    public fun requestAppLaunch(launchAction: Action.LaunchApp) {
         viewModelScope.launch {
             val app: Application? = appRepository.findOne(launchAction.packageName, launchAction.profile.userHandle).first()
             if (app != null) {
@@ -106,7 +106,7 @@ class AppLaunchViewModel @Inject constructor(
         }
     }
 
-    fun requestAppLaunch(application: Application) {
+    public fun requestAppLaunch(application: Application) {
         viewModelScope.launch{
             val startAppTimer = combine(WellbeingSettingsStore.pausedApps.flow(ctx), WellbeingSettingsStore.socialMediaPauseEnabled.flow(ctx)) { pausedApps, socialMediaPauseEnabled ->
                 if (!socialMediaPauseEnabled) return@combine false
@@ -123,7 +123,7 @@ class AppLaunchViewModel @Inject constructor(
     }
 
 
-    suspend fun startTimer(timeLimitMinutes: Int?, app: Application) {
+    public suspend fun startTimer(timeLimitMinutes: Int?, app: Application) {
         AppTimerService.start(
             ctx = ctx,
             application = app,
@@ -134,7 +134,7 @@ class AppLaunchViewModel @Inject constructor(
         )
     }
 
-    fun onAppTimerServiceStarted(duration: Int?): Boolean {
+    public fun onAppTimerServiceStarted(duration: Int?): Boolean {
         val pendingApp = _pendingAppLaunch.value
         if (pendingApp!= null) {
 
@@ -150,7 +150,7 @@ class AppLaunchViewModel @Inject constructor(
         return false
     }
 
-    fun launchShortcut(action: Action.LaunchShortcut) {
+    public fun launchShortcut(action: Action.LaunchShortcut) {
         action.takeIf { it.packageName.isNotEmpty() }?.let {
             packageManagerCompat.launchShortcut(it.packageName, it.shortcutId)
         }

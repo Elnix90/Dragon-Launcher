@@ -6,13 +6,13 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
 import kotlin.math.abs
 import kotlin.math.min
 
-fun minAngleGapForCircle(circleRadius: Float): Double {
+public fun minAngleGapForCircle(circleRadius: Float): Double {
     val arcLength = 2 * POINT_HITBOX_RADIUS_PX
     val minAngleRad = arcLength / circleRadius
     return Math.toDegrees(minAngleRad.toDouble())
 }
 
-fun autoSeparate(
+public fun autoSeparate(
     points: Set<Point>,
     nestId: Int,
     circle: UiCircle?,
@@ -87,7 +87,7 @@ fun autoSeparate(
 
 
 /** Normalize angle into [0,360) */
-fun normalizeAngle(a: Double): Double {
+public fun normalizeAngle(a: Double): Double {
     val v = a % 360.0
     return if (v < 0) v + 360.0 else v
 }
@@ -95,7 +95,7 @@ fun normalizeAngle(a: Double): Double {
 /**
  * Return absolute minimal difference between two angles (0..180)
  */
-fun absAngleDiff(a: Double, b: Double): Double {
+public fun absAngleDiff(a: Double, b: Double): Double {
     val diff = abs(a - b)
     return min(diff, 360 - diff)
 }

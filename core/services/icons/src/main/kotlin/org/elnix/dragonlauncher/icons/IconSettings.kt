@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import org.elnix.dragonlauncher.settings.stores.map.IconsSettingsStore
 
-class IconSettingsRepository(
+public class IconSettingsRepository(
     ctx: Context
 ) {
     private val selectedIconPack: Flow<String> = IconsSettingsStore.selectedIconPack.flow(ctx)
@@ -23,7 +23,7 @@ class IconSettingsRepository(
         } else null
     }
 
-    val settings: Flow<IconSettings> = combine(
+    public val settings: Flow<IconSettings> = combine(
         selectedIconPack,
         tintFlow,
         themedIcons,
@@ -40,7 +40,7 @@ class IconSettingsRepository(
     }
 }
 
-data class IconSettings(
+public data class IconSettings(
     val iconPack: String? = null,
     val iconsTint: Int? = null,
     val themedIcons: Boolean = false,

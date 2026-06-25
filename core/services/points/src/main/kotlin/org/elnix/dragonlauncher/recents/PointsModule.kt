@@ -11,7 +11,7 @@ import jakarta.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object PointsModule {
+internal object PointsModule {
     @Provides
     @Singleton
     fun providePointsService(@ApplicationContext ctx: Context, ): PointsService = PointsServiceImpl(ctx)

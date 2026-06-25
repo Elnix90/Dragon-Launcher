@@ -15,10 +15,10 @@ import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import javax.inject.Inject
 
 @HiltViewModel
-class FontViewModel @Inject constructor(
+public class FontViewModel @Inject constructor(
     fontService: FontService
 ) : ViewModel() {
-    val fontFamily: StateFlow<FontFamily> = fontService.fontFamily
+    public val fontFamily: StateFlow<FontFamily> = fontService.fontFamily
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -26,7 +26,7 @@ class FontViewModel @Inject constructor(
         )
 
 
-    val typography: StateFlow<Typography> = fontFamily.map { fontFamily ->
+    public val typography: StateFlow<Typography> = fontFamily.map { fontFamily ->
         Typography.copy(
             displayLarge = Typography.displayLarge.copy(fontFamily = fontFamily),
             displayMedium = Typography.displayMedium.copy(fontFamily = fontFamily),

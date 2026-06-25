@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("ExtensionModel")
-data class ExtensionModel(
+public data class ExtensionModel(
     @SerialName("id") val id: String,
     @SerialName("name") val name: String,
     @SerialName("package") val packageName: String?,

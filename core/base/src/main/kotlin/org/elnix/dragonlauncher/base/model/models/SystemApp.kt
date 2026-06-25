@@ -7,13 +7,13 @@ import android.graphics.drawable.AdaptiveIconDrawable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
-import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.icons.StaticIconLayer
+import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 
-data class SystemApp(
+public data class SystemApp(
     private val ctx: Context,
     private val applicationInfo: ApplicationInfo,
     override val versionName: String?,
@@ -109,7 +109,7 @@ data class SystemApp(
     }
 }
 
-fun buildFakeComponentName(
+public fun buildFakeComponentName(
     packageName: String
 ): ComponentName {
     // System apps don't have a launcher activity, create a synthetic one

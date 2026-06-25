@@ -44,22 +44,22 @@ import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.Work
 import org.elnix.dragonlauncher.compat.PackageManagerCompat
 import org.elnix.dragonlauncher.profiles.ProfileManager
 
-interface AppRepository {
-    fun findOne(packageName: String, user: UserHandle): Flow<Application?>
-    fun getAllApps(): Flow<ImmutableList<Application>>
-    fun search(
+public interface AppRepository {
+    public fun findOne(packageName: String, user: UserHandle): Flow<Application?>
+    public fun getAllApps(): Flow<ImmutableList<Application>>
+    public fun search(
         query: String,
         workspace: Workspace?, // Null means all of them
         getOnlyAdded: Boolean = false,
         getOnlyRemoved: Boolean = false
     ): Flow<ImmutableList<Application>>
 
-    suspend fun refreshApps()
+    public suspend fun refreshApps()
 
-    suspend fun fromAction(action: Action.LaunchApp): Application?
+    public suspend fun fromAction(action: Action.LaunchApp): Application?
 
-    fun queryAppShortcuts(packageName: String): List<ShortcutInfo>
-    fun loadShortcutIcon(packageName: String, shortcutId: String, sizePx: Int = 48): Bitmap?
+    public fun queryAppShortcuts(packageName: String): List<ShortcutInfo>
+    public fun loadShortcutIcon(packageName: String, shortcutId: String, sizePx: Int = 48): Bitmap?
 }
 
 internal class AppRepositoryImpl(

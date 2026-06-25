@@ -10,7 +10,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.icons.DynamicCalendarIcon
 import org.elnix.dragonlauncher.ktx.obtainTypedArrayOrNull
 
-class CalendarIconProvider(
+internal class CalendarIconProvider(
     val ctx: Context,
     val appRepository: AppRepository,
     val themed: Boolean,

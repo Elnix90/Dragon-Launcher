@@ -5,24 +5,24 @@ package org.elnix.dragonlauncher.base.undoredo
  *
  * @param T The snapshot type stored across all stacks.
  */
-class UndoRedoStack<T>(
+public class UndoRedoStack<T>(
     private val snapshot: () -> T,
     private val restore: (T) -> Unit
 ) {
     private var undoStack: List<T> = emptyList()
     private var redoStack: List<T> = emptyList()
 
-    val canUndo get() = undoStack.isNotEmpty()
-    val canRedo get() = redoStack.isNotEmpty()
+    public val canUndo: Boolean get() = undoStack.isNotEmpty()
+    public val canRedo: Boolean get() = redoStack.isNotEmpty()
 
     /** Push current snapshot before a mutation. Clears redo. */
-    fun push() {
+    public fun push() {
         undoStack = undoStack + snapshot()
         redoStack = emptyList()
     }
 
     /** Pop undo, push current to redo. Returns the state to restore, or null. */
-    fun undo() {
+    public fun undo() {
         if (!canUndo) return
         redoStack = redoStack + undoStack.last()
         val last = undoStack.last()
@@ -32,7 +32,7 @@ class UndoRedoStack<T>(
     }
 
     /** Pop redo, push current to undo. Returns the state to restore, or null. */
-    fun redo() {
+    public fun redo() {
         if (!canRedo) return
         undoStack = undoStack + redoStack.last()
         val last = redoStack.last()
@@ -42,7 +42,7 @@ class UndoRedoStack<T>(
     }
 
     /** Jump to the oldest undo entry. */
-    fun undoAll() {
+    public fun undoAll() {
         if (!canUndo) return
         val first = undoStack.first()
         redoStack = redoStack + first
@@ -52,7 +52,7 @@ class UndoRedoStack<T>(
     }
 
     /** Jump to the newest redo entry. */
-    fun redoAll() {
+    public fun redoAll() {
         if (!canRedo) return
         val first = redoStack.first()
         undoStack = undoStack + first

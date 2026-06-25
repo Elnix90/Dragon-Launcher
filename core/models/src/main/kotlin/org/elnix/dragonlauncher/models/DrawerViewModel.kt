@@ -5,11 +5,14 @@ package org.elnix.dragonlauncher.models
 import android.content.pm.ShortcutInfo
 import android.os.UserHandle
 import android.service.notification.StatusBarNotification
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -19,6 +22,7 @@ import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Workspace
+import org.elnix.dragonlauncher.icons.IconPack
 import org.elnix.dragonlauncher.icons.IconPackManager
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.notifications.NotificationService
@@ -30,31 +34,31 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class DrawerViewModel @Inject constructor(
+public class DrawerViewModel @Inject constructor(
     private val appsRepository: AppRepository,
     private val recentsService: RecentsService,
     private val permissionsManager: PermissionsManager,
     private val iconPackManager: IconPackManager,
-    val appOverrideManager: AppOverridesManager,
-    val workspaceManager: WorkspacesManager,
+    public val appOverrideManager: AppOverridesManager,
+    public val workspaceManager: WorkspacesManager,
     notificationService: NotificationService
 ) : ViewModel() {
 
-    val allApps: StateFlow<List<Application>> = appsRepository.getAllApps().stateIn(
+    public val allApps: StateFlow<List<Application>> = appsRepository.getAllApps().stateIn(
         viewModelScope,
         SharingStarted.Eagerly,
         emptyList()
     )
 
     // Only used for preview, the real user apps getter are using the appsForWorkspace function
-    val userApps: StateFlow<List<Application>> = allApps.map { list ->
+    public val userApps: StateFlow<List<Application>> = allApps.map { list ->
         list.filter { it.isLaunchable && !it.isWork && !it.isSystem && !it.isPrivate }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
 
-    val notifications: Array<out StatusBarNotification?>? = notificationService.activeNotifications
+    public val notifications: Array<out StatusBarNotification?>? = notificationService.activeNotifications
 
-    fun isAppInstalled(packageName: String) = allApps.map { apps ->
+    public fun isAppInstalled(packageName: String): StateFlow<Boolean> = allApps.map { apps ->
         apps.any { it.packageName == packageName }
     }.stateIn(
         viewModelScope,
@@ -62,15 +66,15 @@ class DrawerViewModel @Inject constructor(
         false
     )
 
-    val searchQuery = mutableStateOf("")
+    public val searchQuery: MutableState<String> = mutableStateOf("")
 
-    fun findOne(packageName: String, userHandle: UserHandle) = appsRepository.findOne(packageName, userHandle)
+    public fun findOne(packageName: String, userHandle: UserHandle): Flow<Application?> = appsRepository.findOne(packageName, userHandle)
 
-    fun search(
+    public fun search(
         workspace: Workspace?,
         getOnlyAdded: Boolean = false,
         getOnlyRemoved: Boolean = false
-    ) = appsRepository.search(
+    ): StateFlow<List<Application>> = appsRepository.search(
         searchQuery.value,
         workspace = workspace,
         getOnlyAdded = getOnlyAdded,
@@ -81,27 +85,27 @@ class DrawerViewModel @Inject constructor(
         emptyList()
     )
 
-    fun reloadApps() = viewModelScope.launch {
+    public fun reloadApps(): Job = viewModelScope.launch {
         appsRepository.refreshApps()
     }
 
-    fun getRecentApps(count: Int): StateFlow<List<Application>> {
+    public fun getRecentApps(count: Int): StateFlow<List<Application>> {
         return recentsService.getRecentApps(count)
     }
 
 
-    fun selectWorkspace(workspaceId: String) = workspaceManager.selectWorkspace(workspaceId)
-    val selectedWorkspaceId = workspaceManager.selectedWorkspaceId.stateIn(
+    public fun selectWorkspace(workspaceId: String): Unit = workspaceManager.selectWorkspace(workspaceId)
+    public val selectedWorkspaceId: StateFlow<String> = workspaceManager.selectedWorkspaceId.stateIn(
         viewModelScope,
         SharingStarted.Lazily,
         "user"
     )
 
-    fun queryAppShortcuts(packageName: String): List<ShortcutInfo> = appsRepository.queryAppShortcuts(packageName)
+    public fun queryAppShortcuts(packageName: String): List<ShortcutInfo> = appsRepository.queryAppShortcuts(packageName)
 
-    fun hasPermission(permission: PermissionGroup) = permissionsManager.hasPermission(permission)
+    public fun hasPermission(permission: PermissionGroup): Flow<Boolean> = permissionsManager.hasPermission(permission)
 
-    fun getInstalledIconPacks() = iconPackManager.getInstalledIconPacks()
+    public fun getInstalledIconPacks(): Flow<List<IconPack>> = iconPackManager.getInstalledIconPacks()
 
     init {
         viewModelInitialized()

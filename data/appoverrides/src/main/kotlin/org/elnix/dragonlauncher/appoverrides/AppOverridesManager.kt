@@ -3,10 +3,13 @@
 package org.elnix.dragonlauncher.appoverrides
 
 import android.content.Context
+import io.github.elnix90.logging.WORKSPACES_TAG
+import io.github.elnix90.logging.logE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,20 +21,20 @@ import org.elnix.dragonlauncher.base.model.serializables.AppOverride.Companion.i
 import org.elnix.dragonlauncher.base.model.serializables.AppOverrideState
 import org.elnix.dragonlauncher.base.model.serializables.CacheKey
 import org.elnix.dragonlauncher.base.model.serializables.CustomIcon
-import io.github.elnix90.logging.WORKSPACES_TAG
-import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.settings.stores.array.AppOverridesSettingsStore
 
 
-object AppOverridesJson : DragonJson<AppOverrideState>()
-class AppOverridesManager(
+public object AppOverridesJson : DragonJson<AppOverrideState>()
+
+
+public class AppOverridesManager(
     private val ctx: Context
 ) {
 
     private val scope = CoroutineScope(Job() + Dispatchers.IO)
 
     private val _appOverridesState = MutableStateFlow(defaultAppOverrides)
-    val appOverrideState = _appOverridesState.asStateFlow()
+    public val appOverrideState: StateFlow<AppOverrideState> = _appOverridesState.asStateFlow()
 
 
     init {
@@ -80,17 +83,17 @@ class AppOverridesManager(
         }
     }
 
-    fun getAliasesForApp(app: Application): List<String> {
+    public fun getAliasesForApp(app: Application): List<String> {
         return _appOverridesState.value[app.key]?.aliases ?: emptyList()
     }
 
-    fun addAliasToApp(alias: String, cacheKey: CacheKey) {
+    public fun addAliasToApp(alias: String, cacheKey: CacheKey) {
         updateOv(cacheKey) { old ->
             old.copy(aliases = (old.aliases ?: emptySet()).plus(alias))
         }
     }
 
-    fun updateAliasToApp(old: String, new: String, cacheKey: CacheKey) {
+    public fun updateAliasToApp(old: String, new: String, cacheKey: CacheKey) {
         updateOv(cacheKey) { override ->
             val currentAliases = override.aliases ?: emptyList()
             val updatedAliases = currentAliases.toMutableList().apply {
@@ -105,19 +108,19 @@ class AppOverridesManager(
         }
     }
 
-    fun removeAliasFromApp(cacheKey: CacheKey, aliasToRemove: String) {
+    public fun removeAliasFromApp(cacheKey: CacheKey, aliasToRemove: String) {
         updateOv(cacheKey) { old ->
             old.copy(aliases = old.aliases?.minus(aliasToRemove)?.takeIf { it.isNotEmpty() })
         }
     }
 
-    fun renameApp(cacheKey: CacheKey, customName: String?) {
+    public fun renameApp(cacheKey: CacheKey, customName: String?) {
         updateOv(cacheKey) { old ->
             old.copy(customName = customName?.takeIf { it.isNotEmpty() })
         }
     }
 
-    fun setAppIcon(cacheKey: CacheKey, customIcon: CustomIcon?) {
+    public fun setAppIcon(cacheKey: CacheKey, customIcon: CustomIcon?) {
         updateOv(cacheKey) { old ->
             old.copy(customIcon = customIcon)
         }
@@ -149,7 +152,7 @@ class AppOverridesManager(
 //    }
 
 
-    fun resetOverrides() {
+    public fun resetOverrides() {
         _appOverridesState.value = defaultAppOverrides
 
         scope.launch {

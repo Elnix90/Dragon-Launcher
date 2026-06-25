@@ -10,7 +10,7 @@ import jakarta.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object FontModule {
+internal object FontModule {
     @Provides
     @Singleton
     fun provideFontService(

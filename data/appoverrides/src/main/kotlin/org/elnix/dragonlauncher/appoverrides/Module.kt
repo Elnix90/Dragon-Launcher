@@ -10,10 +10,10 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppOverridesModule {
+public object AppOverridesModule {
 
     @Provides
     @Singleton
-    fun provideAppOverrides(@ApplicationContext ctx: Context): AppOverridesManager =
+    public fun provideAppOverrides(@ApplicationContext ctx: Context): AppOverridesManager =
         AppOverridesManager(ctx)
 }

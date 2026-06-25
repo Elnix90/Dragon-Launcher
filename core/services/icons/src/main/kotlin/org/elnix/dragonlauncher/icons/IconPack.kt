@@ -5,14 +5,14 @@ import android.content.pm.PackageInfo
 import android.content.pm.ResolveInfo
 import org.elnix.dragonlauncher.database.entities.IconPackEntity
 
-data class IconPack(
+public data class IconPack(
     val name: String,
     val packageName: String,
     val version: String,
     val scale: Float = 1f,
     val themed: Boolean = false,
 ) {
-    constructor(entity: IconPackEntity) : this(
+    public constructor(entity: IconPackEntity) : this(
         name = entity.name,
         packageName = entity.packageName,
         version = entity.version,
@@ -47,7 +47,7 @@ data class IconPack(
         themed = themed,
     )
 
-    fun toDatabaseEntity(): IconPackEntity {
+    public fun toDatabaseEntity(): IconPackEntity {
         return IconPackEntity(
             name = name,
             scale = scale,

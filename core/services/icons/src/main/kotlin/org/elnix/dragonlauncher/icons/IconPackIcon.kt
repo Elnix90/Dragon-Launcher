@@ -5,20 +5,20 @@ import org.elnix.dragonlauncher.icons.compat.ClockIconConfig
 import org.elnix.dragonlauncher.ktx.jsonObjectOf
 import org.json.JSONObject
 
-sealed interface IconPackComponent {
-    val iconPack: String
-    fun toDatabaseEntity(): IconEntity
+public sealed interface IconPackComponent {
+    public val iconPack: String
+    public fun toDatabaseEntity(): IconEntity
 }
 
-sealed interface IconPackAppIcon: IconPackComponent {
-    val packageName: String?
-    val activityName: String?
-    val name: String?
-    val themed: Boolean
-    val tint: Int?
+public sealed interface IconPackAppIcon: IconPackComponent {
+    public val packageName: String?
+    public val activityName: String?
+    public val name: String?
+    public val themed: Boolean
+    public val tint: Int?
 }
 
-data class IconBack(
+public data class IconBack(
     val drawable: String,
     override val iconPack: String,
 ): IconPackComponent {
@@ -31,7 +31,7 @@ data class IconBack(
     }
 }
 
-data class IconUpon(
+public data class IconUpon(
     val drawable: String,
     override val iconPack: String,
 ): IconPackComponent {
@@ -44,7 +44,7 @@ data class IconUpon(
     }
 }
 
-data class IconMask(
+public data class IconMask(
     val drawable: String,
     override val iconPack: String,
 ): IconPackComponent {
@@ -57,7 +57,7 @@ data class IconMask(
     }
 }
 
-data class AppIcon(
+public data class AppIcon(
     val drawable: String,
     override val iconPack: String,
     override val packageName: String? = null,
@@ -79,7 +79,7 @@ data class AppIcon(
     }
 }
 
-data class CalendarIcon(
+public data class CalendarIcon(
     val drawables: List<String>,
     override val iconPack: String,
     override val packageName: String?,
@@ -102,7 +102,7 @@ data class CalendarIcon(
 }
 
 
-data class ClockIcon(
+public data class ClockIcon(
     val drawable: String,
     override val iconPack: String,
     override val packageName: String? = null,
@@ -133,7 +133,7 @@ data class ClockIcon(
     }
 }
 
-fun Icon(entity: IconEntity): IconPackComponent? {
+public fun Icon(entity: IconEntity): IconPackComponent? {
     return when(entity.type) {
         "iconback" -> IconBack(
             drawable = entity.drawable ?: return null,
@@ -186,7 +186,7 @@ fun Icon(entity: IconEntity): IconPackComponent? {
     }
 }
 
-fun IconPackAppIcon(entity: IconEntity): IconPackAppIcon? {
+public fun IconPackAppIcon(entity: IconEntity): IconPackAppIcon? {
     if (entity.type != "app" && entity.type != "calendar" && entity.type != "clock") return null
     return Icon(entity) as? IconPackAppIcon
 }

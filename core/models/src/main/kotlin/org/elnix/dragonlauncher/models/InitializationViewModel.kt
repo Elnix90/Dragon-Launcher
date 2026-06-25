@@ -23,7 +23,7 @@ import javax.inject.Inject
  * I don't know the correct architecture I should use, but I invite contributors to come to me to talk about that. RN I pasted the actual initialization code I used since the beginning
  */
 @HiltViewModel
-class InitializationViewModel @Inject constructor(
+public class InitializationViewModel @Inject constructor(
     application: Application,
     private val pointsService: PointsService,
 ) : AndroidViewModel(application) {
@@ -32,7 +32,7 @@ class InitializationViewModel @Inject constructor(
         viewModelInitialized()
     }
 
-    fun checkLauncherInitialization() {
+    public fun checkLauncherInitialization() {
         viewModelScope.launch {
             val hasInitialized = PrivateSettingsStore.hasInitialized.get(application)
 
@@ -43,7 +43,7 @@ class InitializationViewModel @Inject constructor(
         }
     }
 
-    fun initializeSwipeSettings(
+    public fun initializeSwipeSettings(
         points: Set<Point>,
         nests: Set<Nest>,
         defaultPoint: Point?
@@ -56,7 +56,7 @@ class InitializationViewModel @Inject constructor(
         }
     }
 
-    fun initialize() {
+    public fun initialize() {
         initializeSwipeSettings(defaultInitializationSetup, defaultNestsInitializationSetup, null)
     }
 }
@@ -82,6 +82,7 @@ private val defaultInitializationSetup = setOf(
         id = UUID.randomUUID().toString()
     )
 )
-val defaultNestsInitializationSetup = setOf(
+
+public val defaultNestsInitializationSetup: Set<Nest> = setOf(
     Nest(0)
 )

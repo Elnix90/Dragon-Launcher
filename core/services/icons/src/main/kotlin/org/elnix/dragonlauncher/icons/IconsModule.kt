@@ -17,7 +17,7 @@ import org.elnix.dragonlauncher.recents.PointsService
 
 @Module
 @InstallIn(SingletonComponent::class)
-object IconsModule {
+internal object IconsModule {
 
     @Provides
     @Singleton

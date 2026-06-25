@@ -4,7 +4,7 @@ import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.model.serializables.Action
 
-class SystemIconProvider(
+internal class SystemIconProvider(
     private val appRepository: AppRepository,
     private val themedIcons: Boolean,
     private val tint: Int?

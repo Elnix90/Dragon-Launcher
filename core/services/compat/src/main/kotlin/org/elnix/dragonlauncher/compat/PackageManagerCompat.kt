@@ -23,27 +23,27 @@ import org.elnix.dragonlauncher.base.util.ImageUtils.loadDrawableAsBitmap
 import org.elnix.dragonlauncher.i18n.R
 
 
-interface PackageManagerCompat {
+public interface PackageManagerCompat {
     /**
      * Get ALL apps (launchable + system + hidden)
      */
-    fun getAllApplications(): List<ApplicationInfo>
+    public fun getAllApplications(): List<ApplicationInfo>
 
     /**
      * Get only launchable apps
      */
-    fun getLaunchableApps(): List<LauncherActivityInfo>
+    public fun getLaunchableApps(): List<LauncherActivityInfo>
 
-    fun isSystemApp(appInfo: ApplicationInfo): Boolean
+    public fun isSystemApp(appInfo: ApplicationInfo): Boolean
 
-    fun getAppIcon(packageName: String, userId: Int, isPrivate: Boolean = false): Drawable
-    fun getResourcesForApplication(packageName: String): Resources
-    fun queryAppShortcuts(packageName: String): List<ShortcutInfo>
-    fun launchShortcut(packageName: String, id: String)
-    fun loadShortcutIcon(packageName: String, shortcutId: String, sizePx: Int): Bitmap?
+    public fun getAppIcon(packageName: String, userId: Int, isPrivate: Boolean = false): Drawable
+    public fun getResourcesForApplication(packageName: String): Resources
+    public fun queryAppShortcuts(packageName: String): List<ShortcutInfo>
+    public fun launchShortcut(packageName: String, id: String)
+    public fun loadShortcutIcon(packageName: String, shortcutId: String, sizePx: Int): Bitmap?
 }
 
-class PackageManagerCompatImpl(
+internal class PackageManagerCompatImpl(
     private val ctx: Context
 ) : PackageManagerCompat {
 

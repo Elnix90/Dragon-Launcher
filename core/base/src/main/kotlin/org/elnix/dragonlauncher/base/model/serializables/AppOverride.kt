@@ -8,15 +8,15 @@ import kotlin.contracts.contract
 
 @Serializable
 @SerialName("AppOverride")
-data class AppOverride(
+public data class AppOverride(
     val customName: String? = null,
     val customIcon: CustomIcon? = null,
     val customCategory: String? = null,
     val aliases: List<String>? = null
 ) {
-    companion object {
+    public companion object {
         @OptIn(ExperimentalContracts::class)
-        val AppOverride?.isNotNullOrEmpty: Boolean
+        public val AppOverride?.isNotNullOrEmpty: Boolean
             get() {
                 contract {
                     returns(true) implies (this@isNotNullOrEmpty != null)
@@ -29,8 +29,8 @@ data class AppOverride(
                         aliases?.takeIf { it.isNotEmpty() } != null
             }
 
-        val defaultAppOverrides: AppOverrideState = emptyMap()
+        public val defaultAppOverrides: AppOverrideState = emptyMap()
     }
 }
 
-typealias AppOverrideState = Map<CacheKey, AppOverride>
+public typealias AppOverrideState = Map<CacheKey, AppOverride>

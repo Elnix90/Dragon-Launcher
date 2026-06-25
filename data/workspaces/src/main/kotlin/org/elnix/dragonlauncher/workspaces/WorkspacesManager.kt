@@ -5,6 +5,8 @@ package org.elnix.dragonlauncher.workspaces
 import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import io.github.elnix90.logging.WORKSPACES_TAG
+import io.github.elnix90.logging.logE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -19,26 +21,24 @@ import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.base.model.serializables.Workspace.Companion.defaultWorkspaces
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceState
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
-import io.github.elnix90.logging.WORKSPACES_TAG
-import io.github.elnix90.logging.logE
-import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.array.WorkspaceSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 
-object WorkspaceJson : DragonJson<List<Workspace>>()
+private object WorkspaceJson : DragonJson<List<Workspace>>()
 
-class WorkspacesManager(
+public class WorkspacesManager(
     private val ctx: Context
 ) {
 
     private val scope = CoroutineScope(Job() + Dispatchers.IO)
 
     private val _workspacesState = MutableStateFlow(defaultWorkspaces)
-    val workspacesState = _workspacesState.asStateFlow()
+    public val workspacesState: StateFlow<List<Workspace>> = _workspacesState.asStateFlow()
 
     private val _selectedWorkspaceId = MutableStateFlow("user")
-    val selectedWorkspaceId: StateFlow<String> = _selectedWorkspaceId.asStateFlow()
+    public val selectedWorkspaceId: StateFlow<String> = _selectedWorkspaceId.asStateFlow()
 
-    val selectedWorkspace by mutableStateOf(_workspacesState.value.firstOrNull())
+    public val selectedWorkspace: Workspace? by mutableStateOf(_workspacesState.value.firstOrNull())
 
     init {
         scope.launch {
@@ -83,7 +83,7 @@ class WorkspacesManager(
         }
     }
 
-    fun selectWorkspace(id: String) {
+    public fun selectWorkspace(id: String) {
         _selectedWorkspaceId.value = id
 
         scope.launch {
@@ -93,13 +93,13 @@ class WorkspacesManager(
 
 
     /** Enable/disable a workspace */
-    fun setWorkspaceEnabled(id: String, enabled: Boolean) {
+    public fun setWorkspaceEnabled(id: String, enabled: Boolean) {
         updateWs(id) { old ->
             old.copy(enabled = enabled)
         }
     }
 
-    fun createWorkspace(name: String, type: WorkspaceType) {
+    public fun createWorkspace(name: String, type: WorkspaceType) {
         update { old ->
             old + Workspace(
                 id = System.currentTimeMillis().toString(),
@@ -112,29 +112,29 @@ class WorkspacesManager(
         }
     }
 
-    fun editWorkspace(id: String, name: String, type: WorkspaceType) {
+    public fun editWorkspace(id: String, name: String, type: WorkspaceType) {
         updateWs(id) { old ->
             old.copy(name = name, type = type)
         }
     }
 
-    fun deleteWorkspace(id: String) {
+    public fun deleteWorkspace(id: String) {
         update { old ->
             old.filterNot { it.id == id }
         }
     }
 
-    fun setWorkspaceOrder(newOrder: List<Workspace>) {
+    public fun setWorkspaceOrder(newOrder: List<Workspace>) {
         update { newOrder }
     }
 
-    fun resetWorkspace(id: String) {
+    public fun resetWorkspace(id: String) {
         updateWs(id) { old ->
             old.copy(removedAppIds = emptySet(), appIds = emptySet())
         }
     }
 
-    fun addAppToWorkspace(id: String, cacheKey: CacheKey) {
+    public fun addAppToWorkspace(id: String, cacheKey: CacheKey) {
         updateWs(id) { old ->
             old.copy(
                 appIds = old.appIds?.plus(cacheKey) ?: setOf(cacheKey),
@@ -143,7 +143,7 @@ class WorkspacesManager(
         }
     }
 
-    fun removeAppFromWorkspace(id: String, cacheKey: CacheKey) {
+    public fun removeAppFromWorkspace(id: String, cacheKey: CacheKey) {
         updateWs(id) { old ->
             old.copy(
                 appIds = old.appIds?.minus(cacheKey),
@@ -152,7 +152,7 @@ class WorkspacesManager(
         }
     }
 
-    fun resetWorkspaces() {
+    public fun resetWorkspaces() {
         _workspacesState.value = defaultWorkspaces
 
         scope.launch {

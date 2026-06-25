@@ -7,7 +7,7 @@ import org.elnix.dragonlauncher.base.icons.TextLayer
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomTextIcon
 
-class CustomTextIconProvider(
+internal class CustomTextIconProvider(
     private val customIcon: CustomTextIcon,
 ): IconProvider {
     override suspend fun getIcon(

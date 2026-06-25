@@ -8,7 +8,7 @@ import org.elnix.dragonlauncher.badges.MutableBadge
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.i18n.R
 
-class SuspendedAppsBadgeProvider : BadgeProvider {
+internal class SuspendedAppsBadgeProvider : BadgeProvider {
 
     override fun getBadge(application: Application): Flow<Badge?> =
         if (application.isSuspended) {

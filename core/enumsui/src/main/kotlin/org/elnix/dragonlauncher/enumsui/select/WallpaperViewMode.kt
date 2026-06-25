@@ -4,7 +4,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.enumsui.SelectButtonOption
 
 
-enum class WallpaperEditMode(
+public enum class WallpaperEditMode(
     override val resId: Int,
     override val iconResId: Int? = null
 ) : SelectButtonOption {

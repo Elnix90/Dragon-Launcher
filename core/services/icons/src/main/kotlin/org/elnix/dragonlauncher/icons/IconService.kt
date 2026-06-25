@@ -61,6 +61,7 @@ import org.elnix.dragonlauncher.icons.transformations.ForceThemedIconTransformat
 import org.elnix.dragonlauncher.icons.transformations.LauncherIconTransformation
 import org.elnix.dragonlauncher.icons.transformations.LegacyToAdaptiveTransformation
 import org.elnix.dragonlauncher.icons.transformations.transform
+import org.elnix.dragonlauncher.ktx.dp
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import org.elnix.dragonlauncher.recents.PointsService
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
@@ -72,8 +73,8 @@ private object ShortcutIconCache : DragonCache<CacheKey, LauncherIcon>(Action.ac
 private object DrawerIconCache : DragonCache<CacheKey, LauncherIcon>(200)
 
 
-class IconService(
-    val ctx: Context,
+public class IconService(
+    private val ctx: Context,
     private val iconPackManager: IconPackManager,
     private val iconSettingsRepository: IconSettingsRepository,
     private val appRepository: AppRepository,
@@ -82,7 +83,7 @@ class IconService(
     private val pointService: PointsService,
     private val colorService: ColorService
 ) {
-    private val density = Density(ctx.resources.displayMetrics.density)
+    private val density = Density(ctx.dp)
 
     private val appReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -95,7 +96,7 @@ class IconService(
 
     private val scope = CoroutineScope(Job() + Dispatchers.Default)
 
-    val defaultPoint: Flow<Point> = pointService.defaultPoint
+    public val defaultPoint: Flow<Point> = pointService.defaultPoint
 
     private val iconSize = DrawerSettingsStore.iconSize.flow(ctx)
 
@@ -233,34 +234,34 @@ class IconService(
         }
     }
 
-    fun getRandomAppIcon(): CacheKey? = DrawerIconCache.getRandom()
+    public fun getRandomAppIcon(): CacheKey? = DrawerIconCache.getRandom()
 
-    fun getCustomAppIcon(application: Application): Flow<CustomIcon?> {
+    public fun getCustomAppIcon(application: Application): Flow<CustomIcon?> {
         return appOverrideManager.appOverrideState.map {
             it[application.key]?.customIcon
         }
     }
 
-    fun reloadAppIcon(application: Application) {
+    public fun reloadAppIcon(application: Application) {
         @Suppress("UnusedFlow")
         getAppIcon(application, true)
     }
 
-    fun reloadAllAppIcons() {
+    public fun reloadAllAppIcons() {
         DrawerIconCache.evictAll()
     }
 
-    fun incrementPointCacheSize() {
+    public fun incrementPointCacheSize() {
         PointIconCache.incrementCacheSize()
     }
 
-    fun updateMaxCacheSize(newSize: Int) {
+    public fun updateMaxCacheSize(newSize: Int) {
         PointIconCache.updateMaxCacheSize(newSize)
     }
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getAppIcon(
+    public fun getAppIcon(
         application: Application,
         reload: Boolean = false
     ): Flow<LauncherIcon?> {
@@ -276,7 +277,7 @@ class IconService(
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getActionIcon(
+    public fun getActionIcon(
         action: Action,
         reload: Boolean = false
     ): Flow<LauncherIcon?> {
@@ -311,17 +312,17 @@ class IconService(
 
 
 
-    fun reloadPointIcon(point: Point) {
+    public fun reloadPointIcon(point: Point) {
         @Suppress("UnusedFlow")
         getPointIcon(point, true)
     }
 
-    fun reloadAllPointIcons() {
+    public fun reloadAllPointIcons() {
         PointIconCache.evictAll()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getPointIcon(
+    public fun getPointIcon(
         point: Point,
         reload: Boolean = false
     ): Flow<LauncherIcon?> {
@@ -339,13 +340,13 @@ class IconService(
     }
 
 
-    fun reloadShortcutIcon(shortcut: Action.LaunchShortcut) {
+    public fun reloadShortcutIcon(shortcut: Action.LaunchShortcut) {
         @Suppress("UnusedFlow")
         getShortcutIcon(shortcut, true)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getShortcutIcon(
+    public fun getShortcutIcon(
         shortcut: Action.LaunchShortcut,
         reload: Boolean = false
     ): Flow<LauncherIcon?> {
@@ -520,7 +521,7 @@ class IconService(
     }
 
 
-    fun requestIconPackListUpdate() {
+    public fun requestIconPackListUpdate() {
         scope.launch {
             iconPackManager.updateIconPacks().also {
                 if (it) iconPacksUpdated.tryEmit(Unit)
@@ -528,18 +529,18 @@ class IconService(
         }
     }
 
-    fun reinstallAllIconPacks() {
+    public fun reinstallAllIconPacks() {
         scope.launch {
             iconPackManager.updateIconPacks(forceReinstall = true)
             iconPacksUpdated.tryEmit(Unit)
         }
     }
 
-    fun getInstalledIconPacks(): Flow<List<IconPack>> {
+    public fun getInstalledIconPacks(): Flow<List<IconPack>> {
         return iconPackManager.getInstalledIconPacks()
     }
 
-    suspend fun getCustomIconSuggestions(
+    public suspend fun getCustomIconSuggestions(
         action: Action,
         size: Int
     ): List<CustomIconWithPreview> {
@@ -652,7 +653,7 @@ class IconService(
         return suggestions
     }
 
-    suspend fun getUncustomizedDefaultIcon(
+    public suspend fun getUncustomizedDefaultIcon(
         action: Action,
         size: Int
     ): CustomIconWithPreview? {
@@ -664,7 +665,7 @@ class IconService(
         )
     }
 
-    suspend fun searchCustomIcons(query: String, iconPack: IconPack?): List<CustomIconWithPreview> {
+    public suspend fun searchCustomIcons(query: String, iconPack: IconPack?): List<CustomIconWithPreview> {
         val transformations = this.transformations.first()
         val tint = iconSettings.first().iconsTint
         return iconPackManager.searchIconPackIcon(query, iconPack).flatMap {
@@ -714,7 +715,7 @@ class IconService(
     }
 }
 
-data class CustomIconWithPreview(
+public data class CustomIconWithPreview(
     val preview: LauncherIcon,
     val customIcon: CustomIcon?,
 )

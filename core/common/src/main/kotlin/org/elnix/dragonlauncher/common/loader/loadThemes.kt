@@ -11,7 +11,7 @@ import org.json.JSONObject
 
 // TODO Move to themes service
 
-suspend fun loadThemes(ctx: Context): List<ThemeObject> = withContext(Dispatchers.IO) {
+public suspend fun loadThemes(ctx: Context): List<ThemeObject> = withContext(Dispatchers.IO) {
     val am = ctx.assets
     val jsonFiles = am.list(THEMES_DIR)?.filter { it.endsWith(".json") }.orEmpty()
     val themesList = mutableListOf<ThemeObject>()

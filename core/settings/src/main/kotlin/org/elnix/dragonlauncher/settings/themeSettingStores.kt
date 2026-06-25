@@ -8,7 +8,7 @@ import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 
-val themeSettingsStores: Set<SettingsStore<*, *>> by lazy {
+public val themeSettingsStores: Set<SettingsStore<*, *>> by lazy {
     setOf(
         UiSettingsStore,
         ColorModesSettingsStore,

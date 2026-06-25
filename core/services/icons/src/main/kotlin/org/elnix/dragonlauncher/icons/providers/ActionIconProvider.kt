@@ -11,7 +11,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
 import org.elnix.dragonlauncher.base.theme.ExtraColors
 
-class ActionIconProvider(
+internal class ActionIconProvider(
     private val ctx: Context,
     private val extraColors: ExtraColors
 ) : IconProvider {

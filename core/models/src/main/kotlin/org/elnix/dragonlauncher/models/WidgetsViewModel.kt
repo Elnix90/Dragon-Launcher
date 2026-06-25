@@ -7,13 +7,12 @@ import android.util.DisplayMetrics
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Widget
 import org.elnix.dragonlauncher.base.model.serializables.Widget.Companion.WidgetsJson
@@ -26,21 +25,20 @@ import javax.inject.Inject
 import kotlin.random.Random
 
 @HiltViewModel
-class WidgetsViewModel @Inject constructor(
+public class WidgetsViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
     @SuppressLint("StaticFieldLeak")
     private val ctx = application.applicationContext
 
-    private val _widgets = MutableStateFlow<List<Widget>>(emptyList())
-    val widgets = _widgets.asStateFlow()
+    public val widgets: SettingFlow<List<Widget>> = SettingFlow<List<Widget>>(emptyList())
 
 
-    val dm: DisplayMetrics = ctx.resources.displayMetrics
+    public val dm: DisplayMetrics = ctx.resources.displayMetrics
 
 
-    val cellSizePx: StateFlow<Float> = cellSizeDp.flow(ctx).map { it * dm.density }.stateIn(
+    public val cellSizePx: StateFlow<Float> = cellSizeDp.flow(ctx).map { it * dm.density }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
         initialValue = 30 * dm.density
@@ -48,7 +46,7 @@ class WidgetsViewModel @Inject constructor(
 
     private val screenWidth = dm.widthPixels.toFloat()
     private val screenHeight = dm.heightPixels.toFloat()
-    val minSize = 1.5f
+    public val minSize: Float = 1.5f
 
     init {
         loadWidgets()
@@ -56,9 +54,9 @@ class WidgetsViewModel @Inject constructor(
     }
 
 
-    private fun snapshotWidgets(): List<Widget> = _widgets.value.map { it.copy() }
+    private fun snapshotWidgets(): List<Widget> = widgets.value.map { it.copy() }
 
-    val undoRedo = UndoRedoManager(
+    public val undoRedo: UndoRedoManager = UndoRedoManager(
         arrayOf(
             UndoRedoStack(
                 snapshot = { snapshotWidgets() },
@@ -71,13 +69,13 @@ class WidgetsViewModel @Inject constructor(
     )
 
 
-    fun save() {
+    public fun save() {
         viewModelScope.launch {
             WidgetsSettingsStore.jsonSetting.set(ctx, WidgetsJson.encode(snapshotWidgets()))
         }
     }
 
-    fun addWidget(action: Action, info: AppWidgetProviderInfo? = null, nestId: Int) {
+    public fun addWidget(action: Action, info: AppWidgetProviderInfo? = null, nestId: Int) {
 
         viewModelScope.launch {
             val appWidgetId = if (action is Action.OpenWidget) action.widgetId else null
@@ -88,7 +86,7 @@ class WidgetsViewModel @Inject constructor(
                 action = action
             )
 
-            _widgets.value += app
+            widgets.value += app
 
             centerWidget(appId = app.id)
             resetWidgetSize(appId = app.id, info = info)
@@ -96,15 +94,15 @@ class WidgetsViewModel @Inject constructor(
     }
 
 
-    fun removeWidget(id: Int, onDeleteId: (Int) -> Unit) {
+    public fun removeWidget(id: Int, onDeleteId: (Int) -> Unit) {
         viewModelScope.launch {
-            _widgets.value = _widgets.value.filterNot { it.id == id }
+            widgets.value = widgets.value.filterNot { it.id == id }
             onDeleteId(id)
         }
     }
 
-    fun moveWidgetUp(appId: Int) {
-        val current = _widgets.value
+    public fun moveWidgetUp(appId: Int) {
+        val current = widgets.value
         val index = current.indexOfFirst { it.id == appId }
         if (index <= 0) return
 
@@ -112,11 +110,11 @@ class WidgetsViewModel @Inject constructor(
             val widget = removeAt(index)
             add(index - 1, widget)
         }
-        _widgets.value = moved
+        widgets.value = moved
     }
 
-    fun moveWidgetDown(appId: Int) {
-        val current = _widgets.value
+    public fun moveWidgetDown(appId: Int) {
+        val current = widgets.value
         val index = current.indexOfFirst { it.id == appId }
         if (index == -1 || index == current.lastIndex) return
 
@@ -124,11 +122,11 @@ class WidgetsViewModel @Inject constructor(
             val widget = removeAt(index)
             add(index + 1, widget)
         }
-        _widgets.value = moved
+        widgets.value = moved
     }
 
 
-    fun centerWidget(appId: Int) {
+    public fun centerWidget(appId: Int) {
         updateApp(appId) { app ->
             val widgetWidthPx = app.spanX * cellSizePx.value
             val widgetHeightPx = app.spanY * cellSizePx.value
@@ -144,7 +142,7 @@ class WidgetsViewModel @Inject constructor(
     }
 
 
-    fun resetWidgetSize(appId: Int, info: AppWidgetProviderInfo? = null) {
+    public fun resetWidgetSize(appId: Int, info: AppWidgetProviderInfo? = null) {
         updateApp(appId) { app ->
             app.copy(
                 spanX = calculateSpanX(info?.minWidth?.toFloat()),
@@ -154,22 +152,22 @@ class WidgetsViewModel @Inject constructor(
         }
     }
 
-    fun editWidget(app: Widget) {
-        val updated = _widgets.value.map { widget ->
+    public fun editWidget(app: Widget) {
+        val updated = widgets.value.map { widget ->
             if (widget.id == app.id) app
             else widget
         }
 
-        _widgets.value = updated
+        widgets.value = updated
     }
 
 
-    fun restoreWidgets(snapshot: List<Widget>) {
-        _widgets.value = snapshot.map { it.copy() }
+    public fun restoreWidgets(snapshot: List<Widget>) {
+        widgets.value = snapshot.map { it.copy() }
     }
 
-    fun resetAllWidgets() {
-        _widgets.value = emptyList()
+    public fun resetAllWidgets() {
+        widgets.value = emptyList()
 
         viewModelScope.launch {
             WidgetsSettingsStore.resetAll(ctx)
@@ -182,7 +180,7 @@ class WidgetsViewModel @Inject constructor(
         block: (Widget) -> Widget
     ) {
         undoRedo.applyChange {
-            val current = _widgets.value
+            val current = widgets.value
 
             val updatedList = current.map { app ->
                 if (app.id == appId) {
@@ -192,14 +190,14 @@ class WidgetsViewModel @Inject constructor(
                 }
             }
 
-            _widgets.value = updatedList
+            widgets.value = updatedList
         }
     }
 
     private fun loadWidgets() {
         viewModelScope.launch {
             val widgetsJsonString = WidgetsSettingsStore.jsonSetting.get(ctx)
-            _widgets.value = WidgetsJson.decode<List<Widget>>(widgetsJsonString, emptyList())
+            widgets.value = WidgetsJson.decode<List<Widget>>(widgetsJsonString, emptyList())
         }
     }
 

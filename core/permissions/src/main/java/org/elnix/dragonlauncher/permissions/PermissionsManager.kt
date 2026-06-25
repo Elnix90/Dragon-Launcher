@@ -14,49 +14,49 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
+import io.github.elnix90.logging.PERMISSIONS_TAG
+import io.github.elnix90.logging.logE
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import org.elnix.dragonlauncher.ktx.checkPermission
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import org.elnix.dragonlauncher.ktx.tryStartActivity
-import io.github.elnix90.logging.PERMISSIONS_TAG
-import io.github.elnix90.logging.logE
 
-interface PermissionsManager {
-    fun requestPermission(ctx: AppCompatActivity, permissionGroup: PermissionGroup)
+public interface PermissionsManager {
+    public fun requestPermission(ctx: AppCompatActivity, permissionGroup: PermissionGroup)
 
     /**
      * Check if this permission is granted right now without receiving further updates
      * about the granted state.
      * @return true if the given permission group is fully granted
      */
-    fun checkPermissionOnce(permissionGroup: PermissionGroup): Boolean
+    public fun checkPermissionOnce(permissionGroup: PermissionGroup): Boolean
 
-    fun onRequestPermissionsResult(
+    public fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
     )
 
-    fun onResume() {
+    public fun onResume() {
 
     }
 
-    fun hasPermission(permissionGroup: PermissionGroup): Flow<Boolean>
-    suspend fun hasPermissionBlocking(permissionGroup: PermissionGroup): Boolean
+    public fun hasPermission(permissionGroup: PermissionGroup): Flow<Boolean>
+    public suspend fun hasPermissionBlocking(permissionGroup: PermissionGroup): Boolean
 
     /**
      * Special function for the Notification listener to report its status.
      * May not be called by anything else.
      */
-    fun reportNotificationListenerState(running: Boolean)
+    public fun reportNotificationListenerState(running: Boolean)
 
     /**
      * Special function for the accessibility service to report its status.
      * May not be called by anything else.
      */
-    fun reportAccessibilityServiceState(running: Boolean)
+    public fun reportAccessibilityServiceState(running: Boolean)
 }
 
 

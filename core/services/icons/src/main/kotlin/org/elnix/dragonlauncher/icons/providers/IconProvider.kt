@@ -4,7 +4,7 @@ import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.model.serializables.Action
 
 
-interface IconProvider {
+internal interface IconProvider {
     suspend fun getIcon(action: Action, size: Int): LauncherIcon?
 }
 

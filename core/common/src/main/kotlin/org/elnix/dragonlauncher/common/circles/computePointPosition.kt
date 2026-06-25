@@ -1,8 +1,8 @@
 package org.elnix.dragonlauncher.common.circles
 
 import androidx.compose.ui.geometry.Offset
-import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.models.UiCircle
+import org.elnix.dragonlauncher.base.model.serializables.Point
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -20,7 +20,7 @@ private fun computePointPositionInternal(
     )
 }
 
-fun Point.computePosition(
+public fun Point.computePosition(
     circles: List<UiCircle>,
     center: Offset
 ): Offset {
@@ -35,7 +35,7 @@ fun Point.computePosition(
 }
 
 
-fun Point.computePosition(
+public fun Point.computePosition(
     radius: Float,
     center: Offset
 ): Offset {

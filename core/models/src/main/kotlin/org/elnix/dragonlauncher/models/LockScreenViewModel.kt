@@ -22,13 +22,13 @@ import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import javax.inject.Inject
 
 @HiltViewModel
-class LockScreenViewModel @Inject constructor(
+public class LockScreenViewModel @Inject constructor(
     private val application: Application,
     private val securityService: SecurityService,
 ) : AndroidViewModel(application) {
 
-    val isLocked = SettingFlow(false)
-    val screenToUnlock = SettingFlow<NavigationRoute?>(null)
+    public val isLocked: SettingFlow<Boolean> = SettingFlow(false)
+    public val screenToUnlock: SettingFlow<NavigationRoute?> = SettingFlow(null)
 
     private val lockMethod: Flow<LockMethod> = PrivateSettingsStore.lockMethod.flow(application)
 
@@ -37,7 +37,7 @@ class LockScreenViewModel @Inject constructor(
     }
 
 
-    fun removeLock() {
+    public fun removeLock() {
         viewModelScope.launch {
             PrivateSettingsStore.lockPinHash.reset(application)
             PrivateSettingsStore.lockMethod.reset(application)
@@ -45,7 +45,7 @@ class LockScreenViewModel @Inject constructor(
         }
     }
 
-    fun setPinLockMethod(pin: String) {
+    public fun setPinLockMethod(pin: String) {
         viewModelScope.launch {
             val hash = securityService.hashPin(pin)
             PrivateSettingsStore.lockPinHash.set(application, hash)
@@ -55,7 +55,7 @@ class LockScreenViewModel @Inject constructor(
         }
     }
 
-    fun setLockScreenMethod() {
+    public fun setLockScreenMethod() {
         viewModelScope.launch {
             PrivateSettingsStore.lockPinHash.reset(application)
             PrivateSettingsStore.lockMethod.set(application, LockMethod.Device)
@@ -64,29 +64,29 @@ class LockScreenViewModel @Inject constructor(
     }
 
 
-    fun lock() {
+    public fun lock() {
         logD(SECURITY_SERVICE) { "User asked to lock!" }
         isLocked.value = true
     }
 
-    fun unlock() {
+    public fun unlock() {
         logD(SECURITY_SERVICE) { "User asked to unlock!" }
         isLocked.value = false
         screenToUnlock.value = null
     }
 
-    fun cancelUnlock() {
+    public fun cancelUnlock() {
         screenToUnlock.value = null
     }
 
-    fun onEnterNewRoute(route: NavKey) {
+    public fun onEnterNewRoute(route: NavKey) {
         if (route !in NavigationRoute.settingsRoutes) {
             lock()
         }
     }
 
 
-    fun requestUnlock(targetScreen: NavigationRoute) {
+    public fun requestUnlock(targetScreen: NavigationRoute) {
         viewModelScope.launch {
             when (lockMethod.first()) {
                 LockMethod.None -> unlock()
@@ -102,19 +102,19 @@ class LockScreenViewModel @Inject constructor(
         }
     }
 
-    fun isDeviceUnlockAvailable(): Boolean = securityService.isDeviceUnlockAvailable(application)
+    public fun isDeviceUnlockAvailable(): Boolean = securityService.isDeviceUnlockAvailable(application)
 
-    fun showDeviceUnlockPrompt(
+    public fun showDeviceUnlockPrompt(
         activity: FragmentActivity,
         onSuccess: () -> Unit,
         onError: (String) -> Unit,
         onFailed: () -> Unit
-    ) = securityService.showDeviceUnlockPrompt(
+    ): Unit = securityService.showDeviceUnlockPrompt(
         activity = activity,
         onSuccess = onSuccess,
         onError = onError,
         onFailed = onFailed
     )
 
-    fun verifyPin(pin: String, storedHash: String): Boolean = securityService.verifyPin(pin, storedHash)
+    public fun verifyPin(pin: String, storedHash: String): Boolean = securityService.verifyPin(pin, storedHash)
 }

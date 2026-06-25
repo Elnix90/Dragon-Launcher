@@ -7,8 +7,8 @@ import org.elnix.dragonlauncher.permissions.PermissionsManager
 import javax.inject.Inject
 
 @HiltViewModel
-class PermissionsViewModel @Inject constructor(
-    val permissionsManager: PermissionsManager
+public class PermissionsViewModel @Inject constructor(
+    public val permissionsManager: PermissionsManager
 ) : ViewModel() {
 
     init {

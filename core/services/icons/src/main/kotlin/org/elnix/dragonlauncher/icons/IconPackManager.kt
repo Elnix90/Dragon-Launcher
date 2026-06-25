@@ -26,12 +26,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
+import org.elnix.dragonlauncher.base.icons.ClockLayer
 import org.elnix.dragonlauncher.base.icons.ClockSublayer
 import org.elnix.dragonlauncher.base.icons.ClockSublayerRole
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
-import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
-import org.elnix.dragonlauncher.base.icons.ClockLayer
 import org.elnix.dragonlauncher.base.icons.StaticIconLayer
+import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
 import org.elnix.dragonlauncher.database.AppDatabase
 import org.elnix.dragonlauncher.icons.compat.AdaptiveIconDrawableCompat
@@ -39,21 +39,20 @@ import org.elnix.dragonlauncher.icons.compat.toLauncherIcon
 import org.elnix.dragonlauncher.icons.loaders.AppFilterIconPackInstaller
 import org.elnix.dragonlauncher.icons.loaders.GrayscaleMapIconPackInstaller
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
-import org.elnix.dragonlauncher.ktx.randomElementOrNull
 import kotlin.math.roundToInt
 
 
-class IconPackManager(
+public class IconPackManager(
     private val ctx: Context,
     private val appDatabase: AppDatabase,
 ) {
-    fun getInstalledIconPacks(): Flow<List<IconPack>> {
+    public fun getInstalledIconPacks(): Flow<List<IconPack>> {
         return appDatabase.iconDao().getInstalledIconPacks().map { packs ->
             packs.map { IconPack(it) }
         }
     }
 
-    suspend fun getIconPack(packageName: String): IconPack? {
+    public suspend fun getIconPack(packageName: String): IconPack? {
         return withContext(Dispatchers.IO) {
             appDatabase.iconDao().getIconPack(packageName)?.let {
                 IconPack(it)
@@ -62,7 +61,7 @@ class IconPackManager(
     }
 
     private var updateIconPacksMutex = Mutex()
-    suspend fun updateIconPacks(forceReinstall: Boolean = false): Boolean {
+    public suspend fun updateIconPacks(forceReinstall: Boolean = false): Boolean {
         var iconsHaveBeenUpdated = false
         updateIconPacksMutex.lock()
         val installers = listOf(
@@ -95,7 +94,7 @@ class IconPackManager(
         }
     }
 
-    suspend fun getIcon(
+    public suspend fun getIcon(
         iconPack: String,
         packageName: String,
         activityName: String?,
@@ -129,7 +128,7 @@ class IconPackManager(
         }
     }
 
-    suspend fun getIcon(
+    public suspend fun getIcon(
         iconPack: String,
         icon: IconPackAppIcon,
         tint: Int?,
@@ -157,7 +156,7 @@ class IconPackManager(
     }
 
     @SuppressLint("DiscouragedApi")
-    suspend fun generateIcon(
+    public suspend fun generateIcon(
         ctx: Context,
         iconPack: String,
         baseIcon: Drawable,
@@ -262,7 +261,7 @@ class IconPackManager(
         )
     }
 
-    suspend fun getAllIconPackIcons(componentName: ComponentName): List<IconPackAppIcon> {
+    public suspend fun getAllIconPackIcons(componentName: ComponentName): List<IconPackAppIcon> {
         val iconDao = appDatabase.iconDao()
         return iconDao.getIconsFromAllPacks(componentName.packageName, componentName.shortClassName)
             .mapNotNull { IconPackAppIcon(it) }
@@ -271,19 +270,19 @@ class IconPackManager(
     private suspend fun getIconBack(iconPack: String): String? {
         val iconDao = appDatabase.iconDao()
         val iconbacks = iconDao.getIconBacks(iconPack)
-        return iconbacks.randomElementOrNull()
+        return iconbacks.randomOrNull()
     }
 
     private suspend fun getIconUpon(iconPack: String): String? {
         val iconDao = appDatabase.iconDao()
         val iconupons = iconDao.getIconUpons(iconPack)
-        return iconupons.randomElementOrNull()
+        return iconupons.randomOrNull()
     }
 
     private suspend fun getIconMask(iconPack: String): String? {
         val iconDao = appDatabase.iconDao()
         val iconmasks = iconDao.getIconMasks(iconPack)
-        return iconmasks.randomElementOrNull()
+        return iconmasks.randomOrNull()
     }
 
     private suspend fun getPackScale(iconPack: String): Float {
@@ -512,7 +511,7 @@ class IconPackManager(
         }
     }
 
-    suspend fun searchIconPackIcon(query: String, iconPack: IconPack?): List<IconPackAppIcon> {
+    public suspend fun searchIconPackIcon(query: String, iconPack: IconPack?): List<IconPackAppIcon> {
         val iconDao = appDatabase.iconDao()
         val drawableQuery = query.replace(" ", "_").lowercase()
         return iconDao.searchIconPackIcons(

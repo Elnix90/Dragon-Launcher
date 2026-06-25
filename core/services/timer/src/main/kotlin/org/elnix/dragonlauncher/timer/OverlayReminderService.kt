@@ -26,16 +26,17 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.graphics.toColorInt
+import io.github.elnix90.logging.OVERLAY_REMINDER_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
+import io.github.elnix90.logging.logW
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
-import io.github.elnix90.logging.OVERLAY_REMINDER_TAG
-import io.github.elnix90.logging.logD
-import io.github.elnix90.logging.logE
-import io.github.elnix90.logging.logW
+import org.elnix.dragonlauncher.ktx.dp
 import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
 
 /**
@@ -45,19 +46,19 @@ import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
  * Uses WindowManager with FLAG_NOT_FOCUSABLE + FLAG_NOT_TOUCH_MODAL so
  * touches outside the popup pass through to the app below.
  */
-class OverlayReminderService : Service() {
+public class OverlayReminderService : Service() {
 
-    companion object {
-        const val EXTRA_APP_NAME = "extra_app_name"
-        const val EXTRA_MODE = "extra_mode" // "reminder" or "time_warning"
-        const val EXTRA_SESSION_TIME = "extra_session_time"
-        const val EXTRA_TODAY_TIME = "extra_today_time"
-        const val EXTRA_REMAINING_TIME = "extra_remaining_time"
-        const val EXTRA_HAS_LIMIT = "extra_has_limit"
+    public companion object {
+        public const val EXTRA_APP_NAME: String = "extra_app_name"
+        public const val EXTRA_MODE: String = "extra_mode" // "reminder" or "time_warning"
+        public const val EXTRA_SESSION_TIME: String = "extra_session_time"
+        public const val EXTRA_TODAY_TIME: String = "extra_today_time"
+        public const val EXTRA_REMAINING_TIME: String = "extra_remaining_time"
+        public const val EXTRA_HAS_LIMIT: String = "extra_has_limit"
 
         private const val DISMISS_DELAY = 7000L
 
-        fun show(
+        public fun show(
             ctx: Context,
             appName: String,
             sessionTime: String,
@@ -224,7 +225,7 @@ class OverlayReminderService : Service() {
         isWarning: Boolean
     ): FrameLayout {
         val ctx = applicationContext
-        val density = ctx.resources.displayMetrics.density
+        val density = ctx.dp
 
         fun dp(value: Int): Int = (value * density + 0.5f).toInt()
 

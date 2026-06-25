@@ -12,7 +12,7 @@ import org.elnix.dragonlauncher.base.model.serializables.ExtensionModel
 // TODO Move to extensions service
 
 @OptIn(ExperimentalSerializationApi::class)
-suspend fun loadExtensionRegistry(ctx: Context): List<ExtensionModel>? = withContext(Dispatchers.IO) {
+public suspend fun loadExtensionRegistry(ctx: Context): List<ExtensionModel>? = withContext(Dispatchers.IO) {
     try {
         ctx.assets.open("extensions-registry.json").use { inputStream ->
             Json.decodeFromStream<List<ExtensionModel>>(inputStream)

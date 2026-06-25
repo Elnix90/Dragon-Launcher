@@ -6,11 +6,11 @@ import org.elnix.dragonlauncher.base.model.DragonJson
 
 @Serializable
 @SerialName("StatusBar")
-sealed class StatusBar {
+public sealed class StatusBar {
 
     @Serializable
     @SerialName("Time")
-    data class Time(
+    public data class Time(
         val formatter: String = "HH:mm:ss",
         val action: Action? = null,
         val fontSize: Int = 16,
@@ -20,7 +20,7 @@ sealed class StatusBar {
 
     @Serializable
     @SerialName("Date")
-    data class Date(
+    public data class Date(
         val formatter: String = "MMM dd",
         val action: Action? = null,
         val fontSize: Int = 14,
@@ -30,7 +30,7 @@ sealed class StatusBar {
 
     @Serializable
     @SerialName("Bandwidth")
-    data class Bandwidth(
+    public data class Bandwidth(
         val merge: Boolean = false,
         val fontSize: Int = 12,
         val colorHex: String? = null
@@ -38,14 +38,14 @@ sealed class StatusBar {
 
     @Serializable
     @SerialName("Notifications")
-    data class Notifications(
+    public data class Notifications(
         val maxIcons: Int = 8,
         val iconSize: Int = 18
     ) : StatusBar()
 
     @Serializable
     @SerialName("Connectivity")
-    data class Connectivity(
+    public data class Connectivity(
         val showAirplaneMode: Boolean = true,
         val showWifi: Boolean = true,
         val showBluetooth: Boolean = true,
@@ -59,13 +59,13 @@ sealed class StatusBar {
 
     @Serializable
     @SerialName("Spacer")
-    data class Spacer(
+    public data class Spacer(
         val width: Int = -1
     ) : StatusBar()
 
     @Serializable
     @SerialName("Battery")
-    data class Battery(
+    public data class Battery(
         val showIcon: Boolean = false,
         val showPercentage: Boolean = true,
         val fontSize: Int = 14,
@@ -74,7 +74,7 @@ sealed class StatusBar {
 
     @Serializable
     @SerialName("NextAlarm")
-    data class NextAlarm(
+    public data class NextAlarm(
         val formatter: String = "HH:mm",
         val fontSize: Int = 12,
         val colorHex: String? = null
@@ -82,7 +82,7 @@ sealed class StatusBar {
 }
 
 
-val allStatusBars = listOf(
+public val allStatusBars: List<StatusBar> = listOf(
     StatusBar.Time(),
     StatusBar.Date(),
     StatusBar.Bandwidth(),
@@ -93,4 +93,4 @@ val allStatusBars = listOf(
     StatusBar.Spacer()
 )
 
-object StatusBarJson : DragonJson<List<StatusBar>>()
+public object StatusBarJson : DragonJson<List<StatusBar>>()

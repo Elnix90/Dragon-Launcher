@@ -10,13 +10,13 @@ import org.elnix.dragonlauncher.base.model.models.Application
 @JvmInline
 @Serializable
 @SerialName("CacheKey")
-value class CacheKey private constructor(
-    val cacheKey: String
+public value class CacheKey private constructor(
+    public val cacheKey: String
 ) {
     /**
      * Icon Service constructors, to retrieve icons and invalide cache when the providers or transformations changes
      */
-    constructor(
+    public constructor(
         data: Any,
         customIconHashCode: Int,
         providersHashCode: Int,
@@ -27,18 +27,18 @@ value class CacheKey private constructor(
      * Point constructor, in order to store the key in the cache for points too
      * @param point Takes the point id, which is a [java.util.UUID] in [String] format
      */
-    constructor(
+    public constructor(
         point: Point
     ) : this(cacheKey = point.id)
 
     /**
      * Application constructor
      */
-    constructor(
+    public constructor(
         app: Application
     ) : this(cacheKey = "${app.packageName}#${app.user.hashCode()}")
 
-    constructor(
+    public constructor(
         packageName: String,
         userId: Int
     ) : this(cacheKey = "$packageName#$userId")
@@ -47,7 +47,7 @@ value class CacheKey private constructor(
     /**
      * Shortcut constructor
      */
-    constructor(
+    public constructor(
         shortcut: Action.LaunchShortcut
     ) : this(cacheKey = "${shortcut.packageName}#${shortcut.user.hashCode()}#${shortcut.shortcutId}")
 }

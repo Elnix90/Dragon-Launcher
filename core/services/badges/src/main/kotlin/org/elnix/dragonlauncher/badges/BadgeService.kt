@@ -13,8 +13,8 @@ import org.elnix.dragonlauncher.notifications.NotificationRepository
 import org.elnix.dragonlauncher.profiles.ProfileManager
 
 
-interface BadgeService {
-    fun getBadge(application: Application): Flow<Badge?>
+public interface BadgeService {
+    public fun getBadge(application: Application): Flow<Badge?>
 }
 
 

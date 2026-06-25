@@ -14,123 +14,123 @@ import org.elnix.dragonlauncher.i18n.R
 
 @Suppress("EqualsOrHashCode")
 @Serializable
-sealed class NavigationRoute : NavKey {
+public sealed class NavigationRoute : NavKey {
 
     @Serializable
-    data object Main : NavigationRoute()
+    public data object Main : NavigationRoute()
 
     @Serializable
-    data object Drawer : NavigationRoute()
+    public data object Drawer : NavigationRoute()
 
     @Serializable
-    data object Welcome : NavigationRoute()
+    public data object Welcome : NavigationRoute()
 
     @Serializable
-    data class PointsSettings(
+    public data class PointsSettings(
         val initialNestId: Int = 0
     ) : NavigationRoute() {
         override fun hashCode(): Int = super.hashCode()
     }
 
     @Serializable
-    data object Settings : NavigationRoute()
+    public data object Settings : NavigationRoute()
 
     @Serializable
-    data object AppDisplay : NavigationRoute()
+    public data object AppDisplay : NavigationRoute()
 
     @Serializable
-    data object Appearance : NavigationRoute()
+    public data object Appearance : NavigationRoute()
 
     @Serializable
-    data object Colors : NavigationRoute()
+    public data object Colors : NavigationRoute()
 
     @Serializable
-    data object Wallpaper : NavigationRoute()
+    public data object Wallpaper : NavigationRoute()
 
     @Serializable
-    data class Widgets(
+    public data class Widgets(
         val nestId: Int = 0
     ) : NavigationRoute() {
         override fun hashCode(): Int = super.hashCode()
     }
 
     @Serializable
-    data object IconPack : NavigationRoute()
+    public data object IconPack : NavigationRoute()
 
     @Serializable
-    data object StatusBar : NavigationRoute()
+    public data object StatusBar : NavigationRoute()
 
     @Serializable
-    data object Fonts : NavigationRoute()
+    public data object Fonts : NavigationRoute()
 
     @Serializable
-    data object Theme : NavigationRoute()
+    public data object Theme : NavigationRoute()
 
     @Serializable
-    data object AngleLineEdit : NavigationRoute()
+    public data object AngleLineEdit : NavigationRoute()
 
     @Serializable
-    data object HoldToActivateArc : NavigationRoute()
+    public data object HoldToActivateArc : NavigationRoute()
 
     @Serializable
-    data object MainScreenLayers : NavigationRoute()
+    public data object MainScreenLayers : NavigationRoute()
 
     @Serializable
-    data object Behavior : NavigationRoute()
+    public data object Behavior : NavigationRoute()
 
     @Serializable
-    data object DrawerSettings : NavigationRoute()
+    public data object DrawerSettings : NavigationRoute()
 
     @Serializable
-    data object Workspace : NavigationRoute()
+    public data object Workspace : NavigationRoute()
 
     @Serializable
-    data object Permissions : NavigationRoute()
+    public data object Permissions : NavigationRoute()
 
     @Serializable
-    data object Backup : NavigationRoute()
+    public data object Backup : NavigationRoute()
 
     @Serializable
-    data object Wellbeing : NavigationRoute()
+    public data object Wellbeing : NavigationRoute()
 
     @Serializable
-    data object Changelogs : NavigationRoute()
+    public data object Changelogs : NavigationRoute()
 
     @Serializable
-    data object Extensions : NavigationRoute()
+    public data object Extensions : NavigationRoute()
 
     @Serializable
-    data object Debug : NavigationRoute()
+    public data object Debug : NavigationRoute()
 
     @Serializable
-    data object Logs : NavigationRoute()
+    public data object Logs : NavigationRoute()
 
     @Serializable
-    data class LogsViewer(
+    public data class LogsViewer(
         val filename: String
     ) : NavigationRoute() {
         override fun hashCode(): Int = super.hashCode()
     }
 
     @Serializable
-    data object SettingsJson : NavigationRoute()
+    public data object SettingsJson : NavigationRoute()
 
     @Serializable
-    data class NestEdit(
+    public data class NestEdit(
         val nestId: Int = 0
     ) : NavigationRoute() {
         override fun hashCode(): Int = super.hashCode()
     }
 
     @Serializable
-    data class WorkspaceDetail(
+    public data class WorkspaceDetail(
         val workspaceId: String
     ) : NavigationRoute() {
         override fun hashCode(): Int = super.hashCode()
     }
 
     @Serializable
-    data class TimerExceeded(
+    public data class TimerExceeded(
         val appName: String
     ) : NavigationRoute() {
         override fun hashCode(): Int = super.hashCode()
@@ -138,8 +138,8 @@ sealed class NavigationRoute : NavKey {
 
     override fun hashCode(): Int = System.identityHashCode(this)
 
-    companion object {
-        val settingsRoutes: List<NavigationRoute> by lazy {
+    public companion object {
+        public val settingsRoutes: List<NavigationRoute> by lazy {
             listOf(
                 PointsSettings(),
                 Settings,
@@ -173,7 +173,7 @@ sealed class NavigationRoute : NavKey {
 
     }
 
-    fun routeResId(route: NavigationRoute): Int {
+    public fun routeResId(route: NavigationRoute): Int {
 
         return when (route) {
             is Main -> R.string.main_screen
@@ -216,7 +216,7 @@ sealed class NavigationRoute : NavKey {
 }
 
 /** List of routes that the routes killer ignores when the user leave the app for too long, usually files pickers */
-fun NavKey.isInIgnoredReturnScreen(): Boolean =
+public fun NavKey.isInIgnoredReturnScreen(): Boolean =
     when (this) {
         Welcome,
         Backup,
@@ -227,7 +227,7 @@ fun NavKey.isInIgnoredReturnScreen(): Boolean =
     }
 
 /** Screen that are transparents for the main scaffold, in order to see the wallpaper behind */
-fun NavKey.isInTransparentScreen(): Boolean =
+public fun NavKey.isInTransparentScreen(): Boolean =
     when (this) {
         Main,
         Drawer,

@@ -1,18 +1,18 @@
 package org.elnix.dragonlauncher.common.loader
 
 import android.content.Context
+import io.github.elnix90.logging.TAG
+import io.github.elnix90.logging.logE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.base.model.serializables.Update
-import io.github.elnix90.logging.TAG
-import io.github.elnix90.logging.logE
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 
 // TODO Move to changelogs service
-suspend fun loadChangelogs(
+public suspend fun loadChangelogs(
     ctx: Context,
     currentVersionCode: Int
 ): List<Update> = withContext(Dispatchers.IO) {

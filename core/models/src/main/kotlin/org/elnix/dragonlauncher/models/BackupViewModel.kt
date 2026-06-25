@@ -27,11 +27,11 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
-class BackupViewModel @Inject constructor(
+public class BackupViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    val result = SettingFlow<BackupResult?>(null)
+    public val result: SettingFlow<BackupResult?> = SettingFlow<BackupResult?>(null)
     private val _backupTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     init {
@@ -46,7 +46,7 @@ class BackupViewModel @Inject constructor(
         }
     }
 
-    fun commandBackup() {
+    public fun commandBackup() {
         _backupTrigger.tryEmit(Unit)
     }
 
@@ -82,7 +82,7 @@ class BackupViewModel @Inject constructor(
     }
 }
 
-data class BackupResult(
+public data class BackupResult(
     val export: Boolean,
     val error: Boolean,
     val title: String,

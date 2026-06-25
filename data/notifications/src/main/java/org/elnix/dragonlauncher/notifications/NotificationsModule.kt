@@ -10,7 +10,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object NotificationsModule {
+internal object NotificationsModule {
 
     @Provides
     @Singleton

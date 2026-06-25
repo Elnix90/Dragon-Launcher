@@ -5,7 +5,7 @@ import org.elnix.dragonlauncher.base.model.models.UiCircle
 import kotlin.collections.map
 
 
-fun randomFreeAngle(circle: UiCircle?, list: Set<Point>): Double? {
+public fun randomFreeAngle(circle: UiCircle?, list: Set<Point>): Double? {
 
     val circleRadius = circle?.radius ?: return null
 

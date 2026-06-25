@@ -7,6 +7,7 @@ plugins {
 
 kotlin {
     jvmToolchain(21)
+    explicitApi()
 }
 
 extensions.configure<LibraryExtension> {

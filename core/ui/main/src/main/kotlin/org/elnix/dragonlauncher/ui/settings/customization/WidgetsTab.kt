@@ -90,6 +90,7 @@ import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
@@ -126,7 +127,7 @@ fun WidgetsTab(
 ) {
     val cellSizeDp by UiSettingsStore.cellSizeDp.asState()
     val cellSizePx = cellSizeDp * LocalDensity.current.density
-    val widgets by widgetsViewModel.widgets.collectAsState()
+    val widgets by widgetsViewModel.widgets.asState()
     val scope = rememberCoroutineScope()
 
     val widgetsDebugInfos by DebugSettingsStore.widgetsDebugInfo.asState()

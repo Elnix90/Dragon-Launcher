@@ -11,7 +11,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.profiles.ProfileManager
 
-class ProfileBadgeProvider(
+internal class ProfileBadgeProvider(
     private val profileManager: ProfileManager
 ) : BadgeProvider {
 

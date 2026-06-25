@@ -5,7 +5,7 @@ import android.content.Context
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 
-object DummyApp : Application() {
+public object DummyApp : Application() {
     override val isSystem: Boolean = false
     override val isLaunchable: Boolean = true
     override val isSuspended: Boolean = false

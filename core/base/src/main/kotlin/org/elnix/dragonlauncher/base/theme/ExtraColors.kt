@@ -1,9 +1,10 @@
 package org.elnix.dragonlauncher.base.theme
 
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-data class ExtraColors(
+public data class ExtraColors(
     val angleLine: Color,
     val circle: Color,
     val launchApp: Color,
@@ -25,7 +26,7 @@ data class ExtraColors(
 )
 
 
-val DefaultExtraColors = ExtraColors(
+public val DefaultExtraColors: ExtraColors = ExtraColors(
     angleLine = Color(0xFFFF0000),
     circle = Color(0x92FFFFFF),
     launchApp = Color(0xFF55AAFF),
@@ -46,4 +47,4 @@ val DefaultExtraColors = ExtraColors(
     runAdbCommand = Color(0xFF1BEE14)
 )
 
-val LocalExtraColors = staticCompositionLocalOf { DefaultExtraColors }
+public val LocalExtraColors: ProvidableCompositionLocal<ExtraColors> = staticCompositionLocalOf { DefaultExtraColors }

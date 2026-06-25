@@ -6,7 +6,7 @@ import org.elnix.dragonlauncher.base.model.DragonJson
 
 @Serializable
 @SerialName("Widget")
-data class Widget(
+public data class Widget(
     val id: Int,
     val appWidgetId: Int? = null,
     val nestId: Int?,
@@ -20,7 +20,7 @@ data class Widget(
     val foreground: Boolean? = true,
     val shape: IconShape? = null
 ) {
-    companion object {
-        object WidgetsJson : DragonJson<List<Widget>>()
+    public companion object {
+        public object WidgetsJson : DragonJson<List<Widget>>()
     }
 }

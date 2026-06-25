@@ -8,8 +8,8 @@ import org.elnix.dragonlauncher.i18n.R
 
 @Serializable
 @SerialName("WorkspaceType")
-enum class WorkspaceType(
-    @param:DrawableRes val icon: Int
+public enum class WorkspaceType(
+    @param:DrawableRes public val icon: Int
 ){
     All(R.drawable.select_all),
     User(R.drawable.account_tree),
@@ -18,8 +18,8 @@ enum class WorkspaceType(
     Private(R.drawable.encrypted),
     Custom(R.drawable.instant_mix);
 
-    companion object {
-        val WorkspaceType.isPrivate: Boolean
+    public companion object {
+        public val WorkspaceType.isPrivate: Boolean
             get() = this == Private
     }
 }

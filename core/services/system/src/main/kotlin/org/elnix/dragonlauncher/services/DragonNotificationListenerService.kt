@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
  * The user must grant Notification Access in
  * Settings > Apps > Special App Access > Notification Access.
  */
-class DragonNotificationListenerService : NotificationListenerService() {
+public class DragonNotificationListenerService : NotificationListenerService() {
 
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         refreshNotifications()
@@ -46,16 +46,16 @@ class DragonNotificationListenerService : NotificationListenerService() {
         _notifications.value = packages
     }
 
-    companion object {
+    public companion object {
         private val _notifications = MutableStateFlow<List<String>>(emptyList())
 
         /** Distinct package names of apps with active (non-ongoing) notifications. */
-        val notifications: StateFlow<List<String>> = _notifications
+        public val notifications: StateFlow<List<String>> = _notifications
 
         /**
          * Returns true if the notification listener permission has been granted for this app.
          */
-        fun isPermissionGranted(ctx: Context): Boolean {
+        public fun isPermissionGranted(ctx: Context): Boolean {
             val flat = Settings.Secure.getString(
                 ctx.contentResolver,
                 "enabled_notification_listeners"
@@ -72,7 +72,7 @@ class DragonNotificationListenerService : NotificationListenerService() {
  * Opens the system Notification Access settings screen where the user can grant
  * or revoke the notification listener permission for this app.
  */
-fun openNotificationSettings(ctx: Context) {
+public fun openNotificationSettings(ctx: Context) {
     ctx.startActivity(
         Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

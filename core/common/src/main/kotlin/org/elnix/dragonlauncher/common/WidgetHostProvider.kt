@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.common
 import android.appwidget.AppWidgetHostView
 import android.appwidget.AppWidgetProviderInfo
 
-interface WidgetHostProvider {
-    fun createAppWidgetView(widgetId: Int): AppWidgetHostView?
-    fun getAppWidgetInfo(widgetId: Int): AppWidgetProviderInfo?
+public interface WidgetHostProvider {
+    public fun createAppWidgetView(widgetId: Int): AppWidgetHostView?
+    public fun getAppWidgetInfo(widgetId: Int): AppWidgetProviderInfo?
 }

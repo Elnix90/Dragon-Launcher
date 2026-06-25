@@ -14,13 +14,13 @@ import kotlin.math.sin
 
 
 /** Smallest angular difference between two angles in degrees, result in [0, 180]. */
-fun angularDistanceDeg(a: Double, b: Float): Double {
+public fun angularDistanceDeg(a: Double, b: Float): Double {
     val d = abs(a - b)
     return minOf(d, 360.0 - d)
 }
 
 /** Angle 0–360 from [offset] relative to [center] (north = 0, clockwise). */
-fun angle360FromOffset(center: Offset, offset: Offset): Float {
+public fun angle360FromOffset(center: Offset, offset: Offset): Float {
     val dx = offset.x - center.x
     val dy = offset.y - center.y
     val angleRad = atan2(dx.toDouble(), -dy.toDouble())
@@ -30,7 +30,7 @@ fun angle360FromOffset(center: Offset, offset: Offset): Float {
 }
 
 /** Euclidean distance from [center] to [offset] in pixels. */
-fun distFromCenter(center: Offset, offset: Offset): Float =
+public fun distFromCenter(center: Offset, offset: Offset): Float =
     hypot(offset.x - center.x, offset.y - center.y)
 
 
@@ -41,7 +41,7 @@ fun distFromCenter(center: Offset, offset: Offset): Float =
  * still >= [dist] wins; otherwise the outermost ring whose threshold has
  * been crossed wins (classic Dragon Launcher behaviour).
  */
-fun computeTargetCircleFromDist(
+public fun computeTargetCircleFromDist(
     dist: Float,
     dragDistances: Map<Int, Int>,
     snapToOuterCircle: Boolean
@@ -71,7 +71,7 @@ fun computeTargetCircleFromDist(
  * Same logic as [computeTargetCircleFromDist] but for pre-scaled float thresholds,
  * used by the Live Nest overlay after [scaleDragDistances] is applied.
  */
-fun computeTargetCircleFromDistFloat(
+public fun computeTargetCircleFromDistFloat(
     dist: Float,
     dragDistances: Map<Int, Float>,
     pointActionSnapToOuterCircle: Boolean
@@ -103,7 +103,7 @@ fun computeTargetCircleFromDistFloat(
  *
  * Returns null when no candidate falls within the angle tolerance.
  */
-fun selectPointOnRing(
+public fun selectPointOnRing(
     candidates: List<Point>,
     angle360: Float,
     targetCircle: Int,
@@ -119,14 +119,14 @@ fun selectPointOnRing(
 
 
 /** Returns a copy of [dragDistances] with every value multiplied by [scale]. */
-fun scaleDragDistances(dragDistances: Map<Int, Int>, scale: Float): Map<Int, Float> =
+public fun scaleDragDistances(dragDistances: Map<Int, Int>, scale: Float): Map<Int, Float> =
     dragDistances.mapValues { (_, v) -> v * scale }
 
 /**
  * Outer radius of the nest (px) from a pre-scaled distances map.
  * The cancel-zone key (-1) is excluded because it is not a real ring boundary.
  */
-fun outerRadiusPx(scaled: Map<Int, Float>): Float =
+public fun outerRadiusPx(scaled: Map<Int, Float>): Float =
     scaled.filter { it.key != -1 }.values.maxOrNull() ?: 0f
 
 
@@ -138,13 +138,13 @@ fun outerRadiusPx(scaled: Map<Int, Float>): Float =
  * @property isOutsideBounds True when the pointer has moved beyond the outermost ring.
  * @property isInCancelZone True when [targetCircle] == -1.
  */
-data class HitResult(
+public data class HitResult(
     val targetCircle: Int,
     val selectedPoint: Point?,
     val isOutsideBounds: Boolean,
     val angle360: Float
 ) {
-    val isInCancelZone = targetCircle == -1
+    val isInCancelZone: Boolean = targetCircle == -1
 }
 
 /**
@@ -163,7 +163,7 @@ data class HitResult(
  * @param graceDistancePx Extra tolerance (px) added beyond the outer ring before exit fires.
  *   `0f` means strict bounds (default behavior). `-1f` means no bounds
  */
-fun resolveLiveNestHit(
+public fun resolveLiveNestHit(
     center: Offset,
     pointerPos: Offset,
     nestedNest: Nest,
@@ -213,7 +213,7 @@ fun resolveLiveNestHit(
  * Used by both `MainScreenOverlay` and the Live Nest drawing layer so the construction
  * logic stays consistent when one side changes.
  */
-fun uiCirclesFromDragDistances(dragDistances: Map<Int, Int>): List<UiCircle> =
+public fun uiCirclesFromDragDistances(dragDistances: Map<Int, Int>): List<UiCircle> =
     dragDistances
         .filter { it.key != -1 }
         .map { (id, radius) -> UiCircle(id = id, radius = radius.toFloat()) }
@@ -221,12 +221,12 @@ fun uiCirclesFromDragDistances(dragDistances: Map<Int, Int>): List<UiCircle> =
 /**
  * Float-valued variant used for the scaled Live Nest ring list.
  */
-fun uiCirclesFromScaledDragDistances(scaledDistances: Map<Int, Float>): List<UiCircle> =
+public fun uiCirclesFromScaledDragDistances(scaledDistances: Map<Int, Float>): List<UiCircle> =
     scaledDistances
         .filter { it.key != -1 }
         .map { (id, radius) -> UiCircle(id = id, radius = radius) }
 
-fun createCirclesFromDragDistances(
+public fun createCirclesFromDragDistances(
     dragDistances: Map<Int, Int>,
     circles: SnapshotStateList<UiCircle>,
 ) {
@@ -253,7 +253,7 @@ fun createCirclesFromDragDistances(
  *
  * @return The offset in the un-rotated coordinate space
  */
-inline fun Offset.undoRotation(
+public inline fun Offset.undoRotation(
     angle: () -> Float
 ): Offset {
     val angleRad = Math.toRadians(angle().toDouble()).toFloat()
@@ -277,7 +277,7 @@ inline fun Offset.undoRotation(
  * See: [Rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix)
  */
 @Suppress("NOTHING_TO_INLINE")
-inline fun Offset.rotateBy(angle: Float): Offset {
+public inline fun Offset.rotateBy(angle: Float): Offset {
     val angleInRadians = angle * (PI / 180)
     val cos = cos(angleInRadians)
     val sin = sin(angleInRadians)
@@ -293,7 +293,7 @@ inline fun Offset.rotateBy(angle: Float): Offset {
  *
  * @return The offset in the un-scaled coordinate space
  */
-inline fun Offset.undoScale(
+public inline fun Offset.undoScale(
     zoom: () -> Float
 ): Offset {
     val zoom = zoom()
@@ -316,7 +316,7 @@ inline fun Offset.undoScale(
  *
  * @return The offset in the un-translated coordinate space
  */
-inline fun Offset.undoTranslation(
+public inline fun Offset.undoTranslation(
     translation: () -> Offset
 ): Offset {
     val translation = translation()
@@ -332,7 +332,7 @@ inline fun Offset.undoTranslation(
  * Note: ORDER MATTERS!!
  * If you put undo rotation first, it'll break the whole chain for some reason.
  */
-inline fun Offset.undoTransformations(
+public inline fun Offset.undoTransformations(
     angle: () -> Float,
     zoom: () -> Float,
     offset: () -> Offset

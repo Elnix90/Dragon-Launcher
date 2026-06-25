@@ -7,7 +7,7 @@ import org.elnix.dragonlauncher.badges.MutableBadge
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.notifications.NotificationRepository
 
-class NotificationBadgeProvider(
+internal class NotificationBadgeProvider(
     private val notificationRepository: NotificationRepository
 ) : BadgeProvider {
 

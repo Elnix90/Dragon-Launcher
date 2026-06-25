@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.enumsui.toggle
 import org.elnix.dragonlauncher.enumsui.ToggleButtonOption
 import org.elnix.dragonlauncher.i18n.R
 
-enum class DrawerToolbar(
+public enum class DrawerToolbar(
     override val resId: Int,
     override val iconEnabled: Int,
     override val iconDisabled: Int? = null
@@ -12,8 +12,8 @@ enum class DrawerToolbar(
     RecentlyUsed(R.string.recently_used_apps, R.drawable.reset),
     SearchBar(R.string.search_bar, R.drawable.search);
 
-    companion object {
-        val defaultDrawerToolbarOrder = listOf(
+    public companion object {
+        public val defaultDrawerToolbarOrder: List<DrawerToolbar> = listOf(
             Spacer,
             RecentlyUsed,
             SearchBar

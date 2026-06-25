@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.database
 import android.content.ComponentName
 import androidx.room.TypeConverter
 
-class ComponentNameConverter {
+internal class ComponentNameConverter {
     @TypeConverter
     fun toString(componentName: ComponentName?): String? {
         return componentName?.flattenToString()

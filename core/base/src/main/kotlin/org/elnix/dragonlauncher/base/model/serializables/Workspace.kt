@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("Workspace")
-data class Workspace(
+public data class Workspace(
     val id: String,
     val name: String,
     val type: WorkspaceType,
@@ -13,9 +13,9 @@ data class Workspace(
     val removedAppIds: Set<CacheKey>? = null,
     val enabled: Boolean = true
 ) {
-    companion object {
+    public companion object {
         // I disable non-user workspaces by default, enable it if you need it (only used for nerds) (those who download my app are btw :) )
-        val defaultWorkspaces = listOf(
+        public val defaultWorkspaces: List<Workspace> = listOf(
             Workspace(
                 id = "user",
                 name = "User",
@@ -51,4 +51,4 @@ data class Workspace(
 }
 
 
-typealias WorkspaceState = List<Workspace>
+public typealias WorkspaceState = List<Workspace>

@@ -4,13 +4,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 
-class NotificationRepository {
+public class NotificationRepository {
 
     private val _notifications: MutableStateFlow<List<Notification>> = MutableStateFlow(
         emptyList()
     )
 
-    val notifications: Flow<List<Notification>> = _notifications
+    public val notifications: Flow<List<Notification>> = _notifications
 
     internal fun setNotifications(notifications: List<Notification>) {
         _notifications.value = notifications
@@ -33,7 +33,7 @@ class NotificationRepository {
         return notification1.key == notification2.key
     }
 
-    fun cancelNotification(notification: Notification) {
+    public fun cancelNotification(notification: Notification) {
         NotificationService.getInstance()?.cancelNotification(notification.key)
     }
 }
