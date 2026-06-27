@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.ui.remembers
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -14,11 +13,12 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CycleActionStage
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
-import org.elnix.dragonlauncher.common.utils.HapticUtils.performCustomHaptic
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.defaultHapticFeedback
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * For each extra stage, [CycleActionStage.triggerTimeMs] is the **additional** hold time after the
@@ -73,7 +73,8 @@ fun rememberCycleActionsController(
     isDragging: Boolean
 ): CycleActionsState {
     val ctx = LocalContext.current
-    val defaultPoint by pointsViewModel.defaultPoint.collectAsState()
+    val pointsService = pointsViewModel.pointsService
+    val defaultPoint by pointsService.defaultPoint.asState()
 
     val disableHapticFeedbackGlobally= LocalDisableHapticFeedbackGlobally.current
 
@@ -126,18 +127,18 @@ fun rememberCycleActionsController(
                 if (!disableHapticFeedbackGlobally && newIndex != lastFiredStageIndex) {
                     val haptic = when (newIndex) {
                         in 1..stages.size -> {
-                            stages[newIndex - 1].hapticFeedback ?: defaultHapticFeedback(newIndex)
+                            stages[newIndex - 1].hapticFeedback ?: defaultHapticFeedback()
                         }
 
                         0 if loopEnabled && lastFiredStageIndex == stages.size -> {
                             // Light haptic when the loop wraps back to the base action.
-                            defaultHapticFeedback(-1)
+                            defaultHapticFeedback()
                         }
 
                         else -> null
                     }
 
-                    haptic?.let { performCustomHaptic(ctx, it) }
+                    haptic?.perform(ctx)
                     lastFiredStageIndex = newIndex
                 }
             }
@@ -145,7 +146,7 @@ fun rememberCycleActionsController(
             // If looping is disabled, we stay in the last stage after it is reached.
             if (!loopEnabled && newIndex >= stages.size) break
 
-            delay(16L)
+            delay(16L.milliseconds)
         }
     }
 

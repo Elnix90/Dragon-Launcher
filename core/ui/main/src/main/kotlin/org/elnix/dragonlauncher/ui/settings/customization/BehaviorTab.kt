@@ -88,7 +88,6 @@ fun BehaviorTab(onBack: () -> Unit) {
         DragonSettingsGroup(R.string.common_settings) {
             SettingsSwitchRow(BehaviorSettingsStore.keepScreenOn)
             SettingsSwitchRow(BehaviorSettingsStore.disableHapticFeedbackGlobally)
-            SettingsSwitchRow(BehaviorSettingsStore.pointsActionSnapsToOuterCircle)
             SettingsSwitchRow(BehaviorSettingsStore.promptForShortcutsWhenAddingApp)
             SettingsSwitchRow(BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint)
 

@@ -68,7 +68,7 @@ fun AddPointDialog(
     drawerViewModel: DrawerViewModel = activityViewModel(),
     onDismiss: () -> Unit,
     onActionSelected: ((Action) -> Unit)? = null,
-    onMultipleActionsSelected: ((List<Action>, Boolean) -> Unit)? = null
+    onMultipleActionsSelected: ((action: List<Action>) -> Unit)? = null
 ) {
     require((onActionSelected != null) xor (onMultipleActionsSelected != null)) {
         "You can either use onActionSelected or onMultipleActionsSelected but not both at the same time"
@@ -109,7 +109,7 @@ fun AddPointDialog(
 
     fun onActionPicked(action: Action) {
         if (onMultipleActionsSelected != null) {
-            onMultipleActionsSelected(listOf(action), false)
+            onMultipleActionsSelected(listOf(action))
         } else {
             onActionSelected!!(action)
         }
@@ -273,11 +273,11 @@ fun AddPointDialog(
                 }
             },
             onMultipleAppsSelected = if (onMultipleActionsSelected != null) {
-                { apps, autoPlace ->
+                { apps ->
                     val actions = apps.map {
                         Action.LaunchApp(it.packageName, it.profile)
                     }
-                    onMultipleActionsSelected(actions, autoPlace)
+                    onMultipleActionsSelected(actions)
                     showAppPicker = false
                 }
             } else null

@@ -70,7 +70,7 @@ fun AppPickerDialog(
     multiSelectEnabled: Boolean = false,
     onDismiss: () -> Unit,
     onAppSelected: (Application) -> Unit,
-    onMultipleAppsSelected: ((List<Application>, Boolean) -> Unit)? = null
+    onMultipleAppsSelected: ((List<Application>) -> Unit)? = null
 ) {
     // Auto Show keyboard logic
     val focusRequester = remember { FocusRequester() }
@@ -248,26 +248,8 @@ fun AppPickerDialog(
 
                             DragonButton(
                                 onClick = {
-                                    val allApps = allApps
                                     val pickedApps = allApps.filter { it.packageName in selectedApps }
-                                    onMultipleAppsSelected(pickedApps, true)
-                                    onDismiss()
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.playlist_add_check),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(8.dp)
-                                Text(stringResource(R.string.add_all_auto))
-                            }
-
-                            DragonButton(
-                                onClick = {
-                                    val pickedApps = allApps.filter { it.packageName in selectedApps }
-                                    onMultipleAppsSelected(pickedApps, false)
+                                    onMultipleAppsSelected(pickedApps)
                                     onDismiss()
                                 },
                                 modifier = Modifier.fillMaxWidth()

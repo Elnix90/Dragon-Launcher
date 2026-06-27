@@ -158,7 +158,6 @@
     <string name="apply_wallpaper_to">Aplicar fondo a</string>
     <string name="main_screen">Pantalla principal</string>
     <string name="drawer_screen">Rejilla de cajón</string>
-    <string name="show_all_actions_on_current_circle">Mostrar todas las acciones en el círculo actual</string>
     <string name="notifications">Notificación</string>
     <string name="drawer_action_clear">¡Libre</string>
     <string name="drawer_action_search_web">Busca en internet</string>
@@ -293,7 +292,6 @@
     <string name="show_app_angle_preview_description">Mostrar el indicador del ángulo en la línea</string>
     <string name="show_app_icon_start_drag_position_description">Muestra la aplicación seleccionada actualmente en el centro de donde destacaste para arrastrar</string>
     <string name="line_preview_snap_to_action_description">La vista previa de línea no se puede mover libremente, se ajusta a la acción seleccionada cuando hay una</string>
-    <string name="show_all_actions_on_current_circle_description">Cuando se selecciona una acción, también se muestran todos los puntos del mismo círculo</string>
     <string name="min_angle_to_activate">Ángulo mínimo para activar</string>
     <string name="app_label_overlay_size">Tamaño de superposición de etiquetas de aplicaciones</string>
     <string name="app_icon_overlay_size">Tamaño de superposición del icono de la aplicación</string>
@@ -549,8 +547,6 @@
     <string name="show_status_bar_desc">Mostrar la barra de estado, si está deshabilitada no se muestra nada</string>
     <string name="disable_haptic_globally">Deshabilitar la retroalimentación háptica globalmente</string>
     <string name="disable_haptic_globally_desc">Evite que Dragon produzca retroalimentación háptica en la selección de puntos en caso de que lo odie</string>
-    <string name="point_action_snaps_to_outer_circle">La acción del punto se ajusta al círculo exterior</string>
-    <string name="point_action_snaps_to_outer_circle_desc">Elige si la acción se activa en el círculo interior o exterior</string>
     <string name="drag_handle">Controlador de arrastre</string>
     <string name="private_space_title">Espacio privado</string>
     <string name="private_space_locked">Espacio privado bloqueado</string>

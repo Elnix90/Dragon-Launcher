@@ -46,7 +46,7 @@ private fun commitEditText(
         onChange(newValue)
         onDragStateChange?.invoke(false)
     } catch (_: Exception) {
-        // Ignore malformed input — slider keeps its current value
+        // Ignore malformed input - slider keeps its current value
     }
 }
 

@@ -77,7 +77,6 @@ public object UiSettingsStore : MapSettingsStore() {
         default = false
     )
 
-    /** Whether if the points are separated automatically to avoid overlapping when moving them in the circle */
     @SettingKey
     public val autoSeparatePoints: BooleanSettingObject = boolean(
         title = R.string.auto_separate,
@@ -96,14 +95,6 @@ public object UiSettingsStore : MapSettingsStore() {
         default = true
     )
 
-    /** Global setting, can be changed individually for each nest */
-    @SettingKey
-    public val showCirclePreview: BooleanSettingObject = boolean(
-        title = R.string.show_app_circle_preview,
-        description = R.string.show_app_circle_preview_description,
-        default = true
-    )
-
     @SettingKey
     public val showAppPreviewIconCenterStartPosition: BooleanSettingObject = boolean(
         title = R.string.show_app_icon_start_drag_position,
@@ -118,7 +109,6 @@ public object UiSettingsStore : MapSettingsStore() {
         default = false
     )
 
-    /** Show the current selected app on drag in the main screen / show them all on the circle */
     @SettingKey
     public val showAppLaunchingPreview: BooleanSettingObject = boolean(
         title = R.string.show_app_launch_preview,
@@ -127,9 +117,9 @@ public object UiSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val showAllActionsOnCurrentCircle: BooleanSettingObject = boolean(
-        title = R.string.show_all_actions_on_current_circle,
-        description = R.string.show_all_actions_on_current_circle_description,
+    public val showAllActionsOnCurrentShape: BooleanSettingObject = boolean(
+        title = R.string.show_all_actions_on_current_shape,
+        description = R.string.show_all_actions_on_current_shape_desc,
         default = true
     )
 

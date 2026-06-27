@@ -6,17 +6,16 @@ import android.appwidget.AppWidgetManager
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.center
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -27,11 +26,11 @@ import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Widget
 import org.elnix.dragonlauncher.base.resolveShape
+import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.ktx.toDp
 import org.elnix.dragonlauncher.ui.actions.ActionIcon
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
-import org.elnix.dragonlauncher.ui.helpers.nests.actionsInCircle
-import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
+import org.elnix.dragonlauncher.ui.helpers.nests.PointIcon
 import org.elnix.dragonlauncher.ui.widgets.LauncherWidgetHolder
 import kotlin.math.min
 
@@ -119,17 +118,13 @@ fun WidgetHostView(
                 size = sizeDp
             )
         } else {
-
-            val drawParams by rememberSwipeDefaultParams()
-
             val editPoint = Point(
-                circleNumber = 0,
-                angleDeg = 0.0,
+                offset = Offset.Zero,
                 action = Action.OpenCircleNest((widget.action as Action.OpenCircleNest).nestId),
-                id = ""
+                id = -2
             )
 
-            Canvas(
+            BoxWithConstraints(
                 modifier = modifier
                     .size(sizeDp)
                     .clip(widget.shape.resolveShape(default = IconShape.Square))
@@ -137,14 +132,13 @@ fun WidgetHostView(
                         clickable { onLaunchAction() }
                     },
             ) {
-                val center = this.size.center
+                val center = constraints.getCenter()
 
-                actionsInCircle(
+                PointIcon(
                     selected = false,
                     point = editPoint,
                     center = center,
                     depth = 1,
-                    drawParams = drawParams
                 )
             }
         }

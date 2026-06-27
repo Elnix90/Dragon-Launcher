@@ -1,17 +1,18 @@
 package org.elnix.dragonlauncher.ui.remembers
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import org.elnix.dragonlauncher.base.model.serializables.Nest
 import io.github.elnix90.logging.NESTS_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logW
+import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
+
 /**
  * Remembers and manages navigation state between [Nest]s.
  *
@@ -22,11 +23,8 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
  *
  * The state is fully reactive:
  * - When the navigation stack changes, the current nest id updates.
- * - When either the current nest id or the [nests] list changes,
+ * - When either the current nest id or the nests list changes,
  *   the resolved [Nest] updates.
- *
- * @param nests A reactive list of available nests. Must be a state-backed list
- *              (e.g., SnapshotStateList) for proper recomposition.
  *
  * @return A [NestNavigationState] exposing the current nest and navigation actions.
  */
@@ -35,7 +33,8 @@ fun rememberNestNavigation(
     pointsViewModel: PointsViewModel = activityViewModel()
 ): NestNavigationState {
 
-    val nests by pointsViewModel.nests.collectAsState()
+    val pointsService = pointsViewModel.pointsService
+    val nests by pointsService.nests.asState()
 
     /**
      *  Navigation stack holding visited nest ids.

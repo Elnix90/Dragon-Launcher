@@ -1,7 +1,7 @@
 package org.elnix.dragonlauncher.common.circles
 
 import androidx.compose.ui.geometry.Offset
-import org.elnix.dragonlauncher.base.model.models.UiCircle
+import org.elnix.dragonlauncher.base.model.serializables.Nests
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import kotlin.math.cos
 import kotlin.math.sin
@@ -21,28 +21,20 @@ private fun computePointPositionInternal(
 }
 
 public fun Point.computePosition(
-    circles: List<UiCircle>,
+    nests: Nests,
     center: Offset
 ): Offset {
     // Find the circle this point belongs to
-    val circle = circles.find { it.id == circleNumber } ?: return center
+//    val circle = circles.find { it.id == circleNumber } ?: return cente
 
-    return computePointPositionInternal(
-        angleDeg = angleDeg,
-        radius = circle.radius,
-        center = center
-    )
-}
+    val nest = nests.find { it.id == nestId }!!
 
+    // ignore the shapes for now, TODO
+    return this.offset + center
 
-public fun Point.computePosition(
-    radius: Float,
-    center: Offset
-): Offset {
-
-    return computePointPositionInternal(
-        angleDeg = angleDeg,
-        radius = radius,
-        center = center
-    )
+//    return computePointPositionInternal(
+//        angleDeg = 0.0,
+//        radius = 0f,
+//        center = center
+//    )
 }

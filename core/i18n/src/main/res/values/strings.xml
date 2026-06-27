@@ -181,7 +181,6 @@
     <string name="apply_wallpaper_to">Apply wallpaper to</string>
     <string name="main_screen">Main Screen</string>
     <string name="drawer_screen">Drawer Screen</string>
-    <string name="show_all_actions_on_current_circle">Show all actions in current circle</string>
     <string name="notifications">Notification</string>
     <string name="drawer_action_clear">Clear</string>
     <string name="drawer_action_search_web">Search the web</string>
@@ -316,7 +315,6 @@
     <string name="show_app_angle_preview_description">Display the angle indicator on the line</string>
     <string name="show_app_icon_start_drag_position_description">Display the current selected app in the center of where you starred to drag</string>
     <string name="line_preview_snap_to_action_description">The line preview isn\'t free to move, it snaps to the selected action when there\'s one</string>
-    <string name="show_all_actions_on_current_circle_description">When an action is selected, all same-circle points are displayed too</string>
     <string name="min_angle_to_activate">Min Angle to activate</string>
     <string name="app_label_overlay_size">App label overlay size</string>
     <string name="app_icon_overlay_size">App Icon overlay size</string>
@@ -608,8 +606,6 @@
     <string name="show_status_bar_desc">Display the status bar, if disabled nothing\'s showed</string>
     <string name="disable_haptic_globally">Disable Haptic feedback globally</string>
     <string name="disable_haptic_globally_desc">Prevent Dragon to produce any haptic feedback in points selection in case you hate it</string>
-    <string name="point_action_snaps_to_outer_circle">Point action snaps to outer circle</string>
-    <string name="point_action_snaps_to_outer_circle_desc">Choose if the action is activated on the inner circle or the outer one</string>
     <string name="drag_handle">Drag handle</string>
     <string name="private_space_title">Private Space</string>
     <string name="private_space_locked">Private Space locked</string>
@@ -1018,4 +1014,6 @@
     <string name="no_profile_found">No profile found in phone</string>
     <string name="need_to_be_default_launcher_to_access_profile">Dragon needs to be the default launcher in order to access this profile</string>
     <string name="cannor_delete_nest_0">Cannot delete nest 0 (main nest)</string>
+    <string name="show_all_actions_on_current_shape">Show all actions in current shape</string>
+    <string name="show_all_actions_on_current_shape_desc">When you use intersectino shapes, all points on the current selected one will be showed</string>
 </resources>

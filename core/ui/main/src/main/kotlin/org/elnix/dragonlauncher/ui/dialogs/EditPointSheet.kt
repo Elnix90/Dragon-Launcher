@@ -28,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,6 +57,7 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.PointPreviewCanvas
 import org.elnix.dragonlauncher.ui.defaultHapticFeedback
@@ -86,11 +86,10 @@ fun EditPointSheet(
     onConfirm: (Point) -> Unit
 ) {
     val extraColors = LocalExtraColors.current
+    val pointsService = pointsViewModel.pointsService
 
-    val defaultPoint by pointsViewModel.defaultPoint.collectAsState()
-    val nests by pointsViewModel.nests.collectAsState()
-
-
+    val defaultPoint by pointsService.defaultPoint.asState()
+    val nests by pointsService.nests.asState()
 
     var editPoint by remember { mutableStateOf(point) }
     var showEditIconDialog by remember { mutableStateOf(false) }
@@ -152,12 +151,6 @@ fun EditPointSheet(
             ?.takeIf { !isDefaultEditing }
             ?: defaultSwipePointsValues.size!!
 
-    val defaultResolution =
-        defaultPoint.resolution
-            ?.takeIf { !isDefaultEditing }
-            ?: editPoint.size
-            ?: defaultSize
-
     val defaultInnerPadding =
         defaultPoint.innerPadding
             ?.takeIf { !isDefaultEditing }
@@ -207,7 +200,6 @@ fun EditPointSheet(
         editPoint.size,
         editPoint.cycleActions,
         editPoint.holdAndRunDelayMs,
-        editPoint.resolution,
         editPoint.size
     ) {
         iconsViewModel.reloadIcon(editPoint)
@@ -240,8 +232,7 @@ fun EditPointSheet(
                     contentDescription = stringResource(R.string.reset)
                 ) {
                     editPoint = Point(
-                        circleNumber = editPoint.circleNumber,
-                        angleDeg = editPoint.angleDeg,
+                        offset = editPoint.offset,
                         nestId = editPoint.nestId,
                         action = editPoint.action,
                         id = editPoint.id
@@ -271,8 +262,6 @@ fun EditPointSheet(
 
                 PointPreviewCanvas(
                     editPoint = editPoint,
-                    defaultPoint = defaultPoint,
-                    backgroundSurfaceColor = MaterialTheme.colorScheme.surfaceVariant,
                     modifier = Modifier.fillMaxWidth(1f)
                 )
             }
@@ -368,7 +357,7 @@ fun EditPointSheet(
                                     }
 
 
-                                    /*  ─── Hold delay slider ───  */
+                                    /*   Hold delay slider   */
                                     SliderWithLabel(
                                         label = stringResource(R.string.live_nest_hold_delay),
                                         value = editPoint.liveNestPreviewDelayMs ?: defaultLiveNestDelay,
@@ -379,7 +368,7 @@ fun EditPointSheet(
                                         }
                                     ) { editPoint = editPoint.copy(liveNestPreviewDelayMs = it) }
 
-                                    /*  ─── Scale slider ───  */
+                                    /*   Scale slider   */
                                     SliderWithLabel(
                                         label = stringResource(R.string.live_nest_scale),
                                         value = editPoint.liveNestScale ?: defaultLiveNestScale,
@@ -390,7 +379,7 @@ fun EditPointSheet(
                                         }
                                     ) { editPoint = editPoint.copy(liveNestScale = it) }
 
-                                    /*  ─── Grace distance slider ───  */
+                                    /*   Grace distance slider   */
                                     SliderWithLabel(
                                         label = stringResource(R.string.live_nest_grace_distance),
                                         value = editPoint.liveNestGraceDistancePx ?: defaultLiveNestGraceDistance,
@@ -541,8 +530,7 @@ fun EditPointSheet(
                                                 }
 
                                                 HapticFeedBackEditorButtonWithPlayTest(
-                                                    customHapticFeedback = stage.hapticFeedback
-                                                        ?: defaultHapticFeedback(point.circleNumber),
+                                                    customHapticFeedback = stage.hapticFeedback ?: defaultHapticFeedback(),
                                                     titleExt = " (Stage ${index + 1})",
                                                     onClick = { editingCycleStageHapticIndex = index }
                                                 )
@@ -550,7 +538,7 @@ fun EditPointSheet(
                                         }
                                     }
 
-                                    /*  ─── Add Stage (below the cards) ───  */
+                                    // Add Stage (below the cards)
                                     DragonButton(
                                         modifier = Modifier.fillMaxWidth(),
                                         onClick = {
@@ -583,7 +571,7 @@ fun EditPointSheet(
                                 }
 
                                 val currentLoopDelay = editPoint.cycleActionsLoopDelayMs ?: defaultLoopDelay
-                                /*  ─── Loop (optional tail before cycle restarts) ───  */
+                                /*   Loop (optional tail before cycle restarts)   */
                                 if (cycleStages.isNotEmpty() || isDefaultEditing) {
                                     SwitchRow(
                                         state = currentLoopDelay != -1,
@@ -824,13 +812,6 @@ fun EditPointSheet(
                     valueRange = 1..200,
                     onReset = { editPoint = editPoint.copy(size = null) }
                 ) { editPoint = editPoint.copy(size = it) }
-
-                SliderWithLabel(
-                    label = stringResource(R.string.resolution),
-                    value = editPoint.resolution ?: defaultResolution,
-                    valueRange = 1..200,
-                    onReset = { editPoint = editPoint.copy(resolution = null) }
-                ) { editPoint = editPoint.copy(resolution = it) }
             }
 
 
@@ -845,7 +826,7 @@ fun EditPointSheet(
 
 
                 AnimatedContent(selectedView) { view ->
-                    Column() {
+                    Column {
                         when (view) {
 
                             SelectedUnselectedViewMode.Unselected -> {
@@ -948,7 +929,7 @@ fun EditPointSheet(
             DragonColumnGroup {
                 if (!isDefaultEditing) {
                     HapticFeedBackEditorButtonWithPlayTest(
-                        customHapticFeedback = editPoint.hapticFeedback ?: defaultHapticFeedback(point.circleNumber),
+                        customHapticFeedback = editPoint.haptic ?: defaultHapticFeedback(),
                         onClick = { showHapticFeedbackEditor = true },
                     )
                 } else {
@@ -1020,15 +1001,15 @@ fun EditPointSheet(
 
     if (showHapticFeedbackEditor) {
         HapticFeedbackEditor(
-            initial = editPoint.hapticFeedback,
+            initial = editPoint.haptic,
             onDismiss = { showHapticFeedbackEditor = false }
         ) { newHaptic ->
-            editPoint = editPoint.copy(hapticFeedback = newHaptic)
+            editPoint = editPoint.copy(haptic = newHaptic)
             showHapticFeedbackEditor = false
         }
     }
 
-    /*  ─────────────  Cycle Actions ─ action editor  ─────────────  */
+    /*    Cycle Actions  action editor    */
     if (editingCycleStageActionIndex != null) {
         val idx = editingCycleStageActionIndex!!
         AddPointDialog(

@@ -138,6 +138,7 @@ fun MainAppUi(
     onRemoveWidget: (Widget) -> Unit
 ) {
     val ctx = LocalContext.current
+    val pointsService = pointsViewModel.pointsService
 
     var showWidgetPicker by remember { mutableStateOf<Int?>(null) }
     var showFilePicker: Point? by remember { mutableStateOf(null) }
@@ -418,15 +419,15 @@ fun MainAppUi(
                     entry<NavigationRoute.PointsSettings>(metadata = horizontalMetadata) {
                         PointsSettingsScreen(
                             onAdvSettings = {
-                                pointsViewModel.persist()
+                                pointsService.persist()
                                 backStack.navigate(NavigationRoute.Settings)
                             },
                             onNestEdit = {
-                                pointsViewModel.persist()
+                                pointsService.persist()
                                 backStack.navigate(NavigationRoute.NestEdit(it))
                             },
                             onBack = {
-                                pointsViewModel.persist()
+                                pointsService.persist()
                                 backStack.navigateBack()
                             }
                         )
@@ -478,7 +479,7 @@ fun MainAppUi(
                             nestId = key.nestId,
                             onBack = {
                                 backStack.navigateBack()
-                                pointsViewModel.persist()
+                                pointsService.persist()
                             }
                         )
                     }
@@ -525,7 +526,7 @@ fun MainAppUi(
                 onDismiss = { showFilePicker = null },
                 onFileSelected = { newAction ->
                     val updatedPoint = currentPoint.copy(action = newAction)
-                    pointsViewModel.editPoint(currentPoint.id) { updatedPoint }
+                    pointsService.editPoint(currentPoint.id) { updatedPoint }
                     showFilePicker = null
                     launchAction(updatedPoint)
                 }

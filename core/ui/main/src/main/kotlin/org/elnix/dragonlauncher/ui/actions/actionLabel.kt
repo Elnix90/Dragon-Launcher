@@ -15,6 +15,7 @@ import org.elnix.dragonlauncher.ktx.getFilePathFromUri
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 
 @Composable
 fun actionLabel(
@@ -23,6 +24,7 @@ fun actionLabel(
     pointsViewModel: PointsViewModel = activityViewModel()
 ): String {
     val ctx = LocalContext.current
+    val pointsService = pointsViewModel.pointsService
 
     return when (action) {
 
@@ -77,7 +79,7 @@ fun actionLabel(
         Action.OpenRecentApps -> stringResource(R.string.recent_apps)
 
         is Action.OpenCircleNest -> {
-            val nests by pointsViewModel.nests.collectAsState()
+            val nests by pointsService.nests.asState()
 
             nests
                 .find { it.id == action.nestId }

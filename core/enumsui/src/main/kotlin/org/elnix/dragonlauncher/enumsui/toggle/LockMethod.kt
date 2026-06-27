@@ -11,7 +11,7 @@ public enum class LockMethod(
     override val iconEnabled: Int? = null,
     override val iconDisabled: Int? = null
 ) : ToggleButtonOption {
-    /** No lock — settings are freely accessible */
+    /** No lock - settings are freely accessible */
     None(R.string.lock_none),
 
     /** Require a user-defined PIN code */

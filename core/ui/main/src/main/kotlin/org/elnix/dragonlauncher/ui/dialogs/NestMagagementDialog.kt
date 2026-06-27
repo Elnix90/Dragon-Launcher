@@ -1,9 +1,9 @@
 package org.elnix.dragonlauncher.ui.dialogs
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,7 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.center
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,16 +39,17 @@ import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
-import org.elnix.dragonlauncher.ui.helpers.nests.actionsInCircle
-import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
+import org.elnix.dragonlauncher.ui.helpers.nests.PointIcon
 
 @Composable
 fun NestManagementDialog(
@@ -58,7 +58,8 @@ fun NestManagementDialog(
     title: String? = null,
     onSelect: ((Nest) -> Unit)? = null
 ) {
-    val nests by pointsViewModel.nests.collectAsState()
+    val pointsService = pointsViewModel.pointsService
+    val nests by pointsService.nests.asState()
 
     var hasClickedNewNest by remember { mutableStateOf<Int?>(null) }
     val listState = rememberLazyListState()
@@ -90,7 +91,7 @@ fun NestManagementDialog(
                     DragonButton(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            hasClickedNewNest = pointsViewModel.addNest()
+                            hasClickedNewNest = pointsService.addNest()
                         }
                     ) {
                         Icon(
@@ -123,19 +124,14 @@ private fun NestManagementItem(
     onSelect: (() -> Unit)? = null
 ) {
     val ctx = LocalContext.current
-
-    val drawParams by rememberSwipeDefaultParams(
-        backgroundColor = MaterialTheme.colorScheme.surfaceVariant
-    )
+    val pointsService = pointsViewModel.pointsService
 
     var tempCustomName by remember { mutableStateOf(nest.name ?: "") }
 
-
     val editPoint = Point(
-        circleNumber = 0,
-        angleDeg = 0.0,
-        Action.OpenCircleNest(nest.id),
-        id = ""
+        offset = Offset.Zero,
+        action = Action.OpenCircleNest(nest.id),
+        id = -3
     )
 
     Row(
@@ -149,18 +145,17 @@ private fun NestManagementItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        Canvas(
+        BoxWithConstraints(
             modifier = Modifier
                 .size(100.dp)
         ) {
-            val center = size.center
+            val center = constraints.getCenter()
 
-            actionsInCircle(
+            PointIcon(
                 selected = false,
                 point = editPoint,
                 center = center,
                 depth = 1,
-                drawParams = drawParams,
                 preventBgErasing = true
             )
         }
@@ -197,7 +192,7 @@ private fun NestManagementItem(
                 onValueChange = {
                     tempCustomName = it
 
-                    pointsViewModel.editNest(nest.id) { nest ->
+                    pointsService.editNest(nest.id) { nest ->
                         nest.copy(name = it)
                     }
                 },
@@ -233,7 +228,7 @@ private fun NestManagementItem(
             colors = AppObjectsColors.cancelIconButtonColors(),
             enabled = { enabled }
         ) {
-            pointsViewModel.deleteNest(nest.id)
+            pointsService.removeNest(nest.id)
         }
     }
 }

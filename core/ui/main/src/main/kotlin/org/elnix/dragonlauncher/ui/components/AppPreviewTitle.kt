@@ -26,13 +26,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.ui.actions.PointIcon
+import org.elnix.dragonlauncher.ui.actions.FinalPointIcon
 import org.elnix.dragonlauncher.ui.actions.actionLabel
-import io.github.elnix90.runtime.asState
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -91,7 +91,7 @@ fun AppPreviewTitle(
 
 
                 if (showIcon) {
-                    PointIcon(point)
+                    FinalPointIcon(point)
                 }
 
                 if (showLabel) {

@@ -27,6 +27,7 @@ import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
 import org.elnix.dragonlauncher.appshortcuts.AppShortcutRepository
 import org.elnix.dragonlauncher.base.DragonCache
+import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
@@ -63,7 +64,7 @@ import org.elnix.dragonlauncher.icons.transformations.LegacyToAdaptiveTransforma
 import org.elnix.dragonlauncher.icons.transformations.transform
 import org.elnix.dragonlauncher.ktx.dp
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
-import org.elnix.dragonlauncher.recents.PointsService
+import org.elnix.dragonlauncher.points.PointsService
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 
 private object PointIconCache : DragonCache<CacheKey, LauncherIcon>(200)
@@ -96,7 +97,7 @@ public class IconService(
 
     private val scope = CoroutineScope(Job() + Dispatchers.Default)
 
-    public val defaultPoint: Flow<Point> = pointService.defaultPoint
+    private val defaultPoint: SettingFlow<Point> = pointService.defaultPoint
 
     private val iconSize = DrawerSettingsStore.iconSize.flow(ctx)
 
@@ -311,7 +312,6 @@ public class IconService(
     }
 
 
-
     public fun reloadPointIcon(point: Point) {
         @Suppress("UnusedFlow")
         getPointIcon(point, true)
@@ -326,10 +326,9 @@ public class IconService(
         point: Point,
         reload: Boolean = false
     ): Flow<LauncherIcon?> {
-        return defaultPoint.flatMapLatest { defaultPoint ->
-            val resolvedResolutionDp =
-                point.resolution ?: defaultPoint.resolution
-                ?: point.size ?: defaultPoint.size
+        return defaultPoint.flow.flatMapLatest { defaultPoint ->
+            val resolvedResolutionDp = point.size
+                ?: defaultPoint.size
                 ?: Point.defaultSwipePointsValues.size!!
 
             // Convert dp to pixels and enforce a minimum touch-safe size.

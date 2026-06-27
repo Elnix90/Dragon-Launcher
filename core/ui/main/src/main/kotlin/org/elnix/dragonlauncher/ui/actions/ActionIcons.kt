@@ -5,7 +5,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Action
@@ -14,22 +13,21 @@ import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.components.ShapedLauncherIcon
 
 
 @Composable
-fun PointIcon(
+fun FinalPointIcon(
     point: Point,
     modifier: Modifier = Modifier,
     drawerViewModel: DrawerViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel()
 ) {
+    val pointsService = pointsViewModel.pointsService
+    val defaultPoint by pointsService.defaultPoint.asState()
 
-    val defaultPoint by pointsViewModel.defaultPoint.collectAsState()
-    val resolvedResolution =
-        point.resolution ?: defaultPoint.resolution
-        ?: point.size ?: defaultPoint.size
-        ?: Point.defaultSwipePointsValues.size!!
+    val pointSize = point.getSize(defaultPoint)
 
     when (val action = point.action) {
 
@@ -38,20 +36,20 @@ fun PointIcon(
             if (app != null) {
                 AppIcon(
                     app = app!!,
-                    size = resolvedResolution.dp,
+                    size = pointSize,
                     modifier = modifier
                 )
             }
         }
 
         is Action.LaunchShortcut -> {
-            ShortcutIcon(action, resolvedResolution.dp)
+            ShortcutIcon(action, pointSize)
         }
 
         else -> {
             ActionIcon(
                 action = action,
-                size = resolvedResolution.dp,
+                size = pointSize,
                 modifier = modifier
             )
         }

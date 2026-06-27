@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -24,6 +23,7 @@ import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.components.AppPreviewTitle
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -48,7 +48,7 @@ fun AppDisplayTab(
     val showLaunchingAppLabel by UiSettingsStore.showLaunchingAppLabel.asState()
     val showLaunchingAppIcon by UiSettingsStore.showLaunchingAppIcon.asState()
     val appLabelIconOverlayTopPadding by UiSettingsStore.appLabelIconOverlayTopPadding.asState()
-    val showAllActionsOnCurrentCircle by UiSettingsStore.showAllActionsOnCurrentCircle.asState()
+    val showAllActionsOnCurrentCircle by UiSettingsStore.showAllActionsOnCurrentShape.asState()
 
     val mainScreenLayers = LocalMainScreenLayers.current
 
@@ -112,9 +112,9 @@ fun AppDisplayTab(
             contentPadding = PaddingValues(vertical = 12.dp)
         ) {
             SettingsSwitchRow(UiSettingsStore.showAppLaunchingPreview)
-            SettingsSwitchRow(UiSettingsStore.showCirclePreview)
+            SettingsSwitchRow(UiSettingsStore.showAllActionsOnCurrentShape)
 
-            SettingsSwitchRow(UiSettingsStore.showAllActionsOnCurrentCircle) {
+            SettingsSwitchRow(UiSettingsStore.showAllActionsOnCurrentShape) {
                 if (!it) {
                     scope.launch {
                         UiSettingsStore.showAllActionsOnCurrentNest.set(ctx, false)
@@ -139,7 +139,8 @@ fun AppDisplayTab(
     }
 
 
-    val points by pointsViewModel.points.collectAsState()
+    val pointsService = pointsViewModel.pointsService
+    val points by pointsService.points.asState()
     val randomPoint = remember { points.random() }
 
     if (topOverlaySettingsState.isExpanded()) {

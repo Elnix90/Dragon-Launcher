@@ -159,7 +159,6 @@
     <string name="apply_wallpaper_to">Tapete auftragen</string>
     <string name="main_screen">Hauptbildschirm</string>
     <string name="drawer_screen">Schubladenbildschirm</string>
-    <string name="show_all_actions_on_current_circle">Alle Aktionen im aktuellen Kreis anzeigen</string>
     <string name="notifications">Benachrichtigung</string>
     <string name="drawer_action_clear">Frei</string>
     <string name="drawer_action_search_web">Durchsuche das Internet</string>
@@ -294,7 +293,6 @@
     <string name="show_app_angle_preview_description">Zeigen Sie den Winkelindikator auf der Linie an</string>
     <string name="show_app_icon_start_drag_position_description">Zeigen Sie die aktuell ausgewählte App in der Mitte der Stelle an, an der Sie sie mit der Maus gezogen haben</string>
     <string name="line_preview_snap_to_action_description">Die Zeilenvorschau ist nicht frei verschiebbar, sondern rastet bei der ausgewählten Aktion ein, wenn eine vorhanden ist</string>
-    <string name="show_all_actions_on_current_circle_description">Wenn eine Aktion ausgewählt ist, werden auch alle Punkte mit demselben Kreis angezeigt</string>
     <string name="min_angle_to_activate">Min. Winkel zum Aktivieren</string>
     <string name="app_label_overlay_size">Größe des App-Label-Overlays</string>
     <string name="app_icon_overlay_size">Größe des App-Symbol-Overlays</string>
@@ -550,8 +548,6 @@
     <string name="show_status_bar_desc">Zeigen Sie die Statusleiste an. Wenn diese Option deaktiviert ist, wird nichts angezeigt</string>
     <string name="disable_haptic_globally">Deaktivieren Sie das haptische Feedback global</string>
     <string name="disable_haptic_globally_desc">Verhindern Sie, dass Dragon bei der Punkteauswahl haptische Rückmeldungen gibt, falls Sie das nicht mögen</string>
-    <string name="point_action_snaps_to_outer_circle">Die Punktaktion rastet am äußeren Kreis ein</string>
-    <string name="point_action_snaps_to_outer_circle_desc">Wählen Sie, ob die Aktion im inneren oder äußeren Kreis aktiviert wird</string>
     <string name="drag_handle">Ziehgriff</string>
     <string name="private_space_title">Privater Bereich</string>
     <string name="private_space_locked">Privater Bereich gesperrt</string>

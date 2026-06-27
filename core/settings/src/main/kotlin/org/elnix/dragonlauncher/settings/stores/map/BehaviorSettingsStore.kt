@@ -83,13 +83,6 @@ public object BehaviorSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val pointsActionSnapsToOuterCircle: BooleanSettingObject = boolean(
-        title = R.string.point_action_snaps_to_outer_circle,
-        description = R.string.point_action_snaps_to_outer_circle_desc,
-        default = true
-    )
-
-    @SettingKey
     public val superWarningMode: BooleanSettingObject = boolean(
         title = R.string.super_warning_mode,
         description = R.string.super_warning_mode_desc,

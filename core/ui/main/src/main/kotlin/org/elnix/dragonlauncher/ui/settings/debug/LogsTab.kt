@@ -148,7 +148,7 @@ fun LogsTab(
 
     val deviceDetails = remember {
         buildString {
-            appendLine("─── DEVICE DETAILS ───")
+            appendLine(" DEVICE DETAILS ")
             appendLine("System: ${Build.MANUFACTURER} ${Build.MODEL} (${Build.PRODUCT})")
             appendLine("OS: Android ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})")
             if (Build.VERSION.SECURITY_PATCH.isNotEmpty()) {
@@ -166,10 +166,10 @@ fun LogsTab(
             appendLine("Default Launcher: ${if (isDefault) "Yes" else "No ($currentLauncher)"}")
             appendLine("App version: $versionName ($versionCode)")
 
-            appendLine("\n─── EXTENSIONS ───")
+            appendLine("\n EXTENSIONS ")
             appendLine(finalExtensionText)
 
-            appendLine("\n─── PERMISSIONS ───")
+            appendLine("\n PERMISSIONS ")
             try {
                 val info = ctx.packageManager.getPackageInfo(ctx.packageName, PackageManager.GET_PERMISSIONS)
                 info.requestedPermissions?.forEachIndexed { index, perm ->

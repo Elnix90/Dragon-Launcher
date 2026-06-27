@@ -165,7 +165,6 @@ public class OverlayReminderService : Service() {
                     hasLimit, showSession, showToday, showRemaining, isWarning
                 )
 
-                // WindowManager layout params — the key to non-blocking overlay
                 val layoutParams = WindowManager.LayoutParams(
                     WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.WRAP_CONTENT,
@@ -185,7 +184,6 @@ public class OverlayReminderService : Service() {
                 windowManager?.addView(container, layoutParams)
                 logD(OVERLAY_REMINDER_TAG) { "Overlay view added successfully" }
 
-                // Entry animation
                 animateIn(container)
 
                 // If time warning mode, add pulsing animation

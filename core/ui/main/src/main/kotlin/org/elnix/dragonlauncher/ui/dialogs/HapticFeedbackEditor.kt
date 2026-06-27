@@ -40,19 +40,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
-import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
-import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
-import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.pasteClipboard
-import org.elnix.dragonlauncher.common.utils.HapticUtils.performCustomHaptic
-import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ktx.showToast
 import io.github.elnix90.logging.HAPTIC_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
+import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
+import org.elnix.dragonlauncher.base.model.serializables.HapticEntry
+import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
+import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.pasteClipboard
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -65,11 +64,6 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
-private data class HapticEntry(
-    val id: Long,
-    val isVibration: Boolean,
-    val durationMs: Int
-)
 
 @Composable
 fun HapticFeedbackEditor(
@@ -79,22 +73,12 @@ fun HapticFeedbackEditor(
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
+    val lazyListState = rememberLazyListState()
 
-    val initialEntries = remember(initial) {
-        initial?.haptics
-            ?.mapIndexed { i, (isVibration, duration) ->
-                HapticEntry(
-                    id = System.nanoTime() + i,
-                    isVibration = isVibration,
-                    durationMs = duration
-                )
-            }
-            ?: emptyList()
+    val entries = remember(initial) {
+        mutableStateListOf<HapticEntry>().also { it.addAll(initial?.haptics ?: emptyList()) }
     }
 
-    val entries = remember { mutableStateListOf<HapticEntry>().also { it.addAll(initialEntries) } }
-
-    val lazyListState = rememberLazyListState()
 
     val reorderState = rememberReorderableLazyListState(
         lazyListState = lazyListState,
@@ -107,7 +91,7 @@ fun HapticFeedbackEditor(
     fun currentEditingSnapshot(): CustomHapticFeedback? {
         val snapshot = if (entries.isEmpty()) null
         else CustomHapticFeedback(
-            haptics = entries.map { Pair(it.isVibration, it.durationMs) }
+            haptics = entries.map { HapticEntry(it.isVibration, it.durationMs) }
         )
         logD(HAPTIC_TAG) { "Got snapshot: $snapshot" }
         return snapshot
@@ -115,23 +99,21 @@ fun HapticFeedbackEditor(
 
     fun playTest() {
         scope.launch {
-            performCustomHaptic(ctx, currentEditingSnapshot())
+            currentEditingSnapshot()?.perform(ctx)
         }
     }
 
     fun selectPreset(customFeedback: CustomHapticFeedback) {
-        entries.clear()
-        customFeedback.haptics.mapIndexed { i, (isVibration, duration) ->
-            entries.add(
-                HapticEntry(
-                    id = System.nanoTime() + i,
-                    isVibration = isVibration,
-                    durationMs = duration
-                )
-            )
-        }
         scope.launch {
-            delay(50)
+            entries.clear()
+            customFeedback.haptics.forEach { (isVibration, duration) ->
+                entries.add(
+                    HapticEntry(
+                        isVibration = isVibration,
+                        durationMs = duration
+                    )
+                )
+            }
             playTest()
         }
     }
@@ -247,7 +229,6 @@ fun HapticFeedbackEditor(
                     ) {
                         entries.add(
                             HapticEntry(
-                                id = System.nanoTime(),
                                 isVibration = true,
                                 durationMs = 50
                             )
@@ -266,7 +247,6 @@ fun HapticFeedbackEditor(
                     ) {
                         entries.add(
                             HapticEntry(
-                                id = System.nanoTime(),
                                 isVibration = false,
                                 durationMs = 100
                             )
@@ -365,7 +345,7 @@ fun HapticFeedbackEditor(
 
                                             DragonIconButton(
                                                 onClick = {
-                                                    entries.add(index + 1, entries[index].copy(id = System.nanoTime()))
+                                                    entries.add(index + 1, entries[index].copy())
                                                 },
                                                 colors = AppObjectsColors.iconButtonColors(),
                                                 icon = R.drawable.copy,
@@ -412,7 +392,7 @@ fun HapticFeedbackEditor(
 
 @Composable
 private fun RotatingPlayIcon(
-    enabled: Boolean,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -485,11 +465,9 @@ fun HapticFeedBackEditorButtonWithPlayTest(
             Text("${stringResource(R.string.haptic_feedback_editor)}$titleExt")
         }
 
-        RotatingPlayIcon(
-            enabled = true
-        ) {
+        RotatingPlayIcon {
             scope.launch {
-                performCustomHaptic(ctx, customHapticFeedback)
+                customHapticFeedback.perform(ctx)
             }
         }
     }

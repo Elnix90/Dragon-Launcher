@@ -68,7 +68,7 @@ import androidx.graphics.shapes.RoundedPolygon
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
-import org.elnix.dragonlauncher.common.utils.HapticUtils.vibrate
+import org.elnix.dragonlauncher.base.util.HapticUtils.vibrate
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.LockScreenViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
@@ -311,7 +311,7 @@ private fun PinPrompt(
                 backgroundOverlayColor.animateTo(Color.Red)
 
                 if (vibrateOnError) {
-                    vibrate(ctx, 500L)
+                    ctx.vibrate(500L)
                 }
 
                 backgroundOverlayColor.animateTo(Color.Transparent)

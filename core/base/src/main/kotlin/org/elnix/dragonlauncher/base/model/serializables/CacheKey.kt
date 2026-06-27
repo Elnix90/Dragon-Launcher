@@ -29,7 +29,7 @@ public value class CacheKey private constructor(
      */
     public constructor(
         point: Point
-    ) : this(cacheKey = point.id)
+    ) : this(cacheKey = "point-${point.id}")
 
     /**
      * Application constructor

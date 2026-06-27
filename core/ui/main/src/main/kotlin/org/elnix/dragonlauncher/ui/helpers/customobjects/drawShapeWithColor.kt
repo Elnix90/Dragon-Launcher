@@ -66,7 +66,6 @@ fun DrawScope.shapeToPath(
         density = this
     )
 
-    // Reuse a single Path instead of allocating two
     return when (outline) {
         is Outline.Rectangle -> Path().apply { addRect(outline.rect) }
         is Outline.Rounded -> Path().apply { addRoundRect(outline.roundRect) }

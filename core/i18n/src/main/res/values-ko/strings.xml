@@ -159,7 +159,6 @@
     <string name="apply_wallpaper_to">벽지 붙이기</string>
     <string name="main_screen">메인 스크린</string>
     <string name="drawer_screen">서랍 스크린</string>
-    <string name="show_all_actions_on_current_circle">현재 서클 내 모든 행동 표시</string>
     <string name="notifications">알림</string>
     <string name="drawer_action_clear">비켜</string>
     <string name="drawer_action_search_web">웹 검색</string>

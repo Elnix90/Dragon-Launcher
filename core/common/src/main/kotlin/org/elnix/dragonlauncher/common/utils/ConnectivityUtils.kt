@@ -66,7 +66,7 @@ public object ConnectivityUtils {
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
 
-        /*  ─────────────  Mobile data status  ─────────────  */
+        /*    Mobile data status    */
         // 1. Check if mobile data is enabled (check multiple SIMs)
         val mobileDataEnabled = try {
             Settings.Global.getInt(resolver, "mobile_data", 0) == 1 ||

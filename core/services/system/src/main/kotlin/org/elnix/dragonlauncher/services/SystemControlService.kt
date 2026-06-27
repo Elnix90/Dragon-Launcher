@@ -75,7 +75,7 @@ public class SystemControlService : AccessibilityService() {
         // Doesn't work
 
 //        val className = event.className?.toString() ?: ""
-//        logW(ACCESSIBILITY_TAG, "──────────────────────────")
+//        logW(ACCESSIBILITY_TAG, "")
 //        logW(ACCESSIBILITY_TAG, event.toString())
 //        logW(ACCESSIBILITY_TAG, "className: $className")
 //

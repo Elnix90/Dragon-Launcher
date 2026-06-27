@@ -39,7 +39,7 @@ fun rememberSweepAngle(): SweepAngleState {
 
     return SweepAngleState(
         sweepAngle = {
-            // cumulativeAngle grows freely — map it into -360..360
+            // cumulativeAngle grows freely - map it into -360..360
             // by folding at every 360 boundary with alternating sign
             when (val wrapped = cumulativeAngle % 720f) { // fold into -720..720
                 // 0..360 → clockwise fill: 0 → 360
@@ -73,7 +73,7 @@ fun rememberSweepAngle(): SweepAngleState {
     )
 }
 
-/** Non-composable factory for SweepAngleState — creates a stateful angle tracker. */
+/** Non-composable factory for SweepAngleState - creates a stateful angle tracker. */
 fun createSweepAngleState(): SweepAngleState {
     var cumulativeAngle = 0f
     var lastRawAngle = 0f

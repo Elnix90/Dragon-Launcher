@@ -55,7 +55,7 @@ class PinnedShortcutActivity : ComponentActivity() {
 
         logD(PINNED_SHORTCUTS) { "Received pin request: $packageName / $shortcutId ($shortLabel)" }
 
-        // Accept the pin request — this tells the system the shortcut is pinned
+        // Accept the pin request - this tells the system the shortcut is pinned
         val accepted = request.accept()
         if (!accepted) {
             logW(PINNED_SHORTCUTS) { "Failed to accept pin request for $packageName / $shortcutId" }

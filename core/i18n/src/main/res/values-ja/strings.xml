@@ -160,7 +160,6 @@
     <string name="apply_wallpaper_to">壁紙を貼り付けてください</string>
     <string name="main_screen">メインスクリーン</string>
     <string name="drawer_screen">引き出しスクリーン</string>
-    <string name="show_all_actions_on_current_circle">現在のサークル内のすべての行動を表示</string>
     <string name="notifications">通知</string>
     <string name="drawer_action_clear">クリア</string>
     <string name="drawer_action_search_web">ウェブ検索</string>

@@ -157,7 +157,6 @@
     <string name="apply_wallpaper_to">वॉलपेपर लागू करें</string>
     <string name="main_screen">मुख्य स्क्रीन</string>
     <string name="drawer_screen">दराज स्क्रीन</string>
-    <string name="show_all_actions_on_current_circle">वर्तमान सर्कल में सभी क्रियाएँ दिखाएँ</string>
     <string name="notifications">अधिसूचना</string>
     <string name="drawer_action_clear">साफ़ करें</string>
     <string name="drawer_action_search_web">वेब पर खोजें</string>
@@ -292,7 +291,6 @@
     <string name="show_app_angle_preview_description">लाइन पर कोण सूचक प्रदर्शित करें</string>
     <string name="show_app_icon_start_drag_position_description">वर्तमान चयनित ऐप को उस स्थान के केंद्र में प्रदर्शित करें जहां आपने खींचने के लिए तारांकित किया था</string>
     <string name="line_preview_snap_to_action_description">लाइन पूर्वावलोकन को स्थानांतरित करने के लिए स्वतंत्र नहीं है, यह चयनित क्रिया होने पर तुरंत उस पर आ जाता है</string>
-    <string name="show_all_actions_on_current_circle_description">जब कोई क्रिया चुनी जाती है, तो सभी समान-सर्कल बिंदु भी प्रदर्शित होते हैं</string>
     <string name="min_angle_to_activate">सक्रिय करने के लिए न्यूनतम कोण</string>
     <string name="app_label_overlay_size">ऐप लेबल ओवरले आकार</string>
     <string name="app_icon_overlay_size">ऐप आइकन ओवरले आकार</string>
@@ -547,8 +545,6 @@
     <string name="show_status_bar_desc">स्टेटस बार प्रदर्शित करें, यदि अक्षम है तो कुछ भी नहीं दिखाया गया है</string>
     <string name="disable_haptic_globally">विश्व स्तर पर हैप्टिक फीडबैक अक्षम करें</string>
     <string name="disable_haptic_globally_desc">यदि आप इससे नफरत करते हैं तो ड्रैगन को अंक चयन में कोई भी गुप्त प्रतिक्रिया देने से रोकें</string>
-    <string name="point_action_snaps_to_outer_circle">बिंदु क्रिया बाहरी वृत्त पर स्नैप करती है</string>
-    <string name="point_action_snaps_to_outer_circle_desc">चुनें कि क्रिया आंतरिक वृत्त पर सक्रिय है या बाहरी वृत्त पर</string>
     <string name="drag_handle">ड्रैग हैंडल</string>
     <string name="private_space_title">निजी स्पेस</string>
     <string name="private_space_locked">निजी स्पेस लॉक है</string>

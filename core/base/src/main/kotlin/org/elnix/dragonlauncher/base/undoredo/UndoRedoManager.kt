@@ -2,7 +2,7 @@ package org.elnix.dragonlauncher.base.undoredo
 
 /**
  * Groups multiple [UndoRedoStack] instances under named keys, keeping them
- * in lockstep — a single [applyChange], [undo], or [redo] call snapshots
+ * in lockstep - a single [applyChange], [undo], or [redo] call snapshots
  * and restores all registered stacks simultaneously.
  */
 public class UndoRedoManager(

@@ -115,7 +115,6 @@ fun SettingsTitle(
 fun SpecialSettingsTitle(
     onSettings: () -> Unit,
     onEditDefaultPoint: () -> Unit,
-    onReloadPoints: () -> Unit,
     onEditNest: () -> Unit,
     onResetPoints: () -> Unit,
     onBack: () -> Unit
@@ -151,14 +150,6 @@ fun SpecialSettingsTitle(
                         onClick = {
                             dismiss()
                             onResetPoints()
-                        }
-                    ),
-                    MoreOptions(
-                        text = { stringResource(R.string.reload_point_icons) },
-                        icon = R.drawable.refresh,
-                        onClick = {
-                            dismiss()
-                            onReloadPoints()
                         }
                     ),
                     MoreOptions(

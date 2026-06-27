@@ -12,7 +12,7 @@ import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
 import org.elnix.dragonlauncher.appshortcuts.AppShortcutRepository
 import org.elnix.dragonlauncher.colors.ColorService
 import org.elnix.dragonlauncher.database.AppDatabase
-import org.elnix.dragonlauncher.recents.PointsService
+import org.elnix.dragonlauncher.points.PointsService
 
 
 @Module

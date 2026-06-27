@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.models
 
 import android.app.Application
+import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
@@ -11,11 +12,12 @@ import io.github.elnix90.logging.logI
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Nest
+import org.elnix.dragonlauncher.base.model.serializables.Nests
 import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Points
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
-import org.elnix.dragonlauncher.recents.PointsService
+import org.elnix.dragonlauncher.points.PointsService
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
-import java.util.UUID
 import javax.inject.Inject
 
 /**
@@ -44,8 +46,8 @@ public class InitializationViewModel @Inject constructor(
     }
 
     public fun initializeSwipeSettings(
-        points: Set<Point>,
-        nests: Set<Nest>,
+        points: Points,
+        nests: Nests,
         defaultPoint: Point?
     ) {
         logI(INIT_TAG) { "Initializing:\nPoints = $points\nNests = $nests" }
@@ -64,25 +66,22 @@ public class InitializationViewModel @Inject constructor(
 
 private val defaultInitializationSetup = setOf(
     Point(
-        circleNumber = 0,
-        angleDeg = 0.toDouble(),
+        offset = Offset(0f, 200f),
         action = Action.OpenAppDrawer(),
-        id = UUID.randomUUID().toString()
+        id = 0
     ),
     Point(
-        circleNumber = 1,
-        angleDeg = 200.toDouble(),
+        offset = Offset(-50f, -50f),
         action = Action.NotificationShade,
-        id = UUID.randomUUID().toString()
+        id = 1
     ),
     Point(
-        circleNumber = 1,
-        angleDeg = 160.toDouble(),
+        offset = Offset(-50f, 50f),
         action = Action.ControlPanel,
-        id = UUID.randomUUID().toString()
+        id = 2
     )
 )
 
-public val defaultNestsInitializationSetup: Set<Nest> = setOf(
+public val defaultNestsInitializationSetup: Nests = setOf(
     Nest(0)
 )

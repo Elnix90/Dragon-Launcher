@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.recents
+package org.elnix.dragonlauncher.points
 
 import android.content.Context
 import dagger.Module
@@ -7,7 +7,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Singleton
-
 
 @Module
 @InstallIn(SingletonComponent::class)

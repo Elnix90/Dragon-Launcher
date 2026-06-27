@@ -8,7 +8,6 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -25,40 +24,27 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.ToggleButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -67,28 +53,16 @@ import androidx.compose.ui.unit.sp
 import io.github.elnix90.logging.NESTS_TAG
 import io.github.elnix90.logging.SWIPE_TAG
 import io.github.elnix90.logging.logD
-import io.github.elnix90.logging.logE
+import io.github.elnix90.logging.logV
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.Constants
-import org.elnix.dragonlauncher.base.Constants.Settings.SNAP_STEP_DEG
 import org.elnix.dragonlauncher.base.Constants.Settings.TOUCH_THRESHOLD_PX
-import org.elnix.dragonlauncher.base.model.models.UiCircle
 import org.elnix.dragonlauncher.base.model.serializables.Action
-import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.defaultDragDistance
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.common.circles.autoSeparate
 import org.elnix.dragonlauncher.common.circles.computePosition
-import org.elnix.dragonlauncher.common.circles.createCirclesFromDragDistances
-import org.elnix.dragonlauncher.common.circles.normalizeAngle
-import org.elnix.dragonlauncher.common.circles.randomFreeAngle
-import org.elnix.dragonlauncher.common.circles.rotateBy
-import org.elnix.dragonlauncher.common.circles.scaleDragDistances
-import org.elnix.dragonlauncher.common.circles.uiCirclesFromScaledDragDistances
-import org.elnix.dragonlauncher.common.circles.undoTransformations
-import org.elnix.dragonlauncher.enumsui.toggle.AddRemoveCircleTools
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.Center
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.ResetRotation
@@ -103,15 +77,19 @@ import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.FreeMove
 import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.SnapPoints
 import org.elnix.dragonlauncher.enumsui.toggle.SelectedPointEditTools
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.ktx.rotateBy
+import org.elnix.dragonlauncher.ktx.undoTransformations
 import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore.isInDragAroundMode
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.autoSeparatePoints
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.freeMoveDraggedPoint
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.snapPoints
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
@@ -123,26 +101,18 @@ import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
 import org.elnix.dragonlauncher.ui.dialogs.EditPointSheet
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
-import org.elnix.dragonlauncher.ui.dragon.components.EditValueTextField
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
-import org.elnix.dragonlauncher.ui.helpers.customobjects.glowOverlay
-import org.elnix.dragonlauncher.ui.helpers.nests.actionsInCircle
-import org.elnix.dragonlauncher.ui.helpers.nests.circlesSettingsOverlay
+import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowOverlay
+import org.elnix.dragonlauncher.ui.helpers.nests.NestOverlay
+import org.elnix.dragonlauncher.ui.helpers.nests.PointIcon
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.settings.SpecialSettingsTitle
 import org.elnix.dragonlauncher.ui.remembers.rememberNestNavigation
-import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
-import java.math.RoundingMode
-import java.util.UUID
-import kotlin.math.abs
-import kotlin.math.atan2
 import kotlin.math.hypot
-import kotlin.math.round
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -156,41 +126,38 @@ fun PointsSettingsScreen(
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
-    val extraColors = LocalExtraColors.current
 
-    val defaultPoint by pointsViewModel.defaultPoint.collectAsState()
-
+    val pointsService = pointsViewModel.pointsService
+    val defaultPoint by pointsService.defaultPoint.asState()
 
     val scope = rememberCoroutineScope()
 
     val showAdvancedEditTools by SwipeMapSettingsStore.showAdvancedPointTools.asState()
     val showSubNestsSlider by SwipeMapSettingsStore.showSubNestsSlider.asState()
-    val isInDragAroundMode by PrivateSettingsStore.isInDragAroundMode.asState()
+    val isInDragAroundMode by isInDragAroundMode.asState()
 
-    val backgroundColor = MaterialTheme.colorScheme.background
     val primaryColor = MaterialTheme.colorScheme.primary
 
-    val snapPoints by UiSettingsStore.snapPoints.asState()
-    val autoSeparatePoints by UiSettingsStore.autoSeparatePoints.asState()
-    val freeMoveDraggedPoint by UiSettingsStore.freeMoveDraggedPoint.asState()
+    val snapPoints by snapPoints.asState()
+    val autoSeparatePoints by autoSeparatePoints.asState()
+    val freeMoveDraggedPoint by freeMoveDraggedPoint.asState()
 
     val createLiveNestByDefaultWhenCreatingOpenCircleNestPoint by createLiveNestByDefaultWhenCreatingOpenCircleNestPoint.asState()
 
     var center by remember { mutableStateOf(Offset.Zero) }
 
-    val points by pointsViewModel.points.collectAsState()
-    val nests by pointsViewModel.nests.collectAsState()
-    val selectedPoint by pointsViewModel.selectedPoint.asState()
+    val points by pointsService.points.asState()
+    val nests by pointsService.nests.asState()
+    val selectedPoint by pointsService.selectedPoint.asState()
     fun select(point: Point?) {
-        pointsViewModel.select(point)
+        pointsService.select(point)
     }
+
     fun deselect() {
-        pointsViewModel.select(null)
+        pointsService.select(null)
     }
 
     var recomposeTrigger by remember { mutableIntStateOf(0) }
-
-    val circles: SnapshotStateList<UiCircle> = remember { mutableStateListOf() }
 
 
     val selectedPointTempOffset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
@@ -217,7 +184,6 @@ fun PointsSettingsScreen(
     )
 
 
-    var lastSelectedCircle by remember { mutableIntStateOf(0) }
     val aPointIsSelected = selectedPoint != null
 
     var showEditDefaultPoint by remember { mutableStateOf(false) }
@@ -244,16 +210,16 @@ fun PointsSettingsScreen(
     val nestId = currentNest.id
 
 
-    /**
-     * The number of circles; it's the size of the current nest, minus one, cause it ignores the
-     * cancel zone
-     */
-    val circleNumber = currentNest.dragDistances.size - 1
+//    /**
+//     * The number of circles; it's the size of the current nest, minus one, cause it ignores the
+//     * cancel zone
+//     */
+//    val circleNumber = currentNest.dragDistances.size - 1
 
-    /**
-     * Computes an even distance for the circles spacing, for clean integration
-     */
-    val circlesWidthIncrement = (1f / circleNumber).takeIf { it != 0f } ?: 1f
+//    /**
+//     * Computes an even distance for the circles spacing, for clean integration
+//     */
+//    val circlesWidthIncrement = (1f / circleNumber).takeIf { it != 0f } ?: 1f
 
     /**
      * Used to ensure that there is always a 0-id nest, the default one, the most important
@@ -261,91 +227,70 @@ fun PointsSettingsScreen(
     LaunchedEffect(Unit, nestId, nests.size) {
         if (nests.none { it.id == nestId }) {
             logD(NESTS_TAG) { "Creating missing nest $nestId" }
-            pointsViewModel.addNest(nestId)
+            pointsService.addNest(nestId)
         }
     }
 
     fun recenterSelectedTempOffset() {
         selectedPoint?.let { p ->
             scope.launch {
-                selectedPointTempOffset.snapTo(p.computePosition(circles, center))
-            }
-        }
-    }
-
-    val undoRedo = pointsViewModel.undoRedo
-
-    fun applyChange(mutator: () -> Unit) {
-        undoRedo.applyChange(mutator)
-        recenterSelectedTempOffset()
-        recomposeTrigger++
-    }
-
-
-    /**
-     * Adds a new circle to the specified nest (or the currently selected nest by default).
-     *
-     * The new circle ID is computed as the next integer after the current maximum circle number
-     * in the nest (ignoring the special -1 key). The drag distance for the new circle is
-     * initialized using [defaultDragDistance]. The nest list is updated immutably, and the
-     * change is recorded via `applyChange` for undo/redo support.
-     */
-    fun addCircle() {
-        applyChange {
-            pointsViewModel.editNest(nestId) { nest ->
-                val newCircleNumber =
-                    nest.dragDistances
-                        .keys
-                        .filter { it >= 0 }
-                        .maxOrNull()
-                        ?.plus(1) ?: 0
-
-                nest.copy(
-                    dragDistances = nest.dragDistances +
-                            (newCircleNumber to defaultDragDistance(newCircleNumber))
-                )
+                selectedPointTempOffset.snapTo(p.computePosition(nests, center))
             }
         }
     }
 
 
-    /**
-     * Removes the last added circle from the specified nest (or the currently selected nest by default).
-     *
-     * The last circle is determined as the one with the highest circle number greater than 0.
-     * The nest list is updated immutably, and the change is recorded via `applyChange` for
-     * undo/redo support.
-     *
-     * Safely checks if there is mor than 1 circle to avoid deleting the last one
-     */
-    fun removeLastCircle() {
-        applyChange {
-            pointsViewModel.editNest(nestId) { nest ->
-                val maxCircle =
-                    nest.dragDistances
-                        .keys
-                        .filter { k -> k > 0 }
-                        .maxOrNull()
-                        ?: return@editNest nest
+    var showShapeManagementDialog by remember { mutableStateOf(false) }
 
-                nest.copy(
-                    dragDistances = nest.dragDistances - maxCircle
-                )
-            }
-        }
-    }
+//    fun addShape() {
+//        applyChange {
+//            pointsService.editNest(nestId) { nest ->
+//                val newCircleNumber =
+//                    nest.intersectionShapes
+//                        .map { it.id }
+//                        .filter { it >= 0 }
+//                        .maxOrNull()
+//                        ?.plus(1) ?: 0
+//
+//
+//            }
+//        }
+//    }
 
 
-    fun addPoint(point: Point, select: Boolean = true) {
-        pointsViewModel.addPoint(point)
+//    /**
+//     * Removes the last added circle from the specified nest (or the currently selected nest by default).
+//     *
+//     * The last circle is determined as the one with the highest circle number greater than 0.
+//     * The nest list is updated immutably, and the change is recorded via `applyChange` for
+//     * undo/redo support.
+//     *
+//     * Safely checks if there is mor than 1 circle to avoid deleting the last one
+//     */
+//    fun removeLastCircle() {
+//        applyChange {
+//            pointsService.editNest(nestId) { nest ->
+//                val maxCircle =
+//                    nest.dragDistances
+//                        .keys
+//                        .filter { k -> k > 0 }
+//                        .maxOrNull()
+//                        ?: return@editNest nest
+//
+//                nest.copy(
+//                    dragDistances = nest.dragDistances - maxCircle
+//                )
+//            }
+//        }
+//    }
 
-        if (select) {
-            select(point)
-        }
 
-        iconsViewModel.incrementPointCacheSize()
-        iconsViewModel.reloadIcon(point)
-    }
+//    fun addPoint(select: Boolean = true, point: (Int) -> Point) {
+//
+//        pointsService.addPoint(select, point)
+//        iconsViewModel.incrementPointCacheSize()
+//        iconsViewModel.reloadIcon(point)
+//    }
 
     /**
      * Compute the position of a moved point, on the circle, and returns a [Pair] composed of:
@@ -359,36 +304,36 @@ fun PointsSettingsScreen(
      */
     fun computePointMoved(
         point: Point,
-        circles: List<UiCircle>,
         pos: Offset
-    ): Pair<Double, Int>? {
+    ): Offset? {
 
-        // 1. Compute raw angle from center -> pos
-        val dx = pos.x - center.x
-        val dy = center.y - pos.y
-        var angle = Math.toDegrees(atan2(dx.toDouble(), dy.toDouble()))
-        if (angle < 0) angle += 360.0
+//        // 1. Compute raw angle from center -> pos
+//        val dx = pos.x - center.x
+//        val dy = center.y - pos.y
+//        var angle = Math.toDegrees(atan2(dx.toDouble(), dy.toDouble()))
+//        if (angle < 0) angle += 360.0
 
         // 2. Apply snapping if enabled
-        val finalAngle = if (snapPoints) {
-            round(angle / SNAP_STEP_DEG) * SNAP_STEP_DEG
-        } else {
-            angle
-        }
+//        TODO()
+//        val finalAngle = if (snapPoints) {
+//            round(angle / SNAP_STEP_DEG) * SNAP_STEP_DEG
+//        } else {
+//            angle
+//        }
 
         // 3. Find nearest circle based on radius
-        val distFromCenter = hypot(dx, dy)
-        val closestCircle = circles.minByOrNull { c -> abs(c.radius - distFromCenter) }
-            ?: error("Failed to find circle: BIG ISSUE")
+//        val distFromCenter = hypot(dx, dy)
+//        val closestCircle = circles.minByOrNull { c -> abs(c.radius - distFromCenter) }
+//            ?: error("Failed to find circle: BIG ISSUE")
 
 
-        // Only return the angle and circle number if they have changed
-        if (
-            (point.angleDeg != finalAngle) ||
-            (point.circleNumber != closestCircle.id)
-        ) {
-            return (finalAngle to closestCircle.id)
-        }
+//        // Only return the angle and circle number if they have changed
+//        if (
+//            (point.angleDeg != finalAngle) ||
+//            (point.circleNumber != closestCircle.id)
+//        ) {
+//            return (finalAngle to closestCircle.id)
+//        }
 
         // Position is the same as before, return null to tell the updater to not move the point
         return null
@@ -397,26 +342,22 @@ fun PointsSettingsScreen(
     /**
      * Update point position; first compute the new point position using `computePointMoved` and then apply the change to the stack if it was moved
      *
-     * @param point which point to move
+     * @param this@updatePointPosition which point to move
      * @param circles the circles to move the point on
      * @param pos the new position of the points, can be anywhere on the screen, not only on a circle
      */
-    fun updatePointPosition(
-        point: Point,
-        circles: List<UiCircle>,
+    fun Point.updatePosition(
         pos: Offset
     ) {
-        val newPointValues = computePointMoved(
-            point = point,
-            circles = circles,
+        val newPointOffset = computePointMoved(
+            point = this,
             pos = pos
         )
 
         // Only apply the changed if the point has been changed
-        newPointValues?.let { newPoint ->
-            applyChange {
-                point.angleDeg = newPoint.first
-                point.circleNumber = newPoint.second
+        newPointOffset?.let { newOffset ->
+            pointsService.editPoint(id) {
+                it.copy(offset = newOffset)
             }
         }
     }
@@ -444,35 +385,35 @@ fun PointsSettingsScreen(
     }
     BackHandler(onBack = handleBack)
 
-    /**
-     * Computes and updates the radii for all circles in the current nest whenever
-     * the nest, available width, or center changes.
-     *
-     * Each circle's radius is proportional to the available width of the container,
-     * scaled by circlesWidthIncrement, and distributed evenly so that the largest
-     * circle nearly fits the box.
-     *
-     * This updates the mutable list circles, which is used both for rendering
-     * and for hit detection of points on the circles.
-     *
-     * - `currentNest`: The currently selected nest containing the drag distances for each circle.
-     * - `availableWidth`: The width available for drawing the circles, used to scale the radii proportionally.
-     * - `center`: The center of the container, used to compute offsets and positions for points.
-     */
-    LaunchedEffect(currentNest, center) {
-
-        createCirclesFromDragDistances(
-            dragDistances = currentNest.dragDistances,
-            circles = circles
-        )
-    }
+//    /**
+//     * Computes and updates the radii for all circles in the current nest whenever
+//     * the nest, available width, or center changes.
+//     *
+//     * Each circle's radius is proportional to the available width of the container,
+//     * scaled by circlesWidthIncrement, and distributed evenly so that the largest
+//     * circle nearly fits the box.
+//     *
+//     * This updates the mutable list circles, which is used both for rendering
+//     * and for hit detection of points on the circles.
+//     *
+//     * - `currentNest`: The currently selected nest containing the drag distances for each circle.
+//     * - `availableWidth`: The width available for drawing the circles, used to scale the radii proportionally.
+//     * - `center`: The center of the container, used to compute offsets and positions for points.
+//     */
+//    LaunchedEffect(currentNest, center) {
+//
+//        createCirclesFromDragDistances(
+//            dragDistances = currentNest.dragDistances,
+//            circles = circles
+//        )
+//    }
 
     LaunchedEffect(closestHoveredPoint) {
         ableToLaunchHoverAction = false
         closestHoveredPoint?.let {
 
             val finalOffset = it.computePosition(
-                circles,
+                nests,
                 center
             )
 
@@ -480,7 +421,7 @@ fun PointsSettingsScreen(
 
             val startDuration = System.currentTimeMillis()
             while (System.currentTimeMillis() - startDuration < Constants.Settings.HOVER_POINT_DURATION) {
-                delay(50L.milliseconds)
+                delay(50.milliseconds)
             }
             ableToLaunchHoverAction = true
         }
@@ -501,30 +442,6 @@ fun PointsSettingsScreen(
         }
     }
 
-    val baseDrawParams by rememberSwipeDefaultParams(
-        forceShowAllActionsInCurrentNest = true,
-        backgroundColor = MaterialTheme.colorScheme.background
-    )
-
-    val subNestDefaultRadius by SwipeMapSettingsStore.subNestDefaultRadius.asState()
-
-    val drawParams by remember(
-        subNestDefaultRadius,
-        points,
-        nests,
-        displayedFilteredPoints,
-        backgroundColor,
-        extraColors
-    ) {
-        derivedStateOf {
-            baseDrawParams.copy(
-                points = displayedFilteredPoints,
-                surfaceColorDraw = backgroundColor,
-                extraColors = extraColors
-            )
-        }
-    }
-
     val offset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
     val zoom = remember { Animatable(1f) }
     val angle = remember { Animatable(0f) }
@@ -535,9 +452,6 @@ fun PointsSettingsScreen(
         zoom = { zoom.value },
         offset = { offset.value }
     )
-
-    val localWindow = LocalWindowInfo.current
-    val screenSize = localWindow.containerSize
 
     SettingsScaffold(
         title = "",
@@ -551,7 +465,6 @@ fun PointsSettingsScreen(
             SpecialSettingsTitle(
                 onSettings = onAdvSettings,
                 onEditDefaultPoint = { showEditDefaultPoint = true },
-                onReloadPoints = { TODO() }, // iconsViewModel.reloadAllPointIcons() },
                 onEditNest = { onNestEdit(currentNest.id) },
                 onResetPoints = { showResetPointsAndNestsDialog = true },
                 onBack = handleBack
@@ -632,141 +545,140 @@ fun PointsSettingsScreen(
 
                 // Undo/Redo and move bars
                 RowWithScrollIndicator(rowsScrollStates[1]) {
-                    // The move left/right and text field entry, that animates on avery selected point
-                    Row(
-                        modifier = Modifier
-                            .height(70.dp)
-                            .padding(5.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        DragonTooltip(R.string.move_point_clockwise) {
-                            ToggleButton(
-                                checked = false, // For the shape to be always the right one, and not a circle
-                                onCheckedChange = {
-                                    selectedPoint?.let { point ->
-                                        applyChange {
-                                            point.angleDeg = normalizeAngle(point.angleDeg + 1)
-                                            if (snapPoints) point.angleDeg = point.angleDeg
-                                                .toInt()
-                                                .toDouble()
-                                            if (autoSeparatePoints) autoSeparate(
-                                                points,
-                                                nestId,
-                                                circles.find { it.id == point.circleNumber },
-                                                point
-                                            )
-                                        }
-                                    }
-                                },
-                                enabled = aPointIsSelected,
-                                shapes = ButtonGroupDefaults.connectedLeadingButtonShapes(),
-                                colors = AppObjectsColors.toggleButtonColors(),
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.chevron_left),
-                                    contentDescription = stringResource(R.string.move_point_clockwise)
-                                )
-                            }
-                        }
+//                    // The move left/right and text field entry, that animates on avery selected point
+//                    Row(
+//                        modifier = Modifier
+//                            .height(70.dp)
+//                            .padding(5.dp),
+//                        horizontalArrangement = Arrangement.Center,
+//                        verticalAlignment = Alignment.CenterVertically
+//                    ) {
+//                        DragonTooltip(R.string.move_point_clockwise) {
+//                            ToggleButton(
+//                                checked = false, // For the shape to be always the right one, and not a circle
+//                                onCheckedChange = {
+//                                    selectedPoint?.let { point ->
+//                                            point.angleDeg = normalizeAngle(point.angleDeg + 1)
+//                                            if (snapPoints) point.angleDeg = point.angleDeg
+//                                                .toInt()
+//                                                .toDouble()
+//                                            if (autoSeparatePoints) autoSeparate(
+//                                                points,
+//                                                nestId,
+//                                                circles.find { it.id == point.circleNumber },
+//                                                point
+//                                            )
+//
+//                                    }
+//                                },
+//                                enabled = aPointIsSelected,
+//                                shapes = ButtonGroupDefaults.connectedLeadingButtonShapes(),
+//                                colors = AppObjectsColors.toggleButtonColors(),
+//                            ) {
+//                                Icon(
+//                                    painter = painterResource(R.drawable.chevron_left),
+//                                    contentDescription = stringResource(R.string.move_point_clockwise)
+//                                )
+//                            }
+//                        }
+//
+//
+//                        val angleTextValue = selectedPoint
+//                            ?.angleDeg
+//                            ?.toBigDecimal()
+//                            ?.setScale(1, RoundingMode.UP)
+//                            ?.toDouble()
+//                            ?.toString()
+//                            ?: ""
+//
+//
+//                        var angleText by remember { mutableStateOf(angleTextValue) }
+//                        LaunchedEffect(angleTextValue) { angleText = angleTextValue }
+//
+//
+//                        fun commitEditTExt() {
+//                            try {
+//                                selectedPoint?.let { point ->
+//                                    applyChange {
+//                                        point.angleDeg = normalizeAngle(angleText.toDouble())
+//                                        if (snapPoints) point.angleDeg = point.angleDeg
+//                                            .toInt()
+//                                            .toDouble()
+//                                        if (autoSeparatePoints) autoSeparate(
+//                                            points,
+//                                            nestId,
+//                                            circles.find { it.id == point.circleNumber },
+//                                            point
+//                                        )
+//                                    }
+//                                }
+//                            } catch (e: Exception) {
+//                                ctx.showToast("Failed to set value: $e")
+//                                logE(SWIPE_TAG, e) { "Failed to set value for point via text field" }
+//                            }
+//                            isEditing = false
+//                        }
+//
+//                        Spacer(ButtonGroupDefaults.ConnectedSpaceBetween)
+//                        AnimatedVisibility(aPointIsSelected) {
+//                            EditValueTextField(
+//                                value = angleText,
+//                                onValueChange = { angleText = it },
+//                                enabled = aPointIsSelected,
+//                                textColor = MaterialTheme.colorScheme.onPrimary,
+//                                backgroundColor = MaterialTheme.colorScheme.primary,
+//                                onFocusChange = { isEditing = it },
+//                                onDone = ::commitEditTExt
+//                            )
+//                        }
+//
+//                        AnimatedVisibility(isEditing) {
+//                            DragonIconButton(
+//                                onClick = ::commitEditTExt,
+//                                colors = IconButtonDefaults.iconButtonColors(
+//                                    MaterialTheme.colorScheme.primary,
+//                                    MaterialTheme.colorScheme.onPrimary
+//                                ),
+//                                icon = R.drawable.check,
+//                                contentDescription = "Validate"
+//                            )
+//                        }
+//
+//                        Spacer(ButtonGroupDefaults.ConnectedSpaceBetween)
+//
+//                        DragonTooltip(R.string.move_point_anticlockwise) {
+//                            ToggleButton(
+//                                checked = false,
+//                                onCheckedChange = {
+//                                    selectedPoint?.let { point ->
+//                                        applyChange {
+//                                            point.angleDeg = normalizeAngle(point.angleDeg - 1)
+//                                            if (snapPoints) point.angleDeg = point.angleDeg
+//                                                .toInt()
+//                                                .toDouble()
+//                                            if (autoSeparatePoints) autoSeparate(
+//                                                points,
+//                                                nestId,
+//                                                circles.find { it.id == point.circleNumber },
+//                                                point
+//                                            )
+//                                        }
+//                                    }
+//                                },
+//                                enabled = aPointIsSelected,
+//                                shapes = ButtonGroupDefaults.connectedTrailingButtonShapes(),
+//                                colors = AppObjectsColors.toggleButtonColors(),
+//                            ) {
+//                                Icon(
+//                                    painter = painterResource(R.drawable.chevron_right),
+//                                    contentDescription = stringResource(R.string.move_point_anticlockwise),
+//                                )
+//                            }
+//                        }
+//                    }
 
-
-                        val angleTextValue = selectedPoint
-                            ?.angleDeg
-                            ?.toBigDecimal()
-                            ?.setScale(1, RoundingMode.UP)
-                            ?.toDouble()
-                            ?.toString()
-                            ?: ""
-
-
-                        var angleText by remember { mutableStateOf(angleTextValue) }
-                        LaunchedEffect(angleTextValue) { angleText = angleTextValue }
-
-
-                        fun commitEditTExt() {
-                            try {
-                                selectedPoint?.let { point ->
-                                    applyChange {
-                                        point.angleDeg = normalizeAngle(angleText.toDouble())
-                                        if (snapPoints) point.angleDeg = point.angleDeg
-                                            .toInt()
-                                            .toDouble()
-                                        if (autoSeparatePoints) autoSeparate(
-                                            points,
-                                            nestId,
-                                            circles.find { it.id == point.circleNumber },
-                                            point
-                                        )
-                                    }
-                                }
-                            } catch (e: Exception) {
-                                ctx.showToast("Failed to set value: $e")
-                                logE(SWIPE_TAG, e) { "Failed to set value for point via text field" }
-                            }
-                            isEditing = false
-                        }
-
-                        Spacer(ButtonGroupDefaults.ConnectedSpaceBetween)
-                        AnimatedVisibility(aPointIsSelected) {
-                            EditValueTextField(
-                                value = angleText,
-                                onValueChange = { angleText = it },
-                                enabled = aPointIsSelected,
-                                textColor = MaterialTheme.colorScheme.onPrimary,
-                                backgroundColor = MaterialTheme.colorScheme.primary,
-                                onFocusChange = { isEditing = it },
-                                onDone = ::commitEditTExt
-                            )
-                        }
-
-                        AnimatedVisibility(isEditing) {
-                            DragonIconButton(
-                                onClick = ::commitEditTExt,
-                                colors = IconButtonDefaults.iconButtonColors(
-                                    MaterialTheme.colorScheme.primary,
-                                    MaterialTheme.colorScheme.onPrimary
-                                ),
-                                icon = R.drawable.check,
-                                contentDescription = "Validate"
-                            )
-                        }
-
-                        Spacer(ButtonGroupDefaults.ConnectedSpaceBetween)
-
-                        DragonTooltip(R.string.move_point_anticlockwise) {
-                            ToggleButton(
-                                checked = false,
-                                onCheckedChange = {
-                                    selectedPoint?.let { point ->
-                                        applyChange {
-                                            point.angleDeg = normalizeAngle(point.angleDeg - 1)
-                                            if (snapPoints) point.angleDeg = point.angleDeg
-                                                .toInt()
-                                                .toDouble()
-                                            if (autoSeparatePoints) autoSeparate(
-                                                points,
-                                                nestId,
-                                                circles.find { it.id == point.circleNumber },
-                                                point
-                                            )
-                                        }
-                                    }
-                                },
-                                enabled = aPointIsSelected,
-                                shapes = ButtonGroupDefaults.connectedTrailingButtonShapes(),
-                                colors = AppObjectsColors.toggleButtonColors(),
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.chevron_right),
-                                    contentDescription = stringResource(R.string.move_point_anticlockwise),
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(12.dp)
-                    UndoRedoBlock(undoRedo)
+//                    Spacer(12.dp)
+                    UndoRedoBlock(pointsService.undoRedo)
                 }
 
 
@@ -813,28 +725,11 @@ fun PointsSettingsScreen(
 
                     Spacer(12.dp)
 
-                    MultiSelectConnectedButtonRow(
-                        entries = AddRemoveCircleTools.entries,
-                        enabled = {
-                            when (it) {
-                                AddRemoveCircleTools.Add -> true
-                                AddRemoveCircleTools.Remove -> circles.size > 1
-                            }
-                        },
-                        checked = {
-                            when (it) {
-                                AddRemoveCircleTools.Add -> true
-                                AddRemoveCircleTools.Remove -> circles.size > 1
-                            }
-                        },
-                    ) { entry ->
-                        scope.launch {
-                            when (entry) {
-                                AddRemoveCircleTools.Add -> addCircle()
-                                AddRemoveCircleTools.Remove -> removeLastCircle()
-                            }
-                        }
-                    }
+
+                    DragonIconButton(
+                        icon = R.drawable.shapes,
+                        contentDescription = R.string.shapes
+                    ) { showShapeManagementDialog = true }
                 }
             }
 
@@ -885,27 +780,21 @@ fun PointsSettingsScreen(
 
                         SelectedPointEditTools.Remove -> {
                             selectedPoint?.let { point ->
-                                pointsViewModel.removePoint(point.id)
+                                pointsService.removePoint(point.id)
                                 deselect()
                             }
                         }
 
                         SelectedPointEditTools.Duplicate -> {
                             selectedPoint?.let { oldPoint ->
-                                val newPoint = oldPoint.copy(
-                                    id = UUID.randomUUID().toString(),
-                                )
-
-                                applyChange {
-                                    addPoint(newPoint)
-                                    autoSeparate(
-                                        points,
-                                        nestId,
-                                        circles.find { it.id == newPoint.circleNumber },
-                                        newPoint
-                                    )
+                                pointsService.addPoint {
+                                    oldPoint.copy(id = it)
                                 }
-                                deselect()
+//                                autoSeparate(
+//                                    points = points,
+//                                    nest = currentNest,
+//                                    draggedPoint = newPoint
+//                                )
                             }
                         }
                     }
@@ -914,17 +803,15 @@ fun PointsSettingsScreen(
         },
         modifier = Modifier.imePadding()
     ) {
-        // Main content box: Adapts its size to the screen,
-        // computes the circles radii and host the pointer input for the points selection
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .onSizeChanged { size ->
                     // Updates the center and available width variables, that depends on the phone size and orientation.
                     // Computes the larger size between width and height to ensure all points belongs to the hittable zone
-                    // The visual points and hitboxes are separated due to the need of a precise pointer input and
-                    // should be synchronized using the clever [computePointPosition] function that relies on common
-                    // center and circles to output the points position on screen
+                    // The visual points and hitboxes are separated due to the need of a precise pointer input.
+                    // Should be synchronized using the [computePointPosition] function that relies on common
+                    // center to output the points position on screen
 
                     val w = size.width.toFloat()
                     val h = size.height.toFloat()
@@ -939,7 +826,7 @@ fun PointsSettingsScreen(
              * it can release to merge the 2 points
              */
             key(recomposeTrigger) {
-                Canvas(
+                Box(
                     Modifier
                         .fillMaxSize()
                         .graphicsLayer {
@@ -950,57 +837,46 @@ fun PointsSettingsScreen(
                             rotationZ = angle.value
                             transformOrigin = TransformOrigin(0f, 0f)
                         }
-                        .drawWithCache {
-                            onDrawBehind {
-                                circlesSettingsOverlay(
-                                    drawParams = drawParams,
-                                    center = center,
-                                    depth = 1,
-                                    circles = circles,
-                                    selectedPoint = selectedPoint,
-                                    nestId = nestId,
-                                    preventBgErasing = true,
-                                    showConfiguratorDecorations = true,
-                                )
-                            }
-                        }
+
                 ) {
+
+                    NestOverlay(
+                        center = center,
+                        depth = 1,
+                        nest = currentNest,
+                        preventBgErasing = true,
+                        showConfiguratorDecorations = true,
+                        forceShowAllActionsInCurrentNest = true
+                    )
 
                     // Live Nest: semi-transparent target nest preview at the selected point (nest editor only).
                     selectedPoint?.let { p ->
                         val liveTargetId = p.liveNestTargetNestId ?: return@let
                         val nestedNest = nests.find { it.id == liveTargetId } ?: return@let
                         val nestScale = p.liveNestScale ?: 0.5f
-                        val scaledCircles = uiCirclesFromScaledDragDistances(
-                            scaleDragDistances(nestedNest.dragDistances, nestScale)
-                        )
-                        if (scaledCircles.isEmpty()) return@let
+                        val scaledNest = nestedNest scaledBy nestScale
                         val hostCenter = if (isDragging) {
                             selectedPointTempOffset.value
                         } else {
-                            p.computePosition(circles, center)
+                            p.computePosition(nests, center)
                         }
-                        drawIntoCanvas { canvas ->
-                            val bounds = Rect(0f, 0f, screenSize.width.toFloat(), screenSize.height.toFloat())
-                            canvas.saveLayer(bounds, Paint().apply { alpha = 0.4f })
-                            circlesSettingsOverlay(
-                                drawParams = drawParams,
-                                center = hostCenter,
-                                depth = 1,
-                                circles = scaledCircles,
-                                selectedPoint = null,
-                                nestId = nestedNest.id,
-                                preventBgErasing = true,
-                                showConfiguratorDecorations = true
-                            )
-                            canvas.restore()
-                        }
+
+                        NestOverlay(
+                            modifier = Modifier.graphicsLayer {
+                                alpha = 0.4f
+                            },
+                            center = hostCenter,
+                            depth = 1,
+                            nest = scaledNest,
+                            preventBgErasing = true,
+                            showConfiguratorDecorations = true,
+                            forceShowAllActionsInCurrentNest = true
+                        )
                     }
 
                     // Animated Selected point
                     if (selectedPoint != null) {
-                        actionsInCircle(
-                            drawParams = drawParams,
+                        PointIcon(
                             center = selectedPointTempOffset.value,
                             depth = 1,
                             point = selectedPoint!!,
@@ -1012,10 +888,10 @@ fun PointsSettingsScreen(
 
                     // Glow that indicates the merge
                     if (isDragging && closestHoveredTempOffset != null && ableToLaunchHoverAction) {
-                        glowOverlay(
+                        GlowOverlay(
                             center = closestHoveredTempOffset!!,
                             color = primaryColor,
-                            radius = hoveredPointRadialGradientProgress.dp.toPx()
+                            radius = hoveredPointRadialGradientProgress.dp
                         )
                     }
                 }
@@ -1058,7 +934,7 @@ fun PointsSettingsScreen(
                                     // Can only select points on the same nest
                                     filteredPoints.forEach { p ->
                                         val pointOffset = p.computePosition(
-                                            circles = circles,
+                                            nests = nests,
                                             center = center
                                         )
                                         val dist = hypot(
@@ -1075,7 +951,6 @@ fun PointsSettingsScreen(
                                     select(if (best <= TOUCH_THRESHOLD_PX) closest else null)
 
                                     selectedPoint?.let {
-                                        lastSelectedCircle = it.circleNumber
                                         scope.launch {
                                             selectedPointTempOffset.snapTo(transformedOffset)
                                         }
@@ -1093,15 +968,13 @@ fun PointsSettingsScreen(
                                         } else {
                                             val newPointValues = computePointMoved(
                                                 point = p,
-                                                circles = circles,
                                                 pos = transformedPosition
                                             )
 
                                             p.copy(
-                                                angleDeg = newPointValues?.first ?: p.angleDeg,
-                                                circleNumber = newPointValues?.second ?: p.circleNumber
+                                                offset = newPointValues ?: p.offset
                                             ).computePosition(
-                                                circles = circles,
+                                                nests = nests,
                                                 center = center
                                             )
                                         }
@@ -1120,7 +993,7 @@ fun PointsSettingsScreen(
                                         .forEach { p ->
 
                                             val pointOffset = p.computePosition(
-                                                circles = circles,
+                                                nests = nests,
                                                 center = center
                                             )
                                             val dist = hypot(
@@ -1150,101 +1023,60 @@ fun PointsSettingsScreen(
                                             // The hovered point
                                             val closest = closestHoveredPoint!!
 
+                                            // When the action is to open a nest, put the point in that Nest
                                             if (closest.action is Action.OpenCircleNest) {
-                                                // Put the hovered point in the hovered nest
-
-                                                val targetNestId =
-                                                    (closest.action as Action.OpenCircleNest).nestId
-
-                                                // Adjust the merged nest circle size if the point belongs to higher circles and the nest has less
-                                                nests.find { it.id == targetNestId }
-                                                    ?.let { targetNest ->
-
-                                                        // I remove 1 because the dragDistances counts the cancel zone
-                                                        val targetNestCircleNumbers =
-                                                            targetNest.dragDistances.size - 1
-
-                                                        // Add 1 because the circle number starts at 0
-                                                        val selectedPointCircleNumber =
-                                                            p.circleNumber + 1
-
-                                                        if (selectedPointCircleNumber > targetNestCircleNumbers) {
-                                                            repeat(selectedPointCircleNumber - targetNestCircleNumbers) {
-                                                                logD(NESTS_TAG) {
-                                                                    "Adding a circle to nest n°$targetNestId "
-                                                                }
-                                                                addCircle()
-                                                            }
-                                                        }
-                                                    }
-
-                                                applyChange {
-                                                    p.nestId = targetNestId
+                                                pointsService.editPoint(p.id) { old ->
+                                                    val targetNestId = (closest.action as Action.OpenCircleNest).nestId
+                                                    old.copy(nestId = targetNestId)
                                                 }
-
                                             } else {
-                                                // Create new nest and put both points in it at 90° and 270° (left and right)
-                                                // Tee new nest has only one circle and a Go parent nest in the top, for easier access
-                                                applyChange {
-                                                    val newNestId = pointsViewModel.addNest(1)
+                                                val newNestId = pointsService.addNest()
 
-                                                    val newNestPoint = Point(
-                                                        circleNumber = closest.circleNumber,
-                                                        angleDeg = closest.angleDeg,
-                                                        nestId = closest.nestId,
+                                                pointsService.addPoint(false) { id ->
+                                                    Point(
+                                                        offset = closest.offset,
+                                                        nestId = newNestId,
                                                         action = Action.OpenCircleNest(
                                                             newNestId
                                                         ),
-                                                        id = UUID.randomUUID().toString()
+                                                        id = id
                                                     )
+                                                }
 
-                                                    // Creates a new go parent nest that'll be put on top of the nest, to easily exit this nest
-                                                    val newGoParentNestPoint =
-                                                        Point(
-                                                            circleNumber = 0,
-                                                            angleDeg = 0.0,
-                                                            nestId = newNestId,
-                                                            action = Action.GoParentNest,
-                                                            id = UUID.randomUUID().toString(),
-                                                            liveNestTargetNestId = if (createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) newNestId else null
-                                                        )
+                                                // Creates a new go parent nest that'll be put on top of the nest, to easily exit this nest
+                                                pointsService.addPoint(false) { id ->
+                                                    Point(
+                                                        offset = Offset(0f, 50f),
+                                                        nestId = newNestId,
+                                                        action = Action.GoParentNest,
+                                                        id = id,
+                                                        liveNestTargetNestId = if (createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) newNestId else null
+                                                    )
+                                                }
 
-                                                    addPoint(newGoParentNestPoint)
-                                                    addPoint(newNestPoint)
+                                                pointsService.editPoint(p.id) { old ->
+                                                    old.copy(nestId = newNestId)
+                                                }
 
-                                                    // Move the 2 points to the new nest and change their position
-                                                    p.nestId = newNestId
-                                                    p.circleNumber = 0
-                                                    p.angleDeg = 270.0
-
-
-                                                    closest.nestId = newNestId
-                                                    closest.circleNumber = 0
-                                                    closest.angleDeg = 90.0
+                                                pointsService.editPoint(closest.id) { old ->
+                                                    old.copy(nestId = newNestId)
                                                 }
                                             }
                                         } else {
                                             // 2) No merging, just normal dragging and dropping
 
-                                            updatePointPosition(
-                                                point = p,
-                                                circles = circles,
-                                                pos = position
-                                            )
+                                            p.updatePosition(position)
 
-                                            if (autoSeparatePoints) autoSeparate(
-                                                points,
-                                                nestId,
-                                                circles.find { it.id == p.circleNumber },
-                                                p
-                                            )
-
+                                            if (autoSeparatePoints) {
+                                                autoSeparate(
+                                                    points = points,
+                                                    nest = currentNest,
+                                                    draggedPoint = p
+                                                )
+                                            }
 
                                             // Compute final snapped position
-                                            val finalOffset = p.computePosition(
-                                                circles,
-                                                center
-                                            )
+                                            val finalOffset = p.computePosition(nests, center)
 
                                             if (freeMoveDraggedPoint) {
                                                 animateHomingTempOffset(finalOffset)
@@ -1268,52 +1100,31 @@ fun PointsSettingsScreen(
                                     // Manual placement mode: place the current queued app where user tapped
                                     if (isInManualPlacementMode) {
                                         val action = manualPlacementQueue.first()
-                                        val targetCircle =
-                                            lastSelectedCircle.coerceAtMost(circleNumber - 1)
-
-                                        // Compute angle from center
-                                        val dx = transformedOffset.x - center.x
-                                        val dy = center.y - transformedOffset.y
-                                        var angle =
-                                            Math.toDegrees(atan2(dx.toDouble(), dy.toDouble()))
-                                        if (angle < 0) angle += 360.0
-                                        val finalAngle = if (snapPoints) {
-                                            round(angle / SNAP_STEP_DEG) * SNAP_STEP_DEG
-                                        } else angle
-
-                                        // Find nearest circle based on tap distance from center
-                                        val distFromCenter = hypot(dx, dy)
-                                        val closestCircle = circles.minByOrNull { c ->
-                                            abs(c.radius - distFromCenter)
-                                        }
-                                        val circleId = closestCircle?.id ?: targetCircle
 
                                         val newLiveNest =
                                             if (action is Action.OpenCircleNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
                                                 action.nestId
                                             } else null
 
-                                        val point = Point(
-                                            id = UUID.randomUUID().toString(),
-                                            angleDeg = finalAngle,
-                                            action = action,
-                                            circleNumber = circleId,
-                                            nestId = nestId,
-                                            liveNestTargetNestId = newLiveNest
-                                        )
+                                        pointsService.addPoint { id ->
 
-
-                                        applyChange {
-                                            addPoint(point, false)
-                                            if (autoSeparatePoints) autoSeparate(
-                                                points = points,
+                                            Point(
+                                                id = id,
+                                                offset = tapOffset,
+                                                action = action,
                                                 nestId = nestId,
-                                                circle = circles.find { it.id == circleId },
-                                                draggedPoint = point
+                                                liveNestTargetNestId = newLiveNest
                                             )
                                         }
 
-                                        // Dequeue: move to the next app
+
+//                                            if (autoSeparatePoints) autoSeparate(
+//                                                points = points,
+//                                                nestId = nestId,
+//                                                circle = circles.find { it.id == circleId },
+//                                                draggedPoint = point
+//                                            )
+
                                         manualPlacementQueue = manualPlacementQueue.drop(1)
                                     }
 
@@ -1322,8 +1133,9 @@ fun PointsSettingsScreen(
                                     var best = Float.MAX_VALUE
 
                                     filteredPoints.forEach { p ->
-                                        logD(SWIPE_TAG) { "Checking point ${p.id.take(8)}" }
-                                        val pointPos = p.computePosition(circles, center)
+                                        logV(SWIPE_TAG) { "Checking point ${p.id}" }
+
+                                        val pointPos = p.computePosition(nests, center)
                                         val dist = hypot(transformedOffset.x - pointPos.x, transformedOffset.y - pointPos.y)
 
                                         if (dist < best) {
@@ -1332,7 +1144,7 @@ fun PointsSettingsScreen(
                                         }
                                     }
 
-                                    logD(SWIPE_TAG) { "Best: $best, tapped: $tapped" }
+                                    logV(SWIPE_TAG) { "Best: $best, tapped: $tapped" }
 
                                     select(
                                         if (best <= TOUCH_THRESHOLD_PX)
@@ -1351,7 +1163,6 @@ fun PointsSettingsScreen(
                                     )
 
                                     selectedPoint?.let {
-                                        lastSelectedCircle = it.circleNumber
                                         recenterSelectedTempOffset()
                                     }
                                 }
@@ -1378,39 +1189,8 @@ fun PointsSettingsScreen(
             onDismiss = {
                 showAddDialog = false
             },
-            onMultipleActionsSelected = { actions, autoPlace ->
-                val targetCircle = lastSelectedCircle.coerceAtMost(circleNumber - 1)
-                val circle = circles.find { it.id == targetCircle }
-
-                if (autoPlace) {
-                    // Auto-place all apps evenly on the circle
-                    applyChange {
-                        for (action in actions) {
-                            val newAngle = randomFreeAngle(circle, points) ?: continue
-
-                            val newLiveNest =
-                                if (action is Action.OpenCircleNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
-                                    action.nestId
-                                } else null
-
-                            val newPoint = Point(
-                                id = UUID.randomUUID().toString(),
-                                angleDeg = newAngle,
-                                action = action,
-                                circleNumber = targetCircle,
-                                nestId = nestId,
-                                liveNestTargetNestId = newLiveNest
-                            )
-
-
-                            addPoint(newPoint)
-                            autoSeparate(points, nestId, circle, newPoint)
-                        }
-                    }
-                } else {
-                    // Manual placement: queue actions and let user tap to place each one
-                    manualPlacementQueue = actions
-                }
+            onMultipleActionsSelected = { actions ->
+                manualPlacementQueue = actions
                 showAddDialog = false
             }
         )
@@ -1428,9 +1208,8 @@ fun PointsSettingsScreen(
         ) { newPoint ->
             iconsViewModel.reloadIcon(newPoint)
 
-            applyChange {
-                pointsViewModel.editPoint(newPoint.id) { newPoint }
-            }
+            pointsService.editPoint(newPoint.id) { newPoint }
+
             select(newPoint)
             showEditDialog = null
         }
@@ -1513,7 +1292,7 @@ fun PointsSettingsScreen(
                 showEditDefaultPoint = false
             }
         ) {
-            pointsViewModel.set(defaultPoint = it)
+            pointsService.set(newDefaultPoint = it)
             iconsViewModel.reloadAllPointsIcons()
 
             showEditDefaultPoint = false
@@ -1526,7 +1305,7 @@ fun PointsSettingsScreen(
             message = stringResource(R.string.reset_all_points_desc),
             onDismiss = { showResetPointsAndNestsDialog = false }
         ) {
-            pointsViewModel.reset(
+            pointsService.reset(
                 resetPoints = true,
                 resetNests = true,
                 resetDefaultPoint = true
@@ -1547,10 +1326,8 @@ fun PointsSettingsScreen(
         Text("nests id: $nestId")
         Text("current nests id: ${currentNest.id}")
         Text("nests number: ${nests.size}")
-        Text("circle number: $circleNumber")
-        Text("currentNest size: ${currentNest.dragDistances.size}")
-        Text("circle width incr: $circlesWidthIncrement")
-        Text("current dragDistances: ${currentNest.dragDistances}")
+        Text("currentNest shapes number: ${currentNest.intersectionShapes.size}")
+        Text("current shapes: ${currentNest.intersectionShapes}")
         Text("closest hovered point: $closestHoveredTempOffset")
         Text("current nest: $currentNest")
         selectedPoint?.let { Text(it.toString()) }

@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.base.model.serializables
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.geometry.Offset
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.DragonJson
@@ -20,19 +21,19 @@ public data class Nest(
      */
     @SerialName("id")
     val id: Int = 0,
+
     /**
-     * Holds the cancel zone (index -1), and the circle numbers for each drag distances
-     * for all the circles in the nest (index positive integer)
-     * the key is the circle number, made for allowing not ascending order drag distances
-     * For the last one, the drag distance has no limit, it's not even counted
+     * How far the user has to swipe to start actions triggering.
+     * In the opposite; how far does the zone that triggers nothing extends
      */
-    @SerialName("dragDistances")
-    val dragDistances: Map<Int, Int> = mapOf(
-        -1 to 150,
-        0 to 300,
-        1 to 450,
-        2 to 600
-    ),
+    @SerialName("cancelZone")
+    val cancelZone: Int = 150,
+
+    /**
+     * A set of one or more [IntersectionShape], each one of them belongs to the nest and
+     */
+    @SerialName("intersectionShapes")
+    val intersectionShapes: Set<IntersectionShape> = defaultIntersectionShapes,
     /**
      * A custom name for the nest you can set for easier identification
      */
@@ -43,14 +44,7 @@ public data class Nest(
      * Haptic feedback, as default for the points in  the circle, separated from the point system
      */
     @SerialName("hapticFeedback")
-    val haptic: Map<Int, CustomHapticFeedback> = emptyMap(),
-
-    /**
-     * How far you have to be close to the closest point to activate it. If set to 0, the value is infinite
-     */
-    @SerialName("minAngleActivation")
-    val minAngleActivation: Map<Int, Int> = emptyMap(),
-
+    val haptic: CustomHapticFeedback? = null,
 
     /**
      * The nest radius, used to override the default nests radii, if set to null, it uses the default value, otherwise it picks this
@@ -74,21 +68,39 @@ public data class Nest(
     @SerialName("showAllActionsOnCurrentNest")
     val showAllActionsOnCurrentNest: Boolean? = null,
 ) {
-    override fun toString(): String {
-        return "Nest N°$id | contains ${dragDistances.size} circles: "//\n${dragDistances.map { "\n${it.key} to ${it.value}" }}"
-    }
+    override fun toString(): String = "Nest N°$id | contains ${intersectionShapes.size} shapes: "
 //    override fun toString(): String = "Nest N°$id"
 
-
+    public infix fun scaledBy(scale: Float): Nest = this.copy(intersectionShapes = this.intersectionShapes.mapTo(mutableSetOf()) { it scaledBy scale })
 
     public companion object {
 
-        public fun defaultDragDistance(id: Int): Int = when (id) {
-            -1 -> 150 // Cancel Zone (below no action activation)
-            0 -> 300  // First circle 300
-            else -> 300 + 150 * id // others: add 150 each, don't be dumb and go to 10 circles
-        }
+        public val defaultIntersectionShapes: Set<IntersectionShape> = setOf(
+            IntersectionShape(
+                id = 0,
+                shape = IconShape.Circle,
+                size = 300f,
+                centerOffset = Offset.Zero
+            ),
+
+            IntersectionShape(
+                id = 1,
+                shape = IconShape.Circle,
+                size = 450f,
+                centerOffset = Offset.Zero
+            ),
+
+            IntersectionShape(
+                id = 1,
+                shape = IconShape.Circle,
+                size = 600f,
+                centerOffset = Offset.Zero
+            )
+        )
 
         public object NestJson: DragonJson<List<Nest>>()
     }
 }
+
+
+public typealias Nests = Set<Nest>

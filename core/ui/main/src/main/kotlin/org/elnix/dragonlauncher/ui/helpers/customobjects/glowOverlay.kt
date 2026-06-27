@@ -2,6 +2,11 @@ package org.elnix.dragonlauncher.ui.helpers.customobjects
 
 import android.graphics.BlurMaskFilter
 import android.graphics.Paint
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
@@ -14,6 +19,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.ktx.px
 
 
 fun DrawScope.glowOverlay(
@@ -35,6 +43,29 @@ fun DrawScope.glowOverlay(
     }
 }
 
+
+
+@Composable
+fun GlowOverlay(
+    center: Offset,
+    color: Color,
+    radius: Dp
+) {
+    if (radius > 0.dp) {
+        Box(
+            modifier = Modifier
+                .size(radius)
+                .background(
+                    brush = Brush.radialGradient(
+                        0.0f to color,
+                        1.0f to Color.Transparent,
+                        center = center,
+                        radius = radius.px
+                    )
+                )
+        )
+    }
+}
 
 
 fun DrawScope.drawNeonGlowLine(

@@ -41,7 +41,6 @@ import org.elnix.dragonlauncher.base.util.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.IconsViewModel
-import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.AppIcon
@@ -64,13 +63,11 @@ import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 @Composable
 fun PointIconEditor(
     iconsViewModel: IconsViewModel = activityViewModel(),
-    pointsViewModel: PointsViewModel = activityViewModel(),
     point: Point,
     onReset: (() -> Unit)? = null,
     onDismiss: () -> Unit,
     onPicked: (CustomIcon?) -> Unit
 ) {
-    val defaultPoint by pointsViewModel.defaultPoint.collectAsState()
 
     var editCustomIcon by remember(point.customIcon) { mutableStateOf(point.customIcon) }
     val previewPoint = point.copy(customIcon = editCustomIcon)
@@ -85,8 +82,6 @@ fun PointIconEditor(
         preview = {
             PointPreviewCanvas(
                 editPoint = previewPoint,
-                defaultPoint = defaultPoint,
-                backgroundSurfaceColor = MaterialTheme.colorScheme.surface,
                 modifier = Modifier.weight(1f)
             )
         },
