@@ -71,6 +71,16 @@ extensions.configure<ApplicationExtension> {
         }
     }
 
+
+    flavorDimensions += listOf("version")
+    productFlavors {
+        create("beta") {
+            dimension = "version"
+            applicationIdSuffix = ".beta"
+            versionNameSuffix = "-beta"
+            resValue("string", "app_name", "Dragon Launcher Beta")
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -93,8 +103,23 @@ extensions.configure<ApplicationExtension> {
 
 
             applicationIdSuffix = ".debug"
-            versionNameSuffix =  " (${property("version.code") as String})-beta"
+            versionNameSuffix =  " (${property("version.code") as String})-debug"
         }
+//
+//        create("beta") {
+//            isMinifyEnabled = true
+//            isShrinkResources = true
+//            proguardFiles(
+//                getDefaultProguardFile("proguard-android-optimize.txt"),
+//                "proguard-rules.pro"
+//            )
+//
+//            // I use signing config because when I try to install the debug app, and that the release is installed, it won't work.
+//            signingConfig = signingConfigs.getByName("release")
+//
+//            versionNameSuffix = " (${property("version.code") as String})-beta"
+//            applicationIdSuffix = ".debug"
+//        }
     }
 
     compileOptions {
@@ -105,6 +130,7 @@ extensions.configure<ApplicationExtension> {
     buildFeatures {
         compose = true
         buildConfig = true
+        resValues = true
     }
 
     packaging {
