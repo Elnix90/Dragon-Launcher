@@ -1,77 +1,105 @@
-
 package org.elnix.dragonlauncher.ui.helpers.nests
 
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.base.model.models.HitResult
+import androidx.compose.ui.graphics.drawscope.scale
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.models.PointsViewModel
-import org.elnix.dragonlauncher.ui.actions.FinalPointIcon
-import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.actions.rememberPointIconBitmaps
 
+/**
+ * Composable wrapper that renders a single point icon inside a [Canvas].
+ *
+ * Use this from composable context to draw a point's background, border,
+ * action icon, and badges. Prefer the [DrawScope.PointIcon] version when
+ * you are already inside a Canvas.
+ *
+ * @param iconBitmaps Pre-rendered icon bitmaps. If null, they are loaded
+ *   automatically via [rememberPointIconBitmaps].
+ */
+@Composable
+fun PointIcon(
+    point: Point,
+    center: Offset,
+    modifier: Modifier = Modifier,
+    selected: Boolean = false,
+
+    preventBgErasing: Boolean = false,
+    showConfiguratorDecorations: Boolean = false,
+    forceShowAllActionsInCurrentNest: Boolean = false,
+
+    iconBitmaps: Map<Int, ImageBitmap>
+) {
+
+    val iconVersion = iconBitmaps.size
+
+    val drawParams = rememberDrawParams(
+        preventBgErasing = preventBgErasing,
+        showConfiguratorDecorations = showConfiguratorDecorations,
+        iconBitmaps = iconBitmaps,
+        iconBitmapsVersion = iconVersion,
+        forceShowAllActionsInCurrentNest = forceShowAllActionsInCurrentNest,
+        allowShowPointCenter = false,
+    )
+
+    Canvas(modifier = modifier) {
+        this.PointIcon(
+            point = point,
+            depth = 1,
+            center = center,
+            selected = selected,
+            drawParams = drawParams
+        )
+    }
+}
 
 @Suppress("FunctionName")
 fun DrawScope.PointIcon(
     point: Point,
-    center: Offset,
     depth: Int,
+    center: Offset,
     selected: Boolean,
 
-    drawParams: DrawParams,
-    hitResult: HitResult,
+    drawParams: DrawParams
 ) {
-    val pointsService = drawParams.pointsService
-    val nests = pointsService.nests.value
-    val maxNestsDepth = drawParams.maxNestsDepth
-
     val action = point.action
 
-    // Prevent overloading since the drawing is recursive
-    if (depth < maxNestsDepth) {
-        val newCenter = pointsService.computePointPosition(point, depth)
+    if (
+        action !is Action.OpenCircleNest ||
+        point.customIcon != null ||
+        depth >= drawParams.maxNestsDepth ||
+        drawParams.preventDrawingSubNests
+    ) {
+        PointBg(
+            point = point,
+            selected = selected,
+            center = center,
+            drawParams = drawParams,
+            iconBitmap = drawParams.iconBitmaps[point.id]
+        )
+    } else {
+        drawParams.pointsService.nests.value
+            .find { it.id == action.nestId }
+            ?.let { nest ->
+                val newDepth = depth + 1
+                val newScale = 1f / newDepth
 
-        if (action !is Action.OpenCircleNest || point.customIcon != null) {
-
-            PointBg(
-                point = point,
-                center = newCenter,
-                selected = selected,
-                depth = depth,
-                drawParams = drawParams
-            ) {
-                FinalPointIcon(point)
-            }
-        } else {
-            nests
-                .find { it.id == action.nestId }
-                ?.takeIf { !drawParams.preventDrawingSubNests }
-                ?.let { nest ->
+                scale(
+                    scale = newScale,
+                    pivot = center
+                ) {
                     NestOverlay(
                         nest = nest,
-                        center = newCenter,
-                        depth = depth + 1,
+                        depth = newDepth,
+                        center = center,
                         drawParams = drawParams,
-                        hitResult = hitResult,
                         selectedAll = selected
                     )
-                } ?: this.NestPlaceholder(
-                    center = center,
-                    drawParams = drawParams
-                )
-        }
+                }
+            } ?: this.NestPlaceholder(center, drawParams) // This shouldn't render
     }
 }
-

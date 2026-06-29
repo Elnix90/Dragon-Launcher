@@ -11,6 +11,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.models.PointsViewModel
+import org.elnix.dragonlauncher.ui.actions.rememberPointIconBitmaps
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.helpers.nests.PointIcon
@@ -32,6 +33,8 @@ fun PointPreviewCanvas(
 
         }
 
+    val iconBitmaps = rememberPointIconBitmaps()
+
     BoxWithConstraints(
         modifier = modifier
             .height(height.dp)
@@ -48,9 +51,9 @@ fun PointPreviewCanvas(
             selected = false,
             point = editPoint,
             center = Offset(leftX, centerY),
-            depth = 1,
             preventBgErasing = true,
             showConfiguratorDecorations = true,
+            iconBitmaps = iconBitmaps
         )
 
         // Right action
@@ -58,9 +61,9 @@ fun PointPreviewCanvas(
             selected = true,
             point = editPoint,
             center = Offset(rightX, centerY),
-            depth = 1,
             preventBgErasing = true,
             showConfiguratorDecorations = true,
+            iconBitmaps = iconBitmaps
         )
     }
 }

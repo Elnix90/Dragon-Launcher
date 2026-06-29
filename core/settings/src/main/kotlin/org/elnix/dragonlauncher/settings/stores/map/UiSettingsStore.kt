@@ -18,22 +18,6 @@ import org.elnix.dragonlauncher.i18n.R
 @SettingsStore
 public object UiSettingsStore : MapSettingsStore() {
 
-    /** Use the computing of HSV color to produce a color that depends on the angle / progress */
-    @SettingKey
-    public val rgbLoading: BooleanSettingObject = boolean(
-        title = R.string.rgb_loading_settings,
-        description = R.string.rgb_loading_description,
-        default = true
-    )
-
-    /** Use the computing of HSV color to produce a color that depends on the angle / progress */
-    @SettingKey
-    public val rgbLine: BooleanSettingObject = boolean(
-        title = R.string.rgb_line_selector,
-        description = R.string.rgb_line_selector_description,
-        default = true
-    )
-
     /** Overlay on top of the screen */
     @SettingKey
     public val showLaunchingAppLabel: BooleanSettingObject = boolean(
@@ -43,7 +27,7 @@ public object UiSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val showLaunchingAppIcon: BooleanSettingObject = boolean(
+    public val showPreviewPoint: BooleanSettingObject = boolean(
         title = R.string.show_launching_app_icon,
         description = R.string.show_launching_app_icon_description,
         default = true
@@ -96,7 +80,7 @@ public object UiSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val showAppPreviewIconCenterStartPosition: BooleanSettingObject = boolean(
+    public val showPointPreviewCenterStartPosition: BooleanSettingObject = boolean(
         title = R.string.show_app_icon_start_drag_position,
         description = R.string.show_app_icon_start_drag_position_description,
         default = false

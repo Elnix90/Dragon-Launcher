@@ -19,8 +19,8 @@ public data class PointSettingObject(
 ) : SettingObject<Point, String>() {
 
     override val preferenceKey: Preferences.Key<String> = stringPreferencesKey(preferenceKeyName)
-    override fun encode(value: Point): String? = Point.Companion.PointsJson.encode(value)
-    override fun decode(raw: Any?): Point = Point.Companion.PointsJson.decode(raw, default)
+    override fun encode(value: Point): String? = Point.Companion.PointJson.encode(value)
+    override fun decode(raw: Any?): Point = Point.Companion.PointJson.decode(raw, default)
 }
 
 public fun MapSettingsStore.point(

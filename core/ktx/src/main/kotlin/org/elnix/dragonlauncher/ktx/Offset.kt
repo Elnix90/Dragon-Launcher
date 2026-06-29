@@ -23,9 +23,9 @@ public fun angularDistanceDeg(a: Double, b: Float): Double {
 }
 
 /** Angle 0–360 from [offset] relative to [center] (north = 0, clockwise). */
-public fun angle360FromOffset(center: Offset, offset: Offset): Float {
-    val dx = offset.x - center.x
-    val dy = offset.y - center.y
+public fun angle360FromOffset(offset: Offset): Float {
+    val dx = offset.x
+    val dy = offset.y
     val angleRad = atan2(dx.toDouble(), -dy.toDouble())
     var deg = Math.toDegrees(angleRad).toFloat()
     if (deg < 0f) deg += 360f
@@ -136,3 +136,16 @@ public inline fun Offset.undoTransformations(
     zoom: () -> Float,
     offset: () -> Offset
 ): Offset = undoScale(zoom).undoTranslation(offset).undoRotation(angle)
+
+
+/**
+ * Redo all three previous transformations at once
+ *
+ * Note: ORDER MATTERS!!
+ * If you put undo rotation first, it'll break the whole chain for some reason.
+ */
+public inline fun Offset.redoTransformations(
+    angle: () -> Float,
+    zoom: () -> Float,
+    offset: () -> Offset
+): Offset = undoRotation(angle).undoTranslation(offset).undoScale(zoom)

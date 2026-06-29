@@ -34,13 +34,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.base.withHaptic
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
@@ -54,6 +53,7 @@ import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson
+import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
@@ -75,7 +75,7 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
     var playAnimation by remember { mutableStateOf(true) }
 
 
-    val rgbLoading by UiSettingsStore.rgbLoading.asState()
+    val rgbLoading by HoldToActivateArcSettingsStore.rgbLoading.asState()
 
     val progress = remember { Animatable(0f) }
 
@@ -158,8 +158,7 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
         ) {
             while (playAnimation) {
                 progress.snapTo(0f)
-
-                delay(holdDelayBeforeStartingLongClickSettings.toLong())
+                delay(holdDelayBeforeStartingLongClickSettings.milliseconds)
 
                 progress.animateTo(
                     targetValue = 1f,
@@ -210,7 +209,7 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
                 showHoldSettingsOrderDialog = true
             }
             SettingsSwitchRow(HoldToActivateArcSettingsStore.showToleranceOnMainScreen)
-            SettingsSwitchRow(UiSettingsStore.rgbLoading)
+            SettingsSwitchRow(HoldToActivateArcSettingsStore.rgbLoading)
         }
     }
 

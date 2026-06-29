@@ -2,8 +2,10 @@ package org.elnix.dragonlauncher.ui.base.animation
 
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -17,6 +19,11 @@ import androidx.compose.ui.unit.IntOffset
 fun <T> bouncySpec() = spring<T>(
     dampingRatio = Spring.DampingRatioMediumBouncy,
     stiffness = Spring.StiffnessLow
+)
+
+fun <T> easingSpec() = tween<T>(
+    durationMillis = 300,
+    easing = FastOutSlowInEasing
 )
 
 val navigationBouncySpec = spring<IntOffset>(Spring.DampingRatioLowBouncy, Spring.StiffnessLow)

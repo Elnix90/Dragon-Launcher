@@ -35,8 +35,8 @@ fun IntersectionShape(
 
 @Suppress("FunctionName")
 fun DrawScope.IntersectionShape(
-    center: Offset,
     shape: IntersectionShape,
+    center: Offset,
     drawParams: DrawParams
 ) {
 
@@ -44,7 +44,7 @@ fun DrawScope.IntersectionShape(
     val size = Size(sizePx, sizePx)
     val color = shape.color ?: drawParams.extraColors.circle
     val strokeWith = (shape.borderStroke?.dp ?: IntersectionShape.Companion.Defaults.borderStrokeDefault).toPx()
-    val rotation = shape.angle
+    val rotation = shape.angle ?: IntersectionShape.Companion.Defaults.angleDefault
     val position = center + shape.centerOffset
     val shape = shape.shape.resolveShape()
 

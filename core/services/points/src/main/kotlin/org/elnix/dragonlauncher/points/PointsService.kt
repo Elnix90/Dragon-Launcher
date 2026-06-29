@@ -10,11 +10,13 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.models.HitResult
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.NestJson
 import org.elnix.dragonlauncher.base.model.serializables.Nests
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.PointsListJson
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.PointJson
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.PointsJson
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
 import org.elnix.dragonlauncher.base.model.serializables.Points
 import org.elnix.dragonlauncher.base.undoredo.UndoRedoManager
@@ -24,7 +26,12 @@ import org.elnix.dragonlauncher.ktx.distance
 import org.elnix.dragonlauncher.ktx.groupByTo
 import org.elnix.dragonlauncher.settings.stores.array.NestsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.array.PointsSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
+import org.elnix.dragonlauncher.settings.stores.objects.DefaultPointSettingsStore
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 public interface PointsService {
     public val defaultPoint: SettingFlow<Point>
@@ -37,12 +44,13 @@ public interface PointsService {
 
     public fun addPoint(select: Boolean = true, newPoint: (Int) -> Point): Int
     public fun removePoint(id: Int): Boolean
-
     public fun editPoint(id: Int, editedPoint: (Point) -> Point): Boolean
+
     public fun addNest(nestId: Int? = null): Int
     public fun removeNest(id: Int): Boolean
-
     public fun editNest(id: Int, editedNest: (Nest) -> Nest): Boolean
+
+    public fun editDefaultPoint(newDefaultPoint: Point)
     public fun select(point: Point?)
     public fun persist()
 
@@ -60,10 +68,8 @@ public interface PointsService {
     )
 
 
-
     public fun resolveLiveNestHit(
-        center: Offset,
-        pointerPos: Offset,
+        normalizedPos: Offset,
         nest: Nest,
         liveNestScale: Float,
         graceDistancePx: Int = 0
@@ -73,25 +79,40 @@ public interface PointsService {
      * Uses the nest the points belongs to, combined with its offset and the intersection shapes that are in the nest to compute the position ([Offset])
      * of the point in the main Canva
      *
-     * The given calculation depends on the [depth] the drawing is at.
      * @return [Offset] the relative position of the point in ths nest
      */
-    public fun computePointPosition(
-        point: Point,
-        depth: Int
-    ): Offset
+    public fun computePointOffset(point: Point): Offset
 
     public fun getPointsForNest(nest: Nest): Points
 
-    public fun computeClosest(offset: Offset, nestId: Int?): Point
+    /**
+     * Compute the closest point relative to the [normalizedPos] given their [Point.offset] and the eventual [shape][Point.collidingShapeId] they are tied to
+     *
+     * Special cases:
+     *  - [points] is empty -> `null`
+     *  - [points] contains a single element -> the single point
+     */
+    public fun computeClosest(
+        normalizedPos: Offset,
+        nestId: Int?
+    ): Point?
+
+    /**
+     * Same as [computeClosest] but ignores the given [ignoredPointId].
+     */
+    public fun computeClosestExcept(
+        ignoredPointId: Int?,
+        normalizedPos: Offset,
+        nestId: Int?
+    ): Point?
 
     public fun getFurthestPoint(nest: Nest): Point?
 }
 
 
-public class PointsServiceImpl(
+internal class PointsServiceImpl(
     private val ctx: Context
-): PointsService {
+) : PointsService {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override val defaultPoint: SettingFlow<Point> = SettingFlow(dummySwipePoint())
@@ -119,6 +140,12 @@ public class PointsServiceImpl(
                 restore = {
                     set(newNests = it.toSet())
                 }
+            ),
+            UndoRedoStack(
+                snapshot = { defaultPoint.value },
+                restore = {
+                    set(newDefaultPoint = it)
+                }
             )
         )
     )
@@ -140,10 +167,11 @@ public class PointsServiceImpl(
         val newId = getNextId(existingIds)
         val newPoint = newPoint(newId)
 
-        val pointGridCell: Pair<Int, Int> = cellKey(newPoint.offset)
+        val pointGridCell: GridCase = cellKey(newPoint.offset)
         grid.getOrPut(pointGridCell) { mutableSetOf() }.add(newPoint)
 
         undoRedo.applyChange { points.value += newPoint }
+        pointsByNestId = null
         if (select) select(newPoint)
         return newId
     }
@@ -155,6 +183,7 @@ public class PointsServiceImpl(
         grid[pointGridCell]?.remove(pointToRemove)
 
         undoRedo.applyChange { points.value -= pointToRemove }
+        pointsByNestId = null
         return true
     }
 
@@ -172,6 +201,7 @@ public class PointsServiceImpl(
             points.value -= oldPoint
             points.value += editedPoint
         }
+        pointsByNestId = null
         return true
     }
 
@@ -202,14 +232,22 @@ public class PointsServiceImpl(
         return true
     }
 
+    override fun editDefaultPoint(newDefaultPoint: Point) {
+        undoRedo.applyChange {
+            set(newDefaultPoint = newDefaultPoint)
+        }
+    }
+
     override fun persist() {
         scope.launch {
-            val encodedPoints = PointsListJson.encode(points.value)
-            val encodedNests = NestJson.encode(nests.value)
-
+            val encodedPoints = PointsJson.encode(points.value)
             PointsSettingsStore.jsonSetting.set(ctx, encodedPoints)
+
+            val encodedNests = NestJson.encode(nests.value)
             NestsSettingsStore.jsonSetting.set(ctx, encodedNests)
-            SwipeMapSettingsStore.defaultPoint.set(ctx, defaultPoint.value)
+
+            val encodedDefaultPoint = PointJson.encode(defaultPoint.value)
+            DefaultPointSettingsStore.jsonSetting.set(ctx, encodedDefaultPoint)
         }
     }
 
@@ -222,19 +260,17 @@ public class PointsServiceImpl(
             "One of all 3 arg must not bu null"
         }
 
-        undoRedo.applyChange {
-            if (newPoints != null) {
-                points.value = newPoints
-                resetGrid()
-            }
+        if (newPoints != null) {
+            points.value = newPoints
+            resetGrid()
+        }
 
-            if (newNests != null) {
-                nests.value = newNests
-            }
+        if (newNests != null) {
+            nests.value = newNests
+        }
 
-            if (newDefaultPoint != null) {
-                defaultPoint.value = newDefaultPoint
-            }
+        if (newDefaultPoint != null) {
+            defaultPoint.value = newDefaultPoint
         }
 
         persist()
@@ -267,16 +303,16 @@ public class PointsServiceImpl(
     }
 
     private suspend fun loadPoints() {
-        points.value = PointsListJson.decode<Set<Point>>(PointsSettingsStore.jsonSetting.get(ctx), emptySet())
+        points.value = PointsJson.decode<Points>(PointsSettingsStore.jsonSetting.get(ctx), emptySet())
         resetGrid()
     }
 
     private suspend fun loadNests() {
-        nests.value = NestJson.decode<Set<Nest>>(NestsSettingsStore.jsonSetting.get(ctx), emptySet())
+        nests.value = NestJson.decode<Nests>(NestsSettingsStore.jsonSetting.get(ctx), emptySet())
     }
 
     private suspend fun loadDefaultPoint() {
-        defaultPoint.value = SwipeMapSettingsStore.defaultPoint.get(ctx)
+        defaultPoint.value = PointJson.decode(DefaultPointSettingsStore.jsonSetting.get(ctx), Point.defaultSwipePointsValues)
     }
 
     private fun getNextId(existing: Set<Int>): Int {
@@ -291,74 +327,99 @@ public class PointsServiceImpl(
 
     // START OF COMPUTATION SYSTEM
 
-    private var grid: MutableMap<Pair<Int, Int>, MutableSet<Point>> = mutableMapOf()
+    private var grid: GridMap = mutableMapOf()
     private var lastTarget: Offset = Offset.Zero
     private var searchRadius: Int = 1
 
     private val gridSize = 150f
 
+    /** Cache of nest-id → points, rebuilt lazily after every points mutation. */
+    private var pointsByNestId: Map<Int, Points>? = null
+
 
     private fun resetGrid() {
         grid = buildGrid(points.value)
+        pointsByNestId = null
         lastTarget = Offset.Zero
         searchRadius = 1
     }
 
 
-    public override fun computeClosest(offset: Offset, nestId: Int?): Point {
+    override fun computeClosestExcept(
+        ignoredPointId: Int?,
+        normalizedPos: Offset,
+        nestId: Int?
+    ): Point? {
+        return when (points.value.size) {
+            0 -> null
+            1 -> points.value.first()
+            else -> {
 
-        @Suppress("LiftReturnOrAssignment")
-        if (distance(lastTarget, offset) > gridSize) {
-            searchRadius = 1
-        } else {
-            searchRadius = minOf(3, searchRadius + 1)
-        }
+                @Suppress("LiftReturnOrAssignment")
+                if (distance(lastTarget, normalizedPos) > gridSize) {
+                    searchRadius = 1
+                } else {
+                    searchRadius = minOf(3, searchRadius + 1)
+                }
 
-        val targetCell: Pair<Int, Int> = cellKey(offset)
-        val candidates: MutableSet<Point> = mutableSetOf()
+                val targetCell: GridCase = cellKey(normalizedPos)
+                val candidates: MutablePoints = mutableSetOf()
 
-        var expandRadius = searchRadius
-        while (true) {
-            for (dx in -expandRadius..expandRadius) {
-                for (dy in -expandRadius..expandRadius) {
-                    grid[Pair(targetCell.first + dx, targetCell.second + dy)]
-                        ?.let { points ->
-                            val filteredPointsByNest = points.filter { it.nestId == nestId }
-                            candidates.addAll(filteredPointsByNest)
+                var expandRadius = searchRadius
+                while (true) {
+                    for (dx in -expandRadius..expandRadius) {
+                        for (dy in -expandRadius..expandRadius) {
+                            grid[Pair(targetCell.first + dx, targetCell.second + dy)]
+                                ?.let { points ->
+                                    val filteredPointsByNest = points.filter {
+                                        it.nestId == nestId && it.id != ignoredPointId
+                                    }
+                                    candidates.addAll(filteredPointsByNest)
+                                }
                         }
+                    }
+                    if (candidates.isNotEmpty()) break
+                    expandRadius++
+                }
+
+                lastTarget = normalizedPos
+
+                candidates.minBy { p ->
+                    val dx: Float = normalizedPos.x - p.offset.x
+                    val dy: Float = normalizedPos.y - p.offset.y
+                    dx * dx + dy * dy
                 }
             }
-            if (candidates.isNotEmpty()) break
-            expandRadius++
-        }
-
-        lastTarget = offset
-
-        return candidates.minBy { p ->
-            val dx: Float = offset.x - p.offset.x
-            val dy: Float = offset.y - p.offset.y
-            dx * dx + dy * dy
         }
     }
 
+    override fun computeClosest(
+        normalizedPos: Offset,
+        nestId: Int?
+    ): Point? =
+        computeClosestExcept(
+            ignoredPointId = null,
+            normalizedPos = normalizedPos,
+            nestId = nestId
+        )
 
-    public override fun getFurthestPoint(nest: Nest): Point? {
+
+    // TODO cache this
+    override fun getFurthestPoint(nest: Nest): Point? {
         return points.value
             .filter { it.nestId == nest.id }
             .maxByOrNull { it.offset.getDistanceSquared() }
     }
 
 
-    public override fun resolveLiveNestHit(
-        center: Offset,
-        pointerPos: Offset,
+    override fun resolveLiveNestHit(
+        normalizedPos: Offset,
         nest: Nest,
         liveNestScale: Float,
         graceDistancePx: Int
     ): HitResult {
-//        val scaledNest = nest scaledBy liveNestScale
-        val dist = distance(center, pointerPos)
-        val angle360 = angle360FromOffset(center, pointerPos)
+        val dist = normalizedPos.getDistance()
+        val angle360 = angle360FromOffset(normalizedPos)
         val outerRadius = getFurthestPoint(nest)?.offset?.getDistance() ?: Float.MAX_VALUE
 
         graceDistancePx.takeIf { it > -1 }?.let {
@@ -368,7 +429,6 @@ public class PointsServiceImpl(
                     isOutsideBounds = true,
                     isInCancelZone = false,
                     angle360 = angle360,
-                    targetShape = null // TODO
                 )
             }
         }
@@ -379,7 +439,7 @@ public class PointsServiceImpl(
         val selectedPoint = if (isInCancelZone) {
             null
         } else {
-            computeClosest(pointerPos, nest.id)
+            computeClosest(normalizedPos, nest.id)
         }
 
         return HitResult(
@@ -387,15 +447,132 @@ public class PointsServiceImpl(
             isOutsideBounds = false,
             isInCancelZone = isInCancelZone,
             angle360 = angle360,
-            targetShape = null // TODO
         )
     }
 
+    override fun computePointOffset(point: Point): Offset {
+        val nest = nests.value.find { it.id == point.nestId } ?: return point.offset
+        val shapeId = point.collidingShapeId ?: return point.offset
+        val shape = nest.intersectionShapes.find { it.id == shapeId } ?: return point.offset
 
-    private fun buildGrid(points: Points): MutableMap<Pair<Int, Int>, MutableSet<Point>> =
-        points.groupByTo(mutableMapOf<Pair<Int, Int>, MutableSet<Point>>()) { point -> cellKey(point.offset) }
+        val angleRad = atan2(point.offset.y, point.offset.x)
+        val halfSize = shape.size / 2f
+        val rotationRad = Math.toRadians((shape.angle ?: 0).toDouble()).toFloat()
 
-    private fun cellKey(offset: Offset): Pair<Int, Int> =
+        val boundary = computeShapeBoundary(shape.shape, halfSize, angleRad, rotationRad)
+        return shape.centerOffset + boundary
+    }
+
+    override fun getPointsForNest(nest: Nest): Points {
+        var cache = pointsByNestId
+        if (cache != null) return cache[nest.id] ?: emptySet()
+
+        cache = mutableMapOf<Int, MutablePoints>()
+        for (p in points.value) {
+            val nid = p.nestId ?: continue
+            cache.getOrPut(nid) { mutableSetOf() }.add(p)
+        }
+        pointsByNestId = cache
+        return cache[nest.id] ?: emptySet()
+    }
+
+
+    /** Returns the point where the ray at [angleRad] (from origin) first hits
+     *  the boundary of [iconShape] when the shape is inscribed in a circle of
+     *  radius [halfSize] and rotated by [rotationRad]. Unsupported shapes fall
+     *  back to a circle boundary. */
+    private fun computeShapeBoundary(
+        iconShape: IconShape,
+        halfSize: Float,
+        angleRad: Float,
+        rotationRad: Float,
+    ): Offset = when (iconShape) {
+        is IconShape.Circle -> circleBoundary(halfSize, angleRad)
+
+        is IconShape.Square,
+        is IconShape.RoundedSquare,
+        is IconShape.Cookie4Sided ->
+            polygonBoundary(4, halfSize, angleRad, rotationRad)
+
+        is IconShape.Diamond ->
+            polygonBoundary(4, halfSize, angleRad, rotationRad + (PI / 4f).toFloat())
+
+        is IconShape.Triangle,
+        is IconShape.PixelTriangle ->
+            polygonBoundary(3, halfSize, angleRad, rotationRad)
+
+        is IconShape.Pentagon ->
+            polygonBoundary(5, halfSize, angleRad, rotationRad)
+
+        is IconShape.Hexagon,
+        is IconShape.Cookie6Sided ->
+            polygonBoundary(6, halfSize, angleRad, rotationRad)
+
+        is IconShape.Cookie7Sided ->
+            polygonBoundary(7, halfSize, angleRad, rotationRad)
+
+        is IconShape.Cookie9Sided ->
+            polygonBoundary(9, halfSize, angleRad, rotationRad)
+
+        is IconShape.Cookie12Sided ->
+            polygonBoundary(12, halfSize, angleRad, rotationRad)
+
+        is IconShape.Custom ->
+            polygonBoundary(iconShape.numVertices, halfSize, angleRad, rotationRad)
+
+        else -> circleBoundary(halfSize, angleRad)
+    }
+
+    /** Point on a circle of [radius] at the given angle. */
+    private fun circleBoundary(
+        radius: Float,
+        angleRad: Float,
+    ): Offset = Offset(radius * cos(angleRad), radius * sin(angleRad))
+
+    /** Intersection of a ray at [angleRad] with a regular [numSides]-gon
+     *  inscribed in a circle of [radius], rotated by [rotationRad]. */
+    private fun polygonBoundary(
+        numSides: Int,
+        radius: Float,
+        angleRad: Float,
+        rotationRad: Float,
+    ): Offset {
+        val dir = Offset(cos(angleRad), sin(angleRad))
+        val epsilon = 1e-6f
+        var minT = Float.MAX_VALUE
+
+        for (k in 0 until numSides) {
+            val a1 = (2.0 * PI * k / numSides + rotationRad).toFloat()
+            val a2 = (2.0 * PI * ((k + 1) % numSides) / numSides + rotationRad).toFloat()
+            val v1 = Offset(radius * cos(a1), radius * sin(a1))
+            val v2 = Offset(radius * cos(a2), radius * sin(a2))
+            val edgeX = v2.x - v1.x
+            val edgeY = v2.y - v1.y
+            val det = dir.x * edgeY - dir.y * edgeX
+            if (abs(det) < epsilon) continue
+            val t = (v1.x * edgeY - v1.y * edgeX) / det
+            val s = (v1.x * dir.y - v1.y * dir.x) / det
+            if (t >= 0f && s >= 0f && s <= 1f && t < minT) {
+                minT = t
+            }
+        }
+
+        return if (minT < Float.MAX_VALUE) {
+            dir * minT
+        } else {
+            circleBoundary(radius, angleRad)
+
+        }
+    }
+
+    private fun buildGrid(points: Points): GridMap =
+        points.groupByTo(mutableMapOf<GridCase, MutablePoints>()) { point -> cellKey(point.offset) }
+
+    private fun cellKey(offset: Offset): GridCase =
         Pair((offset.x / gridSize).toInt(), (offset.y / gridSize).toInt())
 
 }
+
+private typealias GridCase = Pair<Int, Int>
+private typealias MutablePoints = MutableSet<Point>
+private typealias GridMap = MutableMap<GridCase, MutablePoints>

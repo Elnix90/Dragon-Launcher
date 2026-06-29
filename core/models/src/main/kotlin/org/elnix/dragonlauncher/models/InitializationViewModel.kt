@@ -66,17 +66,17 @@ public class InitializationViewModel @Inject constructor(
 
 private val defaultInitializationSetup = setOf(
     Point(
-        offset = Offset(0f, 200f),
+        offset = Offset(0f, -200f),
         action = Action.OpenAppDrawer(),
         id = 0
     ),
     Point(
-        offset = Offset(-50f, -50f),
+        offset = Offset(-150f, 100f),
         action = Action.NotificationShade,
         id = 1
     ),
     Point(
-        offset = Offset(-50f, 50f),
+        offset = Offset(150f, 100f),
         action = Action.ControlPanel,
         id = 2
     )

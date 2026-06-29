@@ -96,7 +96,7 @@ fun MainScreen(
     val showToleranceOnMainScreen by HoldToActivateArcSettingsStore.showToleranceOnMainScreen.asState()
     val rotationPerSecond by HoldToActivateArcSettingsStore.rotationPerSecond.asState()
 
-    val rgbLoading by UiSettingsStore.rgbLoading.asState()
+    val rgbLoading by HoldToActivateArcSettingsStore.rgbLoading.asState()
 
 
     var start by remember { mutableStateOf<Offset?>(null) }

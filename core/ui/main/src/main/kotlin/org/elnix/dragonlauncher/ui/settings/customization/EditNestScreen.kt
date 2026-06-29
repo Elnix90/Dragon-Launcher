@@ -43,6 +43,7 @@ import org.elnix.dragonlauncher.ktx.rotateBy
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
+import org.elnix.dragonlauncher.ui.actions.rememberPointIconBitmaps
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedbackEditor
@@ -119,6 +120,7 @@ fun NestEditingScreen(
             pointsService.editNest(nestId) { Nest(id = nestId) }
         }
     ) {
+        val iconBitmaps = rememberPointIconBitmaps()
         BoxWithConstraints(
             Modifier
                 .fillMaxSize()
@@ -155,9 +157,9 @@ fun NestEditingScreen(
             NestOverlay(
                 nest = currentNest,
                 center = center,
-                depth = 1,
                 forceShowAllActionsInCurrentNest = true,
-                preventBgErasing = true
+                preventBgErasing = true,
+                iconBitmaps = iconBitmaps
             )
         }
 

@@ -1,13 +1,13 @@
+@file:Suppress("RedundantVisibilityModifier")
+
 package org.elnix.dragonlauncher.ui
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -51,18 +51,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.elnix90.logging.NESTS_TAG
-import io.github.elnix90.logging.SWIPE_TAG
 import io.github.elnix90.logging.logD
-import io.github.elnix90.logging.logV
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.Constants
+import org.elnix.dragonlauncher.base.Constants.Settings.COLLIDING_SHAPE_THRESHOLD_PX
 import org.elnix.dragonlauncher.base.Constants.Settings.TOUCH_THRESHOLD_PX
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.common.circles.autoSeparate
-import org.elnix.dragonlauncher.common.circles.computePosition
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.Center
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.ResetRotation
@@ -77,9 +74,11 @@ import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.FreeMove
 import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.SnapPoints
 import org.elnix.dragonlauncher.enumsui.toggle.SelectedPointEditTools
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.distance
 import org.elnix.dragonlauncher.ktx.rotateBy
 import org.elnix.dragonlauncher.ktx.undoTransformations
 import org.elnix.dragonlauncher.models.IconsViewModel
+import org.elnix.dragonlauncher.models.InitializationViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
@@ -90,7 +89,10 @@ import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.autoSeparatePoints
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.freeMoveDraggedPoint
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.snapPoints
+import org.elnix.dragonlauncher.ui.actions.rememberPointIconBitmaps
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
+import org.elnix.dragonlauncher.ui.base.animation.easingSpec
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
@@ -112,7 +114,7 @@ import org.elnix.dragonlauncher.ui.helpers.nests.PointIcon
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.settings.SpecialSettingsTitle
 import org.elnix.dragonlauncher.ui.remembers.rememberNestNavigation
-import kotlin.math.hypot
+import kotlin.math.sqrt
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -121,6 +123,7 @@ import kotlin.time.Duration.Companion.milliseconds
 fun PointsSettingsScreen(
     iconsViewModel: IconsViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel(),
+    initializationViewModel: InitializationViewModel = activityViewModel(),
     onAdvSettings: () -> Unit,
     onNestEdit: (nest: Int) -> Unit,
     onBack: () -> Unit
@@ -148,7 +151,10 @@ fun PointsSettingsScreen(
 
     val points by pointsService.points.asState()
     val nests by pointsService.nests.asState()
+
     val selectedPoint by pointsService.selectedPoint.asState()
+    val aPointIsSelected = selectedPoint != null
+
     fun select(point: Point?) {
         pointsService.select(point)
     }
@@ -164,11 +170,8 @@ fun PointsSettingsScreen(
     fun animateHomingTempOffset(home: Offset) {
         scope.launch {
             selectedPointTempOffset.animateTo(
-                home,
-                animationSpec = tween(
-                    300,
-                    easing = FastOutSlowInEasing
-                )
+                targetValue = home,
+                animationSpec = easingSpec()
             )
         }
     }
@@ -183,8 +186,6 @@ fun PointsSettingsScreen(
         targetValue = if (ableToLaunchHoverAction) Constants.Settings.HOVER_GRADIENT_RADIUS else 1f
     )
 
-
-    val aPointIsSelected = selectedPoint != null
 
     var showEditDefaultPoint by remember { mutableStateOf(false) }
     var showAddDialog by remember { mutableStateOf(false) }
@@ -231,149 +232,53 @@ fun PointsSettingsScreen(
         }
     }
 
-    fun recenterSelectedTempOffset() {
-        selectedPoint?.let { p ->
-            scope.launch {
-                selectedPointTempOffset.snapTo(p.computePosition(nests, center))
-            }
-        }
-    }
-
-
     var showShapeManagementDialog by remember { mutableStateOf(false) }
 
-//    fun addShape() {
-//        applyChange {
-//            pointsService.editNest(nestId) { nest ->
-//                val newCircleNumber =
-//                    nest.intersectionShapes
-//                        .map { it.id }
-//                        .filter { it >= 0 }
-//                        .maxOrNull()
-//                        ?.plus(1) ?: 0
-//
-//
-//            }
-//        }
-//    }
-
-
-//    /**
-//     * Removes the last added circle from the specified nest (or the currently selected nest by default).
-//     *
-//     * The last circle is determined as the one with the highest circle number greater than 0.
-//     * The nest list is updated immutably, and the change is recorded via `applyChange` for
-//     * undo/redo support.
-//     *
-//     * Safely checks if there is mor than 1 circle to avoid deleting the last one
-//     */
-//    fun removeLastCircle() {
-//        applyChange {
-//            pointsService.editNest(nestId) { nest ->
-//                val maxCircle =
-//                    nest.dragDistances
-//                        .keys
-//                        .filter { k -> k > 0 }
-//                        .maxOrNull()
-//                        ?: return@editNest nest
-//
-//                nest.copy(
-//                    dragDistances = nest.dragDistances - maxCircle
-//                )
-//            }
-//        }
-//    }
-
-
-//    fun addPoint(select: Boolean = true, point: (Int) -> Point) {
-//
-//        pointsService.addPoint(select, point)
-//        iconsViewModel.incrementPointCacheSize()
-//        iconsViewModel.reloadIcon(point)
-//    }
-
-    /**
-     * Compute the position of a moved point, on the circle, and returns a [Pair] composed of:
-     *  - `first`: the new angleDeg of the point on the circles
-     *  - `second`: the new circleNumber
-     *
-     * @param point which point to move
-     * @param circles the circles to move the point on
-     * @param pos the new position of the points, can be anywhere on the screen, not only on a circle
-     * @return Pair with elements or null if the points hasn't moved
-     */
     fun computePointMoved(
         point: Point,
-        pos: Offset
-    ): Offset? {
-
-//        // 1. Compute raw angle from center -> pos
-//        val dx = pos.x - center.x
-//        val dy = center.y - pos.y
-//        var angle = Math.toDegrees(atan2(dx.toDouble(), dy.toDouble()))
-//        if (angle < 0) angle += 360.0
-
-        // 2. Apply snapping if enabled
-//        TODO()
-//        val finalAngle = if (snapPoints) {
-//            round(angle / SNAP_STEP_DEG) * SNAP_STEP_DEG
-//        } else {
-//            angle
-//        }
-
-        // 3. Find nearest circle based on radius
-//        val distFromCenter = hypot(dx, dy)
-//        val closestCircle = circles.minByOrNull { c -> abs(c.radius - distFromCenter) }
-//            ?: error("Failed to find circle: BIG ISSUE")
-
-
-//        // Only return the angle and circle number if they have changed
-//        if (
-//            (point.angleDeg != finalAngle) ||
-//            (point.circleNumber != closestCircle.id)
-//        ) {
-//            return (finalAngle to closestCircle.id)
-//        }
-
-        // Position is the same as before, return null to tell the updater to not move the point
-        return null
-    }
-
-    /**
-     * Update point position; first compute the new point position using `computePointMoved` and then apply the change to the stack if it was moved
-     *
-     * @param this@updatePointPosition which point to move
-     * @param circles the circles to move the point on
-     * @param pos the new position of the points, can be anywhere on the screen, not only on a circle
-     */
-    fun Point.updatePosition(
-        pos: Offset
-    ) {
-        val newPointOffset = computePointMoved(
-            point = this,
-            pos = pos
+        normalizedOffset: Offset
+    ): Pair<Offset, Int?> {
+        val newPointRaw: Point = point.copy(
+            offset = normalizedOffset,
+            collidingShapeId = null
         )
 
-        // Only apply the changed if the point has been changed
-        newPointOffset?.let { newOffset ->
-            pointsService.editPoint(id) {
-                it.copy(offset = newOffset)
+        /**
+         * New point offset, computed raw without any shapes colliding
+         */
+        val newPointOffsetNormalized: Offset = pointsService.computePointOffset(newPointRaw)
+
+        /**
+         * A set of all offsets the point could have if it collides with the shapes.
+         * Later on I'll take the closest one, and if it is < [COLLIDING_SHAPE_THRESHOLD_PX]
+         */
+        val collidingShapesOffsets: Set<Pair<Offset, Int>> = currentNest.intersectionShapes.mapTo(mutableSetOf()) { shape ->
+            pointsService.computePointOffset(
+                newPointRaw.copy(collidingShapeId = shape.id)
+            ) to shape.id
+        }
+
+
+        var minOffsetShapeId: Int? = null
+        var minOffset: Offset? = null
+        var minDistSquared: Float = Float.MAX_VALUE
+
+        for ((offset, shapeId) in collidingShapesOffsets) {
+            val offsetLength = offset.getDistanceSquared()
+            if (offsetLength < minDistSquared) {
+                minDistSquared = offsetLength
+                minOffsetShapeId = shapeId
+                minOffset = offset
             }
         }
-    }
 
-//    // Load points & nests
-//    LaunchedEffect(Unit, showResetPointsAndNestsDialog) {
-//        if (!showResetPointsAndNestsDialog) {
-//            scope.launch {
-//                points.clear()
-//                points.addAll(pointViewModel.points.first())
-//
-//                nests.clear()
-//                nests.addAll(pointViewModel.nests.first())
-//            }
-//        }
-//    }
+        val minOffsetLength: Float = sqrt(minDistSquared)
+        return if (minOffsetLength < COLLIDING_SHAPE_THRESHOLD_PX && snapPoints) {
+            minOffset!! to minOffsetShapeId
+        } else {
+            newPointOffsetNormalized to null
+        }
+    }
 
 
     val handleBack = {
@@ -385,44 +290,19 @@ fun PointsSettingsScreen(
     }
     BackHandler(onBack = handleBack)
 
-//    /**
-//     * Computes and updates the radii for all circles in the current nest whenever
-//     * the nest, available width, or center changes.
-//     *
-//     * Each circle's radius is proportional to the available width of the container,
-//     * scaled by circlesWidthIncrement, and distributed evenly so that the largest
-//     * circle nearly fits the box.
-//     *
-//     * This updates the mutable list circles, which is used both for rendering
-//     * and for hit detection of points on the circles.
-//     *
-//     * - `currentNest`: The currently selected nest containing the drag distances for each circle.
-//     * - `availableWidth`: The width available for drawing the circles, used to scale the radii proportionally.
-//     * - `center`: The center of the container, used to compute offsets and positions for points.
-//     */
-//    LaunchedEffect(currentNest, center) {
-//
-//        createCirclesFromDragDistances(
-//            dragDistances = currentNest.dragDistances,
-//            circles = circles
-//        )
-//    }
+    fun Point.computePosition(): Offset =
+        pointsService.computePointOffset(this) + center
 
     LaunchedEffect(closestHoveredPoint) {
         ableToLaunchHoverAction = false
         closestHoveredPoint?.let {
 
-            val finalOffset = it.computePosition(
-                nests,
-                center
-            )
+            val finalOffset = it.computePosition()
 
             closestHoveredTempOffset = finalOffset
 
-            val startDuration = System.currentTimeMillis()
-            while (System.currentTimeMillis() - startDuration < Constants.Settings.HOVER_POINT_DURATION) {
-                delay(50.milliseconds)
-            }
+            delay(Constants.Settings.HOVER_POINT_DURATION.milliseconds)
+
             ableToLaunchHoverAction = true
         }
     }
@@ -434,24 +314,79 @@ fun PointsSettingsScreen(
         }
     }
 
-    // Shows all points, excepted the currently dragged one, if any, to draw them inside the canva
-    val displayedFilteredPoints by remember(points, isDragging, selectedPoint?.id) {
-        derivedStateOf {
-            if (!isDragging || selectedPoint == null) points
-            else points - selectedPoint!!
-        }
-    }
+    // Shows all points, excepted the currently dragged one, if any, to draw them inside the canvas
+//    val displayedFilteredPoints by remember(points, isDragging, selectedPoint?.id) {
+//        derivedStateOf {
+//            if (!isDragging || selectedPoint == null) points
+//            else points - selectedPoint!!
+//        }
+//    }
 
     val offset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
     val zoom = remember { Animatable(1f) }
     val angle = remember { Animatable(0f) }
 
-    // Helper function to transform pointer coordinates back to original space
-    fun Offset.transformPointerCoordinates(): Offset = undoTransformations(
-        angle = { angle.value },
-        zoom = { zoom.value },
-        offset = { offset.value }
-    )
+
+    fun Offset.undoNormalization(): Offset = this + center
+//    fun Offset.undoNormalization(): Offset = this.undoTransformations(
+//        angle = { -angle.value },
+//        zoom = { -zoom.value },
+//        offset = { -offset.value }
+//    )
+
+
+    /**
+     * Holds an Offset and provides helper functions and value to manage it in the [PointsSettingsScreen] scope.
+     */
+    class TransformedOffset(
+        /**
+         * Original offset, in normal screen coordinates
+         * It will be transformed to give the actual useful values
+         */
+        private val offset: Offset
+    ) {
+        /**
+         * Transformed offset, represents the coordinated in space of the [offset] after undoing the
+         * transformations of [angle], [zoom], and [offset] that are only for visual in the settings screen
+         */
+        public val transformedOffset: Offset by lazy {
+            this.offset.undoTransformations(
+                angle = { angle.value },
+                zoom = { zoom.value },
+                offset = { offset.value }
+            )
+        }
+
+        /**
+         * Represents the offset of the point, if you do not account for both the [angle], [zoom], and [offset] transformations and the [center]
+         * in the middle ot the screen.
+         *
+         * ### **It's the offset you want to save into the points property**
+         * as it can be interpreted by the [org.elnix.dragonlauncher.points.PointsService] and be
+         * converted back to screen coordinates.
+         */
+        public val normalizedOffset: Offset by lazy {
+            this.transformedOffset - center
+        }
+
+        /**
+         * Computes the closest point relative to this [transformedOffset].
+         * @see org.elnix.dragonlauncher.points.PointsService.computeClosest
+         */
+        public val bestP: Point? by lazy {
+            pointsService.computeClosest(this.normalizedOffset, currentNest.id)
+        }
+
+        private val distance: Float by lazy {
+            val betsPOffset = this.bestP?.offset ?: return@lazy 0f
+            distance(betsPOffset, this.normalizedOffset)
+        }
+
+        public inline fun ifDistanceSmallEnough(block: () -> Point?): Point? = if (distance <= TOUCH_THRESHOLD_PX) block() else null
+    }
+
+    fun Offset.toTr(): TransformedOffset = TransformedOffset(this)
+
 
     SettingsScaffold(
         title = "",
@@ -480,7 +415,6 @@ fun PointsSettingsScreen(
                         } else null
 
                     val canGoNest = nestToGo != null
-
                     val canGoback = currentNest.id != 0
 
                     MultiSelectConnectedButtonRow(
@@ -542,144 +476,7 @@ fun PointsSettingsScreen(
                     }
                 }
 
-
-                // Undo/Redo and move bars
-                RowWithScrollIndicator(rowsScrollStates[1]) {
-//                    // The move left/right and text field entry, that animates on avery selected point
-//                    Row(
-//                        modifier = Modifier
-//                            .height(70.dp)
-//                            .padding(5.dp),
-//                        horizontalArrangement = Arrangement.Center,
-//                        verticalAlignment = Alignment.CenterVertically
-//                    ) {
-//                        DragonTooltip(R.string.move_point_clockwise) {
-//                            ToggleButton(
-//                                checked = false, // For the shape to be always the right one, and not a circle
-//                                onCheckedChange = {
-//                                    selectedPoint?.let { point ->
-//                                            point.angleDeg = normalizeAngle(point.angleDeg + 1)
-//                                            if (snapPoints) point.angleDeg = point.angleDeg
-//                                                .toInt()
-//                                                .toDouble()
-//                                            if (autoSeparatePoints) autoSeparate(
-//                                                points,
-//                                                nestId,
-//                                                circles.find { it.id == point.circleNumber },
-//                                                point
-//                                            )
-//
-//                                    }
-//                                },
-//                                enabled = aPointIsSelected,
-//                                shapes = ButtonGroupDefaults.connectedLeadingButtonShapes(),
-//                                colors = AppObjectsColors.toggleButtonColors(),
-//                            ) {
-//                                Icon(
-//                                    painter = painterResource(R.drawable.chevron_left),
-//                                    contentDescription = stringResource(R.string.move_point_clockwise)
-//                                )
-//                            }
-//                        }
-//
-//
-//                        val angleTextValue = selectedPoint
-//                            ?.angleDeg
-//                            ?.toBigDecimal()
-//                            ?.setScale(1, RoundingMode.UP)
-//                            ?.toDouble()
-//                            ?.toString()
-//                            ?: ""
-//
-//
-//                        var angleText by remember { mutableStateOf(angleTextValue) }
-//                        LaunchedEffect(angleTextValue) { angleText = angleTextValue }
-//
-//
-//                        fun commitEditTExt() {
-//                            try {
-//                                selectedPoint?.let { point ->
-//                                    applyChange {
-//                                        point.angleDeg = normalizeAngle(angleText.toDouble())
-//                                        if (snapPoints) point.angleDeg = point.angleDeg
-//                                            .toInt()
-//                                            .toDouble()
-//                                        if (autoSeparatePoints) autoSeparate(
-//                                            points,
-//                                            nestId,
-//                                            circles.find { it.id == point.circleNumber },
-//                                            point
-//                                        )
-//                                    }
-//                                }
-//                            } catch (e: Exception) {
-//                                ctx.showToast("Failed to set value: $e")
-//                                logE(SWIPE_TAG, e) { "Failed to set value for point via text field" }
-//                            }
-//                            isEditing = false
-//                        }
-//
-//                        Spacer(ButtonGroupDefaults.ConnectedSpaceBetween)
-//                        AnimatedVisibility(aPointIsSelected) {
-//                            EditValueTextField(
-//                                value = angleText,
-//                                onValueChange = { angleText = it },
-//                                enabled = aPointIsSelected,
-//                                textColor = MaterialTheme.colorScheme.onPrimary,
-//                                backgroundColor = MaterialTheme.colorScheme.primary,
-//                                onFocusChange = { isEditing = it },
-//                                onDone = ::commitEditTExt
-//                            )
-//                        }
-//
-//                        AnimatedVisibility(isEditing) {
-//                            DragonIconButton(
-//                                onClick = ::commitEditTExt,
-//                                colors = IconButtonDefaults.iconButtonColors(
-//                                    MaterialTheme.colorScheme.primary,
-//                                    MaterialTheme.colorScheme.onPrimary
-//                                ),
-//                                icon = R.drawable.check,
-//                                contentDescription = "Validate"
-//                            )
-//                        }
-//
-//                        Spacer(ButtonGroupDefaults.ConnectedSpaceBetween)
-//
-//                        DragonTooltip(R.string.move_point_anticlockwise) {
-//                            ToggleButton(
-//                                checked = false,
-//                                onCheckedChange = {
-//                                    selectedPoint?.let { point ->
-//                                        applyChange {
-//                                            point.angleDeg = normalizeAngle(point.angleDeg - 1)
-//                                            if (snapPoints) point.angleDeg = point.angleDeg
-//                                                .toInt()
-//                                                .toDouble()
-//                                            if (autoSeparatePoints) autoSeparate(
-//                                                points,
-//                                                nestId,
-//                                                circles.find { it.id == point.circleNumber },
-//                                                point
-//                                            )
-//                                        }
-//                                    }
-//                                },
-//                                enabled = aPointIsSelected,
-//                                shapes = ButtonGroupDefaults.connectedTrailingButtonShapes(),
-//                                colors = AppObjectsColors.toggleButtonColors(),
-//                            ) {
-//                                Icon(
-//                                    painter = painterResource(R.drawable.chevron_right),
-//                                    contentDescription = stringResource(R.string.move_point_anticlockwise),
-//                                )
-//                            }
-//                        }
-//                    }
-
-//                    Spacer(12.dp)
-                    UndoRedoBlock(pointsService.undoRedo)
-                }
+                UndoRedoBlock(pointsService.undoRedo)
 
 
                 // 3. Reset offset/zoom/rotation - add/remove circle
@@ -707,24 +504,22 @@ fun PointsSettingsScreen(
                     ) { entry ->
                         scope.launch {
                             when (entry) {
-
                                 Center -> scope.launch {
-                                    offset.animateTo(Offset.Zero)
+                                    offset.animateTo(Offset.Zero, bouncySpec())
                                 }
 
                                 ResetZoom -> scope.launch {
-                                    zoom.animateTo(1f)
+                                    zoom.animateTo(1f, bouncySpec())
                                 }
 
                                 ResetRotation -> scope.launch {
-                                    angle.animateTo(0f)
+                                    angle.animateTo(0f, bouncySpec())
                                 }
                             }
                         }
                     }
 
                     Spacer(12.dp)
-
 
                     DragonIconButton(
                         icon = R.drawable.shapes,
@@ -818,6 +613,9 @@ fun PointsSettingsScreen(
                     center = Offset(w / 2f, h / 2f)
                 }
         ) {
+
+            val iconBitmaps = rememberPointIconBitmaps()
+
             /**
              * Main Canva, draws the circles, and sub nests by recursivity
              *
@@ -842,15 +640,25 @@ fun PointsSettingsScreen(
 
                     NestOverlay(
                         center = center,
-                        depth = 1,
                         nest = currentNest,
                         preventBgErasing = true,
                         showConfiguratorDecorations = true,
-                        forceShowAllActionsInCurrentNest = true
+                        forceShowAllActionsInCurrentNest = true,
+                        iconBitmaps = iconBitmaps
                     )
 
                     // Live Nest: semi-transparent target nest preview at the selected point (nest editor only).
                     selectedPoint?.let { p ->
+                        // Animated Selected point
+                        PointIcon(
+                            center = selectedPointTempOffset.value,
+                            point = p,
+                            selected = true,
+                            preventBgErasing = true,
+                            showConfiguratorDecorations = true,
+                            iconBitmaps = iconBitmaps
+                        )
+
                         val liveTargetId = p.liveNestTargetNestId ?: return@let
                         val nestedNest = nests.find { it.id == liveTargetId } ?: return@let
                         val nestScale = p.liveNestScale ?: 0.5f
@@ -858,7 +666,7 @@ fun PointsSettingsScreen(
                         val hostCenter = if (isDragging) {
                             selectedPointTempOffset.value
                         } else {
-                            p.computePosition(nests, center)
+                            p.computePosition()
                         }
 
                         NestOverlay(
@@ -866,23 +674,11 @@ fun PointsSettingsScreen(
                                 alpha = 0.4f
                             },
                             center = hostCenter,
-                            depth = 1,
                             nest = scaledNest,
                             preventBgErasing = true,
                             showConfiguratorDecorations = true,
-                            forceShowAllActionsInCurrentNest = true
-                        )
-                    }
-
-                    // Animated Selected point
-                    if (selectedPoint != null) {
-                        PointIcon(
-                            center = selectedPointTempOffset.value,
-                            depth = 1,
-                            point = selectedPoint!!,
-                            selected = true,
-                            preventBgErasing = true,
-                            showConfiguratorDecorations = true
+                            forceShowAllActionsInCurrentNest = true,
+                            iconBitmaps = iconBitmaps
                         )
                     }
 
@@ -926,57 +722,35 @@ fun PointsSettingsScreen(
                         } else {
                             detectDragGestures(
                                 onDragStart = { tapOffset ->
-                                    val transformedOffset = tapOffset.transformPointerCoordinates()
+                                    val tr = tapOffset.toTr()
+                                    val newSelectedPoint = tr.ifDistanceSmallEnough { tr.bestP }
 
-                                    var closest: Point? = null
-                                    var best = Float.MAX_VALUE
-
-                                    // Can only select points on the same nest
-                                    filteredPoints.forEach { p ->
-                                        val pointOffset = p.computePosition(
-                                            nests = nests,
-                                            center = center
-                                        )
-                                        val dist = hypot(
-                                            transformedOffset.x - pointOffset.x,
-                                            transformedOffset.y - pointOffset.y
-                                        )
-
-                                        if (dist < best) {
-                                            best = dist
-                                            closest = p
-                                        }
-                                    }
-
-                                    select(if (best <= TOUCH_THRESHOLD_PX) closest else null)
-
-                                    selectedPoint?.let {
+                                    newSelectedPoint?.let {
+                                        select(it)
                                         scope.launch {
-                                            selectedPointTempOffset.snapTo(transformedOffset)
+                                            selectedPointTempOffset.snapTo(tr.transformedOffset)
                                         }
                                     }
                                 },
                                 onDrag = { change, _ ->
                                     change.consume()
-                                    val transformedPosition = change.position.transformPointerCoordinates()
+                                    val tr = change.position.toTr()
 
                                     // Update the selected point offset in real time (the dragging thing)
                                     selectedPoint?.let { p ->
 
                                         val newPosition: Offset = if (freeMoveDraggedPoint) {
-                                            transformedPosition
+                                            tr.transformedOffset
                                         } else {
-                                            val newPointValues = computePointMoved(
+                                            val (newPointValues, shapeId) = computePointMoved(
                                                 point = p,
-                                                pos = transformedPosition
+                                                normalizedOffset = tr.transformedOffset
                                             )
 
                                             p.copy(
-                                                offset = newPointValues ?: p.offset
-                                            ).computePosition(
-                                                nests = nests,
-                                                center = center
-                                            )
+                                                offset = newPointValues,
+                                                collidingShapeId = shapeId
+                                            ).computePosition()
                                         }
 
                                         scope.launch {
@@ -984,37 +758,16 @@ fun PointsSettingsScreen(
                                         }
                                     }
 
+                                    val bestPExcept =
+                                        if (selectedPoint != null) tr.bestP
+                                        else pointsService.computeClosest(tr.normalizedOffset, nestId)
 
-                                    var closest: Point? = null
-                                    var best = Float.MAX_VALUE
-
-                                    // Can only see points on the same nest
-                                    filteredPoints.filter { it.id != selectedPoint?.id }
-                                        .forEach { p ->
-
-                                            val pointOffset = p.computePosition(
-                                                nests = nests,
-                                                center = center
-                                            )
-                                            val dist = hypot(
-                                                transformedPosition.x - pointOffset.x,
-                                                transformedPosition.y - pointOffset.y
-                                            )
-
-                                            if (dist < best) {
-                                                best = dist
-                                                closest = p
-                                            }
-                                        }
-
-                                    closestHoveredPoint =
-                                        if (best <= TOUCH_THRESHOLD_PX) closest else null
+                                    closestHoveredPoint = tr.ifDistanceSmallEnough { bestPExcept }
 
                                 },
                                 onDragEnd = {
                                     selectedPoint?.let { p ->
-                                        val position = selectedPointTempOffset.value
-
+                                        val tr = selectedPointTempOffset.value.toTr()
 
                                         // 1) On finger release; if the user has hovered another point for long enough, (the glow overlay)
                                         //    do the computation to merge the 2 points
@@ -1046,7 +799,7 @@ fun PointsSettingsScreen(
                                                 // Creates a new go parent nest that'll be put on top of the nest, to easily exit this nest
                                                 pointsService.addPoint(false) { id ->
                                                     Point(
-                                                        offset = Offset(0f, 50f),
+                                                        offset = Offset(0f, 150f),
                                                         nestId = newNestId,
                                                         action = Action.GoParentNest,
                                                         id = id,
@@ -1065,28 +818,27 @@ fun PointsSettingsScreen(
                                         } else {
                                             // 2) No merging, just normal dragging and dropping
 
-                                            p.updatePosition(position)
-
-                                            if (autoSeparatePoints) {
-                                                autoSeparate(
-                                                    points = points,
-                                                    nest = currentNest,
-                                                    draggedPoint = p
+                                            val (newOffsetNormalized, shapeId) = computePointMoved(p, tr.normalizedOffset)
+                                            pointsService.editPoint(p.id) { old ->
+                                                old.copy(
+                                                    offset = newOffsetNormalized,
+                                                    collidingShapeId = shapeId
                                                 )
                                             }
 
-                                            // Compute final snapped position
-                                            val finalOffset = p.computePosition(nests, center)
+                                            if (autoSeparatePoints) {
+                                                TODO()
+                                            }
 
                                             if (freeMoveDraggedPoint) {
-                                                animateHomingTempOffset(finalOffset)
+                                                animateHomingTempOffset(newOffsetNormalized.undoNormalization())
                                             }
                                         }
-
-                                        // Clear dragging state and other points residues
-                                        closestHoveredPoint = null
-                                        ableToLaunchHoverAction = false
                                     }
+
+                                    // Clear dragging state and other points residues
+                                    closestHoveredPoint = null
+                                    ableToLaunchHoverAction = false
                                 }
                             )
                         }
@@ -1095,7 +847,7 @@ fun PointsSettingsScreen(
                         if (!isInDragAroundMode) {
                             detectTapGestures(
                                 onTap = { tapOffset ->
-                                    val transformedOffset = tapOffset.transformPointerCoordinates()
+                                    val tr = tapOffset.toTr()
 
                                     // Manual placement mode: place the current queued app where user tapped
                                     if (isInManualPlacementMode) {
@@ -1107,63 +859,46 @@ fun PointsSettingsScreen(
                                             } else null
 
                                         pointsService.addPoint { id ->
-
                                             Point(
                                                 id = id,
-                                                offset = tapOffset,
+                                                offset = tr.normalizedOffset,
                                                 action = action,
                                                 nestId = nestId,
                                                 liveNestTargetNestId = newLiveNest
                                             )
                                         }
 
-
-//                                            if (autoSeparatePoints) autoSeparate(
-//                                                points = points,
-//                                                nestId = nestId,
-//                                                circle = circles.find { it.id == circleId },
-//                                                draggedPoint = point
-//                                            )
+                                        if (autoSeparatePoints) {
+                                            TODO()
+                                        }
 
                                         manualPlacementQueue = manualPlacementQueue.drop(1)
                                     }
 
-                                    // Normal tap mode
-                                    var tapped: Point? = null
-                                    var best = Float.MAX_VALUE
 
-                                    filteredPoints.forEach { p ->
-                                        logV(SWIPE_TAG) { "Checking point ${p.id}" }
+                                    val newSelectedPoint = tr.ifDistanceSmallEnough {
+                                        if (selectedPoint?.id == tr.bestP?.id) {
+                                            // Same point tapped -> if circle next, open it, else edit point
+                                            if (selectedPoint?.action is Action.OpenCircleNest) {
+                                                nestNavigation.goToNest((selectedPoint?.action as Action.OpenCircleNest).nestId)
+                                                null
+                                            } else {
+                                                showEditDialog = selectedPoint
+                                                tr.bestP
+                                            }
 
-                                        val pointPos = p.computePosition(nests, center)
-                                        val dist = hypot(transformedOffset.x - pointPos.x, transformedOffset.y - pointPos.y)
-
-                                        if (dist < best) {
-                                            best = dist
-                                            tapped = p
-                                        }
+                                        } else tr.bestP
                                     }
 
-                                    logV(SWIPE_TAG) { "Best: $best, tapped: $tapped" }
+                                    select(newSelectedPoint)
 
-                                    select(
-                                        if (best <= TOUCH_THRESHOLD_PX)
-                                            if (selectedPoint?.id == tapped?.id) {
-                                                // Same point tapped -> if circle next, open it, else edit point
-                                                if (selectedPoint?.action is Action.OpenCircleNest) {
-                                                    nestNavigation.goToNest((selectedPoint?.action as Action.OpenCircleNest).nestId)
-                                                    null
-                                                } else {
-                                                    showEditDialog = selectedPoint
-                                                    tapped
-                                                }
-
-                                            } else tapped
-                                        else null
-                                    )
-
-                                    selectedPoint?.let {
-                                        recenterSelectedTempOffset()
+                                    newSelectedPoint?.let {
+                                        scope.launch {
+                                            selectedPointTempOffset.animateTo(
+                                                targetValue = newSelectedPoint.offset.undoNormalization(),
+                                                animationSpec = easingSpec()
+                                            )
+                                        }
                                     }
                                 }
                             )
@@ -1292,7 +1027,7 @@ fun PointsSettingsScreen(
                 showEditDefaultPoint = false
             }
         ) {
-            pointsService.set(newDefaultPoint = it)
+            pointsService.editDefaultPoint(newDefaultPoint = it)
             iconsViewModel.reloadAllPointsIcons()
 
             showEditDefaultPoint = false
@@ -1311,8 +1046,8 @@ fun PointsSettingsScreen(
                 resetDefaultPoint = true
             )
 
+            initializationViewModel.initialize()
             deselect()
-            showResetPointsAndNestsDialog = false
             showResetPointsAndNestsDialog = false
         }
     }

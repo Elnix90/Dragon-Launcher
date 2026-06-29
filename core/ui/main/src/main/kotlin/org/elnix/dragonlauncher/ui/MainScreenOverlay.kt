@@ -34,6 +34,7 @@ import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+import org.elnix.dragonlauncher.ui.actions.rememberPointIconBitmaps
 import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
@@ -73,10 +74,10 @@ fun MainScreenOverlay(
     val startObject = LocalStartLineObject.current
     val endObject = LocalEndLineObject.current
 
-    val rgbLine by UiSettingsStore.rgbLine.asState()
+    val rgbLine by AngleLineSettingsStore.rgbLine.asState()
 
     val showLaunchingAppLabel by UiSettingsStore.showLaunchingAppLabel.asState()
-    val showLaunchingAppIcon by UiSettingsStore.showLaunchingAppIcon.asState()
+    val showLaunchingAppIcon by UiSettingsStore.showPreviewPoint.asState()
 
     val appLabelIconOverlayTopPadding by UiSettingsStore.appLabelIconOverlayTopPadding.asState()
 
@@ -113,6 +114,9 @@ fun MainScreenOverlay(
         }
 
     val hoveredPoint = selectedPointsPerLevel.findLast { it != null }
+    LaunchedEffect(hoveredPoint) {
+        pointsService.select(hoveredPoint)
+    }
 
     val cycleActionsController = rememberCycleActionsController(
         currentAction = hoveredPoint,
@@ -162,8 +166,11 @@ fun MainScreenOverlay(
         hoveredPoint?.let { point ->
             if (!disableHapticFeedbackGlobally) {
                 // Determine which circle/haptic map to use
-                val nestHaptic = deepestController.nestedNest?.haptic
-                val targetShape = deepestController.nestedHit?.targetShape
+                val hitNest = deepestController.nestedNest ?: return@let
+
+                val nestHaptic = hitNest.haptic
+                val targetShape =
+                    hitNest.intersectionShapes.find { deepestController.nestedHit?.selectedPoint?.collidingShapeId == it.id }
 
                 val hapticToPerform = (point.haptic ?: targetShape?.haptic ?: nestHaptic ?: defaultHapticFeedback())
                 hapticToPerform.perform(ctx)
@@ -265,6 +272,8 @@ fun MainScreenOverlay(
         }
     }.reversed()
 
+    val iconBitmaps = rememberPointIconBitmaps()
+
     Box(Modifier.fillMaxSize()) {
 
         MainScreenOverlayDebugInfos(
@@ -330,55 +339,37 @@ fun MainScreenOverlay(
                             }
                             .drawBehind {
 
-                                    val lineColor: Color =
-                                        if (rgbLine) Color.hsv(angle360, 1f, 1f)
-                                        else extraColors.angleLine
+                                val lineColor: Color =
+                                    if (rgbLine) Color.hsv(angle360, 1f, 1f)
+                                    else extraColors.angleLine
 
-                                    actionLine(
-                                        start = liveNestCenterForDraw,
-                                        end = effectiveCurrentPos,
-                                        sweepAngle = sweepAngle,
-                                        lineColor = lineColor,
-                                        order = order,
-                                        showLineObjectPreview = showLineObjectPreview,
-                                        showAngleLineObjectPreview = showAngleLineObjectPreview,
-                                        showStartObjectPreview = showStartObjectPreview,
-                                        showEndObjectPreview = showEndObjectPreview,
-                                        pickedRememberShapeAngle = pickedRememberShapeAngle,
-                                        pickedRememberRotationAngle = pickedRememberRotationAngle,
-                                        pickedRememberRotationStart = pickedRememberRotationStart,
-                                        pickedRememberShapeStart = pickedRememberShapeStart,
-                                        pickedRememberRotationEnd = pickedRememberRotationEnd,
-                                        pickedRememberShapeEnd = pickedRememberShapeEnd,
-                                        lineCustomObject = lineObject,
-                                        angleLineCustomObject = angleLineObject,
-                                        startCustomObject = startObject,
-                                        endCustomObject = endObject
-                                    )
-
-//                                        drawIntoCanvas { canvas ->
-//                                            val bounds = Rect(0f, 0f, size.width, size.height)
-//                                            canvas.saveLayer(bounds, Paint())
-//
-//                                            val effectiveTargetCircle: Int = controller.nestedHit?.targetCircle ?: -1
-//                                            circlesSettingsOverlay(
-//                                                drawParams = drawParams,
-//                                                center = liveNestCenterForDraw,
-//                                                depth = 1,
-//                                                currentCircle = effectiveTargetCircle,
-//                                                circles = controller.scaledUiCircles,
-//                                                selectedPoint = outerSelectedPoint,
-//                                                nestId = nestedNestForDraw.id,
-//                                            )
-//
-//                                            canvas.restore()
-//                                        }
+                                actionLine(
+                                    start = liveNestCenterForDraw,
+                                    end = effectiveCurrentPos,
+                                    sweepAngle = sweepAngle,
+                                    lineColor = lineColor,
+                                    order = order,
+                                    showLineObjectPreview = showLineObjectPreview,
+                                    showAngleLineObjectPreview = showAngleLineObjectPreview,
+                                    showStartObjectPreview = showStartObjectPreview,
+                                    showEndObjectPreview = showEndObjectPreview,
+                                    pickedRememberShapeAngle = pickedRememberShapeAngle,
+                                    pickedRememberRotationAngle = pickedRememberRotationAngle,
+                                    pickedRememberRotationStart = pickedRememberRotationStart,
+                                    pickedRememberShapeStart = pickedRememberShapeStart,
+                                    pickedRememberRotationEnd = pickedRememberRotationEnd,
+                                    pickedRememberShapeEnd = pickedRememberShapeEnd,
+                                    lineCustomObject = lineObject,
+                                    angleLineCustomObject = angleLineObject,
+                                    startCustomObject = startObject,
+                                    endCustomObject = endObject
+                                )
                             }
                     ) {
                         NestOverlay(
                             center = liveNestCenterForDraw,
-                            depth = 1,
                             nest = nestedNestForDraw,
+                            iconBitmaps = iconBitmaps
                         )
                     }
                 } else break

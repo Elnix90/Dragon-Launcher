@@ -131,8 +131,7 @@ fun rememberLiveNestControllerStack(
             null
         } else {
             pointsService.resolveLiveNestHit(
-                center = rootStartPos,
-                pointerPos = current,
+                normalizedPos = current - rootStartPos,
                 nest = rootNest,
                 liveNestScale = 1f,
                 graceDistancePx = -1
@@ -178,10 +177,10 @@ fun rememberLiveNestControllerStack(
                             ?: defaultSwipePointsValues.liveNestGraceDistancePx!!
 
 
+                    val normalizedPos = current - level.liveNestCenter!!
 
                     pointsService.resolveLiveNestHit(
-                        center = level.liveNestCenter!!,
-                        pointerPos = current,
+                        normalizedPos = normalizedPos,
                         nest = level.nestedNest!!,
                         liveNestScale = level.liveNestScale,
                         graceDistancePx = graceDistancePx

@@ -288,8 +288,8 @@ public data class Point(
             liveNestMainNestOpacityPercent = 50
         )
 
-        public object PointsListJson: DragonJson<List<Point>>()
-        public object PointsJson: DragonJson<Point>()
+        public object PointsJson: DragonJson<Points>()
+        public object PointJson: DragonJson<Point>()
     }
 }
 

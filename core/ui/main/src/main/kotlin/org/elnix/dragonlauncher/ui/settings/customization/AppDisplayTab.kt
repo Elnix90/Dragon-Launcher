@@ -19,6 +19,7 @@ import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayerJson
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.PointsViewModel
+import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
@@ -46,7 +47,7 @@ fun AppDisplayTab(
     val scope = rememberCoroutineScope()
 
     val showLaunchingAppLabel by UiSettingsStore.showLaunchingAppLabel.asState()
-    val showLaunchingAppIcon by UiSettingsStore.showLaunchingAppIcon.asState()
+    val showLaunchingAppIcon by UiSettingsStore.showPreviewPoint.asState()
     val appLabelIconOverlayTopPadding by UiSettingsStore.appLabelIconOverlayTopPadding.asState()
     val showAllActionsOnCurrentCircle by UiSettingsStore.showAllActionsOnCurrentShape.asState()
 
@@ -92,7 +93,7 @@ fun AppDisplayTab(
         ExpandableSection(topOverlaySettingsState) {
 
             SettingsSwitchRow(UiSettingsStore.showLaunchingAppLabel)
-            SettingsSwitchRow(UiSettingsStore.showLaunchingAppIcon)
+            SettingsSwitchRow(UiSettingsStore.showPreviewPoint)
             SettingsSlider(
                 setting = UiSettingsStore.appLabelIconOverlayTopPadding,
                 color = MaterialTheme.colorScheme.primary
@@ -123,8 +124,7 @@ fun AppDisplayTab(
             }
 
             SettingsSwitchRow(UiSettingsStore.showAllActionsOnCurrentNest, enabled = showAllActionsOnCurrentCircle)
-            SettingsSwitchRow(UiSettingsStore.showAppPreviewIconCenterStartPosition)
-            SettingsSwitchRow(UiSettingsStore.rgbLine)
+            SettingsSwitchRow(UiSettingsStore.showPointPreviewCenterStartPosition)
             SettingsSwitchRow(UiSettingsStore.linePreviewSnapToAction)
             SettingsSwitchRow(UiSettingsStore.multiplyOrSubtractOpacityInLiveNests)
         }

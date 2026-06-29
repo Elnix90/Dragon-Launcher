@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.base.model.models
 
-import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
 import org.elnix.dragonlauncher.base.model.serializables.Point
 
 /**
@@ -13,7 +12,6 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
  */
 public data class HitResult(
     val selectedPoint: Point?,
-    val targetShape: IntersectionShape?,
     val isOutsideBounds: Boolean,
     val isInCancelZone: Boolean,
     val angle360: Float

@@ -29,6 +29,7 @@ import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.ktx.toDp
 import org.elnix.dragonlauncher.ui.actions.ActionIcon
+import org.elnix.dragonlauncher.ui.actions.rememberPointIconBitmaps
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.helpers.nests.PointIcon
 import org.elnix.dragonlauncher.ui.widgets.LauncherWidgetHolder
@@ -124,6 +125,8 @@ fun WidgetHostView(
                 id = -2
             )
 
+            val iconBitmaps = rememberPointIconBitmaps()
+
             BoxWithConstraints(
                 modifier = modifier
                     .size(sizeDp)
@@ -138,7 +141,7 @@ fun WidgetHostView(
                     selected = false,
                     point = editPoint,
                     center = center,
-                    depth = 1,
+                    iconBitmaps = iconBitmaps
                 )
             }
         }

@@ -29,7 +29,7 @@ public data class IntersectionShape(
     val size: Float,
 
     @SerialName("angle")
-    val angle: Int,
+    val angle: Int? = null,
 
     @SerialName("centerOffset")
     @Serializable(with = OffsetSerializer::class)
@@ -50,6 +50,7 @@ public data class IntersectionShape(
     public companion object {
         public object Defaults {
             public val borderStrokeDefault: Dp = 2.dp
+            public const val angleDefault: Int = 0
         }
     }
 }

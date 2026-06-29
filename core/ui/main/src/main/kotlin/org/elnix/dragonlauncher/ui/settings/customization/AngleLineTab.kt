@@ -26,15 +26,14 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.CustomObjectBlockProperties
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.dialogs.AngleLineObjectsOrderDialog
 import org.elnix.dragonlauncher.ui.dialogs.rememberLineObjectsOrder
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
@@ -82,7 +81,7 @@ fun AngleLineTab(onBack: () -> Unit) {
     var mutableEndObject by remember(lineObjects.endLine) { mutableStateOf(lineObjects.endLine) }
 
 
-    val rgbLine by UiSettingsStore.rgbLine.asState()
+    val rgbLine by AngleLineSettingsStore.rgbLine.asState()
 
 
     var dummyEnd by remember { mutableStateOf(Offset.Infinite) }
@@ -276,6 +275,8 @@ fun AngleLineTab(onBack: () -> Unit) {
                 ) { mutableEndObject = it }
             }
         }
+
+        SettingsSwitchRow(AngleLineSettingsStore.rgbLine)
     }
 
     if (showOrderDialog) {

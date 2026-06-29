@@ -7,10 +7,7 @@ import io.github.elnix90.core.objects.IntSettingObject
 import io.github.elnix90.core.objects.boolean
 import io.github.elnix90.core.objects.int
 import io.github.elnix90.core.stores.MapSettingsStore
-import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.specialObjects.PointSettingObject
-import org.elnix.dragonlauncher.settings.specialObjects.point
 
 @SettingsStore
 public object SwipeMapSettingsStore : MapSettingsStore() {
@@ -32,7 +29,4 @@ public object SwipeMapSettingsStore : MapSettingsStore() {
         title = R.string.show_advanced_edit_tools,
         default = false
     )
-
-    @SettingKey
-    public val defaultPoint: PointSettingObject = point(defaultSwipePointsValues)
 }

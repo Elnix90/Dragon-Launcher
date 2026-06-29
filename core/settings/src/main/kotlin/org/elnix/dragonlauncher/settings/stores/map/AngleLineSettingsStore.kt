@@ -14,6 +14,14 @@ import org.elnix.dragonlauncher.i18n.R
 @SettingsStore
 public object AngleLineSettingsStore : MapSettingsStore() {
 
+    /** Use the computing of HSV color to produce a color that depends on the angle / progress */
+    @SettingKey
+    public val rgbLine: BooleanSettingObject = boolean(
+        title = R.string.rgb_line_selector,
+        description = R.string.rgb_line_selector_description,
+        default = true
+    )
+
     @SettingKey
     public val showLineObjectPreview: BooleanSettingObject = boolean(
         title = R.string.show_app_line_preview,

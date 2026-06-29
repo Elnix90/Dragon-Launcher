@@ -10,7 +10,9 @@ public class SettingFlow<T>(default: T) {
     public val flow: StateFlow<T> = mutableFlow.asStateFlow()
 
     public var value: T
-        get() = mutableFlow.value
+        get() = mutableFlow.value.also {
+//            logWtf { "Accessing value: $it" }
+        }
         set(newValue) { mutableFlow.value = newValue }
 }
 

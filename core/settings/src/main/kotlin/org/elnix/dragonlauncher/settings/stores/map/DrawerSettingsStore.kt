@@ -81,7 +81,10 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val horizontalAlignment: EnumSettingObject<HorizontalAlignment> = enum(HorizontalAlignment.Start)
 
     @SettingKey
-    public val lastWorkspaceUsed: StringSettingObject = string("")
+    public val lastWorkspaceUsed: StringSettingObject = string(
+        default = "",
+        backupable = false
+    )
 
     @SettingKey
     public val leftDrawerAction: EnumSettingObject<DrawerActions> = enum(
