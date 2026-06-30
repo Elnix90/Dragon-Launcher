@@ -15,6 +15,7 @@ import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
@@ -26,6 +27,7 @@ import org.elnix.dragonlauncher.ui.composition.LocalEndLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.composition.LocalLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
+import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 import org.elnix.dragonlauncher.ui.composition.LocalShowLabelsInAddPointDialog
 import org.elnix.dragonlauncher.ui.composition.LocalStartLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalStatusBarElements
@@ -66,6 +68,9 @@ fun ProvideGlobalCompositionLocals(
 
     val iconShape by DrawerSettingsStore.iconShape.asState()
 
+    val nestDebugOverlay by DebugSettingsStore.nestDebugOverlay.asState()
+
+
     /**
      * Main Composition local provider, I just for everything I can here to avoid having to import them everywhere
      * I know that I should carefully review what global locals I add, but until now it worked to I'll keep it that way until I notice lag
@@ -84,7 +89,8 @@ fun ProvideGlobalCompositionLocals(
         LocalMainScreenLayers provides layersOrder,
         LocalShowLabelsInAddPointDialog provides showTooltipsOnAddPointDialog,
 
-        LocalDisableHapticFeedbackGlobally provides disableHapticFeedbackGlobally
+        LocalDisableHapticFeedbackGlobally provides disableHapticFeedbackGlobally,
+        LocalNestDebugOverlay provides nestDebugOverlay
     ) {
         ProvideCurrentTime {
             content()

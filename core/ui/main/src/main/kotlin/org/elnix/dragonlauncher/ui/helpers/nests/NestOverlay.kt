@@ -2,13 +2,17 @@ package org.elnix.dragonlauncher.ui.helpers.nests
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.components.IntersectionShape
+import org.elnix.dragonlauncher.ui.helpers.nests.cache.PointStableCache
 
 /**
  * Composable wrapper that renders a nest and its points inside a [Canvas].
@@ -26,23 +30,27 @@ fun NestOverlay(
     showConfiguratorDecorations: Boolean = false,
     forceShowAllActionsInCurrentNest: Boolean = false,
     allowShowPointCenter: Boolean = false,
+    hideSelectedPoint: Boolean = false,
 ) {
-
     val drawParams = rememberDrawParams(
         preventBgErasing = preventBgErasing,
         showConfiguratorDecorations = showConfiguratorDecorations,
         forceShowAllActionsInCurrentNest = forceShowAllActionsInCurrentNest,
         allowShowPointCenter = allowShowPointCenter,
+        hideSelectedPoint = hideSelectedPoint
     )
+    val iconTrigger by PointStableCache.cacheTrigger.asState()
 
-    Canvas(modifier) {
-        this.NestOverlay(
-            nest = nest,
-            depth = 1,
-            center = center,
-            drawParams = drawParams,
-            selectedAll = false,
-        )
+    key(iconTrigger) {
+        Canvas(modifier) {
+            this.NestOverlay(
+                nest = nest,
+                depth = 1,
+                center = center,
+                drawParams = drawParams,
+                selectedAll = false,
+            )
+        }
     }
 }
 
@@ -64,7 +72,8 @@ fun DrawScope.NestOverlay(
         )
     }
 
-    val filteredPoints = drawParams.pointsService.getPointsForNest(nest)
+    val hideSelected = drawParams.hideSelectedPoint
+    val filteredPoints = drawParams.pointsService.getPointsForNest(nest, hideSelected)
     val selectedPoint = drawParams.pointsService.selectedPoint.value
 
     filteredPoints.forEach { p ->

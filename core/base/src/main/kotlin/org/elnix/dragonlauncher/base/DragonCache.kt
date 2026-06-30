@@ -2,20 +2,14 @@ package org.elnix.dragonlauncher.base
 
 import io.github.elnix90.logging.ICONS_TAG
 import io.github.elnix90.logging.logD
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import java.util.Collections
 import java.util.UUID
 
 public abstract class DragonCache <K,V> (initialMaxSize: Int) {
     private var maxSize = initialMaxSize
-
     public val cacheUUID: UUID = UUID.randomUUID()
 
-    private val _iconsTrigger = MutableStateFlow(0)
-    public val iconsTrigger: StateFlow<Int> = _iconsTrigger.asStateFlow()
+    public val cacheTrigger: SettingFlow<Int> = SettingFlow(0)
 
     /**
      * Updates the maximum number of cached entries.
@@ -46,29 +40,28 @@ public abstract class DragonCache <K,V> (initialMaxSize: Int) {
 
 
     /**
-     * Get or compute, used in the [org.elnix.dragonlauncher.base.util.ImageUtils] object, to directly compute the icon when it is not in the cache.
-     * It's the most direct method, as if the icon isn't found in the list, it is updated real time
+     * Get or compute, used in the [org.elnix.dragonlauncher.base.util.ImageUtils] object, to directly compute [V] when it is not in the cache.
+     * It's the most direct method, as if the [V] isn't found in the list, it is updated real time
      *
-     * @param key the icon it of type [V]
-     * @param compute the function block used to compute the icon, it returns [androidx.compose.ui.graphics.ImageBitmap]
-     * @return [androidx.compose.ui.graphics.ImageBitmap] the actual icon, not null
+     * @param key the object it of type [V]
+     * @param compute the function block used to compute the object, it returns [androidx.compose.ui.graphics.ImageBitmap]
+     * @return [androidx.compose.ui.graphics.ImageBitmap] the actual object, not null
      */
     public fun getOrCompute(
         key: K,
         compute: () -> V
     ): V =
         icons.getOrPut(key) {
-            _iconsTrigger.update { it + 1 }
+            cacheTrigger.update { it + 1 }
             compute()
         }
 
     /**
      * Get or lazy compute, used in the `AppPreviewTitle` Composable, to delegate computing to the viewmodel,
-     * when it can't directly load the icon, with the scope it has
+     * when it can't directly load the object, with the scope it has
      *
-     * @param id the icon it of type [V]
-     * @param compute the function block used to compute the icon, it returns [androidx.compose.ui.graphics.ImageBitmap]
-     * @return [androidx.compose.ui.graphics.ImageBitmap] the actual icon, not null
+     * @param compute the function block used to compute the object, it returns [androidx.compose.ui.graphics.ImageBitmap]
+     * @return [androidx.compose.ui.graphics.ImageBitmap] the actual object, not null
      */
     public fun getOrLazyCompute(
         key: K,
@@ -77,14 +70,14 @@ public abstract class DragonCache <K,V> (initialMaxSize: Int) {
         val result = icons[key]
         if (result == null) {
             compute()
-            logD(ICONS_TAG) { "Failed to get icon for $key. Computing it lazily\ncacheUUID: $cacheUUID\nmaxSize: $maxSize, size: $size" }
+            logD(ICONS_TAG) { "Failed to get object for $key. Computing it lazily\ncacheUUID: $cacheUUID\nmaxSize: $maxSize, size: $size" }
         }
         return result
     }
 
-    /*** Compute simply a new icon, don't return it */
+    /** Compute simply a new object, don't return it */
     public fun compute(key: K, compute: () -> V) {
-        _iconsTrigger.update { it + 1 }
+        cacheTrigger.update { it + 1 }
         icons[key] = compute()
     }
 

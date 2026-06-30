@@ -7,6 +7,7 @@ import android.graphics.PorterDuffColorFilter
 import android.icu.text.NumberFormat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -93,15 +94,13 @@ fun ShapedLauncherIcon(
         )
     }
 
-
+    val systemInDarkTheme = isSystemInDarkTheme()
     val renderSettings = LauncherIconRenderSettings(
         size = size.px.toInt(),
         fgThemeColor = MaterialTheme.colorScheme.onPrimaryContainer.toArgb(),
         bgThemeColor = MaterialTheme.colorScheme.primaryContainer.toArgb(),
-        fgTone = 90,
-        bgTone = 30,
-//        fgTone = if (LocalDarkTheme.current) 90 else 10,TODO
-//        bgTone = if (LocalDarkTheme.current) 30 else 90,
+        fgTone = if (systemInDarkTheme) 90 else 10,
+        bgTone = if (systemInDarkTheme) 30 else 90,
     )
 
     var currentBitmap by remember {

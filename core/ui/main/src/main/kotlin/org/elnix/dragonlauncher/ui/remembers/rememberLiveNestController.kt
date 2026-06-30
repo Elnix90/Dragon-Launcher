@@ -8,7 +8,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
-import io.github.elnix90.logging.POINTS_TAG
 import io.github.elnix90.logging.SWIPE_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
@@ -94,8 +93,6 @@ fun rememberLiveNestControllerStack(
     val maxNestingDepth by UiSettingsStore.maxLiveNestsDepth.asState()
 
     var resetTrigger by remember { mutableIntStateOf(0) }
-
-    logD(POINTS_TAG) { maxNestingDepth.toString() }
 
     val sweepAngleStateStack: List<SweepAngleState> = remember(maxNestingDepth) {
         List(maxNestingDepth) { createSweepAngleState() }

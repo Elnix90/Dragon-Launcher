@@ -2,12 +2,11 @@ package org.elnix.dragonlauncher.ui.actions
 
 import android.os.Build
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
-import kotlinx.coroutines.flow.first
-import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeResId
@@ -29,10 +28,7 @@ fun actionLabel(
     return when (action) {
 
         is Action.LaunchApp -> {
-            var app: Application? = null
-            LaunchedEffect(action) {
-                app = drawerViewModel.findOne(action.packageName, action.profile.userHandle).first()
-            }
+            val app by drawerViewModel.findOne(action.packageName, action.profile.userHandle).collectAsState(null)
             app?.label ?: action.packageName
         }
 

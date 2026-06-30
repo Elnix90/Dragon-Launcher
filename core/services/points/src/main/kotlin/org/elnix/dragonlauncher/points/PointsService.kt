@@ -88,7 +88,10 @@ public interface PointsService {
      */
     public fun computePointOffset(point: Point): Offset
 
-    public fun getPointsForNest(nest: Nest): Points
+    public fun getPointsForNest(
+        nest: Nest,
+        skipSelected: Boolean
+    ): Points
 
     /**
      * Compute the closest point relative to the [normalizedPos] given their [Point.offset] and the eventual [shape][Point.collidingShapeId] they are tied to
@@ -118,6 +121,13 @@ public interface PointsService {
 internal class PointsServiceImpl(
     private val ctx: Context
 ) : PointsService {
+
+    private typealias GridCase = Pair<Int, Int>
+    private typealias MutablePoints = MutableSet<Point>
+    private typealias GridMap = MutableMap<GridCase, MutablePoints>
+    private typealias NestGrid = MutableMap<Int, MutablePoints>
+    private typealias FurthestGrid = MutableMap<Int, Point?>
+
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override val defaultPoint: SettingFlow<Point> = SettingFlow(dummySwipePoint())
@@ -128,7 +138,7 @@ internal class PointsServiceImpl(
 
     override val selectedPoint: SettingFlow<Point?> = SettingFlow(null)
     override fun select(id: Int?) {
-        undoRedo.applyChange{
+        undoRedo.applyChange {
             selectedPoint.value = points.value.find { it.id == id }
         }
     }
@@ -164,6 +174,8 @@ internal class PointsServiceImpl(
                 loadNests()
                 loadDefaultPoint()
             }.await()
+
+            resetGrids()
         }
     }
 
@@ -171,42 +183,87 @@ internal class PointsServiceImpl(
         val existingIds = points.value.mapTo(mutableSetOf()) { it.id }
         val newId = getNextId(existingIds)
         val newPoint = newPoint(newId)
-
-        val pointGridCell: GridCase = cellKey(newPoint.offset)
-        grid.getOrPut(pointGridCell) { mutableSetOf() }.add(newPoint)
+//        val nestId = newPoint.nestId
+//
+//        val pointGridCell: GridCase = cellKey(newPoint.offset)
+//        grid.getOrPut(pointGridCell) { mutableSetOf() }.add(newPoint)
+//        nestGrid[nestId]?.plus(newPoint)
+//
+//
+//        val furthestForNest = furthestPointGrid[nestId]
+//
+//        if (furthestForNest != null && furthestForNest.offset.getDistanceSquared() > newPoint.offset.getDistanceSquared()) {
+//            furthestPointGrid[nestId] = newPoint
+//        }
 
         undoRedo.applyChange { points.value += newPoint }
-        pointsByNestId = null
         if (select) select(newId)
+        resetGrids()
         return newId
     }
 
     override fun removePoint(id: Int): Boolean {
         val pointToRemove = points.value.find { it.id == id } ?: return false
-
-        val pointGridCell = cellKey(pointToRemove.offset)
-        grid[pointGridCell]?.remove(pointToRemove)
+//        val nestId = pointToRemove.nestId
+//
+//        val pointGridCell = cellKey(pointToRemove.offset)
+//        grid[pointGridCell]?.remove(pointToRemove)
+//        nestGrid[nestId]?.minus(pointToRemove)
+//
+//        val furthestForNest = furthestPointGrid[nestId]
+//        if (furthestForNest?.id == pointToRemove.id) {
+//            furthestPointGrid[nestId] = nestGrid[nestId]?.maxByOrNull { it.offset.getDistanceSquared() }
+//        }
 
         undoRedo.applyChange { points.value -= pointToRemove }
-        pointsByNestId = null
+
+
+        resetGrids()
+
         return true
     }
 
     override fun editPoint(id: Int, editedPoint: (Point) -> Point): Boolean {
         val oldPoint = points.value.find { it.id == id } ?: return false
-
-        val oldPointGridCell = cellKey(oldPoint.offset)
-        grid[oldPointGridCell]?.remove(oldPoint)
-
         val editedPoint = editedPoint(oldPoint)
-        val newPointGridCell = cellKey(editedPoint.offset)
-        grid.getOrPut(newPointGridCell) { mutableSetOf() }.add(editedPoint)
+//
+//        val oldNestId = oldPoint.nestId
+//        val editedNestId = editedPoint.nestId
+//
+//        val oldPointGridCell = cellKey(oldPoint.offset)
+//        grid[oldPointGridCell]?.remove(oldPoint)
+//
+//        val newPointGridCell = cellKey(editedPoint.offset)
+//        grid.getOrPut(newPointGridCell) { mutableSetOf() }.add(editedPoint)
+//
+//        nestGrid[oldPoint.nestId]?.minus(oldPoint)
+//        nestGrid[editedPoint.nestId]?.plus(editedPoint)
+//
+//
+//        if (oldNestId == editedNestId) {
+//            val furthestForNest = furthestPointGrid[oldNestId]
+//            if (furthestForNest != null && furthestForNest.offset.getDistanceSquared() < editedPoint.offset.getDistanceSquared()) {
+//                furthestPointGrid[oldNestId] = editedPoint
+//            }
+//        } else {
+//            // Shit again here bc the point has moved from nest
+//            val furthestForNest = furthestPointGrid[oldNestId]
+//            if (furthestForNest != null && furthestForNest.id == id) {
+//                // This is really annoying bc
+//            }
+//
+//        }
+//        if (furthestForNest?.id == pointToRemove.id) {
+//            furthestPointGrid[nestId] = nestGrid[nestId]?.maxByOrNull { it.offset.getDistanceSquared() }
+//        }
 
         undoRedo.applyChange {
             points.value -= oldPoint
             points.value += editedPoint
         }
-        pointsByNestId = null
+
+        resetGrids()
+
         return true
     }
 
@@ -214,11 +271,7 @@ internal class PointsServiceImpl(
         val existingIds = nests.value.mapTo(mutableSetOf()) { it.id }
         val newId = if (nestId != null && nestId !in existingIds) nestId else getNextId(existingIds)
         val newNest = Nest(id = newId)
-
-        undoRedo.applyChange {
-            nests.value += newNest
-        }
-
+        undoRedo.applyChange { nests.value += newNest }
         return newId
     }
 
@@ -238,9 +291,7 @@ internal class PointsServiceImpl(
     }
 
     override fun editDefaultPoint(newDefaultPoint: Point) {
-        undoRedo.applyChange {
-            set(newDefaultPoint = newDefaultPoint)
-        }
+        undoRedo.applyChange { set(newDefaultPoint = newDefaultPoint) }
     }
 
     override fun persist() {
@@ -261,13 +312,11 @@ internal class PointsServiceImpl(
         newNests: Nests?,
         newDefaultPoint: Point?
     ) {
-        require(newPoints != null || newNests != null || newDefaultPoint != null) {
-            "One of all 3 arg must not bu null"
-        }
+        require(newPoints != null || newNests != null || newDefaultPoint != null) { "One of all 3 args must not bu null" }
 
         if (newPoints != null) {
             points.value = newPoints
-            resetGrid()
+            resetGrids()
         }
 
         if (newNests != null) {
@@ -287,15 +336,13 @@ internal class PointsServiceImpl(
         resetNests: Boolean,
         resetDefaultPoint: Boolean
     ) {
-        require(resetPoints || resetNests || resetDefaultPoint) {
-            "Must at least reset something"
-        }
+        require(resetPoints || resetNests || resetDefaultPoint) { "Must at least reset something" }
 
         undoRedo.applyChange {
             if (resetPoints) {
                 points.value = emptySet()
                 selectedPoint.value = null
-                resetGrid()
+                resetGrids()
             }
             if (resetNests) {
                 nests.value = emptySet()
@@ -310,7 +357,7 @@ internal class PointsServiceImpl(
 
     private suspend fun loadPoints() {
         points.value = PointsJson.decode<Points>(PointsSettingsStore.jsonSetting.get(ctx), emptySet())
-        resetGrid()
+        resetGrids()
     }
 
     private suspend fun loadNests() {
@@ -331,24 +378,38 @@ internal class PointsServiceImpl(
     }
 
 
-
     private var grid: GridMap = mutableMapOf()
+    private var nestGrid: NestGrid = mutableMapOf()
+    private var furthestPointGrid: FurthestGrid = mutableMapOf()
+
     private var lastTarget: Offset = Offset.Zero
     private var searchRadius: Int = 1
-
     private val gridSize = 150f
 
-    /** Cache of nest-id → points, rebuilt lazily after every points mutation. */
-    private var pointsByNestId: Map<Int, Points>? = null
+    /**
+     * I originally wanted to update the caches dynamically when any points is updated,
+     * but it was way too many errors that could create caches misses and undefined behavior.
+     * Now since the points shouldn't be updated when you usually drag in the main screen
+     */
+    private fun resetGrids() {
+        grid = points.value.groupByTo(mutableMapOf<GridCase, MutablePoints>()) { point -> cellKey(point.offset) }
+        nestGrid = points.value.groupByTo(mutableMapOf<Int, MutablePoints>()) { point -> point.nestId }
 
 
-    private fun resetGrid() {
-        grid = buildGrid(points.value)
-        pointsByNestId = null
+        furthestPointGrid = points.value
+            .groupBy { it.nestId }
+            .mapValues { (_, nestPoints) ->
+                nestPoints.maxByOrNull { it.offset.getDistanceSquared() }
+            }
+            .toMutableMap()
+
+
         lastTarget = Offset.Zero
         searchRadius = 1
     }
 
+
+    override fun getFurthestPoint(nest: Nest): Point? = furthestPointGrid[nest.id]
 
     override fun computeClosestExcept(
         ignoredPointId: Int?,
@@ -409,14 +470,6 @@ internal class PointsServiceImpl(
         )
 
 
-    // TODO cache this
-    override fun getFurthestPoint(nest: Nest): Point? {
-        return points.value
-            .filter { it.nestId == nest.id }
-            .maxByOrNull { it.offset.getDistanceSquared() }
-    }
-
-
     override fun resolveLiveNestHit(
         normalizedPos: Offset,
         nest: Nest,
@@ -468,19 +521,14 @@ internal class PointsServiceImpl(
         return shape.centerOffset + boundary
     }
 
-    override fun getPointsForNest(nest: Nest): Points {
-        var cache = pointsByNestId
-        if (cache != null) return cache[nest.id] ?: emptySet()
-
-        cache = mutableMapOf<Int, MutablePoints>()
-        for (p in points.value) {
-            val nid = p.nestId ?: continue
-            cache.getOrPut(nid) { mutableSetOf() }.add(p)
-        }
-        pointsByNestId = cache
-        return cache[nest.id] ?: emptySet()
+    override fun getPointsForNest(
+        nest: Nest,
+        skipSelected: Boolean
+    ): Points {
+        val pointsInTheNest: MutablePoints = nestGrid[nest.id] ?: return emptySet()
+        val selectedPoint = selectedPoint.value ?: return pointsInTheNest
+        return if (skipSelected) pointsInTheNest - selectedPoint else pointsInTheNest
     }
-
 
     /** Returns the point where the ray at [angleRad] (from origin) first hits
      *  the boundary of [iconShape] when the shape is inscribed in a circle of
@@ -570,14 +618,7 @@ internal class PointsServiceImpl(
         }
     }
 
-    private fun buildGrid(points: Points): GridMap =
-        points.groupByTo(mutableMapOf<GridCase, MutablePoints>()) { point -> cellKey(point.offset) }
-
     private fun cellKey(offset: Offset): GridCase =
         Pair((offset.x / gridSize).toInt(), (offset.y / gridSize).toInt())
 
 }
-
-private typealias GridCase = Pair<Int, Int>
-private typealias MutablePoints = MutableSet<Point>
-private typealias GridMap = MutableMap<GridCase, MutablePoints>

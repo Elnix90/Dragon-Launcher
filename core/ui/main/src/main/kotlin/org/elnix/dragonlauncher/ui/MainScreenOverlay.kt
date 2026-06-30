@@ -17,9 +17,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.logging.POINTS_TAG
 import io.github.elnix90.logging.SWIPE_TAG
-import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logI
 import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.serializables.Action
@@ -94,8 +92,6 @@ fun MainScreenOverlay(
 
     // Find which level is currently active (deepest active one)
     val activeLevelIndex = liveNestControllersStack.indexOfLast { it.isActive }
-
-    logD(POINTS_TAG) { liveNestControllersStack.toString() }
     assert(activeLevelIndex > -1)
 
     val deepestController = liveNestControllersStack[activeLevelIndex]
@@ -261,7 +257,7 @@ fun MainScreenOverlay(
             val percent =
                 (controller.hostPoint?.liveNestMainNestOpacityPercent ?: defaultPoint.liveNestMainNestOpacityPercent)
                     .takeIf { it != -1 } ?: Point.defaultLiveNestMainNestOpacityPercent
-            
+
             if (multiplyOrSubtractOpacityInLiveNests) {
                 alpha -= percent.coerceIn(0, 100) / 100f
             } else {

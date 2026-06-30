@@ -115,8 +115,7 @@ public data class Point(
     val id: Int,
 
     /** Which nest this points belongs to, this value cannot be null, as each [Point] belongs to a nest */
-    val nestId: Int? = 0,
-
+    val nestId: Int = 0,
 
     /**
      * Whether this points snaps to one of the shapes of its [nestId]
@@ -261,6 +260,8 @@ public data class Point(
 
     public fun getSize(defaultPoint: Point): Dp = (size ?: defaultPoint.size ?: defaultSize).coerceAtLeast(1).dp
     public fun getInnerPadding(defaultPoint: Point): Dp = (innerPadding ?: defaultPoint.innerPadding ?: defaultInnerPadding).coerceAtLeast(1).dp
+
+
 
     override fun toString(): String = "Point(id = ${this.id})"
 

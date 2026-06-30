@@ -5,29 +5,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.rememberTextMeasurer
 import io.github.elnix90.runtime.asState
-import org.elnix.dragonlauncher.base.model.serializables.Nests
-import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.model.serializables.Points
 import org.elnix.dragonlauncher.base.theme.ExtraColors
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.points.PointsService
-import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
+import org.elnix.dragonlauncher.ui.helpers.nests.cache.RememberPointStableCaches
+
 
 /**
- * Parameters forwarded to every DrawScope-level nest/point drawing function.
+ * Aggregated drawing parameters derived from [PointsViewModel] and other reactive sources.
  *
- * @property iconBitmaps Pre-rendered action icons keyed by point id.
+ * Composed once per key change inside [rememberDrawParams] so that no computation
+ * is duplicated inside the DrawScope drawing functions.
  */
 data class DrawParams(
     val ctx: Context,
-    val points: Points,
-    val nests: Nests,
-    val defaultPoint: Point,
+
     val pointsService: PointsService,
     val extraColors: ExtraColors,
 
@@ -40,22 +39,25 @@ data class DrawParams(
     val showCurrentPoint: Boolean,
     val showAllActionsInCurrentShape: Boolean,
     val showAllActionsInCurrentNest: Boolean,
-    val nestDebugOverlay: Boolean
+    val hideSelectedPoint: Boolean,
+
+    val nestDebugOverlay: Boolean,
+    val textMeasurer: TextMeasurer
 )
 
 /**
  * Creates a [DrawParams] reactively observing the current [PointsViewModel] state.
  *
  * The returned instance updates whenever [PointsService.points], [PointsService.nests],
- * [PointsService.defaultPoint], or [iconBitmapsVersion] change.
+ * [PointsService.defaultPoint], or any observed UI / debug setting changes.
+ *
+ * As a side effect this function also drives [RememberPointStableCaches] which keeps
+ * [org.elnix.dragonlauncher.ui.helpers.nests.cache.PointStableCache] synchronised with the current point set.
  *
  * @param pointsViewModel source of point/nest data
  * @param preventBgErasing when true the nest background is preserved (not cleared)
  * @param showConfiguratorDecorations when true shows cycle/hold-and-run badges
  * @param forceShowAllActionsInCurrentNest when true every point of the nest is drawn
- * @param iconBitmaps pre-rendered action icon bitmaps
- * @param iconBitmapsVersion version counter for [iconBitmaps] content changes;
- *   pass `iconBitmaps.size` when using a [SnapshotStateMap][androidx.compose.runtime.snapshots.SnapshotStateMap]
  */
 @Composable
 fun rememberDrawParams(
@@ -63,33 +65,36 @@ fun rememberDrawParams(
     showConfiguratorDecorations: Boolean,
     forceShowAllActionsInCurrentNest: Boolean,
     allowShowPointCenter: Boolean,
+    hideSelectedPoint: Boolean,
     pointsViewModel: PointsViewModel = activityViewModel()
 ): DrawParams {
     val ctx = LocalContext.current
     val extraColors = LocalExtraColors.current
-    val pointService = pointsViewModel.pointsService
-
-    val points by pointService.points.asState()
-    val nests by pointService.nests.asState()
-    val defaultPoint by pointService.defaultPoint.asState()
 
     val showCurrentPoint by UiSettingsStore.showPreviewPoint.asState()
     val maxNestsDepth by UiSettingsStore.maxNestsDepth.asState()
     val showPointInCenter by UiSettingsStore.showPointPreviewCenterStartPosition.asState()
 
-    val nestDebugOverlay by DebugSettingsStore.nestDebugOverlay.asState()
+    val showAllActionInCurrentShape by UiSettingsStore.showAllActionsOnCurrentShape.asState()
+    val showPointPreviewCenterStartPosition by UiSettingsStore.showPointPreviewCenterStartPosition.asState()
+
+    val textMeasurer = rememberTextMeasurer()
+    val nestDebugOverlay = LocalNestDebugOverlay.current
+
+    RememberPointStableCaches(textMeasurer)
 
     return remember(
-        points,
-        nests,
-        defaultPoint,
+        extraColors,
+        showCurrentPoint,
+        maxNestsDepth,
+        showPointInCenter,
+        showAllActionInCurrentShape,
+        showPointPreviewCenterStartPosition,
+        textMeasurer
     ) {
         DrawParams(
             ctx = ctx,
-            points = points,
-            nests = nests,
-            defaultPoint = defaultPoint,
-            pointsService = pointService,
+            pointsService = pointsViewModel.pointsService,
             extraColors = extraColors,
             maxNestsDepth = maxNestsDepth,
             preventBgErasing = preventBgErasing,
@@ -97,9 +102,11 @@ fun rememberDrawParams(
             preventDrawingSubNests = false,
             showConfiguratorDecorations = showConfiguratorDecorations,
             showCurrentPoint = showCurrentPoint,
-            showAllActionsInCurrentShape = false,
-            showAllActionsInCurrentNest = forceShowAllActionsInCurrentNest,
-            nestDebugOverlay = nestDebugOverlay
+            showAllActionsInCurrentShape = showAllActionInCurrentShape,
+            showAllActionsInCurrentNest = forceShowAllActionsInCurrentNest || showPointPreviewCenterStartPosition,
+            hideSelectedPoint = hideSelectedPoint,
+            nestDebugOverlay = nestDebugOverlay,
+            textMeasurer = textMeasurer
         )
     }
 }

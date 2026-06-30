@@ -3,18 +3,21 @@ package org.elnix.dragonlauncher.ui.helpers.nests
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.unit.IntSize
+import io.github.elnix90.logging.POINTS_TAG
+import io.github.elnix90.logging.logW
 import org.elnix.dragonlauncher.base.cache.DrawPathCache
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ui.helpers.customobjects.shapeToPath
+import org.elnix.dragonlauncher.ui.helpers.nests.cache.PointStableCache
 
 
 @Suppress("FunctionName")
@@ -22,16 +25,21 @@ fun DrawScope.PointBg(
     point: Point,
     selected: Boolean,
     center: Offset,
-    drawParams: DrawParams,
-    iconBitmap: ImageBitmap?,
+    drawParams: DrawParams
 ) {
-    val defaultPoint = drawParams.defaultPoint
     val extraColors = drawParams.extraColors
+    val defaultPoint = drawParams.pointsService.defaultPoint.value
 
-    val sizePx: Float = point.getSize(defaultPoint).toPx()
-    val innerPaddingPx: Float = point.getInnerPadding(defaultPoint).toPx()
+    val cached = PointStableCache[point.id] ?: run {
+        logW(POINTS_TAG) {
+            "Failed to get cache!!!"
+        }
+        return
+    }
 
-    val borderRadii: Float = ((sizePx / 2 + innerPaddingPx).coerceAtLeast(0f))
+    val iconBitmap = cached.imageBitmap
+    val iconSize = cached.iconSize
+    val sizePx = cached.sizePx
 
     val borderStroke: Float =
         if (selected) {
@@ -64,11 +72,17 @@ fun DrawScope.PointBg(
 
     val borderShape = borderIconShape.resolveShape()
 
-    val iconSizeF = borderRadii * 2f
-    val iconSize = Size(iconSizeF, iconSizeF)
-
     val path = DrawPathCache.getOrCompute(Pair(borderIconShape, iconSize)) {
         shapeToPath(borderShape, iconSize)
+    }
+
+    val drawScopeText = cached.drawScopeText
+
+    if (drawScopeText != null) {
+        drawText(
+            textLayoutResult = drawScopeText.textLayoutResult,
+            topLeft = center - drawScopeText.topLeft
+        )
     }
 
     translate(
@@ -81,34 +95,30 @@ fun DrawScope.PointBg(
             style = Fill
         )
 
-        if (borderStroke > 0f) {
-            if (borderColor.alpha != 0f) {
-                drawPath(
-                    path = path,
-                    color = borderColor,
-                    style = Stroke(width = borderStroke)
-                )
-            }
+        if (borderStroke > 0f && borderColor.alpha != 0f) {
+            drawPath(
+                path = path,
+                color = borderColor,
+                style = Stroke(width = borderStroke)
+            )
         }
     }
 
     if (iconBitmap != null) {
-        val iconDrawSize = sizePx.coerceAtLeast(1f)
         val iconPath = DrawPathCache.getOrCompute(
-            Pair(borderIconShape, Size(iconDrawSize, iconDrawSize))
+            Pair(borderIconShape, Size(sizePx, sizePx))
         ) {
-            shapeToPath(borderShape, Size(iconDrawSize, iconDrawSize))
+            shapeToPath(borderShape, Size(sizePx, sizePx))
         }
 
-
         translate(
-            left = center.x + iconDrawSize / -2f,
-            top = center.y + iconDrawSize / -2f
+            left = center.x + sizePx / -2f,
+            top = center.y + sizePx / -2f
         ) {
             clipPath(iconPath) {
                 drawImage(
                     image = iconBitmap,
-                    dstSize = IntSize(iconDrawSize.toInt(), iconDrawSize.toInt())
+                    dstSize = IntSize(sizePx.toInt(), sizePx.toInt())
                 )
             }
         }

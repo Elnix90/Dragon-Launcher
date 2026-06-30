@@ -8,7 +8,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.scale
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.ui.actions.BitmapPointIconsCache
 
 /**
  * Composable wrapper that renders a single point icon inside a [Canvas].
@@ -33,6 +32,7 @@ fun PointIcon(
         showConfiguratorDecorations = showConfiguratorDecorations,
         forceShowAllActionsInCurrentNest = forceShowAllActionsInCurrentNest,
         allowShowPointCenter = false,
+        hideSelectedPoint = false
     )
 
     Canvas(modifier = modifier) {
@@ -67,8 +67,7 @@ fun DrawScope.PointIcon(
             point = point,
             selected = selected,
             center = center,
-            drawParams = drawParams,
-            iconBitmap = BitmapPointIconsCache[point.id]
+            drawParams = drawParams
         )
     } else {
         drawParams.pointsService.nests.value

@@ -371,7 +371,7 @@ fun PointsSettingsScreen(
         }
 
         private val distance: Float by lazy {
-            val betsPOffset = this.bestP?.offset ?: return@lazy 0f
+            val betsPOffset = this.bestP?.offset ?: return@lazy Float.MAX_VALUE
             distance(betsPOffset, this.normalizedOffset)
         }
 
@@ -418,7 +418,8 @@ fun PointsSettingsScreen(
             )
         },
         bottomContent = {
-            if (showAdvancedEditTools) { // Row with nest toolbar and toggle buttons toolbar
+            if (showAdvancedEditTools) {
+                // Row with nest toolbar and toggle buttons toolbar
                 RowWithScrollIndicator(rowsScrollStates[0]) {
                     // Nests toolbar
                     val nestToGo =
@@ -640,14 +641,14 @@ fun PointsSettingsScreen(
                         rotationZ = angle.value
                         transformOrigin = TransformOrigin(0f, 0f)
                     }
-
             ) {
                 NestOverlay(
                     center = center,
                     nest = currentNest,
                     preventBgErasing = true,
                     showConfiguratorDecorations = true,
-                    forceShowAllActionsInCurrentNest = true
+                    forceShowAllActionsInCurrentNest = true,
+                    hideSelectedPoint = true
                 )
 
                 selectedPoint?.let { p ->
@@ -750,11 +751,12 @@ fun PointsSettingsScreen(
                                         }
                                     }
 
-                                    val bestPExcept =
-                                        if (selectedPoint != null) tr.bestP
-                                        else pointsService.computeClosest(tr.normalizedOffset, nestId)
+                                    val bestPExcept = pointsService.computeClosestExcept(selectedPoint?.id, tr.normalizedOffset, nestId)
+                                    val bestPExceptOffset = bestPExcept?.offset ?: return@detectDragGestures
 
-                                    closestHoveredPoint = tr ifDistanceIsSmallEnough { bestPExcept }
+                                    closestHoveredPoint = if (distance(bestPExceptOffset, tr.normalizedOffset) <= TOUCH_THRESHOLD_PX) {
+                                        bestPExcept
+                                    } else null
                                 },
                                 onDragEnd = {
                                     if (selectedPoint != null && selectedPointTempOffset != null) {

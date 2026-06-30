@@ -14,12 +14,3 @@ fun DrawScope.NestPlaceholder(
         radius = 100f
     )
 }
-
-//@Suppress("FunctionName")
-//fun DrawScope.NestPlaceholder2(
-//    center: Offset,
-//    drawParams: DrawParams
-//) {
-//
-//    drawImage()
-//}
