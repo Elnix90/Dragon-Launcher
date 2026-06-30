@@ -288,7 +288,9 @@ fun MainAppUi(
                 onReselectFile = { showFilePicker = point },
                 onAppSettings = backStack::navigate,
                 onAppDrawer = { workspaceId ->
-                    if (workspaceId != null) { drawerViewModel.selectWorkspace(workspaceId) }
+                    if (workspaceId != null) {
+                        drawerViewModel.selectWorkspace(workspaceId)
+                    }
                     backStack.navigate(NavigationRoute.Drawer)
                 }
             ) { command ->
@@ -446,26 +448,41 @@ fun MainAppUi(
                         )
                     }
                     entry<NavigationRoute.Behavior>(metadata = horizontalMetadata) { BehaviorTab(backStack::navigateBack) }
-                    entry<NavigationRoute.DrawerSettings>(metadata = horizontalMetadata) { DrawerTab(backStack::navigateBack) }
-                    entry<NavigationRoute.Backup>(metadata = horizontalMetadata) { BackupTab(backStack::navigateBack) }
-                    entry<NavigationRoute.Changelogs>(metadata = horizontalMetadata) { ChangelogsScreen(backStack::navigateBack) }
-                    entry<NavigationRoute.Extensions>(metadata = horizontalMetadata) { ExtensionsTab(backStack::navigateBack) }
-                    entry<NavigationRoute.Wellbeing>(metadata = horizontalMetadata) { WellbeingTab(backStack::navigateBack) }
-                    entry<NavigationRoute.Debug>(metadata = horizontalMetadata) { DebugTab(backStack::navigate, backStack::navigateBack) }
-                    entry<NavigationRoute.Logs>(metadata = horizontalMetadata) { LogsTab(backStack::navigate, backStack::navigateBack) }
-                    entry<NavigationRoute.SettingsJson>(metadata = horizontalMetadata) { SettingsDebugTab(backStack::navigateBack) }
+                    entry<NavigationRoute.DrawerSettings>(metadata = horizontalMetadata) {
+                        DrawerTab(
+                            onBack = backStack::navigateBack,
+                            onNavigate = backStack::navigate
+                        )
+                    }
+                    entry<NavigationRoute.Backup>(metadata = horizontalMetadata) { BackupTab(onBack = backStack::navigateBack) }
+                    entry<NavigationRoute.Changelogs>(metadata = horizontalMetadata) { ChangelogsScreen(onBack = backStack::navigateBack) }
+                    entry<NavigationRoute.Extensions>(metadata = horizontalMetadata) { ExtensionsTab(onBack = backStack::navigateBack) }
+                    entry<NavigationRoute.Wellbeing>(metadata = horizontalMetadata) { WellbeingTab(onBack = backStack::navigateBack) }
+                    entry<NavigationRoute.Debug>(metadata = horizontalMetadata) {
+                        DebugTab(
+                            onNavigate = backStack::navigate,
+                            onBack = backStack::navigateBack
+                        )
+                    }
+                    entry<NavigationRoute.Logs>(metadata = horizontalMetadata) {
+                        LogsTab(
+                            onNavigate = backStack::navigate,
+                            onBack = backStack::navigateBack
+                        )
+                    }
+                    entry<NavigationRoute.SettingsJson>(metadata = horizontalMetadata) { SettingsDebugTab(onBack = backStack::navigateBack) }
 
                     // All the appearance sub-settings
-                    entry<NavigationRoute.AppDisplay>(metadata = horizontalMetadata) { AppDisplayTab(backStack::navigateBack) }
-                    entry<NavigationRoute.Colors>(metadata = horizontalMetadata) { ColorSelectorTab(backStack::navigateBack) }
-                    entry<NavigationRoute.Theme>(metadata = horizontalMetadata) { ThemesTab(backStack::navigateBack) }
-                    entry<NavigationRoute.Wallpaper>(metadata = horizontalMetadata) { WallpaperTab(backStack::navigateBack) }
-                    entry<NavigationRoute.IconPack>(metadata = horizontalMetadata) { IconPackTab(backStack::navigateBack) }
-                    entry<NavigationRoute.StatusBar>(metadata = horizontalMetadata) { StatusBarTab(backStack::navigateBack) }
-                    entry<NavigationRoute.Fonts>(metadata = horizontalMetadata) { FontTab(backStack::navigateBack) }
-                    entry<NavigationRoute.AngleLineEdit>(metadata = horizontalMetadata) { AngleLineTab(backStack::navigateBack) }
-                    entry<NavigationRoute.HoldToActivateArc>(metadata = horizontalMetadata) { HoldToActivateArcTab(backStack::navigateBack) }
-                    entry<NavigationRoute.MainScreenLayers>(metadata = horizontalMetadata) { MainScreeLayersTab(backStack::navigateBack) }
+                    entry<NavigationRoute.AppDisplay>(metadata = horizontalMetadata) { AppDisplayTab(onBack = backStack::navigateBack) }
+                    entry<NavigationRoute.Colors>(metadata = horizontalMetadata) { ColorSelectorTab(onBack = backStack::navigateBack) }
+                    entry<NavigationRoute.Theme>(metadata = horizontalMetadata) { ThemesTab(onBack = backStack::navigateBack) }
+                    entry<NavigationRoute.Wallpaper>(metadata = horizontalMetadata) { WallpaperTab(onBack = backStack::navigateBack) }
+                    entry<NavigationRoute.IconPack>(metadata = horizontalMetadata) { IconPackTab(onBack = backStack::navigateBack) }
+                    entry<NavigationRoute.StatusBar>(metadata = horizontalMetadata) { StatusBarTab(onBack = backStack::navigateBack) }
+                    entry<NavigationRoute.Fonts>(metadata = horizontalMetadata) { FontTab(onBack = backStack::navigateBack) }
+                    entry<NavigationRoute.AngleLineEdit>(metadata = horizontalMetadata) { AngleLineTab(onBack = backStack::navigateBack) }
+                    entry<NavigationRoute.HoldToActivateArc>(metadata = horizontalMetadata) { HoldToActivateArcTab(onBack = backStack::navigateBack) }
+                    entry<NavigationRoute.MainScreenLayers>(metadata = horizontalMetadata) { MainScreeLayersTab(onBack = backStack::navigateBack) }
 
                     entry<NavigationRoute.LogsViewer>(metadata = horizontalMetadata) { key ->
                         LogsViewerScreen(
@@ -512,7 +529,10 @@ fun MainAppUi(
                     }
 
                     entry<NavigationRoute.TimerExceeded> { key ->
-                        TimeLimitExceededScreen(key.appName, backStack::navigateBack)
+                        TimeLimitExceededScreen(
+                            appName = key.appName,
+                            onDismiss = backStack::navigateBack
+                        )
                     }
                 }
             )

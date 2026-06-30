@@ -32,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.core.util.clearAllData
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.Constants.URLs.ELNIX90_GITHUB_PROFILE_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.EXTENSIONS_GITHUB_REPO_LINK
@@ -50,7 +51,6 @@ import org.elnix.dragonlauncher.ktx.openUrl
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.components.BetaVersionType
 import org.elnix.dragonlauncher.ui.components.BetaVersionWarning
 import org.elnix.dragonlauncher.ui.components.LocalePickerSheet
@@ -138,11 +138,6 @@ fun SettingsScreen(
                 title = stringResource(R.string.app_drawer),
                 icon = R.drawable.grid_on
             ) { onNavigate(NavigationRoute.DrawerSettings) }
-
-            SettingsItem(
-                title = stringResource(R.string.workspaces),
-                icon = R.drawable.workspaces
-            ) { onNavigate(NavigationRoute.Workspace) }
 
             SettingsItem(
                 title = stringResource(R.string.wellbeing),

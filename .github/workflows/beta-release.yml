@@ -58,12 +58,8 @@ jobs:
             echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}"
           } >> $GITHUB_ENV
 
-      - name: Build Release APK
-        uses: nick-fields/retry@v3
-        with:
-          timeout_minutes: 15
-          max_attempts: 3
-          command: ./gradlew assembleBetaRelease assembleBetaDebug --parallel --no-daemon ${{ inputs.disable_gradle_cache && '--no-build-cache' || '--build-cache' }} -x lint
+      - name: Build APKs
+        run: ./gradlew assembleBetaRelease assembleBetaDebug --parallel --no-daemon ${{ inputs.disable_gradle_cache && '--no-build-cache' || '--build-cache' }} -x lint
 
       - name: Prepare release artifacts
         run: |

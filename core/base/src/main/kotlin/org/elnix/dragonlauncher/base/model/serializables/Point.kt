@@ -8,6 +8,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.DragonJson
 import org.elnix.dragonlauncher.base.model.serializables.serializers.OffsetSerializer
+import org.jetbrains.annotations.ApiStatus
 import kotlin.random.Random
 
 
@@ -94,10 +95,13 @@ public data class Point(
 
     /**
      * The main parameter of any point; it's offset from center position
+     *
+     * DO NOT USE DIRECTLY, this property is made public to allow usage in other libraries, but it isn't meant to be directly accessed.
+     * Use **`computePointOffset`** in `org/elnix/dragonlauncher/points/PointsService.kt:89` rather
      */
+    @ApiStatus.Internal
     @Serializable(with = OffsetSerializer::class)
     val offset: Offset,
-
     /**
      *  Action executed when the swipe point is triggered.
      * This cannot be null as each [Point] should trigger an action

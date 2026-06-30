@@ -51,7 +51,12 @@ public interface PointsService {
     public fun editNest(id: Int, editedNest: (Nest) -> Nest): Boolean
 
     public fun editDefaultPoint(newDefaultPoint: Point)
-    public fun select(point: Point?)
+
+    /**
+     * Select the given [Point] by it id
+     * If `null` is provided, the [selectedPoint] is deselected
+     */
+    public fun select(id: Int?)
     public fun persist()
 
     /** Set the given [points], [nests] and [defaultPoint] if not null. */
@@ -122,8 +127,10 @@ internal class PointsServiceImpl(
     override val nests: SettingFlow<Nests> = SettingFlow(emptySet())
 
     override val selectedPoint: SettingFlow<Point?> = SettingFlow(null)
-    override fun select(point: Point?) {
-        selectedPoint.value = point
+    override fun select(id: Int?) {
+        undoRedo.applyChange{
+            selectedPoint.value = points.value.find { it.id == id }
+        }
     }
 
     override val undoRedo: UndoRedoManager = UndoRedoManager(
@@ -132,20 +139,20 @@ internal class PointsServiceImpl(
                 snapshot = { points.value.map { it.copy() } },
                 restore = {
                     set(newPoints = it.toSet())
-                    selectedPoint.value = points.value.find { p -> p.id == (selectedPoint.value?.id ?: "") }
+                    selectedPoint.value = points.value.find { p -> p.id == selectedPoint.value?.id }
                 }
             ),
             UndoRedoStack(
                 snapshot = { nests.value.map { it.copy() } },
-                restore = {
-                    set(newNests = it.toSet())
-                }
+                restore = { set(newNests = it.toSet()) }
             ),
             UndoRedoStack(
                 snapshot = { defaultPoint.value },
-                restore = {
-                    set(newDefaultPoint = it)
-                }
+                restore = { set(newDefaultPoint = it) }
+            ),
+            UndoRedoStack(
+                snapshot = { selectedPoint.value },
+                restore = { selectedPoint.value = it }
             )
         )
     )
@@ -172,7 +179,7 @@ internal class PointsServiceImpl(
 
         undoRedo.applyChange { points.value += newPoint }
         pointsByNestId = null
-        if (select) select(newPoint)
+        if (select) select(newId)
         return newId
     }
 
@@ -289,6 +296,7 @@ internal class PointsServiceImpl(
         undoRedo.applyChange {
             if (resetPoints) {
                 points.value = emptySet()
+                selectedPoint.value = null
                 resetGrid()
             }
             if (resetNests) {
@@ -325,7 +333,6 @@ internal class PointsServiceImpl(
     }
 
 
-    // START OF COMPUTATION SYSTEM
 
     private var grid: GridMap = mutableMapOf()
     private var lastTarget: Offset = Offset.Zero

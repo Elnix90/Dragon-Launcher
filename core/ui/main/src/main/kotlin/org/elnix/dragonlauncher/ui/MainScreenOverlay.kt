@@ -115,7 +115,7 @@ fun MainScreenOverlay(
 
     val hoveredPoint = selectedPointsPerLevel.findLast { it != null }
     LaunchedEffect(hoveredPoint) {
-        pointsService.select(hoveredPoint)
+        pointsService.select(hoveredPoint?.id)
     }
 
     val cycleActionsController = rememberCycleActionsController(

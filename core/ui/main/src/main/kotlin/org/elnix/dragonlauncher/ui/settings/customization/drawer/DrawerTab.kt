@@ -34,6 +34,7 @@ import io.github.elnix90.logging.SHAPES_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.Companion.notDisabled
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.Companion.notNone
@@ -62,6 +63,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 @Composable
 fun DrawerTab(
     onBack: () -> Unit,
+    onNavigate: (NavigationRoute) -> Unit,
     drawerViewModel: DrawerViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
@@ -112,6 +114,13 @@ fun DrawerTab(
         }
     ) {
 
+        DragonSettingsGroup(R.string.workspaces) {
+            SettingsItem(
+                title = stringResource(R.string.workspaces),
+                icon = R.drawable.workspaces
+            ) { onNavigate(NavigationRoute.Workspace) }
+        }
+
         DragonSettingsGroup(R.string.behavior) {
             SettingsSwitchRow(DrawerSettingsStore.autoOpenSingleMatch)
 
@@ -123,17 +132,20 @@ fun DrawerTab(
         }
 
         DragonSettingsGroup(R.string.drawer_pull_down_settings) {
-            SettingsSwitchRow(DrawerSettingsStore.pullDownAnimations,
+            SettingsSwitchRow(
+                DrawerSettingsStore.pullDownAnimations,
 
-            )
+                )
 
-            SettingsSwitchRow(DrawerSettingsStore.pullDownWallPaperDim,
+            SettingsSwitchRow(
+                DrawerSettingsStore.pullDownWallPaperDim,
 
-            )
+                )
 
-            SettingsSwitchRow(DrawerSettingsStore.pullDownScaleIn,
+            SettingsSwitchRow(
+                DrawerSettingsStore.pullDownScaleIn,
 
-            )
+                )
 
 //                SettingsSwitchRow(
 //                    setting = DrawerSettingsStore.pullDownIconFade,
@@ -176,7 +188,7 @@ fun DrawerTab(
             }
 
             ExpandableSection(drawerNormalSettingsState) {
-                SettingsSlider(DrawerSettingsStore.iconSize,)
+                SettingsSlider(DrawerSettingsStore.iconSize)
                 SettingsSlider(DrawerSettingsStore.iconsSpacingHorizontal)
                 SettingsSlider(DrawerSettingsStore.iconsSpacingVertical)
             }

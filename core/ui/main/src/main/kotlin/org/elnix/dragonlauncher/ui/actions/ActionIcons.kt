@@ -133,11 +133,11 @@ fun rememberPointIconBitmaps(
     pointsViewModel: PointsViewModel = activityViewModel(),
 ): Map<Int, ImageBitmap> {
     val density = LocalDensity.current
+    val colorScheme = MaterialTheme.colorScheme
+
     val pointsService = pointsViewModel.pointsService
     val defaultPoint by pointsService.defaultPoint.asState()
     val points by pointsService.points.asState()
-
-    val colorScheme = MaterialTheme.colorScheme
 
     val renderSettings = remember(defaultPoint) {
         LauncherIconRenderSettings(
