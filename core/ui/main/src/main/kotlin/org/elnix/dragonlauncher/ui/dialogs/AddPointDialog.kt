@@ -429,7 +429,7 @@ private fun AddPointColumn(
         is Action.OpenUrl -> stringResource(R.string.open_url)
         is Action.RunAdbCommand -> stringResource(R.string.run_adb_command)
         is Action.OpenFile -> stringResource(R.string.open_file)
-        is Action.OpenCircleNest -> stringResource(R.string.open_nest_circle)
+        is Action.OpenCircleNest -> stringResource(R.string.open_nest)
         else -> actionLabel(action)
     }
 

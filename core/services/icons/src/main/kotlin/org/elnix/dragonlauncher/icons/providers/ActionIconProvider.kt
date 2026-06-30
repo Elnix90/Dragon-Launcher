@@ -28,7 +28,7 @@ internal class ActionIconProvider(
             else -> {/* no-op */}
         }
 
-        val drawable = action.drawable.let {
+        val drawable = action.drawableId.let {
             ContextCompat.getDrawable(ctx, it)
         } ?: return null
 

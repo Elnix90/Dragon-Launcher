@@ -203,8 +203,6 @@
     <string name="invalid_format">Invalid format. Check examples above.</string>
     <string name="next_alarm_at">Alarm %1$s</string>
     <string name="theme_selector_help">Select a predefined themes, you can backup your settings and propose you theme in a pull request on github</string>
-    <string name="open_nest_circle">Open Circle Nest</string>
-    <string name="delete_circle_nest">Delete Circle Nest</string>
     <string name="workspace_defaults">All apps</string>
     <string name="workspace_added">Added apps</string>
     <string name="workspace_removed">Hidden apps</string>
@@ -1016,4 +1014,6 @@
     <string name="cannor_delete_nest_0">Cannot delete nest 0 (main nest)</string>
     <string name="show_all_actions_on_current_shape">Show all actions in current shape</string>
     <string name="show_all_actions_on_current_shape_desc">When you use intersectino shapes, all points on the current selected one will be showed</string>
+    <string name="open_nest">Open Nest</string>
+    <string name="delete_nest">Delete Nest</string>
 </resources>

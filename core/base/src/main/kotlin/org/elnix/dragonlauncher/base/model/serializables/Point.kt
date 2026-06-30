@@ -253,7 +253,7 @@ public data class Point(
      */
     val holdAndRunAction: Action? = null
 
-) {
+) : Comparable<Point> {
 
     val key: CacheKey = CacheKey(this)
 
@@ -261,6 +261,8 @@ public data class Point(
     public fun getInnerPadding(defaultPoint: Point): Dp = (innerPadding ?: defaultPoint.innerPadding ?: defaultSwipePointsValues.innerPadding!!).coerceAtLeast(1).dp
 
     override fun toString(): String = "Point(id = ${this.id})"
+
+    override fun compareTo(other: Point): Int = this.id.compareTo(other.id)
 
     public companion object {
         public fun dummySwipePoint(

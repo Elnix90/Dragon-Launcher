@@ -102,8 +102,6 @@ fun MainScreenOverlay(
 
     val deepestController = liveNestControllersStack[activeLevelIndex]
 
-//    val targetCircle = deepestController.hostPoint?.circleNumber ?: -1
-
     val isAnyLiveNestActive = activeLevelIndex > 0
 
     val selectedPointsPerLevel: List<Point?> =

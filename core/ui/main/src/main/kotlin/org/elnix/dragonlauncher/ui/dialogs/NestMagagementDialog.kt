@@ -225,7 +225,7 @@ private fun NestManagementItem(
 
         DragonIconButton(
             icon = R.drawable.close,
-            contentDescription = stringResource(if (enabled) R.string.delete_circle_nest else R.string.cannor_delete_nest_0),
+            contentDescription = stringResource(if (enabled) R.string.delete_nest else R.string.cannor_delete_nest_0),
             colors = AppObjectsColors.cancelIconButtonColors(),
             enabled = { enabled }
         ) {

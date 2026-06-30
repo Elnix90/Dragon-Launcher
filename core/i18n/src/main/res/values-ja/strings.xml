@@ -182,8 +182,6 @@
     <string name="invalid_format">フォーマットが無効です。上記の例を参照してください。</string>
     <string name="next_alarm_at">警報 %1$s</string>
     <string name="theme_selector_help">あらかじめ定義されたテーマを選べば、設定をバックアップしてGitHubのプルリクエストでテーマを提案できます</string>
-    <string name="open_nest_circle">オープンサークルネスト</string>
-    <string name="delete_circle_nest">サークルネストを削除</string>
     <string name="workspace_defaults">すべてのアプリ</string>
     <string name="workspace_added">追加アプリ</string>
     <string name="workspace_removed">隠しアプリ</string>

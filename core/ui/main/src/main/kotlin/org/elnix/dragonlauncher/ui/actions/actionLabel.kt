@@ -2,11 +2,12 @@ package org.elnix.dragonlauncher.ui.actions
 
 import android.os.Build
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
+import kotlinx.coroutines.flow.first
+import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeResId
@@ -15,7 +16,6 @@ import org.elnix.dragonlauncher.ktx.getFilePathFromUri
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
 
 @Composable
 fun actionLabel(
@@ -29,7 +29,10 @@ fun actionLabel(
     return when (action) {
 
         is Action.LaunchApp -> {
-            val app by drawerViewModel.findOne(action.packageName, action.profile.userHandle).collectAsState(null)
+            var app: Application? = null
+            LaunchedEffect(action) {
+                app = drawerViewModel.findOne(action.packageName, action.profile.userHandle).first()
+            }
             app?.label ?: action.packageName
         }
 
@@ -61,40 +64,24 @@ fun actionLabel(
 
         is Action.OpenUrl -> action.url
 
-        Action.NotificationShade -> stringResource(R.string.notifications)
-
-        Action.ControlPanel -> stringResource(R.string.control_panel)
-
-        is Action.OpenAppDrawer -> stringResource(R.string.app_drawer)
 
         is Action.OpenDragonLauncherSettings -> "${stringResource(R.string.dragon_launcher_settings)} (${stringResource(routeResId(action.route))})"
 
-        Action.Lock -> stringResource(R.string.lock)
 
         is Action.OpenFile ->
             ctx.getFilePathFromUri(action.uri.toUri())
 
-        Action.ReloadApps -> stringResource(R.string.reload_apps)
-
-        Action.OpenRecentApps -> stringResource(R.string.recent_apps)
 
         is Action.OpenCircleNest -> {
-            val nests by pointsService.nests.asState()
-
-            nests
+            pointsService.nests.value
                 .find { it.id == action.nestId }
                 ?.name
                 ?.takeIf { it.trim().isNotEmpty() }
-                ?: stringResource(R.string.open_nest_circle)
+                ?: stringResource(R.string.open_nest)
         }
 
-        Action.GoParentNest -> stringResource(R.string.go_parent_nest)
-        is Action.OpenWidget -> stringResource(R.string.widgets)
         is Action.RunAdbCommand -> action.command.trim().takeIf { it.isNotEmpty() } ?: stringResource(R.string.run_adb_command)
-        is Action.ToggleBluetooth -> stringResource(R.string.toggle_bluetooth)
-        is Action.ToggleData -> stringResource(R.string.toggle_mobile_data)
-        is Action.ToggleWifi -> stringResource(R.string.toggle_wifi)
-        Action.None -> "None"
-        Action.KillLauncher -> stringResource(R.string.kill_launcher)
+
+        else -> stringResource(action.resId)
     }
 }

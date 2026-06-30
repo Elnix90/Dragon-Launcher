@@ -645,7 +645,6 @@ fun PointsSettingsScreen(
                         }
 
                 ) {
-
                     NestOverlay(
                         center = center,
                         nest = currentNest,

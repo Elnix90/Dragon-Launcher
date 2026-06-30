@@ -164,8 +164,6 @@ internal class PointsServiceImpl(
                 loadNests()
                 loadDefaultPoint()
             }.await()
-
-//            logI(POINTS_TAG) { "Loaded Swipe Settings:\nPoints = ${points.value}\nNests = ${nests.value}\nDefault Point = ${defaultPoint.value}" }
         }
     }
 

@@ -181,8 +181,6 @@
     <string name="invalid_format">Ungültiges Format. Schau dir die obigen Beispiele an.</string>
     <string name="next_alarm_at">Alarm at %1$s</string>
     <string name="theme_selector_help">Wähle ein vordefiniertes Theme, du kannst deine Einstellungen sichern und dein Theme in einer Pull Request auf GitHub vorschlagen</string>
-    <string name="open_nest_circle">Open Circle Nest</string>
-    <string name="delete_circle_nest">Circle Nest löschen</string>
     <string name="workspace_defaults">Alle Apps</string>
     <string name="workspace_added">Hinzugefügte Apps</string>
     <string name="workspace_removed">Versteckte Apps</string>

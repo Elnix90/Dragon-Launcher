@@ -180,8 +180,6 @@
     <string name="invalid_format">Formato inválido. Consulta los ejemplos anteriores.</string>
     <string name="next_alarm_at">Alarma %1$s</string>
     <string name="theme_selector_help">Selecciona un tema predefinido, puedes hacer una copia de seguridad de tus ajustes y proponer tu tema en una solicitud pull en github</string>
-    <string name="open_nest_circle">Nido Circular Abierto</string>
-    <string name="delete_circle_nest">Eliminar Nido de Círculo</string>
     <string name="workspace_defaults">Todas las aplicaciones</string>
     <string name="workspace_added">Aplicaciones añadidas</string>
     <string name="workspace_removed">Aplicaciones ocultas</string>

@@ -182,8 +182,6 @@
     <string name="invalid_format">Formato inválido. Confira exemplos acima.</string>
     <string name="next_alarm_at">Alarme %1$s</string>
     <string name="theme_selector_help">Selecione um tema pré-definido, você pode fazer backup das suas configurações e propor seu tema em um pull request no github</string>
-    <string name="open_nest_circle">Ninho Circular Aberto</string>
-    <string name="delete_circle_nest">Exclua Ninho do Círculo</string>
     <string name="workspace_defaults">Todos os aplicativos</string>
     <string name="workspace_added">Aplicativos adicionados</string>
     <string name="workspace_removed">Aplicativos ocultos</string>

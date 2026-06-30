@@ -181,8 +181,6 @@
     <string name="invalid_format">잘못된 형식입니다. 위의 예시를 참고하세요.</string>
     <string name="next_alarm_at">경보 %1$s</string>
     <string name="theme_selector_help">미리 정의된 테마를 선택하세요. 설정을 백업한 후 GitHub에서 풀 리퀘스트로 테마를 제안할 수 있습니다</string>
-    <string name="open_nest_circle">오픈 서클 네스트</string>
-    <string name="delete_circle_nest">서클 네스트 삭제</string>
     <string name="workspace_defaults">모든 앱</string>
     <string name="workspace_added">추가 앱</string>
     <string name="workspace_removed">숨겨진 앱</string>

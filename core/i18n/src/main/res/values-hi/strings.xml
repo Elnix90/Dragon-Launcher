@@ -179,8 +179,6 @@
     <string name="invalid_format">अमान्य प्रारूप। ऊपर दिए गए उदाहरण देखें।</string>
     <string name="next_alarm_at">अलार्म %1$s</string>
     <string name="theme_selector_help">एक पूर्वनिर्धारित थीम का चयन करें, आप अपनी सेटिंग्स का बैकअप ले सकते हैं और जीथब पर एक पुल अनुरोध में आपको थीम का प्रस्ताव दे सकते हैं</string>
-    <string name="open_nest_circle">ओपन सर्कल नेस्ट</string>
-    <string name="delete_circle_nest">सर्कल नेस्ट हटाएं</string>
     <string name="workspace_defaults">सभी ऐप्स</string>
     <string name="workspace_added">जोड़े गए ऐप्स</string>
     <string name="workspace_removed">छिपे हुए ऐप्स</string>
