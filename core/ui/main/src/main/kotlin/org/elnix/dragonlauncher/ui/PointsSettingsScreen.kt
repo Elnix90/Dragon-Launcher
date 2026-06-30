@@ -664,6 +664,11 @@ fun PointsSettingsScreen(
 
                     // Live Nest: semi-transparent target nest preview at the selected point (nest editor only).
                     val liveTargetId = p.liveNestTargetNestId ?: return@let
+
+
+                    // Don't draw if the action is opening the same nest it is displaying
+                    if (p.action is Action.OpenCircleNest && (p.action as Action.OpenCircleNest).nestId == liveTargetId) return@let
+
                     val nestedNest = nests.find { it.id == liveTargetId } ?: return@let
                     val nestScale = p.liveNestScale ?: Point.defaultLiveNestScale
                     val scaledNest = nestedNest scaledBy nestScale

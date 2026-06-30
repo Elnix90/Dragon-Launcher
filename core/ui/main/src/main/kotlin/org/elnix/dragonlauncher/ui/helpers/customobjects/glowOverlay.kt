@@ -2,10 +2,8 @@ package org.elnix.dragonlauncher.ui.helpers.customobjects
 
 import android.graphics.BlurMaskFilter
 import android.graphics.Paint
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -21,9 +19,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.ktx.px
-import org.elnix.dragonlauncher.ktx.toDp
 
 
 fun DrawScope.glowOverlay(
@@ -45,30 +41,19 @@ fun DrawScope.glowOverlay(
     }
 }
 
-
-
 @Composable
 fun GlowOverlay(
     center: Offset,
     color: Color,
     radius: Dp
 ) {
+    val radiusPx = radius.px
 
-    val dx = center.x.toDp
-    val dy = center.y.toDp
-    if (radius > 0.dp) {
-        Box(
-            modifier = Modifier
-                .size(radius)
-                .offset(dx, dy)
-                .background(
-                    brush = Brush.radialGradient(
-                        0.0f to color,
-                        1.0f to Color.Transparent,
-                        center = center,
-                        radius = radius.px
-                    )
-                )
+    Canvas(Modifier.fillMaxSize()) {
+        glowOverlay(
+            center = center,
+            color = color,
+            radius = radiusPx
         )
     }
 }
