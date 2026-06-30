@@ -65,6 +65,7 @@ import org.elnix.dragonlauncher.ui.helpers.wallpaper.WallpaperDim
 import org.elnix.dragonlauncher.ui.remembers.rememberHoldToOpenSettings
 import org.elnix.dragonlauncher.ui.remembers.rememberNestNavigation
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
+import kotlin.time.Duration.Companion.milliseconds
 
 
 @SuppressLint("LocalContextResourcesRead")
@@ -285,7 +286,7 @@ fun MainScreen(
 
                         LaunchedEffect(start) {
                             if (start != null) {
-                                delay(layer.showAfter.toLong())
+                                delay(layer.showAfter.milliseconds)
                                 showCustomDim = true
                             } else {
                                 showCustomDim = false

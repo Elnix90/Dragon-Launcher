@@ -1016,4 +1016,6 @@
     <string name="show_all_actions_on_current_shape_desc">When you use intersectino shapes, all points on the current selected one will be showed</string>
     <string name="open_nest">Open Nest</string>
     <string name="delete_nest">Delete Nest</string>
+    <string name="nest_debug_overlay">Nest debug overlay</string>
+    <string name="nest_debug_overlay_desc">Adds some visual debug features in the drawing of nests</string>
 </resources>

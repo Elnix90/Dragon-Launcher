@@ -30,7 +30,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import org.elnix.dragonlauncher.settings.AllStores
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
@@ -41,6 +40,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.InitializationViewModel
 import org.elnix.dragonlauncher.services.SystemControl
+import org.elnix.dragonlauncher.settings.AllStores
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
@@ -140,6 +140,7 @@ fun DebugTab(
 
         DragonSettingsGroup(R.string.debug_infos) {
             SettingsSwitchRow(DebugSettingsStore.mainScreenDebugInfos)
+            SettingsSwitchRow(DebugSettingsStore.nestDebugOverlay)
             SettingsSwitchRow(DebugSettingsStore.settingsDebugInfo)
             SettingsSwitchRow(DebugSettingsStore.widgetsDebugInfo)
             SettingsSwitchRow(DebugSettingsStore.workspacesDebugInfo)

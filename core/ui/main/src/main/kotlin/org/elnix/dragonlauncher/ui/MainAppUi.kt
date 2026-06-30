@@ -73,6 +73,7 @@ import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.timer.AppTimerService.Companion.EXTRA_APP_NAME
 import org.elnix.dragonlauncher.timer.AppTimerService.Companion.SHOW_LAUNCHER
+import org.elnix.dragonlauncher.ui.actions.PointsIconsUpdater
 import org.elnix.dragonlauncher.ui.actions.launchAction
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
@@ -171,7 +172,7 @@ fun MainAppUi(
         lockScreenViewModel.onEnterNewRoute(currentRoute)
     }
 
-
+    PointsIconsUpdater()
 
 
     @SuppressLint("LocalContextGetResourceValueCall")

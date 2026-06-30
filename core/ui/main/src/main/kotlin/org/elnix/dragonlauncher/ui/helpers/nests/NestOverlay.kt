@@ -5,11 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.ui.actions.rememberPointIconBitmaps
 import org.elnix.dragonlauncher.ui.components.IntersectionShape
 
 /**
@@ -18,9 +16,6 @@ import org.elnix.dragonlauncher.ui.components.IntersectionShape
  * Use this from composable context when you need to draw a complete nest
  * with backgrounds, borders, action icons, and badges. Prefer the
  * [DrawScope.NestOverlay] version when you are already inside a Canvas.
- *
- * @param iconBitmaps Pre-rendered icon bitmaps. If null, they are loaded
- *   automatically via [rememberPointIconBitmaps].
  */
 @Composable
 fun NestOverlay(
@@ -31,17 +26,12 @@ fun NestOverlay(
     showConfiguratorDecorations: Boolean = false,
     forceShowAllActionsInCurrentNest: Boolean = false,
     allowShowPointCenter: Boolean = false,
-    iconBitmaps: Map<Int, ImageBitmap>
 ) {
-
-    val iconVersion = iconBitmaps.size
 
     val drawParams = rememberDrawParams(
         preventBgErasing = preventBgErasing,
         showConfiguratorDecorations = showConfiguratorDecorations,
         forceShowAllActionsInCurrentNest = forceShowAllActionsInCurrentNest,
-        iconBitmaps = iconBitmaps,
-        iconBitmapsVersion = iconVersion,
         allowShowPointCenter = allowShowPointCenter,
     )
 
@@ -81,11 +71,13 @@ fun DrawScope.NestOverlay(
         val drawPoint: Point = selectedPoint?.takeIf { it.id == p.id } ?: p
         val pointOffset = center + drawParams.pointsService.computePointOffset(p)
 
-        drawLine(
-            color = Color.White,
-            start = center,
-            end = pointOffset
-        )
+        if (drawParams.nestDebugOverlay) {
+            drawLine(
+                color = Color.White,
+                start = center,
+                end = pointOffset
+            )
+        }
 
         PointIcon(
             depth = depth,

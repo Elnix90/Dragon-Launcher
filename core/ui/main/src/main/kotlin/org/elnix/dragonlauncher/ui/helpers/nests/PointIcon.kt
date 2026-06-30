@@ -4,12 +4,11 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.scale
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.ui.actions.rememberPointIconBitmaps
+import org.elnix.dragonlauncher.ui.actions.BitmapPointIconsCache
 
 /**
  * Composable wrapper that renders a single point icon inside a [Canvas].
@@ -17,9 +16,6 @@ import org.elnix.dragonlauncher.ui.actions.rememberPointIconBitmaps
  * Use this from composable context to draw a point's background, border,
  * action icon, and badges. Prefer the [DrawScope.PointIcon] version when
  * you are already inside a Canvas.
- *
- * @param iconBitmaps Pre-rendered icon bitmaps. If null, they are loaded
- *   automatically via [rememberPointIconBitmaps].
  */
 @Composable
 fun PointIcon(
@@ -30,18 +26,11 @@ fun PointIcon(
 
     preventBgErasing: Boolean = false,
     showConfiguratorDecorations: Boolean = false,
-    forceShowAllActionsInCurrentNest: Boolean = false,
-
-    iconBitmaps: Map<Int, ImageBitmap>
+    forceShowAllActionsInCurrentNest: Boolean = false
 ) {
-
-    val iconVersion = iconBitmaps.size
-
     val drawParams = rememberDrawParams(
         preventBgErasing = preventBgErasing,
         showConfiguratorDecorations = showConfiguratorDecorations,
-        iconBitmaps = iconBitmaps,
-        iconBitmapsVersion = iconVersion,
         forceShowAllActionsInCurrentNest = forceShowAllActionsInCurrentNest,
         allowShowPointCenter = false,
     )
@@ -79,7 +68,7 @@ fun DrawScope.PointIcon(
             selected = selected,
             center = center,
             drawParams = drawParams,
-            iconBitmap = drawParams.iconBitmaps[point.id]
+            iconBitmap = BitmapPointIconsCache[point.id]
         )
     } else {
         drawParams.pointsService.nests.value

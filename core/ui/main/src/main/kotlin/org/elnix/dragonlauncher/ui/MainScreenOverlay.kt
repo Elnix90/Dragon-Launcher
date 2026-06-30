@@ -34,7 +34,6 @@ import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.ui.actions.rememberPointIconBitmaps
 import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
@@ -270,8 +269,6 @@ fun MainScreenOverlay(
         }
     }.reversed()
 
-    val iconBitmaps = rememberPointIconBitmaps()
-
     Box(Modifier.fillMaxSize()) {
 
         MainScreenOverlayDebugInfos(
@@ -366,8 +363,7 @@ fun MainScreenOverlay(
                     ) {
                         NestOverlay(
                             center = liveNestCenterForDraw,
-                            nest = nestedNestForDraw,
-                            iconBitmaps = iconBitmaps
+                            nest = nestedNestForDraw
                         )
                     }
                 } else break

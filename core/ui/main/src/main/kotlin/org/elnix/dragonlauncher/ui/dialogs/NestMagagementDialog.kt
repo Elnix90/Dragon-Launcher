@@ -42,7 +42,6 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.actions.rememberPointIconBitmaps
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
@@ -146,7 +145,6 @@ private fun NestManagementItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        val iconBitmaps = rememberPointIconBitmaps()
         BoxWithConstraints(
             modifier = Modifier
                 .size(100.dp)
@@ -156,8 +154,7 @@ private fun NestManagementItem(
                 selected = false,
                 point = editPoint,
                 center = center,
-                preventBgErasing = true,
-                iconBitmaps = iconBitmaps
+                preventBgErasing = true
             )
         }
 

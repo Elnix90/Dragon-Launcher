@@ -90,7 +90,6 @@ import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.autoSeparatePoints
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.freeMoveDraggedPoint
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.snapPoints
-import org.elnix.dragonlauncher.ui.actions.rememberPointIconBitmaps
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.base.asState
@@ -404,7 +403,6 @@ fun PointsSettingsScreen(
 //            else points - selectedPoint!!
 //        }
 //    }
-    val iconBitmaps = rememberPointIconBitmaps()
 
     SettingsScaffold(
         title = "",
@@ -650,8 +648,7 @@ fun PointsSettingsScreen(
                         nest = currentNest,
                         preventBgErasing = true,
                         showConfiguratorDecorations = true,
-                        forceShowAllActionsInCurrentNest = true,
-                        iconBitmaps = iconBitmaps
+                        forceShowAllActionsInCurrentNest = true
                     )
 
                     // Live Nest: semi-transparent target nest preview at the selected point (nest editor only).
@@ -663,8 +660,7 @@ fun PointsSettingsScreen(
                                 point = p,
                                 selected = true,
                                 preventBgErasing = true,
-                                showConfiguratorDecorations = true,
-                                iconBitmaps = iconBitmaps
+                                showConfiguratorDecorations = true
                             )
                         }
 
@@ -679,15 +675,12 @@ fun PointsSettingsScreen(
                         }
 
                         NestOverlay(
-                            modifier = Modifier.graphicsLayer {
-                                alpha = 0.4f
-                            },
+                            modifier = Modifier.graphicsLayer { alpha = 0.4f },
                             center = hostCenter,
                             nest = scaledNest,
                             preventBgErasing = true,
                             showConfiguratorDecorations = true,
-                            forceShowAllActionsInCurrentNest = true,
-                            iconBitmaps = iconBitmaps
+                            forceShowAllActionsInCurrentNest = true
                         )
                     }
 
@@ -789,7 +782,8 @@ fun PointsSettingsScreen(
                                                         action = Action.OpenCircleNest(
                                                             newNestId
                                                         ),
-                                                        id = id
+                                                        id = id,
+                                                        liveNestTargetNestId = if (createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) newNestId else null
                                                     )
                                                 }
                                                 select(newNestPointId)
@@ -800,8 +794,7 @@ fun PointsSettingsScreen(
                                                         offset = Offset(0f, 150f),
                                                         nestId = newNestId,
                                                         action = Action.GoParentNest,
-                                                        id = id,
-                                                        liveNestTargetNestId = if (createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) newNestId else null
+                                                        id = id
                                                     )
                                                 }
 

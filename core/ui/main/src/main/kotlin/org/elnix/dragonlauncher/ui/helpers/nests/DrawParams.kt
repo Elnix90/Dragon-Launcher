@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.serializables.Nests
@@ -14,6 +13,7 @@ import org.elnix.dragonlauncher.base.theme.ExtraColors
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.points.PointsService
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
@@ -40,8 +40,7 @@ data class DrawParams(
     val showCurrentPoint: Boolean,
     val showAllActionsInCurrentShape: Boolean,
     val showAllActionsInCurrentNest: Boolean,
-
-    val iconBitmaps: Map<Int, ImageBitmap>
+    val nestDebugOverlay: Boolean
 )
 
 /**
@@ -64,8 +63,6 @@ fun rememberDrawParams(
     showConfiguratorDecorations: Boolean,
     forceShowAllActionsInCurrentNest: Boolean,
     allowShowPointCenter: Boolean,
-    iconBitmaps: Map<Int, ImageBitmap> = emptyMap(),
-    iconBitmapsVersion: Int = 0,
     pointsViewModel: PointsViewModel = activityViewModel()
 ): DrawParams {
     val ctx = LocalContext.current
@@ -80,11 +77,12 @@ fun rememberDrawParams(
     val maxNestsDepth by UiSettingsStore.maxNestsDepth.asState()
     val showPointInCenter by UiSettingsStore.showPointPreviewCenterStartPosition.asState()
 
+    val nestDebugOverlay by DebugSettingsStore.nestDebugOverlay.asState()
+
     return remember(
         points,
         nests,
         defaultPoint,
-        iconBitmapsVersion
     ) {
         DrawParams(
             ctx = ctx,
@@ -101,7 +99,7 @@ fun rememberDrawParams(
             showCurrentPoint = showCurrentPoint,
             showAllActionsInCurrentShape = false,
             showAllActionsInCurrentNest = forceShowAllActionsInCurrentNest,
-            iconBitmaps = iconBitmaps
+            nestDebugOverlay = nestDebugOverlay
         )
     }
 }
