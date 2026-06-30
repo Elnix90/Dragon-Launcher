@@ -27,8 +27,8 @@ fun PointPreviewCanvas(
     val height =
         when (editPoint.action) {
             is Action.OpenCircleNest -> 100
-            else -> (editPoint.size ?: defaultPoint.size ?: Point.defaultSwipePointsValues.size!!) +
-                    (editPoint.innerPadding ?: defaultPoint.innerPadding ?: Point.defaultSwipePointsValues.innerPadding!!) * 2
+            else -> (editPoint.size ?: defaultPoint.size ?: Point.defaultSize) +
+                    (editPoint.innerPadding ?: defaultPoint.innerPadding ?: Point.defaultInnerPadding) * 2
 
         }
 

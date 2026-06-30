@@ -1,3 +1,5 @@
+@file:Suppress("ConstPropertyName")
+
 package org.elnix.dragonlauncher.base.model.serializables
 
 import androidx.compose.runtime.Immutable
@@ -257,8 +259,8 @@ public data class Point(
 
     val key: CacheKey = CacheKey(this)
 
-    public fun getSize(defaultPoint: Point): Dp = (size ?: defaultPoint.size ?: defaultSwipePointsValues.size!!).coerceAtLeast(1).dp
-    public fun getInnerPadding(defaultPoint: Point): Dp = (innerPadding ?: defaultPoint.innerPadding ?: defaultSwipePointsValues.innerPadding!!).coerceAtLeast(1).dp
+    public fun getSize(defaultPoint: Point): Dp = (size ?: defaultPoint.size ?: defaultSize).coerceAtLeast(1).dp
+    public fun getInnerPadding(defaultPoint: Point): Dp = (innerPadding ?: defaultPoint.innerPadding ?: defaultInnerPadding).coerceAtLeast(1).dp
 
     override fun toString(): String = "Point(id = ${this.id})"
 
@@ -276,22 +278,39 @@ public data class Point(
                 nestId = 0
             )
 
-        public val defaultSwipePointsValues: Point = dummySwipePoint(null,-1).copy(
-            borderStroke = 4f,
-            borderStrokeSelected = 8f,
-            opacity = 1f,
-            innerPadding = 5,
-            size = 22,
-            borderShape = IconShape.Circle,
-            borderShapeSelected = IconShape.Circle,
-            liveNestPreviewDelayMs = 500,
-            liveNestScale = 0.65f,
-            liveNestGraceDistancePx = 50,
-            liveNestSnapsToFingerPosition = true,
-            holdAndRunDelayMs = 500,
-            cycleActionsLoopDelayMs = 500,
-            cycleActionStageDefaultDelay = 500,
-            liveNestMainNestOpacityPercent = 50
+
+        public const val defaultBorderStroke: Float = 4f
+        public const val defaultBorderStrokeSelected: Float = 8f
+        public const val defaultOpacity: Float = 1f
+        public const val defaultInnerPadding: Int = 5
+        public const val defaultSize: Int = 22
+        public val defaultBorderShape: IconShape = IconShape.Circle
+        public val defaultBorderShapeSelected: IconShape = IconShape.Circle
+        public const val defaultLiveNestPreviewDelayMs: Int = 500
+        public const val defaultLiveNestScale: Float = 0.65f
+        public const val defaultLiveNestGraceDistancePx: Int = 50
+        public const val defaultLiveNestSnapsToFingerPosition: Boolean = true
+        public const val defaultHoldAndRunDelayMs: Int = 500
+        public const val defaultCycleActionsLoopDelayMs: Int = 500
+        public const val defaultCycleActionStageDefaultDelay: Int = 500
+        public const val defaultLiveNestMainNestOpacityPercent: Int = 50
+
+        public val defaultSwipePointsValues: Point = dummySwipePoint(null, -1).copy(
+            borderStroke = defaultBorderStroke,
+            borderStrokeSelected = defaultBorderStrokeSelected,
+            opacity = defaultOpacity,
+            innerPadding = defaultInnerPadding,
+            size = defaultSize,
+            borderShape = defaultBorderShape,
+            borderShapeSelected = defaultBorderShapeSelected,
+            liveNestPreviewDelayMs = defaultLiveNestPreviewDelayMs,
+            liveNestScale = defaultLiveNestScale,
+            liveNestGraceDistancePx = defaultLiveNestGraceDistancePx,
+            liveNestSnapsToFingerPosition = defaultLiveNestSnapsToFingerPosition,
+            holdAndRunDelayMs = defaultHoldAndRunDelayMs,
+            cycleActionsLoopDelayMs = defaultCycleActionsLoopDelayMs,
+            cycleActionStageDefaultDelay = defaultCycleActionStageDefaultDelay,
+            liveNestMainNestOpacityPercent = defaultLiveNestMainNestOpacityPercent
         )
 
         public object PointsJson: DragonJson<Points>()

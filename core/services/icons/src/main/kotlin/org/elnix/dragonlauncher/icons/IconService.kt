@@ -329,7 +329,7 @@ public class IconService(
         return defaultPoint.flow.flatMapLatest { defaultPoint ->
             val resolvedResolutionDp = point.size
                 ?: defaultPoint.size
-                ?: Point.defaultSwipePointsValues.size!!
+                ?: Point.defaultSize
 
             // Convert dp to pixels and enforce a minimum touch-safe size.
             val size = (resolvedResolutionDp * density.density).toInt()

@@ -31,8 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -170,8 +168,6 @@ fun PointsSettingsScreen(
             deselect()
         }
     }
-
-    var recomposeTrigger by remember { mutableIntStateOf(0) }
 
     var closestHoveredPoint by remember { mutableStateOf<Point?>(null) }
     var closestHoveredTempOffset by remember { mutableStateOf<Offset?>(null) }
@@ -321,7 +317,7 @@ fun PointsSettingsScreen(
     /**
      * Compute position of a point in the screen.
      *
-     * @return
+     * @return the `transformed offset` of the point.
      */
     fun Point.computePosition(): Offset =
         pointsService.computePointOffset(this).undoNormalization()
@@ -623,77 +619,80 @@ fun PointsSettingsScreen(
                 }
         ) {
             /**
-             * Main Canva, draws the circles, and sub nests by recursivity
+             * Main Canva, draws the circles, and sub nests by recursivity.
              *
-             * if the user is dragging a point, I draw it in the offset of where the finger is.
-             * if the user has hovered a point for more than 500ms, a radial circle overlay spawns and indicates that
-             * it can release to merge the 2 points
+             * Uses [graphicsLayer] to apply transformation of [offset], [zoom] and [angle] and provide an easy way to navigate in the canva
+             *
+             * - If the user drags a point, I draw it in the offset of where the finger is.
+             * - If the user has hovered a point for more than 500ms, a radial circle overlay spawns and indicates
+             *   that it can release to merge the 2 points
+             * - If the selected point is a live nest, it is drawn in transparency on top of it.
+             *   **Only if the nest isn't a OpenCircleNest that points to the same nest action**
              */
-            key(recomposeTrigger) {
-                Box(
-                    Modifier
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            translationX = -offset.value.x * zoom.value
-                            translationY = -offset.value.y * zoom.value
-                            scaleX = zoom.value
-                            scaleY = zoom.value
-                            rotationZ = angle.value
-                            transformOrigin = TransformOrigin(0f, 0f)
-                        }
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        translationX = -offset.value.x * zoom.value
+                        translationY = -offset.value.y * zoom.value
+                        scaleX = zoom.value
+                        scaleY = zoom.value
+                        rotationZ = angle.value
+                        transformOrigin = TransformOrigin(0f, 0f)
+                    }
 
-                ) {
+            ) {
+                NestOverlay(
+                    center = center,
+                    nest = currentNest,
+                    preventBgErasing = true,
+                    showConfiguratorDecorations = true,
+                    forceShowAllActionsInCurrentNest = true
+                )
+
+                selectedPoint?.let { p ->
+                    // Animated Selected point
+                    selectedPointTempOffset?.let { selectedPointTempOffset ->
+                        PointIcon(
+                            center = selectedPointTempOffset.transform(),
+                            point = p,
+                            selected = true,
+                            preventBgErasing = true,
+                            showConfiguratorDecorations = true
+                        )
+                    }
+
+                    // Live Nest: semi-transparent target nest preview at the selected point (nest editor only).
+                    val liveTargetId = p.liveNestTargetNestId ?: return@let
+                    val nestedNest = nests.find { it.id == liveTargetId } ?: return@let
+                    val nestScale = p.liveNestScale ?: Point.defaultLiveNestScale
+                    val scaledNest = nestedNest scaledBy nestScale
+                    val hostCenter = if (isDragging) {
+                        selectedPointTempOffset!!.transform()
+                    } else {
+                        p.computePosition()
+                    }
+
                     NestOverlay(
-                        center = center,
-                        nest = currentNest,
+                        modifier = Modifier.graphicsLayer { alpha = 0.4f },
+                        center = hostCenter,
+                        nest = scaledNest,
                         preventBgErasing = true,
                         showConfiguratorDecorations = true,
                         forceShowAllActionsInCurrentNest = true
                     )
+                }
 
-                    // Live Nest: semi-transparent target nest preview at the selected point (nest editor only).
-                    selectedPoint?.let { p ->
-                        // Animated Selected point
-                        selectedPointTempOffset?.let { selectedPointTempOffset ->
-                            PointIcon(
-                                center = selectedPointTempOffset.transform(),
-                                point = p,
-                                selected = true,
-                                preventBgErasing = true,
-                                showConfiguratorDecorations = true
-                            )
-                        }
-
-                        val liveTargetId = p.liveNestTargetNestId ?: return@let
-                        val nestedNest = nests.find { it.id == liveTargetId } ?: return@let
-                        val nestScale = p.liveNestScale ?: 0.5f
-                        val scaledNest = nestedNest scaledBy nestScale
-                        val hostCenter = if (isDragging) {
-                            selectedPointTempOffset!!.transform()
-                        } else {
-                            p.computePosition()
-                        }
-
-                        NestOverlay(
-                            modifier = Modifier.graphicsLayer { alpha = 0.4f },
-                            center = hostCenter,
-                            nest = scaledNest,
-                            preventBgErasing = true,
-                            showConfiguratorDecorations = true,
-                            forceShowAllActionsInCurrentNest = true
-                        )
-                    }
-
-                    // Glow that indicates the merge
-                    if (isDragging && closestHoveredTempOffset != null && ableToLaunchHoverAction) {
-                        GlowOverlay(
-                            center = closestHoveredTempOffset!!,
-                            color = primaryColor,
-                            radius = hoveredPointRadialGradientProgress.dp
-                        )
-                    }
+                // Glow that indicates the merge
+                if (isDragging && closestHoveredTempOffset != null && ableToLaunchHoverAction) {
+                    GlowOverlay(
+                        center = closestHoveredTempOffset!!,
+                        color = primaryColor,
+                        radius = hoveredPointRadialGradientProgress.dp
+                    )
                 }
             }
+
 
             Box(
                 Modifier
@@ -753,7 +752,6 @@ fun PointsSettingsScreen(
                                     closestHoveredPoint = tr ifDistanceIsSmallEnough { bestPExcept }
                                 },
                                 onDragEnd = {
-
                                     if (selectedPoint != null && selectedPointTempOffset != null) {
                                         val selectedPoint = selectedPoint!!
                                         val tr = selectedPointTempOffset!!.toTr()
@@ -761,8 +759,6 @@ fun PointsSettingsScreen(
                                         // 1) On finger release; if the user has hovered another point for long enough, (the glow overlay)
                                         //    do the computation to merge the 2 points
                                         if (ableToLaunchHoverAction && closestHoveredPoint != null) {
-
-                                            // The hovered point
                                             val closest = closestHoveredPoint!!
 
                                             // When the action is to open a nest, put the point in that Nest

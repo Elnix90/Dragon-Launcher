@@ -26,7 +26,6 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.models.IconsViewModel
@@ -259,8 +258,10 @@ fun MainScreenOverlay(
         liveNestControllersStack.filter { it.isActive }.forEach { controller ->
             add(alpha)
 
-            val percent = (controller.hostPoint?.liveNestMainNestOpacityPercent ?: defaultPoint.liveNestMainNestOpacityPercent).takeIf { it != -1 }
-                ?: defaultSwipePointsValues.liveNestMainNestOpacityPercent!!
+            val percent =
+                (controller.hostPoint?.liveNestMainNestOpacityPercent ?: defaultPoint.liveNestMainNestOpacityPercent)
+                    .takeIf { it != -1 } ?: Point.defaultLiveNestMainNestOpacityPercent
+            
             if (multiplyOrSubtractOpacityInLiveNests) {
                 alpha -= percent.coerceIn(0, 100) / 100f
             } else {

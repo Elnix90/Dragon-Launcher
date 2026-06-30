@@ -16,7 +16,6 @@ import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.models.HitResult
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
@@ -172,10 +171,10 @@ fun rememberLiveNestControllerStack(
 
                 else -> {
                     val graceDistancePx =
-                        level.hostPoint?.liveNestGraceDistancePx
+                        level.hostPoint
+                            ?.liveNestGraceDistancePx
                             ?: defaultPoint.liveNestGraceDistancePx
-                            ?: defaultSwipePointsValues.liveNestGraceDistancePx!!
-
+                            ?: Point.defaultLiveNestGraceDistancePx
 
                     val normalizedPos = current - level.liveNestCenter!!
 
@@ -265,9 +264,13 @@ fun rememberLiveNestControllerStack(
 
             val targetNestId = currentPoint.liveNestTargetNestId ?: return@LaunchedEffect
 
-            val delayMs = (currentPoint.liveNestPreviewDelayMs ?: defaultPoint.liveNestPreviewDelayMs
-            ?: defaultSwipePointsValues.liveNestPreviewDelayMs!!).toLong()
-            val scale = currentPoint.liveNestScale ?: defaultPoint.liveNestScale ?: defaultSwipePointsValues.liveNestScale!!
+            val delayMs = (
+                    currentPoint.liveNestPreviewDelayMs
+                        ?: defaultPoint.liveNestPreviewDelayMs
+                        ?: Point.defaultLiveNestPreviewDelayMs
+                    ).toLong()
+
+            val scale = currentPoint.liveNestScale ?: defaultPoint.liveNestScale ?: Point.defaultLiveNestScale
 
 //            val previousLiveNestCircles = scaledCircles[idx -1]
             val previousLiveNestCenter = nestStack[idx - 1].liveNestCenter ?: return@LaunchedEffect
@@ -278,7 +281,7 @@ fun rememberLiveNestControllerStack(
 
 
             val snapToCenterPos = currentPoint.liveNestSnapsToFingerPosition ?: defaultPoint.liveNestSnapsToFingerPosition
-            ?: defaultSwipePointsValues.liveNestSnapsToFingerPosition!!
+            ?: Point.defaultLiveNestSnapsToFingerPosition
             val center = if (snapToCenterPos) {
                 currentPointOffset
             } else {

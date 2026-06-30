@@ -12,7 +12,6 @@ import kotlinx.coroutines.isActive
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CycleActionStage
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.defaultSwipePointsValues
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
@@ -76,7 +75,7 @@ fun rememberCycleActionsController(
     val pointsService = pointsViewModel.pointsService
     val defaultPoint by pointsService.defaultPoint.asState()
 
-    val disableHapticFeedbackGlobally= LocalDisableHapticFeedbackGlobally.current
+    val disableHapticFeedbackGlobally = LocalDisableHapticFeedbackGlobally.current
 
     val stages: List<CycleActionStage>? = currentAction?.cycleActions
 
@@ -96,7 +95,13 @@ fun rememberCycleActionsController(
         currentStageIndex = 0
         if (stages.isNullOrEmpty()) return@LaunchedEffect
 
-        val loopDelayMs = (currentAction.cycleActionsLoopDelayMs ?: defaultPoint.cycleActionsLoopDelayMs ?: defaultSwipePointsValues.cycleActionsLoopDelayMs!!).toLong().coerceAtLeast(1L)
+        val loopDelayMs = (
+                currentAction.cycleActionsLoopDelayMs
+                    ?: defaultPoint.cycleActionsLoopDelayMs
+                    ?: Point.defaultCycleActionsLoopDelayMs
+                ).toLong()
+            .coerceAtLeast(1L)
+
         val loopEnabled = loopDelayMs != -1L
 
         val cumulativeMs = cumulativeTriggerThresholdsMs(stages)
