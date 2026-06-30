@@ -151,7 +151,7 @@ fun rememberPointIconBitmaps(
 
     val icons = remember { mutableStateMapOf<Int, ImageBitmap>() }
 
-    LaunchedEffect(points, defaultPoint, renderSettings) {
+    LaunchedEffect(points.toSortedSet(), defaultPoint, renderSettings) {
         icons.clear()
         val batch = mutableMapOf<Int, ImageBitmap>()
         for (point in points) {
