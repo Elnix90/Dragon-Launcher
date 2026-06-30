@@ -305,15 +305,7 @@ fun MainScreenOverlay(
                     val effectiveCurrentPos: Offset = remember(current, hoveredPoint, isAnyLiveNestActive, activeLevelIndex) {
                         when {
                             linePreviewSnapToAction && outerSelectedPoint != null -> {
-//                                    val dragRadii = scaleDragDistances(nestedNestForDraw.dragDistances, controller.liveNestScale)
-//                                    val targetCircle = hitResult.targetCircle
-//                                    val radius = (dragRadii[targetCircle] ?: dragRadii[targetCircle])!!
-
-                                outerSelectedPoint.offset
-//                                    outerSelectedPoint.computePosition(
-//                                        radius = radius,
-//                                        center = liveNestCenterForDraw
-//                                    )
+                                outerSelectedPoint.offset + liveNestCenterForDraw
                             }
 
                             // Means that the live HAS to snap to action, because otherwise it would move around under the top activated live nest
