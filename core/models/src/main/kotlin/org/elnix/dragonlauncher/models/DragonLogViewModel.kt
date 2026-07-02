@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.models
 
-import android.annotation.SuppressLint
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
@@ -25,11 +24,7 @@ import javax.inject.Inject
 public class DragonLogViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
-
-    @SuppressLint("StaticFieldLeak")
-    private val ctx = application.applicationContext
     private var fileTree: FileLoggingTree? = null
-
 
     private val recentLogs = ConcurrentLinkedQueue<LogAlert>()
     private val _alertFlow = MutableStateFlow<LogAlert?>(null)
@@ -43,10 +38,19 @@ public class DragonLogViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            fileTree = FileLoggingTree(ctx, ::onHighPriorityLog)
-            fileTree?.snackBarLogLevel = DebugSettingsStore.snackBarLogLevel.get(ctx)
-            fileTree?.filesLogsLevel = DebugSettingsStore.filesLogLevel.get(ctx)
-            fileTree?.filterTag = DebugSettingsStore.filterTag.get(ctx)
+            fileTree = FileLoggingTree(application, ::onHighPriorityLog)
+
+            DebugSettingsStore.snackBarLogLevel.flow(application).collect {
+                fileTree?.snackBarLogLevel = it
+            }
+
+            DebugSettingsStore.filesLogLevel.flow(application).collect {
+                fileTree?.filesLogsLevel = it
+            }
+
+            DebugSettingsStore.filterTag.flow(application).collect {
+                fileTree?.filterTag = it
+            }
 
             updateLoggingState()
         }
@@ -69,36 +73,36 @@ public class DragonLogViewModel @Inject constructor(
                 return@launch
             }
 
-            DebugSettingsStore.enableLogging.set(ctx, enable)
+            DebugSettingsStore.enableLogging.set(application, enable)
             updateLoggingState()
         }
     }
 
-    public fun updateSnackBarLogLevel(newLevel: Int) {
-        fileTree?.snackBarLogLevel = newLevel
-        viewModelScope.launch {
-            DebugSettingsStore.snackBarLogLevel.set(ctx, newLevel)
-        }
-    }
-
-    public fun updateFilesLogLevel(newLevel: Int) {
-        fileTree?.filesLogsLevel = newLevel
-        viewModelScope.launch {
-            DebugSettingsStore.filesLogLevel.set(ctx, newLevel)
-        }
-    }
-
-    public fun updateFilterTag(newTag: String) {
-        fileTree?.filterTag = newTag
-        viewModelScope.launch {
-            DebugSettingsStore.filterTag.set(ctx, newTag)
-        }
-    }
+//    public fun updateSnackBarLogLevel(newLevel: Int) {
+//        fileTree?.snackBarLogLevel = newLevel
+//        viewModelScope.launch {
+//            DebugSettingsStore.snackBarLogLevel.set(application, newLevel)
+//        }
+//    }
+//
+//    public fun updateFilesLogLevel(newLevel: Int) {
+//        fileTree?.filesLogsLevel = newLevel
+//        viewModelScope.launch {
+//            DebugSettingsStore.filesLogLevel.set(application, newLevel)
+//        }
+//    }
+//
+//    public fun updateFilterTag(newTag: String) {
+//        fileTree?.filterTag = newTag
+//        viewModelScope.launch {
+//            DebugSettingsStore.filterTag.set(application, newTag)
+//        }
+//    }
 
     private suspend fun updateLoggingState() {
         val tree = fileTree ?: return
         val plantedTrees = Timber.forest()
-        if (enableLogging.get(application.applicationContext)) {
+        if (enableLogging.get(application)) {
             if (tree !in plantedTrees) {
                 Timber.plant(tree)
             }

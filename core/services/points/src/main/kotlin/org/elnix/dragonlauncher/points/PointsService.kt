@@ -138,13 +138,23 @@ internal class PointsServiceImpl(
 
     override val selectedPoint: SettingFlow<Point?> = SettingFlow(null)
     override fun select(id: Int?) {
-        undoRedo.applyChange {
-            selectedPoint.value = points.value.find { it.id == id }
+        if (id == null && selectedPoint.value != null) {
+            undoRedo.applyChange {
+                selectedPoint.value = null
+            }
+        } else {
+            val newSel = points.value.find { it.id == id }
+
+            if (newSel != selectedPoint.value) {
+                undoRedo.applyChange {
+                    selectedPoint.value = newSel
+                }
+            }
         }
     }
 
     override val undoRedo: UndoRedoManager = UndoRedoManager(
-        arrayOf(
+        stacks = arrayOf(
             UndoRedoStack(
                 snapshot = { points.value.map { it.copy() } },
                 restore = {
@@ -164,7 +174,8 @@ internal class PointsServiceImpl(
                 snapshot = { selectedPoint.value },
                 restore = { selectedPoint.value = it }
             )
-        )
+        ),
+        scope = scope
     )
 
     init {
@@ -614,7 +625,6 @@ internal class PointsServiceImpl(
             dir * minT
         } else {
             circleBoundary(radius, angleRad)
-
         }
     }
 

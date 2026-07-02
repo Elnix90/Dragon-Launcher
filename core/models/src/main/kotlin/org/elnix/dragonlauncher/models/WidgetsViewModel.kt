@@ -57,15 +57,13 @@ public class WidgetsViewModel @Inject constructor(
     private fun snapshotWidgets(): List<Widget> = widgets.value.map { it.copy() }
 
     public val undoRedo: UndoRedoManager = UndoRedoManager(
-        arrayOf(
+        stacks = arrayOf(
             UndoRedoStack(
                 snapshot = { snapshotWidgets() },
-                restore = {
-                    restoreWidgets(it)
-//                        selected = widgets.find { p -> p.id == (selected?.id ?: "") }
-                }
+                restore = { restoreWidgets(it) }
             )
-        )
+        ),
+        scope = viewModelScope
     )
 
 

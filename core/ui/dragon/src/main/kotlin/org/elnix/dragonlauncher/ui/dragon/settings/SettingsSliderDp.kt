@@ -17,8 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.core.objects.DpSettingObject
-import kotlinx.coroutines.launch
 import io.github.elnix90.runtime.asState
+import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 
 @Composable
@@ -29,10 +29,7 @@ fun SettingsSlider(
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     showValue: Boolean = true,
     enabled: Boolean = true,
-    allowTextEditValue: Boolean = true,
-    onReset: (() -> Unit)? = null,
-    onDragStateChange: ((Boolean) -> Unit)? = null,
-    onChange: ((Int) -> Unit)? = null,
+    allowTextEditValue: Boolean = true
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -54,18 +51,10 @@ fun SettingsSlider(
         allowTextEditValue = allowTextEditValue,
         backgroundColor = backgroundColor,
         showValue = showValue,
-        onReset = {
-            scope.launch { setting.reset(ctx) }
-            onReset?.invoke()
-        },
-        onDragStateChange = {
-            scope.launch { setting.set(ctx, tempState) }
-            onDragStateChange?.invoke(it)
-        }
-    ) {
-        tempState = it.dp
-        onChange?.invoke(it)
-    }
+        onReset = { scope.launch { setting.reset(ctx) } },
+        onDragStateChange = { scope.launch { setting.set(ctx, tempState) } },
+        onChange = { tempState = it.dp }
+    )
 }
 
 fun ClosedRange<Dp>.toIntRange(): IntRange = IntRange(this.start.value.toInt(), this.endInclusive.value.toInt())

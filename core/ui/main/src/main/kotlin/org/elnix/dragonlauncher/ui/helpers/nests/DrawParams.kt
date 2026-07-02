@@ -81,7 +81,7 @@ fun rememberDrawParams(
     val textMeasurer = rememberTextMeasurer()
     val nestDebugOverlay = LocalNestDebugOverlay.current
 
-    RememberPointStableCaches(textMeasurer)
+    RememberPointStableCaches()
 
     return remember(
         extraColors,

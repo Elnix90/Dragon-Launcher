@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.scale
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.ui.remembers.CustomTexts
 
 /**
  * Composable wrapper that renders a single point icon inside a [Canvas].
@@ -25,7 +26,8 @@ fun PointIcon(
 
     preventBgErasing: Boolean = false,
     showConfiguratorDecorations: Boolean = false,
-    forceShowAllActionsInCurrentNest: Boolean = false
+    forceShowAllActionsInCurrentNest: Boolean = false,
+    customText: CustomTexts = null
 ) {
     val drawParams = rememberDrawParams(
         preventBgErasing = preventBgErasing,
@@ -41,7 +43,8 @@ fun PointIcon(
             depth = 1,
             center = center,
             selected = selected,
-            drawParams = drawParams
+            drawParams = drawParams,
+            customText = customText
         )
     }
 }
@@ -53,7 +56,8 @@ fun DrawScope.PointIcon(
     center: Offset,
     selected: Boolean,
 
-    drawParams: DrawParams
+    drawParams: DrawParams,
+    customText: CustomTexts
 ) {
     val action = point.action
 
@@ -67,7 +71,8 @@ fun DrawScope.PointIcon(
             point = point,
             selected = selected,
             center = center,
-            drawParams = drawParams
+            drawParams = drawParams,
+            customText = customText
         )
     } else {
         drawParams.pointsService.nests.value

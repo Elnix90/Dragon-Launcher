@@ -98,15 +98,17 @@ public object DebugSettingsStore : MapSettingsStore() {
     @SettingKey
     public val snackBarLogLevel: IntSettingObject = int(
         title = R.string.snackbar_log_level,
-        default = 7, // No logs
-        allowedRange = 2..7
+        description = R.string.snackbar_log_level_desc,
+        default = 8, // No logs
+        allowedRange = 2..8
     )
 
     @SettingKey
     public val filesLogLevel: IntSettingObject = int(
         title = R.string.files_log_level,
+        description = R.string.files_log_level_desc,
         default = Log.DEBUG,
-        allowedRange = 2..7
+        allowedRange = 2..8
     )
 
     @SettingKey

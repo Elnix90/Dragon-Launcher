@@ -990,6 +990,7 @@
     <string name="files_log_level">Files log level</string>
     <string name="snackbar_log_level">snackbar_log_level</string>
     <string name="snackbar_log_level_desc">e</string>
+    <string name="files_log_level_desc">e</string>
     <string name="recently_used_apps_count_desc">How many recent apps show up in the drawer</string>
     <string name="themed_icons">Themed icons</string>
     <string name="force_themed">Force themed</string>

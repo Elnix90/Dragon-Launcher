@@ -5,6 +5,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.TextLayoutResult
 import org.elnix.dragonlauncher.base.DragonCache
+import org.elnix.dragonlauncher.ui.remembers.CustomTexts
 
 /**
  * Density-dependent drawing values cached per point.
@@ -25,7 +26,7 @@ data class StablePointValues(
     val innerPaddingPx: Float,
     val borderRadii: Float,
     val iconSize: Size,
-    val drawScopeText: DrawScopeText?,
+    val customTexts: CustomTexts,
     val imageBitmap: ImageBitmap?
 )
 
@@ -42,6 +43,6 @@ data class StablePointValues(
 object PointStableCache : DragonCache<Int, StablePointValues>(200)
 
 data class DrawScopeText(
-    val textLayoutResult: TextLayoutResult,
+    val offsetTextLayoutResult: TextLayoutResult,
     val topLeft: Offset
 )

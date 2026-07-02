@@ -9,18 +9,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextMeasurer
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.util.fastRoundToInt
-import io.github.elnix90.logging.POINTS_TAG
-import io.github.elnix90.logging.logD
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -28,12 +21,11 @@ import org.elnix.dragonlauncher.base.icons.DynamicLauncherIcon
 import org.elnix.dragonlauncher.base.icons.LauncherIconRenderSettings
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
+import org.elnix.dragonlauncher.ui.remembers.rememberDrawScopeText
 
 /**
  * Observes `points] and keeps [PointStableCache] synchronised with their
@@ -44,7 +36,6 @@ import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
  */
 @Composable
 fun RememberPointStableCaches(
-    textMeasurer: TextMeasurer,
     pointsViewModel: PointsViewModel = activityViewModel(),
     iconsViewModel: IconsViewModel = activityViewModel()
 ) {
@@ -57,7 +48,6 @@ fun RememberPointStableCaches(
 
     for (point in points) {
         RememberPointStableCacheEntry(
-            textMeasurer = textMeasurer,
             point = point,
             defaultPoint = defaultPoint,
             iconsViewModel = iconsViewModel
@@ -71,7 +61,6 @@ fun RememberPointStableCaches(
  */
 @Composable
 private fun RememberPointStableCacheEntry(
-    textMeasurer: TextMeasurer,
     point: Point,
     defaultPoint: Point,
     iconsViewModel: IconsViewModel
@@ -100,47 +89,8 @@ private fun RememberPointStableCacheEntry(
         (sizePx / 2 + innerPaddingPx).coerceAtLeast(0f)
     }
 
-
     val imageBitmap by loadPointIconBitmap(point, iconsViewModel, renderSettings)
-
-    val labelSmall = MaterialTheme.typography.labelSmall
-    val extraColors = LocalExtraColors.current
-    val textStyle = remember(labelSmall, extraColors) {
-        labelSmall.copy(color = extraColors.circle)
-    }
-
-    val nestDebugOverlay = LocalNestDebugOverlay.current
-    val drawScopeText: DrawScopeText? = remember(nestDebugOverlay, textMeasurer, point.offset, textStyle) {
-        if (nestDebugOverlay) {
-            val pointOffset = point.offset
-            val x = pointOffset.x.fastRoundToInt()
-            val y = pointOffset.y.fastRoundToInt()
-
-            val text = "$x ; $y"
-
-            val textLayoutResult = textMeasurer.measure(
-                text = AnnotatedString(text),
-                constraints = Constraints(maxWidth = Int.MAX_VALUE),
-                style = textStyle
-            )
-
-            val textWidth = textLayoutResult.size.width
-            val textHeight = textLayoutResult.size.height
-
-            val topLeft = Offset(
-                x = textWidth / 2f,
-                y = textHeight + sizePx
-            )
-
-            DrawScopeText(
-                textLayoutResult = textLayoutResult,
-                topLeft = topLeft
-            )
-        } else null
-    }
-    LaunchedEffect(imageBitmap) {
-        logD(POINTS_TAG) { "img bmp: $imageBitmap" }
-    }
+    val customTexts= rememberDrawScopeText(point, sizePx)
 
     LaunchedEffect(
         point.id,
@@ -149,7 +99,7 @@ private fun RememberPointStableCacheEntry(
         borderRadii,
         renderSettings,
         imageBitmap,
-        drawScopeText
+        customTexts
     ) {
         PointStableCache.compute(point.id) {
             StablePointValues(
@@ -158,7 +108,7 @@ private fun RememberPointStableCacheEntry(
                 borderRadii = borderRadii,
                 iconSize = Size(borderRadii * 2f, borderRadii * 2f),
                 imageBitmap = imageBitmap,
-                drawScopeText = drawScopeText
+                customTexts = customTexts
             )
         }
     }

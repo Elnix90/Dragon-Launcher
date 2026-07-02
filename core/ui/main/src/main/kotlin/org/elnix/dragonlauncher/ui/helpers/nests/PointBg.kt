@@ -10,14 +10,13 @@ import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.unit.IntSize
-import io.github.elnix90.logging.POINTS_TAG
-import io.github.elnix90.logging.logW
 import org.elnix.dragonlauncher.base.cache.DrawPathCache
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ui.helpers.customobjects.shapeToPath
 import org.elnix.dragonlauncher.ui.helpers.nests.cache.PointStableCache
+import org.elnix.dragonlauncher.ui.remembers.CustomTexts
 
 
 @Suppress("FunctionName")
@@ -25,17 +24,13 @@ fun DrawScope.PointBg(
     point: Point,
     selected: Boolean,
     center: Offset,
-    drawParams: DrawParams
+    drawParams: DrawParams,
+    customText: CustomTexts
 ) {
     val extraColors = drawParams.extraColors
     val defaultPoint = drawParams.pointsService.defaultPoint.value
 
-    val cached = PointStableCache[point.id] ?: run {
-        logW(POINTS_TAG) {
-            "Failed to get cache!!!"
-        }
-        return
-    }
+    val cached = PointStableCache[point.id] ?: return
 
     val iconBitmap = cached.imageBitmap
     val iconSize = cached.iconSize
@@ -76,12 +71,20 @@ fun DrawScope.PointBg(
         shapeToPath(borderShape, iconSize)
     }
 
-    val drawScopeText = cached.drawScopeText
-
-    if (drawScopeText != null) {
+    val customTexts = customText ?: cached.customTexts
+    val offsetScopeText = customTexts?.first
+    if (offsetScopeText != null) {
         drawText(
-            textLayoutResult = drawScopeText.textLayoutResult,
-            topLeft = center - drawScopeText.topLeft
+            textLayoutResult = offsetScopeText.offsetTextLayoutResult,
+            topLeft = center - offsetScopeText.topLeft
+        )
+    }
+
+    val idScopeText = customTexts?.second
+    if (idScopeText != null) {
+        drawText(
+            textLayoutResult = idScopeText.offsetTextLayoutResult,
+            topLeft = center - idScopeText.topLeft
         )
     }
 

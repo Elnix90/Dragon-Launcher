@@ -8,6 +8,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -31,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -49,6 +52,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.elnix90.logging.NESTS_TAG
+import io.github.elnix90.logging.POINTS_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
@@ -58,6 +62,7 @@ import org.elnix.dragonlauncher.base.Constants.Settings.COLLIDING_SHAPE_THRESHOL
 import org.elnix.dragonlauncher.base.Constants.Settings.TOUCH_THRESHOLD_PX
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.Center
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.ResetRotation
@@ -72,8 +77,9 @@ import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.FreeMove
 import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.SnapPoints
 import org.elnix.dragonlauncher.enumsui.toggle.SelectedPointEditTools
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.applyTransformations
 import org.elnix.dragonlauncher.ktx.distance
-import org.elnix.dragonlauncher.ktx.redoTransformations
+import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ktx.rotateBy
 import org.elnix.dragonlauncher.ktx.undoTransformations
 import org.elnix.dragonlauncher.models.IconsViewModel
@@ -96,6 +102,7 @@ import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.components.ToggleAnimatedFab
 import org.elnix.dragonlauncher.ui.components.AppPreviewTitle
+import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
 import org.elnix.dragonlauncher.ui.dialogs.EditPointSheet
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
@@ -110,6 +117,7 @@ import org.elnix.dragonlauncher.ui.helpers.nests.NestOverlay
 import org.elnix.dragonlauncher.ui.helpers.nests.PointIcon
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.settings.SpecialSettingsTitle
+import org.elnix.dragonlauncher.ui.remembers.rememberDrawScopeText
 import org.elnix.dragonlauncher.ui.remembers.rememberNestNavigation
 import kotlin.math.sqrt
 import kotlin.time.Duration.Companion.milliseconds
@@ -126,11 +134,10 @@ fun PointsSettingsScreen(
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     val pointsService = pointsViewModel.pointsService
     val defaultPoint by pointsService.defaultPoint.asState()
-
-    val scope = rememberCoroutineScope()
 
     val showAdvancedEditTools by SwipeMapSettingsStore.showAdvancedPointTools.asState()
     val showSubNestsSlider by SwipeMapSettingsStore.showSubNestsSlider.asState()
@@ -152,22 +159,6 @@ fun PointsSettingsScreen(
     val selectedPoint by pointsService.selectedPoint.asState()
     val aPointIsSelected = selectedPoint != null
 
-    fun select(id: Int?) {
-        pointsService.select(id)
-    }
-
-    fun deselect() {
-        pointsService.select(null)
-    }
-
-    fun toggleDragAroundMode(checked: Boolean) {
-        scope.launch {
-            PrivateSettingsStore.isInDragAroundMode.set(ctx, checked)
-        }
-        if (checked) {
-            deselect()
-        }
-    }
 
     var closestHoveredPoint by remember { mutableStateOf<Point?>(null) }
     var closestHoveredTempOffset by remember { mutableStateOf<Offset?>(null) }
@@ -193,25 +184,10 @@ fun PointsSettingsScreen(
 
     val rowsScrollStates = List(3) { rememberScrollState() }
 
-    /** Nests System
-     * - Collects the nests from the datastore, then initialize the base nest to 0 (always the default)
-     * while all the other have a random id
-     */
+
     val nestNavigation = rememberNestNavigation()
     val currentNest = nestNavigation.currentNest
     val nestId = currentNest.id
-
-
-//    /**
-//     * The number of circles; it's the size of the current nest, minus one, cause it ignores the
-//     * cancel zone
-//     */
-//    val circleNumber = currentNest.dragDistances.size - 1
-
-//    /**
-//     * Computes an even distance for the circles spacing, for clean integration
-//     */
-//    val circlesWidthIncrement = (1f / circleNumber).takeIf { it != 0f } ?: 1f
 
     /**
      * Used to ensure that there is always a 0-id nest, the default one, the most important
@@ -270,24 +246,20 @@ fun PointsSettingsScreen(
     }
 
 
-    val handleBack = {
-        if (isInManualPlacementMode) manualPlacementQueue = emptyList()
-        else if (selectedPoint != null) deselect()
-        else if (nestId != 0) nestNavigation.goBack()
-        else if (isEditing) isEditing = false
-        else onBack()
-    }
-    BackHandler(onBack = handleBack)
-
-
     val offset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
     val zoom = remember { Animatable(1f) }
     val angle = remember { Animatable(0f) }
 
     /**
-     * Undo normalization of a point offset and returns the `transformed` [Offset] corresponding to the offset in local coordinates space, when transformations are applied
+     * Normalize a [Point.offset]
      *
-     * @return
+     * It should take a **non-transformed** offset in entry and returns its offset normalized around [Offset.Zero], effectively subtracting the center from it
+     */
+    fun Offset.normalize(): Offset = this - center
+
+    /**
+     * Undo normalization of a [Point.offset]
+     * @returns the `transformed` [Offset] corresponding to the offset in local coordinates space, when transformations are applied
      */
     fun Offset.undoNormalization(): Offset = this + center
 
@@ -295,10 +267,10 @@ fun PointsSettingsScreen(
      * Transform a pointer position [Offset] into its coordinated, after applying [offset], [zoom] and [angle] transformations.
      * The resulted [Offset] is meant to be used within the [graphicsLayer] block in the Main drawing block
      */
-    fun Offset.transform(): Offset = this.undoTransformations(
-        angle = { angle.value },
-        zoom = { zoom.value },
-        offset = { offset.value }
+    fun Offset.transform(): Offset = applyTransformations(
+        zoom = zoom.value,
+        offset = offset.value,
+        angle = angle.value
     )
 
     /**
@@ -308,29 +280,11 @@ fun PointsSettingsScreen(
      *
      * May be removed in the future
      */
-    fun Offset.undoTransformation(): Offset = undoNormalization().redoTransformations(
-        angle = { -angle.value },
-        zoom = { -zoom.value },
-        offset = { -offset.value }
+    fun Offset.undoTransformation(): Offset = undoTransformations(
+        zoom = zoom.value,
+        offset = offset.value,
+        angle = angle.value
     )
-
-    /**
-     * Compute position of a point in the screen.
-     *
-     * @return the `transformed offset` of the point.
-     */
-    fun Point.computePosition(): Offset =
-        pointsService.computePointOffset(this).undoNormalization()
-
-
-    LaunchedEffect(closestHoveredPoint) {
-        ableToLaunchHoverAction = false
-        closestHoveredPoint?.let {
-            closestHoveredTempOffset = it.computePosition()
-            delay(Constants.Settings.HOVER_POINT_DURATION.milliseconds)
-            ableToLaunchHoverAction = true
-        }
-    }
 
     /**
      * Holds an Offset and provides helper functions and value to manage it in the [PointsSettingsScreen] scope.
@@ -359,7 +313,7 @@ fun PointsSettingsScreen(
          * converted back to screen coordinates.
          */
         public val normalizedOffset: Offset by lazy {
-            this.transformedOffset - center
+            this.transformedOffset.normalize()
         }
 
         /**
@@ -375,16 +329,83 @@ fun PointsSettingsScreen(
             distance(betsPOffset, this.normalizedOffset)
         }
 
-        public inline infix fun ifDistanceIsSmallEnough(block: () -> Point?): Point? = if (distance <= TOUCH_THRESHOLD_PX) block() else null
+        /**
+         * Whether the distance to the closest point is inferior to an arbitrary [TOUCH_THRESHOLD_PX].
+         *
+         * TODO Make this threshold dependent on the [zoom]
+         */
+        private val distanceSmallEnough: Boolean by lazy { distance <= TOUCH_THRESHOLD_PX }
+
+
+        /** Executes [block] if [distanceSmallEnough] */
+        public inline infix fun ifDistanceIsSmallEnough(block: () -> Point?): Point? = if (distanceSmallEnough) block() else null
+
+        override fun toString(): String =
+            "TR(\n" +
+                    "   offset = ${this.offset}\n" +
+                    "   transformedOffset = $transformedOffset\n" +
+                    "   normalizedOffset = $normalizedOffset\n" +
+                    "   bestP = $bestP\n" +
+                    "   distance = $distance${if (!distanceSmallEnough) " (Too Far!)" else ""}\n" +
+                    ")"
     }
 
     fun Offset.toTr(): TransformedOffset = TransformedOffset(this)
 
+//    fun Point.toTr(): TransformedOffset {
+//        val pointOffset = pointsService.computePointOffset(this)
+//
+//        val untransformed = pointOffset.transform()
+//        val unNormalized = untransformed.undoNormalization()
+//
+//
+//        logD(POINTS_TAG) { "unNormalized = $unNormalized; unTransformed $untransformed" }
+//        val tr = TransformedOffset(unNormalized)
+//        logD(POINTS_TAG) { "Point TR: $tr" }
+//        return tr
+//    }
 
-    val selectedPointTempOffsetAnimatable = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
+    /**
+     * Compute position of a point in the screen.
+     *
+     * @return the `transformed offset` of the point.
+     * ### NEVER TOUCH THAT AGAIN IT WORKS!!
+     */
+    fun Point.computePosition(): Offset =
+        pointsService.computePointOffset(this).undoNormalization().undoTransformation()
+
+
     var selectedPointTempOffset: Offset? by remember { mutableStateOf(null) }
     val isDragging = selectedPointTempOffset != null
 
+
+    fun select(id: Int?) {
+        pointsService.select(id)
+        selectedPointTempOffset = points.find { it.id == id }?.computePosition()
+    }
+
+    fun deselect() {
+        pointsService.select(null)
+        selectedPointTempOffset = null
+    }
+
+    fun toggleDragAroundMode(checked: Boolean) {
+        scope.launch {
+            PrivateSettingsStore.isInDragAroundMode.set(ctx, checked)
+        }
+        if (checked) {
+            deselect()
+        }
+    }
+
+    LaunchedEffect(closestHoveredPoint) {
+        ableToLaunchHoverAction = false
+        closestHoveredPoint?.let {
+            closestHoveredTempOffset = it.computePosition()
+            delay(Constants.Settings.HOVER_POINT_DURATION.milliseconds)
+            ableToLaunchHoverAction = true
+        }
+    }
 
     val filteredPoints by remember(points, nestId) {
         derivedStateOf {
@@ -398,6 +419,25 @@ fun PointsSettingsScreen(
 //            if (!isDragging || selectedPoint == null) points
 //            else points - selectedPoint!!
 //        }
+//    }
+
+    val handleBack = {
+        if (isInManualPlacementMode) manualPlacementQueue = emptyList()
+        else if (selectedPoint != null) deselect()
+        else if (nestId != 0) nestNavigation.goBack()
+        else if (isEditing) isEditing = false
+        else onBack()
+    }
+    BackHandler(onBack = handleBack)
+
+//
+//
+//    // Debug values
+//    var clickOffset by remember { mutableStateOf(Offset.Zero) }
+//    var transformedOffset by remember { mutableStateOf(Offset.Zero) }
+//
+//    LaunchedEffect(clickOffset) {
+//        transformedOffset = clickOffset.transform()
 //    }
 
     SettingsScaffold(
@@ -607,6 +647,7 @@ fun PointsSettingsScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(Color.Blue.alphaMultiplier(0.05f))
                 .onSizeChanged { size ->
                     // Updates the center and available width variables, that depends on the phone size and orientation.
                     // Computes the larger size between width and height to ensure all points belongs to the hittable zone
@@ -630,75 +671,124 @@ fun PointsSettingsScreen(
              * - If the selected point is a live nest, it is drawn in transparency on top of it.
              *   **Only if the nest isn't a OpenCircleNest that points to the same nest action**
              */
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .graphicsLayer {
-                        translationX = -offset.value.x * zoom.value
-                        translationY = -offset.value.y * zoom.value
-                        scaleX = zoom.value
-                        scaleY = zoom.value
-                        rotationZ = angle.value
-                        transformOrigin = TransformOrigin(0f, 0f)
-                    }
-            ) {
-                NestOverlay(
-                    center = center,
-                    nest = currentNest,
-                    preventBgErasing = true,
-                    showConfiguratorDecorations = true,
-                    forceShowAllActionsInCurrentNest = true,
-                    hideSelectedPoint = true
-                )
+            key(selectedPoint) {
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            translationX = -offset.value.x * zoom.value
+                            translationY = -offset.value.y * zoom.value
+                            scaleX = zoom.value
+                            scaleY = zoom.value
+                            rotationZ = angle.value
+                            transformOrigin = TransformOrigin(0f, 0f)
+                        }
+                ) {
+                    NestOverlay(
+                        center = center,
+                        nest = currentNest,
+                        preventBgErasing = true,
+                        showConfiguratorDecorations = true,
+                        forceShowAllActionsInCurrentNest = true,
+                        hideSelectedPoint = true
+                    )
 
-                selectedPoint?.let { p ->
-                    // Animated Selected point
                     selectedPointTempOffset?.let { selectedPointTempOffset ->
-                        PointIcon(
-                            center = selectedPointTempOffset.transform(),
-                            point = p,
-                            selected = true,
-                            preventBgErasing = true,
-                            showConfiguratorDecorations = true
+                        val tr = selectedPointTempOffset.toTr()
+                        GlowOverlay(
+                            center = tr.transformedOffset,
+                            color = Color.Red,
+                            radius = 60.dp
                         )
                     }
 
-                    // Live Nest: semi-transparent target nest preview at the selected point (nest editor only).
-                    val liveTargetId = p.liveNestTargetNestId ?: return@let
+                    selectedPoint?.let { p ->
+                        // Animated Selected point
+                        selectedPointTempOffset?.let { selectedPointTempOffset ->
+                            val tr = selectedPointTempOffset.toTr()
 
 
-                    // Don't draw if the action is opening the same nest it is displaying
-                    if (p.action is Action.OpenCircleNest && (p.action as Action.OpenCircleNest).nestId == liveTargetId) return@let
+//                            LaunchedEffect(selectedPointTempOffset) {
+//                                logD(POINTS_TAG) { "StO: $selectedPointTempOffset" }
+//                            }
 
-                    val nestedNest = nests.find { it.id == liveTargetId } ?: return@let
-                    val nestScale = p.liveNestScale ?: Point.defaultLiveNestScale
-                    val scaledNest = nestedNest scaledBy nestScale
-                    val hostCenter = if (isDragging) {
-                        selectedPointTempOffset!!.transform()
-                    } else {
-                        p.computePosition()
+                            val pointSize = p.getSize(defaultPoint).px
+                            val customText = rememberDrawScopeText(p.copy(offset = tr.normalizedOffset), pointSize)
+
+                            PointIcon(
+                                center = tr.transformedOffset,
+                                point = p,
+                                selected = true,
+                                preventBgErasing = true,
+                                showConfiguratorDecorations = true,
+                                customText = customText
+                            )
+
+                            if (LocalNestDebugOverlay.current) {
+                                Canvas(Modifier.fillMaxSize()) {
+                                    drawLine(
+                                        color = Color.White,
+                                        start = center,
+                                        end = tr.transformedOffset
+                                    )
+                                }
+                            }
+                        }
+
+                        // Live Nest: semi-transparent target nest preview at the selected point (nest editor only).
+                        val liveTargetId = p.liveNestTargetNestId ?: return@let
+
+
+                        // Don't draw if the action is opening the same nest it is displaying
+                        if (p.action is Action.OpenCircleNest && (p.action as Action.OpenCircleNest).nestId == liveTargetId) return@let
+
+                        val nestedNest = nests.find { it.id == liveTargetId } ?: return@let
+                        val nestScale = p.liveNestScale ?: Point.defaultLiveNestScale
+                        val scaledNest = nestedNest scaledBy nestScale
+                        val hostCenter = if (isDragging) {
+                            selectedPointTempOffset!!.transform()
+                        } else {
+                            p.computePosition()
+                        }
+
+                        NestOverlay(
+                            modifier = Modifier.graphicsLayer { alpha = 0.4f },
+                            center = hostCenter,
+                            nest = scaledNest,
+                            preventBgErasing = true,
+                            showConfiguratorDecorations = true,
+                            forceShowAllActionsInCurrentNest = true
+                        )
                     }
 
-                    NestOverlay(
-                        modifier = Modifier.graphicsLayer { alpha = 0.4f },
-                        center = hostCenter,
-                        nest = scaledNest,
-                        preventBgErasing = true,
-                        showConfiguratorDecorations = true,
-                        forceShowAllActionsInCurrentNest = true
-                    )
-                }
-
-                // Glow that indicates the merge
-                if (isDragging && closestHoveredTempOffset != null && ableToLaunchHoverAction) {
-                    GlowOverlay(
-                        center = closestHoveredTempOffset!!,
-                        color = primaryColor,
-                        radius = hoveredPointRadialGradientProgress.dp
-                    )
+                    // Glow that indicates the merge
+                    if (isDragging && closestHoveredTempOffset != null && ableToLaunchHoverAction) {
+                        GlowOverlay(
+                            center = closestHoveredTempOffset!!,
+                            color = primaryColor,
+                            radius = hoveredPointRadialGradientProgress.dp
+                        )
+                    }
                 }
             }
-
+//            Box(Modifier.fillMaxSize()) {
+////                GlowOverlay(
+////                    center = clickOffset,
+////                    color = Color.Blue,
+////                    radius = 40.dp
+////                )
+//
+//                GlowOverlay(
+//                    center = transformedOffset,
+//                    color = Color.Green,
+//                    radius = 70.dp
+//                )
+//
+//                val dist = distance(clickOffset, transformedOffset)
+//                DragonColumnGroup {
+//                    Text(dist.fastRoundToInt().toString())
+//                }
+//            }
 
             Box(
                 Modifier
@@ -731,11 +821,11 @@ fun PointsSettingsScreen(
                                     val tr = tapOffset.toTr()
                                     val newSelectedPoint = tr ifDistanceIsSmallEnough { tr.bestP }
 
-                                    selectedPointTempOffset = tr.offset
                                     select(newSelectedPoint?.id)
                                 },
                                 onDrag = { change, _ ->
                                     change.consume()
+//                                    clickOffset = change.position
                                     val tr = change.position.toTr()
 
                                     // Update the selected point offset in real time (the dragging thing)
@@ -820,13 +910,13 @@ fun PointsSettingsScreen(
                                                 TODO()
                                             }
 
-                                            if (freeMoveDraggedPoint) {
-                                                scope.launch {
-                                                    selectedPointTempOffsetAnimatable.animateTo(
-                                                        targetValue = newOffsetNormalized.undoTransformation(),
-                                                    )
-                                                }
-                                            }
+//                                            if (freeMoveDraggedPoint) {
+//                                                scope.launch {
+//                                                    selectedPointTempOffsetAnimatable.animateTo(
+//                                                        targetValue = newOffsetNormalized.undoTransformation(),
+//                                                    )
+//                                                }
+//                                            }
                                         }
                                     }
 
@@ -847,6 +937,7 @@ fun PointsSettingsScreen(
                             detectTapGestures(
                                 onTap = { tapOffset ->
                                     val tr = tapOffset.toTr()
+//                                    clickOffset = tapOffset
 
                                     // Manual placement mode: place the current queued app where user tapped
                                     if (isInManualPlacementMode) {
@@ -888,6 +979,7 @@ fun PointsSettingsScreen(
                                         } else tr.bestP
                                     }
 
+                                    logD(POINTS_TAG) { tr.toString() }
                                     select(newSelectedPoint?.id)
                                 }
                             )

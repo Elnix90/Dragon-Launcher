@@ -15,8 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import io.github.elnix90.core.objects.IntSettingObject
-import kotlinx.coroutines.launch
 import io.github.elnix90.runtime.asState
+import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 
 @Composable
@@ -28,8 +28,7 @@ fun SettingsSlider(
     showValue: Boolean = true,
     enabled: Boolean = true,
     allowTextEditValue: Boolean = true,
-    onReset: (() -> Unit)? = null,
-    onDragStateChange: ((Boolean) -> Unit)? = null,
+    customDesc: ((Int) -> String)? = null,
     onChange: ((Int) -> Unit)? = null,
 ) {
     val ctx = LocalContext.current
@@ -44,7 +43,7 @@ fun SettingsSlider(
     SliderWithLabel(
         modifier = modifier,
         label = stringResource(setting.title!!),
-        description = stringResource(setting.description!!),
+        description = customDesc?.invoke(state) ?: stringResource(setting.description!!),
         value = tempState,
         valueRange = setting.allowedRange,
         color = color,
@@ -52,13 +51,9 @@ fun SettingsSlider(
         allowTextEditValue = allowTextEditValue,
         backgroundColor = backgroundColor,
         showValue = showValue,
-        onReset = {
-            scope.launch { setting.reset(ctx) }
-            onReset?.invoke()
-        },
+        onReset = { scope.launch { setting.reset(ctx) } },
         onDragStateChange = {
             scope.launch { setting.set(ctx, tempState) }
-            onDragStateChange?.invoke(it)
         }
     ) {
         tempState = it

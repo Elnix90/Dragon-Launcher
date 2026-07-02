@@ -6,7 +6,6 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +29,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +41,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import io.github.elnix90.logging.LOGS_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
+import io.github.elnix90.logging.logLevelName
+import io.github.elnix90.runtime.asState
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.contentOrNull
@@ -57,23 +63,18 @@ import org.elnix.dragonlauncher.common.utils.rememberVersionCode
 import org.elnix.dragonlauncher.common.utils.rememberVersionName
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
-import io.github.elnix90.logging.LOGS_TAG
-import io.github.elnix90.logging.logD
-import io.github.elnix90.logging.logE
-import io.github.elnix90.logging.logLevelName
 import org.elnix.dragonlauncher.models.DragonLogViewModel
 import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
-import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
+import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -86,10 +87,10 @@ fun LogsTab(
     dragonLogViewModel: DragonLogViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
+    val scope = rememberCoroutineScope()
+
 
     val enableLogging by DebugSettingsStore.enableLogging.asState()
-    val snackBarLogLevel by DebugSettingsStore.snackBarLogLevel.asState()
-    val filesLogLevel by DebugSettingsStore.snackBarLogLevel.asState()
     val filterTag by DebugSettingsStore.filterTag.asState()
 
     var tempFilterTag by remember(filterTag) { mutableStateOf(filterTag) }
@@ -242,43 +243,33 @@ fun LogsTab(
                 verticalArrangement = Arrangement.spacedBy(5.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                SliderWithLabel(
-                    label = stringResource(DebugSettingsStore.snackBarLogLevel.title!!),
-                    description = snackBarLogLevel.logLevelName,
-                    value = snackBarLogLevel,
-                    showValue = false,
-                    allowTextEditValue = false,
-                    valueRange = 2..7,
-                    onReset = {
-                        dragonLogViewModel.updateSnackBarLogLevel(Log.ERROR)
-                    }
-                ) {
-                    dragonLogViewModel.updateSnackBarLogLevel(it)
-                }
 
-                SliderWithLabel(
-                    label = stringResource(DebugSettingsStore.filesLogLevel.title!!),
-                    description = filesLogLevel.logLevelName,
-                    value = filesLogLevel,
-                    showValue = false,
-                    allowTextEditValue = false,
-                    valueRange = 2..7,
-                    onReset = {
-                        dragonLogViewModel.updateFilesLogLevel(Log.DEBUG)
-                    }
-                ) {
-                    dragonLogViewModel.updateFilesLogLevel(it)
-                }
+                SettingsSlider(
+                    setting = DebugSettingsStore.snackBarLogLevel,
+                    customDesc = { it.logLevelName }
+                )
+
+                SettingsSlider(
+                    setting = DebugSettingsStore.filesLogLevel,
+                    customDesc = { it.logLevelName }
+                )
 
                 TextField(
                     value = tempFilterTag,
-                    onValueChange = {
-                        tempFilterTag = it
-                        dragonLogViewModel.updateFilterTag(it)
-                    },
+                    onValueChange = { tempFilterTag = it },
                     label = { Text(stringResource(R.string.filter_tag)) },
                     colors = AppObjectsColors.outlinedTextFieldColors(),
-                    modifier = Modifier.fillMaxWidth(1f)
+                    modifier = Modifier.fillMaxWidth(1f),
+                    trailingIcon = {
+                        DragonIconButton(
+                            icon = R.drawable.check,
+                            contentDescription = R.string.save
+                        ) {
+                            scope.launch {
+                                DebugSettingsStore.filterTag.set(ctx, tempFilterTag)
+                            }
+                        }
+                    }
                 )
 
                 DragonButton(

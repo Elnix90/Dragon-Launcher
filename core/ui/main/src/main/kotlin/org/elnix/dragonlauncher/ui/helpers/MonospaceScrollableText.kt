@@ -17,12 +17,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.elnix90.logging.allLetters
+import io.github.elnix90.logging.logLevel
+import io.github.elnix90.logging.logLevelColor
 import my.nanihadesuka.compose.LazyColumnScrollbar
 import my.nanihadesuka.compose.ScrollbarSelectionMode
 import my.nanihadesuka.compose.ScrollbarSettings
 import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
-import io.github.elnix90.logging.logLevel
-import io.github.elnix90.logging.logLevelColor
 
 @Composable
 fun MonospaceScrollableText(
@@ -55,14 +56,13 @@ fun MonospaceScrollableText(
             if (
                 line.length > 27 &&
                 line.startsWith("[") &&
-                line[26] in "VDIWE"
+                line[26].toString() in allLetters
             ) {
-                return line[26].logLevel!!.logLevelColor
+                return line[26].toString().logLevel!!.logLevelColor
             }
         }
         return null
     }
-
 
     Box(modifier = modifier.fillMaxWidth()) {
         SelectionContainer {
