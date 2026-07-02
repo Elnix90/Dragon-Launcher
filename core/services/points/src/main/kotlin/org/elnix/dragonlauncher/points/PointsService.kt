@@ -89,7 +89,7 @@ public interface PointsService {
     public fun computePointOffset(point: Point): Offset
 
     public fun getPointsForNest(
-        nest: Nest,
+        nestId: Int,
         skipSelected: Boolean
     ): Points
 
@@ -109,12 +109,17 @@ public interface PointsService {
      * Same as [computeClosest] but ignores the given [ignoredPointId].
      */
     public fun computeClosestExcept(
-        ignoredPointId: Int?,
+        ignoredPointId: Array<Int>?,
         normalizedPos: Offset,
         nestId: Int?
     ): Point?
 
     public fun getFurthestPoint(nest: Nest): Point?
+
+    public fun autoSeparate(
+        nestId: Int,
+        draggedPointId: Int
+    ): Boolean
 }
 
 
@@ -194,20 +199,9 @@ internal class PointsServiceImpl(
         val existingIds = points.value.mapTo(mutableSetOf()) { it.id }
         val newId = getNextId(existingIds)
         val newPoint = newPoint(newId)
-//        val nestId = newPoint.nestId
-//
-//        val pointGridCell: GridCase = cellKey(newPoint.offset)
-//        grid.getOrPut(pointGridCell) { mutableSetOf() }.add(newPoint)
-//        nestGrid[nestId]?.plus(newPoint)
-//
-//
-//        val furthestForNest = furthestPointGrid[nestId]
-//
-//        if (furthestForNest != null && furthestForNest.offset.getDistanceSquared() > newPoint.offset.getDistanceSquared()) {
-//            furthestPointGrid[nestId] = newPoint
-//        }
 
         undoRedo.applyChange { points.value += newPoint }
+
         if (select) select(newId)
         resetGrids()
         return newId
@@ -215,58 +209,16 @@ internal class PointsServiceImpl(
 
     override fun removePoint(id: Int): Boolean {
         val pointToRemove = points.value.find { it.id == id } ?: return false
-//        val nestId = pointToRemove.nestId
-//
-//        val pointGridCell = cellKey(pointToRemove.offset)
-//        grid[pointGridCell]?.remove(pointToRemove)
-//        nestGrid[nestId]?.minus(pointToRemove)
-//
-//        val furthestForNest = furthestPointGrid[nestId]
-//        if (furthestForNest?.id == pointToRemove.id) {
-//            furthestPointGrid[nestId] = nestGrid[nestId]?.maxByOrNull { it.offset.getDistanceSquared() }
-//        }
 
         undoRedo.applyChange { points.value -= pointToRemove }
 
-
         resetGrids()
-
         return true
     }
 
     override fun editPoint(id: Int, editedPoint: (Point) -> Point): Boolean {
         val oldPoint = points.value.find { it.id == id } ?: return false
         val editedPoint = editedPoint(oldPoint)
-//
-//        val oldNestId = oldPoint.nestId
-//        val editedNestId = editedPoint.nestId
-//
-//        val oldPointGridCell = cellKey(oldPoint.offset)
-//        grid[oldPointGridCell]?.remove(oldPoint)
-//
-//        val newPointGridCell = cellKey(editedPoint.offset)
-//        grid.getOrPut(newPointGridCell) { mutableSetOf() }.add(editedPoint)
-//
-//        nestGrid[oldPoint.nestId]?.minus(oldPoint)
-//        nestGrid[editedPoint.nestId]?.plus(editedPoint)
-//
-//
-//        if (oldNestId == editedNestId) {
-//            val furthestForNest = furthestPointGrid[oldNestId]
-//            if (furthestForNest != null && furthestForNest.offset.getDistanceSquared() < editedPoint.offset.getDistanceSquared()) {
-//                furthestPointGrid[oldNestId] = editedPoint
-//            }
-//        } else {
-//            // Shit again here bc the point has moved from nest
-//            val furthestForNest = furthestPointGrid[oldNestId]
-//            if (furthestForNest != null && furthestForNest.id == id) {
-//                // This is really annoying bc
-//            }
-//
-//        }
-//        if (furthestForNest?.id == pointToRemove.id) {
-//            furthestPointGrid[nestId] = nestGrid[nestId]?.maxByOrNull { it.offset.getDistanceSquared() }
-//        }
 
         undoRedo.applyChange {
             points.value -= oldPoint
@@ -423,7 +375,7 @@ internal class PointsServiceImpl(
     override fun getFurthestPoint(nest: Nest): Point? = furthestPointGrid[nest.id]
 
     override fun computeClosestExcept(
-        ignoredPointId: Int?,
+        ignoredPointId: Array<Int>?,
         normalizedPos: Offset,
         nestId: Int?
     ): Point? {
@@ -449,7 +401,7 @@ internal class PointsServiceImpl(
                             grid[Pair(targetCell.first + dx, targetCell.second + dy)]
                                 ?.let { points ->
                                     val filteredPointsByNest = points.filter {
-                                        it.nestId == nestId && it.id != ignoredPointId
+                                        it.nestId == nestId && (ignoredPointId == null || it.id !in ignoredPointId)
                                     }
                                     candidates.addAll(filteredPointsByNest)
                                 }
@@ -533,13 +485,69 @@ internal class PointsServiceImpl(
     }
 
     override fun getPointsForNest(
-        nest: Nest,
+        nestId: Int,
         skipSelected: Boolean
     ): Points {
-        val pointsInTheNest: MutablePoints = nestGrid[nest.id] ?: return emptySet()
+        val pointsInTheNest: MutablePoints = nestGrid[nestId] ?: return emptySet()
         val selectedPoint = selectedPoint.value ?: return pointsInTheNest
         return if (skipSelected) pointsInTheNest - selectedPoint else pointsInTheNest
     }
+
+
+    private fun Int.findPointById(): Point? = points.value.find { it.id == this }
+    private val density = ctx.resources.displayMetrics.density
+
+    override fun autoSeparate(
+        nestId: Int,
+        draggedPointId: Int
+    ): Boolean {
+        val draggedPoint = draggedPointId.findPointById() ?: return false
+
+        var hasMoved = false
+
+        while (true) {
+            val draggedPointOffset = computePointOffset(draggedPoint)
+
+            val closest = computeClosestExcept(
+                ignoredPointId = arrayOf(draggedPoint.id),
+                normalizedPos = draggedPointOffset,
+                nestId = nestId
+            )
+
+            if (closest == null) return hasMoved
+            val closestOffset = computePointOffset(closest)
+
+
+            val distanceBetweenPoints = distance(closestOffset, draggedPointOffset)
+
+            val pointsSizeTogether = (closest.getSize(defaultPoint.value) / 2 + draggedPoint.getSize(defaultPoint.value) / 2).value * density
+
+            if (distanceBetweenPoints < pointsSizeTogether) {
+
+                /**
+                 * Offset that represents the vector to transform [closestOffset] into [draggedPointOffset]
+                 */
+                val commonOffset = draggedPointOffset - closestOffset
+
+                val halfCommon = commonOffset / 2f
+
+
+                // If this works first time I'm a genius
+                editPoint(draggedPoint.id) { old ->
+                    old.copy(offset = old.offset - halfCommon)
+                }
+
+                editPoint(closest.id) { old ->
+                    old.copy(offset = old.offset + halfCommon)
+                }
+
+                hasMoved = true
+            } else {
+                return hasMoved
+            }
+        }
+    }
+
 
     /** Returns the point where the ray at [angleRad] (from origin) first hits
      *  the boundary of [iconShape] when the shape is inscribed in a circle of

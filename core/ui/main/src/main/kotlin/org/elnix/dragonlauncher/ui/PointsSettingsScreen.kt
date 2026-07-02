@@ -627,15 +627,10 @@ fun PointsSettingsScreen(
 
                         SelectedPointEditTools.Duplicate -> {
                             selectedPoint?.let { oldPoint ->
-                                pointsService.addPoint {
-                                    oldPoint.copy(id = it)
+                                val newId = pointsService.addPoint { newId ->
+                                    oldPoint.copy(id = newId)
                                 }
-                                TODO()
-//                                autoSeparate(
-//                                    points = points,
-//                                    nest = currentNest,
-//                                    draggedPoint = newPoint
-//                                )
+                                pointsService.autoSeparate(currentNest.id, newId)
                             }
                         }
                     }
@@ -841,7 +836,8 @@ fun PointsSettingsScreen(
                                         }
                                     }
 
-                                    val bestPExcept = pointsService.computeClosestExcept(selectedPoint?.id, tr.normalizedOffset, nestId)
+                                    val ignoredPointIds = selectedPoint?.let { arrayOf(it.id) }
+                                    val bestPExcept = pointsService.computeClosestExcept(ignoredPointIds, tr.normalizedOffset, nestId)
                                     val bestPExceptOffset = bestPExcept?.offset ?: return@detectDragGestures
 
                                     closestHoveredPoint = if (distance(bestPExceptOffset, tr.normalizedOffset) <= TOUCH_THRESHOLD_PX) {
@@ -907,7 +903,7 @@ fun PointsSettingsScreen(
                                             }
 
                                             if (autoSeparatePoints) {
-                                                TODO()
+                                                pointsService.autoSeparate(currentNest.id, selectedPoint.id)
                                             }
 
 //                                            if (freeMoveDraggedPoint) {
@@ -948,7 +944,7 @@ fun PointsSettingsScreen(
                                                 action.nestId
                                             } else null
 
-                                        pointsService.addPoint { id ->
+                                        val newPointId = pointsService.addPoint { id ->
                                             Point(
                                                 id = id,
                                                 offset = tr.normalizedOffset,
@@ -959,7 +955,7 @@ fun PointsSettingsScreen(
                                         }
 
                                         if (autoSeparatePoints) {
-                                            TODO()
+                                            pointsService.autoSeparate(currentNest.id, newPointId)
                                         }
 
                                         manualPlacementQueue = manualPlacementQueue.drop(1)

@@ -149,7 +149,6 @@ public object Constants {
     }
 
     public object Settings {
-        public const val POINT_HITBOX_RADIUS_PX: Float = 40f
         public const val TOUCH_THRESHOLD_PX: Float = 100f
         public const val COLLIDING_SHAPE_THRESHOLD_PX: Float = 50f
         public const val HOVER_POINT_DURATION: Long = 500L

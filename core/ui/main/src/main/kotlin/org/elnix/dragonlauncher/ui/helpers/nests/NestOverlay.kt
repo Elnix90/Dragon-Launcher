@@ -73,7 +73,7 @@ fun DrawScope.NestOverlay(
     }
 
     val hideSelected = drawParams.hideSelectedPoint
-    val filteredPoints = drawParams.pointsService.getPointsForNest(nest, hideSelected)
+    val filteredPoints = drawParams.pointsService.getPointsForNest(nest.id, hideSelected)
     val selectedPoint = drawParams.pointsService.selectedPoint.value
 
     filteredPoints.forEach { p ->
