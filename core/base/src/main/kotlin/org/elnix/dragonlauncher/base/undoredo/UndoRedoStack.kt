@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.base.undoredo
 
-import io.github.elnix90.logging.logWtf
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.elnix.dragonlauncher.base.SettingFlow
@@ -34,7 +33,6 @@ public class UndoRedoStack<T>(
     /** Push current snapshot before a mutation. Clears redo. */
     public fun push() {
         undoStack.value += snapshot()
-        logWtf { "Stack pushed" }
         redoStack.value = emptyList()
     }
 

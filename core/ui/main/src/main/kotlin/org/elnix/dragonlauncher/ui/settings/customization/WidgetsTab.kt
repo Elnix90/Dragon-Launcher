@@ -96,6 +96,7 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
+import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
@@ -173,13 +174,18 @@ fun WidgetsTab(
         onReset = { widgetsViewModel.resetAllWidgets() },
         applyPadding = false,
         scrollableContent = false,
-        otherIcons = arrayOf(
-            Triple(
-                { showMoreSheet = !showMoreSheet },
-                R.drawable.more_vert,
-                stringResource(R.string.more)
+        moreOptions = { dismiss ->
+            listOf(
+                MoreOptions(
+                    text = { stringResource(R.string.show_more_sheet) },
+                    onClick = {
+                        showMoreSheet = !showMoreSheet
+                        dismiss()
+                    },
+                    icon = R.drawable.more_vert,
+                )
             )
-        ),
+        },
         bottomContent = {
             RowWithScrollIndicator(rowsScrollStates[0]) {
                 MultiSelectConnectedButtonRow(

@@ -64,12 +64,15 @@ fun DrawScope.NestOverlay(
 
     selectedAll: Boolean = false,
 ) {
-    nest.intersectionShapes.forEach { shape ->
-        this.IntersectionShape(
-            shape = shape,
-            center = center,
-            drawParams = drawParams,
-        )
+    repeat(2) { pass ->
+        nest.intersectionShapes.forEach { shape ->
+            this.IntersectionShape(
+                shape = shape,
+                center = center,
+                drawParams = drawParams,
+                erase = pass == 0
+            )
+        }
     }
 
     val hideSelected = drawParams.hideSelectedPoint

@@ -34,6 +34,7 @@ import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants
+import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dialogs.AngleLineObjectsOrderDialog
 import org.elnix.dragonlauncher.ui.dialogs.rememberLineObjectsOrder
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
@@ -157,9 +158,18 @@ fun AngleLineTab(onBack: () -> Unit) {
                 AngleLineSettingsStore.resetAll(ctx)
             }
         },
-        otherIcons = arrayOf(
-            Triple({ showOrderDialog = true }, R.drawable.more_vert, stringResource(R.string.more))
-        ),
+        moreOptions = { dismiss ->
+            listOf(
+                MoreOptions(
+                    text = { stringResource(R.string.more) },
+                    onClick = {
+                        showOrderDialog = true
+                        dismiss()
+                    },
+                    icon = R.drawable.more_vert,
+                )
+            )
+        },
         topContent = {
             Canvas(
                 modifier = Modifier

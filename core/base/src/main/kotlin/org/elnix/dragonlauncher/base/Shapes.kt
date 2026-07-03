@@ -4,7 +4,9 @@ import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.drawable.AdaptiveIconDrawable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.GenericShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.ui.geometry.Offset
@@ -41,11 +43,11 @@ public fun IconShape?.resolveShape(default: IconShape = IconShape.PlatformDefaul
             IconShape.Squircle -> SquircleShape
             IconShape.Teardrop -> TeardropShape
             IconShape.EasterEgg -> EasterEggShape
+            IconShape.Square -> RoundedCornerShape(0)
+            IconShape.Circle -> CircleShape
 
             /** Compute first the [RoundedPolygon] and then use the [toShape] from the library  I copied to convert it to a shape. */
             else -> when (shapeToResolve) {
-                IconShape.Circle -> MaterialShapes.Circle
-                IconShape.Square -> MaterialShapes.Square
                 IconShape.Slanted -> MaterialShapes.Slanted
                 IconShape.Arch -> MaterialShapes.Arch
                 IconShape.Fan -> MaterialShapes.Fan

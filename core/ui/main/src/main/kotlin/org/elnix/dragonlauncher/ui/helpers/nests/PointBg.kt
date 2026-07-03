@@ -2,6 +2,7 @@ package org.elnix.dragonlauncher.ui.helpers.nests
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
@@ -95,7 +96,8 @@ fun DrawScope.PointBg(
         drawPath(
             path = path,
             color = backgroundColor,
-            style = Fill
+            style = Fill,
+            blendMode = BlendMode.Clear
         )
 
         if (borderStroke > 0f && borderColor.alpha != 0f) {

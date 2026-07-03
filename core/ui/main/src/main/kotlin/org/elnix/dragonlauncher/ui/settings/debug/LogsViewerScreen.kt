@@ -9,11 +9,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.models.DragonLogViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.helpers.MonospaceScrollableText
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import java.io.File
@@ -43,13 +44,19 @@ fun LogsViewerScreen(
         onReset = null,
         resetText = null,
         scrollableContent = false,
-        otherIcons = arrayOf(
-            Triple(
-                { ctx.copyToClipboard(logs); ctx.showToast("Copied to clipboard") },
-                R.drawable.copy,
-                stringResource(R.string.copy)
+        moreOptions = { dismiss ->
+            listOf(
+                MoreOptions(
+                    text = { stringResource(R.string.copy) },
+                    onClick = {
+                        ctx.copyToClipboard(logs)
+                        ctx.showToast("Copied to clipboard")
+                        dismiss()
+                    },
+                    icon = R.drawable.copy,
+                )
             )
-        )
+        }
     ) {
         MonospaceScrollableText(lines, useDragonLogsColoration = true)
     }

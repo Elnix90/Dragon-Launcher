@@ -970,7 +970,7 @@
     <string name="left_padding_desc">How large the safe zone on the left is</string>
     <string name="right_padding_desc">How large the safe zone on the right is</string>
     <string name="home_action_desc">The action performed when you do a home gesture or button click</string>
-    <string name="double_click_action_desc">Launched when you double click anywhere on the main screen</string>
+    <string name="double_click_action_desc">Launched when you double-click anywhere on the main screen</string>
     <string name="back_action_desc">Action performed when you use the back button or gesture</string>
     <string name="force_app_language_selector">Force app language selector</string>
     <string name="force_app_language_selector_desc">Don\'t use the android language selector when available, always uses the app\'s native</string>
@@ -1019,4 +1019,6 @@
     <string name="delete_nest">Delete Nest</string>
     <string name="nest_debug_overlay">Nest debug overlay</string>
     <string name="nest_debug_overlay_desc">Adds some visual debug features in the drawing of nests</string>
+    <string name="auto_merge">Auto merge</string>
+    <string name="show_more_sheet">Show more sheet</string>
 </resources>

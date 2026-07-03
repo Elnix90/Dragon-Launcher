@@ -31,7 +31,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
@@ -42,7 +41,6 @@ import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.ktx.rotateBy
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.PointsViewModel
-import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedbackEditor
@@ -75,10 +73,6 @@ fun NestEditingScreen(
         onBack()
         return
     }
-
-    val subNestDefaultRadius by SwipeMapSettingsStore.subNestDefaultRadius.asState()
-    var tempRadius by remember { mutableStateOf(currentNest.nestRadius) }
-
 
     val intersectionShapesState = remember(currentNest.id) {
         mutableStateListOf<IntersectionShape>().apply {

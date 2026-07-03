@@ -69,6 +69,7 @@ import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
@@ -190,13 +191,18 @@ fun LogsTab(
         onBack = onBack,
         helpText = "Logs, need more info?",
         onReset = null,
-        otherIcons = arrayOf(
-            Triple(
-                { refreshTrigger++; ctx.showToast("Refreshing...") },
-                R.drawable.refresh,
-                stringResource(R.string.refresh)
+        moreOptions = { dismiss ->
+            listOf(
+                MoreOptions(
+                    text = { stringResource(R.string.refresh) },
+                    onClick = {
+                        refreshTrigger++; ctx.showToast("Refreshing...")
+                        dismiss()
+                    },
+                    icon = R.drawable.refresh,
+                )
             )
-        )
+        }
     ) {
         ExpandableSection(rememberExpandableSection("Device info")) {
             Card(

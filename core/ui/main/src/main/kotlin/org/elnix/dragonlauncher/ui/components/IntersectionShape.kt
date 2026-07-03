@@ -37,7 +37,8 @@ fun IntersectionShape(
 fun DrawScope.IntersectionShape(
     shape: IntersectionShape,
     center: Offset,
-    drawParams: DrawParams
+    drawParams: DrawParams,
+    erase: Boolean
 ) {
 
     val sizePx = shape.size.dp.toPx()
@@ -56,6 +57,6 @@ fun DrawScope.IntersectionShape(
         size = size,
         color = color,
         strokeWidth = strokeWith,
-        erase = false
+        erase = erase
     )
 }

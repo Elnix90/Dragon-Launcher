@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -44,6 +45,7 @@ import org.elnix.dragonlauncher.ui.dialogs.rememberLineObjectsOrder
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine
 import org.elnix.dragonlauncher.ui.helpers.nests.NestOverlay
+import org.elnix.dragonlauncher.ui.helpers.nests.rememberDrawParams
 import org.elnix.dragonlauncher.ui.remembers.LiveNestState
 import org.elnix.dragonlauncher.ui.remembers.rememberCycleActionsController
 import org.elnix.dragonlauncher.ui.remembers.rememberHoldAndRunController
@@ -266,6 +268,14 @@ fun MainScreenOverlay(
         }
     }.reversed()
 
+    val drawParams = rememberDrawParams(
+        preventBgErasing = false,
+        showConfiguratorDecorations = false,
+        forceShowAllActionsInCurrentNest = false,
+        allowShowPointCenter = false,
+        hideSelectedPoint = false
+    )
+
     Box(Modifier.fillMaxSize()) {
 
         MainScreenOverlayDebugInfos(
@@ -314,7 +324,7 @@ fun MainScreenOverlay(
                     }
 
                     // Main canvas, uses drawWithCache to improve drawing performances
-                    Box(
+                    Canvas(
                         modifier = Modifier
                             .fillMaxSize()
                             .graphicsLayer {
@@ -322,37 +332,39 @@ fun MainScreenOverlay(
                                 compositingStrategy = CompositingStrategy.Offscreen
                             }
                             .drawBehind {
-
-                                val lineColor: Color =
-                                    if (rgbLine) Color.hsv(angle360, 1f, 1f)
-                                    else extraColors.angleLine
-
-                                actionLine(
-                                    start = liveNestCenterForDraw,
-                                    end = effectiveCurrentPos,
-                                    sweepAngle = sweepAngle,
-                                    lineColor = lineColor,
-                                    order = order,
-                                    showLineObjectPreview = showLineObjectPreview,
-                                    showAngleLineObjectPreview = showAngleLineObjectPreview,
-                                    showStartObjectPreview = showStartObjectPreview,
-                                    showEndObjectPreview = showEndObjectPreview,
-                                    pickedRememberShapeAngle = pickedRememberShapeAngle,
-                                    pickedRememberRotationAngle = pickedRememberRotationAngle,
-                                    pickedRememberRotationStart = pickedRememberRotationStart,
-                                    pickedRememberShapeStart = pickedRememberShapeStart,
-                                    pickedRememberRotationEnd = pickedRememberRotationEnd,
-                                    pickedRememberShapeEnd = pickedRememberShapeEnd,
-                                    lineCustomObject = lineObject,
-                                    angleLineCustomObject = angleLineObject,
-                                    startCustomObject = startObject,
-                                    endCustomObject = endObject
+                                NestOverlay(
+                                    center = liveNestCenterForDraw,
+                                    nest = nestedNestForDraw,
+                                    depth = 1,
+                                    drawParams = drawParams,
+                                    selectedAll = false,
                                 )
                             }
                     ) {
-                        NestOverlay(
-                            center = liveNestCenterForDraw,
-                            nest = nestedNestForDraw
+                        val lineColor: Color =
+                            if (rgbLine) Color.hsv(angle360, 1f, 1f)
+                            else extraColors.angleLine
+
+                        actionLine(
+                            start = liveNestCenterForDraw,
+                            end = effectiveCurrentPos,
+                            sweepAngle = sweepAngle,
+                            lineColor = lineColor,
+                            order = order,
+                            showLineObjectPreview = showLineObjectPreview,
+                            showAngleLineObjectPreview = showAngleLineObjectPreview,
+                            showStartObjectPreview = showStartObjectPreview,
+                            showEndObjectPreview = showEndObjectPreview,
+                            pickedRememberShapeAngle = pickedRememberShapeAngle,
+                            pickedRememberRotationAngle = pickedRememberRotationAngle,
+                            pickedRememberRotationStart = pickedRememberRotationStart,
+                            pickedRememberShapeStart = pickedRememberShapeStart,
+                            pickedRememberRotationEnd = pickedRememberRotationEnd,
+                            pickedRememberShapeEnd = pickedRememberShapeEnd,
+                            lineCustomObject = lineObject,
+                            angleLineCustomObject = angleLineObject,
+                            startCustomObject = startObject,
+                            endCustomObject = endObject
                         )
                     }
                 } else break

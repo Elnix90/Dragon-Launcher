@@ -28,7 +28,8 @@ fun SettingsSlider(
     showValue: Boolean = true,
     decimals: Int = 2,
     allowTextEditValue: Boolean = true,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    customDesc: ((Float) -> String)? = null
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -42,7 +43,7 @@ fun SettingsSlider(
     SliderWithLabel(
         modifier = modifier,
         label = stringResource(setting.title!!),
-        description = stringResource(setting.description!!),
+        description = customDesc?.invoke(state) ?: stringResource(setting.description!!),
         value = tempState,
         valueRange = setting.allowedRange,
         color = color,

@@ -35,9 +35,14 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 private fun SettingsTitleInternal(
     title: String,
     onBack: () -> Unit,
+    moreOptions: ((() -> Unit) -> List<MoreOptions>)?,
     specialContent: @Composable RowScope.() -> Unit
 ) {
     val interactionSource = rememberInteractionSource()
+    var showBurgerMenu by remember { mutableStateOf(false) }
+    val dismiss = { showBurgerMenu = false }
+
+    val actions = moreOptions?.invoke(dismiss)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -67,6 +72,21 @@ private fun SettingsTitleInternal(
                 .basicMarquee(iterations = 2)
         )
 
+        actions?.let {
+            Box {
+                DragonIconButton(
+                    icon = R.drawable.more_vert,
+                    contentDescription = stringResource(R.string.open_burger_menu)
+                ) { showBurgerMenu = true }
+
+                BurgerListAction(
+                    isExpanded = showBurgerMenu,
+                    onDismissRequest = dismiss,
+                    actions = it
+                )
+            }
+        }
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(5.dp)
@@ -79,22 +99,17 @@ private fun SettingsTitleInternal(
 @Composable
 fun SettingsTitle(
     title: String,
-    vararg otherIcons: Triple<(() -> Unit), Int, String>,
+    moreOptions: ((() -> Unit) -> List<MoreOptions>)? = null,
     resetIcon: (() -> Unit)?,
     helpIcon: () -> Unit,
     onBack: () -> Unit
 ) {
+
     SettingsTitleInternal(
         title = title,
+        moreOptions = moreOptions,
         onBack = onBack
     ) {
-        otherIcons.forEach {
-            DragonIconButton(
-                icon = it.second,
-                contentDescription = it.third
-            ) { it.first() }
-        }
-
         if (resetIcon != null) {
             DragonIconButton(
                 icon = R.drawable.reset,
@@ -122,79 +137,52 @@ fun SpecialSettingsTitle(
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val interactionSource = rememberInteractionSource()
-
-    var showBurgerMenu by remember { mutableStateOf(false) }
-    val dismiss = { showBurgerMenu = false }
-
-    val showSubNestsSlider by SwipeMapSettingsStore.showSubNestsSlider.asState()
     val showAdvancedPointTools by SwipeMapSettingsStore.showAdvancedPointTools.asState()
 
     SettingsTitleInternal(
         title = stringResource(R.string.points_settings),
-        onBack = onBack
-    ) {
-        Box {
-            DragonIconButton(
-                icon = R.drawable.more_vert,
-                contentDescription = stringResource(R.string.open_burger_menu)
-            ) { showBurgerMenu = true }
-
-            BurgerListAction(
-                isExpanded = showBurgerMenu,
-                onDismissRequest = dismiss,
-                actions = listOf(
-                    MoreOptions(
-                        text = { stringResource(R.string.reset_all_points) },
-                        icon = R.drawable.delete_forever,
-                        onClick = {
+        onBack = onBack,
+        moreOptions = { dismiss ->
+            listOf(
+                MoreOptions(
+                    text = { stringResource(R.string.reset_all_points) },
+                    icon = R.drawable.delete_forever,
+                    onClick = {
+                        dismiss()
+                        onResetPoints()
+                    }
+                ),
+                MoreOptions(
+                    text = { stringResource(R.string.show_advanced_edit_tools) },
+                    icon = if (showAdvancedPointTools) R.drawable.toggle_on else R.drawable.toggle_off,
+                    onClick = {
+                        scope.launch {
+                            SwipeMapSettingsStore.showAdvancedPointTools.set(ctx, !showAdvancedPointTools)
                             dismiss()
-                            onResetPoints()
                         }
-                    ),
-                    MoreOptions(
-                        text = { stringResource(R.string.show_sub_nest_size_slider) },
-                        icon = if (showSubNestsSlider) R.drawable.toggle_on else R.drawable.toggle_off,
-                        onClick = {
-                            scope.launch {
-                                SwipeMapSettingsStore.showSubNestsSlider.set(ctx, !showSubNestsSlider)
-                                dismiss()
-                            }
-                        }
-                    ),
-                    MoreOptions(
-                        text = { stringResource(R.string.show_advanced_edit_tools) },
-                        icon = if (showAdvancedPointTools) R.drawable.toggle_on else R.drawable.toggle_off,
-                        onClick = {
-                            scope.launch {
-                                SwipeMapSettingsStore.showAdvancedPointTools.set(ctx, !showAdvancedPointTools)
-                                dismiss()
-                            }
-                        }
-                    ),
-                    MoreOptions(
-                        text = { stringResource(R.string.edit_default_point_settings) },
-                        icon = R.drawable.edit_rounded,
-                        onClick = {
-                            dismiss()
-                            onEditDefaultPoint()
-                        }
-                    ),
-                    MoreOptions(
-                        text = { stringResource(R.string.edit_nest) },
-                        icon = R.drawable.nest_icon,
-                        onClick = {
-                            dismiss()
-                            onEditNest()
-                        }
-                    )
+                    }
+                ),
+                MoreOptions(
+                    text = { stringResource(R.string.edit_default_point_settings) },
+                    icon = R.drawable.edit_rounded,
+                    onClick = {
+                        dismiss()
+                        onEditDefaultPoint()
+                    }
+                ),
+                MoreOptions(
+                    text = { stringResource(R.string.edit_nest) },
+                    icon = R.drawable.nest_icon,
+                    onClick = {
+                        dismiss()
+                        onEditNest()
+                    }
                 )
             )
         }
-
+    ) {
         AnimatedFab(
             onClick = onSettings,
-            interactionSource = interactionSource,
             icon = R.drawable.settings
         )
     }

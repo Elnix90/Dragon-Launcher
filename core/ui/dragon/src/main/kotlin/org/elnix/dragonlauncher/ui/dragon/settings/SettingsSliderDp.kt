@@ -29,7 +29,8 @@ fun SettingsSlider(
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     showValue: Boolean = true,
     enabled: Boolean = true,
-    allowTextEditValue: Boolean = true
+    allowTextEditValue: Boolean = true,
+    customDesc: ((Dp) -> String)? = null,
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -43,7 +44,7 @@ fun SettingsSlider(
     SliderWithLabel(
         modifier = modifier,
         label = stringResource(setting.title!!),
-        description = stringResource(setting.description!!),
+        description = customDesc?.invoke(state) ?: stringResource(setting.description!!),
         value = tempState.value.toInt(),
         valueRange = setting.allowedRange.toIntRange(),
         color = color,

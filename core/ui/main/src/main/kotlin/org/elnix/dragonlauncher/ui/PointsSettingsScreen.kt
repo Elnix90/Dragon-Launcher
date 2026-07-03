@@ -4,7 +4,6 @@ package org.elnix.dragonlauncher.ui
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animateFloatAsState
@@ -19,11 +18,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -72,13 +68,14 @@ import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.EnterNest
 import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.GoParentNest
 import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.NestManagement
 import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools
+import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.AutoMarge
 import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.AutoSeparate
 import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.FreeMove
 import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.SnapPoints
 import org.elnix.dragonlauncher.enumsui.toggle.SelectedPointEditTools
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.applyTransformations
-import org.elnix.dragonlauncher.ktx.distance
+import org.elnix.dragonlauncher.ktx.distanceTo
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ktx.rotateBy
 import org.elnix.dragonlauncher.ktx.undoTransformations
@@ -91,9 +88,6 @@ import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore.isInDragAroundMode
 import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.autoSeparatePoints
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.freeMoveDraggedPoint
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.snapPoints
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.base.asState
@@ -109,7 +103,6 @@ import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowOverlay
@@ -140,14 +133,14 @@ fun PointsSettingsScreen(
     val defaultPoint by pointsService.defaultPoint.asState()
 
     val showAdvancedEditTools by SwipeMapSettingsStore.showAdvancedPointTools.asState()
-    val showSubNestsSlider by SwipeMapSettingsStore.showSubNestsSlider.asState()
     val isInDragAroundMode by isInDragAroundMode.asState()
 
     val primaryColor = MaterialTheme.colorScheme.primary
 
-    val snapPoints by snapPoints.asState()
-    val autoSeparatePoints by autoSeparatePoints.asState()
-    val freeMoveDraggedPoint by freeMoveDraggedPoint.asState()
+    val snapPoints by UiSettingsStore.snapPoints.asState()
+    val autoSeparatePoints by UiSettingsStore.autoSeparatePoints.asState()
+    val freeMoveDraggedPoint by UiSettingsStore.freeMoveDraggedPoint.asState()
+    val autoMerge by UiSettingsStore.autoMerge.asState()
 
     val createLiveNestByDefaultWhenCreatingOpenCircleNestPoint by createLiveNestByDefaultWhenCreatingOpenCircleNestPoint.asState()
 
@@ -157,7 +150,6 @@ fun PointsSettingsScreen(
     val nests by pointsService.nests.asState()
 
     val selectedPoint by pointsService.selectedPoint.asState()
-    val aPointIsSelected = selectedPoint != null
 
 
     var closestHoveredPoint by remember { mutableStateOf<Point?>(null) }
@@ -326,7 +318,7 @@ fun PointsSettingsScreen(
 
         private val distance: Float by lazy {
             val betsPOffset = this.bestP?.offset ?: return@lazy Float.MAX_VALUE
-            distance(betsPOffset, this.normalizedOffset)
+            betsPOffset distanceTo this.normalizedOffset
         }
 
         /**
@@ -378,16 +370,20 @@ fun PointsSettingsScreen(
     var selectedPointTempOffset: Offset? by remember { mutableStateOf(null) }
     val isDragging = selectedPointTempOffset != null
 
-
-    fun select(id: Int?) {
-        pointsService.select(id)
-        selectedPointTempOffset = points.find { it.id == id }?.computePosition()
-    }
-
     fun deselect() {
         pointsService.select(null)
         selectedPointTempOffset = null
     }
+
+    fun select(id: Int?) {
+        if (id == null) {
+            deselect()
+        } else {
+            pointsService.select(id)
+            selectedPointTempOffset = points.find { it.id == id }?.computePosition()
+        }
+    }
+
 
     fun toggleDragAroundMode(checked: Boolean) {
         scope.launch {
@@ -429,16 +425,6 @@ fun PointsSettingsScreen(
         else onBack()
     }
     BackHandler(onBack = handleBack)
-
-//
-//
-//    // Debug values
-//    var clickOffset by remember { mutableStateOf(Offset.Zero) }
-//    var transformedOffset by remember { mutableStateOf(Offset.Zero) }
-//
-//    LaunchedEffect(clickOffset) {
-//        transformedOffset = clickOffset.transform()
-//    }
 
     SettingsScaffold(
         title = "",
@@ -516,6 +502,7 @@ fun PointsSettingsScreen(
                                 SnapPoints -> snapPoints
                                 AutoSeparate -> autoSeparatePoints
                                 FreeMove -> freeMoveDraggedPoint
+                                AutoMarge -> autoMerge
                             }
                         }
                     ) {
@@ -524,6 +511,7 @@ fun PointsSettingsScreen(
                                 SnapPoints -> UiSettingsStore.snapPoints.set(ctx, !snapPoints)
                                 AutoSeparate -> UiSettingsStore.autoSeparatePoints.set(ctx, !autoSeparatePoints)
                                 FreeMove -> UiSettingsStore.freeMoveDraggedPoint.set(ctx, !freeMoveDraggedPoint)
+                                AutoMarge -> UiSettingsStore.autoMerge.set(ctx, !autoMerge)
                             }
                         }
                     }
@@ -612,8 +600,8 @@ fun PointsSettingsScreen(
 
                 MultiSelectConnectedButtonRow(
                     entries = SelectedPointEditTools.entries,
-                    checked = { aPointIsSelected },
-                    enabled = { aPointIsSelected }
+                    checked = { selectedPoint != null },
+                    enabled = { selectedPoint != null }
                 ) { option ->
                     when (option) {
                         SelectedPointEditTools.Edit -> showEditDialog = selectedPoint
@@ -630,6 +618,7 @@ fun PointsSettingsScreen(
                                 val newId = pointsService.addPoint { newId ->
                                     oldPoint.copy(id = newId)
                                 }
+                                select(newId)
                                 pointsService.autoSeparate(currentNest.id, newId)
                             }
                         }
@@ -688,24 +677,19 @@ fun PointsSettingsScreen(
                         hideSelectedPoint = true
                     )
 
-                    selectedPointTempOffset?.let { selectedPointTempOffset ->
-                        val tr = selectedPointTempOffset.toTr()
-                        GlowOverlay(
-                            center = tr.transformedOffset,
-                            color = Color.Red,
-                            radius = 60.dp
-                        )
-                    }
+//                    selectedPointTempOffset?.let { selectedPointTempOffset ->
+//                        val tr = selectedPointTempOffset.toTr()
+//                        GlowOverlay(
+//                            center = tr.transformedOffset,
+//                            color = Color.Red,
+//                            radius = 60.dp
+//                        )
+//                    }
 
                     selectedPoint?.let { p ->
                         // Animated Selected point
                         selectedPointTempOffset?.let { selectedPointTempOffset ->
                             val tr = selectedPointTempOffset.toTr()
-
-
-//                            LaunchedEffect(selectedPointTempOffset) {
-//                                logD(POINTS_TAG) { "StO: $selectedPointTempOffset" }
-//                            }
 
                             val pointSize = p.getSize(defaultPoint).px
                             val customText = rememberDrawScopeText(p.copy(offset = tr.normalizedOffset), pointSize)
@@ -733,7 +717,6 @@ fun PointsSettingsScreen(
                         // Live Nest: semi-transparent target nest preview at the selected point (nest editor only).
                         val liveTargetId = p.liveNestTargetNestId ?: return@let
 
-
                         // Don't draw if the action is opening the same nest it is displaying
                         if (p.action is Action.OpenCircleNest && (p.action as Action.OpenCircleNest).nestId == liveTargetId) return@let
 
@@ -741,7 +724,7 @@ fun PointsSettingsScreen(
                         val nestScale = p.liveNestScale ?: Point.defaultLiveNestScale
                         val scaledNest = nestedNest scaledBy nestScale
                         val hostCenter = if (isDragging) {
-                            selectedPointTempOffset!!.transform()
+                            selectedPointTempOffset!!
                         } else {
                             p.computePosition()
                         }
@@ -766,24 +749,6 @@ fun PointsSettingsScreen(
                     }
                 }
             }
-//            Box(Modifier.fillMaxSize()) {
-////                GlowOverlay(
-////                    center = clickOffset,
-////                    color = Color.Blue,
-////                    radius = 40.dp
-////                )
-//
-//                GlowOverlay(
-//                    center = transformedOffset,
-//                    color = Color.Green,
-//                    radius = 70.dp
-//                )
-//
-//                val dist = distance(clickOffset, transformedOffset)
-//                DragonColumnGroup {
-//                    Text(dist.fastRoundToInt().toString())
-//                }
-//            }
 
             Box(
                 Modifier
@@ -816,15 +781,18 @@ fun PointsSettingsScreen(
                                     val tr = tapOffset.toTr()
                                     val newSelectedPoint = tr ifDistanceIsSmallEnough { tr.bestP }
 
+                                    logD(POINTS_TAG) {
+                                        "New selectedPoint: $newSelectedPoint"
+                                    }
                                     select(newSelectedPoint?.id)
                                 },
                                 onDrag = { change, _ ->
                                     change.consume()
-//                                    clickOffset = change.position
                                     val tr = change.position.toTr()
 
                                     // Update the selected point offset in real time (the dragging thing)
                                     selectedPoint?.let { p ->
+                                        logD(POINTS_TAG) { "New $p" }
                                         selectedPointTempOffset = if (freeMoveDraggedPoint) {
                                             tr.offset
                                         } else {
@@ -834,15 +802,16 @@ fun PointsSettingsScreen(
                                             )
                                             newOffsetNormalized.undoTransformation()
                                         }
+
+                                        if (autoMerge) {
+                                            val bestPExcept = pointsService.computeClosestExcept(arrayOf(p.id), tr.normalizedOffset, nestId)
+                                            val bestPExceptOffset = bestPExcept?.offset ?: return@detectDragGestures
+
+                                            closestHoveredPoint = if (bestPExceptOffset distanceTo tr.normalizedOffset <= TOUCH_THRESHOLD_PX) {
+                                                bestPExcept
+                                            } else null
+                                        }
                                     }
-
-                                    val ignoredPointIds = selectedPoint?.let { arrayOf(it.id) }
-                                    val bestPExcept = pointsService.computeClosestExcept(ignoredPointIds, tr.normalizedOffset, nestId)
-                                    val bestPExceptOffset = bestPExcept?.offset ?: return@detectDragGestures
-
-                                    closestHoveredPoint = if (distance(bestPExceptOffset, tr.normalizedOffset) <= TOUCH_THRESHOLD_PX) {
-                                        bestPExcept
-                                    } else null
                                 },
                                 onDragEnd = {
                                     if (selectedPoint != null && selectedPointTempOffset != null) {
@@ -933,7 +902,6 @@ fun PointsSettingsScreen(
                             detectTapGestures(
                                 onTap = { tapOffset ->
                                     val tr = tapOffset.toTr()
-//                                    clickOffset = tapOffset
 
                                     // Manual placement mode: place the current queued app where user tapped
                                     if (isInManualPlacementMode) {
@@ -975,7 +943,6 @@ fun PointsSettingsScreen(
                                         } else tr.bestP
                                     }
 
-                                    logD(POINTS_TAG) { tr.toString() }
                                     select(newSelectedPoint?.id)
                                 }
                             )
@@ -983,16 +950,6 @@ fun PointsSettingsScreen(
                     }
             )
         }
-    }
-
-    AnimatedVisibility(showSubNestsSlider) {
-        SettingsSlider(
-            setting = SwipeMapSettingsStore.subNestDefaultRadius,
-            modifier = Modifier
-                .height(50.dp)
-                .width(150.dp)
-                .offset(x = 20.dp, y = 50.dp)
-        )
     }
 
 

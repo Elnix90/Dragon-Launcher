@@ -33,18 +33,18 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
+import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 @OptIn(ExperimentalLayoutApi::class)
-@Suppress("AssignedValueIsNeverRead")
 @Composable
 fun SettingsScaffold(
     title: String,
     onBack: () -> Unit,
     helpText: String,
     onReset: (() -> Unit)?,
-    vararg otherIcons: Triple<(() -> Unit), Int, String>,
     modifier: Modifier = Modifier,
+    moreOptions: ((() -> Unit) -> List<MoreOptions>)? = null,
     horizontalPadding: Dp = 16.dp,
     applyPadding: Boolean = true,
     resetTitle: String = stringResource(R.string.reset_default_settings),
@@ -90,7 +90,7 @@ fun SettingsScaffold(
                 } else {
                     SettingsTitle(
                         title = title,
-                        otherIcons = otherIcons,
+                        moreOptions = moreOptions,
                         helpIcon = { showHelpDialog = true },
                         resetIcon = if (onReset != null) {
                             { showResetDialog = true }

@@ -128,7 +128,7 @@ fun rememberLiveNestControllerStack(
         } else {
             pointsService.resolveLiveNestHit(
                 normalizedPos = current - rootStartPos,
-                nest = rootNest,
+                nestId = rootNest.id,
                 liveNestScale = 1f,
                 graceDistancePx = -1
             ).also {
@@ -142,17 +142,18 @@ fun rememberLiveNestControllerStack(
     val hitTests: List<HitResult?> = nestStack.mapIndexed { idx, level ->
         val isRoot = idx == 0
 
-        remember(
-            resetTrigger,
-            isRoot,
-            level.liveNestActive,
-            level.liveNestCenter,
-            current,
-            level.nestedNest,
-            level.liveNestScale,
-            level.hostPoint,
-            activeLevelIndex
-        ) {
+        // No need to remember since current is changing always
+//        remember(
+//            resetTrigger,
+//            isRoot,
+//            level.liveNestActive,
+//            level.liveNestCenter,
+//            current,
+//            level.nestedNest,
+//            level.liveNestScale,
+//            level.hostPoint,
+//            activeLevelIndex
+//        ) {
             when {
                 isRoot -> rootHit
 
@@ -177,7 +178,7 @@ fun rememberLiveNestControllerStack(
 
                     pointsService.resolveLiveNestHit(
                         normalizedPos = normalizedPos,
-                        nest = level.nestedNest!!,
+                        nestId = level.nestedNest!!.id,
                         liveNestScale = level.liveNestScale,
                         graceDistancePx = graceDistancePx
                     ).also {
@@ -186,7 +187,7 @@ fun rememberLiveNestControllerStack(
                 }
             }
         }
-    }
+//    }
 
     // Keep releaseHitRef up-to-date BEFORE they freeze
     SideEffect {

@@ -80,6 +80,12 @@ public object UiSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
+    public val autoMerge: BooleanSettingObject = boolean(
+        title = R.string.auto_merge,
+        default = true
+    )
+
+    @SettingKey
     public val showPointPreviewCenterStartPosition: BooleanSettingObject = boolean(
         title = R.string.show_app_icon_start_drag_position,
         description = R.string.show_app_icon_start_drag_position_description,

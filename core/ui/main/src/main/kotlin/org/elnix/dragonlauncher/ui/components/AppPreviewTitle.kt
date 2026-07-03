@@ -51,12 +51,10 @@ fun AppPreviewTitle(
 
     val appLabelOverlaySize by UiSettingsStore.appLabelOverlaySize.asState()
 
-
-
     val alpha = remember { Animatable(initialValue = 0f) }
     val offsetY = remember { Animatable(initialValue = -20f) }
 
-    LaunchedEffect(point) {
+    LaunchedEffect(point.id) {
         alpha.snapTo(0f)
         alpha.animateTo(
             targetValue = 1f,
@@ -64,7 +62,7 @@ fun AppPreviewTitle(
         )
     }
 
-    LaunchedEffect(point) {
+    LaunchedEffect(point.id) {
         offsetY.snapTo(-20f)
         offsetY.animateTo(
             targetValue = 0f,

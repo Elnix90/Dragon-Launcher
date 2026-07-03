@@ -2,6 +2,8 @@ package org.elnix.dragonlauncher.points
 
 import android.content.Context
 import androidx.compose.ui.geometry.Offset
+import io.github.elnix90.logging.POINTS_TAG
+import io.github.elnix90.logging.logD
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -21,9 +23,11 @@ import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySw
 import org.elnix.dragonlauncher.base.model.serializables.Points
 import org.elnix.dragonlauncher.base.undoredo.UndoRedoManager
 import org.elnix.dragonlauncher.base.undoredo.UndoRedoStack
-import org.elnix.dragonlauncher.ktx.angle360FromOffset
-import org.elnix.dragonlauncher.ktx.distance
+import org.elnix.dragonlauncher.ktx.angleDeg
+import org.elnix.dragonlauncher.ktx.angleRad
+import org.elnix.dragonlauncher.ktx.distanceTo
 import org.elnix.dragonlauncher.ktx.groupByTo
+import org.elnix.dragonlauncher.ktx.toRadians
 import org.elnix.dragonlauncher.settings.stores.array.NestsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.array.PointsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.objects.DefaultPointSettingsStore
@@ -75,7 +79,7 @@ public interface PointsService {
 
     public fun resolveLiveNestHit(
         normalizedPos: Offset,
-        nest: Nest,
+        nestId: Int,
         liveNestScale: Float,
         graceDistancePx: Int = 0
     ): HitResult
@@ -102,7 +106,7 @@ public interface PointsService {
      */
     public fun computeClosest(
         normalizedPos: Offset,
-        nestId: Int?
+        nestId: Int
     ): Point?
 
     /**
@@ -111,10 +115,10 @@ public interface PointsService {
     public fun computeClosestExcept(
         ignoredPointId: Array<Int>?,
         normalizedPos: Offset,
-        nestId: Int?
+        nestId: Int
     ): Point?
 
-    public fun getFurthestPoint(nest: Nest): Point?
+    public fun getFurthestPoint(nestId: Int): Point?
 
     public fun autoSeparate(
         nestId: Int,
@@ -355,14 +359,19 @@ internal class PointsServiceImpl(
      * Now since the points shouldn't be updated when you usually drag in the main screen
      */
     private fun resetGrids() {
-        grid = points.value.groupByTo(mutableMapOf<GridCase, MutablePoints>()) { point -> cellKey(point.offset) }
-        nestGrid = points.value.groupByTo(mutableMapOf<Int, MutablePoints>()) { point -> point.nestId }
+        grid = points.value.groupByTo(mutableMapOf<GridCase, MutablePoints>()) { point ->
+            cellKey(computePointOffset(point))
+        }
+
+        nestGrid = points.value.groupByTo(mutableMapOf<Int, MutablePoints>()) { point ->
+            point.nestId
+        }
 
 
         furthestPointGrid = points.value
             .groupBy { it.nestId }
             .mapValues { (_, nestPoints) ->
-                nestPoints.maxByOrNull { it.offset.getDistanceSquared() }
+                nestPoints.maxByOrNull { computePointOffset(it).getDistanceSquared() }
             }
             .toMutableMap()
 
@@ -372,20 +381,23 @@ internal class PointsServiceImpl(
     }
 
 
-    override fun getFurthestPoint(nest: Nest): Point? = furthestPointGrid[nest.id]
+    override fun getFurthestPoint(nestId: Int): Point? = furthestPointGrid[nestId]
 
     override fun computeClosestExcept(
         ignoredPointId: Array<Int>?,
         normalizedPos: Offset,
-        nestId: Int?
+        nestId: Int
     ): Point? {
-        return when (points.value.size) {
+        val pointsInNestFiltered = getPointsForNest(nestId = nestId, skipSelected = false)
+            .filter { (ignoredPointId == null || it.id !in ignoredPointId) }
+
+        return when (pointsInNestFiltered.size) {
             0 -> null
-            1 -> points.value.first()
+            1 -> pointsInNestFiltered.first()
             else -> {
 
                 @Suppress("LiftReturnOrAssignment")
-                if (distance(lastTarget, normalizedPos) > gridSize) {
+                if (lastTarget distanceTo normalizedPos > gridSize) {
                     searchRadius = 1
                 } else {
                     searchRadius = minOf(3, searchRadius + 1)
@@ -424,7 +436,7 @@ internal class PointsServiceImpl(
 
     override fun computeClosest(
         normalizedPos: Offset,
-        nestId: Int?
+        nestId: Int
     ): Point? =
         computeClosestExcept(
             ignoredPointId = null,
@@ -435,16 +447,18 @@ internal class PointsServiceImpl(
 
     override fun resolveLiveNestHit(
         normalizedPos: Offset,
-        nest: Nest,
+        nestId: Int,
         liveNestScale: Float,
         graceDistancePx: Int
     ): HitResult {
         val dist = normalizedPos.getDistance()
-        val angle360 = angle360FromOffset(normalizedPos)
-        val outerRadius = getFurthestPoint(nest)?.offset?.getDistance() ?: Float.MAX_VALUE
+        val angle360 = normalizedPos.angleDeg()
+
+        // If there's no point in that nest, the HitResult returns a out-of-bounds hit
+        val outerRadius = getFurthestPoint(nestId)?.offset?.getDistance()
 
         graceDistancePx.takeIf { it > -1 }?.let {
-            if (outerRadius > 0f && dist > outerRadius + graceDistancePx) {
+            if (outerRadius == null || outerRadius > 0f && dist > outerRadius + graceDistancePx) {
                 return HitResult(
                     selectedPoint = null,
                     isOutsideBounds = true,
@@ -454,13 +468,14 @@ internal class PointsServiceImpl(
             }
         }
 
+        val nest = nestId.findNestById()
         val isInCancelZone = dist <= nest.cancelZone
 
         // When inside the cancel zone there is no point to select.
         val selectedPoint = if (isInCancelZone) {
             null
         } else {
-            computeClosest(normalizedPos, nest.id)
+            computeClosest(normalizedPos, nestId)
         }
 
         return HitResult(
@@ -495,6 +510,11 @@ internal class PointsServiceImpl(
 
 
     private fun Int.findPointById(): Point? = points.value.find { it.id == this }
+
+    private fun Int.findNestById(): Nest = findNestByIdOrNull() ?: Nest()
+    private fun Int.findNestByIdOrNull(): Nest? = nests.value.find { it.id == this }
+
+
     private val density = ctx.resources.displayMetrics.density
 
     override fun autoSeparate(
@@ -502,50 +522,92 @@ internal class PointsServiceImpl(
         draggedPointId: Int
     ): Boolean {
         val draggedPoint = draggedPointId.findPointById() ?: return false
+        if (points.value.size < 2) return false
 
         var hasMoved = false
 
-        while (true) {
+        /**
+         * Limit the number max of repetitions because otherwise the app could end up being unresponsive
+         * I mean; it shouldn't as I am a pretty good programmer and I anticipated all the edge cases in [computeClosestExcept]
+         * but we never know...
+         */
+        repeat(100) {
             val draggedPointOffset = computePointOffset(draggedPoint)
 
             val closest = computeClosestExcept(
-                ignoredPointId = arrayOf(draggedPoint.id),
+                ignoredPointId = arrayOf(draggedPointId),
                 normalizedPos = draggedPointOffset,
                 nestId = nestId
-            )
+            ) ?: return hasMoved
 
-            if (closest == null) return hasMoved
             val closestOffset = computePointOffset(closest)
-
-
-            val distanceBetweenPoints = distance(closestOffset, draggedPointOffset)
-
+            val distanceBetweenPoints = closestOffset distanceTo draggedPointOffset
             val pointsSizeTogether = (closest.getSize(defaultPoint.value) / 2 + draggedPoint.getSize(defaultPoint.value) / 2).value * density
 
-            if (distanceBetweenPoints < pointsSizeTogether) {
+//            logD(POINTS_TAG) {
+//                "draggedPoint: $draggedPoint\n" +
+//                        "draggedPointOffset: $draggedPointOffset\n" +
+//                        "closest: $closest\n" +
+//                        "closestOffset! $closestOffset\n" +
+//                        "distanceBetweenPoins: $distanceBetweenPoints\n" +
+//                        "pointSizeTogether: $pointsSizeTogether"
+//            }
 
-                /**
-                 * Offset that represents the vector to transform [closestOffset] into [draggedPointOffset]
-                 */
-                val commonOffset = draggedPointOffset - closestOffset
+            if (distanceBetweenPoints > pointsSizeTogether) return hasMoved
 
-                val halfCommon = commonOffset / 2f
-
-
-                // If this works first time I'm a genius
-                editPoint(draggedPoint.id) { old ->
-                    old.copy(offset = old.offset - halfCommon)
-                }
-
-                editPoint(closest.id) { old ->
-                    old.copy(offset = old.offset + halfCommon)
-                }
-
-                hasMoved = true
+            val angleInRadians = if (distanceBetweenPoints == 0f) {
+                val angle = (0..360).random().toFloat().toRadians()
+                logD(POINTS_TAG) { "Took random angle : $angle" }
+                angle
             } else {
-                return hasMoved
+                /**
+                 * Angle from the [Offset] that represents the vector to transform [closestOffset] into [draggedPointOffset]
+                 */
+                val offset = (draggedPointOffset - closestOffset)
+
+                val angle = offset.angleRad()
+                logD(POINTS_TAG) {
+                    "Took.. -> offset: $offset\n           angle: $angle"
+                }
+                angle
             }
+
+            val distanceToMove = distanceBetweenPoints.takeIf { it > 0f } ?: (pointsSizeTogether / 2)
+
+            val offsetToMove = Offset(
+                x = distanceToMove * cos(angleInRadians).toFloat(),
+                y = distanceToMove * sin(angleInRadians).toFloat()
+            )
+
+            logD(POINTS_TAG) {
+                "DistanceToMove: $distanceToMove\n" +
+                        "offset to move: $offsetToMove\n" +
+                        "offset to move angle: ${offsetToMove.angleRad()}\n "
+            }
+
+            editPoint(draggedPoint.id) { old ->
+                old.copy(offset = old.offset - offsetToMove)
+            }
+
+            editPoint(closest.id) { old ->
+                old.copy(offset = old.offset + offsetToMove)
+            }
+
+//            logI(POINTS_TAG) {
+//                "Separating them by:\n" +
+//                        "distanceToMove: $distanceToMove\n" +
+//                        "offsetToMove: $offsetToMove\n\n" +
+//                        "Points before: ${points.value.map { it.offset }}"
+//            }
+
+//            logW(POINTS_TAG) {
+//                "Points after: ${points.value.map { it.offset }}"
+//            }
+
+            hasMoved = true
+
         }
+        return hasMoved
     }
 
 
