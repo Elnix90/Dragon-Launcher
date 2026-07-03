@@ -77,6 +77,11 @@ fun DrawerTab(
     val rightDrawerWidth by DrawerSettingsStore.rightDrawerWidth.asState()
 
     val iconShape by DrawerSettingsStore.iconShape.asState()
+    LaunchedEffect(iconShape){
+        val iconShapeValue = DrawerSettingsStore.iconShape.get(ctx)
+
+        logD(SHAPES_TAG) { "IconShape: ${iconShape}, value = $iconShapeValue" }
+    }
 
     val drawerCategorySettingsState = rememberExpandableSection(stringResource(R.string.category_settings))
     val drawerNormalSettingsState = rememberExpandableSection(stringResource(R.string.grid_settings))
@@ -119,6 +124,12 @@ fun DrawerTab(
                 title = stringResource(R.string.workspaces),
                 icon = R.drawable.workspaces
             ) { onNavigate(NavigationRoute.Workspace) }
+
+            SettingsItem(
+                title = stringResource(R.string.icon_pack),
+                icon = R.drawable.palette
+            ) { onNavigate(NavigationRoute.IconPack) }
+
         }
 
         DragonSettingsGroup(R.string.behavior) {
@@ -132,27 +143,9 @@ fun DrawerTab(
         }
 
         DragonSettingsGroup(R.string.drawer_pull_down_settings) {
-            SettingsSwitchRow(
-                DrawerSettingsStore.pullDownAnimations,
-
-                )
-
-            SettingsSwitchRow(
-                DrawerSettingsStore.pullDownWallPaperDim,
-
-                )
-
-            SettingsSwitchRow(
-                DrawerSettingsStore.pullDownScaleIn,
-
-                )
-
-//                SettingsSwitchRow(
-//                    setting = DrawerSettingsStore.pullDownIconFade,
-//                    enabled = false,
-//                    title = stringResource(R.string.pull_down_icon_fade),
-//                    description = stringResource(R.string.pull_down_icon_fade_desc)
-//                )
+            SettingsSwitchRow(DrawerSettingsStore.pullDownAnimations)
+            SettingsSwitchRow(DrawerSettingsStore.pullDownWallPaperDim)
+            SettingsSwitchRow(DrawerSettingsStore.pullDownScaleIn)
         }
 
 
