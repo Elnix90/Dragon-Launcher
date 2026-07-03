@@ -6,11 +6,15 @@ import androidx.compose.ui.geometry.Offset
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.hypot
+import kotlin.math.pow
 import kotlin.math.sin
 
 /** Euclidean distance from [this@distance] to [b] in pixels. */
 public inline infix fun Offset.distanceTo(b: Offset): Float =
     hypot(b.x - x, b.y - y)
+
+public inline infix fun Offset.distanceSquaredTo(b: Offset): Float =
+    (b.x - x).pow(2) +  (b.y - y).pow(2)
 
 public fun Offset.angleRad(): Double = atan2(y.toDouble(), x.toDouble())
 

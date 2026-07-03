@@ -239,7 +239,6 @@
     <string name="show_app_launch_preview">アプリ起動プレビューを表示</string>
     <string name="show_app_circle_preview">アプリサークルのプレビューを表示</string>
     <string name="show_app_line_preview">アプリラインのプレビューを表示</string>
-    <string name="show_app_angle_preview">アプリアングルのプレビューを表示します。 %1$s</string>
     <string name="do_you_hate_it">「嫌いですか？」</string>
     <string name="line_preview_snap_to_action">ラインプレビューのアクションへのスナップ</string>
     <string name="icon_packs_found">%1$d 個のアイコン パックが見つかりました</string>

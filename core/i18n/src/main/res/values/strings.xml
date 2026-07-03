@@ -262,8 +262,6 @@
     <string name="show_app_launch_preview">Show App launch preview</string>
     <string name="show_app_circle_preview">Show App circle preview</string>
     <string name="show_app_line_preview">Show App line preview</string>
-    <string name="show_app_angle_preview">Show App Angle preview. %1$s</string>
-    <string name="do_you_hate_it">" Do you hate it?"</string>
     <string name="line_preview_snap_to_action">Line Preview snap to action</string>
     <string name="icon_packs_found">%1$d icon packs found</string>
     <string name="default_text">Default</string>
@@ -739,16 +737,11 @@
     <string name="notification_access_desc">Allow displaying notification dots on apps</string>
     <string name="install_from_unknown_source_permission">Install from unknown source permission (APK)</string>
     <string name="install_from_unknown_source_permission_desc">Needed to install extensions</string>
-
     <string name="accessibility_service">Accessibility Service</string>
     <string name="accessibility_service_desc">Used to expand the notification panel via gestures.</string>
-
     <string name="usage_access">Usage Statistics Access</string>
-
     <string name="android_permissions">Android Permissions</string>
-
     <string name="manage_in_system_settings">Manage in system settings.</string>
-    <string name="free_move_dragged_point">Free move dragged point</string>
     <string name="snap_points">Snap Points</string>
     <string name="show_circle">Show Circle</string>
     <string name="undo">Undo</string>
@@ -1021,4 +1014,12 @@
     <string name="nest_debug_overlay_desc">Adds some visual debug features in the drawing of nests</string>
     <string name="auto_merge">Auto merge</string>
     <string name="show_more_sheet">Show more sheet</string>
+    <string name="show_angle_preview">Show angle preview</string>
+    <plurals name="n_points_selected">
+        <item quantity="one">%d point selected</item>
+        <item quantity="other">%d points selected</item>
+    </plurals>
+    <string name="see_selected_points">See selected points</string>
+    <string name="point_not_found">Point not found</string>
+    <string name="selected_points">Selected points</string>
 </resources>

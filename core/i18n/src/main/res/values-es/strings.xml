@@ -239,7 +239,6 @@
     <string name="show_app_launch_preview">Mostrar vista previa del inicio de la aplicación</string>
     <string name="show_app_circle_preview">Mostrar vista previa del círculo de aplicaciones</string>
     <string name="show_app_line_preview">Mostrar vista previa de la línea de la aplicación</string>
-    <string name="show_app_angle_preview">Mostrar vista previa del ángulo de la aplicación. %1$s</string>
     <string name="do_you_hate_it">" • ¿No te gusta?"</string>
     <string name="line_preview_snap_to_action">Vista previa de línea: ajuste a la acción</string>
     <string name="icon_packs_found">%1$d paquetes de iconos encontrados</string>
@@ -686,7 +685,6 @@
     <string name="usage_access">Acceso a estadísticas de uso</string>
     <string name="android_permissions">Permisos de Android</string>
     <string name="manage_in_system_settings">Administrar la configuración del sistema.</string>
-    <string name="free_move_dragged_point">Arrastrar libremente el punto seleccionado</string>
     <string name="snap_points">Ajustar puntos</string>
     <string name="show_circle">Mostrar círculo</string>
     <string name="undo">Deshacer</string>

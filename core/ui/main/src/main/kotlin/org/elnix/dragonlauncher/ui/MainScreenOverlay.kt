@@ -11,8 +11,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
@@ -23,6 +26,9 @@ import io.github.elnix90.logging.logI
 import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultEndCustomObject
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultStartCustomObject
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
@@ -32,11 +38,10 @@ import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
-import org.elnix.dragonlauncher.ui.components.AppPreviewTitle
+import org.elnix.dragonlauncher.ui.components.PointPreviewTitle
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalEndLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalLineObject
@@ -109,7 +114,7 @@ fun MainScreenOverlay(
 
     val hoveredPoint = selectedPointsPerLevel.findLast { it != null }
     LaunchedEffect(hoveredPoint) {
-        pointsService.select(hoveredPoint?.id)
+        pointsService.selectOnyOne(hoveredPoint?.id)
     }
 
     val cycleActionsController = rememberCycleActionsController(
@@ -218,7 +223,7 @@ fun MainScreenOverlay(
     val showEndObjectPreview by AngleLineSettingsStore.showEndObjectPreview.asState()
 
     val pickedRememberShapeAngle = remember(isDragging) {
-        (angleLineObject.shape ?: UiConstants.defaultAngleCustomObject.shape).resolveShape()
+        (angleLineObject.shape ?: defaultAngleCustomObject.shape).resolveShape()
     }
     val pickedRememberRotationAngle = remember(isDragging) {
         angleLineObject.rotation
@@ -227,7 +232,7 @@ fun MainScreenOverlay(
     }
 
     val pickedRememberShapeStart = remember(isDragging) {
-        (startObject.shape ?: UiConstants.defaultStartCustomObject.shape).resolveShape()
+        (startObject.shape ?: defaultStartCustomObject.shape).resolveShape()
     }
     val pickedRememberRotationStart = remember(isDragging) {
         startObject.rotation
@@ -236,7 +241,7 @@ fun MainScreenOverlay(
     }
 
     val pickedRememberShapeEnd = remember(isDragging) {
-        (endObject.shape ?: UiConstants.defaultEndCustomObject.shape).resolveShape()
+        (endObject.shape ?: defaultEndCustomObject.shape).resolveShape()
     }
     val pickedRememberRotationEnd = remember(isDragging) {
         endObject.rotation
@@ -341,31 +346,37 @@ fun MainScreenOverlay(
                                 )
                             }
                     ) {
-                        val lineColor: Color =
-                            if (rgbLine) Color.hsv(angle360, 1f, 1f)
-                            else extraColors.angleLine
 
-                        actionLine(
-                            start = liveNestCenterForDraw,
-                            end = effectiveCurrentPos,
-                            sweepAngle = sweepAngle,
-                            lineColor = lineColor,
-                            order = order,
-                            showLineObjectPreview = showLineObjectPreview,
-                            showAngleLineObjectPreview = showAngleLineObjectPreview,
-                            showStartObjectPreview = showStartObjectPreview,
-                            showEndObjectPreview = showEndObjectPreview,
-                            pickedRememberShapeAngle = pickedRememberShapeAngle,
-                            pickedRememberRotationAngle = pickedRememberRotationAngle,
-                            pickedRememberRotationStart = pickedRememberRotationStart,
-                            pickedRememberShapeStart = pickedRememberShapeStart,
-                            pickedRememberRotationEnd = pickedRememberRotationEnd,
-                            pickedRememberShapeEnd = pickedRememberShapeEnd,
-                            lineCustomObject = lineObject,
-                            angleLineCustomObject = angleLineObject,
-                            startCustomObject = startObject,
-                            endCustomObject = endObject
-                        )
+                        drawIntoCanvas { canvas ->
+                            val bounds = Rect(0f, 0f, size.width, size.height)
+                            canvas.saveLayer(bounds, Paint())
+
+                            val lineColor: Color =
+                                if (rgbLine) Color.hsv(angle360, 1f, 1f)
+                                else extraColors.angleLine
+
+                            actionLine(
+                                start = liveNestCenterForDraw,
+                                end = effectiveCurrentPos,
+                                sweepAngle = sweepAngle,
+                                lineColor = lineColor,
+                                order = order,
+                                showLineObjectPreview = showLineObjectPreview,
+                                showAngleLineObjectPreview = showAngleLineObjectPreview,
+                                showStartObjectPreview = showStartObjectPreview,
+                                showEndObjectPreview = showEndObjectPreview,
+                                pickedRememberShapeAngle = pickedRememberShapeAngle,
+                                pickedRememberRotationAngle = pickedRememberRotationAngle,
+                                pickedRememberRotationStart = pickedRememberRotationStart,
+                                pickedRememberShapeStart = pickedRememberShapeStart,
+                                pickedRememberRotationEnd = pickedRememberRotationEnd,
+                                pickedRememberShapeEnd = pickedRememberShapeEnd,
+                                lineCustomObject = lineObject,
+                                angleLineCustomObject = angleLineObject,
+                                startCustomObject = startObject,
+                                endCustomObject = endObject
+                            )
+                        }
                     }
                 } else break
             }
@@ -376,7 +387,7 @@ fun MainScreenOverlay(
     // Label on top of the screen.
     // Priority: inner Live Nest selection → outer Live Nest selection (with cycle stage) → main nest.
     if (showLaunchingAppLabel || showLaunchingAppIcon) {
-        AppPreviewTitle(
+        PointPreviewTitle(
             point = displayPoint,
             topPadding = appLabelIconOverlayTopPadding.dp,
             showLabel = showLaunchingAppLabel,

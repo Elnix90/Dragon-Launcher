@@ -77,10 +77,10 @@ fun DrawScope.NestOverlay(
 
     val hideSelected = drawParams.hideSelectedPoint
     val filteredPoints = drawParams.pointsService.getPointsForNest(nest.id, hideSelected)
-    val selectedPoint = drawParams.pointsService.selectedPoint.value
+    val selectedPoints = drawParams.pointsService.selectedPointsIds.value
 
     filteredPoints.forEach { p ->
-        val drawPoint: Point = selectedPoint?.takeIf { it.id == p.id } ?: p
+        val drawPoint: Point = filteredPoints.firstOrNull { it.id == p.id } ?: p
         val pointOffset = center + drawParams.pointsService.computePointOffset(p)
 
         if (drawParams.nestDebugOverlay) {
@@ -95,16 +95,17 @@ fun DrawScope.NestOverlay(
             depth = depth,
             point = drawPoint,
             center = pointOffset,
-            selected = selectedAll || (p.id == selectedPoint?.id),
+            selected = selectedAll || (p.id in selectedPoints),
             drawParams = drawParams,
             customText = null
         )
     }
 
     if (drawParams.allowShowPointInCenter) {
-        selectedPoint?.let { selectedPoint ->
+        if (selectedPoints.size == 1) {
+            val point = filteredPoints.firstOrNull { it.id == selectedPoints.first() } ?: return
             PointIcon(
-                point = selectedPoint,
+                point = point,
                 depth = depth,
                 center = center,
                 selected = true,

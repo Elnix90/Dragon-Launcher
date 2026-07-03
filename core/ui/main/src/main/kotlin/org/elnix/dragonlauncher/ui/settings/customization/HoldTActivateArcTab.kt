@@ -37,9 +37,9 @@ import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
-import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.base.withHaptic
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
@@ -176,7 +176,7 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
         ) {
             EditCustomObjectBlock(
                 editObject = mutableHoldObject,
-                default = UiConstants.defaultAngleCustomObject
+                default = defaultAngleCustomObject
             ) { mutableHoldObject = it }
         }
 

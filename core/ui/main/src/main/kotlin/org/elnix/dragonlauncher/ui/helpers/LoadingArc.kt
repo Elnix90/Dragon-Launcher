@@ -28,9 +28,9 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultHoldCustomObject
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ktx.px
-import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawNeonGlowShapePath
 
 private fun DrawScope.holdTolerance(
@@ -64,18 +64,18 @@ fun HoldToActivateArc(
     val color = if (rgbLoading) {
         Color.hsv(progress * 360f, 1f, 1f)
     } else {
-        customObject.color ?: UiConstants.defaultHoldCustomObject.color!!
+        customObject.color ?: defaultHoldCustomObject.color!!
     }
 
-    val shape = customObject.shape ?: UiConstants.defaultHoldCustomObject.shape
-    val radius = (customObject.size ?: UiConstants.defaultHoldCustomObject.size!!).dp
-    val strokeWidth = (customObject.stroke ?: UiConstants.defaultHoldCustomObject.stroke!!).dp
+    val shape = customObject.shape ?: defaultHoldCustomObject.shape
+    val radius = (customObject.size ?: defaultHoldCustomObject.size!!).dp
+    val strokeWidth = (customObject.stroke ?: defaultHoldCustomObject.stroke!!).dp
     val glowRadius = customObject.glow?.radius?.dp?.px ?: 0f
     val glowColor = customObject.glow?.color
 
     // Remembers for each new click the random or not rotation it applies (if -1)
     val rotationAngleStart = remember(center) {
-        (customObject.rotation ?: UiConstants.defaultHoldCustomObject.rotation!!)
+        (customObject.rotation ?: defaultHoldCustomObject.rotation!!)
             .takeIf { it != -1 }
             ?: (0..360).random()
     }

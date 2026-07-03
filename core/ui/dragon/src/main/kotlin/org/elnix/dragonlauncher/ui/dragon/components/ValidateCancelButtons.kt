@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -17,7 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.withHaptic
 import org.elnix.dragonlauncher.ui.dragon.text.AutoResizeableText
 
@@ -33,7 +33,6 @@ fun ValidateCancelButtons(
 
     val interactionSources = remember { List(2) { MutableInteractionSource() } }
 
-    @Suppress("DEPRECATION")
     ButtonGroup(
         overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
         modifier = Modifier.fillMaxWidth()
@@ -45,7 +44,7 @@ fun ValidateCancelButtons(
                         onClick = withHaptic(HapticFeedbackType.Reject) {
                             onCancel()
                         },
-                        shapes = UiConstants.dragonShapes(),
+                        shapes = ButtonDefaults.shapes(),
                         modifier = Modifier
                             .weight(1f)
                             .animateWidth(interactionSources[0]),
@@ -74,7 +73,7 @@ fun ValidateCancelButtons(
                         .weight(1f)
                         .animateWidth(interactionSources[1]),
                     interactionSource = interactionSources[1],
-                    shapes = UiConstants.dragonShapes(),
+                    shapes = ButtonDefaults.shapes(),
                 ) {
                     AutoResizeableText(
                         text = validateText,

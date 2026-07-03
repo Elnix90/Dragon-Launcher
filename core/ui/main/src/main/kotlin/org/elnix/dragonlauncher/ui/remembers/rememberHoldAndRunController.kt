@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.serializables.Point
+import kotlin.time.Duration.Companion.milliseconds
 
 
 /**
@@ -57,7 +58,7 @@ fun rememberHoldAndRunController(
 
         val delayMs = currentPoint.holdAndRunDelayMs?.toLong() ?: return@LaunchedEffect
 
-        delay(delayMs)
+        delay(delayMs.milliseconds)
 
         // Guard: still on the same point and not yet fired (safety for rapid transitions).
         if (!firedThisGesture) {

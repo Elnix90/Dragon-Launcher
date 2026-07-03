@@ -16,6 +16,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 
 /**
@@ -66,8 +67,7 @@ fun rememberHoldToOpenSettings(
                     val holdJob = scope.launch {
                         progress.snapTo(0f)
 
-                        delay(holdDelay)
-
+                        delay(holdDelay.milliseconds)
 
                         progress.animateTo(
                             targetValue = 1f,

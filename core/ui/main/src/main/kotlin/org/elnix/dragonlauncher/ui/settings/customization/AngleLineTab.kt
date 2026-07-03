@@ -1,12 +1,13 @@
-@file:Suppress("AssignedValueIsNeverRead")
-
 package org.elnix.dragonlauncher.ui.settings.customization
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.VectorConverter
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,12 +29,17 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultEndCustomObject
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultLineCustomObject
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultStartCustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObjectBlockProperties
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.distanceSquaredTo
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
-import org.elnix.dragonlauncher.ui.base.UiConstants
+import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dialogs.AngleLineObjectsOrderDialog
 import org.elnix.dragonlauncher.ui.dialogs.rememberLineObjectsOrder
@@ -48,7 +54,6 @@ import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson
 import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberAngleLineObjects
 import org.elnix.dragonlauncher.ui.remembers.rememberSweepAngle
 import kotlin.math.atan2
-
 
 @Composable
 fun AngleLineTab(onBack: () -> Unit) {
@@ -85,14 +90,13 @@ fun AngleLineTab(onBack: () -> Unit) {
     val rgbLine by AngleLineSettingsStore.rgbLine.asState()
 
 
-    var dummyEnd by remember { mutableStateOf(Offset.Infinite) }
-    var hasAlreadyBeenPlaced by remember { mutableStateOf(false) }
+    val start = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
+    val end = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
 
+    var moveStartOrEnd by remember { mutableStateOf(false) }
 
-    var start by remember { mutableStateOf(Offset(0f, 0f)) }
-
-    val dx = dummyEnd.x - start.x
-    val dy = dummyEnd.y - start.y
+    val dx = end.value.x - start.value.x
+    val dy = end.value.y - start.value.y
 
     // angle relative to UP = 0°
     val angleRad = atan2(dx.toDouble(), -dy.toDouble())
@@ -105,12 +109,10 @@ fun AngleLineTab(onBack: () -> Unit) {
         sweepState.onAngleChanged(angleDeg)
     }
 
-
     val sweep = sweepState.sweepAngle()
 
-
     val pickedRememberShapeAngle = remember(mutableAngleLineObject.shape) {
-        (mutableAngleLineObject.shape ?: UiConstants.defaultAngleCustomObject.shape).resolveShape()
+        (mutableAngleLineObject.shape ?: defaultAngleCustomObject.shape).resolveShape()
     }
     val pickedRememberRotationAngle = remember(mutableAngleLineObject.rotation) {
         mutableAngleLineObject.rotation
@@ -119,7 +121,7 @@ fun AngleLineTab(onBack: () -> Unit) {
     }
 
     val pickedRememberShapeStart = remember(mutableStartObject.shape) {
-        (mutableStartObject.shape ?: UiConstants.defaultStartCustomObject.shape).resolveShape()
+        (mutableStartObject.shape ?: defaultStartCustomObject.shape).resolveShape()
     }
     val pickedRememberRotationStart = remember(mutableStartObject.rotation) {
         mutableStartObject.rotation
@@ -128,7 +130,7 @@ fun AngleLineTab(onBack: () -> Unit) {
     }
 
     val pickedRememberShapeEnd = remember(mutableEndObject.shape) {
-        (mutableEndObject.shape ?: UiConstants.defaultEndCustomObject.shape).resolveShape()
+        (mutableEndObject.shape ?: defaultEndCustomObject.shape).resolveShape()
     }
     val pickedRememberRotationEnd = remember(mutableEndObject.rotation) {
         mutableEndObject.rotation
@@ -146,6 +148,43 @@ fun AngleLineTab(onBack: () -> Unit) {
         }
     }
 
+    Canvas(
+        modifier = Modifier
+            .graphicsLayer {
+                compositingStrategy = CompositingStrategy.Offscreen
+            }
+            .fillMaxSize()
+
+    ) {
+        val lineColor =
+            if (rgbLine) Color.hsv(sweepState.angle360(), 1f, 1f)
+            else extraColors.angleLine
+
+        actionLine(
+            start = start.value,
+            end = end.value,
+            sweepAngle = sweep,
+            lineColor = lineColor,
+            order = order,
+            showLineObjectPreview = showLineObjectPreview,
+            showAngleLineObjectPreview = showAngleLineObjectPreview,
+            showStartObjectPreview = showStartObjectPreview,
+            showEndObjectPreview = showEndObjectPreview,
+            pickedRememberShapeAngle = pickedRememberShapeAngle,
+            pickedRememberRotationAngle = pickedRememberRotationAngle,
+            pickedRememberRotationStart = pickedRememberRotationStart,
+            pickedRememberShapeStart = pickedRememberShapeStart,
+            pickedRememberRotationEnd = pickedRememberRotationEnd,
+            pickedRememberShapeEnd = pickedRememberShapeEnd,
+            lineCustomObject = mutableLineObject,
+            angleLineCustomObject = mutableAngleLineObject,
+            startCustomObject = mutableStartObject,
+            endCustomObject = mutableEndObject
+
+        )
+    }
+
+
     SettingsScaffold(
         title = stringResource(R.string.angle_line),
         onBack = {
@@ -161,76 +200,74 @@ fun AngleLineTab(onBack: () -> Unit) {
         moreOptions = { dismiss ->
             listOf(
                 MoreOptions(
-                    text = { stringResource(R.string.more) },
+                    text = { stringResource(R.string.configure_draw_order) },
                     onClick = {
                         showOrderDialog = true
                         dismiss()
                     },
-                    icon = R.drawable.more_vert,
+                    icon = R.drawable.height,
                 )
             )
         },
         topContent = {
-            Canvas(
+            Box(
                 modifier = Modifier
-                    .graphicsLayer {
-                        compositingStrategy = CompositingStrategy.Offscreen
-                    }
                     .aspectRatio(1f)
                     .fillMaxWidth()
                     .pointerInput(Unit) {
-                        // Allow the user to move the end for cleaner preview
-                        detectDragGestures { change, _ ->
-                            dummyEnd = change.position
-                        }
-                        detectTapGestures { position ->
-                            dummyEnd = position
-                        }
+                        detectDragGestures(
+                            onDragStart = { position: Offset ->
+                                val distanceToStart = start.value distanceSquaredTo position
+                                val distanceToEnd = end.value distanceSquaredTo position
+
+                                moveStartOrEnd = if (distanceToEnd < distanceToStart) {
+                                    false
+                                } else {
+                                    true
+                                }
+                            },
+                            onDrag = { change, _ ->
+                                scope.launch {
+                                    if (moveStartOrEnd) {
+                                        start.animateTo(
+                                            targetValue = change.position,
+                                            animationSpec = bouncySpec()
+                                        )
+                                    } else {
+                                        end.animateTo(
+                                            targetValue = change.position,
+                                            animationSpec = bouncySpec()
+                                        )
+                                    }
+                                }
+                            }
+                        )
                     }
                     .onGloballyPositioned { coordinates ->
-                        if (!hasAlreadyBeenPlaced) {
-                            val rect = coordinates.boundsInRoot()
-                            val rectSize = (rect.height * density.density).toInt() / 2
+                        val rect = coordinates.boundsInRoot()
+                        val rectSize = (rect.height * density.density).toInt() / 4
 
-                            dummyEnd = Offset(
-                                rect.left + (0..rectSize).random(),
-                                rect.top + (0..rectSize).random()
+                        scope.launch {
+                            start.animateTo(
+                                targetValue = Offset(
+                                    rect.center.x + (-rectSize..rectSize).random(),
+                                    rect.center.y + (-rectSize..rectSize).random()
+                                ),
+                                animationSpec = bouncySpec()
                             )
-                            // Prevent the thing to move after first placement
-                            hasAlreadyBeenPlaced = true
+                        }
+
+                        scope.launch {
+                            end.animateTo(
+                                targetValue = Offset(
+                                    rect.center.x + (-rectSize..rectSize).random(),
+                                    rect.center.y + (-rectSize..rectSize).random()
+                                ),
+                                animationSpec = bouncySpec()
+                            )
                         }
                     }
-            ) {
-
-                start = Offset(size.width / 2f, size.height / 2f)
-
-                val lineColor =
-                    if (rgbLine) Color.hsv(sweepState.angle360(), 1f, 1f)
-                    else extraColors.angleLine
-
-                actionLine(
-                    start = start,
-                    end = dummyEnd,
-                    sweepAngle = sweep,
-                    lineColor = lineColor,
-                    order = order,
-                    showLineObjectPreview = showLineObjectPreview,
-                    showAngleLineObjectPreview = showAngleLineObjectPreview,
-                    showStartObjectPreview = showStartObjectPreview,
-                    showEndObjectPreview = showEndObjectPreview,
-                    pickedRememberShapeAngle = pickedRememberShapeAngle,
-                    pickedRememberRotationAngle = pickedRememberRotationAngle,
-                    pickedRememberRotationStart = pickedRememberRotationStart,
-                    pickedRememberShapeStart = pickedRememberShapeStart,
-                    pickedRememberRotationEnd = pickedRememberRotationEnd,
-                    pickedRememberShapeEnd = pickedRememberShapeEnd,
-                    lineCustomObject = mutableLineObject,
-                    angleLineCustomObject = mutableAngleLineObject,
-                    startCustomObject = mutableStartObject,
-                    endCustomObject = mutableEndObject
-
-                )
-            }
+            )
         }
     ) {
         /** Line object setting */
@@ -240,7 +277,7 @@ fun AngleLineTab(onBack: () -> Unit) {
             AnimatedVisibility(showLineObjectPreview) {
                 EditCustomObjectBlock(
                     editObject = mutableLineObject,
-                    default = UiConstants.defaultLineCustomObject,
+                    default = defaultLineCustomObject,
                     properties = CustomObjectBlockProperties(
                         allowSizeCustomization = false,
                         allowShapeCustomization = false,
@@ -257,7 +294,7 @@ fun AngleLineTab(onBack: () -> Unit) {
             AnimatedVisibility(showAngleLineObjectPreview) {
                 EditCustomObjectBlock(
                     editObject = mutableAngleLineObject,
-                    default = UiConstants.defaultAngleCustomObject
+                    default = defaultAngleCustomObject
                 ) { mutableAngleLineObject = it }
             }
         }
@@ -269,7 +306,7 @@ fun AngleLineTab(onBack: () -> Unit) {
             AnimatedVisibility(showStartObjectPreview) {
                 EditCustomObjectBlock(
                     editObject = mutableStartObject,
-                    default = UiConstants.defaultStartCustomObject
+                    default = defaultStartCustomObject
                 ) { mutableStartObject = it }
             }
         }
@@ -281,7 +318,7 @@ fun AngleLineTab(onBack: () -> Unit) {
             AnimatedVisibility(showEndObjectPreview) {
                 EditCustomObjectBlock(
                     editObject = mutableEndObject,
-                    default = UiConstants.defaultEndCustomObject
+                    default = defaultEndCustomObject
                 ) { mutableEndObject = it }
             }
         }

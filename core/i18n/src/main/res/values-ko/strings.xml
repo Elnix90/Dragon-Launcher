@@ -238,7 +238,6 @@
     <string name="show_app_launch_preview">앱 실행 미리보기 표시</string>
     <string name="show_app_circle_preview">앱서클 미리보기 표시</string>
     <string name="show_app_line_preview">앱 라인 미리보기 표시</string>
-    <string name="show_app_angle_preview">앱 각도 미리보기를 표시합니다. %1$s</string>
     <string name="do_you_hate_it">\"당신은 그것을 싫어합니까\?\"</string>
     <string name="line_preview_snap_to_action">라인 미리보기 스냅 투 액션</string>
     <string name="icon_packs_found">%1$d개의 아이콘 팩이 발견되었습니다.</string>

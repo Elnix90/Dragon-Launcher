@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Checkbox
@@ -69,6 +70,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import io.github.elnix90.logging.FONT_PROVIDER
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -76,15 +81,11 @@ import org.elnix.dragonlauncher.base.Constants
 import org.elnix.dragonlauncher.fonts.fontNameToFont
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
-import io.github.elnix90.logging.FONT_PROVIDER
-import io.github.elnix90.logging.logD
-import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -404,7 +405,7 @@ fun FontTab(onBack: () -> Unit) {
                                     modifier = Modifier
                                         .weight(3f)
                                         .animateWidth(interactionSources[0]),
-                                    shapes = UiConstants.dragonShapes()
+                                    shapes = ButtonDefaults.shapes(),
                                 ) {
                                     Icon(
                                         painter = painterResource(R.drawable.download),
@@ -439,7 +440,7 @@ fun FontTab(onBack: () -> Unit) {
                                     modifier = Modifier
                                         .weight(3f)
                                         .animateWidth(interactionSources[1]),
-                                    shapes = UiConstants.dragonShapes()
+                                    shapes = ButtonDefaults.shapes(),
                                 ) {
                                     Icon(
                                         painter = painterResource(R.drawable.add),
@@ -516,7 +517,7 @@ fun FontTab(onBack: () -> Unit) {
                                         horizontal = 8.dp,
                                         vertical = 8.dp
                                     ),
-                                    shapes = UiConstants.dragonShapes(),
+                                    shapes = ButtonDefaults.shapes(),
                                     colors = AppObjectsColors.cancelButtonColors()
                                 ) {
                                     Icon(

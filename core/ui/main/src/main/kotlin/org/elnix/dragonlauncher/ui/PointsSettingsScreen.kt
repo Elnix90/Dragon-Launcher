@@ -2,7 +2,6 @@
 
 package org.elnix.dragonlauncher.ui
 
-import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.VectorConverter
@@ -29,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -48,7 +48,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.elnix90.logging.NESTS_TAG
-import io.github.elnix90.logging.POINTS_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
@@ -68,9 +67,8 @@ import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.EnterNest
 import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.GoParentNest
 import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.NestManagement
 import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools
-import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.AutoMarge
+import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.AutoMerge
 import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.AutoSeparate
-import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.FreeMove
 import org.elnix.dragonlauncher.enumsui.toggle.PointsEditTools.SnapPoints
 import org.elnix.dragonlauncher.enumsui.toggle.SelectedPointEditTools
 import org.elnix.dragonlauncher.i18n.R
@@ -95,7 +93,8 @@ import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.components.ToggleAnimatedFab
-import org.elnix.dragonlauncher.ui.components.AppPreviewTitle
+import org.elnix.dragonlauncher.ui.base.modifiers.selfAlignHorizontally
+import org.elnix.dragonlauncher.ui.components.SelectedPointsTopBar
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
 import org.elnix.dragonlauncher.ui.dialogs.EditPointSheet
@@ -116,7 +115,6 @@ import kotlin.math.sqrt
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun PointsSettingsScreen(
     iconsViewModel: IconsViewModel = activityViewModel(),
@@ -139,7 +137,6 @@ fun PointsSettingsScreen(
 
     val snapPoints by UiSettingsStore.snapPoints.asState()
     val autoSeparatePoints by UiSettingsStore.autoSeparatePoints.asState()
-    val freeMoveDraggedPoint by UiSettingsStore.freeMoveDraggedPoint.asState()
     val autoMerge by UiSettingsStore.autoMerge.asState()
 
     val createLiveNestByDefaultWhenCreatingOpenCircleNestPoint by createLiveNestByDefaultWhenCreatingOpenCircleNestPoint.asState()
@@ -149,8 +146,8 @@ fun PointsSettingsScreen(
     val points by pointsService.points.asState()
     val nests by pointsService.nests.asState()
 
-    val selectedPoint by pointsService.selectedPoint.asState()
-
+    val selectedPointsIds: List<Int> by pointsService.selectedPointsIds.asState()
+    val aSinglePointIsSelected = selectedPointsIds.size == 1
 
     var closestHoveredPoint by remember { mutableStateOf<Point?>(null) }
     var closestHoveredTempOffset by remember { mutableStateOf<Offset?>(null) }
@@ -163,7 +160,7 @@ fun PointsSettingsScreen(
 
     var showEditDefaultPoint by remember { mutableStateOf(false) }
     var showAddDialog by remember { mutableStateOf(false) }
-    var showEditDialog by remember { mutableStateOf<Point?>(null) }
+    var showEditDialog by remember { mutableStateOf<Int?>(null) }
 
     // Manual placement mode state (multi-select "Place one by one")
     var manualPlacementQueue by remember { mutableStateOf<List<Action>>(emptyList()) }
@@ -344,19 +341,6 @@ fun PointsSettingsScreen(
 
     fun Offset.toTr(): TransformedOffset = TransformedOffset(this)
 
-//    fun Point.toTr(): TransformedOffset {
-//        val pointOffset = pointsService.computePointOffset(this)
-//
-//        val untransformed = pointOffset.transform()
-//        val unNormalized = untransformed.undoNormalization()
-//
-//
-//        logD(POINTS_TAG) { "unNormalized = $unNormalized; unTransformed $untransformed" }
-//        val tr = TransformedOffset(unNormalized)
-//        logD(POINTS_TAG) { "Point TR: $tr" }
-//        return tr
-//    }
-
     /**
      * Compute position of a point in the screen.
      *
@@ -367,21 +351,24 @@ fun PointsSettingsScreen(
         pointsService.computePointOffset(this).undoNormalization().undoTransformation()
 
 
-    var selectedPointTempOffset: Offset? by remember { mutableStateOf(null) }
-    val isDragging = selectedPointTempOffset != null
+    val selectedPointTempOffset = remember { mutableStateMapOf<Int, Offset>() }
+    val isDragging = selectedPointTempOffset.isEmpty()
 
-    fun deselect() {
-        pointsService.select(null)
-        selectedPointTempOffset = null
+
+    fun select(id: Int) {
+        pointsService.select(id)
+        val point = pointsService.findPointById(id) ?: return
+        selectedPointTempOffset[id] = point.computePosition()
     }
 
-    fun select(id: Int?) {
-        if (id == null) {
-            deselect()
-        } else {
-            pointsService.select(id)
-            selectedPointTempOffset = points.find { it.id == id }?.computePosition()
-        }
+    fun deselect(id: Int) {
+        pointsService.deselect(id)
+        selectedPointTempOffset -= id
+    }
+
+    fun deselectAll() {
+        pointsService.deselectAll()
+        selectedPointTempOffset.clear()
     }
 
 
@@ -390,7 +377,7 @@ fun PointsSettingsScreen(
             PrivateSettingsStore.isInDragAroundMode.set(ctx, checked)
         }
         if (checked) {
-            deselect()
+            deselectAll()
         }
     }
 
@@ -409,22 +396,16 @@ fun PointsSettingsScreen(
         }
     }
 
-    // Shows all points, excepted the currently dragged one, if any, to draw them inside the canvas
-//    val displayedFilteredPoints by remember(points, isDragging, selectedPoint?.id) {
-//        derivedStateOf {
-//            if (!isDragging || selectedPoint == null) points
-//            else points - selectedPoint!!
-//        }
-//    }
-
     val handleBack = {
         if (isInManualPlacementMode) manualPlacementQueue = emptyList()
-        else if (selectedPoint != null) deselect()
+        else if (selectedPointsIds.isNotEmpty()) deselectAll()
         else if (nestId != 0) nestNavigation.goBack()
         else if (isEditing) isEditing = false
         else onBack()
     }
     BackHandler(onBack = handleBack)
+
+    val recomposeTrigger by pointsService.recomposeTRigger.asState()
 
     SettingsScaffold(
         title = "",
@@ -449,8 +430,9 @@ fun PointsSettingsScreen(
                 RowWithScrollIndicator(rowsScrollStates[0]) {
                     // Nests toolbar
                     val nestToGo =
-                        if (selectedPoint?.action is Action.OpenCircleNest) {
-                            (selectedPoint!!.action as Action.OpenCircleNest).nestId
+                        if (selectedPointsIds.size == 1) {
+                            val point = pointsService.findPointById(selectedPointsIds.first())
+                            if (point != null && point.action is Action.OpenCircleNest) (point.action as Action.OpenCircleNest).nestId else null
                         } else null
 
                     val canGoNest = nestToGo != null
@@ -480,13 +462,13 @@ fun PointsSettingsScreen(
 
                             GoParentNest -> {
                                 nestNavigation.goBack()
-                                deselect()
+                                deselectAll()
                             }
 
                             EnterNest -> {
                                 nestToGo?.let {
                                     nestNavigation.goToNest(it)
-                                    deselect()
+                                    deselectAll()
                                 }
                             }
                         }
@@ -501,8 +483,7 @@ fun PointsSettingsScreen(
                             when (it) {
                                 SnapPoints -> snapPoints
                                 AutoSeparate -> autoSeparatePoints
-                                FreeMove -> freeMoveDraggedPoint
-                                AutoMarge -> autoMerge
+                                AutoMerge -> autoMerge
                             }
                         }
                     ) {
@@ -510,8 +491,7 @@ fun PointsSettingsScreen(
                             when (it) {
                                 SnapPoints -> UiSettingsStore.snapPoints.set(ctx, !snapPoints)
                                 AutoSeparate -> UiSettingsStore.autoSeparatePoints.set(ctx, !autoSeparatePoints)
-                                FreeMove -> UiSettingsStore.freeMoveDraggedPoint.set(ctx, !freeMoveDraggedPoint)
-                                AutoMarge -> UiSettingsStore.autoMerge.set(ctx, !autoMerge)
+                                AutoMerge -> UiSettingsStore.autoMerge.set(ctx, !autoMerge)
                             }
                         }
                     }
@@ -600,21 +580,38 @@ fun PointsSettingsScreen(
 
                 MultiSelectConnectedButtonRow(
                     entries = SelectedPointEditTools.entries,
-                    checked = { selectedPoint != null },
-                    enabled = { selectedPoint != null }
+                    checked = {
+                        when (it) {
+                            SelectedPointEditTools.Edit -> aSinglePointIsSelected
+                            SelectedPointEditTools.Duplicate -> selectedPointsIds.isNotEmpty()
+                            SelectedPointEditTools.Remove -> selectedPointsIds.isNotEmpty()
+                        }
+                    },
+                    enabled = {
+                        when (it) {
+                            SelectedPointEditTools.Edit -> aSinglePointIsSelected
+                            SelectedPointEditTools.Duplicate -> selectedPointsIds.isNotEmpty()
+                            SelectedPointEditTools.Remove -> selectedPointsIds.isNotEmpty()
+                        }
+                    }
                 ) { option ->
                     when (option) {
-                        SelectedPointEditTools.Edit -> showEditDialog = selectedPoint
+                        SelectedPointEditTools.Edit -> {
+                            showEditDialog = selectedPointsIds.firstOrNull() ?: return@MultiSelectConnectedButtonRow
+                        }
 
                         SelectedPointEditTools.Remove -> {
-                            selectedPoint?.let { point ->
-                                pointsService.removePoint(point.id)
-                                deselect()
+
+                            selectedPointsIds.forEach { id ->
+                                pointsService.removePoint(id)
                             }
+                            deselectAll()
+
                         }
 
                         SelectedPointEditTools.Duplicate -> {
-                            selectedPoint?.let { oldPoint ->
+                            selectedPointsIds.forEach { id ->
+                                val oldPoint = pointsService.findPointById(id) ?: return@MultiSelectConnectedButtonRow
                                 val newId = pointsService.addPoint { newId ->
                                     oldPoint.copy(id = newId)
                                 }
@@ -655,7 +652,7 @@ fun PointsSettingsScreen(
              * - If the selected point is a live nest, it is drawn in transparency on top of it.
              *   **Only if the nest isn't a OpenCircleNest that points to the same nest action**
              */
-            key(selectedPoint) {
+            key(recomposeTrigger, selectedPointsIds, selectedPointTempOffset, points.size, nests.size, defaultPoint) {
                 Box(
                     Modifier
                         .fillMaxSize()
@@ -677,57 +674,44 @@ fun PointsSettingsScreen(
                         hideSelectedPoint = true
                     )
 
-//                    selectedPointTempOffset?.let { selectedPointTempOffset ->
-//                        val tr = selectedPointTempOffset.toTr()
-//                        GlowOverlay(
-//                            center = tr.transformedOffset,
-//                            color = Color.Red,
-//                            radius = 60.dp
-//                        )
-//                    }
+                    // Animated Selected point
+                    selectedPointTempOffset.forEach { (id, offset) ->
+                        val point = pointsService.findPointById(id) ?: return@forEach
+                        val tr = offset.toTr()
 
-                    selectedPoint?.let { p ->
-                        // Animated Selected point
-                        selectedPointTempOffset?.let { selectedPointTempOffset ->
-                            val tr = selectedPointTempOffset.toTr()
+                        val pointSize = point.getSize(defaultPoint).px
+                        val customText = rememberDrawScopeText(point.copy(offset = tr.normalizedOffset), pointSize)
 
-                            val pointSize = p.getSize(defaultPoint).px
-                            val customText = rememberDrawScopeText(p.copy(offset = tr.normalizedOffset), pointSize)
+                        PointIcon(
+                            center = tr.transformedOffset,
+                            point = point,
+                            selected = true,
+                            preventBgErasing = true,
+                            showConfiguratorDecorations = true,
+                            customText = customText
+                        )
 
-                            PointIcon(
-                                center = tr.transformedOffset,
-                                point = p,
-                                selected = true,
-                                preventBgErasing = true,
-                                showConfiguratorDecorations = true,
-                                customText = customText
-                            )
-
-                            if (LocalNestDebugOverlay.current) {
-                                Canvas(Modifier.fillMaxSize()) {
-                                    drawLine(
-                                        color = Color.White,
-                                        start = center,
-                                        end = tr.transformedOffset
-                                    )
-                                }
+                        if (LocalNestDebugOverlay.current) {
+                            Canvas(Modifier.fillMaxSize()) {
+                                drawLine(
+                                    color = Color.White,
+                                    start = center,
+                                    end = tr.transformedOffset
+                                )
                             }
                         }
 
+
                         // Live Nest: semi-transparent target nest preview at the selected point (nest editor only).
-                        val liveTargetId = p.liveNestTargetNestId ?: return@let
+                        val liveTargetId = point.liveNestTargetNestId ?: return@forEach
 
                         // Don't draw if the action is opening the same nest it is displaying
-                        if (p.action is Action.OpenCircleNest && (p.action as Action.OpenCircleNest).nestId == liveTargetId) return@let
+                        if (point.action is Action.OpenCircleNest && (point.action as Action.OpenCircleNest).nestId == liveTargetId) return@forEach
 
-                        val nestedNest = nests.find { it.id == liveTargetId } ?: return@let
-                        val nestScale = p.liveNestScale ?: Point.defaultLiveNestScale
+                        val nestedNest = nests.find { it.id == liveTargetId } ?: return@forEach
+                        val nestScale = point.liveNestScale ?: Point.defaultLiveNestScale
                         val scaledNest = nestedNest scaledBy nestScale
-                        val hostCenter = if (isDragging) {
-                            selectedPointTempOffset!!
-                        } else {
-                            p.computePosition()
-                        }
+                        val hostCenter = if (isDragging) offset else point.computePosition()
 
                         NestOverlay(
                             modifier = Modifier.graphicsLayer { alpha = 0.4f },
@@ -779,92 +763,107 @@ fun PointsSettingsScreen(
                             detectDragGestures(
                                 onDragStart = { tapOffset ->
                                     val tr = tapOffset.toTr()
-                                    val newSelectedPoint = tr ifDistanceIsSmallEnough { tr.bestP }
+                                    val newSelectedPoint = (tr ifDistanceIsSmallEnough { tr.bestP })
 
-                                    logD(POINTS_TAG) {
-                                        "New selectedPoint: $newSelectedPoint"
+                                    // Only select if not already
+                                    if (newSelectedPoint != null && newSelectedPoint.id !in selectedPointsIds) {
+                                        select(newSelectedPoint.id)
+
+                                        // Ensures the value for this point id is present in the offsets
+                                        // Since it is a delegated property, its update comes right after the newt line of code runs,
+                                        // and therefore it ain't present in the list
+                                        // In Any cases, if it weren't to be in the list it would be overriden with the same value.
+                                        selectedPointTempOffset[newSelectedPoint.id] = newSelectedPoint.computePosition()
                                     }
-                                    select(newSelectedPoint?.id)
+
+                                    selectedPointsIds.forEach { id ->
+                                        val point = pointsService.findPointById(id) ?: return@forEach
+                                        selectedPointTempOffset[id] = point.computePosition()
+                                    }
                                 },
-                                onDrag = { change, _ ->
+                                onDrag = { change, dragAmount ->
                                     change.consume()
-                                    val tr = change.position.toTr()
 
-                                    // Update the selected point offset in real time (the dragging thing)
-                                    selectedPoint?.let { p ->
-                                        logD(POINTS_TAG) { "New $p" }
-                                        selectedPointTempOffset = if (freeMoveDraggedPoint) {
-                                            tr.offset
-                                        } else {
-                                            val (newOffsetNormalized, _) = computePointMoved(
-                                                point = p,
-                                                normalizedOffset = tr.normalizedOffset
-                                            )
-                                            newOffsetNormalized.undoTransformation()
-                                        }
+                                    selectedPointsIds.forEach { id ->
+                                        val previousOffset = selectedPointTempOffset[id] ?: return@forEach
+                                        selectedPointTempOffset[id] = previousOffset + dragAmount
+                                    }
 
-                                        if (autoMerge) {
-                                            val bestPExcept = pointsService.computeClosestExcept(arrayOf(p.id), tr.normalizedOffset, nestId)
-                                            val bestPExceptOffset = bestPExcept?.offset ?: return@detectDragGestures
+                                    if (autoMerge) {
+                                        val tr = change.position.toTr()
+                                        val bestPExcept = pointsService.computeClosestExcept(
+                                            ignoredPointId = selectedPointsIds.toTypedArray(),
+                                            normalizedPos = tr.normalizedOffset,
+                                            nestId = nestId
+                                        )
 
-                                            closestHoveredPoint = if (bestPExceptOffset distanceTo tr.normalizedOffset <= TOUCH_THRESHOLD_PX) {
-                                                bestPExcept
-                                            } else null
-                                        }
+                                        val bestPExceptOffset = bestPExcept?.offset ?: return@detectDragGestures
+
+                                        closestHoveredPoint = if (bestPExceptOffset distanceTo tr.normalizedOffset <= TOUCH_THRESHOLD_PX) {
+                                            bestPExcept
+                                        } else null
                                     }
                                 },
                                 onDragEnd = {
-                                    if (selectedPoint != null && selectedPointTempOffset != null) {
-                                        val selectedPoint = selectedPoint!!
-                                        val tr = selectedPointTempOffset!!.toTr()
 
-                                        // 1) On finger release; if the user has hovered another point for long enough, (the glow overlay)
-                                        //    do the computation to merge the 2 points
-                                        if (ableToLaunchHoverAction && closestHoveredPoint != null) {
-                                            val closest = closestHoveredPoint!!
+                                    // 1) On finger release; if the user has hovered another point for long enough, (the glow overlay)
+                                    //    do the computation to merge the 2 points
+                                    if (ableToLaunchHoverAction && closestHoveredPoint != null) {
+                                        val closest = closestHoveredPoint!!
 
-                                            // When the action is to open a nest, put the point in that Nest
-                                            if (closest.action is Action.OpenCircleNest) {
-                                                pointsService.editPoint(selectedPoint.id) { old ->
+                                        // When the action is to open a nest, put the point in that Nest
+                                        if (closest.action is Action.OpenCircleNest) {
+                                            // Put all selected points into that nest
+                                            selectedPointTempOffset.forEach { (id, _) ->
+                                                pointsService.editPoint(id) { old ->
                                                     val targetNestId = (closest.action as Action.OpenCircleNest).nestId
                                                     old.copy(nestId = targetNestId)
                                                 }
-                                            } else {
-                                                val newNestId = pointsService.addNest()
-
-                                                // Creates a new nest point, to open the newly created Nest
-                                                val newNestPointId = pointsService.addPoint(false) { id ->
-                                                    Point(
-                                                        offset = closest.offset,
-                                                        nestId = currentNest.id,
-                                                        action = Action.OpenCircleNest(
-                                                            newNestId
-                                                        ),
-                                                        id = id,
-                                                        liveNestTargetNestId = if (createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) newNestId else null
-                                                    )
-                                                }
-                                                select(newNestPointId)
-
-                                                // Creates a new go parent nest that'll be put on top of the nest, to easily exit this nest
-                                                pointsService.addPoint(false) { id ->
-                                                    Point(
-                                                        offset = Offset(0f, 150f),
-                                                        nestId = newNestId,
-                                                        action = Action.GoParentNest,
-                                                        id = id
-                                                    )
-                                                }
-
-                                                // Update both merged points nestId to the one of the new nest
-                                                pointsService.editPoint(selectedPoint.id) { old -> old.copy(nestId = newNestId) }
-                                                pointsService.editPoint(closest.id) { old -> old.copy(nestId = newNestId) }
                                             }
                                         } else {
-                                            // 2) No merging, just normal dragging and dropping
-                                            val (newOffsetNormalized, shapeId) = computePointMoved(selectedPoint, tr.normalizedOffset)
+                                            val newNestId = pointsService.addNest()
 
-                                            pointsService.editPoint(selectedPoint.id) { old ->
+                                            // Creates a new nest point, to open the newly created Nest
+                                            val newNestPointId = pointsService.addPoint(false) { id ->
+                                                Point(
+                                                    offset = closest.offset,
+                                                    nestId = currentNest.id,
+                                                    action = Action.OpenCircleNest(
+                                                        newNestId
+                                                    ),
+                                                    id = id,
+                                                    liveNestTargetNestId = if (createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) newNestId else null
+                                                )
+                                            }
+                                            select(newNestPointId)
+
+                                            // Creates a new go parent nest that'll be put on top of the nest, to easily exit this nest
+                                            pointsService.addPoint(false) { id ->
+                                                Point(
+                                                    offset = Offset(0f, 150f),
+                                                    nestId = newNestId,
+                                                    action = Action.GoParentNest,
+                                                    id = id
+                                                )
+                                            }
+
+                                            // Update both merged points nestId to the all the selected points
+                                            selectedPointTempOffset.forEach { (id, _) ->
+                                                pointsService.editPoint(id) { old ->
+                                                    old.copy(nestId = newNestId)
+                                                }
+                                            }
+                                            pointsService.editPoint(closest.id) { old -> old.copy(nestId = newNestId) }
+                                        }
+                                    } else {
+                                        // 2) No merging, just normal dragging and dropping
+                                        selectedPointTempOffset.forEach { (id, offset) ->
+                                            val tr = offset.toTr()
+
+                                            val point = pointsService.findPointById(id) ?: return@forEach
+                                            val (newOffsetNormalized, shapeId) = computePointMoved(point, tr.normalizedOffset)
+
+                                            pointsService.editPoint(id) { old ->
                                                 old.copy(
                                                     offset = newOffsetNormalized,
                                                     collidingShapeId = shapeId
@@ -872,25 +871,18 @@ fun PointsSettingsScreen(
                                             }
 
                                             if (autoSeparatePoints) {
-                                                pointsService.autoSeparate(currentNest.id, selectedPoint.id)
+                                                pointsService.autoSeparate(currentNest.id, id)
                                             }
-
-//                                            if (freeMoveDraggedPoint) {
-//                                                scope.launch {
-//                                                    selectedPointTempOffsetAnimatable.animateTo(
-//                                                        targetValue = newOffsetNormalized.undoTransformation(),
-//                                                    )
-//                                                }
-//                                            }
                                         }
                                     }
 
-                                    selectedPointTempOffset = null
+//                                    selectedPointTempOffset.clear()
                                     closestHoveredPoint = null
                                     ableToLaunchHoverAction = false
                                 },
                                 onDragCancel = {
-                                    selectedPointTempOffset = null
+                                    selectedPointTempOffset.clear()
+                                    deselectAll()
                                     closestHoveredPoint = null
                                     ableToLaunchHoverAction = false
                                 }
@@ -898,55 +890,63 @@ fun PointsSettingsScreen(
                         }
                     }
                     .pointerInput(isInManualPlacementMode, isInDragAroundMode, nestId, filteredPoints) {
-                        if (!isInDragAroundMode) {
-                            detectTapGestures(
-                                onTap = { tapOffset ->
-                                    val tr = tapOffset.toTr()
+                        detectTapGestures(
+                            onTap = { tapOffset ->
+                                val tr = tapOffset.toTr()
 
-                                    // Manual placement mode: place the current queued app where user tapped
-                                    if (isInManualPlacementMode) {
-                                        val action = manualPlacementQueue.first()
+                                // Manual placement mode: place the current queued app where user tapped
+                                if (isInManualPlacementMode) {
+                                    val action = manualPlacementQueue.first()
 
-                                        val newLiveNest =
-                                            if (action is Action.OpenCircleNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
-                                                action.nestId
-                                            } else null
+                                    val newLiveNest =
+                                        if (action is Action.OpenCircleNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
+                                            action.nestId
+                                        } else null
 
-                                        val newPointId = pointsService.addPoint { id ->
-                                            Point(
-                                                id = id,
-                                                offset = tr.normalizedOffset,
-                                                action = action,
-                                                nestId = nestId,
-                                                liveNestTargetNestId = newLiveNest
-                                            )
-                                        }
-
-                                        if (autoSeparatePoints) {
-                                            pointsService.autoSeparate(currentNest.id, newPointId)
-                                        }
-
-                                        manualPlacementQueue = manualPlacementQueue.drop(1)
+                                    val newPointId = pointsService.addPoint { id ->
+                                        Point(
+                                            id = id,
+                                            offset = tr.normalizedOffset,
+                                            action = action,
+                                            nestId = nestId,
+                                            liveNestTargetNestId = newLiveNest
+                                        )
                                     }
 
-                                    val newSelectedPoint = tr ifDistanceIsSmallEnough {
-                                        if (selectedPoint?.id == tr.bestP?.id) {
-                                            // Same point tapped -> if circle next, open it, else edit point
-                                            if (selectedPoint?.action is Action.OpenCircleNest) {
-                                                nestNavigation.goToNest((selectedPoint?.action as Action.OpenCircleNest).nestId)
-                                                null
-                                            } else {
-                                                showEditDialog = selectedPoint
-                                                tr.bestP
-                                            }
-
-                                        } else tr.bestP
+                                    if (autoSeparatePoints) {
+                                        pointsService.autoSeparate(currentNest.id, newPointId)
                                     }
 
-                                    select(newSelectedPoint?.id)
+                                    manualPlacementQueue = manualPlacementQueue.drop(1)
                                 }
-                            )
-                        }
+
+                                val bestP = tr ifDistanceIsSmallEnough { tr.bestP }
+
+                                if (bestP == null) {
+                                    deselectAll()
+                                } else {
+                                    val id = bestP.id
+
+                                    if (isInDragAroundMode) {
+                                        toggleDragAroundMode(false)
+                                    }
+
+                                    // Checks whether if there are only 1 point selected, and if it is the case, open its editor or nest
+                                    if (selectedPointsIds.size == 1 && id in selectedPointsIds) {
+                                        // Same point tapped -> if circle nest, open it, else edit point
+                                        if (bestP.action is Action.OpenCircleNest) {
+                                            nestNavigation.goToNest((bestP.action as Action.OpenCircleNest).nestId)
+                                        } else {
+                                            showEditDialog = bestP.id
+                                        }
+                                    } else if (bestP.id in selectedPointsIds) {
+                                        deselect(id)
+                                    } else {
+                                        select(id)
+                                    }
+                                }
+                            }
+                        )
                     }
             )
         }
@@ -967,21 +967,24 @@ fun PointsSettingsScreen(
     }
 
     if (showEditDialog != null) {
-        val editPoint = showEditDialog!!
+        val editPointId = showEditDialog!!
+        val editPoint = pointsService.findPointById(editPointId)
 
-        EditPointSheet(
-            point = editPoint,
-            onDismiss = {
+        editPoint?.let {
+            EditPointSheet(
+                point = editPoint,
+                onDismiss = {
+                    showEditDialog = null
+                    iconsViewModel.reloadIcon(editPoint)
+                },
+            ) { newPoint ->
+                iconsViewModel.reloadIcon(newPoint)
+
+                pointsService.editPoint(newPoint.id) { newPoint }
+
+                select(newPoint.id)
                 showEditDialog = null
-                iconsViewModel.reloadIcon(editPoint)
-            },
-        ) { newPoint ->
-            iconsViewModel.reloadIcon(newPoint)
-
-            pointsService.editPoint(newPoint.id) { newPoint }
-
-            select(newPoint.id)
-            showEditDialog = null
+            }
         }
     }
 
@@ -991,18 +994,23 @@ fun PointsSettingsScreen(
             onDismissRequest = { showNestManagementDialog = false },
             onSelect = {
                 nestNavigation.goToNest(it.id)
-                deselect()
+                deselectAll()
                 showNestManagementDialog = false
             }
         )
     }
 
-    AppPreviewTitle(
-        point = selectedPoint,
-        topPadding = 100.dp,
-        showLabel = true,
-        showIcon = true
-    )
+    SelectedPointsTopBar(
+        modifier = Modifier.selfAlignHorizontally(),
+        points = points,
+        selectedPointsIds = selectedPointsIds,
+        onDeselect = { id ->
+            select(id)
+        }
+    ) {
+        deselectAll()
+    }
+
 
     if (isInManualPlacementMode) {
         val appName = when (val currentAction = manualPlacementQueue.first()) {
@@ -1082,7 +1090,7 @@ fun PointsSettingsScreen(
             )
 
             initializationViewModel.initialize()
-            deselect()
+            deselectAll()
             showResetPointsAndNestsDialog = false
         }
     }
@@ -1100,6 +1108,7 @@ fun PointsSettingsScreen(
         Text("current shapes: ${currentNest.intersectionShapes}")
         Text("closest hovered point: $closestHoveredTempOffset")
         Text("current nest: $currentNest")
-        selectedPoint?.let { Text(it.toString()) }
     }
 }
+
+

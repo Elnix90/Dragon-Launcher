@@ -74,12 +74,6 @@ public object UiSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val freeMoveDraggedPoint: BooleanSettingObject = boolean(
-        title = R.string.free_move_dragged_point,
-        default = true
-    )
-
-    @SettingKey
     public val autoMerge: BooleanSettingObject = boolean(
         title = R.string.auto_merge,
         default = true

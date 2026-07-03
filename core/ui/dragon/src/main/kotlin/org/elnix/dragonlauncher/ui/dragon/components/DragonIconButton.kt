@@ -4,12 +4,12 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -26,7 +26,7 @@ fun DragonIconButtonImpl(
         modifier = modifier,
         enabled = enabled,
         colors = colors,
-        shapes = UiConstants.dragonIconButtonShapes(),
+        shapes = IconButtonDefaults.shapes(),
         content = content
     )
 }

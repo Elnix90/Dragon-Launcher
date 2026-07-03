@@ -74,7 +74,7 @@ import org.elnix.dragonlauncher.models.LockScreenViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.ui.base.UiConstants.allMaterialShapes
+import org.elnix.dragonlauncher.ui.base.UiConstants.pinMaterialShapes
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
@@ -110,7 +110,7 @@ fun PinUnlock(
             pin = newValue
             if (pinShapes.size < newValue.length) {
                 repeat(newValue.length - pinShapes.size) {
-                    pinShapes.add(allMaterialShapes.random())
+                    pinShapes.add(pinMaterialShapes.random())
                 }
             } else {
                 repeat(pinShapes.size - newValue.length) {
@@ -172,7 +172,7 @@ fun PinSetup(
             errorMessage = null
             if (pinShapes.size < newValue.length) {
                 repeat(newValue.length - pinShapes.size) {
-                    pinShapes.add(allMaterialShapes.random())
+                    pinShapes.add(pinMaterialShapes.random())
                 }
             } else {
                 repeat(pinShapes.size - newValue.length) {

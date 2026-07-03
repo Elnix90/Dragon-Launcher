@@ -14,11 +14,15 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.ui.unit.IntOffset
 
-// Copied from https://github.com/sosauce/Chocola/blob/469eef0e6bca3bc32a25f9fcd0cb5e157abe72f4/app/src/main/java/com/sosauce/chocola/utils/Extensions.kt#L507
 
 fun <T> bouncySpec() = spring<T>(
     dampingRatio = Spring.DampingRatioMediumBouncy,
     stiffness = Spring.StiffnessLow
+)
+
+fun <T> defaultSpec() = spring<T>(
+    dampingRatio = Spring.DampingRatioHighBouncy,
+    stiffness = Spring.StiffnessHigh
 )
 
 fun <T> easingSpec() = tween<T>(

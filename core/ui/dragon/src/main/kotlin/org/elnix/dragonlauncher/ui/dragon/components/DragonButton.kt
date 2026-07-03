@@ -4,6 +4,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupScope
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
@@ -15,13 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.withHaptic
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Suppress("AssignedValueIsNeverRead")
 @Composable
 fun DragonButton(
     onClick: () -> Unit,
@@ -41,7 +40,7 @@ fun DragonButton(
             if (needConfirm) showConfirmPopup = true
             else onClick()
         },
-        shapes = UiConstants.dragonShapes(),
+        shapes = ButtonDefaults.shapes(),
         enabled = enabled,
         colors = colors,
         content = content
@@ -60,7 +59,6 @@ fun DragonButton(
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Suppress("AssignedValueIsNeverRead")
 @Composable
 fun ButtonGroupScope.DragonButton(
     onClick: () -> Unit,
@@ -83,7 +81,7 @@ fun ButtonGroupScope.DragonButton(
             if (needValidation) showConfirmPopup = true
             else onClick()
         },
-        shapes = UiConstants.dragonShapes(),
+        shapes = ButtonDefaults.shapes(),
         enabled = enabled,
         colors = colors,
         content = content

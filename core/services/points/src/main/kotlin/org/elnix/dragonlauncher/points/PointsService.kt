@@ -42,7 +42,14 @@ public interface PointsService {
     public val points: SettingFlow<Points>
     public val nests: SettingFlow<Nests>
 
-    public val selectedPoint: SettingFlow<Point?>
+    public val recomposeTRigger: SettingFlow<Int>
+
+    /**
+     * Selected points ids, a [List] of all selected points, by order of selection.
+     *
+     * A *File* according to M.Morlong, thanks!
+     */
+    public val selectedPointsIds: SettingFlow<List<Int>>
 
     public val undoRedo: UndoRedoManager
 
@@ -56,11 +63,34 @@ public interface PointsService {
 
     public fun editDefaultPoint(newDefaultPoint: Point)
 
+
+    public fun findPointById(id: Int): Point?
+    public fun findNestById(id: Int): Nest
+    public fun findNestByIdOrNull(id: Int): Nest?
+
+
     /**
      * Select the given [Point] by it id
-     * If `null` is provided, the [selectedPoint] is deselected
+     * If `null` is provided, the [selectedPointsIds] is cleared
      */
-    public fun select(id: Int?)
+    public fun select(id: Int)
+
+    /**
+     * Select ony one, means that either all selected points are removed from the list and only the one provided is added, or if it is null, they are all removed
+     */
+    public fun selectOnyOne(id: Int?)
+
+    /**
+     * Pretty much self-explanatory ig
+     */
+    public fun deselect(id: Int)
+    public fun deselectAll()
+
+
+    /**
+     * Persist the values: [points], [nests] and [defaultPoint] into datastore
+     * Do not call this too repetitively to prevent I/O overhead
+     */
     public fun persist()
 
     /** Set the given [points], [nests] and [defaultPoint] if not null. */
@@ -70,6 +100,12 @@ public interface PointsService {
         newDefaultPoint: Point? = null
     )
 
+    /**
+     * Reset [points], [nests] and/or [defaultPoint] whether the value is given in parameter
+     *
+     * Must at least reset one of these
+     * @throws [IllegalArgumentException] if all 3 parameters are false
+     */
     public fun reset(
         resetPoints: Boolean = false,
         resetNests: Boolean = false,
@@ -145,30 +181,91 @@ internal class PointsServiceImpl(
 
     override val nests: SettingFlow<Nests> = SettingFlow(emptySet())
 
-    override val selectedPoint: SettingFlow<Point?> = SettingFlow(null)
-    override fun select(id: Int?) {
-        if (id == null && selectedPoint.value != null) {
-            undoRedo.applyChange {
-                selectedPoint.value = null
-            }
-        } else {
-            val newSel = points.value.find { it.id == id }
+    override val recomposeTRigger: SettingFlow<Int> = SettingFlow(0)
+    override val selectedPointsIds: SettingFlow<List<Int>> = SettingFlow(emptyList())
 
-            if (newSel != selectedPoint.value) {
-                undoRedo.applyChange {
-                    selectedPoint.value = newSel
+    override fun select(id: Int) {
+        val newSel: Point? = findPointById(id)
+        val currentSelectedIds: List<Int> = selectedPointsIds.value
+
+        when {
+            // Deselect all if newSel is null and something is selected
+            // I did not put the if below in the same line because of a failing smart cast to non-nullable point
+            newSel == null -> {
+                // Only deselect if the list isn't already empty to avoid undoRedo overhead
+                if (currentSelectedIds.isNotEmpty()) {
+                    applyChange {
+                        selectedPointsIds.value = emptyList()
+                    }
+                }
+            }
+
+            // Deselect newSel if already selected
+            newSel.id in currentSelectedIds -> {
+                applyChange {
+                    selectedPointsIds.value = currentSelectedIds - newSel.id
+                }
+            }
+
+            // Select newSel (add to set or create new set)
+            else -> {
+                applyChange {
+                    selectedPointsIds.value = currentSelectedIds + (newSel.id)
                 }
             }
         }
+        recomposeTRigger.value++
+    }
+
+    override fun deselect(id: Int) {
+        if (id !in selectedPointsIds.value) return
+        selectedPointsIds.value -= id
+        recomposeTRigger.value++
+    }
+
+    override fun deselectAll() {
+        selectedPointsIds.value = emptyList()
+        recomposeTRigger.value++
+    }
+
+    override fun selectOnyOne(id: Int?) {
+        if (id == null) {
+            selectedPointsIds.value = emptyList()
+            return
+        }
+
+        val newSel: Point? = findPointById(id)
+        val currentSelectedIds: List<Int> = selectedPointsIds.value
+
+        when {
+            // Deselect all if newSel is null and something is selected
+            // I did not put the if below in the same line because of a failing smart cast to non-nullable point
+            newSel == null -> {
+                // Only deselect if the list isn't already empty to avoid undoRedo overhead
+                if (currentSelectedIds.isNotEmpty()) {
+                    applyChange {
+                        selectedPointsIds.value = emptyList()
+                    }
+                }
+            }
+
+            else -> {
+                applyChange {
+                    selectedPointsIds.value = listOf(newSel.id)
+                }
+            }
+        }
+        recomposeTRigger.value++
     }
 
     override val undoRedo: UndoRedoManager = UndoRedoManager(
         stacks = arrayOf(
             UndoRedoStack(
                 snapshot = { points.value.map { it.copy() } },
-                restore = {
-                    set(newPoints = it.toSet())
-                    selectedPoint.value = points.value.find { p -> p.id == selectedPoint.value?.id }
+                restore = { points ->
+                    set(newPoints = points.toSet())
+
+                    selectedPointsIds.value = points.map { it.id }.filter { it in selectedPointsIds.value }
                 }
             ),
             UndoRedoStack(
@@ -180,12 +277,17 @@ internal class PointsServiceImpl(
                 restore = { set(newDefaultPoint = it) }
             ),
             UndoRedoStack(
-                snapshot = { selectedPoint.value },
-                restore = { selectedPoint.value = it }
+                snapshot = { selectedPointsIds.value },
+                restore = { selectedPointsIds.value = it }
             )
         ),
         scope = scope
     )
+
+    private inline fun applyChange(mutator: () -> Unit) {
+        undoRedo.applyChange(mutator)
+        recomposeTRigger.value++
+    }
 
     init {
         scope.launch {
@@ -204,7 +306,7 @@ internal class PointsServiceImpl(
         val newId = getNextId(existingIds)
         val newPoint = newPoint(newId)
 
-        undoRedo.applyChange { points.value += newPoint }
+        applyChange { points.value += newPoint }
 
         if (select) select(newId)
         resetGrids()
@@ -214,7 +316,7 @@ internal class PointsServiceImpl(
     override fun removePoint(id: Int): Boolean {
         val pointToRemove = points.value.find { it.id == id } ?: return false
 
-        undoRedo.applyChange { points.value -= pointToRemove }
+        applyChange { points.value -= pointToRemove }
 
         resetGrids()
         return true
@@ -224,7 +326,7 @@ internal class PointsServiceImpl(
         val oldPoint = points.value.find { it.id == id } ?: return false
         val editedPoint = editedPoint(oldPoint)
 
-        undoRedo.applyChange {
+        applyChange {
             points.value -= oldPoint
             points.value += editedPoint
         }
@@ -238,19 +340,19 @@ internal class PointsServiceImpl(
         val existingIds = nests.value.mapTo(mutableSetOf()) { it.id }
         val newId = if (nestId != null && nestId !in existingIds) nestId else getNextId(existingIds)
         val newNest = Nest(id = newId)
-        undoRedo.applyChange { nests.value += newNest }
+        applyChange { nests.value += newNest }
         return newId
     }
 
     override fun removeNest(id: Int): Boolean {
         val nestToDelete = nests.value.find { it.id == id } ?: return false
-        undoRedo.applyChange { nests.value -= nestToDelete }
+        applyChange { nests.value -= nestToDelete }
         return true
     }
 
     override fun editNest(id: Int, editedNest: (Nest) -> Nest): Boolean {
         val oldNest = nests.value.find { it.id == id } ?: return false
-        undoRedo.applyChange {
+        applyChange {
             nests.value -= oldNest
             nests.value += editedNest(oldNest)
         }
@@ -258,7 +360,7 @@ internal class PointsServiceImpl(
     }
 
     override fun editDefaultPoint(newDefaultPoint: Point) {
-        undoRedo.applyChange { set(newDefaultPoint = newDefaultPoint) }
+        applyChange { set(newDefaultPoint = newDefaultPoint) }
     }
 
     override fun persist() {
@@ -295,6 +397,7 @@ internal class PointsServiceImpl(
         }
 
         persist()
+        recomposeTRigger.value++
     }
 
 
@@ -305,10 +408,10 @@ internal class PointsServiceImpl(
     ) {
         require(resetPoints || resetNests || resetDefaultPoint) { "Must at least reset something" }
 
-        undoRedo.applyChange {
+        applyChange {
             if (resetPoints) {
                 points.value = emptySet()
-                selectedPoint.value = null
+                selectedPointsIds.value = emptyList()
                 resetGrids()
             }
             if (resetNests) {
@@ -320,19 +423,23 @@ internal class PointsServiceImpl(
         }
 
         persist()
+        recomposeTRigger.value++
     }
 
     private suspend fun loadPoints() {
         points.value = PointsJson.decode<Points>(PointsSettingsStore.jsonSetting.get(ctx), emptySet())
         resetGrids()
+        recomposeTRigger.value++
     }
 
     private suspend fun loadNests() {
         nests.value = NestJson.decode<Nests>(NestsSettingsStore.jsonSetting.get(ctx), emptySet())
+        recomposeTRigger.value++
     }
 
     private suspend fun loadDefaultPoint() {
         defaultPoint.value = PointJson.decode(DefaultPointSettingsStore.jsonSetting.get(ctx), Point.defaultSwipePointsValues)
+        recomposeTRigger.value++
     }
 
     private fun getNextId(existing: Set<Int>): Int {
@@ -468,7 +575,7 @@ internal class PointsServiceImpl(
             }
         }
 
-        val nest = nestId.findNestById()
+        val nest = findNestById(nestId)
         val isInCancelZone = dist <= nest.cancelZone
 
         // When inside the cancel zone there is no point to select.
@@ -504,15 +611,18 @@ internal class PointsServiceImpl(
         skipSelected: Boolean
     ): Points {
         val pointsInTheNest: MutablePoints = nestGrid[nestId] ?: return emptySet()
-        val selectedPoint = selectedPoint.value ?: return pointsInTheNest
-        return if (skipSelected) pointsInTheNest - selectedPoint else pointsInTheNest
+        if (!skipSelected) return pointsInTheNest
+
+        val selectedPoints = selectedPointsIds.value
+
+        return pointsInTheNest.filterNotTo(mutableSetOf()) { it.id in selectedPoints }
     }
 
 
-    private fun Int.findPointById(): Point? = points.value.find { it.id == this }
+    override fun findPointById(id: Int): Point? = points.value.find { it.id == id }
 
-    private fun Int.findNestById(): Nest = findNestByIdOrNull() ?: Nest()
-    private fun Int.findNestByIdOrNull(): Nest? = nests.value.find { it.id == this }
+    override fun findNestById(id: Int): Nest = findNestByIdOrNull(id) ?: Nest()
+    override fun findNestByIdOrNull(id: Int): Nest? = nests.value.find { it.id == id }
 
 
     private val density = ctx.resources.displayMetrics.density
@@ -521,7 +631,7 @@ internal class PointsServiceImpl(
         nestId: Int,
         draggedPointId: Int
     ): Boolean {
-        val draggedPoint = draggedPointId.findPointById() ?: return false
+        val draggedPoint = findPointById(draggedPointId) ?: return false
         if (points.value.size < 2) return false
 
         var hasMoved = false

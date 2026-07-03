@@ -239,7 +239,6 @@
     <string name="show_app_launch_preview">Mostrar visualização de inicialização do aplicativo</string>
     <string name="show_app_circle_preview">Mostrar visualização do círculo do aplicativo</string>
     <string name="show_app_line_preview">Mostrar visualização da linha do aplicativo</string>
-    <string name="show_app_angle_preview">Mostrar visualização do ângulo do aplicativo. %1$s</string>
     <string name="do_you_hate_it">\"Você odeia isso\?\"</string>
     <string name="line_preview_snap_to_action">Visualização de linha instantânea para ação</string>
     <string name="icon_packs_found">%1$d pacotes de ícones encontrados</string>

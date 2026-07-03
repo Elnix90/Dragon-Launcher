@@ -50,7 +50,6 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
@@ -210,7 +209,7 @@ fun AppPickerDialog(
                                 }
                             },
                             modifier = Modifier.padding(5.dp),
-                            shapes = UiConstants.dragonShapes(),
+                            shapes = ButtonDefaults.shapes(),
                             colors = ButtonDefaults.textButtonColors(
                                 containerColor = animatedColor
                             )
