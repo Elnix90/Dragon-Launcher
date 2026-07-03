@@ -182,6 +182,7 @@ public sealed class IconShape {
     @Serializable
     @SerialName("Heart")
     public object Heart : IconShape()
+
     @Serializable
     @SerialName("Random")
     public object Random : IconShape()
@@ -198,91 +199,146 @@ public sealed class IconShape {
 
         @Serializable(with = CornerRoundingSerializer::class)
         val perVertexRounding: List<CornerRounding>? = null
-        ) : IconShape()
+    ) : IconShape()
+
+    override fun toString(): String =
+        when (this) {
+            Arch -> "Arch"
+            Arrow -> "Arrow"
+            Boom -> "Boom"
+            Bun -> "Bun"
+            Burst -> "Burst"
+            Circle -> "Circle"
+            ClamShell -> "ClamShell"
+            Clover4Leaf -> "Clover4Leaf"
+            Clover8Leaf -> "Clover8Leaf"
+            Cookie12Sided -> "Cookie12Sided"
+            Cookie4Sided -> "Cookie4Sided"
+            Cookie6Sided -> "Cookie6Sided"
+            Cookie7Sided -> "Cookie7Sided"
+            Cookie9Sided -> "Cookie9Sided"
+            is Custom -> "Custom"
+            Diamond -> "Diamond"
+            EasterEgg -> "EasterEgg"
+            Fan -> "Fan"
+            Flower -> "Flower"
+            Gem -> "Gem"
+            Ghostish -> "Ghostish"
+            Heart -> "Heart"
+            Hexagon -> "Hexagon"
+            Oval -> "Oval"
+            Pebble -> "Pebble"
+            Pentagon -> "Pentagon"
+            Pill -> "Pill"
+            PixelCircle -> "PixelCircle"
+            PixelTriangle -> "PixelTriangle"
+            PlatformDefault -> "PlatformDefault"
+            Puffy -> "Puffy"
+            PuffyDiamond -> "PuffyDiamond"
+            Random -> "Random"
+            RoundedSquare -> "RoundedSquare"
+            SemiCircle -> "SemiCircle"
+            Slanted -> "Slanted"
+            SoftBoom -> "SoftBoom"
+            SoftBurst -> "SoftBurst"
+            Square -> "Square"
+            Squircle -> "Squircle"
+            Sunny -> "Sunny"
+            Teardrop -> "Teardrop"
+            Triangle -> "Triangle"
+            VerySunny -> "VerySunny"
+        }
+
 
     public companion object {
 
         @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-        public val allMaterialShapes: List<RoundedPolygon> = listOf(
-            MaterialShapes.Circle,
-            MaterialShapes.Square,
-            MaterialShapes.Slanted,
-            MaterialShapes.Arch,
-            MaterialShapes.Fan,
-            MaterialShapes.Arrow,
-            MaterialShapes.SemiCircle,
-            MaterialShapes.Oval,
-            MaterialShapes.Pill,
-            MaterialShapes.Triangle,
-            MaterialShapes.Diamond,
-            MaterialShapes.ClamShell,
-            MaterialShapes.Pentagon,
-            MaterialShapes.Gem,
-            MaterialShapes.VerySunny,
-            MaterialShapes.Sunny,
-            MaterialShapes.Cookie4Sided,
-            MaterialShapes.Cookie6Sided,
-            MaterialShapes.Cookie7Sided,
-            MaterialShapes.Cookie9Sided,
-            MaterialShapes.Cookie12Sided,
-            MaterialShapes.Ghostish,
-            MaterialShapes.Clover4Leaf,
-            MaterialShapes.Clover8Leaf,
-            MaterialShapes.Burst,
-            MaterialShapes.SoftBurst,
-            MaterialShapes.Boom,
-            MaterialShapes.SoftBoom,
-            MaterialShapes.Flower,
-            MaterialShapes.Puffy,
-            MaterialShapes.PuffyDiamond,
-            MaterialShapes.PixelCircle,
-            MaterialShapes.PixelTriangle,
-            MaterialShapes.Bun,
-            MaterialShapes.Heart
-        )
+        public val allMaterialShapes: List<RoundedPolygon> by lazy {
+            listOf(
+                MaterialShapes.Circle,
+                MaterialShapes.Square,
+                MaterialShapes.Slanted,
+                MaterialShapes.Arch,
+                MaterialShapes.Fan,
+                MaterialShapes.Arrow,
+                MaterialShapes.SemiCircle,
+                MaterialShapes.Oval,
+                MaterialShapes.Pill,
+                MaterialShapes.Triangle,
+                MaterialShapes.Diamond,
+                MaterialShapes.ClamShell,
+                MaterialShapes.Pentagon,
+                MaterialShapes.Gem,
+                MaterialShapes.VerySunny,
+                MaterialShapes.Sunny,
+                MaterialShapes.Cookie4Sided,
+                MaterialShapes.Cookie6Sided,
+                MaterialShapes.Cookie7Sided,
+                MaterialShapes.Cookie9Sided,
+                MaterialShapes.Cookie12Sided,
+                MaterialShapes.Ghostish,
+                MaterialShapes.Clover4Leaf,
+                MaterialShapes.Clover8Leaf,
+                MaterialShapes.Burst,
+                MaterialShapes.SoftBurst,
+                MaterialShapes.Boom,
+                MaterialShapes.SoftBoom,
+                MaterialShapes.Flower,
+                MaterialShapes.Puffy,
+                MaterialShapes.PuffyDiamond,
+                MaterialShapes.PixelCircle,
+                MaterialShapes.PixelTriangle,
+                MaterialShapes.Bun,
+                MaterialShapes.Heart
+            )
+        }
 
-        public val allShapes: List<IconShape> = listOf(
-            PlatformDefault,
-            Circle,
-            Square,
-            Slanted,
-            Arch,
-            Fan,
-            Arrow,
-            SemiCircle,
-            Oval,
-            Pill,
-            Triangle,
-            Diamond,
-            ClamShell,
-            Pentagon,
-            Gem,
-            VerySunny,
-            Sunny,
-            Cookie4Sided,
-            Cookie6Sided,
-            Cookie7Sided,
-            Cookie9Sided,
-            Cookie12Sided,
-            Ghostish,
-            Clover4Leaf,
-            Clover8Leaf,
-            Burst,
-            SoftBurst,
-            Boom,
-            SoftBoom,
-            Flower,
-            Puffy,
-            PuffyDiamond,
-            PixelCircle,
-            PixelTriangle,
-            Bun,
-            Heart,
-            Random
-        )
+        public val allShapes: List<IconShape> by lazy {
+            listOf(
+                PlatformDefault,
+                Circle,
+                Square,
+                Slanted,
+                Arch,
+                Fan,
+                Arrow,
+                SemiCircle,
+                Oval,
+                Pill,
+                Triangle,
+                Diamond,
+                ClamShell,
+                Pentagon,
+                Gem,
+                VerySunny,
+                Sunny,
+                Cookie4Sided,
+                Cookie6Sided,
+                Cookie7Sided,
+                Cookie9Sided,
+                Cookie12Sided,
+                Ghostish,
+                Clover4Leaf,
+                Clover8Leaf,
+                Burst,
+                SoftBurst,
+                Boom,
+                SoftBoom,
+                Flower,
+                Puffy,
+                PuffyDiamond,
+                PixelCircle,
+                PixelTriangle,
+                Bun,
+                Heart,
+                Random
+            )
+        }
 
-        public val allShapesWithoutRandom: List<IconShape> = allShapes.filterNot { it == Random }
+        public val allShapesWithoutRandom: List<IconShape> by lazy {
+            allShapes.filterNot { it == Random }
+        }
 
-        public object IconShapeJson: DragonJson<IconShape>()
+        public object IconShapeJson : DragonJson<IconShape>()
     }
 }
