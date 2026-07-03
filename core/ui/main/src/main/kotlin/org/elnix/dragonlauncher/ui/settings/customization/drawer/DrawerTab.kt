@@ -30,8 +30,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.logging.SHAPES_TAG
-import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
@@ -44,7 +42,6 @@ import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.dialogs.DrawerToolbarsOrderDialog
-import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
@@ -55,7 +52,6 @@ import org.elnix.dragonlauncher.ui.dragon.settings.DrawerActionSelector
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.dragon.settings.toIntRange
-import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
@@ -75,13 +71,6 @@ fun DrawerTab(
     val rightDrawerAction by DrawerSettingsStore.rightDrawerAction.asState()
     val leftDrawerWidth by DrawerSettingsStore.leftDrawerWidth.asState()
     val rightDrawerWidth by DrawerSettingsStore.rightDrawerWidth.asState()
-
-    val iconShape by DrawerSettingsStore.iconShape.asState()
-    LaunchedEffect(iconShape){
-        val iconShapeValue = DrawerSettingsStore.iconShape.get(ctx)
-
-        logD(SHAPES_TAG) { "IconShape: ${iconShape}, value = $iconShapeValue" }
-    }
 
     val drawerCategorySettingsState = rememberExpandableSection(stringResource(R.string.category_settings))
     val drawerNormalSettingsState = rememberExpandableSection(stringResource(R.string.grid_settings))
@@ -106,7 +95,6 @@ fun DrawerTab(
     var showToolbarsOrderDialog by remember { mutableStateOf(false) }
 
 
-    var showShapePickerDialog by remember { mutableStateOf(false) }
 
     SettingsScaffold(
         title = stringResource(R.string.app_drawer),
@@ -186,10 +174,7 @@ fun DrawerTab(
                 SettingsSlider(DrawerSettingsStore.iconsSpacingVertical)
             }
 
-            ShapeRow(
-                selected = iconShape,
-                onReset = { scope.launch { DrawerSettingsStore.iconShape.reset(ctx) } }
-            ) { showShapePickerDialog = true }
+            DrawerIconShapePicker()
         }
 
         GridSizeSlider(apps)
@@ -317,18 +302,6 @@ fun DrawerTab(
                         rightWidth = it.dp
                     }
                 }
-            }
-        }
-    }
-
-    if (showShapePickerDialog) {
-        ShapePickerDialog(
-            selected = iconShape,
-            onDismiss = { showShapePickerDialog = false }
-        ) {
-            logD(SHAPES_TAG) { "Picked: $it" }
-            scope.launch {
-                DrawerSettingsStore.iconShape.set(ctx, it)
             }
         }
     }

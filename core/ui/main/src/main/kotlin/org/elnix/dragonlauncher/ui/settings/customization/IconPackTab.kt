@@ -23,6 +23,7 @@ import org.elnix.dragonlauncher.ui.dragon.settings.SettingsColorPicker
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.helpers.IconPackListContent
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
+import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerIconShapePicker
 
 @Composable
 fun IconPackTab(
@@ -73,6 +74,8 @@ fun IconPackTab(
         SettingsSwitchRow(IconsSettingsStore.forceThemed, enabled = themedIcons)
 
         SettingsSwitchRow(IconsSettingsStore.adaptify)
+
+        DrawerIconShapePicker()
 
         IconPackListContent(
             packs = packs,
