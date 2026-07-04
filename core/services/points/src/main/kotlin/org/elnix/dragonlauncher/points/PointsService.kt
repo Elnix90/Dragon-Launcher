@@ -182,7 +182,36 @@ internal class PointsServiceImpl(
     override val nests: SettingFlow<Nests> = SettingFlow(emptySet())
 
     override val recomposeTRigger: SettingFlow<Int> = SettingFlow(0)
+
     override val selectedPointsIds: SettingFlow<List<Int>> = SettingFlow(emptyList())
+
+
+    override val undoRedo: UndoRedoManager = UndoRedoManager(
+        stacks = arrayOf(
+            UndoRedoStack(
+                snapshot = { points.value.map { it.copy() } },
+                restore = { points ->
+                    set(newPoints = points.toSet())
+
+                    selectedPointsIds.value = points.map { it.id }.filter { it in selectedPointsIds.value }
+                }
+            ),
+            UndoRedoStack(
+                snapshot = { nests.value.map { it.copy() } },
+                restore = { set(newNests = it.toSet()) }
+            ),
+            UndoRedoStack(
+                snapshot = { defaultPoint.value },
+                restore = { set(newDefaultPoint = it) }
+            )
+        ),
+        scope = scope
+    )
+
+    private inline fun applyChange(mutator: () -> Unit) {
+        undoRedo.applyChange(mutator)
+        recomposeTRigger.value++
+    }
 
     override fun select(id: Int) {
         val newSel: Point? = findPointById(id)
@@ -194,24 +223,21 @@ internal class PointsServiceImpl(
             newSel == null -> {
                 // Only deselect if the list isn't already empty to avoid undoRedo overhead
                 if (currentSelectedIds.isNotEmpty()) {
-                    applyChange {
-                        selectedPointsIds.value = emptyList()
-                    }
+                    selectedPointsIds.value = emptyList()
+
                 }
             }
 
             // Deselect newSel if already selected
             newSel.id in currentSelectedIds -> {
-                applyChange {
-                    selectedPointsIds.value = currentSelectedIds - newSel.id
-                }
+                selectedPointsIds.value = currentSelectedIds - newSel.id
+
             }
 
             // Select newSel (add to set or create new set)
             else -> {
-                applyChange {
-                    selectedPointsIds.value = currentSelectedIds + (newSel.id)
-                }
+                selectedPointsIds.value = currentSelectedIds + (newSel.id)
+
             }
         }
         recomposeTRigger.value++
@@ -243,49 +269,16 @@ internal class PointsServiceImpl(
             newSel == null -> {
                 // Only deselect if the list isn't already empty to avoid undoRedo overhead
                 if (currentSelectedIds.isNotEmpty()) {
-                    applyChange {
-                        selectedPointsIds.value = emptyList()
-                    }
+                    selectedPointsIds.value = emptyList()
+
                 }
             }
 
             else -> {
-                applyChange {
-                    selectedPointsIds.value = listOf(newSel.id)
-                }
+                selectedPointsIds.value = listOf(newSel.id)
+
             }
         }
-        recomposeTRigger.value++
-    }
-
-    override val undoRedo: UndoRedoManager = UndoRedoManager(
-        stacks = arrayOf(
-            UndoRedoStack(
-                snapshot = { points.value.map { it.copy() } },
-                restore = { points ->
-                    set(newPoints = points.toSet())
-
-                    selectedPointsIds.value = points.map { it.id }.filter { it in selectedPointsIds.value }
-                }
-            ),
-            UndoRedoStack(
-                snapshot = { nests.value.map { it.copy() } },
-                restore = { set(newNests = it.toSet()) }
-            ),
-            UndoRedoStack(
-                snapshot = { defaultPoint.value },
-                restore = { set(newDefaultPoint = it) }
-            ),
-            UndoRedoStack(
-                snapshot = { selectedPointsIds.value },
-                restore = { selectedPointsIds.value = it }
-            )
-        ),
-        scope = scope
-    )
-
-    private inline fun applyChange(mutator: () -> Unit) {
-        undoRedo.applyChange(mutator)
         recomposeTRigger.value++
     }
 
@@ -340,22 +333,28 @@ internal class PointsServiceImpl(
         val existingIds = nests.value.mapTo(mutableSetOf()) { it.id }
         val newId = if (nestId != null && nestId !in existingIds) nestId else getNextId(existingIds)
         val newNest = Nest(id = newId)
+
         applyChange { nests.value += newNest }
+
         return newId
     }
 
     override fun removeNest(id: Int): Boolean {
         val nestToDelete = nests.value.find { it.id == id } ?: return false
+
         applyChange { nests.value -= nestToDelete }
+
         return true
     }
 
     override fun editNest(id: Int, editedNest: (Nest) -> Nest): Boolean {
         val oldNest = nests.value.find { it.id == id } ?: return false
+
         applyChange {
             nests.value -= oldNest
             nests.value += editedNest(oldNest)
         }
+
         return true
     }
 

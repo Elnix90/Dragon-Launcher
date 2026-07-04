@@ -371,6 +371,14 @@ fun PointsSettingsScreen(
         selectedPointTempOffset.clear()
     }
 
+    fun reInitializeSelectedPointTempOffset() {
+        selectedPointTempOffset.clear()
+        selectedPointsIds.forEach { id ->
+            val point = pointsService.findPointById(id) ?: return@forEach
+            selectedPointTempOffset[id] = point.computePosition()
+        }
+    }
+
 
     fun toggleDragAroundMode(checked: Boolean) {
         scope.launch {
@@ -379,6 +387,11 @@ fun PointsSettingsScreen(
         if (checked) {
             deselectAll()
         }
+    }
+
+    val recomposeTrigger by pointsService.recomposeTRigger.asState()
+    LaunchedEffect(recomposeTrigger) {
+        reInitializeSelectedPointTempOffset()
     }
 
     LaunchedEffect(closestHoveredPoint) {
@@ -404,8 +417,6 @@ fun PointsSettingsScreen(
         else onBack()
     }
     BackHandler(onBack = handleBack)
-
-    val recomposeTrigger by pointsService.recomposeTRigger.asState()
 
     SettingsScaffold(
         title = "",
@@ -652,7 +663,7 @@ fun PointsSettingsScreen(
              * - If the selected point is a live nest, it is drawn in transparency on top of it.
              *   **Only if the nest isn't a OpenCircleNest that points to the same nest action**
              */
-            key(recomposeTrigger, selectedPointsIds, selectedPointTempOffset, points.size, nests.size, defaultPoint) {
+            key(selectedPointsIds, selectedPointTempOffset, points.size, nests.size, defaultPoint) {
                 Box(
                     Modifier
                         .fillMaxSize()
