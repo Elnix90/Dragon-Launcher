@@ -129,6 +129,17 @@ public data class Point(
     /** Fully customizable icon definition overriding default visuals. */
     val customIcon: CustomIcon? = null,
 
+
+    /**
+     * Custom Glow that can be applied to the border
+     */
+    val glow: CustomGlow? = null,
+
+    /**
+     * Custom Glow that can be applied to the border when point is selected
+     */
+    val glowSelected: CustomGlow? = null,
+
     /** Border thickness (dp) when the swipe point is not selected. */
     val borderStroke: Float? = null,
 
@@ -295,6 +306,8 @@ public data class Point(
         public const val defaultCycleActionsLoopDelayMs: Int = 500
         public const val defaultCycleActionStageDefaultDelay: Int = 500
         public const val defaultLiveNestMainNestOpacityPercent: Int = 50
+        public val defaultGlow: CustomGlow = CustomGlow(radius = defaultSize * 1.1f)
+        public val defaultGlowSelected: CustomGlow = CustomGlow(radius = defaultSize + 1.3f)
 
         public val defaultSwipePointsValues: Point = dummySwipePoint(null, -1).copy(
             borderStroke = defaultBorderStroke,
@@ -311,7 +324,9 @@ public data class Point(
             holdAndRunDelayMs = defaultHoldAndRunDelayMs,
             cycleActionsLoopDelayMs = defaultCycleActionsLoopDelayMs,
             cycleActionStageDefaultDelay = defaultCycleActionStageDefaultDelay,
-            liveNestMainNestOpacityPercent = defaultLiveNestMainNestOpacityPercent
+            liveNestMainNestOpacityPercent = defaultLiveNestMainNestOpacityPercent,
+            glow = defaultGlow,
+            glowSelected = defaultGlowSelected
         )
 
         public object PointsJson: DragonJson<Points>()
