@@ -8,6 +8,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -35,7 +36,10 @@ import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.actions.FinalPointIcon
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
+import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
+import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
@@ -46,12 +50,15 @@ fun SelectedPointsTopBar(
     points: Points,
     selectedPointsIds: List<Int>,
     onDeselect: (Int) -> Unit,
+    onInvert: () -> Unit,
+    onSelectAll: () -> Unit,
     onDeselectAll: () -> Unit
 ) {
-    var showDialog by remember { mutableStateOf(false) }
+    var showSelectedPointsDialog by remember { mutableStateOf(false) }
+    var showMoreDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(selectedPointsIds) {
-        if (selectedPointsIds.isEmpty()) showDialog = false
+        if (selectedPointsIds.isEmpty()) showSelectedPointsDialog = false
     }
 
 
@@ -77,7 +84,7 @@ fun SelectedPointsTopBar(
         Row(
             modifier = Modifier
                 .padding(top = 10.dp)
-                .shapedClickable { showDialog = true }
+                .shapedClickable { showSelectedPointsDialog = true }
                 .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                 .padding(10.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -88,26 +95,54 @@ fun SelectedPointsTopBar(
                 onClick = onDeselectAll
             )
 
+            Spacer(5.dp)
+
             Text(
                 pluralStringResource(
                     R.plurals.n_points_selected,
                     frozenIds.size,
                     frozenIds.size
-                )
+                ),
+                modifier = Modifier.padding(3.dp)
             )
+
+            Box {
+                DragonIconButton(
+                    icon = R.drawable.more_vert,
+                    contentDescription = R.string.more,
+                    onClick = { showMoreDialog = true }
+                )
+
+                BurgerListAction(
+                    actions = listOf(
+                        MoreOptions(
+                            onClick = onSelectAll,
+                            icon = R.drawable.select_all,
+                            text = { stringResource(R.string.select_all) }
+                        ),
+                        MoreOptions(
+                            onClick = onInvert,
+                            icon = R.drawable.swap_calls,
+                            text = { stringResource(R.string.invert) }
+                        )
+                    ),
+                    isExpanded = showMoreDialog,
+                    onDismissRequest = { showMoreDialog = false }
+                )
+            }
         }
     }
 
 
-    if (showDialog) {
+    if (showSelectedPointsDialog) {
         CustomAlertDialog(
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = { showSelectedPointsDialog = false },
             modifier = Modifier.padding(36.dp),
             imePadding = false,
             scroll = false,
             alignment = Alignment.Center,
             confirmButton = {
-                ValidateCancelButtons(validateText = stringResource(R.string.ok)) { showDialog = false }
+                ValidateCancelButtons(validateText = stringResource(R.string.ok)) { showSelectedPointsDialog = false }
             },
             title = {
                 Text(

@@ -35,7 +35,10 @@ fun BurgerListAction(
         ) {
             actions.fastForEachIndexed { index, option ->
                 DropdownMenuItem(
-                    onClick = option.onClick,
+                    onClick = {
+                        option.onClick()
+                        onDismissRequest()
+                    },
                     enabled = option.enabled,
                     shape = when (index) {
                         0 -> MenuDefaults.leadingItemShape

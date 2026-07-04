@@ -84,7 +84,9 @@ public interface PointsService {
      * Pretty much self-explanatory ig
      */
     public fun deselect(id: Int)
+    public fun selectAll(nestId: Int)
     public fun deselectAll()
+    public fun invertSelection(nestId: Int)
 
 
     /**
@@ -249,8 +251,18 @@ internal class PointsServiceImpl(
         recomposeTRigger.value++
     }
 
+    override fun selectAll(nestId: Int) {
+        selectedPointsIds.value = points.value.filter { it.nestId == nestId }.map { it.id }
+        recomposeTRigger.value++
+    }
+
     override fun deselectAll() {
         selectedPointsIds.value = emptyList()
+        recomposeTRigger.value++
+    }
+
+    override fun invertSelection(nestId: Int) {
+        selectedPointsIds.value = points.value.filter { it.nestId == nestId }.map { it.id } - selectedPointsIds.value.toSet()
         recomposeTRigger.value++
     }
 

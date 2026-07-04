@@ -366,11 +366,6 @@ fun PointsSettingsScreen(
         selectedPointTempOffset -= id
     }
 
-    fun deselectAll() {
-        pointsService.deselectAll()
-        selectedPointTempOffset.clear()
-    }
-
     fun reInitializeSelectedPointTempOffset() {
         selectedPointTempOffset.clear()
         selectedPointsIds.forEach { id ->
@@ -385,7 +380,7 @@ fun PointsSettingsScreen(
             PrivateSettingsStore.isInDragAroundMode.set(ctx, checked)
         }
         if (checked) {
-            deselectAll()
+            pointsService.deselectAll()
         }
     }
 
@@ -411,7 +406,7 @@ fun PointsSettingsScreen(
 
     val handleBack = {
         if (isInManualPlacementMode) manualPlacementQueue = emptyList()
-        else if (selectedPointsIds.isNotEmpty()) deselectAll()
+        else if (selectedPointsIds.isNotEmpty()) pointsService.deselectAll()
         else if (nestId != 0) nestNavigation.goBack()
         else if (isEditing) isEditing = false
         else onBack()
@@ -473,13 +468,13 @@ fun PointsSettingsScreen(
 
                             GoParentNest -> {
                                 nestNavigation.goBack()
-                                deselectAll()
+                                pointsService.deselectAll()
                             }
 
                             EnterNest -> {
                                 nestToGo?.let {
                                     nestNavigation.goToNest(it)
-                                    deselectAll()
+                                    pointsService.deselectAll()
                                 }
                             }
                         }
@@ -616,7 +611,7 @@ fun PointsSettingsScreen(
                             selectedPointsIds.forEach { id ->
                                 pointsService.removePoint(id)
                             }
-                            deselectAll()
+                            pointsService.deselectAll()
 
                         }
 
@@ -893,7 +888,7 @@ fun PointsSettingsScreen(
                                 },
                                 onDragCancel = {
                                     selectedPointTempOffset.clear()
-                                    deselectAll()
+                                    pointsService.deselectAll()
                                     closestHoveredPoint = null
                                     ableToLaunchHoverAction = false
                                 }
@@ -934,7 +929,7 @@ fun PointsSettingsScreen(
                                 val bestP = tr ifDistanceIsSmallEnough { tr.bestP }
 
                                 if (bestP == null) {
-                                    deselectAll()
+                                    pointsService.deselectAll()
                                 } else {
                                     val id = bestP.id
 
@@ -1005,7 +1000,7 @@ fun PointsSettingsScreen(
             onDismissRequest = { showNestManagementDialog = false },
             onSelect = {
                 nestNavigation.goToNest(it.id)
-                deselectAll()
+                pointsService.deselectAll()
                 showNestManagementDialog = false
             }
         )
@@ -1015,12 +1010,11 @@ fun PointsSettingsScreen(
         modifier = Modifier.selfAlignHorizontally(),
         points = points,
         selectedPointsIds = selectedPointsIds,
-        onDeselect = { id ->
-            select(id)
-        }
-    ) {
-        deselectAll()
-    }
+        onDeselect = { id -> select(id) },
+        onInvert = { pointsService.invertSelection(currentNest.id) },
+        onSelectAll = { pointsService.selectAll(currentNest.id) },
+        onDeselectAll = { pointsService.deselectAll() }
+    )
 
 
     if (isInManualPlacementMode) {
@@ -1101,7 +1095,7 @@ fun PointsSettingsScreen(
             )
 
             initializationViewModel.initialize()
-            deselectAll()
+            pointsService.deselectAll()
             showResetPointsAndNestsDialog = false
         }
     }
