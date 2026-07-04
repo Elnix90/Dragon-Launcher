@@ -1022,4 +1022,6 @@
     <string name="see_selected_points">See selected points</string>
     <string name="point_not_found">Point not found</string>
     <string name="selected_points">Selected points</string>
+    <string name="animation_when_snapping">Animation when snapping</string>
+    <string name="animation_when_snapping_desc">Use expressive animation to animate the snapping</string>
 </resources>

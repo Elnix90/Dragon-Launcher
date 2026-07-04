@@ -125,6 +125,10 @@ fun AppDisplayTab(
             SettingsSwitchRow(UiSettingsStore.showAllActionsOnCurrentNest, enabled = showAllActionsOnCurrentCircle)
             SettingsSwitchRow(UiSettingsStore.showPointPreviewCenterStartPosition)
             SettingsSwitchRow(UiSettingsStore.linePreviewSnapToAction)
+
+            val snap by UiSettingsStore.linePreviewSnapToAction.asState()
+            SettingsSwitchRow(UiSettingsStore.animationWhenSnapping, enabled = snap)
+
             SettingsSwitchRow(UiSettingsStore.multiplyOrSubtractOpacityInLiveNests)
         }
 

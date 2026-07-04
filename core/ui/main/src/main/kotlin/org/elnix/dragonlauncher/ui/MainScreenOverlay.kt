@@ -1,5 +1,7 @@
 package org.elnix.dragonlauncher.ui
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.VectorConverter
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -24,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import io.github.elnix90.logging.SWIPE_TAG
 import io.github.elnix90.logging.logI
 import io.github.elnix90.runtime.asState
+import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
@@ -39,6 +43,7 @@ import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.components.PointPreviewTitle
@@ -85,6 +90,8 @@ fun MainScreenOverlay(
     val appLabelIconOverlayTopPadding by UiSettingsStore.appLabelIconOverlayTopPadding.asState()
 
     val linePreviewSnapToAction by UiSettingsStore.linePreviewSnapToAction.asState()
+    val animationWhenSnapping by UiSettingsStore.animationWhenSnapping.asState()
+    val animatedCurrent = remember(start) { Animatable(start ?: Offset.Unspecified, Offset.VectorConverter) }
 
     val isDragging = start != null && current != null
 
@@ -112,9 +119,21 @@ fun MainScreenOverlay(
             }
         }
 
+    val scope = rememberCoroutineScope()
     val hoveredPoint = selectedPointsPerLevel.findLast { it != null }
     LaunchedEffect(hoveredPoint) {
         pointsService.selectOnyOne(hoveredPoint?.id)
+        if (animationWhenSnapping && hoveredPoint != null && start != null) {
+            pointsService.findPointById(hoveredPoint.id)?.let { p ->
+                val position = pointsService.computePointOffset(p) + start
+                scope.launch {
+                    animatedCurrent.animateTo(
+                        targetValue = position,
+                        animationSpec = bouncySpec()
+                    )
+                }
+            }
+        }
     }
 
     val cycleActionsController = rememberCycleActionsController(
@@ -316,7 +335,11 @@ fun MainScreenOverlay(
                     val effectiveCurrentPos: Offset = remember(current, hoveredPoint, isAnyLiveNestActive, activeLevelIndex) {
                         when {
                             linePreviewSnapToAction && outerSelectedPoint != null -> {
-                                outerSelectedPoint.offset + liveNestCenterForDraw
+                                if (animationWhenSnapping && animatedCurrent.value != Offset.Unspecified) {
+                                    animatedCurrent.value
+                                } else {
+                                    outerSelectedPoint.offset + liveNestCenterForDraw
+                                }
                             }
 
                             // Means that the live HAS to snap to action, because otherwise it would move around under the top activated live nest

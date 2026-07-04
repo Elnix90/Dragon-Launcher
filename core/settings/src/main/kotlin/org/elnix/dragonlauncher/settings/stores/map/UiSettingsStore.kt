@@ -73,6 +73,7 @@ public object UiSettingsStore : MapSettingsStore() {
         default = true
     )
 
+
     @SettingKey
     public val autoMerge: BooleanSettingObject = boolean(
         title = R.string.auto_merge,
@@ -90,6 +91,13 @@ public object UiSettingsStore : MapSettingsStore() {
     public val linePreviewSnapToAction: BooleanSettingObject = boolean(
         title = R.string.line_preview_snap_to_action,
         description = R.string.line_preview_snap_to_action_description,
+        default = false
+    )
+
+    @SettingKey
+    public val animationWhenSnapping: BooleanSettingObject = boolean(
+        title = R.string.animation_when_snapping,
+        description = R.string.animation_when_snapping_desc,
         default = false
     )
 
