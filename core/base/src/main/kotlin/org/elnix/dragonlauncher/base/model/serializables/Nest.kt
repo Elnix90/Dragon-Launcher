@@ -80,21 +80,21 @@ public data class Nest(
                 id = 0,
                 shape = IconShape.Circle,
                 size = 300f,
-                centerOffset = Offset.Zero
+                offset = Offset.Zero
             ),
 
             IntersectionShape(
                 id = 1,
                 shape = IconShape.Square,
                 size = 450f,
-                centerOffset = Offset.Zero
+                offset = Offset.Zero
             ),
 
             IntersectionShape(
                 id = 1,
                 shape = IconShape.Cookie12Sided,
                 size = 600f,
-                centerOffset = Offset.Zero
+                offset = Offset.Zero
             )
         )
 

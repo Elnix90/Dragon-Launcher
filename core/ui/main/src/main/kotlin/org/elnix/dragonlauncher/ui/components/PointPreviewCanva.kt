@@ -13,7 +13,7 @@ import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.helpers.nests.PointIcon
+import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 
 @Composable
 fun PointPreviewCanvas(

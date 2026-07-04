@@ -30,7 +30,7 @@ import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.ktx.toDp
 import org.elnix.dragonlauncher.ui.actions.ActionIcon
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
-import org.elnix.dragonlauncher.ui.helpers.nests.PointIcon
+import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 import org.elnix.dragonlauncher.ui.widgets.LauncherWidgetHolder
 import kotlin.math.min
 

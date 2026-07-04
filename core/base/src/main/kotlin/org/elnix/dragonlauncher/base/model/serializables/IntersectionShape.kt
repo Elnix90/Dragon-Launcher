@@ -31,9 +31,9 @@ public data class IntersectionShape(
     @SerialName("angle")
     val angle: Int? = null,
 
-    @SerialName("centerOffset")
+    @SerialName("offset")
     @Serializable(with = OffsetSerializer::class)
-    val centerOffset: Offset,
+    val offset: Offset,
 
     @SerialName("haptic")
     val haptic: CustomHapticFeedback? = null,
@@ -43,9 +43,22 @@ public data class IntersectionShape(
 
     @SerialName("color")
     @Serializable(with = ColorSerializer::class)
-    val color: Color? = null
+    val color: Color? = null,
+
+    @SerialName("glow")
+    val glow: CustomGlow? = CustomGlow(
+        color = color,
+        radius = 5f
+    )
 ) {
     public infix fun scaledBy(scale: Float): IntersectionShape = this.copy(size = this.size * scale)
+
+    /**
+     * Used by the path cache resolver to not recompute twice the same instance of a [androidx.compose.ui.graphics.Path]
+     */
+    override fun hashCode(): Int {
+        return shape.hashCode() + size.toInt() + (angle ?: 0)
+    }
 
     public companion object {
         public object Defaults {

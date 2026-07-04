@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.helpers.nests
+package org.elnix.dragonlauncher.ui.helpers.swipe
 
 import android.content.Context
 import androidx.compose.runtime.Composable
@@ -15,7 +15,8 @@ import org.elnix.dragonlauncher.points.PointsService
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
-import org.elnix.dragonlauncher.ui.helpers.nests.cache.RememberPointStableCaches
+import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.RememberPointStableCaches
+import org.elnix.dragonlauncher.ui.helpers.swipe.cache.points.RememberNestsStableCaches
 
 
 /**
@@ -52,7 +53,7 @@ data class DrawParams(
  * [PointsService.defaultPoint], or any observed UI / debug setting changes.
  *
  * As a side effect this function also drives [RememberPointStableCaches] which keeps
- * [org.elnix.dragonlauncher.ui.helpers.nests.cache.PointStableCache] synchronised with the current point set.
+ * [org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.PointStableCache] synchronised with the current point set.
  *
  * @param pointsViewModel source of point/nest data
  * @param preventBgErasing when true the nest background is preserved (not cleared)
@@ -82,6 +83,7 @@ fun rememberDrawParams(
     val nestDebugOverlay = LocalNestDebugOverlay.current
 
     RememberPointStableCaches()
+    RememberNestsStableCaches()
 
     return remember(
         extraColors,

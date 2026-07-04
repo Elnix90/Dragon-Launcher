@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 
 fun DrawScope.drawShapeWithColor(
@@ -59,11 +60,18 @@ fun DrawScope.drawShapeWithColor(
 fun DrawScope.shapeToPath(
     shape: Shape,
     size: Size
+): Path = shapeToPath(shape, size, this)
+
+
+fun shapeToPath(
+    shape: Shape,
+    size: Size,
+    density: Density
 ): Path {
     val outline = shape.createOutline(
         size = size,
         layoutDirection = LayoutDirection.Ltr,
-        density = this
+        density = density
     )
 
     return when (outline) {

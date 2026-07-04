@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.helpers.nests
+package org.elnix.dragonlauncher.ui.helpers.swipe
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -16,7 +16,7 @@ import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ui.helpers.customobjects.shapeToPath
-import org.elnix.dragonlauncher.ui.helpers.nests.cache.PointStableCache
+import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.PointStableCache
 import org.elnix.dragonlauncher.ui.remembers.CustomTexts
 
 

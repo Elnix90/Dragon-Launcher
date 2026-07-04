@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.util.fastRoundToInt
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
-import org.elnix.dragonlauncher.ui.helpers.nests.cache.DrawScopeText
+import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.DrawScopeText
 
 @Composable
 fun rememberDrawScopeText(

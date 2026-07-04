@@ -614,7 +614,7 @@ internal class PointsServiceImpl(
         val rotationRad = Math.toRadians((shape.angle ?: 0).toDouble()).toFloat()
 
         val boundary = computeShapeBoundary(shape.shape, halfSize, angleRad, rotationRad)
-        return shape.centerOffset + boundary
+        return shape.offset + boundary
     }
 
     override fun getPointsForNest(

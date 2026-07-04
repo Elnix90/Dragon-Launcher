@@ -97,5 +97,5 @@ public abstract class DragonCache <K,V> (initialMaxSize: Int) {
      * The current number of entries held in the cache.
      * Useful for debugging or logging cache pressure.
      */
-    public val size: Int = icons.size
+    public val size: Int get() = icons.size
 }

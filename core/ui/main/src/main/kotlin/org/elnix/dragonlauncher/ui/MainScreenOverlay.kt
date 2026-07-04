@@ -49,8 +49,8 @@ import org.elnix.dragonlauncher.ui.composition.LocalStartLineObject
 import org.elnix.dragonlauncher.ui.dialogs.rememberLineObjectsOrder
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine
-import org.elnix.dragonlauncher.ui.helpers.nests.NestOverlay
-import org.elnix.dragonlauncher.ui.helpers.nests.rememberDrawParams
+import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
+import org.elnix.dragonlauncher.ui.helpers.swipe.rememberDrawParams
 import org.elnix.dragonlauncher.ui.remembers.LiveNestState
 import org.elnix.dragonlauncher.ui.remembers.rememberCycleActionsController
 import org.elnix.dragonlauncher.ui.remembers.rememberHoldAndRunController

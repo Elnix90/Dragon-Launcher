@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.helpers.nests
+package org.elnix.dragonlauncher.ui.helpers.swipe
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable

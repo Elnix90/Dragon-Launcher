@@ -105,8 +105,8 @@ import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowOverlay
-import org.elnix.dragonlauncher.ui.helpers.nests.NestOverlay
-import org.elnix.dragonlauncher.ui.helpers.nests.PointIcon
+import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
+import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.settings.SpecialSettingsTitle
 import org.elnix.dragonlauncher.ui.remembers.rememberDrawScopeText
