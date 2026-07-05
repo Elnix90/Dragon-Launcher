@@ -332,7 +332,7 @@ fun MainScreenOverlay(
                     val sweepAngle = controller.sweepAngleState.sweepAngle()
                     val angle360 = controller.sweepAngleState.angle360()
 
-                    val effectiveCurrentPos: Offset = remember(current, hoveredPoint, isAnyLiveNestActive, activeLevelIndex) {
+                    val effectiveCurrentPos: Offset = remember(animatedCurrent.value, current, hoveredPoint, isAnyLiveNestActive, activeLevelIndex) {
                         when {
                             linePreviewSnapToAction && outerSelectedPoint != null -> {
                                 if (animationWhenSnapping && animatedCurrent.value != Offset.Unspecified) {
