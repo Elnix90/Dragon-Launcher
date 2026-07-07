@@ -335,8 +335,9 @@ fun MainScreenOverlay(
     )
 
     Box(Modifier.fillMaxSize()) {
+        val debugInfo by DebugSettingsStore.mainScreenDebugInfos.asState()
 
-        DebugZone(DebugSettingsStore.mainScreenDebugInfos) {
+        DebugZone(debugInfo) {
             Text("start = ${start?.let { "%.1f, %.1f".format(it.x, it.y) } ?: "-"}")
             Text("current = ${current?.let { "%.1f, %.1f".format(it.x, it.y) } ?: "-"}")
             Text("sweep raw = %.1f°".format(deepestController.sweepAngleState.sweepAngle()))
@@ -349,7 +350,9 @@ fun MainScreenOverlay(
             Text("current point = $hoveredPoint")
         }
 
-        DebugPointer(animatedCurrent, deepestController.liveNestCenter)
+        if (debugInfo) {
+            DebugPointer(animatedCurrent, deepestController.liveNestCenter)
+        }
 
         if (isDragging) {
             for ((idx, controller) in liveNestControllersStack.withIndex()) {

@@ -413,8 +413,8 @@ fun NestEditScreen2(
 //                                    (shape.offset + centroid / oldScale).rotateBy(gestureRotate) - (centroid / newScale + pan / oldScale)
 //                                (shape.offset + centroid / oldScale).rotateBy(gestureRotate) - (centroid / newScale + pan / oldScale)
 
-                                val newOffset =
-                                    (shape.offset + centroid / oldScale).rotateBy(gestureRotate) - (centroid / newScale) + pan / oldScale
+//                                val newOffset =
+//                                    (shape.offset + centroid / oldScale).rotateBy(gestureRotate) - (centroid / newScale) + pan / oldScale
 
 
 
@@ -427,7 +427,7 @@ fun NestEditScreen2(
 //                                } else newOffset
 
                                 val newShape = shape.copy(
-                                    offset = newOffset,
+//                                    offset = newOffset,
                                     scale = newScale,
                                     angle = newAngle.fastRoundToInt()
                                 )
