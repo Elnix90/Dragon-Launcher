@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.actions.AppIcon
@@ -107,7 +108,18 @@ fun AppLongPressPopup(
                 }
             )
         )
+
+        add(
+            MoreOptions(
+                text = { stringResource(R.string.detailed_info) },
+                icon = R.drawable.info,
+                onClick = {
+                    showDetailedAppInfoDialog = true
+                }
+            )
+        )
     }
+    val cannotMessage = stringResource(R.string.cannot_directly_uninstall_from_other_profiles)
 
     Column {
         ButtonGroup(
@@ -116,6 +128,15 @@ fun AppLongPressPopup(
             horizontalArrangement = Arrangement.spacedBy(MenuDefaults.GroupSpacing, Alignment.CenterHorizontally),
         ) {
 
+            customItem(
+                buttonGroupContent = {
+                    Button(
+                        onClick = { appLaunchViewModel.requestAppLaunch(app) },
+                        icon = R.drawable.open_in_new
+                    )
+                },
+                menuContent = {}
+            )
             customItem(
                 buttonGroupContent = {
                     Button(
@@ -128,24 +149,19 @@ fun AppLongPressPopup(
             customItem(
                 buttonGroupContent = {
                     Button(
-                        onClick = { showDetailedAppInfoDialog = true },
-                        icon = R.drawable.info
+                        onClick = {
+                            if (!app.isPrivate) {
+                                app.uninstall(ctx)
+                            } else {
+                                ctx.showToast(cannotMessage)
+                                app.openAppDetails(ctx)
+                            }
+                        },
+                        icon = R.drawable.delete_forever
                     )
                 },
                 menuContent = { }
             )
-
-            if (!app.isPrivate) {
-                customItem(
-                    buttonGroupContent = {
-                        Button(
-                            onClick = { app.uninstall(ctx) },
-                            icon = R.drawable.delete_forever
-                        )
-                    },
-                    menuContent = { }
-                )
-            }
         }
 
         Spacer(MenuDefaults.GroupSpacing)
@@ -214,7 +230,6 @@ fun AppLongPressPopup(
         AppAliasesDialog(app) { showAliasDialog = false }
     }
 }
-
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
