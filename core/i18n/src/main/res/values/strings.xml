@@ -246,7 +246,7 @@
     <string name="size">Size</string>
     <string name="shape_scale">Scale: %1$f</string>
     <string name="rotation">Rotation</string>
-    <string name="rotation_arg">Rotation: %1$d</string>
+    <string name="rotation_arg">Rotation: %1$f</string>
     <string name="scale_x">Scale X</string>
     <string name="scale_y">Scale Y</string>
     <string name="open_app">Open App</string>
@@ -696,8 +696,8 @@
     <string name="google_lockdown_warning">"Google has announced that, starting in 2026/2027, all apps on certified Android devices will require the developer to submit personal identity details directly to Google. Since the developers of this app do not agree to this requirement, this app will no longer work on certified Android devices after that time. "</string>
     <string name="dismiss">Dismiss</string>
     <string name="nest_radius">Nest Radius</string>
-    <string name="edit_nest">Edit nest %1$d
-    </string>
+    <string name="edit_nest">Edit nest</string>
+    <string name="edit_nest_arg">Edit nest %1$d</string>
     <string name="angle_line">Angle Line</string>
     <string name="angle_line_help">Customize the appearance of the line that appear when you drag on the main screen</string>
     <string name="show_start_object_preview">Show start object preview</string>
@@ -1028,9 +1028,13 @@
     <string name="selected_points">Selected points</string>
     <string name="animation_when_snapping">Animation when snapping</string>
     <string name="animation_when_snapping_desc">Use expressive animation to animate the snapping</string>
-    <string name="snap_shapes">Snap shapes</string>
+    <string name="snap_shapes_offset">Snap shapes offset</string>
+    <string name="snap_shapes_scale">Snap shapes scale</string>
+    <string name="snap_shapes_angle">Snap shapes angle</string>
     <string name="nest_debug_info">Nest debug info</string>
     <string name="nest_debug_info_desc">Show debug info in nest editing screen</string>
     <string name="shapes_management">Shapes Management</string>
     <string name="add_shape">Add shape</string>
+    <string name="detailed_info">Detailed Info</string>
+    <string name="cannot_directly_uninstall_from_other_profiles">Cannot directly uninstall from other profiles</string>
 </resources>

@@ -280,6 +280,44 @@ public data class Point(
 
     override fun compareTo(other: Point): Int = this.id.compareTo(other.id)
 
+    override fun toString(): String =
+        "Point(\n" +
+                "  offset = ${offset}\n" +
+                "  action = ${action}\n" +
+                "  id = $id\n" +
+                "  nestId = $nestId\n" +
+                "  collidingShapeId = $collidingShapeId\n" +
+                "  customIcon = ${customIcon}\n" +
+                "  glow = ${glow}\n" +
+                "  glowSelected = ${glowSelected}\n" +
+                "  borderStroke = ${borderStroke}\n" +
+                "  borderStrokeSelected = ${borderStrokeSelected}\n" +
+                "  borderColor = ${borderColor}\n" +
+                "  backgroundColor = ${backgroundColor}\n" +
+                "  borderColorSelected = ${borderColorSelected}\n" +
+                "  backgroundColorSelected = ${backgroundColorSelected}\n" +
+                "  opacity = ${opacity}\n" +
+                "  haptic = ${haptic}\n" +
+                "  customName = ${customName}\n" +
+                "  innerPadding = ${innerPadding}\n" +
+                "  customActionColor = ${customActionColor}\n" +
+                "  size = ${size}\n" +
+                "  borderShape = ${borderShape}\n" +
+                "  borderShapeSelected = ${borderShapeSelected}\n" +
+                "  liveNestTargetNestId = ${liveNestTargetNestId}\n" +
+                "  liveNestPreviewDelayMs = ${liveNestPreviewDelayMs}\n" +
+                "  liveNestScale = ${liveNestScale}\n" +
+                "  liveNestGraceDistancePx = ${liveNestGraceDistancePx}\n" +
+                "  liveNestMainNestOpacityPercent = ${liveNestMainNestOpacityPercent}\n" +
+                "  liveNestSnapsToFingerPosition = ${liveNestSnapsToFingerPosition}\n" +
+                "  cycleActions = ${cycleActions}\n" +
+                "  cycleActionStageDefaultDelay = ${cycleActionStageDefaultDelay}\n" +
+                "  cycleActionsLoopDelayMs = ${cycleActionsLoopDelayMs}\n" +
+                "  holdAndRunDelayMs = ${holdAndRunDelayMs}\n" +
+                "  holdAndRunAction = ${holdAndRunAction}\n" +
+                ")"
+
+
     public companion object {
         public fun dummySwipePoint(
             action: Action? = null,

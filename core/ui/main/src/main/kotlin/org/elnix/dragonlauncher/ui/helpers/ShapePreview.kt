@@ -18,15 +18,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
+import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 
 @Composable
-fun ShapePreview(
+fun     ShapePreview(
     iconShape: IconShape,
     modifier: Modifier = Modifier,
     selected: Boolean = false,
@@ -43,7 +43,7 @@ fun ShapePreview(
             .padding(5.dp)
             .then(modifier)
             .aspectRatio(1f, true)
-            .clip(DragonShape)
+            .clip(MaterialTheme.shapes.large)
             .conditional(onClick) {
                 shapedClickable(onClick = it)
             },

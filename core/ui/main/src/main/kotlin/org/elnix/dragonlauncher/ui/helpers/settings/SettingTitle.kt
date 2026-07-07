@@ -181,7 +181,7 @@ fun SpecialSettingsTitle(
                     }
                 ),
                 MoreOptions(
-                    text = { stringResource(R.string.edit_nest, nestId) },
+                    text = { stringResource(R.string.edit_nest_arg, nestId) },
                     icon = R.drawable.nest_icon,
                     onClick = {
                         dismiss()

@@ -56,7 +56,6 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.navigaton.ManipulationSystem
-import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.Center
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.ResetRotation
@@ -167,17 +166,13 @@ fun PointsSettingsScreen(
     var showNestManagementDialog by remember { mutableStateOf(false) }
     var showResetPointsAndNestsDialog by remember { mutableStateOf(false) }
 
-
-    val rowsScrollStates = List(3) { rememberScrollState() }
-
+    val rowsScrollStates = List(2) { rememberScrollState() }
 
     val nestService = pointsViewModel.nestsNavigationService
     val nestId by pointsViewModel.currentNestId.collectAsState()
     val currentNest = pointsService.findNestByIdOrNull(nestId) ?: Nest(0)
 
     SelfCheckNestPresent()
-
-    var showShapeManagementDialog by remember { mutableStateOf(false) }
 
     fun computePointMoved(
         point: Point,
@@ -388,9 +383,7 @@ fun PointsSettingsScreen(
         },
         bottomContent = {
             if (showAdvancedEditTools) {
-                // Row with nest toolbar and toggle buttons toolbar
                 RowWithScrollIndicator(rowsScrollStates[0]) {
-                    // Nests toolbar
                     val nestToGo =
                         if (selectedPointsIds.size == 1) {
                             val point = pointsService.findPointById(selectedPointsIds.first())
@@ -438,7 +431,6 @@ fun PointsSettingsScreen(
 
                     Spacer(12.dp)
 
-                    // The 3 points settings tools: Snap points / Auto separate / Lock to circle
                     MultiSelectConnectedButtonRow(
                         entries = PointsEditTools.entries,
                         checked = {
@@ -459,11 +451,9 @@ fun PointsSettingsScreen(
                     }
                 }
 
-                UndoRedoBlock(pointsService.undoRedo)
+                Spacer(5.dp)
 
-
-                // 3. Reset offset/zoom/rotation - add/remove circle
-                RowWithScrollIndicator(rowsScrollStates[2]) {
+                RowWithScrollIndicator(rowsScrollStates[1]) {
                     val canResetOffset = offset.value != Offset.Zero
                     val canResetZoom = zoom.value != 1f
                     val canResetRotation = angle.value != 0f
@@ -504,10 +494,7 @@ fun PointsSettingsScreen(
 
                     Spacer(12.dp)
 
-                    DragonIconButton(
-                        icon = R.drawable.shapes,
-                        contentDescription = R.string.shapes
-                    ) { showShapeManagementDialog = true }
+                    UndoRedoBlock(pointsService.undoRedo)
                 }
             }
 
@@ -554,7 +541,7 @@ fun PointsSettingsScreen(
                             offset = newOffset,
                             nestId = nestId,
                             action = Action.OpenDragonLauncherSettings(),
-                            collidingShapeId = null
+                            collidingShapeId = 0
                         )
                     }
                 }
@@ -609,7 +596,6 @@ fun PointsSettingsScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Blue.alphaMultiplier(0.05f))
                 .onSizeChanged { size ->
                     // Updates the center and available width variables, that depends on the phone size and orientation.
                     // Computes the larger size between width and height to ensure all points belongs to the hittable zone
@@ -1083,8 +1069,10 @@ fun PointsSettingsScreen(
         Text("Points number: ${points.size}")
         Text("Nests number: ${nests.size}")
         Text("current Nest shapes number: ${currentNest.intersectionShapes.size}")
-        Text("closest hovered point: $closestHoveredTempOffset")
-//        Text("Points: $points")
+        val firstPoint = selectedPointsIds.firstOrNull()?.let {
+            pointsService.findPointById(it)
+        }
+        Text("first selected point: $firstPoint")
     }
 }
 

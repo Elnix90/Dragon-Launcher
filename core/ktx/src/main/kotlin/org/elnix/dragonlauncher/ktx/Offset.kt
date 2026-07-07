@@ -8,7 +8,6 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.pow
-import kotlin.math.roundToInt
 import kotlin.math.sin
 
 /** Euclidean distance from [this@distance] to [b] in pixels. */
@@ -81,18 +80,17 @@ public inline fun Offset.undoTransformations(
  * Snaps the value to the nearest integer if it crosses the threshold.
  * @param threshold The distance from an integer to trigger snapping
  */
-public fun Float.snapToRound(threshold: Float): Float {
-    val rounded = this.roundToInt().toFloat()
-    return if (abs(this - rounded) <= threshold) rounded else this
+public fun Float.snapToRound(snapTo: Float, threshold: Float): Float {
+    return if (abs(this - snapTo) <= threshold) snapTo else this
 }
 
 /**
  * Snaps both x and y of the Offset to integers if they cross the threshold.
  * @param threshold The distance from an integer to trigger snapping
  */
-public fun Offset.snapToRound(threshold: Float): Offset {
+public fun Offset.snapToRound(snapTo: Offset, threshold: Float): Offset {
     return Offset(
-        x = x.snapToRound(threshold),
-        y = y.snapToRound(threshold)
+        x = x.snapToRound(snapTo.x, threshold),
+        y = y.snapToRound(snapTo.y, threshold)
     )
 }

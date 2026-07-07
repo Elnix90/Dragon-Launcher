@@ -150,7 +150,6 @@ public object Constants {
 
     public object Settings {
         public const val TOUCH_THRESHOLD_PX: Float = 100f
-        public const val SNAP_THRESHOLD: Float = 10f
         public const val COLLIDING_SHAPE_THRESHOLD_PX: Float = 50f
         public const val HOVER_POINT_DURATION: Long = 500L
         public const val HOVER_GRADIENT_RADIUS: Float = 75f

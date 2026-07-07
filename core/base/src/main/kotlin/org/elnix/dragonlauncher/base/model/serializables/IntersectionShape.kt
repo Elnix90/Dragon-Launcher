@@ -30,7 +30,7 @@ public data class IntersectionShape(
     val scale: Float = 1f,
 
     @SerialName("angle")
-    val angle: Int = 0,
+    val angle: Float = 0f,
 
     @SerialName("offset")
     @Serializable(with = OffsetSerializer::class)

@@ -1,10 +1,13 @@
 package org.elnix.dragonlauncher.ui.dialogs
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,13 +26,13 @@ import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getNextId
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.base.modifiers.selfAlignHorizontally
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
-import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.ui.helpers.ShapePreview
 
 @Composable
@@ -55,7 +58,7 @@ fun IntersectionShapeManagementDialog(
 
     CustomAlertDialog(
         onDismissRequest = onDismiss,
-        modifier = modifier,
+        modifier = modifier.heightIn(max = 600.dp),
         imePadding = false,
         scroll = false,
         alignment = Alignment.Center,
@@ -102,7 +105,8 @@ fun IntersectionShapeManagementDialog(
                                 offset = Offset.Zero
                             )
                         )
-                    }
+                    },
+                    modifier = modifier.selfAlignHorizontally()
                 ) {
                     Text(stringResource(R.string.add_shape))
                 }
@@ -132,11 +136,25 @@ private fun ShapeItem(
         Text("ID: ${shape.id}")
         Spacer()
 
-        TextWithDescription(
-            text = shape.offset.toString(),
-            description1 = stringResource(R.string.shape_scale, shape.scale),
-            description2 = stringResource(R.string.rotation_arg, shape.angle ?: 0)
-        )
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            Text(
+                text = shape.offset.toString(),
+                style = MaterialTheme.typography.labelMedium
+            )
+            Text(
+                text = stringResource(R.string.shape_scale, shape.scale),
+                style = MaterialTheme.typography.labelSmall
+            )
+
+            Text(
+                text = stringResource(R.string.rotation_arg, shape.angle),
+                style = MaterialTheme.typography.labelSmall
+            )
+        }
+
 
         DragonIconButton(
             icon = R.drawable.close,

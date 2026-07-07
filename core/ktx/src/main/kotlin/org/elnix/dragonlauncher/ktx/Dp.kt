@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ktx
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
@@ -14,6 +15,7 @@ import androidx.compose.ui.unit.Dp
  */
 public inline val Dp.px: Float
     @Composable
+    @ReadOnlyComposable
     get() = value * LocalDensity.current.density
 
 
@@ -21,4 +23,5 @@ public inline val Dp.px: Float
 @Stable
 public inline val Float.toDp: Dp
     @Composable
+    @ReadOnlyComposable
     get() = with(LocalDensity.current) { this@toDp.toDp() }

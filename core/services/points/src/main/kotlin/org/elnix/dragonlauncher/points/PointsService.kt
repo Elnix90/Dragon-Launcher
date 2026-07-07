@@ -611,11 +611,9 @@ internal class PointsServiceImpl(
         val shape = nest.intersectionShapes.find { it.id == shapeId } ?: return point.offset
 
         val angleRad = point.angle
-        val halfSize = shape.getSize(density).width
-//        val halfSize = shape.size / 2f
+        val halfSize = shape.getSize(density).width / 2
         val rotationRad = Math.toRadians(shape.angle.toDouble()).toFloat()
         logD(POINTS_TAG) { "angleRad: $angleRad, halfSize: $halfSize" }
-
 
         val boundary = computeShapeBoundary(shape.shape, halfSize, angleRad, rotationRad)
         logD(POINTS_TAG) { "Boundary: $boundary" }

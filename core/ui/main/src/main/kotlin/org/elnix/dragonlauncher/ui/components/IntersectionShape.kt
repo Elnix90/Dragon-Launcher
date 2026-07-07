@@ -34,7 +34,7 @@ fun DrawScope.IntersectionShape(
                 top = position.y
             )
             rotate(
-                degrees = rotation.toFloat(),
+                degrees = rotation,
                 pivot = Offset.Zero
             )
             translate(
