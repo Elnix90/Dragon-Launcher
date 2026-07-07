@@ -155,8 +155,14 @@ fun MainScreenOverlay(
         } else if (animationWhenSnapping) {
             pointsService.findPointById(hoveredPoint.id)?.let { p ->
 
-                val liveNestCenter = deepestController.liveNestCenter!!
-                if (current != null){
+                // TODO the animated thing still moves from the start instead of snapping to current pos and then animating
+                val liveNestCenter =
+                    if (isAnyLiveNestActive) { deepestController.liveNestCenter }
+                    else { start }
+                        ?: return@LaunchedEffect
+
+
+                if (current != null) {
                     scope.launch {
                         animatedCurrent.snapTo(current - liveNestCenter)
                         animatedCurrent.animateTo(
