@@ -29,13 +29,17 @@ fun DrawScope.IntersectionShape(
 
     withTransform(
         {
+            translate(
+                left = position.x,
+                top = position.y
+            )
             rotate(
                 degrees = rotation.toFloat(),
-                pivot = center
+                pivot = Offset.Zero
             )
             translate(
-                left = position.x - size.width / 2f,
-                top = position.y - size.height / 2f
+                left = -size.width / 2f,
+                top = -size.height / 2f
             )
         }
     ) {

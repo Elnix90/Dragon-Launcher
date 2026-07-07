@@ -4,7 +4,13 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.calculateCentroid
+import androidx.compose.foundation.gestures.calculateCentroidSize
+import androidx.compose.foundation.gestures.calculatePan
+import androidx.compose.foundation.gestures.calculateRotation
+import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -22,7 +28,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,18 +41,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastAny
+import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastRoundToInt
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.Constants.Settings.TOUCH_THRESHOLD_PX
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
-import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.navigaton.ManipulationSystem
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
@@ -56,11 +63,9 @@ import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.EnterNest
 import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.GoParentNest
 import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.NestManagement
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ktx.distanceTo
 import org.elnix.dragonlauncher.ktx.rotateBy
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.PointsViewModel
-import org.elnix.dragonlauncher.points.PointsService
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
@@ -68,7 +73,6 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.base.modifiers.selfAlignHorizontally
 import org.elnix.dragonlauncher.ui.components.IntersectionShape
 import org.elnix.dragonlauncher.ui.components.ManipulationSystemReset
 import org.elnix.dragonlauncher.ui.dialogs.IntersectionShapeManagementDialog
@@ -83,6 +87,8 @@ import org.elnix.dragonlauncher.ui.helpers.customobjects.shapeToPath
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
 import org.elnix.dragonlauncher.ui.helpers.swipe.rememberDrawParams
+import kotlin.math.PI
+import kotlin.math.abs
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -136,13 +142,14 @@ fun NestEditScreen2(
     val zoom = manipulationSystem.zoom
 
     val density = LocalDensity.current
-    val paths: SnapshotStateMap<IntersectionShape, Path> = remember(currentNest.intersectionShapes) { mutableStateMapOf() }
+    val paths: SnapshotStateMap<IntersectionShape, Path> = remember { mutableStateMapOf() }
 
     fun addPath(shape: IntersectionShape) {
         paths[shape] = shapeToPath(shape.shape.resolveShape(), shape.getSize(density.density), density)
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(currentNest.intersectionShapes) {
+        paths.clear()
         currentNest.intersectionShapes.forEach { shape ->
             addPath(shape)
         }
@@ -155,16 +162,14 @@ fun NestEditScreen2(
     }
 
     val handleBack = {
-        saveCurrentNest()
         if (selectedShapeId != null) selectedShapeId = null
-        else { onBack() }
+        else {
+            onBack()
+        }
     }
     BackHandler(onBack = handleBack)
 
     val recomposeTrigger by pointsService.recomposeTRigger.asState()
-
-    var rc by remember { mutableIntStateOf(0) }
-
 
 //    var debugPan by remember { mutableStateOf(Offset.Unspecified) }
 //    var debugCentroid by remember { mutableStateOf(Offset.Unspecified) }
@@ -369,14 +374,19 @@ fun NestEditScreen2(
                     }
                 }
             }
-            Text(text = rc.toString(), modifier = Modifier.selfAlignHorizontally(Alignment.End))
 
             Box(
                 Modifier
                     .fillMaxSize()
                     .pointerInput(Unit, isInDragAroundMode, nestId) {
-                        detectTransformGestures(true) { centroid, pan, gestureZoom, gestureRotate ->
-                            rc++
+                        detectTransformGestures(
+                            panZoomLock = true,
+                            onGestureEnd = {
+                                if (!isInDragAroundMode) {
+                                    saveCurrentNest()
+                                }
+                            }
+                        ) { centroid, pan, gestureZoom, gestureRotate ->
                             if (isInDragAroundMode) {
 
                                 val oldScale = zoom.value
@@ -409,15 +419,40 @@ fun NestEditScreen2(
                                 val newScale = oldScale * gestureZoom
                                 val newAngle = shape.angle + gestureRotate
 
-//                                val newOffset =
-//                                    (shape.offset + centroid / oldScale).rotateBy(gestureRotate) - (centroid / newScale + pan / oldScale)
-//                                (shape.offset + centroid / oldScale).rotateBy(gestureRotate) - (centroid / newScale + pan / oldScale)
+                                // Convert centroid and pan from screen space to canvas space
+                                // by undoing the graphicsLayer transform (ManipulationSystem).
+                                // The graphicsLayer applies: scale(zoom) then rotate(angle)
+                                // then translate(-offset*zoom). Its inverse converts screen
+                                // coordinates back to canvas space.
+                                val canvasCentroid =
+                                    (centroid / zoom.value + offset.value).rotateBy(-angle.value)
+                                val canvasPan =
+                                    (pan / zoom.value).rotateBy(-angle.value)
 
-//                                val newOffset =
-//                                    (shape.offset + centroid / oldScale).rotateBy(gestureRotate) - (centroid / newScale) + pan / oldScale
+                                // Relative position of the gesture centroid from the screen
+                                // center, expressed in canvas (un-transformed) coordinates.
+                                val r = canvasCentroid - center
 
-
-
+                                // Compute the new offset that keeps the gesture centroid
+                                // visually fixed during rotation and scaling.
+                                //
+                                // Derivation:
+                                //   C  = center + O + R(θ) * d       (pre-gesture)
+                                //   C' = center + N + R(θ+Δθ) * d'  (post-gesture)
+                                // where:
+                                //   C  = canvas centroid, O = old offset, θ = old angle,
+                                //   d  = local point offset from shape center
+                                //   N  = new offset, Δθ = rotation delta,
+                                //   d' = d * (newScale / oldScale) (path scales linearly)
+                                //
+                                // Solving for N with C' = C + pan:
+                                //   N = (C - center) + pan
+                                //       - R(Δθ) * (C - center - O) * (newScale / oldScale)
+                                val safeOldScale = maxOf(oldScale, 0.01f)
+                                val newOffset =
+                                    canvasPan + r -
+                                            (r - shape.offset).rotateBy(gestureRotate) *
+                                            (newScale / safeOldScale)
 
 //                                val effectiveNewOffset = if (snapShapes) {
 //                                    newOffset.copy(
@@ -427,7 +462,7 @@ fun NestEditScreen2(
 //                                } else newOffset
 
                                 val newShape = shape.copy(
-//                                    offset = newOffset,
+                                    offset = newOffset,
                                     scale = newScale,
                                     angle = newAngle.fastRoundToInt()
                                 )
@@ -475,71 +510,135 @@ fun NestEditScreen2(
 }
 
 
+///**
+// * Holds an Offset and provides helper functions and value to manage its values and variants inside settings screens that allows objects manipulation
+// */
+//class TransformedOffset(
+//    private val manipulationSystem: ManipulationSystem,
+//    private val pointsService: PointsService,
+//    private val nestId: Int,
+//    /**
+//     * Original offset, in normal screen coordinates
+//     * It will be transformed to give the actual useful values
+//     */
+//    val offset: Offset
+//) {
+//
+//    /**
+//     * Transformed offset, represents the coordinated in space of the [offset] after undoing the
+//     * transformations of [angle], [zoom], and [offset] that are only for visual in the settings screen
+//     */
+//    public val transformedOffset: Offset by lazy {
+//        manipulationSystem.transform(this.offset)
+//    }
+//
+//    /**
+//     * Represents the offset of the point, if you do not account for both the [angle], [zoom], and [offset] transformations and the [center]
+//     * in the middle ot the screen.
+//     *
+//     * ### **It's the offset you want to save into the points property**
+//     * as it can be interpreted by the [PointsService] and be
+//     * converted back to screen coordinates.
+//     */
+//    public val normalizedOffset: Offset by lazy {
+//        manipulationSystem.normalize(this.transformedOffset)
+//    }
+//
+//    /**
+//     * Computes the closest point relative to this [transformedOffset].
+//     * @see PointsService.computeClosest
+//     */
+//    public val bestP: Point? by lazy {
+//        pointsService.computeClosest(this.normalizedOffset, nestId)
+//    }
+//
+//    private val distance: Float by lazy {
+//        val betsPOffset = this.bestP?.let { pointsService.computePointOffset(it) } ?: return@lazy Float.MAX_VALUE
+//        betsPOffset distanceTo this.normalizedOffset
+//    }
+//
+//    /**
+//     * Whether the distance to the closest point is inferior to an arbitrary [TOUCH_THRESHOLD_PX].
+//     *
+//     * TODO Make this threshold dependent on the [zoom]
+//     */
+//    public val distanceSmallEnough: Boolean by lazy { distance <= TOUCH_THRESHOLD_PX }
+//
+//
+//    /** Executes [block] if [distanceSmallEnough] */
+//    public inline infix fun ifDistanceIsSmallEnough(block: () -> Point?): Point? = if (distanceSmallEnough) block() else null
+//
+//    override fun toString(): String =
+//        "TR(\n" +
+//                "   offset = ${this.offset}\n" +
+//                "   transformedOffset = $transformedOffset\n" +
+//                "   normalizedOffset = $normalizedOffset\n" +
+//                "   bestP = $bestP\n" +
+//                "   distance = $distance${if (!distanceSmallEnough) " (Too Far!)" else ""}\n" +
+//                ")"
+//}
+
+
 /**
- * Holds an Offset and provides helper functions and value to manage its values and variants inside settings screens that allows objects manipulation
+ * Same as [androidx.compose.foundation.gestures.detectTransformGestures] but I added a [onGestureEnd] lambda that fires on gesture end
  */
-class TransformedOffset(
-    private val manipulationSystem: ManipulationSystem,
-    private val pointsService: PointsService,
-    private val nestId: Int,
-    /**
-     * Original offset, in normal screen coordinates
-     * It will be transformed to give the actual useful values
-     */
-    val offset: Offset
+suspend fun PointerInputScope.detectTransformGestures(
+    panZoomLock: Boolean = false,
+    onGestureEnd: () -> Unit,
+    onGesture: (centroid: Offset, pan: Offset, zoom: Float, rotation: Float) -> Unit
 ) {
+    awaitEachGesture {
+        var rotation = 0f
+        var zoom = 1f
+        var pan = Offset.Zero
+        var pastTouchSlop = false
+        val touchSlop = viewConfiguration.touchSlop
+        var lockedToPanZoom = false
 
-    /**
-     * Transformed offset, represents the coordinated in space of the [offset] after undoing the
-     * transformations of [angle], [zoom], and [offset] that are only for visual in the settings screen
-     */
-    public val transformedOffset: Offset by lazy {
-        manipulationSystem.transform(this.offset)
+        awaitFirstDown(requireUnconsumed = false)
+        do {
+            val event = awaitPointerEvent()
+            val canceled = event.changes.fastAny { it.isConsumed }
+            if (!canceled) {
+                val zoomChange = event.calculateZoom()
+                val rotationChange = event.calculateRotation()
+                val panChange = event.calculatePan()
+
+                if (!pastTouchSlop) {
+                    zoom *= zoomChange
+                    rotation += rotationChange
+                    pan += panChange
+
+                    val centroidSize = event.calculateCentroidSize(useCurrent = false)
+                    val zoomMotion = abs(1 - zoom) * centroidSize
+                    val rotationMotion = abs(rotation * PI.toFloat() * centroidSize / 180f)
+                    val panMotion = pan.getDistance()
+
+                    if (
+                        zoomMotion > touchSlop ||
+                        rotationMotion > touchSlop ||
+                        panMotion > touchSlop
+                    ) {
+                        pastTouchSlop = true
+                        lockedToPanZoom = panZoomLock && rotationMotion < touchSlop
+                    }
+                }
+
+                if (pastTouchSlop) {
+                    val centroid = event.calculateCentroid(useCurrent = false)
+                    val effectiveRotation = if (lockedToPanZoom) 0f else rotationChange
+                    if (effectiveRotation != 0f || zoomChange != 1f || panChange != Offset.Zero) {
+                        onGesture(centroid, panChange, zoomChange, effectiveRotation)
+                    }
+                    event.changes.fastForEach {
+                        if (it.positionChanged()) {
+                            it.consume()
+                        }
+                    }
+                }
+            }
+        } while ((!canceled && event.changes.fastAny { it.pressed }))
+
+        onGestureEnd()
     }
-
-    /**
-     * Represents the offset of the point, if you do not account for both the [angle], [zoom], and [offset] transformations and the [center]
-     * in the middle ot the screen.
-     *
-     * ### **It's the offset you want to save into the points property**
-     * as it can be interpreted by the [PointsService] and be
-     * converted back to screen coordinates.
-     */
-    public val normalizedOffset: Offset by lazy {
-        manipulationSystem.normalize(this.transformedOffset)
-    }
-
-    /**
-     * Computes the closest point relative to this [transformedOffset].
-     * @see PointsService.computeClosest
-     */
-    public val bestP: Point? by lazy {
-        pointsService.computeClosest(this.normalizedOffset, nestId)
-    }
-
-    private val distance: Float by lazy {
-        val betsPOffset = this.bestP?.let { pointsService.computePointOffset(it) } ?: return@lazy Float.MAX_VALUE
-        betsPOffset distanceTo this.normalizedOffset
-    }
-
-    /**
-     * Whether the distance to the closest point is inferior to an arbitrary [TOUCH_THRESHOLD_PX].
-     *
-     * TODO Make this threshold dependent on the [zoom]
-     */
-    public val distanceSmallEnough: Boolean by lazy { distance <= TOUCH_THRESHOLD_PX }
-
-
-    /** Executes [block] if [distanceSmallEnough] */
-    public inline infix fun ifDistanceIsSmallEnough(block: () -> Point?): Point? = if (distanceSmallEnough) block() else null
-
-    override fun toString(): String =
-        "TR(\n" +
-                "   offset = ${this.offset}\n" +
-                "   transformedOffset = $transformedOffset\n" +
-                "   normalizedOffset = $normalizedOffset\n" +
-                "   bestP = $bestP\n" +
-                "   distance = $distance${if (!distanceSmallEnough) " (Too Far!)" else ""}\n" +
-                ")"
 }
-
