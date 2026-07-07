@@ -140,6 +140,7 @@ fun DebugTab(
 
         DragonSettingsGroup(R.string.debug_infos) {
             SettingsSwitchRow(DebugSettingsStore.mainScreenDebugInfos)
+            SettingsSwitchRow(DebugSettingsStore.nestDebugInfo)
             SettingsSwitchRow(DebugSettingsStore.nestDebugOverlay)
             SettingsSwitchRow(DebugSettingsStore.settingsDebugInfo)
             SettingsSwitchRow(DebugSettingsStore.widgetsDebugInfo)

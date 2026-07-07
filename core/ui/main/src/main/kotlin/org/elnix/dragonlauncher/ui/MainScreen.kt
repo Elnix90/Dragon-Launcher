@@ -46,6 +46,7 @@ import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeResId
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.toDp
+import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
@@ -63,7 +64,6 @@ import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
 import org.elnix.dragonlauncher.ui.helpers.wallpaper.CustomDim
 import org.elnix.dragonlauncher.ui.helpers.wallpaper.WallpaperDim
 import org.elnix.dragonlauncher.ui.remembers.rememberHoldToOpenSettings
-import org.elnix.dragonlauncher.ui.remembers.rememberNestNavigation
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -73,7 +73,8 @@ import kotlin.time.Duration.Companion.milliseconds
 fun MainScreen(
     onNavigate: (NavigationRoute) -> Unit,
     onLaunchAction: (Point) -> Unit,
-    widgetsViewModel: WidgetsViewModel = activityViewModel()
+    widgetsViewModel: WidgetsViewModel = activityViewModel(),
+            pointsViewModel: PointsViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
     val holdCustomObject = LocalHoldCustomObject.current
@@ -113,8 +114,8 @@ fun MainScreen(
 
     LaunchedEffect(Unit) { lastClickTime = 0 }
 
-    val nestNavigation = rememberNestNavigation()
-    val nestId = nestNavigation.currentNest.id
+    val nestNavigation = pointsViewModel.nestsNavigationService
+    val nestId by pointsViewModel.currentNestId.collectAsState()
 
     val filteredWidgetObjects by remember(widgetsObjects, nestId) {
         derivedStateOf {
@@ -302,7 +303,7 @@ fun MainScreen(
                         MainScreenOverlay(
                             start = start,
                             current = current,
-                            currentNest = nestNavigation.currentNest,
+                            currentNestId = nestId,
                             onLaunch = { launchAction(it) }
                         )
                     }

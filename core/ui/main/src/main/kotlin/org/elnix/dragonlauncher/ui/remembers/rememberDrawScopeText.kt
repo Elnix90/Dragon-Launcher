@@ -44,14 +44,14 @@ fun rememberDrawScopeText(
     }
 }
 
-public typealias CustomTexts = Pair<DrawScopeText,DrawScopeText>?
+public typealias CustomTexts = Pair<DrawScopeText, DrawScopeText>?
 
-private fun geTopLeftAndTM(
+fun geTopLeftAndTM(
     text: String,
     textStyle: TextStyle,
     sizePx: Float,
     textMeasurer: TextMeasurer
-) : DrawScopeText{
+): DrawScopeText {
     val textLayoutResult = textMeasurer.measure(
         text = AnnotatedString(text),
         constraints = Constraints(maxWidth = Int.MAX_VALUE),

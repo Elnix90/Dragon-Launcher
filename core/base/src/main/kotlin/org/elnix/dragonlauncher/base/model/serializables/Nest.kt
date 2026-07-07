@@ -68,7 +68,7 @@ public data class Nest(
     @SerialName("showAllActionsOnCurrentNest")
     val showAllActionsOnCurrentNest: Boolean? = null,
 ) {
-    override fun toString(): String = "Nest(id = $id, contains ${intersectionShapes.size} shapes)"
+//    override fun toString(): String = "Nest(id = $id, contains ${intersectionShapes.size} shapes)"
 //    override fun toString(): String = "Nest N°$id"
 
     public infix fun scaledBy(scale: Float): Nest = this.copy(intersectionShapes = this.intersectionShapes.mapTo(mutableSetOf()) { it scaledBy scale })
@@ -79,23 +79,23 @@ public data class Nest(
             IntersectionShape(
                 id = 0,
                 shape = IconShape.Circle,
-                size = 300f,
+                scale = 1f,
                 offset = Offset.Zero
             ),
-
-            IntersectionShape(
-                id = 1,
-                shape = IconShape.Square,
-                size = 450f,
-                offset = Offset.Zero
-            ),
-
-            IntersectionShape(
-                id = 1,
-                shape = IconShape.Cookie12Sided,
-                size = 600f,
-                offset = Offset.Zero
-            )
+//
+//            IntersectionShape(
+//                id = 1,
+//                shape = IconShape.Square,
+//                size = 450f,
+//                offset = Offset.Zero
+//            ),
+//
+//            IntersectionShape(
+//                id = 1,
+//                shape = IconShape.Cookie12Sided,
+//                size = 600f,
+//                offset = Offset.Zero
+//            )
         )
 
         public object NestJson: DragonJson<List<Nest>>()

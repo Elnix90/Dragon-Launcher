@@ -10,6 +10,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.DragonJson
 import org.elnix.dragonlauncher.base.model.serializables.serializers.OffsetSerializer
+import org.elnix.dragonlauncher.ktx.angleRad
 import org.jetbrains.annotations.ApiStatus
 import kotlin.random.Random
 
@@ -273,8 +274,9 @@ public data class Point(
     public fun getInnerPadding(defaultPoint: Point): Dp = (innerPadding ?: defaultPoint.innerPadding ?: defaultInnerPadding).coerceAtLeast(1).dp
 
 
+    public val angle: Float by lazy { offset.angleRad() }
 
-    override fun toString(): String = "Point(id = ${this.id})"
+//    override fun toString(): String = "Point(id = ${this.id})"
 
     override fun compareTo(other: Point): Int = this.id.compareTo(other.id)
 

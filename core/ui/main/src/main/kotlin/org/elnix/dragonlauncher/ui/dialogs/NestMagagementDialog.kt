@@ -49,7 +49,7 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
-import org.elnix.dragonlauncher.ui.helpers.nests.PointIcon
+import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 
 @Composable
 fun NestManagementDialog(

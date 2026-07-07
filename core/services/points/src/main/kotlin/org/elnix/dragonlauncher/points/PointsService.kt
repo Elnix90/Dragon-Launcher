@@ -26,6 +26,7 @@ import org.elnix.dragonlauncher.base.undoredo.UndoRedoStack
 import org.elnix.dragonlauncher.ktx.angleDeg
 import org.elnix.dragonlauncher.ktx.angleRad
 import org.elnix.dragonlauncher.ktx.distanceTo
+import org.elnix.dragonlauncher.ktx.getNextId
 import org.elnix.dragonlauncher.ktx.groupByTo
 import org.elnix.dragonlauncher.ktx.toRadians
 import org.elnix.dragonlauncher.settings.stores.array.NestsSettingsStore
@@ -33,7 +34,6 @@ import org.elnix.dragonlauncher.settings.stores.array.PointsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.objects.DefaultPointSettingsStore
 import kotlin.math.PI
 import kotlin.math.abs
-import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -60,6 +60,7 @@ public interface PointsService {
     public fun addNest(nestId: Int? = null): Int
     public fun removeNest(id: Int): Boolean
     public fun editNest(id: Int, editedNest: (Nest) -> Nest): Boolean
+    public fun resetNest(id: Int)
 
     public fun editDefaultPoint(newDefaultPoint: Point)
 
@@ -308,7 +309,7 @@ internal class PointsServiceImpl(
 
     override fun addPoint(select: Boolean, newPoint: (Int) -> Point): Int {
         val existingIds = points.value.mapTo(mutableSetOf()) { it.id }
-        val newId = getNextId(existingIds)
+        val newId = existingIds.getNextId()
         val newPoint = newPoint(newId)
 
         applyChange { points.value += newPoint }
@@ -343,7 +344,7 @@ internal class PointsServiceImpl(
 
     override fun addNest(nestId: Int?): Int {
         val existingIds = nests.value.mapTo(mutableSetOf()) { it.id }
-        val newId = if (nestId != null && nestId !in existingIds) nestId else getNextId(existingIds)
+        val newId = if (nestId != null && nestId !in existingIds) nestId else existingIds.getNextId()
         val newNest = Nest(id = newId)
 
         applyChange { nests.value += newNest }
@@ -352,7 +353,7 @@ internal class PointsServiceImpl(
     }
 
     override fun removeNest(id: Int): Boolean {
-        val nestToDelete = nests.value.find { it.id == id } ?: return false
+        val nestToDelete = findNestByIdOrNull(id) ?: return false
 
         applyChange { nests.value -= nestToDelete }
 
@@ -360,7 +361,7 @@ internal class PointsServiceImpl(
     }
 
     override fun editNest(id: Int, editedNest: (Nest) -> Nest): Boolean {
-        val oldNest = nests.value.find { it.id == id } ?: return false
+        val oldNest = findNestByIdOrNull(id) ?: return false
 
         applyChange {
             nests.value -= oldNest
@@ -368,6 +369,15 @@ internal class PointsServiceImpl(
         }
 
         return true
+    }
+
+    override fun resetNest(id: Int) {
+        val oldNest = findNestByIdOrNull(id) ?: return
+
+        applyChange {
+            nests.value -= oldNest
+            nests.value += Nest(id)
+        }
     }
 
     override fun editDefaultPoint(newDefaultPoint: Point) {
@@ -451,15 +461,6 @@ internal class PointsServiceImpl(
     private suspend fun loadDefaultPoint() {
         defaultPoint.value = PointJson.decode(DefaultPointSettingsStore.jsonSetting.get(ctx), Point.defaultSwipePointsValues)
         recomposeTRigger.value++
-    }
-
-    private fun getNextId(existing: Set<Int>): Int {
-        // Starts at index 0, and iterate trough each id to fill the missing ones (shouldn't happen)
-        var newId = 0
-        while (newId in existing) {
-            newId++
-        }
-        return newId
     }
 
 
@@ -605,15 +606,19 @@ internal class PointsServiceImpl(
     }
 
     override fun computePointOffset(point: Point): Offset {
-        val nest = nests.value.find { it.id == point.nestId } ?: return point.offset
+        val nest = nests.value.find { it.id == point.nestId } ?: Nest()
         val shapeId = point.collidingShapeId ?: return point.offset
         val shape = nest.intersectionShapes.find { it.id == shapeId } ?: return point.offset
 
-        val angleRad = atan2(point.offset.y, point.offset.x)
-        val halfSize = shape.size / 2f
-        val rotationRad = Math.toRadians((shape.angle ?: 0).toDouble()).toFloat()
+        val angleRad = point.angle
+        val halfSize = shape.getSize(density).width
+//        val halfSize = shape.size / 2f
+        val rotationRad = Math.toRadians(shape.angle.toDouble()).toFloat()
+        logD(POINTS_TAG) { "angleRad: $angleRad, halfSize: $halfSize" }
+
 
         val boundary = computeShapeBoundary(shape.shape, halfSize, angleRad, rotationRad)
+        logD(POINTS_TAG) { "Boundary: $boundary" }
         return shape.offset + boundary
     }
 
@@ -643,7 +648,7 @@ internal class PointsServiceImpl(
         draggedPointId: Int
     ): Boolean {
         val draggedPoint = findPointById(draggedPointId) ?: return false
-        if (points.value.size < 2) return false
+        if (getPointsForNest(nestId, false).size < 2) return false
 
         var hasMoved = false
 
@@ -677,7 +682,7 @@ internal class PointsServiceImpl(
             if (distanceBetweenPoints > pointsSizeTogether) return hasMoved
 
             val angleInRadians = if (distanceBetweenPoints == 0f) {
-                val angle = (0..360).random().toFloat().toRadians()
+                val angle = (0..360).random().toFloat().toRadians().toFloat()
                 logD(POINTS_TAG) { "Took random angle : $angle" }
                 angle
             } else {
@@ -696,8 +701,8 @@ internal class PointsServiceImpl(
             val distanceToMove = distanceBetweenPoints.takeIf { it > 0f } ?: (pointsSizeTogether / 2)
 
             val offsetToMove = Offset(
-                x = distanceToMove * cos(angleInRadians).toFloat(),
-                y = distanceToMove * sin(angleInRadians).toFloat()
+                x = distanceToMove * cos(angleInRadians),
+                y = distanceToMove * sin(angleInRadians)
             )
 
             logD(POINTS_TAG) {
@@ -741,41 +746,44 @@ internal class PointsServiceImpl(
         halfSize: Float,
         angleRad: Float,
         rotationRad: Float,
-    ): Offset = when (iconShape) {
-        is IconShape.Circle -> circleBoundary(halfSize, angleRad)
+    ): Offset {
+        logD(POINTS_TAG) { "Computing shape: $iconShape" }
+        return when (iconShape) {
+            is IconShape.Circle -> circleBoundary(halfSize, angleRad)
 
-        is IconShape.Square,
-        is IconShape.RoundedSquare,
-        is IconShape.Cookie4Sided ->
-            polygonBoundary(4, halfSize, angleRad, rotationRad)
+            is IconShape.Square,
+            is IconShape.RoundedSquare,
+            is IconShape.Cookie4Sided ->
+                polygonBoundary(4, halfSize, angleRad, rotationRad)
 
-        is IconShape.Diamond ->
-            polygonBoundary(4, halfSize, angleRad, rotationRad + (PI / 4f).toFloat())
+            is IconShape.Diamond ->
+                polygonBoundary(4, halfSize, angleRad, rotationRad + (PI / 4f).toFloat())
 
-        is IconShape.Triangle,
-        is IconShape.PixelTriangle ->
-            polygonBoundary(3, halfSize, angleRad, rotationRad)
+            is IconShape.Triangle,
+            is IconShape.PixelTriangle ->
+                polygonBoundary(3, halfSize, angleRad, rotationRad)
 
-        is IconShape.Pentagon ->
-            polygonBoundary(5, halfSize, angleRad, rotationRad)
+            is IconShape.Pentagon ->
+                polygonBoundary(5, halfSize, angleRad, rotationRad)
 
-        is IconShape.Hexagon,
-        is IconShape.Cookie6Sided ->
-            polygonBoundary(6, halfSize, angleRad, rotationRad)
+            is IconShape.Hexagon,
+            is IconShape.Cookie6Sided ->
+                polygonBoundary(6, halfSize, angleRad, rotationRad)
 
-        is IconShape.Cookie7Sided ->
-            polygonBoundary(7, halfSize, angleRad, rotationRad)
+            is IconShape.Cookie7Sided ->
+                polygonBoundary(7, halfSize, angleRad, rotationRad)
 
-        is IconShape.Cookie9Sided ->
-            polygonBoundary(9, halfSize, angleRad, rotationRad)
+            is IconShape.Cookie9Sided ->
+                polygonBoundary(9, halfSize, angleRad, rotationRad)
 
-        is IconShape.Cookie12Sided ->
-            polygonBoundary(12, halfSize, angleRad, rotationRad)
+            is IconShape.Cookie12Sided ->
+                polygonBoundary(12, halfSize, angleRad, rotationRad)
 
-        is IconShape.Custom ->
-            polygonBoundary(iconShape.numVertices, halfSize, angleRad, rotationRad)
+            is IconShape.Custom ->
+                polygonBoundary(iconShape.numVertices, halfSize, angleRad, rotationRad)
 
-        else -> circleBoundary(halfSize, angleRad)
+            else -> circleBoundary(halfSize, angleRad)
+        }
     }
 
     /** Point on a circle of [radius] at the given angle. */

@@ -6,7 +6,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
 import org.elnix.dragonlauncher.base.resolveShape
@@ -58,11 +57,8 @@ private fun RememberShapePath(
         shape.shape.resolveShape()
     }
 
-    val resolvedSizePx = remember(shape.size) {
-        shape.size * density.density
-    }
-    val resolvedSize = remember(shape.size) {
-        Size(resolvedSizePx, resolvedSizePx)
+    val resolvedSize = remember(shape.scale) {
+       shape.getSize(density.density)
     }
 
     LaunchedEffect(

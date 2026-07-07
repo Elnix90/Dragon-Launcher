@@ -73,6 +73,11 @@ public object UiSettingsStore : MapSettingsStore() {
         default = true
     )
 
+    @SettingKey
+    public val snapShapes: BooleanSettingObject = boolean(
+        title = R.string.snap_shapes,
+        default = true
+    )
 
     @SettingKey
     public val autoMerge: BooleanSettingObject = boolean(

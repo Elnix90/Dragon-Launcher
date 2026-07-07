@@ -3,10 +3,12 @@
 package org.elnix.dragonlauncher.ktx
 
 import androidx.compose.ui.geometry.Offset
+import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.pow
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
 /** Euclidean distance from [this@distance] to [b] in pixels. */
@@ -16,11 +18,11 @@ public inline infix fun Offset.distanceTo(b: Offset): Float =
 public inline infix fun Offset.distanceSquaredTo(b: Offset): Float =
     (b.x - x).pow(2) +  (b.y - y).pow(2)
 
-public fun Offset.angleRad(): Double = atan2(y.toDouble(), x.toDouble())
+public fun Offset.angleRad(): Float = atan2(y, x)
 
 /** Angle 0–360 from [this] (north = 0, clockwise). */
 public fun Offset.angleDeg(): Float {
-    var deg = Math.toDegrees(this.angleRad()).toFloat()
+    var deg = Math.toDegrees(this.angleRad().toDouble()).toFloat()
     if (deg < 0f) deg += 360f
     return deg
 }
@@ -72,3 +74,25 @@ public inline fun Offset.undoTransformations(
     zoom: Float,
     offset: Offset
 ): Offset = rotateBy(angle).minus(offset).times(zoom)
+
+
+
+/**
+ * Snaps the value to the nearest integer if it crosses the threshold.
+ * @param threshold The distance from an integer to trigger snapping
+ */
+public fun Float.snapToRound(threshold: Float): Float {
+    val rounded = this.roundToInt().toFloat()
+    return if (abs(this - rounded) <= threshold) rounded else this
+}
+
+/**
+ * Snaps both x and y of the Offset to integers if they cross the threshold.
+ * @param threshold The distance from an integer to trigger snapping
+ */
+public fun Offset.snapToRound(threshold: Float): Offset {
+    return Offset(
+        x = x.snapToRound(threshold),
+        y = y.snapToRound(threshold)
+    )
+}

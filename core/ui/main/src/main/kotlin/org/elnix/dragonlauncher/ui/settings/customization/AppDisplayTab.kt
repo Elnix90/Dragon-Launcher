@@ -124,7 +124,13 @@ fun AppDisplayTab(
 
             SettingsSwitchRow(UiSettingsStore.showAllActionsOnCurrentNest, enabled = showAllActionsOnCurrentCircle)
             SettingsSwitchRow(UiSettingsStore.showPointPreviewCenterStartPosition)
-            SettingsSwitchRow(UiSettingsStore.linePreviewSnapToAction)
+            SettingsSwitchRow(UiSettingsStore.linePreviewSnapToAction) {
+                if (!it) {
+                    scope.launch {
+                        UiSettingsStore.showAllActionsOnCurrentNest.set(ctx, false)
+                    }
+                }
+            }
 
             val snap by UiSettingsStore.linePreviewSnapToAction.asState()
             SettingsSwitchRow(UiSettingsStore.animationWhenSnapping, enabled = snap)

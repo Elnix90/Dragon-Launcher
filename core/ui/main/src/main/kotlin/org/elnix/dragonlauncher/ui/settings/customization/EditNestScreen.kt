@@ -32,7 +32,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.enumsui.select.NestEditMode
@@ -43,11 +42,10 @@ import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.dialogs.HapticFeedbackEditor
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
-import org.elnix.dragonlauncher.ui.helpers.nests.NestOverlay
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
+import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -87,27 +85,16 @@ fun NestEditingScreen(
         pointsService.editNest(nestId) { block() }
     }
 
-    fun commitDragDistances() {
-        updateNest {
-            currentNest.copy(intersectionShapes = intersectionShapesState.toSet())
-        }
-    }
-
-    fun commitHaptic(state: CustomHapticFeedback) {
-
-    }
-
 
     var offset by remember { mutableStateOf(Offset.Zero) }
     var zoom by remember { mutableFloatStateOf(1f) }
     var angle by remember { mutableFloatStateOf(0f) }
 
-
     SettingsScaffold(
         title = stringResource(R.string.edit_nest),
         onBack = onBack,
         helpText = stringResource(R.string.edit_nest_help),
-        resetText = stringResource(R.string.reset_nest_text),
+        resetText = stringResource(R.string.reset_nest),
         onReset = {
             // Resets current nest to a new one, with the same id (avoids destroying it)
             pointsService.editNest(nestId) { Nest(id = nestId) }
@@ -207,7 +194,7 @@ fun NestEditingScreen(
 //                            }
 //                        }
 //
-//                        Haptic -> {
+//                        NestEditMode.Haptic -> {
 //                            // Keep drag distance state here cause haptic may be empty dues to how it is handled
 //                            intersectionShapesState.toSortedMap().filter { it.key != -1 }
 //                                .forEach { (idx, _) ->
@@ -245,7 +232,7 @@ fun NestEditingScreen(
 //                        }
 //
 //                        // Well in this tab I'll just put whatever settings I can put
-//                        Radius -> {
+//                        NestEditMode.Radius -> {
 //                            SliderWithLabel(
 //                                label = stringResource(R.string.nest_radius),
 //                                value = tempRadius ?: subNestDefaultRadius,
@@ -312,20 +299,20 @@ fun NestEditingScreen(
         }
     }
 
-    TODO("Use the intersection shape editor for per-shape haptic")
-    if (showHapticFeedbackEditor != null) {
-        val circleIdToEdit = showHapticFeedbackEditor!!
-
-        HapticFeedbackEditor(
-            initial = currentNest.haptic,
-            onDismiss = { showHapticFeedbackEditor = null }
-        ) { newHaptic ->
-            newHaptic?.let {
-                updateNest {
-                    currentNest.copy(haptic = it)
-                }
-            }
-            showHapticFeedbackEditor = null
-        }
-    }
+//    TODO("Use the intersection shape editor for per-shape haptic")
+//    if (showHapticFeedbackEditor != null) {
+//        val circleIdToEdit = showHapticFeedbackEditor!!
+//
+//        HapticFeedbackEditor(
+//            initial = currentNest.haptic,
+//            onDismiss = { showHapticFeedbackEditor = null }
+//        ) { newHaptic ->
+//            newHaptic?.let {
+//                updateNest {
+//                    currentNest.copy(haptic = it)
+//                }
+//            }
+//            showHapticFeedbackEditor = null
+//        }
+//    }
 }

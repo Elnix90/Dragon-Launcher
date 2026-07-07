@@ -27,7 +27,7 @@ import kotlin.time.Duration.Companion.milliseconds
  *
  * @property isActive True while the user is inside an active Live Nest overlay.
  * @property hostPoint The parent point whose hold triggered the Live Nest.
- * @property nestedNest The [Nest] being rendered as a scaled overlay.
+ * @property nestedNestId The [Nest] being rendered as a scaled overlay.
  * @property liveNestScale Scale applied to ring radii (0.3–1.0).
  * @property liveNestCenter Finger position at the moment Live Nest activated; used as the
  *   drawing center and hit-test origin so the overlay appears around the host point
@@ -39,7 +39,7 @@ import kotlin.time.Duration.Companion.milliseconds
 data class LiveNestState(
     val isActive: Boolean,
     val hostPoint: Point?,
-    val nestedNest: Nest?,
+    val nestedNestId: Int?,
     val liveNestScale: Float,
     val liveNestCenter: Offset?,
 //    val scaledIntersectionShapes: Set<IntersectionShape>,
@@ -63,7 +63,7 @@ private data class NestLevelState(
     // All the mutable state from rememberLiveNestController
     var liveNestActive: Boolean = false,
     var hostPoint: Point? = null,
-    var nestedNest: Nest? = null,
+    var nestedNestId: Int? = null,
     var liveNestScale: Float = 0.5f,
     var liveNestCenter: Offset? = null,
     var suppressMainLaunch: Boolean = false,
@@ -84,11 +84,10 @@ fun rememberLiveNestControllerStack(
     pointsViewModel: PointsViewModel = activityViewModel(),
     isDragging: Boolean,
     rootStartPos: Offset?,
-    rootNest: Nest,
+    rootNestId: Int,
     current: Offset?,
 ): List<LiveNestState> {
     val pointsService = pointsViewModel.pointsService
-    val nests by pointsService.nests.asState()
     val defaultPoint by pointsService.defaultPoint.asState()
     val maxNestingDepth by UiSettingsStore.maxLiveNestsDepth.asState()
 
@@ -118,7 +117,7 @@ fun rememberLiveNestControllerStack(
         isAnyLiveNestActive,
         isDragging,
         current,
-        rootNest,
+        rootNestId,
         rootStartPos,
         activeLevelIndex
     ) {
@@ -128,7 +127,7 @@ fun rememberLiveNestControllerStack(
         } else {
             pointsService.resolveLiveNestHit(
                 normalizedPos = current - rootStartPos,
-                nestId = rootNest.id,
+                nestId = rootNestId,
                 liveNestScale = 1f,
                 graceDistancePx = -1
             ).also {
@@ -164,7 +163,7 @@ fun rememberLiveNestControllerStack(
                 }
 
 
-                !level.liveNestActive || level.liveNestCenter == null || current == null || level.nestedNest == null -> null
+                !level.liveNestActive || level.liveNestCenter == null || current == null || level.nestedNestId == null -> null
 
 
                 else -> {
@@ -178,7 +177,7 @@ fun rememberLiveNestControllerStack(
 
                     pointsService.resolveLiveNestHit(
                         normalizedPos = normalizedPos,
-                        nestId = level.nestedNest!!.id,
+                        nestId = level.nestedNestId!!,
                         liveNestScale = level.liveNestScale,
                         graceDistancePx = graceDistancePx
                     ).also {
@@ -250,7 +249,7 @@ fun rememberLiveNestControllerStack(
 
             if (isRoot) {
                 level.hostPoint = currentPoint
-                level.nestedNest = rootNest
+                level.nestedNestId = rootNestId
                 level.liveNestScale = 1f
                 level.liveNestCenter = rootStartPos
                 level.liveNestActive = true
@@ -273,7 +272,8 @@ fun rememberLiveNestControllerStack(
 //            val previousLiveNestCircles = scaledCircles[idx -1]
             val previousLiveNestCenter = nestStack[idx - 1].liveNestCenter ?: return@LaunchedEffect
 
-            val currentPointOffset = currentPoint.offset + previousLiveNestCenter
+
+            val currentPointOffset = pointsService.computePointOffset(currentPoint) + previousLiveNestCenter
 
             delay(delayMs.milliseconds)
 
@@ -286,10 +286,9 @@ fun rememberLiveNestControllerStack(
                 level.currentRef.value ?: return@LaunchedEffect
             }
 
-            val nest = nests.firstOrNull { it.id == targetNestId } ?: Nest(targetNestId)
 
             level.hostPoint = currentPoint
-            level.nestedNest = nest
+            level.nestedNestId = targetNestId
             level.liveNestScale = scale
             level.liveNestCenter = center
             level.liveNestActive = true
@@ -302,7 +301,7 @@ fun rememberLiveNestControllerStack(
             if (hit?.isOutsideBounds == true && nestStack[idx].liveNestActive) {
                 nestStack[idx].liveNestActive = false
                 nestStack[idx].hostPoint = null
-                nestStack[idx].nestedNest = null
+                nestStack[idx].nestedNestId = null
                 nestStack[idx].liveNestCenter = null
                 nestStack[idx].suppressMainLaunch = true
                 nestStack[idx].timerResetBump++
@@ -316,7 +315,7 @@ fun rememberLiveNestControllerStack(
         LiveNestState(
             isActive = level.liveNestActive || isRoot,
             hostPoint = level.hostPoint,
-            nestedNest = if (isRoot) rootNest else level.nestedNest,
+            nestedNestId = if (isRoot) rootNestId else level.nestedNestId,
             liveNestScale = level.liveNestScale,
             liveNestCenter = if (isRoot) rootStartPos else level.liveNestCenter,
 //            scaledIntersectionShapes = scaledCircles[idx],
@@ -338,7 +337,7 @@ fun rememberLiveNestControllerStack(
             clearAfterLaunch = {
                 level.liveNestActive = false
                 level.hostPoint = null
-                level.nestedNest = null
+                level.nestedNestId = null
                 level.liveNestCenter = null
                 level.suppressMainLaunch = false
                 level.releaseHitRef.value = null

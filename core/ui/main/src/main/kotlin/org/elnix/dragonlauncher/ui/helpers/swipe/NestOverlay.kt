@@ -13,6 +13,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.components.IntersectionShape
 import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.PointStableCache
+import org.elnix.dragonlauncher.ui.helpers.swipe.cache.points.NestIntersectionShapesPathCache
 
 /**
  * Composable wrapper that renders a nest and its points inside a [Canvas].
@@ -26,6 +27,7 @@ fun NestOverlay(
     nest: Nest,
     center: Offset,
     modifier: Modifier = Modifier,
+    depth: Int = 1,
     preventBgErasing: Boolean = false,
     showConfiguratorDecorations: Boolean = false,
     forceShowAllActionsInCurrentNest: Boolean = false,
@@ -45,7 +47,7 @@ fun NestOverlay(
         Canvas(modifier) {
             this.NestOverlay(
                 nest = nest,
-                depth = 1,
+                depth = depth,
                 center = center,
                 drawParams = drawParams,
                 selectedAll = false,
@@ -66,7 +68,11 @@ fun DrawScope.NestOverlay(
 ) {
     repeat(2) { pass ->
         nest.intersectionShapes.forEach { shape ->
+            // This is computed here, because I cannot draw shapes reactively otherwise in the nest edit screen
+            val path = NestIntersectionShapesPathCache[shape] ?: return
+
             this.IntersectionShape(
+                path = path,
                 shape = shape,
                 center = center,
                 drawParams = drawParams,

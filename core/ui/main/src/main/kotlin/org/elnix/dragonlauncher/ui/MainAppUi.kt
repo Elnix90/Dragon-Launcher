@@ -102,7 +102,7 @@ import org.elnix.dragonlauncher.ui.settings.customization.ColorSelectorTab
 import org.elnix.dragonlauncher.ui.settings.customization.FontTab
 import org.elnix.dragonlauncher.ui.settings.customization.HoldToActivateArcTab
 import org.elnix.dragonlauncher.ui.settings.customization.IconPackTab
-import org.elnix.dragonlauncher.ui.settings.customization.NestEditingScreen
+import org.elnix.dragonlauncher.ui.settings.customization.NestEditScreen2
 import org.elnix.dragonlauncher.ui.settings.customization.StatusBarTab
 import org.elnix.dragonlauncher.ui.settings.customization.ThemesTab
 import org.elnix.dragonlauncher.ui.settings.customization.WallpaperTab
@@ -488,13 +488,20 @@ fun MainAppUi(
                     }
 
                     entry<NavigationRoute.NestEdit>(metadata = horizontalMetadata) { key ->
-                        NestEditingScreen(
-                            nestId = key.nestId,
+                        NestEditScreen2(
+                            initialNestId = key.nestId,
                             onBack = {
                                 backStack.navigateBack()
                                 pointsService.persist()
                             }
                         )
+//                        NestEditingScreen(
+//                            nestId = key.nestId,
+//                            onBack = {
+//                                backStack.navigateBack()
+//                                pointsService.persist()
+//                            }
+//                        )
                     }
 
                     entry<NavigationRoute.Widgets>(metadata = horizontalMetadata) { key ->

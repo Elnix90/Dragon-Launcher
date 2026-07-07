@@ -16,7 +16,6 @@ import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
@@ -65,8 +64,6 @@ fun ProvideGlobalCompositionLocals(
     val layersOrder by rememberMainScreenLayerOrder()
 
     val showTooltipsOnAddPointDialog by UiSettingsStore.showTooltipsOnAddPointDialog.asState()
-
-    val iconShape by DrawerSettingsStore.iconShape.asState()
 
     val nestDebugOverlay by DebugSettingsStore.nestDebugOverlay.asState()
 

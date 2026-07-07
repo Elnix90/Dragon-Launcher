@@ -724,7 +724,7 @@
     <string name="steps">Étapes</string>
     <string name="you_can_edit_haptic_feedback_on_nest_settings">Vous pouvez modifier le retour haptique sur les paramètres de nid</string>
     <string name="edit_nest_help">Personnaliser la taille du nid, les distances de dragage, les retours haptiques et d\'autres paramètres utiles</string>
-    <string name="reset_nest_text">Réinitialiser ce nid à l\'état par défaut ? vous perdrez toutes les valeurs personnalisées que vous avez changées !</string>
+    <string name="reset_nest">Réinitialiser ce nid à l\'état par défaut ? vous perdrez toutes les valeurs personnalisées que vous avez changées !</string>
     <string name="use_custom_color_channels">Utilisez des canaux de couleur personnalisés</string>
     <string name="use_custom_color_channels_desc">Ignorer les canaux de couleur par défaut utilisés pour les objets matériels, tels que les interrupteurs, pour utiliser la mienne</string>
     <string name="hold_settings_help">Les réglages liés à l\'arc qui apparaît lorsque vous tenez assez longtemps sur l\'écran principal, Vous ne pouvez pas complètement désactiver, sinon, vous pouvez lâcher la dernière porte qui peut vous mener à des réglages, si vous avez fait de la merde, et ainsi être forcé de réinitialiser l\'application.</string>

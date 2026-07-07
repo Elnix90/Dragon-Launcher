@@ -753,7 +753,7 @@
     <string name="steps">Pasos</string>
     <string name="you_can_edit_haptic_feedback_on_nest_settings">Puedes editar la respuesta háptica en los ajustes</string>
     <string name="edit_nest_help">Configura en tamaño del nido, distancia del arrastre, retroalimentación háptica y otras opciones</string>
-    <string name="reset_nest_text">¿Restaurar el nido a su estado predeterminado?, todos los cambios ¡Desaparecerán!</string>
+    <string name="reset_nest">¿Restaurar el nido a su estado predeterminado?, todos los cambios ¡Desaparecerán!</string>
     <string name="use_custom_color_channels">Usar canales de color personalizados</string>
     <string name="use_custom_color_channels_desc">Anular los canales de color predeterminados, usados para los objetos de material, como los interruptores, para usar los del launcher</string>
 </resources>

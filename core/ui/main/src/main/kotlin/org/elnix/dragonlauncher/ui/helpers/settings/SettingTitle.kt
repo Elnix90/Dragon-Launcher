@@ -128,7 +128,9 @@ fun SettingsTitle(
 
 @Composable
 fun SpecialSettingsTitle(
+    nestId: Int,
     onSettings: () -> Unit,
+    onSelectAll: () -> Unit,
     onEditDefaultPoint: () -> Unit,
     onEditNest: () -> Unit,
     onResetPoints: () -> Unit,
@@ -163,6 +165,14 @@ fun SpecialSettingsTitle(
                     }
                 ),
                 MoreOptions(
+                    text = { stringResource(R.string.select_all) },
+                    icon = R.drawable.select_all,
+                    onClick = {
+                        dismiss()
+                        onSelectAll()
+                    }
+                ),
+                MoreOptions(
                     text = { stringResource(R.string.edit_default_point_settings) },
                     icon = R.drawable.edit_rounded,
                     onClick = {
@@ -171,7 +181,7 @@ fun SpecialSettingsTitle(
                     }
                 ),
                 MoreOptions(
-                    text = { stringResource(R.string.edit_nest) },
+                    text = { stringResource(R.string.edit_nest, nestId) },
                     icon = R.drawable.nest_icon,
                     onClick = {
                         dismiss()

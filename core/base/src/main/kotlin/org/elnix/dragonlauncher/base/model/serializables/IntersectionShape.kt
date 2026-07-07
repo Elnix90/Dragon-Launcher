@@ -2,6 +2,7 @@ package org.elnix.dragonlauncher.base.model.serializables
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -15,8 +16,8 @@ import org.elnix.dragonlauncher.base.model.serializables.serializers.OffsetSeria
  * Shape that can be present in any [Nest] to intersect with the points that uses their Ids
  */
 @Immutable
-@SerialName("IntersectionShape")
 @Serializable
+@SerialName("IntersectionShape")
 public data class IntersectionShape(
 
     @SerialName("id")
@@ -26,10 +27,10 @@ public data class IntersectionShape(
     val shape: IconShape,
 
     @SerialName("size")
-    val size: Float,
+    val scale: Float = 1f,
 
     @SerialName("angle")
-    val angle: Int? = null,
+    val angle: Int = 0,
 
     @SerialName("offset")
     @Serializable(with = OffsetSerializer::class)
@@ -51,20 +52,31 @@ public data class IntersectionShape(
         radius = 5f
     )
 ) {
-    public infix fun scaledBy(scale: Float): IntersectionShape = this.copy(size = this.size * scale)
+    public infix fun scaledBy(scale: Float): IntersectionShape = this.copy(scale = this.scale * scale)
 
+//    /**
+//     * Shape scale computed from its size and the default size
+//     */
+//    public fun getScale(): Float = this.size / defaultSize
     /**
-     * Used by the path cache resolver to not recompute twice the same instance of a [androidx.compose.ui.graphics.Path]
+     * Returns the size of this [IntersectionShape], computed with the pixel density
      */
-    override fun hashCode(): Int {
-        return shape.hashCode() + size.toInt() + (angle ?: 0)
+    public fun getSize(density: Float): Size {
+        val sidePx = this.scale * defaultSize.dp.value * density
+        return Size(sidePx, sidePx)
     }
 
+//    /**
+//     * Used by the path cache resolver to not recompute twice the same instance of a [androidx.compose.ui.graphics.Path]
+//     */
+//    override fun hashCode(): Int {
+//        return (shape.hashCode()  + angle)
+//    }
+
+    @Suppress("ConstPropertyName")
     public companion object {
-        public object Defaults {
-            public val borderStrokeDefault: Dp = 2.dp
-            public const val angleDefault: Int = 0
-        }
+        public val borderStrokeDefault: Dp = 2.dp
+        public const val defaultSize: Float = 300f
     }
 }
 
