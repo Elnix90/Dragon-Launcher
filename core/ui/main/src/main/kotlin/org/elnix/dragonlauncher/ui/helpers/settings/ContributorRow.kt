@@ -25,10 +25,9 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.openUrl
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 
 @Composable
-fun ContributorItem(
+public fun ContributorItem(
     name: String,
     @DrawableRes imageRes: Int,
     description: String? = null,
@@ -39,7 +38,7 @@ fun ContributorItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(DragonShape)
+            .clip(MaterialTheme.shapes.large)
             .background(MaterialTheme.colorScheme.surface)
             .combinedClickable(
                 onLongClick = { ctx.copyToClipboard(githubUrl) }

@@ -35,7 +35,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 
 @Composable
-fun WarningReminder(modifier: Modifier = Modifier) {
+public fun WarningReminder(modifier: Modifier = Modifier) {
 
     Card(
         modifier = modifier,

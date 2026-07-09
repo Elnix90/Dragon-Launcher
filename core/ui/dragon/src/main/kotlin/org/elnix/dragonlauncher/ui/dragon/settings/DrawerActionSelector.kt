@@ -10,13 +10,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import io.github.elnix90.core.objects.EnumSettingObject
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 
 @Composable
-fun DrawerActionSelector(
+public fun DrawerActionSelector(
     settingObject: EnumSettingObject<DrawerActions>,
     allowNone: Boolean = false
 ) {

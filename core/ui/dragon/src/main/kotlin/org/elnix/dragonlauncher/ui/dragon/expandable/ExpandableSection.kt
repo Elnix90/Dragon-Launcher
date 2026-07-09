@@ -36,7 +36,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.AutoResizeableText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExpandableSection(
+public fun ExpandableSection(
     state: ExpandableSectionState,
     content: @Composable ColumnScope.() -> Unit
 ) {

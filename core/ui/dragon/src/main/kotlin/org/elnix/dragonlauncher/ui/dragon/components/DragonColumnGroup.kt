@@ -14,10 +14,10 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 
 @Composable
-fun DragonColumnGroup(
+public fun DragonColumnGroup(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
-) = CompositionLocalProvider(
+): Unit = CompositionLocalProvider(
     LocalContentColor provides MaterialTheme.colorScheme.onSurface
 ) {
     Column(
@@ -30,10 +30,10 @@ fun DragonColumnGroup(
 
 
 @Composable
-fun DragonColumn(
+public fun DragonColumn(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
-) = CompositionLocalProvider(
+): Unit = CompositionLocalProvider(
     LocalContentColor provides MaterialTheme.colorScheme.onSurface
 ) {
     Column(

@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -54,12 +55,11 @@ import androidx.compose.ui.window.DialogProperties
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.widgets.LauncherWidgetHolder
 
 @Composable
-fun WidgetPickerDialog(
+public fun WidgetPickerDialog(
     drawerViewModel: DrawerViewModel = activityViewModel(),
     onBindCustomWidget: (Int, ComponentName) -> Unit,
     onDismiss: () -> Unit
@@ -138,7 +138,7 @@ fun WidgetPickerDialog(
                         }
                     },
                     singleLine = true,
-                    shape = DragonShape
+                    shape = CircleShape
                 )
 
                 if (filteredWidgets.isEmpty() && searchQuery.isNotEmpty()) {
@@ -256,13 +256,13 @@ private fun WidgetPreviewImage(
         Image(
             bitmap = bitmap!!.asImageBitmap(),
             contentDescription = null,
-            modifier = modifier.clip(DragonShape)
+            modifier = modifier.clip(MaterialTheme.shapes.large)
         )
     } else if (hasError) {
         AppIconFallback(provider, ctx, modifier)
     } else {
         Box(
-            modifier = modifier.clip(DragonShape),
+            modifier = modifier.clip(MaterialTheme.shapes.large),
             contentAlignment = Alignment.Center
         ) {
             LoadingIndicator(modifier = Modifier.size(20.dp))
@@ -271,7 +271,7 @@ private fun WidgetPreviewImage(
 }
 
 @SuppressLint("UseCompatLoadingForDrawables")
-fun loadWidgetPreview(
+public fun loadWidgetPreview(
     provider: AppWidgetProviderInfo,
     ctx: Context
 ): Bitmap? {
@@ -336,7 +336,7 @@ private fun AppIconFallback(
         Image(
             bitmap = appIconBitmap.asImageBitmap(),
             contentDescription = null,
-            modifier = modifier.clip(DragonShape)
+            modifier = modifier.clip(MaterialTheme.shapes.large)
         )
     } else {
         LetterFallback(text = fallbackText, modifier = modifier)
@@ -353,7 +353,7 @@ private fun LetterFallback(
     Box(
         modifier = modifier
             .background(MaterialTheme.colorScheme.primary)
-            .clip(DragonShape),
+            .clip(MaterialTheme.shapes.large),
         contentAlignment = Alignment.Center
     ) {
         Text(

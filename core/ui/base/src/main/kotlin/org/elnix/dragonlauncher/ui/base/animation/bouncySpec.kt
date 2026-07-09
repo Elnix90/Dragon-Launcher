@@ -1,9 +1,13 @@
 package org.elnix.dragonlauncher.ui.base.animation
 
 import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.SpringSpec
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -15,25 +19,25 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.ui.unit.IntOffset
 
 
-fun <T> bouncySpec() = spring<T>(
+public fun <T> bouncySpec(): SpringSpec<T> = spring(
     dampingRatio = Spring.DampingRatioMediumBouncy,
     stiffness = Spring.StiffnessLow
 )
 
-fun <T> defaultSpec() = spring<T>(
+public fun <T> defaultSpec(): SpringSpec<T> = spring(
     dampingRatio = Spring.DampingRatioHighBouncy,
     stiffness = Spring.StiffnessHigh
 )
 
-fun <T> easingSpec() = tween<T>(
+public fun <T> easingSpec(): TweenSpec<T> = tween(
     durationMillis = 300,
     easing = FastOutSlowInEasing
 )
 
-val navigationBouncySpec = spring<IntOffset>(Spring.DampingRatioLowBouncy, Spring.StiffnessLow)
+public val navigationBouncySpec: SpringSpec<IntOffset> = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessLow)
 
 
-val barsContentTransform = ContentTransform(
+public val barsContentTransform: ContentTransform = ContentTransform(
     targetContentEnter = slideInVertically(
         spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
@@ -50,8 +54,8 @@ val barsContentTransform = ContentTransform(
 )
 
 
-val slideInHorizontalBouncy = slideInHorizontally(bouncySpec()) { it } + fadeIn()
-val slideOutHorizontalBouncy = slideOutHorizontally(bouncySpec()) { it } + fadeOut()
+public val slideInHorizontalBouncy: EnterTransition = slideInHorizontally(bouncySpec()) { it } + fadeIn()
+public val slideOutHorizontalBouncy: ExitTransition = slideOutHorizontally(bouncySpec()) { it } + fadeOut()
 
-val slideInVerticalBouncy = slideInVertically(bouncySpec()) { it } + fadeIn()
-val slideOutVerticalBouncy = slideOutVertically(bouncySpec()) { it } + fadeOut()
+public val slideInVerticalBouncy: EnterTransition = slideInVertically(bouncySpec()) { it } + fadeIn()
+public val slideOutVerticalBouncy: ExitTransition = slideOutVertically(bouncySpec()) { it } + fadeOut()

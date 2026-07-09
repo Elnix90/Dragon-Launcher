@@ -35,7 +35,7 @@ import org.elnix.dragonlauncher.ui.remembers.rememberDrawScopeText
  * a change to one point never invalidates the cached values of others.
  */
 @Composable
-fun RememberPointStableCaches(
+public fun RememberPointStableCaches(
     pointsViewModel: PointsViewModel = activityViewModel(),
     iconsViewModel: IconsViewModel = activityViewModel()
 ) {

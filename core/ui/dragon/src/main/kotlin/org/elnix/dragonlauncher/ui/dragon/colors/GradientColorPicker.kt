@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -31,12 +32,11 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import android.graphics.Color as AndroidColor
 
 
 @Composable
-fun GradientColorPicker(
+public fun GradientColorPicker(
     initialColor: Color,
     onColorSelected: (Color) -> Unit
 ) {
@@ -72,7 +72,7 @@ fun GradientColorPicker(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
-                    .clip(DragonShape)
+                    .clip(MaterialTheme.shapes.large)
                     .background(Brush.horizontalGradient(listOf(Color.White, hueColor)))
                     .drawWithContent {
                         drawContent()

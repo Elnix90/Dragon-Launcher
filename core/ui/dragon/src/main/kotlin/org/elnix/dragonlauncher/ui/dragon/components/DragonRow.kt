@@ -15,13 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 
 
 @Composable
-fun DragonRow(
+public fun DragonRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = rememberInteractionSource(),
@@ -51,13 +50,13 @@ fun DragonRow(
 
 
 @Composable
-fun DragonRow(
+public fun DragonRow(
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit
 ) {
     Row(
         modifier = modifier
-            .clip(DragonShape)
+            .clip(MaterialTheme.shapes.large)
             .background(MaterialTheme.colorScheme.surface)
             .padding(10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,

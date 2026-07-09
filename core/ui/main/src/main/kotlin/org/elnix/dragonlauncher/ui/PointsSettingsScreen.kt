@@ -53,6 +53,7 @@ import org.elnix.dragonlauncher.base.Constants
 import org.elnix.dragonlauncher.base.Constants.Settings.COLLIDING_SHAPE_THRESHOLD_PX
 import org.elnix.dragonlauncher.base.Constants.Settings.TOUCH_THRESHOLD_PX
 import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.navigaton.ManipulationSystem
@@ -112,7 +113,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun PointsSettingsScreen(
+public fun PointsSettingsScreen(
     iconsViewModel: IconsViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel(),
     initializationViewModel: InitializationViewModel = activityViewModel(),
@@ -651,9 +652,18 @@ fun PointsSettingsScreen(
 
                         if (LocalNestDebugOverlay.current) {
                             Canvas(Modifier.fillMaxSize()) {
+
+                                val endOffset: Offset = if (point.collidingShapeId == null) {
+                                    center
+                                } else {
+                                    currentNest.intersectionShapes.firstOrNull { it.id == point.collidingShapeId }?.let {
+                                        center + it.offset
+                                    } ?: center
+                                }
+
                                 drawLine(
                                     color = Color.White,
-                                    start = center,
+                                    start = endOffset,
                                     end = tr.transformedOffset
                                 )
                             }
@@ -693,8 +703,10 @@ fun PointsSettingsScreen(
                     if (closestHoveredTempOffset != null && ableToLaunchHoverAction) {
                         GlowOverlay(
                             center = closestHoveredTempOffset!!,
-                            color = primaryColor,
-                            radius = hoveredPointRadialGradientProgress.dp
+                            glow = CustomGlow(
+                                color = primaryColor,
+                                radius = hoveredPointRadialGradientProgress
+                            )
                         )
                     }
                 }

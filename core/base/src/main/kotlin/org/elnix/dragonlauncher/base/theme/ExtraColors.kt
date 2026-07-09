@@ -5,8 +5,9 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 public data class ExtraColors(
+    val holdToActivate: Color,
     val angleLine: Color,
-    val circle: Color,
+    val shapes: Color,
     val launchApp: Color,
     val openUrl: Color,
     val notificationShade: Color,
@@ -22,13 +23,14 @@ public data class ExtraColors(
     val toggleWifi: Color,
     val toggleBluetooth: Color,
     val toggleData: Color,
-    val runAdbCommand: Color
+    val runAdbCommand: Color,
 )
 
 
 public val DefaultExtraColors: ExtraColors = ExtraColors(
+    holdToActivate = Color(0xFF59007A),
     angleLine = Color(0xFFFF0000),
-    circle = Color(0x92FFFFFF),
+    shapes = Color(0x92FFFFFF),
     launchApp = Color(0xFF55AAFF),
     openUrl = Color(0xFF66DD77),
     notificationShade = Color(0xFFFFBB44),

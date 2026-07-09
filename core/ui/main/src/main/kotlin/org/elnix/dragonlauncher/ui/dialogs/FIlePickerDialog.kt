@@ -10,7 +10,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 
 
 @Composable
-fun FilePickerDialog(
+public fun FilePickerDialog(
     onDismiss: () -> Unit,
     onFileSelected: (Action.OpenFile) -> Unit
 ) {

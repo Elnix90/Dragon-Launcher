@@ -19,7 +19,7 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
-fun SwitchRow(
+public fun SwitchRow(
     state: Boolean?,
     title: String,
     description: String? = null,

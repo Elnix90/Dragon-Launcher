@@ -24,7 +24,7 @@ import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.StablePointValues
  * a change to one point never invalidates the cached values of others.
  */
 @Composable
-fun RememberNestsStableCaches(
+public fun RememberNestsStableCaches(
     pointsViewModel: PointsViewModel = activityViewModel(),
 ) {
     val nests by pointsViewModel.pointsService.nests.asState()

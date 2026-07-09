@@ -15,8 +15,7 @@ import androidx.compose.ui.unit.dp
 
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
-// TODO
-fun WallpaperBlur(radius: Int) {
+public fun WallpaperBlur(radius: Int) {
 
     val ctx = LocalContext.current
     val density = LocalDensity.current

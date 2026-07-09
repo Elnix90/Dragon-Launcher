@@ -208,7 +208,7 @@ private fun SliderWithLabelInternal(
  * @param onChange Callback invoked when the value changes
  */
 @Composable
-fun SliderWithLabel(
+public fun SliderWithLabel(
     modifier: Modifier = Modifier,
     label: String,
     description: String? = null,
@@ -273,7 +273,7 @@ fun SliderWithLabel(
  * @param onChange Callback invoked when the value changes
  */
 @Composable
-fun SliderWithLabel(
+public fun SliderWithLabel(
     modifier: Modifier = Modifier,
     label: String,
     description: String? = null,

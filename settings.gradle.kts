@@ -31,7 +31,6 @@ dependencyResolutionManagement {
 rootProject.name = "Dragon Launcher"
 include(":app")
 
-include(":core:libs:material-color-utilities")
 include(":core:libs:material-shapes")
 
 include(":core:ktx")

@@ -52,7 +52,6 @@
     <string name="on_error_color">Na cor de erro</string>
     <string name="outline_color">Cor do Contorno</string>
     <string name="angle_line_color">Cor da Linha de Ângulo</string>
-    <string name="circle_color">Cor do Círculo</string>
     <string name="launch_app_color">Lançar o App Color</string>
     <string name="open_url_color">Abrir URL Cor</string>
     <string name="notification_shade_color">Cor da Notificação</string>

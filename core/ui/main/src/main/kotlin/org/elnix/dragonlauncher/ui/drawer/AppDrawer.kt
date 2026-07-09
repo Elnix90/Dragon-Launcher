@@ -109,7 +109,7 @@ import kotlin.math.pow
 @SuppressLint("LocalContextGetResourceValueCall")
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AppDrawerScreen(
+public fun AppDrawerScreen(
     drawerViewModel: DrawerViewModel = activityViewModel(),
     profilesViewModel: ProfilesViewModel = activityViewModel(),
     onRegisterHomeHandler: ((() -> Unit)?) -> Unit,
@@ -613,14 +613,13 @@ fun AppDrawerScreen(
  * Drawer actions, creates left and right clickable buttons that can activate the selected [org.elnix.dragonlauncher.enumsui.toggle.DrawerActions]
  */
 @Composable
-fun BoxScope.DrawerActions(
+public fun BoxScope.DrawerActions(
     leftDrawerAction: DrawerActions,
     leftDrawerWidth: Dp,
     rightDrawerAction: DrawerActions,
     rightDrawerWidth: Dp,
     launchDrawerAction: (DrawerActions) -> Unit
 ) {
-
     if (leftDrawerAction != Disabled) {
         Box(
             modifier = Modifier

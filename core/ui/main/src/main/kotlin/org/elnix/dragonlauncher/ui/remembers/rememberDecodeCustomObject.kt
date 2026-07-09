@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ui.remembers
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -26,7 +27,7 @@ private inline fun <reified T> rememberDecodedObject(
     default: T,
     json: Json,
     crossinline onError: (Exception) -> Unit = {}
-): T {
+): State<T> {
     return remember(jsonString) {
         derivedStateOf {
             if (jsonString.isNotBlankJson) {
@@ -40,44 +41,44 @@ private inline fun <reified T> rememberDecodedObject(
                 default
             }
         }
-    }.value
+    }
 }
 
 
-object CustomObjectJson : DragonJson<CustomObject>() {
-        data class AngleLineObjects(
-            val line: CustomObject,
-            val angleLine: CustomObject,
-            val startLine: CustomObject,
-            val endLine: CustomObject
+public object CustomObjectJson : DragonJson<CustomObject>() {
+    public data class AngleLineObjects(
+        val line: CustomObject,
+        val angleLine: CustomObject,
+        val startLine: CustomObject,
+        val endLine: CustomObject
     )
 
     @Composable
-    fun rememberAngleLineObjects(): AngleLineObjects {
+    public fun rememberAngleLineObjects(): AngleLineObjects {
         val lineJson by AngleLineSettingsStore.lineJson.asState()
         val angleLineJson by AngleLineSettingsStore.angleLineJson.asState()
         val startLineJson by AngleLineSettingsStore.startLineJson.asState()
         val endLineJson by AngleLineSettingsStore.endLineJson.asState()
 
-        val lineObject = rememberDecodedObject(
+        val lineObject by rememberDecodedObject(
             jsonString = lineJson,
             default = defaultLineCustomObject,
             json = json
         ) { logE(ANGLE_LINE_TAG, it) { "Error decoding lineObject" } }
 
-        val angleLineObject = rememberDecodedObject(
+        val angleLineObject by rememberDecodedObject(
             jsonString = angleLineJson,
             default = defaultAngleCustomObject,
             json = json
         ) { logE(ANGLE_LINE_TAG, it) { "Error decoding angleLineObject" } }
 
-        val startLineObject = rememberDecodedObject(
+        val startLineObject by rememberDecodedObject(
             jsonString = startLineJson,
             default = defaultStartCustomObject,
             json = json
         ) { logE(ANGLE_LINE_TAG, it) { "Error decoding startLineObject" } }
 
-        val endLineObject = rememberDecodedObject(
+        val endLineObject by rememberDecodedObject(
             jsonString = endLineJson,
             default = defaultEndCustomObject,
             json = json
@@ -92,9 +93,8 @@ object CustomObjectJson : DragonJson<CustomObject>() {
     }
 
 
-
     @Composable
-    fun rememberHoldCustomObject(): CustomObject {
+    public fun rememberHoldCustomObject(): State<CustomObject> {
         val holdCustomObjectJson by HoldToActivateArcSettingsStore.holdToActivateArcCustomObject.asState()
         return rememberDecodedObject(
             jsonString = holdCustomObjectJson,

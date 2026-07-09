@@ -38,7 +38,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 
 
 @Composable
-fun WorkspaceListScreen(
+public fun WorkspaceListScreen(
     drawerViewModel: DrawerViewModel = activityViewModel(),
     onOpenWorkspace: (String) -> Unit,
     onBack: () -> Unit

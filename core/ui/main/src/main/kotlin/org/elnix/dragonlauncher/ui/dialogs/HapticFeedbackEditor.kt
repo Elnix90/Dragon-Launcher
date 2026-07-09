@@ -53,7 +53,6 @@ import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.pasteClipboard
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -66,7 +65,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 
 
 @Composable
-fun HapticFeedbackEditor(
+public fun HapticFeedbackEditor(
     initial: CustomHapticFeedback? = null,
     onDismiss: () -> Unit,
     onPicked: (CustomHapticFeedback?) -> Unit
@@ -184,7 +183,7 @@ fun HapticFeedbackEditor(
                         horizontalArrangement = Arrangement.spacedBy(5.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(DragonShape)
+                            .clip(MaterialTheme.shapes.large)
                             .horizontalScroll(rememberScrollState())
                             .background(MaterialTheme.colorScheme.surfaceVariant)
                     ) {
@@ -260,7 +259,7 @@ fun HapticFeedbackEditor(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(DragonShape)
+                            .clip(MaterialTheme.shapes.large)
                             .background(MaterialTheme.colorScheme.surface.alphaMultiplier(0.7f))
                             .padding(24.dp),
                         contentAlignment = Alignment.Center
@@ -441,7 +440,7 @@ private fun AddStepButton(
 
 
 @Composable
-fun HapticFeedBackEditorButtonWithPlayTest(
+public fun HapticFeedBackEditorButtonWithPlayTest(
     customHapticFeedback: CustomHapticFeedback,
     titleExt: String = "",
     onClick: () -> Unit

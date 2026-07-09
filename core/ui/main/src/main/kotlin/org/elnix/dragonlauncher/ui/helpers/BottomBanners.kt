@@ -27,7 +27,7 @@ import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
 
 @Composable
-fun BottomBanners(currentRoute: NavKey) {
+public fun BottomBanners(currentRoute: NavKey) {
     val ctx = LocalContext.current
 
     val showSetDefaultLauncherBanner by PrivateSettingsStore.showSetDefaultLauncherBanner.asStateNull()

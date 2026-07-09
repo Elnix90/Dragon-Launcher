@@ -3,15 +3,9 @@ package org.elnix.dragonlauncher.ui.settings.customization
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.calculateCentroid
-import androidx.compose.foundation.gestures.calculateCentroidSize
-import androidx.compose.foundation.gestures.calculatePan
-import androidx.compose.foundation.gestures.calculateRotation
-import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,18 +13,22 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,25 +37,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastAny
-import androidx.compose.ui.util.fastForEach
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
+import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.navigaton.ManipulationSystem
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools
@@ -73,6 +71,7 @@ import org.elnix.dragonlauncher.ktx.snapToRound
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
@@ -80,26 +79,31 @@ import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.IntersectionShape
 import org.elnix.dragonlauncher.ui.components.ManipulationSystemReset
+import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dialogs.IntersectionShapeManagementDialog
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
+import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
+import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
+import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.SelfCheckNestPresent
 import org.elnix.dragonlauncher.ui.helpers.ShapePreview
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
+import org.elnix.dragonlauncher.ui.helpers.customobjects.drawNeonGlowLine
 import org.elnix.dragonlauncher.ui.helpers.customobjects.shapeToPath
+import org.elnix.dragonlauncher.ui.helpers.detectTransformGestures
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
 import org.elnix.dragonlauncher.ui.helpers.swipe.rememberDrawParams
-import kotlin.math.PI
-import kotlin.math.abs
 
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun NestEditScreen2(
+public fun NestEditScreen2(
     pointsViewModel: PointsViewModel = activityViewModel(),
     initialNestId: Int,
     onBack: () -> Unit
@@ -111,6 +115,11 @@ fun NestEditScreen2(
     val snapShapesOffset by UiSettingsStore.snapShapesOffset.asState()
     val snapShapesScale by UiSettingsStore.snapShapesScale.asState()
     val snapShapeAngle by UiSettingsStore.snapShapeAngle.asState()
+
+    val cellSizeDp by UiSettingsStore.widgetsCellSizeDp.asState()
+    val cellSizePx = cellSizeDp.px
+    var showMoreSheet by remember { mutableStateOf(false) }
+
 
     val nests by pointsService.nests.asState()
     val rowsScrollStates = List(3) { rememberScrollState() }
@@ -183,10 +192,15 @@ fun NestEditScreen2(
     val handleBack = {
         if (selectedShapeId != null) selectedShapeId = null
         else {
+            saveCurrentNest()
             onBack()
         }
     }
     BackHandler(onBack = handleBack)
+
+
+//    TODO("Make snapping tools global (not only with the center of the nest")
+//    TODO("Mark center of the nest with some graphical stuff for users")
 
     val recomposeTrigger by pointsService.recomposeTRigger.asState()
     val drawParams = rememberDrawParams(
@@ -209,6 +223,18 @@ fun NestEditScreen2(
         resetTitle = stringResource(R.string.reset_nest),
         horizontalPadding = 0.dp,
         scrollableContent = false,
+        moreOptions = { dismiss ->
+            listOf(
+                MoreOptions(
+                    text = { stringResource(R.string.show_more_sheet) },
+                    onClick = {
+                        showMoreSheet = !showMoreSheet
+                        dismiss()
+                    },
+                    icon = R.drawable.add_circle,
+                )
+            )
+        },
         bottomContent = {
             RowWithScrollIndicator(rowsScrollStates[0]) {
                 val canGoback = nestId != 0
@@ -421,18 +447,14 @@ fun NestEditScreen2(
                             transformOrigin = TransformOrigin(0f, 0f)
                         }
                 ) {
-                    NestOverlay(
-                        center = center,
-                        nest = currentNest.copy(intersectionShapes = emptySet()),
-                        depth = Int.MAX_VALUE,
-                        preventBgErasing = true,
-                        showConfiguratorDecorations = true,
-                        forceShowAllActionsInCurrentNest = true,
-                        hideSelectedPoint = true
-                    )
                     val primaryColor = MaterialTheme.colorScheme.primary
 
                     Canvas(Modifier.fillMaxSize()) {
+
+                        centerOfNest(center)
+
+//                        backgroundGrid(cellSizePx)
+
                         repeat(2) { pass ->
                             paths.forEach { (shape, path) ->
                                 val selected = shape.id == selectedShapeId
@@ -446,6 +468,16 @@ fun NestEditScreen2(
                             }
                         }
                     }
+
+                    NestOverlay(
+                        center = center,
+                        nest = currentNest.copy(intersectionShapes = emptySet()),
+                        depth = Int.MAX_VALUE,
+                        preventBgErasing = true,
+                        showConfiguratorDecorations = true,
+                        forceShowAllActionsInCurrentNest = true,
+                        hideSelectedPoint = true
+                    )
                 }
             }
 
@@ -537,6 +569,85 @@ fun NestEditScreen2(
             )
         }
     }
+
+    var tempCancelZone by remember { mutableIntStateOf(currentNest.cancelZone) }
+    var tempCustomName by remember { mutableStateOf(currentNest.name ?: "") }
+
+
+    if (showMoreSheet) {
+        DragonModalBottomSheet(
+            onDismissRequest = { showMoreSheet = false },
+        ) {
+            DragonSettingsGroup(
+                title = R.string.nest_info,
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+
+            ) {
+                Text(
+                    text = stringResource(R.string.shapes_number, paths.size),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    text = stringResource(R.string.current_nest, nestId),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                SettingsSlider(UiSettingsStore.nestsCellSizeDp)
+            }
+
+            DragonSettingsGroup(
+                title = R.string.nest_edition,
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+            ) {
+                TextField(
+                    value = tempCustomName,
+                    onValueChange = {
+                        tempCustomName = it
+
+                        pointsService.editNest(nestId) { nest ->
+                            nest.copy(name = it)
+                        }
+                    },
+                    placeholder = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.edit_rounded),
+                                contentDescription = stringResource(R.string.custom_name)
+                            )
+                            Text(
+                                text = stringResource(R.string.custom_name),
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    },
+                    colors = AppObjectsColors.outlinedTextFieldColors(removeBorder = true),
+                    singleLine = true,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .fillMaxWidth()
+                )
+
+                SliderWithLabel(
+                    label = stringResource(R.string.cancel_zone),
+                    description = stringResource(R.string.cancel_zone_desc),
+                    value = tempCancelZone,
+                    valueRange = 0..1000,
+                    onReset = { tempCancelZone = Nest.defaultCancelZone },
+                    onDragStateChange = { isDragging ->
+                        if (!isDragging) {
+                            pointsService.editNest(nestId) { old ->
+                                old.copy(cancelZone = tempCancelZone)
+                            }
+                        }
+                    }
+                ) { newValue -> tempCancelZone = newValue }
+            }
+        }
+    }
+
 
     if (showNestManagementDialog) {
         NestManagementDialog(
@@ -642,66 +753,28 @@ fun NestEditScreen2(
 //}
 
 
-/**
- * Same as [androidx.compose.foundation.gestures.detectTransformGestures] but I added a [onGestureEnd] lambda that fires on gesture end
- */
-suspend fun PointerInputScope.detectTransformGestures(
-    panZoomLock: Boolean = false,
-    onGestureEnd: () -> Unit,
-    onGesture: (centroid: Offset, pan: Offset, zoom: Float, rotation: Float) -> Unit
-) {
-    awaitEachGesture {
-        var rotation = 0f
-        var zoom = 1f
-        var pan = Offset.Zero
-        var pastTouchSlop = false
-        val touchSlop = viewConfiguration.touchSlop
-        var lockedToPanZoom = false
+public fun DrawScope.centerOfNest(center: Offset) {
+    val horizontalStart = Offset(center.x - 50.dp.toPx(), center.y)
+    val horizontalEnd = Offset(center.x - 50.dp.toPx(), center.y)
 
-        awaitFirstDown(requireUnconsumed = false)
-        do {
-            val event = awaitPointerEvent()
-            val canceled = event.changes.fastAny { it.isConsumed }
-            if (!canceled) {
-                val zoomChange = event.calculateZoom()
-                val rotationChange = event.calculateRotation()
-                val panChange = event.calculatePan()
+    val verticalStart = Offset(center.x - 50.dp.toPx(), center.y)
+    val verticalEnd = Offset(center.x - 50.dp.toPx(), center.y)
 
-                if (!pastTouchSlop) {
-                    zoom *= zoomChange
-                    rotation += rotationChange
-                    pan += panChange
+    drawNeonGlowLine(
+        start = horizontalStart,
+        end = horizontalEnd,
+        color = Color.Red,
+        lineStrokeWidth = 5.dp.toPx(),
+        erase = false,
+        glow = CustomGlow(20f)
+    )
 
-                    val centroidSize = event.calculateCentroidSize(useCurrent = false)
-                    val zoomMotion = abs(1 - zoom) * centroidSize
-                    val rotationMotion = abs(rotation * PI.toFloat() * centroidSize / 180f)
-                    val panMotion = pan.getDistance()
-
-                    if (
-                        zoomMotion > touchSlop ||
-                        rotationMotion > touchSlop ||
-                        panMotion > touchSlop
-                    ) {
-                        pastTouchSlop = true
-                        lockedToPanZoom = panZoomLock && rotationMotion < touchSlop
-                    }
-                }
-
-                if (pastTouchSlop) {
-                    val centroid = event.calculateCentroid(useCurrent = false)
-                    val effectiveRotation = if (lockedToPanZoom) 0f else rotationChange
-                    if (effectiveRotation != 0f || zoomChange != 1f || panChange != Offset.Zero) {
-                        onGesture(centroid, panChange, zoomChange, effectiveRotation)
-                    }
-                    event.changes.fastForEach {
-                        if (it.positionChanged()) {
-                            it.consume()
-                        }
-                    }
-                }
-            }
-        } while ((!canceled && event.changes.fastAny { it.pressed }))
-
-        onGestureEnd()
-    }
+    drawNeonGlowLine(
+        start = verticalStart,
+        end = verticalEnd,
+        color = Color.Red,
+        lineStrokeWidth = 5.dp.toPx(),
+        erase = false,
+        glow = CustomGlow(20f)
+    )
 }

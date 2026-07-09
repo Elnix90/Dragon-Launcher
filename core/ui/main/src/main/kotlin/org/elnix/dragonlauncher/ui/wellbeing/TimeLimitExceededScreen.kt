@@ -64,7 +64,7 @@ private val BgBottom = Color(0xFF1A1A2E)
 
 
 @Composable
-fun TimeLimitExceededScreen(
+public fun TimeLimitExceededScreen(
     appName: String,
     onDismiss: () -> Unit
 ) {

@@ -5,13 +5,14 @@ import android.os.Looper
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.awaitCancellation
@@ -24,7 +25,7 @@ import java.time.ZoneId
  * The time is updated every second.
  */
 @Composable
-fun ProvideCurrentTime(content: @Composable () -> Unit) {
+public fun ProvideCurrentTime(content: @Composable () -> Unit) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -62,4 +63,4 @@ fun ProvideCurrentTime(content: @Composable () -> Unit) {
     )
 }
 
-val LocalTime = compositionLocalOf { System.currentTimeMillis() }
+public val LocalTime: ProvidableCompositionLocal<Long> = compositionLocalOf { System.currentTimeMillis() }

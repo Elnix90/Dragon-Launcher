@@ -44,7 +44,6 @@ import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.AppIcon
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
@@ -61,7 +60,7 @@ import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 
 @Composable
-fun PointIconEditor(
+public fun PointIconEditor(
     iconsViewModel: IconsViewModel = activityViewModel(),
     point: Point,
     onReset: (() -> Unit)? = null,
@@ -95,7 +94,7 @@ fun PointIconEditor(
 }
 
 @Composable
-fun AppIconEditor(
+public fun AppIconEditor(
     app: Application,
     drawerViewModel: DrawerViewModel = activityViewModel(),
     iconViewModel: IconsViewModel = activityViewModel(),
@@ -323,7 +322,7 @@ private fun SelectableCard(
 ) {
     Row(
         modifier = modifier
-            .clip(DragonShape)
+            .clip(MaterialTheme.shapes.large)
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .conditional(onClick != null) {
                 clickable(onClick = onClick!!)

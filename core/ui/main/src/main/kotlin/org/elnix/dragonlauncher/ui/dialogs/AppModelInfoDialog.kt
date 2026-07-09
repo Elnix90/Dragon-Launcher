@@ -16,10 +16,9 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 
 @Composable
-fun ApplicationInfoDialog(
+public fun ApplicationInfoDialog(
     app: Application,
     onDismiss: () -> Unit
 ) {
@@ -43,7 +42,7 @@ fun ApplicationInfoDialog(
         onDismissRequest = onDismiss,
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 6.dp,
-        shape = DragonShape
+        shape = MaterialTheme.shapes.large
     )
 }
 

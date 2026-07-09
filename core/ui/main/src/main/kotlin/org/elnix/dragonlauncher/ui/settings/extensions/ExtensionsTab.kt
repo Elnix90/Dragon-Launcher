@@ -37,7 +37,7 @@ import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
-fun ExtensionsTab(
+public fun ExtensionsTab(
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current

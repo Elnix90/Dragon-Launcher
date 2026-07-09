@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 
-fun DrawScope.drawShapeWithColor(
+public fun DrawScope.drawShapeWithColor(
     shape: Shape,
     rotation: Int,
     center: Offset,
@@ -49,21 +49,19 @@ fun DrawScope.drawShapeWithColor(
         drawPath(
             path = path,
             color = color,
-            style = if (strokeWidth > 0f)
-                Stroke(strokeWidth)
-            else
-                Fill
+            style = if (strokeWidth > 0f) Stroke(strokeWidth) else Fill
         )
     }
 }
 
-fun DrawScope.shapeToPath(
+
+public fun DrawScope.shapeToPath(
     shape: Shape,
     size: Size
 ): Path = shapeToPath(shape, size, this)
 
 
-fun shapeToPath(
+public fun shapeToPath(
     shape: Shape,
     size: Size,
     density: Density

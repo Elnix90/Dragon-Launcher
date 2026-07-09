@@ -13,15 +13,14 @@ import org.elnix.dragonlauncher.ui.remembers.CustomTexts
  * These values depend only on the point's configuration and the current
  * density, never on transient visual state such as selection. They are
  * computed once inside a [androidx.compose.runtime.remember] block and
- * written to [org.elnix.dragonlauncher.ui.helpers.swipe.cache.PointStableCache] via [androidx.compose.runtime.LaunchedEffect].
+ * written to [PointStableCache] via [androidx.compose.runtime.LaunchedEffect].
  *
  * @property sizePx point outer diameter in pixels
  * @property innerPaddingPx inner padding in pixels
  * @property borderRadii effective radius of the border circle
  * @property iconSize size of the icon bounding box derived from [borderRadii]
- * @property iconDrawSize size of the drawn icon in pixels
  */
-data class StablePointValues(
+public data class StablePointValues(
     val sizePx: Float,
     val innerPaddingPx: Float,
     val borderRadii: Float,
@@ -31,7 +30,7 @@ data class StablePointValues(
 )
 
 /**
- * LRU cache of [org.elnix.dragonlauncher.ui.helpers.swipe.cache.StablePointValues] keyed by point identifier.
+ * LRU cache of [StablePointValues] keyed by point identifier.
  *
  * The cache is populated by [RememberPointStableCaches] and should be
  * read inside DrawScope functions such as [org.elnix.dragonlauncher.ui.helpers.swipe.PointBg]. Lookups that
@@ -40,9 +39,9 @@ data class StablePointValues(
  * @see RememberPointStableCaches
  * @see org.elnix.dragonlauncher.ui.helpers.swipe.PointBg
  */
-object PointStableCache : DragonCache<Int, StablePointValues>(200)
+public object PointStableCache : DragonCache<Int, StablePointValues>(200)
 
-data class DrawScopeText(
+public data class DrawScopeText(
     val offsetTextLayoutResult: TextLayoutResult,
     val topLeft: Offset
 )

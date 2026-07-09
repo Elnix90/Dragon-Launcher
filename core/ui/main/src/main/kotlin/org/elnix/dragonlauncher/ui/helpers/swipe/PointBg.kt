@@ -12,17 +12,18 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.unit.IntSize
 import org.elnix.dragonlauncher.base.cache.DrawPathCache
+import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
-import org.elnix.dragonlauncher.ui.helpers.customobjects.drawNeonGlowShapePath
+import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
 import org.elnix.dragonlauncher.ui.helpers.customobjects.shapeToPath
 import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.PointStableCache
 import org.elnix.dragonlauncher.ui.remembers.CustomTexts
 
 
 @Suppress("FunctionName")
-fun DrawScope.PointBg(
+public fun DrawScope.PointBg(
     point: Point,
     selected: Boolean,
     center: Offset,
@@ -32,7 +33,6 @@ fun DrawScope.PointBg(
     val extraColors = drawParams.extraColors
     val defaultPoint = drawParams.pointsService.defaultPoint.value
     val cached = PointStableCache[point.id] ?: return
-
 
 
     val customTexts = customText ?: cached.customTexts
@@ -53,7 +53,6 @@ fun DrawScope.PointBg(
     }
 
 
-
     val iconBitmap = cached.imageBitmap
     val iconSize = cached.iconSize
     val sizePx = cached.sizePx
@@ -71,7 +70,7 @@ fun DrawScope.PointBg(
                 ?: defaultPoint.borderColorSelected?.let { Color(it) }
         } else {
             point.borderColor?.let { Color(it) } ?: defaultPoint.borderColor?.let { Color(it) }
-        } ?: extraColors.circle
+        } ?: extraColors.shapes
 
     val backgroundColor: Color =
         if (selected) {
@@ -116,12 +115,14 @@ fun DrawScope.PointBg(
         }
     ) {
 
-        drawNeonGlowShapePath(
+        drawPathGlow(
             path = path,
             color = borderColor,
             lineStrokeWidth = borderStroke,
-            glowRadius = glowRadius,
-            glowColor = glowColor,
+            glow = CustomGlow(
+                radius = glowRadius,
+                color = glowColor,
+            ),
             erase = true
         )
         drawPath(

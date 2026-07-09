@@ -67,8 +67,8 @@ public object ColorUtils {
 
 
     /** Utility: convert Color → #AARRGGBB */
-    public fun Color?.toHexWithAlpha(prefix: Boolean = true): String =
-        "${if (prefix) "#" else ""}%08X".format(this?.toArgb())
+    public fun Color.toHexWithAlpha(prefix: Boolean = true): String =
+        "${if (prefix) "#" else ""}%08X".format(this.toArgb())
 
 
     public fun randomColor(

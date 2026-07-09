@@ -16,7 +16,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 
 
 @Composable
-fun SetDefaultLauncherBanner() {
+public fun SetDefaultLauncherBanner() {
 
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()

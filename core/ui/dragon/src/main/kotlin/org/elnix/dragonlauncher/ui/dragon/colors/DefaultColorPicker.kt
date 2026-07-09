@@ -31,7 +31,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 
 @Composable
-fun DefaultColorPicker(
+public fun DefaultColorPicker(
     initialColor: Color,
     onColorSelected: (Color) -> Unit
 ) {

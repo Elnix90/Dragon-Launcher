@@ -51,7 +51,6 @@
     <string name="reset_to_default_colors">Reset to Default Colors</string>
     <string name="make_every_colors_random">Randomize All Colors</string>
     <string name="angle_line_color">Angle Line Color</string>
-    <string name="circle_color">Circle Color</string>
     <string name="launch_app_color">Launch App Color</string>
     <string name="open_url_color">Open URL Color</string>
     <string name="notification_shade_color">Notification Shade Color</string>
@@ -794,11 +793,11 @@
     <string name="loading">Loading…</string>
     <string name="charging_animation">Charging animation</string>
     <string name="charging_animation_desc">Play a beautiful charging animation when the phone is charging</string>
-    <string name="widget_number_total">Widgets Number (total)</string>
-    <string name="widget_number_nest">Widgets Number (nest)</string>
+    <string name="widget_number_total">Widgets Number (total): %1$d</string>
+    <string name="widget_number_nest">Widgets Number (nest)! %1$d</string>
     <string name="shape">Shape</string>
     <string name="scale">Scale</string>
-    <string name="current_nest">Current nest</string>
+    <string name="current_nest">Current nest: %1$d</string>
     <string name="drag_overlay">Drag overlay</string>
     <string name="hold_to_activate">Hold to activate</string>
     <string name="main_screen_layers">Main screen layers</string>
@@ -812,8 +811,10 @@
     <string name="dim_amount_help">How much dim (wallpaper color) is applied on the screen</string>
     <string name="snap_rotation">Snap rotation by 15°</string>
     <string name="enable_snap_move">Enable snap move</string>
-    <string name="cell_size">Cell Size</string>
-    <string name="cell_size_help">The size of the grid that is used to snap widgets sizes</string>
+    <string name="widget_cell_size">Cell Size</string>
+    <string name="widget_cell_size_help">The size of the grid that is used to snap widgets</string>
+    <string name="nests_cell_size">Cell Size</string>
+    <string name="nests_cell_size_help">The size of the grid that is used to snap shapes</string>
     <string name="off_screen_timeout">Off-screen timeout (s)</string>
     <string name="off_screen_timeout_desc">How long the app waits before returning to home screen when you\'re in another screen. Doesn\'t apply to some specified screens, such as backup (because you pick a file). -1 means no return</string>
     <string name="paste">Paste</string>
@@ -1037,4 +1038,13 @@
     <string name="add_shape">Add shape</string>
     <string name="detailed_info">Detailed Info</string>
     <string name="cannot_directly_uninstall_from_other_profiles">Cannot directly uninstall from other profiles</string>
+    <string name="shapes_number">Shapes number: %1$d</string>
+    <string name="cancel_zone_desc">How far you have to drag to enable the first point</string>
+    <string name="nest_info">Nest info</string>
+    <string name="nest_edition">Nest Edition</string>
+    <string name="mirror_desc">Some shapes are drawn the wrong way, mirror them vertically to achieve what you want</string>
+    <string name="mirror">Mirror</string>
+    <string name="automatic_magic_number">Automatic magic number</string>
+    <string name="hold_to_activate_color">Hold to activate color</string>
+    <string name="shapes_color">Shapes color</string>
 </resources>

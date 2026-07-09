@@ -51,7 +51,7 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
-fun MainScreeLayersTab(
+public fun MainScreeLayersTab(
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
@@ -219,7 +219,7 @@ fun MainScreeLayersTab(
 }
 
 @Composable
-fun rememberMainScreenLayerOrder(): MutableState<List<MainScreenLayer>> {
+public fun rememberMainScreenLayerOrder(): MutableState<List<MainScreenLayer>> {
     val orderString by UiSettingsStore.mainScreenLayers.asState()
 
     return remember(orderString) {

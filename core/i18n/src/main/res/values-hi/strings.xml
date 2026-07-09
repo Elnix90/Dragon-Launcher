@@ -48,7 +48,6 @@
     <string name="reset_to_default_colors">डिफ़ॉल्ट रंगों पर रीसेट करें</string>
     <string name="make_every_colors_random">सभी रंगों को यादृच्छिक करें</string>
     <string name="angle_line_color">कोण रेखा रंग</string>
-    <string name="circle_color">वृत्त का रंग</string>
     <string name="launch_app_color">ऐप कलर लॉन्च करें</string>
     <string name="open_url_color">URL रंग खोलें</string>
     <string name="notification_shade_color">अधिसूचना छाया रंग</string>

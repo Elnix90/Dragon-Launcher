@@ -30,7 +30,7 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants
 
 @Composable
-fun EditValueTextField(
+public fun EditValueTextField(
     value: String,
     onValueChange: (String) -> Unit,
     enabled: Boolean = true,

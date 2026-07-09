@@ -18,7 +18,7 @@ import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 @Composable
-fun rememberSettingsExportLauncher(
+public fun rememberSettingsExportLauncher(
     selectedStoresForExport: Set<SettingsStore<*, *>>,
     backupViewModel: BackupViewModel = activityViewModel()
 ): ManagedActivityResultLauncher<String, Uri?> {
@@ -64,7 +64,7 @@ fun rememberSettingsExportLauncher(
 }
 
 @Composable
-fun rememberSafeSettingsExportLauncher(
+public fun rememberSafeSettingsExportLauncher(
     selectedStoresForExport: Set<SettingsStore<*, *>>
 ): ManagedActivityResultLauncher<String, Uri?> {
     val ctx = LocalContext.current

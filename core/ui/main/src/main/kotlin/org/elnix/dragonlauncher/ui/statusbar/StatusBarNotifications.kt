@@ -24,7 +24,7 @@ import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 @Composable
-fun StatusBarNotifications(
+public fun StatusBarNotifications(
     element: StatusBar.Notifications,
     drawerViewModel: DrawerViewModel = activityViewModel(),
 ) {

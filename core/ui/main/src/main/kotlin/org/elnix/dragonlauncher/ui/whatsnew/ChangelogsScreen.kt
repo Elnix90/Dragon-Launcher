@@ -14,7 +14,7 @@ import org.elnix.dragonlauncher.ktx.openUrl
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
-fun ChangelogsScreen(
+public fun ChangelogsScreen(
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current

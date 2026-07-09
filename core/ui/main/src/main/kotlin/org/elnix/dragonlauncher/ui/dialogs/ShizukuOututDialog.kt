@@ -13,7 +13,7 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
-fun ShizukuOutputDialog(
+public fun ShizukuOutputDialog(
     shizukuViewModel: ShizukuViewModel = activityViewModel()
 ) {
     val output by shizukuViewModel.outputValue.asState()

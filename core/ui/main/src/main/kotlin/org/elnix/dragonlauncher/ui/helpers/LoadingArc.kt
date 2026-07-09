@@ -18,7 +18,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Matrix
-import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathMeasure
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.StrokeCap
@@ -28,10 +28,11 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
-import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultHoldCustomObject
 import org.elnix.dragonlauncher.base.resolveShape
-import org.elnix.dragonlauncher.ktx.px
-import org.elnix.dragonlauncher.ui.helpers.customobjects.drawNeonGlowShapePath
+import org.elnix.dragonlauncher.base.theme.LocalExtraColors
+import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
+import org.elnix.dragonlauncher.ui.helpers.customobjects.mirrorVertically
+import org.elnix.dragonlauncher.ui.helpers.customobjects.shapeToPath
 
 private fun DrawScope.holdTolerance(
     center: Offset,
@@ -47,7 +48,7 @@ private fun DrawScope.holdTolerance(
 
 
 @Composable
-fun HoldToActivateArc(
+public fun HoldToActivateArc(
     center: Offset?,
     progress: Float,
     rgbLoading: Boolean,
@@ -57,32 +58,24 @@ fun HoldToActivateArc(
     playAnimation: Boolean = true,
     showHoldTolerance: (() -> Float)? = null
 ) {
-    val ctx = LocalContext.current
-
     if (center == null || progress <= 0f) return
+
+    val ctx = LocalContext.current
+    val extraColors = LocalExtraColors.current
 
     val color = if (rgbLoading) {
         Color.hsv(progress * 360f, 1f, 1f)
     } else {
-        customObject.color ?: defaultHoldCustomObject.color!!
+        customObject.color ?: extraColors.holdToActivate
     }
-
-    val shape = customObject.shape ?: defaultHoldCustomObject.shape
-    val radius = (customObject.size ?: defaultHoldCustomObject.size!!).dp
-    val strokeWidth = (customObject.stroke ?: defaultHoldCustomObject.stroke!!).dp
-    val glowRadius = customObject.glow?.radius?.dp?.px ?: 0f
-    val glowColor = customObject.glow?.color
 
     // Remembers for each new click the random or not rotation it applies (if -1)
     val rotationAngleStart = remember(center) {
-        (customObject.rotation ?: defaultHoldCustomObject.rotation!!)
-            .takeIf { it != -1 }
-            ?: (0..360).random()
+        customObject.rotation.takeIf { it != -1 } ?: (0..360).random()
     }
-
-
     // Remembers the shape for each new click, but keeps the same when holding
-    val resolvedShape: Shape = remember(center) { shape.resolveShape() }
+    val resolvedShape: Shape = remember(center) { customObject.shape.resolveShape() }
+
 
     val infiniteTransition = rememberInfiniteTransition(label = "infinite")
 
@@ -90,7 +83,7 @@ fun HoldToActivateArc(
         ctx.contentResolver,
         Settings.Global.ANIMATOR_DURATION_SCALE,
         1f
-    ).coerceAtLeast(0.1f) // avoid division by zero
+    )
 
     val rotationTween = if (rotationsPerSecond > 0f) {
         (1000f / rotationsPerSecond / animationScale).toInt()
@@ -107,38 +100,34 @@ fun HoldToActivateArc(
     )
 
     val pathMeasurer = remember { PathMeasure() }
-    val destinationPath = remember { androidx.compose.ui.graphics.Path() }
+    val destinationPath = remember { Path() }
     val matrix = remember { Matrix() }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .drawWithCache {
-                val diameterPx = radius.toPx() * 2
-
-                val composePath = when (val outline = resolvedShape.createOutline(
-                    size = Size(diameterPx, diameterPx),
-                    layoutDirection = layoutDirection,
-                    density = this
-                )) {
-                    is Outline.Generic -> outline.path
-                    is Outline.Rounded -> androidx.compose.ui.graphics.Path().apply { addRoundRect(outline.roundRect) }
-                    is Outline.Rectangle -> androidx.compose.ui.graphics.Path().apply { addRect(outline.rect) }
-                }
+                val diameterPx = customObject.size.dp.toPx() * 2
+                val path = shapeToPath(resolvedShape, Size(diameterPx, diameterPx), this)
 
                 matrix.reset()
                 matrix.translate(-diameterPx / 2f, -diameterPx / 2f)
-                composePath.transform(matrix)
+                path.transform(matrix)
 
-                pathMeasurer.setPath(composePath, false)
+                pathMeasurer.setPath(path, false)
                 val totalLength = pathMeasurer.length
                 destinationPath.reset()
                 pathMeasurer.getSegment(0f, totalLength * progress, destinationPath)
 
                 onDrawBehind {
                     withTransform({
+                        if (customObject.mirror) mirrorVertically(center)
+
                         // Rotate to start to the angle position chosen
-                        rotate(degrees = rotationAngleStart.toFloat(), pivot = center)
+                        rotate(
+                            degrees = rotationAngleStart.toFloat(),
+                            pivot = center
+                        )
 
                         // Rotates with the animation rotation, computed above
                         if (rotationsPerSecond > 0 && playAnimation) {
@@ -146,12 +135,11 @@ fun HoldToActivateArc(
                         }
                         translate(center.x, center.y)
                     }) {
-                        drawNeonGlowShapePath(
+                        drawPathGlow(
                             path = destinationPath,
                             color = color,
-                            lineStrokeWidth = strokeWidth.toPx(),
-                            glowRadius = glowRadius,
-                            glowColor = glowColor ?: color,
+                            lineStrokeWidth = customObject.stroke,
+                            glow = customObject.glow,
                             erase = erase
                         )
                     }

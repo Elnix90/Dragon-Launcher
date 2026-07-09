@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.graphics.shapes.Morph
 
-data class FancyAnimation(
+public data class FancyAnimation(
     val rotation: Float,
     val outerRotation: Float,
     val scale: Float,
@@ -28,7 +28,7 @@ data class FancyAnimation(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun rememberFancyAnimations(isPressed: Boolean): FancyAnimation {
+public fun rememberFancyAnimations(isPressed: Boolean): FancyAnimation {
 
     val morph = remember {
         Morph(
@@ -80,7 +80,7 @@ fun rememberFancyAnimations(isPressed: Boolean): FancyAnimation {
     )
 }
 
-class MorphPolygonShape(
+public class MorphPolygonShape(
     private val morph: Morph,
     private val percentage: Float
 ) : Shape {

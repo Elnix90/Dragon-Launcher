@@ -56,7 +56,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
-fun DebugTab(
+public fun DebugTab(
     onNavigate: (NavigationRoute) -> Unit,
     onBack: () -> Unit,
     initializationViewModel: InitializationViewModel = activityViewModel()

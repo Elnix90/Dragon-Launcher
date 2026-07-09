@@ -36,7 +36,7 @@ import kotlin.time.Duration.Companion.milliseconds
  * @property nestedHit Real-time hit result while [isActive]; null otherwise.
  * @property suppressMainLaunch True after an abort - blocks main-nest action on release.
  */
-data class LiveNestState(
+public data class LiveNestState(
     val isActive: Boolean,
     val hostPoint: Point?,
     val nestedNestId: Int?,
@@ -80,7 +80,7 @@ private class MutableReference<T>(var value: T)
 
 
 @Composable
-fun rememberLiveNestControllerStack(
+public fun rememberLiveNestControllerStack(
     pointsViewModel: PointsViewModel = activityViewModel(),
     isDragging: Boolean,
     rootStartPos: Offset?,

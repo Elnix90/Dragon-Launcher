@@ -21,10 +21,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 
 @Composable
-fun AppDrawerSearch(
+public fun AppDrawerSearch(
     searchQuery: String,
     onSearchChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -42,7 +41,7 @@ fun AppDrawerSearch(
         modifier = modifier
             .fillMaxWidth()
             .padding(5.dp)
-            .clip(DragonShape)
+            .clip(MaterialTheme.shapes.large)
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .onFocusChanged { focusState ->
                 val focused = focusState.isFocused

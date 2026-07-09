@@ -1,30 +1,10 @@
-import com.android.build.api.dsl.LibraryExtension
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
 }
 
-kotlin {
-    jvmToolchain(21)
-}
-
-extensions.configure<LibraryExtension> {
+android {
     namespace = "org.elnix.dragonlauncher.ui.theme"
-
-    compileSdk {
-        version = release(libs.versions.compileSdk.get().toInt())
-    }
-
-    defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt()
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
 
     buildFeatures {
         compose = true
@@ -37,9 +17,10 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
+    implementation(libs.settings.core)
+    implementation(libs.settings.runtime)
 
     runtimeOnly(libs.androidx.lifecycle.process)
-
 
     api(libs.androidx.compose.ui.text)
     api(libs.androidx.compose.runtime)
@@ -51,6 +32,4 @@ dependencies {
     api(project(":core:base"))
     api(project(":core:enumsui"))
     implementation(project(":core:settings"))
-    implementation(libs.settings.core)
-    implementation(libs.settings.runtime)
 }

@@ -9,14 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.theme.DarkDragonColorScheme
 import org.elnix.dragonlauncher.base.theme.LightDragonColorScheme
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
-import io.github.elnix90.runtime.asState
 
 
 @Composable
-fun systemColorScheme(): ColorScheme {
+public fun systemColorScheme(): ColorScheme {
     val context = LocalContext.current
     val darkTheme = isSystemInDarkTheme()
     val dynamicColors by ColorModesSettingsStore.dynamicColors.asState()

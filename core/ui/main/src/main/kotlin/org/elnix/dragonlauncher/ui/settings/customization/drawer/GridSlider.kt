@@ -26,14 +26,13 @@ import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
 
 @Composable
-fun GridSizeSlider(apps: List<Application>) {
+public fun GridSizeSlider(apps: List<Application>) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -78,8 +77,8 @@ fun GridSizeSlider(apps: List<Application>) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp)
-                .clip(DragonShape)
-                .border(2.dp, MaterialTheme.colorScheme.primary, DragonShape)
+                .clip(MaterialTheme.shapes.large)
+                .border(2.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large)
         ) {
             AppGrid(
                 apps = apps.shuffled().take(if (tempGridSize == 1) 3 else tempGridSize * 2),

@@ -23,13 +23,12 @@ import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.enumsui.toggle.WorkspaceAction
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 
 @Composable
-fun ReorderableCollectionItemScope.WorkspaceRow(
+public fun ReorderableCollectionItemScope.WorkspaceRow(
     workspace: Workspace,
     isDragging: Boolean = false,
     onClick: () -> Unit,
@@ -49,7 +48,7 @@ fun ReorderableCollectionItemScope.WorkspaceRow(
 
     Card(
         colors = AppObjectsColors.cardColors(),
-        shape = DragonShape,
+        shape = MaterialTheme.shapes.large,
         elevation = CardDefaults.cardElevation(elevation.value),
         modifier = Modifier
             .scale(scale.value)

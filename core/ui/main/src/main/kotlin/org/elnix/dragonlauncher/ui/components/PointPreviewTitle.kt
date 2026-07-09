@@ -37,7 +37,7 @@ import org.elnix.dragonlauncher.ui.actions.actionLabel
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun PointPreviewTitle(
+public fun PointPreviewTitle(
     point: Point?,
     topPadding: Dp = 60.dp,
     showLabel: Boolean,

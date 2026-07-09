@@ -20,7 +20,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 
 @Composable
-fun UrlInputDialog(
+public fun UrlInputDialog(
     onDismiss: () -> Unit,
     onUrlSelected: (Action.OpenUrl) -> Unit
 ) {

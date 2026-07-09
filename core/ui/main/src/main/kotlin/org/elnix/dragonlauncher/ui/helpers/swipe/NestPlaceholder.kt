@@ -4,12 +4,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.DrawScope
 
 @Suppress("FunctionName")
-fun DrawScope.NestPlaceholder(
+public fun DrawScope.NestPlaceholder(
     center: Offset,
     drawParams: DrawParams
 ) {
     drawCircle(
-        color = drawParams.extraColors.circle,
+        color = drawParams.extraColors.shapes,
         center = center,
         radius = 100f
     )

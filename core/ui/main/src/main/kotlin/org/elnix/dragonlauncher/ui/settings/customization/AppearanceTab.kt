@@ -14,7 +14,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 
 @Composable
-fun AppearanceTab(
+public fun AppearanceTab(
     onNavigate: (NavigationRoute) -> Unit,
     onBack: () -> Unit
 ) {

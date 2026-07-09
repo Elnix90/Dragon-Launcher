@@ -19,12 +19,11 @@ import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Companion.settingsRoutes
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeResId
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.LazyColumnWithScrollIndicator
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 
 @Composable
-fun SettingsPagePicker(
+public fun SettingsPagePicker(
     onDismissRequest: () -> Unit,
     onSelect: (NavigationRoute) -> Unit
 ) {
@@ -48,7 +47,7 @@ fun SettingsPagePicker(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(DragonShape)
+                        .clip(MaterialTheme.shapes.large)
                         .clickable { onSelect(route) }
                         .padding(5.dp),
                     verticalAlignment = Alignment.CenterVertically,

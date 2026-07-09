@@ -14,7 +14,7 @@ import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.DrawScopeText
 
 @Composable
-fun rememberDrawScopeText(
+public fun rememberDrawScopeText(
     point: Point,
     sizePx: Float
 ): CustomTexts {
@@ -46,7 +46,7 @@ fun rememberDrawScopeText(
 
 public typealias CustomTexts = Pair<DrawScopeText, DrawScopeText>?
 
-fun geTopLeftAndTM(
+public fun geTopLeftAndTM(
     text: String,
     textStyle: TextStyle,
     sizePx: Float,

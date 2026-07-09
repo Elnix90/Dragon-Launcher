@@ -21,7 +21,7 @@ import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
 
 @Deprecated("use DragonSettingGroup instead")
 @Composable
-fun TextDividerOld(
+public fun TextDividerOld(
     text: String,
     modifier: Modifier = Modifier,
     lineColor: Color = MaterialTheme.colorScheme.outline,

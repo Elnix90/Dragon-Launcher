@@ -1,31 +1,11 @@
-import com.android.build.api.dsl.LibraryExtension
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
 }
 
-kotlin {
-    jvmToolchain(21)
-}
-
-extensions.configure<LibraryExtension> {
+android {
     namespace = "org.elnix.dragonlauncher.ui.main"
-
-    compileSdk {
-        version = release(libs.versions.compileSdk.get().toInt())
-    }
-
-    defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt()
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
 
     buildFeatures {
         compose = true
@@ -44,6 +24,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.appcompat)
+    implementation(libs.material)
     implementation(libs.androidx.material3)
     implementation(libs.reorderable)
     implementation(libs.shapeindicators)

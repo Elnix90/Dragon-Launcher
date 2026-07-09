@@ -26,7 +26,7 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun StatusBarDate(
+public fun StatusBarDate(
     element: StatusBar.Date,
     onAction: ((Action) -> Unit)? = null
 ) {
@@ -84,7 +84,7 @@ fun StatusBarDate(
 
 
 @Composable
-fun StatusBarTime(
+public fun StatusBarTime(
     element: StatusBar.Time,
     onAction: ((Action) -> Unit)? = null
 ) {

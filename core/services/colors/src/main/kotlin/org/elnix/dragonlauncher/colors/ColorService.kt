@@ -17,7 +17,7 @@ internal class ColorServiceImpl(
 ) : ColorService {
 
     private val angleLineColor = ColorSettingsStore.angleLineColor.flow(ctx)
-    private val circleColor = ColorSettingsStore.circleColor.flow(ctx)
+    private val shapesColor = ColorSettingsStore.shapesColor.flow(ctx)
     private val launchAppColor = ColorSettingsStore.launchAppColor.flow(ctx)
     private val openUrlColor = ColorSettingsStore.openUrlColor.flow(ctx)
     private val notificationShadeColor = ColorSettingsStore.notificationShadeColor.flow(ctx)
@@ -34,10 +34,11 @@ internal class ColorServiceImpl(
     private val toggleData = ColorSettingsStore.toggleData.flow(ctx)
     private val toggleWifi = ColorSettingsStore.toggleWifi.flow(ctx)
     private val runAdbCommand = ColorSettingsStore.runAdbCommand.flow(ctx)
+    private val holdToActivateColor = ColorSettingsStore.holdToActivateColor.flow(ctx)
 
     override val extraColors: Flow<ExtraColors> = combine(
         angleLineColor,
-        circleColor,
+        shapesColor,
         launchAppColor,
         openUrlColor,
         notificationShadeColor,
@@ -53,11 +54,12 @@ internal class ColorServiceImpl(
         toggleBluetooth,
         toggleData,
         toggleWifi,
-        runAdbCommand
+        runAdbCommand,
+        holdToActivateColor
     ) { extraColors ->
         ExtraColors(
             angleLine = extraColors[0],
-            circle = extraColors[1],
+            shapes = extraColors[1],
             launchApp = extraColors[2],
             openUrl = extraColors[3],
             notificationShade = extraColors[4],
@@ -73,7 +75,9 @@ internal class ColorServiceImpl(
             toggleBluetooth = extraColors[14],
             toggleData = extraColors[15],
             toggleWifi = extraColors[16],
-            runAdbCommand = extraColors[17]
+
+            runAdbCommand = extraColors[17],
+            holdToActivate = extraColors[18]
         )
     }
 

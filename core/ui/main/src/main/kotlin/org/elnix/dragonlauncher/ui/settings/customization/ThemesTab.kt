@@ -76,7 +76,7 @@ import org.json.JSONObject
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-fun ThemesTab(
+public fun ThemesTab(
     onBack: () -> Unit,
     backupViewModel: BackupViewModel = activityViewModel()
 ) {

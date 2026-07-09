@@ -38,6 +38,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
@@ -85,7 +86,6 @@ import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -96,7 +96,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-fun FontTab(onBack: () -> Unit) {
+public fun FontTab(onBack: () -> Unit) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -467,7 +467,7 @@ fun FontTab(onBack: () -> Unit) {
                                         .weight(1f)
                                         .animateWidth(interactionSources[2]),
                                     colors = AppObjectsColors.cancelIconButtonColors(),
-                                    shapes = UiConstants.dragonIconButtonShapes()
+                                    shapes = IconButtonDefaults.shapes()
                                 ) {
                                     Icon(
                                         painter = painterResource(R.drawable.delete_forever),
@@ -548,7 +548,7 @@ fun FontTab(onBack: () -> Unit) {
                                         .weight(1f)
                                         .animateWidth(interactionSources[4]),
                                     colors = AppObjectsColors.cancelIconButtonColors(),
-                                    shapes = UiConstants.dragonIconButtonShapes()
+                                    shapes = IconButtonDefaults.shapes()
                                 ) {
                                     Icon(
                                         painter = painterResource(R.drawable.cancel),
@@ -636,7 +636,7 @@ fun FontTab(onBack: () -> Unit) {
                     }
                 },
                 singleLine = true,
-                shape = DragonShape
+                shape = MaterialTheme.shapes.large
             )
         }
 
@@ -748,7 +748,7 @@ fun FontTab(onBack: () -> Unit) {
 }
 
 @Composable
-fun FontRow(
+public fun FontRow(
     font: String,
     isSelected: Boolean,
     isInstalled: Boolean,
@@ -762,7 +762,7 @@ fun FontRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(DragonShape)
+            .clip(MaterialTheme.shapes.large)
             .background(containerColor)
             .clickable { onClick() }
             .padding(horizontal = 12.dp, vertical = 8.dp),

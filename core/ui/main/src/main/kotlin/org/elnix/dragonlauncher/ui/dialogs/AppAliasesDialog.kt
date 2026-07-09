@@ -37,7 +37,6 @@ import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
@@ -45,7 +44,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AppAliasesDialog(
+public fun AppAliasesDialog(
     app: Application,
     workspaceViewModel: DrawerViewModel = activityViewModel(),
     onDismiss: () -> Unit
@@ -174,7 +173,7 @@ fun AppAliasesDialog(
         },
         dismissButton = {},
         containerColor = MaterialTheme.colorScheme.surface,
-        shape = DragonShape
+        shape = MaterialTheme.shapes.large
     )
 
     if (showAliasEditScreen != null) {

@@ -5,6 +5,7 @@ package org.elnix.dragonlauncher.ui.settings.customization
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -59,7 +61,6 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
@@ -80,7 +81,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun ColorSelectorTab(
+public fun ColorSelectorTab(
     onBack: (() -> Unit)
 ) {
     val ctx = LocalContext.current
@@ -121,7 +122,8 @@ fun ColorSelectorTab(
                 .fillMaxWidth()
                 .height(IntrinsicSize.Max)
                 .background(
-                    color = MaterialTheme.colorScheme.surface, shape = DragonShape
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = MaterialTheme.shapes.large
                 )
                 .padding(12.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -133,7 +135,7 @@ fun ColorSelectorTab(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .clip(DragonShape)
+                        .clip(MaterialTheme.shapes.large)
                         .conditional(selected) {
                             background(MaterialTheme.colorScheme.surfaceDim)
                         }
@@ -170,32 +172,37 @@ fun ColorSelectorTab(
                         )
                     }
 
-
                     // I like this simple animation I made, I think I've changed my mind about animations
                     val shapeCorners by animateIntAsState(
                         targetValue = if (selected) 12 else 50,
-                        animationSpec = bouncySpec(),
+                        animationSpec = bouncySpec()
+                    )
 
-                        )
+                    val scale by animateFloatAsState(
+                        targetValue = if (selected) 1.2f else 1f,
+                        animationSpec = bouncySpec()
+                    )
 
                     val boxShape = RoundedCornerShape(shapeCorners)
 
                     if (background != null) {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(boxShape)
-                                .then(
-                                    when (background) {
-                                        is Color -> Modifier.background(background)
-                                        is Brush -> Modifier.background(background)
-                                        else -> Modifier
-                                    }
-                                )
-                                .border(
-                                    1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f), boxShape
-                                )
-                        )
+                        Box((Modifier.scale(scale))) {
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(boxShape)
+                                    .then(
+                                        when (background) {
+                                            is Color -> Modifier.background(background)
+                                            is Brush -> Modifier.background(background)
+                                            else -> Modifier
+                                        }
+                                    )
+                                    .border(
+                                        1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f), boxShape
+                                    )
+                            )
+                        }
                     }
 
 
@@ -408,8 +415,9 @@ fun ColorSelectorTab(
                             }
 
                             ColorSelectorModes.Custom -> {
+                                SettingsColorPicker(ColorSettingsStore.holdToActivateColor)
                                 SettingsColorPicker(ColorSettingsStore.angleLineColor)
-                                SettingsColorPicker(ColorSettingsStore.circleColor)
+                                SettingsColorPicker(ColorSettingsStore.shapesColor)
                                 SettingsColorPicker(ColorSettingsStore.launchAppColor)
                                 SettingsColorPicker(ColorSettingsStore.openUrlColor)
                                 SettingsColorPicker(ColorSettingsStore.notificationShadeColor)
@@ -493,7 +501,7 @@ fun ColorSelectorTab(
                 ) { applyColor = it ?: Color.Black }
             },
             containerColor = MaterialTheme.colorScheme.surface,
-            shape = DragonShape
+            shape = MaterialTheme.shapes.large
         )
     }
 

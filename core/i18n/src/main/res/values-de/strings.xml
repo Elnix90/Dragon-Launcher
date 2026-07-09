@@ -48,7 +48,6 @@
     <string name="reset_to_default_colors">Zurücksetzen auf Standardfarben</string>
     <string name="make_every_colors_random">Alle Farben randomisieren</string>
     <string name="angle_line_color">Farbe der Winkellinie</string>
-    <string name="circle_color">Kreisfarbe</string>
     <string name="launch_app_color">Start-App-Farbe</string>
     <string name="open_url_color">URL Farbe öffnen</string>
     <string name="notification_shade_color">Benachrichtigungsfarbe</string>

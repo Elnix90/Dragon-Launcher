@@ -70,7 +70,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @SuppressLint("LocalContextResourcesRead")
 @Composable
-fun MainScreen(
+public fun MainScreen(
     onNavigate: (NavigationRoute) -> Unit,
     onLaunchAction: (Point) -> Unit,
     widgetsViewModel: WidgetsViewModel = activityViewModel(),

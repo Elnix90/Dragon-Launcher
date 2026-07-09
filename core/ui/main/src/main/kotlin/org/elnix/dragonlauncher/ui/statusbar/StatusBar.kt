@@ -72,7 +72,6 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
@@ -90,7 +89,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun StatusBar(
+public fun StatusBar(
     launchAction: ((Action) -> Unit)?,
 ) {
     val view = LocalView.current
@@ -173,7 +172,7 @@ private data class StatusBarElement(
 )
 
 @Composable
-fun EditStatusBar() {
+public fun EditStatusBar() {
     val ctx = LocalContext.current
     val haptic = LocalHapticFeedback.current
 
@@ -299,7 +298,7 @@ fun EditStatusBar() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(100.dp)
-                .background(MaterialTheme.colorScheme.surface, DragonShape)
+                .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.large)
                 .background(statusBarBackground)
                 .padding(
                     start = leftStatusBarPadding.dp,
@@ -358,8 +357,8 @@ fun EditStatusBar() {
                             .scale(scale)
                             .longPressDraggableHandle(onDragStopped = ::save)
                             .sizeIn(minWidth = 50.dp, minHeight = 50.dp)
-                            .border(1.dp, borderColor, DragonShape)
-                            .clip(DragonShape)
+                            .border(1.dp, borderColor, MaterialTheme.shapes.large)
+                            .clip(MaterialTheme.shapes.large)
                             .background(backgroundColor)
                             .clickable {
                                 selectedElementId =
@@ -662,8 +661,8 @@ fun EditStatusBar() {
                 DragonTooltip(itemName) {
                     Box(
                         modifier = Modifier
-                            .border(1.dp, MaterialTheme.colorScheme.primary, DragonShape)
-                            .clip(DragonShape)
+                            .border(1.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large)
+                            .clip(MaterialTheme.shapes.large)
                             .background(MaterialTheme.colorScheme.surfaceVariant)
                             .sizeIn(minWidth = 50.dp, minHeight = 50.dp)
                             .clickable { addElement(item) }
@@ -691,11 +690,11 @@ fun EditStatusBar() {
 
 
 @Composable
-fun StatusBarItem(
+public fun StatusBarItem(
     element: StatusBar,
     launchAction: ((Action) -> Unit)? = null,
     previewMode: Boolean = false
-) = when (element) {
+): Unit = when (element) {
     is StatusBar.Bandwidth -> StatusBarBandwidth(element)
 
     is StatusBar.Connectivity -> StatusBarConnectivity(
@@ -724,7 +723,7 @@ fun StatusBarItem(
 
 
 @Composable
-fun showStatusBar(): State<Boolean> {
+public fun showStatusBar(): State<Boolean> {
     val mainScreensLayers = LocalMainScreenLayers.current
 
     return remember(mainScreensLayers) {
@@ -740,7 +739,7 @@ fun showStatusBar(): State<Boolean> {
 
 
 @Composable
-fun showChargingAnimation(): State<Boolean> {
+public fun showChargingAnimation(): State<Boolean> {
     val mainScreensLayers = LocalMainScreenLayers.current
 
     return remember(mainScreensLayers) {

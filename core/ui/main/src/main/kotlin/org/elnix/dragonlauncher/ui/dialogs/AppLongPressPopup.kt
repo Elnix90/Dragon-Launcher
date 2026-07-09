@@ -42,7 +42,7 @@ import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AppLongPressPopup(
+public fun AppLongPressPopup(
     app: Application,
     appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
     drawerViewModel: DrawerViewModel = activityViewModel(),

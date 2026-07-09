@@ -23,13 +23,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 
 
 @Composable
-fun TextEditorDialog(
+public fun TextEditorDialog(
     title: @Composable () -> String,
     placeHolder: @Composable () -> String,
     initialText: String,
@@ -96,6 +95,6 @@ fun TextEditorDialog(
         },
         dismissButton = {},
         containerColor = MaterialTheme.colorScheme.surface,
-        shape = DragonShape
+        shape = MaterialTheme.shapes.large
     )
 }

@@ -19,60 +19,42 @@ public data class Nest(
      *  By default, the id 0 is the first nest that is available,
      *  I'll try to make the old system importable, to avoid breaking changes like empty actions circle
      */
-    @SerialName("id")
     val id: Int = 0,
 
     /**
      * How far the user has to swipe to start actions triggering.
      * In the opposite; how far does the zone that triggers nothing extends
      */
-    @SerialName("cancelZone")
-    val cancelZone: Int = 150,
+    val cancelZone: Int = defaultCancelZone,
 
     /**
      * A set of one or more [IntersectionShape], each one of them belongs to the nest and
      */
-    @SerialName("intersectionShapes")
     val intersectionShapes: Set<IntersectionShape> = defaultIntersectionShapes,
     /**
      * A custom name for the nest you can set for easier identification
      */
-    @SerialName("name")
     val name: String? = null,
 
-    /**
-     * Haptic feedback, as default for the points in  the circle, separated from the point system
-     */
-    @SerialName("hapticFeedback")
-    val haptic: CustomHapticFeedback? = null,
-
-    /**
-     * The nest radius, used to override the default nests radii, if set to null, it uses the default value, otherwise it picks this
-     */
-    @SerialName("nestRadius")
-    val nestRadius: Int? = null,
-
-    /**
-     * If this nests displays it's circle, this is a per-nest setting
-     */
-    @SerialName("showCircle")
-    val showCircle: Boolean? = null,
-
-    /**
-     * Same settings as in the global Appearance tab, but applied to this specific nest.
-     * Names are self-explanatory
-     */
-    @SerialName("showAllActionsOnCurrentCircle")
-    val showAllActionsOnCurrentCircle: Boolean? = null,
-
-    @SerialName("showAllActionsOnCurrentNest")
-    val showAllActionsOnCurrentNest: Boolean? = null,
+//    /**
+//     * Same settings as in the global Appearance tab, but applied to this specific nest.
+//     * Names are self-explanatory
+//     */
+//    val showAllActionsOnCurrentShape: Boolean? = null,
+//
+//    /**
+//     * If true, all points in the nest are visible when
+//     */
+//    val showAllPointsOnCurrentNest: Boolean = false,
 ) {
 //    override fun toString(): String = "Nest(id = $id, contains ${intersectionShapes.size} shapes)"
 //    override fun toString(): String = "Nest N°$id"
 
     public infix fun scaledBy(scale: Float): Nest = this.copy(intersectionShapes = this.intersectionShapes.mapTo(mutableSetOf()) { it scaledBy scale })
 
+    public fun name(): String = this.name ?: id.toString()
+
+    @Suppress("ConstPropertyName")
     public companion object {
 
         public val defaultIntersectionShapes: Set<IntersectionShape> = setOf(
@@ -97,6 +79,9 @@ public data class Nest(
 //                offset = Offset.Zero
 //            )
         )
+
+
+        public const val defaultCancelZone: Int = 150
 
         public object NestJson: DragonJson<List<Nest>>()
     }

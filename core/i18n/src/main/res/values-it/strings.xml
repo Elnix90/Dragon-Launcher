@@ -20,7 +20,6 @@
     <string name="reset_to_default_colors">Ripristina Colori Default</string>
     <string name="make_every_colors_random">Imposta Colori Casualmente</string>
     <string name="angle_line_color">Colore Linea Angolo</string>
-    <string name="circle_color">Colore Cerchio</string>
     <string name="launch_app_color">Colore Avvia Applicazione</string>
     <string name="control_panel_color">Colore Pannello Di Controllo</string>
     <string name="show_sub_nest_size_slider">Mostra slider sotto-raggruppamenti</string>

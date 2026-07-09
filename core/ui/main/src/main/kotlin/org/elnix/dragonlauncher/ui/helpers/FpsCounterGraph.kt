@@ -39,7 +39,7 @@ private const val GRAPH_Y_AXIS_FPS_LIMIT = 144
 // https://gist.github.com/miredirex/e7d47d6f85e91cb897032204f2273e3b
 
 @Composable
-fun FpsCounterGraph(modifier: Modifier = Modifier) {
+public fun FpsCounterGraph(modifier: Modifier = Modifier) {
     val showFps by DebugSettingsStore.showFps.asState()
     if (!showFps) return
 

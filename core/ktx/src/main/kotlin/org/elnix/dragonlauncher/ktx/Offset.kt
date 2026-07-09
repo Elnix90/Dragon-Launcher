@@ -14,6 +14,16 @@ import kotlin.math.sin
 public inline infix fun Offset.distanceTo(b: Offset): Float =
     hypot(b.x - x, b.y - y)
 
+
+public fun angle360FromOffset(center: Offset, offset: Offset): Float {
+    val dx = offset.x - center.x
+    val dy = offset.y - center.y
+    val angleRad = atan2(dx.toDouble(), -dy.toDouble())
+    var deg = Math.toDegrees(angleRad).toFloat()
+    if (deg < 0f) deg += 360f
+    return deg
+}
+
 public inline infix fun Offset.distanceSquaredTo(b: Offset): Float =
     (b.x - x).pow(2) +  (b.y - y).pow(2)
 

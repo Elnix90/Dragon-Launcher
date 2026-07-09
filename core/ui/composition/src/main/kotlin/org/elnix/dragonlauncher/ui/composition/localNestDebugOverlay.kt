@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.composition
 
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
 
-val LocalNestDebugOverlay = compositionLocalOf<Boolean> { error("no LocalNestDebugOverlay provided") }
+public val LocalNestDebugOverlay: ProvidableCompositionLocal<Boolean> = compositionLocalOf { error("no LocalNestDebugOverlay provided") }

@@ -13,7 +13,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 
 @Composable
-fun FullScreenOverlay(
+public fun FullScreenOverlay(
     onDismissRequest: () -> Unit,
     alignment: Alignment = Alignment.BottomCenter,
     imePadding: Boolean = true,

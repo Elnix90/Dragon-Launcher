@@ -17,7 +17,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 @Composable
-fun SettingsSwitchRow(
+public fun SettingsSwitchRow(
     setting: BooleanSettingObject,
     enabled: Boolean = true,
     needValidationToEnable: Boolean = false,

@@ -48,7 +48,6 @@
     <string name="reset_to_default_colors">Restablecer a los colores predeterminados</string>
     <string name="make_every_colors_random">Aleatorizar todos los colores</string>
     <string name="angle_line_color">Color de la línea de ángulo</string>
-    <string name="circle_color">Color del círculo</string>
     <string name="launch_app_color">Lanzamiento de App Color</string>
     <string name="open_url_color">URL abierta color</string>
     <string name="notification_shade_color">Color de tono de notificación</string>

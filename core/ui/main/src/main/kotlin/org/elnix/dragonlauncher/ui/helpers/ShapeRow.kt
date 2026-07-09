@@ -18,14 +18,13 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 
 @Composable
-fun ShapeRow(
+public fun ShapeRow(
     selected: IconShape,
     modifier: Modifier = Modifier,
     title: String = stringResource(R.string.edit_icons_shape),
@@ -35,7 +34,7 @@ fun ShapeRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(DragonShape)
+            .clip(MaterialTheme.shapes.large)
             .shapedClickable(onClick = onClick)
             .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 16.dp, vertical = 14.dp),
@@ -72,7 +71,7 @@ fun ShapeRow(
 
 
 @Composable
-fun SmallShapeRow(
+public fun SmallShapeRow(
     selected: IconShape,
     onReset: () -> Unit,
     onClick: () -> Unit
@@ -80,7 +79,7 @@ fun SmallShapeRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(DragonShape)
+            .clip(MaterialTheme.shapes.large)
             .clickable { onClick() }
             .background(MaterialTheme.colorScheme.surface),
         verticalAlignment = Alignment.CenterVertically,

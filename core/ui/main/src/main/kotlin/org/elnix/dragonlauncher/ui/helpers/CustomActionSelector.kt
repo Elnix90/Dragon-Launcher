@@ -153,7 +153,7 @@ private fun ActionSelectorImpl(
 }
 
 @Composable
-fun CustomActionSelector(
+public fun CustomActionSelector(
     label: String,
     currentAction: Action?,
     nullText: String? = null,
@@ -174,7 +174,7 @@ fun CustomActionSelector(
 }
 
 @Composable
-fun SettingActionSelector(setting: ActionSettingObject) {
+public fun SettingActionSelector(setting: ActionSettingObject) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 

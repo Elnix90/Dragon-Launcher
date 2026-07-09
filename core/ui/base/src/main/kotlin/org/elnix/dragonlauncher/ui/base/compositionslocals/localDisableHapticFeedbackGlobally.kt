@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.base.compositionslocals
 
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
 
-val LocalDisableHapticFeedbackGlobally = compositionLocalOf<Boolean> { error("No LocalDisableHapticFeedbackGlobally provided") }
+public val LocalDisableHapticFeedbackGlobally: ProvidableCompositionLocal<Boolean> = compositionLocalOf { error("No LocalDisableHapticFeedbackGlobally provided") }

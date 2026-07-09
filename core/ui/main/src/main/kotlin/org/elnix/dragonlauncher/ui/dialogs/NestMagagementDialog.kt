@@ -42,7 +42,6 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -52,7 +51,7 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 
 @Composable
-fun NestManagementDialog(
+public fun NestManagementDialog(
     pointsViewModel: PointsViewModel = activityViewModel(),
     onDismissRequest: () -> Unit,
     title: String? = null,
@@ -138,7 +137,7 @@ private fun NestManagementItem(
         modifier = modifier
             .fillMaxWidth()
             .height(120.dp)
-            .clip(DragonShape)
+            .clip(MaterialTheme.shapes.large)
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .clickable { onSelect?.invoke() }
             .padding(5.dp),
@@ -165,7 +164,7 @@ private fun NestManagementItem(
             Row(
                 modifier = Modifier
                     .height(IntrinsicSize.Min)
-                    .clip(DragonShape)
+                    .clip(MaterialTheme.shapes.large)
                     .clickable {
                         ctx.copyToClipboard(nest.id.toString())
                     },
@@ -212,7 +211,7 @@ private fun NestManagementItem(
                 colors = AppObjectsColors.outlinedTextFieldColors(removeBorder = true),
                 singleLine = true,
                 modifier = Modifier
-                    .clip(DragonShape)
+                    .clip(MaterialTheme.shapes.large)
                     .weight(1f)
             )
         }

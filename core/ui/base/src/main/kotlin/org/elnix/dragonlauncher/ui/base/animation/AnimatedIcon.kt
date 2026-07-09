@@ -8,13 +8,13 @@ import androidx.compose.ui.res.painterResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.animation.AnimatedIconStatus.Default
 import org.elnix.dragonlauncher.ui.base.animation.AnimatedIconStatus.Error
 import org.elnix.dragonlauncher.ui.base.animation.AnimatedIconStatus.Success
+import kotlin.time.Duration.Companion.milliseconds
 
 
 /**
@@ -22,7 +22,7 @@ import org.elnix.dragonlauncher.ui.base.animation.AnimatedIconStatus.Success
  * there are 3 possible states for this component:
  *  [Default], [Success] and [Error]
  */
-enum class AnimatedIconStatus {
+public enum class AnimatedIconStatus {
     Default, Success, Error
 }
 
@@ -35,11 +35,10 @@ enum class AnimatedIconStatus {
  *
  * @param scope CoroutineScope for launching state change animations
  */
-class AnimatedIcon(
+public class AnimatedIcon(
     private val scope: CoroutineScope
 ) {
-    private val _status = MutableStateFlow(Default)
-    val status = _status.asStateFlow()
+    public val status: SettingFlow<AnimatedIconStatus> = SettingFlow(Default)
 
     private var job: Job? = null
 
@@ -50,12 +49,12 @@ class AnimatedIcon(
      * Shows [AnimatedIconStatus.Error] icon for 500ms then returns to [AnimatedIconStatus.Default].
      * Cancels any previous pending state change.
      */
-    fun setError() {
+    public fun setError() {
         job?.cancel()
         job = scope.launch {
-            _status.value = Error
-            delay(500)
-            _status.value = Default
+            status.value = Error
+            delay(500.milliseconds)
+            status.value = Default
         }
     }
 
@@ -65,11 +64,11 @@ class AnimatedIcon(
      * Shows [AnimatedIconStatus.Success] icon for 500ms then returns to [AnimatedIconStatus.Default].
      * Cancels any previous pending state change.
      */
-    fun setSuccess() {
+    public fun setSuccess() {
         job = scope.launch {
-            _status.value = Success
-            delay(500)
-            _status.value = Default
+            status.value = Success
+            delay(500.milliseconds)
+            status.value = Default
         }
     }
 }
@@ -82,7 +81,7 @@ class AnimatedIcon(
  * @return Painter for the current status ([AnimatedIconStatus.Default], [AnimatedIconStatus.Success], or [AnimatedIconStatus.Error] icon)
  */
 @Composable
-fun AnimatedIconStatus.icon(defaultIcon: Int): Painter {
+public fun AnimatedIconStatus.icon(defaultIcon: Int): Painter {
     return painterResource(
         when (this) {
             Default -> defaultIcon
@@ -100,7 +99,7 @@ fun AnimatedIconStatus.icon(defaultIcon: Int): Painter {
  * @return [AnimatedIcon] instance tied to current composition scope
  */
 @Composable
-fun rememberClipboardIconController(): AnimatedIcon {
+public fun rememberClipboardIconController(): AnimatedIcon {
     val scope = rememberCoroutineScope()
     return remember { AnimatedIcon(scope) }
 }

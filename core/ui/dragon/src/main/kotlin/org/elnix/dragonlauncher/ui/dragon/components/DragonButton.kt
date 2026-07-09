@@ -22,7 +22,7 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun DragonButton(
+public fun DragonButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -60,7 +60,7 @@ fun DragonButton(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun ButtonGroupScope.DragonButton(
+public fun ButtonGroupScope.DragonButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,

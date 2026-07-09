@@ -56,7 +56,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -83,12 +82,12 @@ import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsMoveUpDown
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsSnapping
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsUpDown
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ktx.rotateBy
 import org.elnix.dragonlauncher.ktx.toDp
 import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
@@ -109,6 +108,7 @@ import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
 import org.elnix.dragonlauncher.ui.helpers.SmallShapeRow
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
+import org.elnix.dragonlauncher.ui.helpers.swipe.backgroundGrid
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -118,7 +118,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WidgetsTab(
+public fun WidgetsTab(
     onBack: () -> Unit,
     widgetsViewModel: WidgetsViewModel = activityViewModel(),
     onLaunchSystemWidgetPicker: (nestId: Int) -> Unit,
@@ -126,8 +126,8 @@ fun WidgetsTab(
     onRemoveWidget: (Widget) -> Unit,
     initialNestId: Int = 0
 ) {
-    val cellSizeDp by UiSettingsStore.cellSizeDp.asState()
-    val cellSizePx = cellSizeDp * LocalDensity.current.density
+    val cellSizeDp by UiSettingsStore.widgetsCellSizeDp.asState()
+    val cellSizePx = cellSizeDp.px
     val widgets by widgetsViewModel.widgets.asState()
     val scope = rememberCoroutineScope()
 
@@ -378,36 +378,11 @@ fun WidgetsTab(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .border(1.dp, MaterialTheme.colorScheme.primary, DragonShape)
+                        .border(1.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large)
                         .conditional(snapMove) {
                             drawWithCache {
                                 onDrawBehind {
-                                    val lineWidth = 1f
-                                    val color = Color.White.copy(alpha = 0.25f)
-
-                                    // Vertical lines
-                                    var x = 0f
-                                    while (x <= size.width) {
-                                        drawLine(
-                                            color = color,
-                                            start = Offset(x, 0f),
-                                            end = Offset(x, size.height),
-                                            strokeWidth = lineWidth
-                                        )
-                                        x += cellSizePx
-                                    }
-
-                                    // Horizontal lines
-                                    var y = 0f
-                                    while (y <= size.height) {
-                                        drawLine(
-                                            color = color,
-                                            start = Offset(0f, y),
-                                            end = Offset(size.width, y),
-                                            strokeWidth = lineWidth
-                                        )
-                                        y += cellSizePx
-                                    }
+                                    backgroundGrid(cellSizePx)
                                 }
                             }
                         }
@@ -484,9 +459,9 @@ fun WidgetsTab(
         DragonModalBottomSheet(
             onDismissRequest = { showMoreSheet = false },
         ) {
-            Text("${stringResource(R.string.widget_number_total)}: ${widgets.size}")
-            Text("${stringResource(R.string.widget_number_nest)}: ${widgets.count { it.nestId == nestId }}")
-            Text("${stringResource(R.string.current_nest)}: $nestId")
+            Text(stringResource(R.string.widget_number_total, widgets.size))
+            Text(stringResource(R.string.widget_number_nest, widgets.count { it.nestId == nestId }))
+            Text(stringResource(R.string.current_nest, nestId))
 
             HorizontalDivider()
 
@@ -529,7 +504,7 @@ fun WidgetsTab(
                 }
             }
 
-            SettingsSlider(UiSettingsStore.cellSizeDp)
+            SettingsSlider(UiSettingsStore.widgetsCellSizeDp)
         }
     }
 
@@ -714,7 +689,7 @@ private fun DraggableWidget(
             .border(
                 width = if (selected) 2.dp else 0.dp,
                 color = borderColor,
-                shape = DragonShape
+                shape = MaterialTheme.shapes.large
             )
     ) {
 

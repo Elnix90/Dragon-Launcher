@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 
 @Composable
-fun SettingsColorPicker(
+public fun SettingsColorPicker(
     settingObject: SettingObject<Color, String>,
     enabled: Boolean = true,
     onPicked: ((Color?) -> Unit)?=  null

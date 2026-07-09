@@ -18,7 +18,7 @@ import org.elnix.dragonlauncher.ui.remembers.rememberAutoBackupLauncher
  * now since it auto get uri permissions on import
  */
 @Composable
-fun ReselectAutoBackupBanner() {
+public fun ReselectAutoBackupBanner() {
     val autoBackupLauncher = rememberAutoBackupLauncher()
 
     DragonRow(

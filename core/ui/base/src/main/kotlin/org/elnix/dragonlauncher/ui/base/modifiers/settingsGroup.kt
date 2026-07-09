@@ -12,7 +12,7 @@ import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
 
 
 @Composable
-fun Modifier.settingsGroup(
+public fun Modifier.settingsGroup(
     clickModifier: Modifier? = null,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     enabled: Boolean = true

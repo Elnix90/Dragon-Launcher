@@ -78,6 +78,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.common.utils.DateUtils.formatDuration
@@ -85,10 +86,10 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import java.util.Calendar
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 
 private val ZenPurple = Color(0xFF6C5CE7)
@@ -101,7 +102,7 @@ private val TextSecondary = Color(0xFFB2BEC3)
 
 @SuppressLint("MissingPermission")
 @Composable
-fun DigitalPauseScreen(
+public fun DigitalPauseScreen(
     application: Application,
     appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
     onCancel: () -> Unit
@@ -136,7 +137,7 @@ fun DigitalPauseScreen(
 
     LaunchedEffect(Unit) {
         while (countdown > 0) {
-            delay(1000)
+            delay(1000.milliseconds)
             countdown--
             if (countdown % 3 == 0 && countdown > 0) {
                 currentPhraseIndex = (currentPhraseIndex + 1) % breathingPhrases.size
@@ -606,7 +607,7 @@ private fun FloatingParticles(modifier: Modifier = Modifier) {
     }
 }
 
-data class ParticleData(
+private data class ParticleData(
     val x: Float,
     val y: Float,
     val size: Dp,
@@ -713,7 +714,7 @@ private fun PermissionNeededContent(ctx: Context) {
     }
 }
 
-data class AppUsageStats(
+public data class AppUsageStats(
     val yesterdayMinutes: Long,
     val todayMinutes: Long
 )

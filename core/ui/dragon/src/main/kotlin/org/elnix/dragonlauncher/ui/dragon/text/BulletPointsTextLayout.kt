@@ -18,7 +18,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BulletPointsTextLayout(
+public fun BulletPointsTextLayout(
     modifier: Modifier = Modifier,
     textLines: List<String>,
     textStyle: TextStyle = MaterialTheme.typography.bodySmall,

@@ -25,7 +25,7 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 
 @Composable
-fun WorkspaceUnavailableContent(
+public fun WorkspaceUnavailableContent(
     workspaceType: WorkspaceType
 ) {
     Box(

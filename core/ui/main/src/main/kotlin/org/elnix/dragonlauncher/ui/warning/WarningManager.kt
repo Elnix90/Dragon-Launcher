@@ -16,29 +16,26 @@
  */
 package org.elnix.dragonlauncher.ui.warning
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
 import kotlinx.datetime.toLocalDateTime
+import org.elnix.dragonlauncher.base.SettingFlow
 import kotlin.time.Clock
 
 // Cloned from https://github.com/shub39/Grit/blob/89c2bb9a8c3b9bc66262ced9e378a8103a6d7a61/app/src/main/java/com/shub39/grit/warning/WarningManager.kt
 
-object WarningManager {
-    fun showWarning(): Boolean = (getDaysLeft() >= 0)
+public object WarningManager {
+    public fun showWarning(): Boolean = (getDaysLeft() >= 0)
 
-    private val _showWarningDialog = MutableStateFlow(showWarning())
 
-    val showWarningDialog = _showWarningDialog.asStateFlow()
+    public val showWarningDialog: SettingFlow<Boolean> = SettingFlow(showWarning())
 
-    fun updateWarningDialog(newValue: Boolean) {
-        _showWarningDialog.update { newValue }
+    public fun updateWarningDialog(newValue: Boolean) {
+        showWarningDialog.update { newValue }
     }
 
-    fun getDaysLeft(): Int {
+    public fun getDaysLeft(): Int {
         return Clock.System.now()
             .toLocalDateTime(TimeZone.currentSystemDefault())
             .date

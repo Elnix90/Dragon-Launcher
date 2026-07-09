@@ -34,13 +34,13 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 
 
-enum class BetaVersionType {
+public enum class BetaVersionType {
     App, Feature
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun BetaVersionWarning(
+public fun BetaVersionWarning(
     betaVersionType: BetaVersionType
 ) {
     val ctx = LocalContext.current

@@ -4,7 +4,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -40,7 +39,7 @@ public data class IntersectionShape(
     val haptic: CustomHapticFeedback? = null,
 
     @SerialName("borderStroke")
-    val borderStroke: Int? = null,
+    val borderStroke: Float? = null,
 
     @SerialName("color")
     @Serializable(with = ColorSerializer::class)
@@ -75,7 +74,7 @@ public data class IntersectionShape(
 
     @Suppress("ConstPropertyName")
     public companion object {
-        public val borderStrokeDefault: Dp = 2.dp
+        public const val borderStrokeDefault: Float = 2f
         public const val defaultSize: Float = 300f
     }
 }

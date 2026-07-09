@@ -16,7 +16,7 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 
 @Composable
-fun PointPreviewCanvas(
+public fun PointPreviewCanvas(
     editPoint: Point,
     modifier: Modifier = Modifier,
     pointsViewModel: PointsViewModel = activityViewModel()

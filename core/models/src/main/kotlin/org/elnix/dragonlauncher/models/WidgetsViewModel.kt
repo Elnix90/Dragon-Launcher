@@ -20,7 +20,7 @@ import org.elnix.dragonlauncher.base.undoredo.UndoRedoManager
 import org.elnix.dragonlauncher.base.undoredo.UndoRedoStack
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.settings.stores.array.WidgetsSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.cellSizeDp
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.widgetsCellSizeDp
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -38,7 +38,7 @@ public class WidgetsViewModel @Inject constructor(
     public val dm: DisplayMetrics = ctx.resources.displayMetrics
 
 
-    public val cellSizePx: StateFlow<Float> = cellSizeDp.flow(ctx).map { it * dm.density }.stateIn(
+    public val cellSizePx: StateFlow<Float> = widgetsCellSizeDp.flow(ctx).map { it.value * dm.density }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
         initialValue = 30 * dm.density

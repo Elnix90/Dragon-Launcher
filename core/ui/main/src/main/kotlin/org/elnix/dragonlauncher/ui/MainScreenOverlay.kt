@@ -35,9 +35,6 @@ import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
-import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
-import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultEndCustomObject
-import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultStartCustomObject
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
@@ -69,7 +66,7 @@ import org.elnix.dragonlauncher.ui.remembers.rememberLiveNestControllerStack
 import org.elnix.dragonlauncher.ui.remembers.rememberPointTextStyle
 
 @Composable
-fun MainScreenOverlay(
+public fun MainScreenOverlay(
     iconsViewModel: IconsViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel(),
     start: Offset?,
@@ -222,22 +219,19 @@ fun MainScreenOverlay(
     LaunchedEffect(hoveredPoint?.id, liveNestControllersStack.count { it.isActive }) {
         hoveredPoint?.let { point ->
             if (!disableHapticFeedbackGlobally) {
-                // Determine which circle/haptic map to use
                 val hitNestId = deepestController.nestedNestId ?: return@let
                 val hitNest = pointsService.findNestByIdOrNull(hitNestId) ?: return@let
 
-                val nestHaptic = hitNest.haptic
                 val targetShape =
                     hitNest.intersectionShapes.find { deepestController.nestedHit?.selectedPoint?.collidingShapeId == it.id }
 
-                val hapticToPerform = (point.haptic ?: targetShape?.haptic ?: nestHaptic ?: defaultHapticFeedback())
+                val hapticToPerform = (point.haptic ?: targetShape?.haptic ?: defaultHapticFeedback())
                 hapticToPerform.perform(ctx)
             }
         }
     }
 
     val haptic = LocalHapticFeedback.current
-    // Haptic when entering the "cancel zone" of the Live Nest (Case B).
     LaunchedEffect(deepestController.nestedHit?.isInCancelZone) {
         if (isAnyLiveNestActive && deepestController.isActive && deepestController.nestedHit?.isInCancelZone == true && !disableHapticFeedbackGlobally) {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -281,31 +275,27 @@ fun MainScreenOverlay(
     val showStartObjectPreview by AngleLineSettingsStore.showStartObjectPreview.asState()
     val showEndObjectPreview by AngleLineSettingsStore.showEndObjectPreview.asState()
 
+
+    // All of these uses the isDragging key as remember key to allow the random shape and/or angle to be recomputed each times
     val pickedRememberShapeAngle = remember(isDragging) {
-        (angleLineObject.shape ?: defaultAngleCustomObject.shape).resolveShape()
+        angleLineObject.shape.resolveShape()
     }
     val pickedRememberRotationAngle = remember(isDragging) {
-        angleLineObject.rotation
-            ?.takeIf { it != -1 }
-            ?: (0..360).random()
+        angleLineObject.rotation.takeIf { it != -1 } ?: (0..360).random()
     }
 
     val pickedRememberShapeStart = remember(isDragging) {
-        (startObject.shape ?: defaultStartCustomObject.shape).resolveShape()
+        startObject.shape.resolveShape()
     }
     val pickedRememberRotationStart = remember(isDragging) {
-        startObject.rotation
-            ?.takeIf { it != -1 }
-            ?: (0..360).random()
+        startObject.rotation.takeIf { it != -1 } ?: (0..360).random()
     }
 
     val pickedRememberShapeEnd = remember(isDragging) {
-        (endObject.shape ?: defaultEndCustomObject.shape).resolveShape()
+        endObject.shape.resolveShape()
     }
     val pickedRememberRotationEnd = remember(isDragging) {
-        endObject.rotation
-            ?.takeIf { it != -1 }
-            ?: (0..360).random()
+        endObject.rotation.takeIf { it != -1 } ?: (0..360).random()
     }
 
     val multiplyOrSubtractOpacityInLiveNests by UiSettingsStore.multiplyOrSubtractOpacityInLiveNests.asState()
@@ -464,7 +454,7 @@ fun MainScreenOverlay(
 }
 
 
-fun defaultHapticFeedback(): CustomHapticFeedback = CustomHapticFeedback.build {
+public fun defaultHapticFeedback(): CustomHapticFeedback = CustomHapticFeedback.build {
     haptic(20)
 }
 

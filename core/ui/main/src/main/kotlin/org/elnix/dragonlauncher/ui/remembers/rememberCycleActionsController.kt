@@ -43,7 +43,7 @@ private fun cumulativeTriggerThresholdsMs(stages: List<CycleActionStage>): List<
  *   base stage is current (caller should fire the point's own action in that case).
  * @property clear Resets all cycle state; call after a launch or after a cancel.
  */
-data class CycleActionsState(
+public data class CycleActionsState(
     val isActive: Boolean,
     val currentStageIndex: Int,
     val currentStageAction: Action?,
@@ -66,7 +66,7 @@ data class CycleActionsState(
  * @param isDragging    True while a finger is on screen.
  */
 @Composable
-fun rememberCycleActionsController(
+public fun rememberCycleActionsController(
     pointsViewModel: PointsViewModel = activityViewModel(),
     currentAction: Point?,
     isDragging: Boolean

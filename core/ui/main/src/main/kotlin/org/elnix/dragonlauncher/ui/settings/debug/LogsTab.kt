@@ -82,7 +82,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import java.io.File
 
 @Composable
-fun LogsTab(
+public fun LogsTab(
     onNavigate: (NavigationRoute) -> Unit,
     onBack: () -> Unit,
     dragonLogViewModel: DragonLogViewModel = activityViewModel()

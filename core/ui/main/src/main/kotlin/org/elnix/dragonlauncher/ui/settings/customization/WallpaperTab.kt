@@ -42,7 +42,7 @@ import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 
 @SuppressLint("LocalContextResourcesRead", "LocalContextGetResourceValueCall")
 @Composable
-fun WallpaperTab(onBack: () -> Unit) {
+public fun WallpaperTab(onBack: () -> Unit) {
     val ctx = LocalContext.current
 
     val scope = rememberCoroutineScope()

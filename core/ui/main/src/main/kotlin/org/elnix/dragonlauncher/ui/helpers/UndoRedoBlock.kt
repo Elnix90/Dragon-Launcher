@@ -8,7 +8,7 @@ import org.elnix.dragonlauncher.enumsui.toggle.UndRedoEditTools
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 
 @Composable
-fun UndoRedoBlock(undoRedo: UndoRedoManager) {
+public fun UndoRedoBlock(undoRedo: UndoRedoManager) {
 
     val undoButtonEnabled by undoRedo.canUndo.collectAsState()
     val redoButtonEnabled by undoRedo.canRedo.collectAsState()

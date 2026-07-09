@@ -45,7 +45,6 @@ import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.AppIcon
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
@@ -60,7 +59,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
-fun WellbeingTab(
+public fun WellbeingTab(
     onBack: () -> Unit,
     drawerViewModel: DrawerViewModel = activityViewModel(),
     appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
@@ -326,7 +325,7 @@ private fun PausedAppItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(DragonShape)
+            .clip(MaterialTheme.shapes.large)
             .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,

@@ -31,7 +31,7 @@ import kotlin.time.Duration.Companion.milliseconds
  * @return
  */
 @Composable
-fun rememberHoldToOpenSettings(
+public fun rememberHoldToOpenSettings(
     onSettings: (Offset) -> Unit,
     holdDelay: Long,     // ms before arc appears
     loadDuration: Long, // ms to fill arc
@@ -113,8 +113,8 @@ fun rememberHoldToOpenSettings(
 }
 
 /** Container for the produced gesture state. */
-class HoldGestureState(
-    val pointerModifier: Modifier,
-    val progressProvider: () -> Float,
-    val centerProvider: () -> Offset?
+public class HoldGestureState(
+    public val pointerModifier: Modifier,
+    public val progressProvider: () -> Float,
+    public val centerProvider: () -> Offset?
 )

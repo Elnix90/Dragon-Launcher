@@ -20,7 +20,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import java.io.File
 
 @Composable
-fun LogsViewerScreen(
+public fun LogsViewerScreen(
     dragonLogViewModel: DragonLogViewModel = activityViewModel(),
     filename: String,
     onBack: () -> Unit

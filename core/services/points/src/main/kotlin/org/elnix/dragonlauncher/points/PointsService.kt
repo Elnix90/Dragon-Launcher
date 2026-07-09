@@ -606,7 +606,7 @@ internal class PointsServiceImpl(
     }
 
     override fun computePointOffset(point: Point): Offset {
-        val nest = nests.value.find { it.id == point.nestId } ?: Nest()
+        val nest = findNestByIdOrNull(point.nestId) ?: return point.offset
         val shapeId = point.collidingShapeId ?: return point.offset
         val shape = nest.intersectionShapes.find { it.id == shapeId } ?: return point.offset
 

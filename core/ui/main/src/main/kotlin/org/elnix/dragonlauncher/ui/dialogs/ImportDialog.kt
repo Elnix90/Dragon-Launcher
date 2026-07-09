@@ -13,13 +13,12 @@ import androidx.compose.ui.unit.dp
 import io.github.elnix90.core.stores.SettingsStore
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.backupableStores
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.LazyColumnWithScrollIndicator
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.json.JSONObject
 
 @Composable
-fun ImportSettingsDialog(
+public fun ImportSettingsDialog(
     backupJson: JSONObject,
     onDismiss: () -> Unit,
     onConfirm: (selectedStores: Set<SettingsStore<*, *>>) -> Unit
@@ -55,6 +54,6 @@ fun ImportSettingsDialog(
         },
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 6.dp,
-        shape = DragonShape
+        shape = MaterialTheme.shapes.large
     )
 }

@@ -10,7 +10,7 @@ import org.elnix.dragonlauncher.ktx.openDefaultLauncherSettings
 import org.elnix.dragonlauncher.ui.helpers.GradientBigButton
 
 @Composable
-fun WelcomePageLauncher() {
+public fun WelcomePageLauncher() {
     val ctx = LocalContext.current
     val isDefaultLauncher by rememberIsDefaultLauncher()
 

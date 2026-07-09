@@ -23,7 +23,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.AutoResizeableText
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun ValidateCancelButtons(
+public fun ValidateCancelButtons(
     validateText: String = stringResource(R.string.save),
     cancelText: String = stringResource(R.string.cancel),
     validateEnabled: Boolean = true,

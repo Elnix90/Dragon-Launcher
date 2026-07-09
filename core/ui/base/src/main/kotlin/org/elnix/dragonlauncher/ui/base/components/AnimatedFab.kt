@@ -29,7 +29,7 @@ import org.elnix.dragonlauncher.ui.base.withHapticParam
 
 
 @Composable
-fun AnimatedFab(
+public fun AnimatedFab(
     @DrawableRes icon: Int,
     modifier: Modifier = Modifier,
     minSize: Dp = 56.dp,
@@ -64,7 +64,7 @@ fun AnimatedFab(
 }
 
 @Composable
-fun ToggleAnimatedFab(
+public fun ToggleAnimatedFab(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,

@@ -47,7 +47,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
  */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
+public fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
     entries: List<T>,
     enabled: (T) -> Boolean = { true },
     checked: (T) -> Boolean = { true },

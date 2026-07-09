@@ -20,10 +20,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 
 @Composable
-fun GradientBigButton(
+public fun GradientBigButton(
     text: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -51,11 +50,11 @@ fun GradientBigButton(
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
             .height(70.dp)
-            .clip(DragonShape)
+            .clip(MaterialTheme.shapes.large)
             .border(
                 width = 3.dp,
                 brush = gradient,
-                shape = DragonShape
+                shape = MaterialTheme.shapes.large
             )
             .background(
                 if (enabled) MaterialTheme.colorScheme.background

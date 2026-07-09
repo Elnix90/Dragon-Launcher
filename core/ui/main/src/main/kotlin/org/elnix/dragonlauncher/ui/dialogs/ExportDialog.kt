@@ -26,13 +26,12 @@ import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons.Invert
 import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons.SelectAll
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.backupableStores
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.LazyColumnWithScrollIndicator
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 
 @Composable
-fun ExportSettingsDialog(
+public fun ExportSettingsDialog(
     onDismiss: () -> Unit,
     title: Int = R.string.select_settings_to_export,
     availableStores: Set<SettingsStore<*, *>> = backupableStores,
@@ -70,12 +69,12 @@ fun ExportSettingsDialog(
         },
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 6.dp,
-        shape = DragonShape
+        shape = MaterialTheme.shapes.large
     )
 }
 
 @Composable
-fun <T> SelectedActionRow(
+public fun <T> SelectedActionRow(
     selected: SnapshotStateMap<T, Boolean>,
     totalNumber: Int,
     onAnyAction: (() -> Unit)? = null
@@ -118,14 +117,14 @@ fun <T> SelectedActionRow(
 
 
 @Composable
-fun StoreItem(
+public fun StoreItem(
     selected: SnapshotStateMap<SettingsStore<*,*>, Boolean>,
     settingsStore: SettingsStore<*, *>
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(DragonShape)
+            .clip(MaterialTheme.shapes.large)
             .padding(vertical = 4.dp)
             .toggleable(
                 value = selected[settingsStore] ?: true,

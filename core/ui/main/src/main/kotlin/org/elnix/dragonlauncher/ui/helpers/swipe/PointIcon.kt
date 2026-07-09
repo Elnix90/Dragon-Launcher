@@ -18,7 +18,7 @@ import org.elnix.dragonlauncher.ui.remembers.CustomTexts
  * you are already inside a Canvas.
  */
 @Composable
-fun PointIcon(
+public fun PointIcon(
     point: Point,
     center: Offset,
     modifier: Modifier = Modifier,
@@ -50,7 +50,7 @@ fun PointIcon(
 }
 
 @Suppress("FunctionName")
-fun DrawScope.PointIcon(
+public fun DrawScope.PointIcon(
     point: Point,
     depth: Int,
     center: Offset,

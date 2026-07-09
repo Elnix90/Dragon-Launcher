@@ -1,24 +1,25 @@
 package org.elnix.dragonlauncher.ui.composition
 
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 
-val LocalLineObject = compositionLocalOf<CustomObject> {
+public val LocalLineObject: ProvidableCompositionLocal<CustomObject> = compositionLocalOf {
     error("No LocalLine provided")
 }
 
-val LocalAngleLineObject = compositionLocalOf<CustomObject> {
+public val LocalAngleLineObject: ProvidableCompositionLocal<CustomObject> = compositionLocalOf {
     error("No LocalAngleLine provided")
 }
 
-val LocalStartLineObject = compositionLocalOf<CustomObject> {
+public val LocalStartLineObject: ProvidableCompositionLocal<CustomObject> = compositionLocalOf {
     error("No LocalStartLine provided")
 }
 
-val LocalEndLineObject = compositionLocalOf<CustomObject> {
+public val LocalEndLineObject: ProvidableCompositionLocal<CustomObject> = compositionLocalOf {
     error("No LocalEndLine provided")
 }
 
-val LocalHoldCustomObject = compositionLocalOf<CustomObject> {
+public val LocalHoldCustomObject: ProvidableCompositionLocal<CustomObject> = compositionLocalOf {
     error("No LocalHoldCustomObject provided")
 }

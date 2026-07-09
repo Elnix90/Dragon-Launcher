@@ -20,7 +20,7 @@ import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
-fun SettingsItem(
+public fun SettingsItem(
     title: String,
     modifier: Modifier = Modifier,
     description: String? = null,

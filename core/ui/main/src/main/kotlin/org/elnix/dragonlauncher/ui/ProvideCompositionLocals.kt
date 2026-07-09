@@ -35,7 +35,7 @@ import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberAngleLineO
 import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberHoldCustomObject
 
 @Composable
-fun ProvideGlobalCompositionLocals(
+public fun ProvideGlobalCompositionLocals(
     iconsViewModel: IconsViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel(),
     content: @Composable () -> Unit
@@ -60,7 +60,7 @@ fun ProvideGlobalCompositionLocals(
 
 
     val lineObjects = rememberAngleLineObjects()
-    val holdCustomObject = rememberHoldCustomObject()
+    val holdCustomObject by rememberHoldCustomObject()
     val layersOrder by rememberMainScreenLayerOrder()
 
     val showTooltipsOnAddPointDialog by UiSettingsStore.showTooltipsOnAddPointDialog.asState()

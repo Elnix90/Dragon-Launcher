@@ -20,11 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 
 
 @Composable
-fun CustomAlertDialog(
+public fun CustomAlertDialog(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     imePadding: Boolean = true,
@@ -53,7 +52,7 @@ fun CustomAlertDialog(
                 modifier = modifier
                     .fillMaxWidth()
                     .heightIn(max = maxDialogHeight)
-                    .clip(DragonShape)
+                    .clip(MaterialTheme.shapes.large)
                     .background(MaterialTheme.colorScheme.surface)
                     .padding(top = 15.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,

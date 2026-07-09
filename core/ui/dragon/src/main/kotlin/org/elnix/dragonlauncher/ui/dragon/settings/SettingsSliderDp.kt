@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 
 @Composable
-fun SettingsSlider(
+public fun SettingsSlider(
     setting: DpSettingObject,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.primary,
@@ -58,4 +58,4 @@ fun SettingsSlider(
     )
 }
 
-fun ClosedRange<Dp>.toIntRange(): IntRange = IntRange(this.start.value.toInt(), this.endInclusive.value.toInt())
+public fun ClosedRange<Dp>.toIntRange(): IntRange = IntRange(this.start.value.toInt(), this.endInclusive.value.toInt())

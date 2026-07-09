@@ -37,7 +37,7 @@ import org.elnix.dragonlauncher.ui.base.animation.slideOutHorizontalBouncy
  * @param content Composable lambda to render each item
  */
 @Composable
-fun <T> LazyRowWithScrollIndicator(
+public fun <T> LazyRowWithScrollIndicator(
     items: List<T>,
     modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(5.dp),
@@ -65,7 +65,7 @@ fun <T> LazyRowWithScrollIndicator(
 
 
 @Composable
-fun RowWithScrollIndicator(
+public fun RowWithScrollIndicator(
     scrollState: ScrollState = rememberScrollState(),
     content: @Composable RowScope.() -> Unit
 ) {
@@ -93,7 +93,7 @@ fun RowWithScrollIndicator(
  * @param visible Whether to display the scroll indicator
  */
 @Composable
-fun BoxScope.HorizontalScrollIndicator(visible: Boolean) {
+public fun BoxScope.HorizontalScrollIndicator(visible: Boolean) {
     AnimatedVisibility(
         visible = visible,
         modifier = Modifier.align(Alignment.CenterEnd),

@@ -64,7 +64,7 @@ import org.elnix.dragonlauncher.ui.warning.WarningReminder
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-fun SettingsScreen(
+public fun SettingsScreen(
     onNavigate: (NavigationRoute) -> Unit,
     onBack: () -> Unit
 ) {

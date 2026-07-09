@@ -9,11 +9,12 @@ import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,7 +27,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -39,13 +39,17 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.getCenter
+import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.base.withHaptic
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.dialogs.HoldSettingsOrderSheet
+import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
+import org.elnix.dragonlauncher.ui.dragon.settings.SettingsColorPicker
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
@@ -57,7 +61,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
-fun HoldToActivateArcTab(onBack: () -> Unit) {
+public fun HoldToActivateArcTab(onBack: () -> Unit) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -67,6 +71,7 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
     val holdToActivateSettingsTolerance by HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance.asState()
     val showToleranceOnMainScreen by HoldToActivateArcSettingsStore.showToleranceOnMainScreen.asState()
     val rotationPerSecond by HoldToActivateArcSettingsStore.rotationPerSecond.asState()
+    val rgbLoading by HoldToActivateArcSettingsStore.rgbLoading.asState()
 
     val holdCustomObject = LocalHoldCustomObject.current
 
@@ -75,7 +80,6 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
     var playAnimation by remember { mutableStateOf(true) }
 
 
-    val rgbLoading by HoldToActivateArcSettingsStore.rgbLoading.asState()
 
     val progress = remember { Animatable(0f) }
 
@@ -113,7 +117,6 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
                     AnimatedPlayPauseIcon(playAnimation)
                 }
 
-
                 SliderWithLabel(
                     label = stringResource(R.string.animated_progress),
                     showValue = false,
@@ -126,16 +129,13 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
                 }
             }
 
-            Box(
+            BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
                     .onSizeChanged { boxSize = it }
             ) {
-                val center = Offset(
-                    x = boxSize.width / 2f,
-                    y = boxSize.height / 2f - 15f
-                )
+                val center = this.constraints.getCenter()
 
                 HoldToActivateArc(
                     center = center,
@@ -180,7 +180,6 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
             ) { mutableHoldObject = it }
         }
 
-
         DragonSettingsGroup(
             title = R.string.configuration,
             contentPadding = PaddingValues(top = 12.dp)
@@ -197,10 +196,31 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
                 setting = HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance,
                 modifier = Modifier.settingsGroupHorizontalPadding()
             )
-            SettingsSlider(
-                setting = HoldToActivateArcSettingsStore.rotationPerSecond,
-                modifier = Modifier.settingsGroupHorizontalPadding()
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
+            ) {
+                SettingsSlider(
+                    setting = HoldToActivateArcSettingsStore.rotationPerSecond,
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                        .weight(1f)
+                )
+                DragonIconButton(
+                    icon = R.drawable.flash_auto,
+                    contentDescription = R.string.automatic_magic_number
+                ) {
+                    scope.launch {
+                        val duration = HoldToActivateArcSettingsStore.longCLickSettingsDuration.get(ctx)
+
+                        /**
+                         * The number of rotations to achieve the same speed in both sides of the shape when playing (works best with circle)
+                         */
+                        val magicNumber = 1000f / duration
+                        HoldToActivateArcSettingsStore.rotationPerSecond.set(ctx, magicNumber)
+                    }
+                }
+            }
             SettingsItem(
                 title = stringResource(R.string.edit_hold_to_activate_elements),
                 description = stringResource(R.string.edit_hold_to_activate_elements_desc),
@@ -210,6 +230,7 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
             }
             SettingsSwitchRow(HoldToActivateArcSettingsStore.showToleranceOnMainScreen)
             SettingsSwitchRow(HoldToActivateArcSettingsStore.rgbLoading)
+            SettingsColorPicker(ColorSettingsStore.holdToActivateColor)
         }
     }
 
@@ -220,7 +241,7 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
 
 
 @Composable
-fun AnimatedPlayPauseIcon(
+public fun AnimatedPlayPauseIcon(
     isPlaying: Boolean,
     modifier: Modifier = Modifier,
     size: Dp = 24.dp

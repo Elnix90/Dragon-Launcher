@@ -55,7 +55,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AppGrid(
+public fun AppGrid(
     apps: List<Application>,
     fillMaxSize: Boolean = true,
 

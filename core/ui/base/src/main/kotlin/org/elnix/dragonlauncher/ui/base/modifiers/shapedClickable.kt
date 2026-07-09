@@ -18,7 +18,7 @@ import org.elnix.dragonlauncher.ui.base.withHaptic
 
 
 @Composable
-fun Modifier.shapedClickable(
+public fun Modifier.shapedClickable(
     enabled: Boolean = true,
     isSelected: Boolean = false,
     hapticFeedback: Boolean = false,
@@ -48,7 +48,7 @@ fun Modifier.shapedClickable(
 }
 
 @Composable
-fun provideClickableShape(
+public fun provideClickableShape(
     interactionSource: MutableInteractionSource,
     isSelected: Boolean = false
 ): Shape {

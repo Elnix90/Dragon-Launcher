@@ -32,7 +32,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.json.JSONObject
 
 @Composable
-fun SettingsDebugTab(
+public fun SettingsDebugTab(
     onBack: () -> Unit
 ) {
     val scope = rememberCoroutineScope()

@@ -30,7 +30,6 @@ import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.actions.AppIcon
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.dialogs.AppLongPressPopup
@@ -48,7 +47,7 @@ private fun CheckIcon() {
 }
 
 @Composable
-fun AppItemHorizontal(
+public fun AppItemHorizontal(
     app: Application,
     selected: Boolean,
     onLongClick: ((Application) -> Unit)?,
@@ -86,7 +85,7 @@ fun AppItemHorizontal(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(DragonShape)
+                .clip(MaterialTheme.shapes.large)
                 .conditional(selected) {
                     background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
                 }
@@ -122,7 +121,7 @@ fun AppItemHorizontal(
 }
 
 @Composable
-fun AppItemGrid(
+public fun AppItemGrid(
     app: Application,
     selected: Boolean,
     onLongClick: ((Application) -> Unit)?,
@@ -147,13 +146,13 @@ fun AppItemGrid(
             }
         },
         modifier = Modifier
-            .clip(DragonShape)
+            .clip(MaterialTheme.shapes.large)
             .conditional(selected) {
                 background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
                     .border(
                         2.dp,
                         MaterialTheme.colorScheme.primary,
-                        DragonShape
+                        MaterialTheme.shapes.large
                     )
             }
             .combinedClickable(

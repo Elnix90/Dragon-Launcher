@@ -18,7 +18,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 
 @Composable
-fun SliderColorPicker(
+public fun SliderColorPicker(
     actualColor: Color,
     onColorSelected: (Color) -> Unit
 ) {

@@ -31,7 +31,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 // I hate the behavior of this shitty modal sheet that force showing the system bars, even in fullscreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WhatsNewBottomSheet() {
+public fun WhatsNewBottomSheet() {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 

@@ -10,11 +10,11 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun TextWithDescription(
+public fun TextWithDescription(
     text: String,
     description: String?,
     modifier: Modifier = Modifier
-) = Column(
+): Unit = Column(
     modifier = modifier,
     verticalArrangement = Arrangement.spacedBy(5.dp)
 ) {
@@ -33,12 +33,12 @@ fun TextWithDescription(
 
 
 @Composable
-fun TextWithDescription(
+public fun TextWithDescription(
     text: String,
     description1: String?,
     description2: String?,
     modifier: Modifier = Modifier
-) = Column(
+): Unit = Column(
     modifier = modifier,
     verticalArrangement = Arrangement.spacedBy(5.dp)
 ) {

@@ -9,7 +9,8 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.text.drawText
 import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.DrawScopeText
 
-fun DrawScope.PointerLocation(
+@Suppress("FunctionName")
+public fun DrawScope.PointerLocation(
     offset: Offset,
     color: Color = Color.White,
     stroke: Float = 4f,

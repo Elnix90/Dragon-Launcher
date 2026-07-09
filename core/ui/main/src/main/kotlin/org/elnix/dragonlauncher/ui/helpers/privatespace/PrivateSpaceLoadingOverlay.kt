@@ -32,7 +32,7 @@ import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun PrivateSpaceLoadingOverlay(
+public fun PrivateSpaceLoadingOverlay(
     onCancel: () -> Unit,
 ) {
     // TODO make this down scrollable to dismiss

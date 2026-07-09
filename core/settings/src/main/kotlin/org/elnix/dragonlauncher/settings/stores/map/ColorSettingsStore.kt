@@ -312,11 +312,17 @@ public object ColorSettingsStore : MapSettingsStore() {
         default = DefaultExtraColors.angleLine
     )
 
-    @Deprecated("Have to change that system to a per-circle selection")
     @SettingKey
-    public val circleColor: ColorSettingObject = color(
-        title = R.string.circle_color,
-        default = DefaultExtraColors.circle
+    public val holdToActivateColor: ColorSettingObject = color(
+        title = R.string.hold_to_activate_color,
+        default = DefaultExtraColors.holdToActivate
+    )
+
+
+    @SettingKey
+    public val shapesColor: ColorSettingObject = color(
+        title = R.string.shapes_color,
+        default = DefaultExtraColors.shapes
     )
 
     @SettingKey

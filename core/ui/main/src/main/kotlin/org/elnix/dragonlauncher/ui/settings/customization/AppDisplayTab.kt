@@ -38,7 +38,7 @@ import org.elnix.dragonlauncher.ui.statusbar.showChargingAnimation
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AppDisplayTab(
+public fun AppDisplayTab(
     onBack: (() -> Unit),
     pointsViewModel: PointsViewModel = activityViewModel()
 ) {

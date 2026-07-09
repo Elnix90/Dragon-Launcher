@@ -35,7 +35,7 @@ import org.elnix.dragonlauncher.ui.remembers.rememberSafeSettingsExportLauncher
 
 
 @Composable
-fun CrashScreen(
+public fun CrashScreen(
     stackTrace: String,
     onDismiss: () -> Unit
 ) {

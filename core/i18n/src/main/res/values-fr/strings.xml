@@ -49,7 +49,6 @@
     <string name="reset_to_default_colors">Réinitialisation aux couleurs par défaut</string>
     <string name="make_every_colors_random">Couleurs aléatoires</string>
     <string name="angle_line_color">Couleur des lignes d’angle</string>
-    <string name="circle_color">Couleur du cercle</string>
     <string name="launch_app_color">Lancement de l’application Color</string>
     <string name="open_url_color">URL Couleur ouverte</string>
     <string name="notification_shade_color">Couleur de nuance de notification</string>
@@ -741,8 +740,6 @@
     <string name="loading">Chargement…</string>
     <string name="charging_animation">Animation de charge</string>
     <string name="charging_animation_desc">Joue une magnifique animation de recharge lorsque le téléphone est en charge</string>
-    <string name="widget_number_total">Widgets Nombre (total)</string>
-    <string name="widget_number_nest">Nombre de widgets (nid)</string>
     <string name="shape">Forme</string>
     <string name="scale">Échelle</string>
     <string name="drag_overlay">Affichage du drag</string>
@@ -757,8 +754,8 @@
     <string name="dim_amount_help">Combien de niveau d\'obscurité (c\'est un enfer de traduire ça en français, SVP parlez anglais) (couleur du fond) est appliqué sur l\'écran</string>
     <string name="snap_rotation">Ancre les rotations de 15°</string>
     <string name="enable_snap_move">Activer l\'ancrage au mouvement</string>
-    <string name="cell_size">Taille de la cellule</string>
-    <string name="cell_size_help">La taille de la grille utilisée pour les tailles des widgets</string>
+    <string name="widget_cell_size">Taille de la cellule</string>
+    <string name="widget_cell_size_help">La taille de la grille utilisée pour les tailles des widgets</string>
     <string name="off_screen_timeout">Durée en dehors de l\'écran</string>
     <string name="off_screen_timeout_desc">Combien de temps l\'application attend avant de revenir à l\'écran d\'accueil lorsque vous êtes dans un autre écran. Ne s\'applique pas à certains écrans spécifiés, tels que la sauvegarde (parce que vous choisissez un fichier). -1 signifie pas de retour</string>
     <string name="paste">Coller</string>

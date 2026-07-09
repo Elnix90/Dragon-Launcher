@@ -11,11 +11,10 @@ import androidx.compose.runtime.remember
 import kotlinx.coroutines.launch
 import io.github.elnix90.logging.logLevelChar
 import org.elnix.dragonlauncher.models.DragonLogViewModel
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 @Composable
-fun LauncherSnackbarHost(
+public fun LauncherSnackbarHost(
     dragonLogViewModel: DragonLogViewModel = activityViewModel(),
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -39,7 +38,7 @@ fun LauncherSnackbarHost(
         snackbar = { data ->
             Snackbar(
                 snackbarData = data,
-                shape = DragonShape,
+                shape = MaterialTheme.shapes.large,
                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 actionColor = MaterialTheme.colorScheme.primary,

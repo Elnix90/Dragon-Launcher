@@ -23,7 +23,7 @@ import org.elnix.dragonlauncher.ui.helpers.swipe.cache.points.NestIntersectionSh
  * [DrawScope.NestOverlay] version when you are already inside a Canvas.
  */
 @Composable
-fun NestOverlay(
+public fun NestOverlay(
     nest: Nest,
     center: Offset,
     modifier: Modifier = Modifier,
@@ -57,7 +57,7 @@ fun NestOverlay(
 }
 
 @Suppress("FunctionName")
-fun DrawScope.NestOverlay(
+public fun DrawScope.NestOverlay(
     nest: Nest,
     depth: Int,
     center: Offset,
@@ -90,9 +90,17 @@ fun DrawScope.NestOverlay(
         val pointOffset = center + drawParams.pointsService.computePointOffset(p)
 
         if (drawParams.nestDebugOverlay) {
+            val endOffset: Offset = if (drawPoint.collidingShapeId == null) {
+                center
+            } else {
+                nest.intersectionShapes.firstOrNull { it.id == drawPoint.collidingShapeId }?.let {
+                    center + it.offset
+                } ?: center
+            }
+
             drawLine(
                 color = Color.White,
-                start = center,
+                start = endOffset,
                 end = pointOffset
             )
         }

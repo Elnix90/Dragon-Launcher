@@ -29,14 +29,13 @@ import androidx.compose.ui.window.DialogProperties
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 
 
 @Composable
-fun UserValidation(
+public fun UserValidation(
     title: String? = null,
     message: String?,
     validateText: String = stringResource(R.string.ok),
@@ -70,7 +69,7 @@ fun UserValidation(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .padding(bottom = 4.dp)
-                        .clip(DragonShape)
+                        .clip(MaterialTheme.shapes.large)
                         .background(MaterialTheme.colorScheme.surface.copy(0.5f))
                         .padding(8.dp)
 
@@ -99,7 +98,7 @@ fun UserValidation(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = Modifier
-                                .clip(DragonShape)
+                                .clip(MaterialTheme.shapes.large)
                                 .clickable {
                                     doNotRemindMeAgainChecked = !doNotRemindMeAgainChecked
                                 }
@@ -144,6 +143,6 @@ fun UserValidation(
         },
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 6.dp,
-        shape = DragonShape
+        shape = MaterialTheme.shapes.large
     )
 }

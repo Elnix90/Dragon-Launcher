@@ -66,7 +66,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-fun BackupTab(
+public fun BackupTab(
     onBack: () -> Unit,
     backupViewModel: BackupViewModel = activityViewModel()
 ) {

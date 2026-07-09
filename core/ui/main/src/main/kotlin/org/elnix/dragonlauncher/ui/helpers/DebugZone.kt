@@ -17,7 +17,7 @@ import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 
 @Composable
-fun DebugZone(visible: Boolean, content: @Composable () -> Unit) {
+public fun DebugZone(visible: Boolean, content: @Composable () -> Unit) {
     AnimatedVisibility(visible) {
         Column(Modifier.settingsGroup()) {
             CompositionLocalProvider(
@@ -34,7 +34,7 @@ fun DebugZone(visible: Boolean, content: @Composable () -> Unit) {
 }
 
 @Composable
-fun DebugZone(setting: BooleanSettingObject, content: @Composable () -> Unit) {
+public fun DebugZone(setting: BooleanSettingObject, content: @Composable () -> Unit) {
     val isVisible by setting.asState()
     DebugZone(isVisible, content)
 }

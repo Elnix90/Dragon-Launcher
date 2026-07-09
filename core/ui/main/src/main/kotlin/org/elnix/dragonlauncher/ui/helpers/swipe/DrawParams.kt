@@ -25,7 +25,7 @@ import org.elnix.dragonlauncher.ui.helpers.swipe.cache.points.RememberNestsStabl
  * Composed once per key change inside [rememberDrawParams] so that no computation
  * is duplicated inside the DrawScope drawing functions.
  */
-data class DrawParams(
+public data class DrawParams(
     val ctx: Context,
 
     val pointsService: PointsService,
@@ -61,7 +61,7 @@ data class DrawParams(
  * @param forceShowAllActionsInCurrentNest when true every point of the nest is drawn
  */
 @Composable
-fun rememberDrawParams(
+public fun rememberDrawParams(
     preventBgErasing: Boolean,
     showConfiguratorDecorations: Boolean,
     forceShowAllActionsInCurrentNest: Boolean,

@@ -33,7 +33,6 @@ import org.elnix.dragonlauncher.base.model.serializables.Action.LaunchShortcut.C
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.actions.ShortcutIcon
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppDrawerSearch
 
@@ -47,7 +46,7 @@ private fun ShortcutInfo.matchesAppShortcutSearch(appName: String, q: String): B
 }
 
 @Composable
-fun AppShortcutPickerDialog(
+public fun AppShortcutPickerDialog(
     app: Application,
     shortcuts: List<ShortcutInfo>,
     onDismiss: () -> Unit,
@@ -125,7 +124,7 @@ fun AppShortcutPickerDialog(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(DragonShape)
+                                .clip(MaterialTheme.shapes.large)
                                 .clickable {
                                     onShortcutSelected(shortcut)
                                 }
@@ -152,7 +151,7 @@ fun AppShortcutPickerDialog(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(DragonShape)
+                            .clip(MaterialTheme.shapes.large)
                             .clickable { onOpenApp() }
                             .padding(8.dp)
                     ) {
@@ -170,6 +169,6 @@ fun AppShortcutPickerDialog(
         },
         confirmButton = {},
         containerColor = MaterialTheme.colorScheme.surface,
-        shape = DragonShape
+        shape = MaterialTheme.shapes.large
     )
 }

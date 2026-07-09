@@ -52,7 +52,6 @@
     <string name="on_error_color">エラーカラーについて</string>
     <string name="outline_color">輪郭色</string>
     <string name="angle_line_color">角度線の色</string>
-    <string name="circle_color">サークルカラー</string>
     <string name="launch_app_color">ローンチアプリの色</string>
     <string name="open_url_color">オープンURLカラー</string>
     <string name="notification_shade_color">通知シェードカラー</string>

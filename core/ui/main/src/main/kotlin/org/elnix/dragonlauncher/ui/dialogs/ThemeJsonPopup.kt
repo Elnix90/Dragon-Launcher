@@ -10,7 +10,7 @@ import org.elnix.dragonlauncher.ui.helpers.MonospaceScrollableText
 import org.json.JSONObject
 
 @Composable
-fun ThemeJsonPopup(
+public fun ThemeJsonPopup(
     json: JSONObject,
     onDismiss: () -> Unit
 ) {

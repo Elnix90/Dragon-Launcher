@@ -26,17 +26,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.base.model.models.ADBCommands
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
+import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 
 
 @Composable
-fun <T : ADBCommands> AdbCommandPickerDialog(
+public fun <T : ADBCommands> AdbCommandPickerDialog(
     label: String?,
     options: List<T>,
     selected: () -> T,
@@ -75,7 +74,7 @@ fun <T : ADBCommands> AdbCommandPickerDialog(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(DragonShape)
+                            .clip(MaterialTheme.shapes.large)
                             .clickable {
                                 selected = option
                             }
@@ -91,9 +90,9 @@ fun <T : ADBCommands> AdbCommandPickerDialog(
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontFamily = FontFamily.Monospace,
                                 modifier = Modifier
-                                    .clip(DragonShape)
+                                    .clip(MaterialTheme.shapes.large)
                                     .background(MaterialTheme.colorScheme.surfaceVariant)
-                                    .border(1.dp, MaterialTheme.colorScheme.secondary, DragonShape)
+                                    .border(1.dp, MaterialTheme.colorScheme.secondary, MaterialTheme.shapes.large)
                                     .padding(5.dp)
                             )
 

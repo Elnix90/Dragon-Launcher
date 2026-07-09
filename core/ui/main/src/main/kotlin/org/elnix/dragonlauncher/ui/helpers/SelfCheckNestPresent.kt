@@ -11,7 +11,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 
 @Composable
-fun SelfCheckNestPresent(
+public fun SelfCheckNestPresent(
     pointsViewModel: PointsViewModel = activityViewModel()
 ) {
     val pointsService = pointsViewModel.pointsService

@@ -44,7 +44,6 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Action.LaunchShortcut.Companion.toAction
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.actions.ShortcutIcon
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppDrawerSearch
 
@@ -72,7 +71,7 @@ private fun PinnedShortcutItem.matchesShortcutSearch(q: String): Boolean {
  * grouped by app. Allows the user to pick one to add as a swipe action.
  */
 @Composable
-fun PinnedShortcutsPickerDialog(
+public fun PinnedShortcutsPickerDialog(
     onDismiss: () -> Unit,
     onShortcutSelected: (Action.LaunchShortcut) -> Unit
 ) {
@@ -213,7 +212,7 @@ fun PinnedShortcutsPickerDialog(
             }
         },
         containerColor = MaterialTheme.colorScheme.surface,
-        shape = DragonShape
+        shape = MaterialTheme.shapes.large
     )
 }
 
@@ -227,7 +226,7 @@ private fun ShortcutRow(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .clip(DragonShape)
+            .clip(MaterialTheme.shapes.large)
             .clickable(onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {

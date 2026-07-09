@@ -36,7 +36,7 @@ import kotlin.math.min
 
 
 @Composable
-fun WidgetHostView(
+public fun WidgetHostView(
     widget: Widget,
     cellSizePx: Float,
     modifier: Modifier = Modifier,

@@ -17,7 +17,7 @@ import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 @Composable
-fun actionLabel(
+public fun actionLabel(
     action: Action,
     drawerViewModel: DrawerViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel()

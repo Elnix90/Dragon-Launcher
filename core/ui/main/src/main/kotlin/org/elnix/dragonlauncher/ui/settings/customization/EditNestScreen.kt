@@ -50,7 +50,7 @@ import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun NestEditingScreen(
+public fun NestEditingScreen(
     nestId: Int?,
     pointsViewModel: PointsViewModel = activityViewModel(),
     onBack: () -> Unit

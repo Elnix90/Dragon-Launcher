@@ -13,7 +13,7 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 @Composable
-fun BackupResultDialog(
+public fun BackupResultDialog(
     backupViewModel: BackupViewModel = activityViewModel(),
 ) {
     val result by backupViewModel.result.asState()

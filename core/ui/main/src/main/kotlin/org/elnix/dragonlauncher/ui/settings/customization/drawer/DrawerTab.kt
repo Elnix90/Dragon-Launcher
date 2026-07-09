@@ -57,7 +57,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 
 @Composable
-fun DrawerTab(
+public fun DrawerTab(
     onBack: () -> Unit,
     onNavigate: (NavigationRoute) -> Unit,
     drawerViewModel: DrawerViewModel = activityViewModel()

@@ -123,7 +123,7 @@ private fun ColorPickerButton(
 
 
 @Composable
-fun ColorPickerButtonOne(
+public fun ColorPickerButtonOne(
     currentColor: Color,
     backgroundColor: Color,
     enabled: Boolean,
@@ -152,7 +152,7 @@ fun ColorPickerButtonOne(
 
 
 @Composable
-fun ColorPickerButtonTwo(
+public fun ColorPickerButtonTwo(
     currentColor: Color,
     backgroundColor: Color,
     enabled: Boolean,

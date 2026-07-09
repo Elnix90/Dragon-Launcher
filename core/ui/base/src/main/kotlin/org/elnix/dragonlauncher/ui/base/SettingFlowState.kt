@@ -7,4 +7,4 @@ import org.elnix.dragonlauncher.base.SettingFlow
 
 
 @Composable
-fun <T> SettingFlow<T>.asState(): State<T> = this.flow.collectAsStateWithLifecycle()
+public fun <T> SettingFlow<T>.asState(): State<T> = this.flow.collectAsStateWithLifecycle()

@@ -28,7 +28,7 @@ import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 import org.elnix.dragonlauncher.ui.statusbar.showStatusBar
 
 @Composable
-fun StatusBarTab(
+public fun StatusBarTab(
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current

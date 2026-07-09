@@ -7,10 +7,10 @@ import androidx.compose.ui.text.TextStyle
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 
 @Composable
-fun rememberPointTextStyle(): TextStyle {
+public fun rememberPointTextStyle(): TextStyle {
     val labelSmall = MaterialTheme.typography.labelSmall
     val extraColors = LocalExtraColors.current
     return remember(labelSmall, extraColors) {
-        labelSmall.copy(color = extraColors.circle)
+        labelSmall.copy(color = extraColors.shapes)
     }
 }

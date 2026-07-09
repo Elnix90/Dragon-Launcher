@@ -36,7 +36,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.helpers.ShapePreview
 
 @Composable
-fun IntersectionShapeManagementDialog(
+public fun IntersectionShapeManagementDialog(
     shapes: Set<IntersectionShape>,
     modifier: Modifier = Modifier,
     onSelectShape: (id: Int) -> Unit,

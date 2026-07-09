@@ -6,7 +6,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun PrivateSpaceUnlockScreen(
+public fun PrivateSpaceUnlockScreen(
     onCancel: () -> Unit,
     onStart: (CoroutineScope) -> Unit
 ) {

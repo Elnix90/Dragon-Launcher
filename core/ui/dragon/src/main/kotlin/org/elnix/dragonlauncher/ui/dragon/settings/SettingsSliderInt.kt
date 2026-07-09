@@ -20,7 +20,8 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 
 @Composable
-fun SettingsSlider(
+
+public fun SettingsSlider(
     setting: IntSettingObject,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.primary,

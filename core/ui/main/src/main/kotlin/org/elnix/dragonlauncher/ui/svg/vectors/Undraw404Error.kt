@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun undraw404Error(): ImageVector {
+public fun undraw404Error(): ImageVector {
     return Builder(
         name = "bmcLogo",
         defaultWidth = 860.13.dp,

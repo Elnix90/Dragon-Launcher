@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.base.model.serializables
 
+import androidx.annotation.IntRange
 import androidx.compose.ui.graphics.Color
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -9,14 +10,51 @@ import org.elnix.dragonlauncher.base.model.serializables.serializers.ColorSerial
 @Serializable
 @SerialName("CustomObject")
 public data class CustomObject(
-    val stroke: Float? = null,
+    /**
+     * Stroke of the object.
+     *
+     * The value it **ALWAYS** interpreted as raw dp, then converted into pixels using [androidx.compose.ui.unit.Density]
+     */
+    val stroke: Float,
     @Serializable(with = ColorSerializer::class)
-    val color: Color? = null,
-    val glow: CustomGlow? = null,
-    val rotation: Int? = null,
-    val shape: IconShape? = null,
-    val size: Float? = null,
-    val eraseBackground: Boolean? = null
+
+    /**
+     * The color uses by the shape.
+     * Defaults to `null` -> uses the given circle color or RGB driven color from angle
+     */
+    val color: Color?,
+
+    /**
+     * Optional [CustomGlow] for the shape.
+     * Depending on the context it may or may not be used in drawing
+     */
+    val glow: CustomGlow?,
+
+    val shape: IconShape,
+
+    /**
+     * The size of the object, pretty self-explanatory
+     * Depending on the context this could mean different things, but it is used as a size discriminant factor for the [CustomObject]
+     * The value it **ALWAYS** interpreted as raw dp, then converted into pixels using [androidx.compose.ui.unit.Density]
+     */
+    val size: Float,
+
+    /**
+     * When the [CustomObject] is using the [shape] parameter, it often uses also the rotation, which is uses to correctly place the shape like the user wants
+     */
+    @IntRange(from = -1, to = 360)
+    val rotation: Int,
+
+    /**
+     * Some shapes are drawn in the wrong way, use this to mirror them vertically (and play with [rotation]) to achieve what you want
+     */
+    val mirror: Boolean = false,
+
+    /**
+     * Whether to use the [androidx.compose.ui.graphics.BlendMode.Clear] option when drawing to erase what's under the same canvas
+     */
+    val eraseBackground: Boolean = false
+
 ) {
     public companion object {
 
@@ -26,11 +64,9 @@ public data class CustomObject(
             glow = CustomGlow(
                 radius = 10f
             ),
-
-            /** Not used for the line as it goes from `start` to `end` */
-            shape = null,
-            size = null,
-            rotation = null, // No rotation for line, (it's nullable, but I use nul here to indicate that the rotation isn't available)
+            shape = IconShape.Circle,
+            size = 0f, // Unused for line (only stroke)
+            rotation = 0, // No rotation for line, (it's nullable, but I use nul here to indicate that the rotation isn't available)
 
             eraseBackground = false
         )
@@ -74,14 +110,14 @@ public data class CustomObject(
 
 
         public val defaultHoldCustomObject: CustomObject = CustomObject(
-            stroke = 10f,
-            color = Color.Red,
+            stroke = 4f,
+            color = null,
             glow = CustomGlow(
                 radius = 12f
             ),
-            shape = IconShape.Circle,
+            shape = IconShape.Cookie12Sided,
             size = 70f,
-            rotation = 0,
+            rotation = -1,
             eraseBackground = false
         )
 
@@ -90,11 +126,10 @@ public data class CustomObject(
 
 @Serializable
 public data class CustomGlow(
+    val radius: Float,
     @Serializable(with = ColorSerializer::class)
-    val color: Color? = null,
-    val radius: Float? = null
+    val color: Color? = null
 )
-
 
 
 public data class CustomObjectBlockProperties(
@@ -103,6 +138,7 @@ public data class CustomObjectBlockProperties(
     val allowShapeCustomization: Boolean = true,
     val allowSizeCustomization: Boolean = true,
     val allowEraseBackgroundCustomization: Boolean = true,
+    val allowMirrorCustomization: Boolean = true,
     val allowRotationCustomization: Boolean = true,
 
     val allowGlowCustomization: Boolean = true

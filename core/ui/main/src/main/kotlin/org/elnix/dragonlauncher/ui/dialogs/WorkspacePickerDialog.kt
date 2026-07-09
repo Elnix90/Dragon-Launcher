@@ -20,12 +20,11 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 
 @Composable
-fun WorkspacePickerDialog(
+public fun WorkspacePickerDialog(
     drawerViewModel: DrawerViewModel = activityViewModel(),
     onDismiss: () -> Unit,
     onActionPicked: (Action.OpenAppDrawer) -> Unit
@@ -51,7 +50,7 @@ fun WorkspacePickerDialog(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(DragonShape)
+                        .clip(MaterialTheme.shapes.large)
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .clickable {
                             onActionPicked(Action.OpenAppDrawer())
@@ -71,7 +70,7 @@ fun WorkspacePickerDialog(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(DragonShape)
+                            .clip(MaterialTheme.shapes.large)
                             .background(MaterialTheme.colorScheme.surface)
                             .clickable {
                                 onActionPicked(
@@ -91,6 +90,6 @@ fun WorkspacePickerDialog(
             }
         },
         containerColor = MaterialTheme.colorScheme.surface,
-        shape = DragonShape
+        shape = MaterialTheme.shapes.large
     )
 }

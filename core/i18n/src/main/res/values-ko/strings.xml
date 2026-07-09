@@ -52,7 +52,6 @@
     <string name="on_error_color">오류 색상에 관하여</string>
     <string name="outline_color">윤곽 색상</string>
     <string name="angle_line_color">각도선 색상</string>
-    <string name="circle_color">서클 컬러</string>
     <string name="launch_app_color">출시 앱 색상</string>
     <string name="open_url_color">오픈 URL 색상</string>
     <string name="notification_shade_color">알림 색상</string>

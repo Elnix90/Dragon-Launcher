@@ -29,7 +29,7 @@ import org.elnix.dragonlauncher.ui.base.asState
 
 
 @Suppress("FunctionName")
-fun DrawScope.DecorationIcons(
+public fun DrawScope.DecorationIcons(
     ctx: Context,
     center: Offset,
     iconSize: Size,

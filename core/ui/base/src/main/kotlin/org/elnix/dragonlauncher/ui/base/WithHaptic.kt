@@ -21,7 +21,7 @@ import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFee
  * @return A stable `() -> Unit` lambda wrapping [block] with haptic feedback.
  */
 @Composable
-fun withHaptic(
+public fun withHaptic(
     type: HapticFeedbackType = HapticFeedbackType.ContextClick,
     block: () -> Unit
 ): () -> Unit {
@@ -62,7 +62,7 @@ fun withHaptic(
  * @return A stable `(T) -> Unit` lambda wrapping [block] with haptic feedback.
  */
 @Composable
-fun <T> withHapticParam(
+public fun <T> withHapticParam(
     type: HapticFeedbackType = HapticFeedbackType.ContextClick,
     block: () -> Unit
 ): (T) -> Unit {

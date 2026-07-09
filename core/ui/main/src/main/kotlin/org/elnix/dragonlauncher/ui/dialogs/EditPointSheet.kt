@@ -54,7 +54,6 @@ import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.actionLabel
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -76,7 +75,7 @@ import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditPointSheet(
+public fun EditPointSheet(
     point: Point,
     isDefaultEditing: Boolean = false,
     iconsViewModel: IconsViewModel = activityViewModel(),
@@ -122,7 +121,7 @@ fun EditPointSheet(
             .borderColor
             ?.takeIf { !isDefaultEditing }
             ?.let(::Color)
-            ?: extraColors.circle
+            ?: extraColors.shapes
 
     val defaultBackgroundColor =
         defaultPoint
@@ -142,7 +141,7 @@ fun EditPointSheet(
             .borderColorSelected
             ?.takeIf { !isDefaultEditing }
             ?.let(::Color)
-            ?: extraColors.circle
+            ?: extraColors.shapes
 
     val defaultBackgroundColorSelected =
         defaultPoint
@@ -456,7 +455,7 @@ fun EditPointSheet(
 
                                         OutlinedCard(
                                             modifier = Modifier.fillMaxWidth(),
-                                            shape = DragonShape,
+                                            shape = MaterialTheme.shapes.large,
                                             border = BorderStroke(
                                                 1.dp,
                                                 MaterialTheme.colorScheme.outlineVariant
@@ -689,7 +688,7 @@ fun EditPointSheet(
                                             Row(
                                                 modifier = Modifier
                                                     .fillMaxWidth()
-                                                    .clip(DragonShape)
+                                                    .clip(MaterialTheme.shapes.large)
                                                     .background(MaterialTheme.colorScheme.surfaceVariant)
                                                     .clickable { showHoldAndRunActionDialog = true }
                                                     .padding(12.dp),

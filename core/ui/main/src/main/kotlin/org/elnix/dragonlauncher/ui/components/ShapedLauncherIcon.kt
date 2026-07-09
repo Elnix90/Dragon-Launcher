@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapShader
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.graphics.Rect
 import android.icu.text.NumberFormat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
@@ -39,7 +40,6 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.toAndroidRect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -61,19 +61,19 @@ import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.icons.TextLayer
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
 import org.elnix.dragonlauncher.base.icons.VectorLayer
+import org.elnix.dragonlauncher.base.icons.getTone
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ktx.drawWithColorFilter
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalTime
-import palettes.TonalPalette
 import java.time.Instant
 import java.time.ZoneId
 import kotlin.math.roundToInt
 import android.graphics.Shader as PlatformShader
 
 @Composable
-fun ShapedLauncherIcon(
+public fun ShapedLauncherIcon(
     modifier: Modifier = Modifier,
     size: Dp,
     icon: () -> LauncherIcon? = { null },
@@ -275,11 +275,11 @@ fun ShapedLauncherIcon(
     }
 }
 
-private fun getTone(argb: Int, tone: Int): Int {
-    return TonalPalette
-        .fromInt(argb)
-        .tone(tone)
-}
+//private fun getTone(argb: Int, tone: Int): Int {
+//    return TonalPalette
+//        .fromInt(argb)
+//        .tone(tone)
+//}
 
 @Composable
 private fun ClockLayer(
@@ -320,7 +320,10 @@ private fun ClockLayer(
                     else -> {}
                 }
                 drawIntoCanvas {
-                    sublayer.drawable.bounds = this.size.toRect().toAndroidRect()
+                    sublayer.drawable.bounds = run {
+                        val toRect = size.toRect()
+                        Rect(toRect.left.toInt(), toRect.top.toInt(), toRect.right.toInt(), toRect.bottom.toInt())
+                    }
                     sublayer.drawable.drawWithColorFilter(it.nativeCanvas, colorFilter)
                 }
             }
@@ -328,8 +331,8 @@ private fun ClockLayer(
     }
 }
 
-class BitmapShaderBrush(
-    val bitmap: Bitmap,
+public class BitmapShaderBrush(
+    public val bitmap: Bitmap,
 ) : ShaderBrush() {
     override fun createShader(size: Size): Shader {
         return BitmapShader(bitmap, PlatformShader.TileMode.CLAMP, PlatformShader.TileMode.CLAMP)

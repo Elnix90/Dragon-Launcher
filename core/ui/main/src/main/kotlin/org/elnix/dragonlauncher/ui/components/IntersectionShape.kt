@@ -4,13 +4,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
-import org.elnix.dragonlauncher.ui.helpers.customobjects.drawNeonGlowShapePath
+import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
 import org.elnix.dragonlauncher.ui.helpers.swipe.DrawParams
 
 @Suppress("FunctionName")
-fun DrawScope.IntersectionShape(
+public fun DrawScope.IntersectionShape(
     path: Path,
     shape: IntersectionShape,
     center: Offset,
@@ -19,13 +18,11 @@ fun DrawScope.IntersectionShape(
 ) {
 
     val size = shape.getSize(this.density)
-    val color = shape.color ?: drawParams.extraColors.circle
-    val strokeWith = (shape.borderStroke?.dp ?: IntersectionShape.borderStrokeDefault).toPx()
+    val color = shape.color ?: drawParams.extraColors.shapes
+    val strokeWith = shape.borderStroke ?: IntersectionShape.borderStrokeDefault
     val rotation = shape.angle
     val position = center + shape.offset
     val glow = shape.glow
-    val glowColor = glow?.color ?: color
-    val glowStrokeWidth = glow?.radius ?: strokeWith
 
     withTransform(
         {
@@ -43,12 +40,11 @@ fun DrawScope.IntersectionShape(
             )
         }
     ) {
-        drawNeonGlowShapePath(
+        drawPathGlow(
             path = path,
             color = color,
             lineStrokeWidth = strokeWith,
-            glowRadius = glowStrokeWidth,
-            glowColor = glowColor,
+            glow = glow,
             erase = erase
         )
     }

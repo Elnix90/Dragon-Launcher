@@ -1,13 +1,16 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
+import androidx.compose.ui.unit.dp
 import io.github.elnix90.annotations.SettingKey
 import io.github.elnix90.annotations.SettingsStore
 import io.github.elnix90.core.objects.BooleanSettingObject
+import io.github.elnix90.core.objects.DpSettingObject
 import io.github.elnix90.core.objects.FloatSettingObject
 import io.github.elnix90.core.objects.IntSettingObject
 import io.github.elnix90.core.objects.StringSetSettingObject
 import io.github.elnix90.core.objects.StringSettingObject
 import io.github.elnix90.core.objects.boolean
+import io.github.elnix90.core.objects.dp
 import io.github.elnix90.core.objects.float
 import io.github.elnix90.core.objects.int
 import io.github.elnix90.core.objects.string
@@ -182,11 +185,19 @@ public object UiSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val cellSizeDp: IntSettingObject = int(
-        title = R.string.cell_size,
-        description = R.string.cell_size_help,
-        default = 30,
-        allowedRange = 1..100
+    public val nestsCellSizeDp: DpSettingObject = dp(
+        title = R.string.nests_cell_size,
+        description = R.string.nests_cell_size_help,
+        default = 30.dp,
+        allowedRange = 1.dp..100.dp
+    )
+
+    @SettingKey
+    public val widgetsCellSizeDp: DpSettingObject = dp(
+        title = R.string.widget_cell_size,
+        description = R.string.widget_cell_size_help,
+        default = 30.dp,
+        allowedRange = 1.dp..100.dp
     )
 
     @SettingKey

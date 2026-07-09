@@ -6,6 +6,7 @@ import androidx.compose.animation.core.VectorConverter
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +28,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
@@ -37,15 +39,19 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomObjectBlockProper
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.angle360FromOffset
 import org.elnix.dragonlauncher.ktx.distanceSquaredTo
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dialogs.AngleLineObjectsOrderDialog
 import org.elnix.dragonlauncher.ui.dialogs.rememberLineObjectsOrder
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSectionMode
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
+import org.elnix.dragonlauncher.ui.dragon.settings.SettingsColorPicker
 import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
 import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine
@@ -53,10 +59,9 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson
 import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberAngleLineObjects
 import org.elnix.dragonlauncher.ui.remembers.rememberSweepAngle
-import kotlin.math.atan2
 
 @Composable
-fun AngleLineTab(onBack: () -> Unit) {
+public fun AngleLineTab(onBack: () -> Unit) {
     val ctx = LocalContext.current
     val density = LocalDensity.current
     val extraColors = LocalExtraColors.current
@@ -92,16 +97,9 @@ fun AngleLineTab(onBack: () -> Unit) {
 
     val start = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
     val end = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
+    val angleDeg = angle360FromOffset(start.value, end.value)
 
     var moveStartOrEnd by remember { mutableStateOf(false) }
-
-    val dx = end.value.x - start.value.x
-    val dy = end.value.y - start.value.y
-
-    // angle relative to UP = 0°
-    val angleRad = atan2(dx.toDouble(), -dy.toDouble())
-    val angleDeg = Math.toDegrees(angleRad).toFloat()
-
 
     val sweepState = rememberSweepAngle()
 
@@ -112,32 +110,25 @@ fun AngleLineTab(onBack: () -> Unit) {
     val sweep = sweepState.sweepAngle()
 
     val pickedRememberShapeAngle = remember(mutableAngleLineObject.shape) {
-        (mutableAngleLineObject.shape ?: defaultAngleCustomObject.shape).resolveShape()
+        mutableAngleLineObject.shape.resolveShape()
     }
     val pickedRememberRotationAngle = remember(mutableAngleLineObject.rotation) {
-        mutableAngleLineObject.rotation
-            ?.takeIf { it != -1 }
-            ?: (0..360).random()
+        mutableAngleLineObject.rotation.takeIf { it != -1 } ?: (0..360).random()
     }
 
     val pickedRememberShapeStart = remember(mutableStartObject.shape) {
-        (mutableStartObject.shape ?: defaultStartCustomObject.shape).resolveShape()
+        mutableStartObject.shape.resolveShape()
     }
     val pickedRememberRotationStart = remember(mutableStartObject.rotation) {
-        mutableStartObject.rotation
-            ?.takeIf { it != -1 }
-            ?: (0..360).random()
+        mutableStartObject.rotation.takeIf { it != -1 } ?: (0..360).random()
     }
 
     val pickedRememberShapeEnd = remember(mutableEndObject.shape) {
-        (mutableEndObject.shape ?: defaultEndCustomObject.shape).resolveShape()
+        mutableEndObject.shape.resolveShape()
     }
     val pickedRememberRotationEnd = remember(mutableEndObject.rotation) {
-        mutableEndObject.rotation
-            ?.takeIf { it != -1 }
-            ?: (0..360).random()
+        mutableEndObject.rotation.takeIf { it != -1 } ?: (0..360).random()
     }
-
 
     fun saveAll() {
         scope.launch {
@@ -180,7 +171,6 @@ fun AngleLineTab(onBack: () -> Unit) {
             angleLineCustomObject = mutableAngleLineObject,
             startCustomObject = mutableStartObject,
             endCustomObject = mutableEndObject
-
         )
     }
 
@@ -270,7 +260,6 @@ fun AngleLineTab(onBack: () -> Unit) {
             )
         }
     ) {
-        /** Line object setting */
         ExpandableSection(lineObjectExpandableSectionState) {
             SettingsSwitchRow(AngleLineSettingsStore.showLineObjectPreview)
 
@@ -287,7 +276,6 @@ fun AngleLineTab(onBack: () -> Unit) {
             }
         }
 
-        /** Angle Line object setting */
         ExpandableSection(angleObjectExpandableSectionState) {
             SettingsSwitchRow(AngleLineSettingsStore.showAngleLineObjectPreview)
 
@@ -299,7 +287,6 @@ fun AngleLineTab(onBack: () -> Unit) {
             }
         }
 
-        /** Start object setting */
         ExpandableSection(startObjectExpandableSectionState) {
             SettingsSwitchRow(AngleLineSettingsStore.showStartObjectPreview)
 
@@ -311,7 +298,6 @@ fun AngleLineTab(onBack: () -> Unit) {
             }
         }
 
-        /** End object setting */
         ExpandableSection(endObjectExpandableSectionState) {
             SettingsSwitchRow(AngleLineSettingsStore.showEndObjectPreview)
 
@@ -323,7 +309,13 @@ fun AngleLineTab(onBack: () -> Unit) {
             }
         }
 
-        SettingsSwitchRow(AngleLineSettingsStore.rgbLine)
+        DragonSettingsGroup(
+            title = R.string.other,
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+        ) {
+            SettingsSwitchRow(AngleLineSettingsStore.rgbLine)
+            SettingsColorPicker(ColorSettingsStore.angleLineColor)
+        }
     }
 
     if (showOrderDialog) {

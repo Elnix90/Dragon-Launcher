@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -51,7 +52,6 @@ import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.actions.ActionIcon
 import org.elnix.dragonlauncher.ui.actions.actionLabel
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.components.VerticalScrollIndicator
@@ -63,7 +63,7 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.dragon.text.AutoResizeableText
 
 @Composable
-fun AddPointDialog(
+public fun AddPointDialog(
     actions: List<Action> = defaultChoosableActions,
     drawerViewModel: DrawerViewModel = activityViewModel(),
     onDismiss: () -> Unit,
@@ -151,9 +151,9 @@ fun AddPointDialog(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(DragonShape)
+                            .clip(MaterialTheme.shapes.large)
                             .background(color.copy(0.5f))
-                            .border(1.dp, color, DragonShape)
+                            .border(1.dp, color, MaterialTheme.shapes.large)
                             .clickable { showAppPicker = true }
                             .padding(12.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -173,7 +173,7 @@ fun AddPointDialog(
 
                 Box {
                     LazyVerticalGrid(
-                        modifier = Modifier.clip(DragonShape),
+                        modifier = Modifier.clip(MaterialTheme.shapes.large),
                         columns = GridCells.Fixed(if (showTooltipsOnAddPointDialog) 1 else 3),
                         state = gridState,
                         verticalArrangement = Arrangement.spacedBy(5.dp),
@@ -439,9 +439,9 @@ private fun AddPointColumn(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(DragonShape)
+                .clip(MaterialTheme.shapes.large)
                 .background(color.copy(0.5f))
-                .border(1.dp, color, DragonShape)
+                .border(1.dp, color, MaterialTheme.shapes.large)
                 .clickable { onSelected() }
                 .padding(12.dp),
             horizontalArrangement = Arrangement.Center,

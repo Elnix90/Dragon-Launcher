@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.base.icons
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -8,12 +9,12 @@ import android.graphics.PorterDuffColorFilter
 import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import androidx.core.graphics.withScale
+import com.google.android.material.color.utilities.TonalPalette
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.ktx.drawWithColorFilter
-import palettes.TonalPalette
 import java.lang.ref.WeakReference
 
 public sealed interface LauncherIcon
@@ -94,12 +95,13 @@ public data class StaticLauncherIcon(
             else -> {}
         }
     }
+}
 
-    private fun getTone(argb: Int, tone: Int): Int {
-        return TonalPalette
-            .fromInt(argb)
-            .tone(tone)
-    }
+@SuppressLint("RestrictedApi")
+public fun getTone(argb: Int, tone: Int): Int {
+    return TonalPalette
+        .fromInt(argb)
+        .tone(tone)
 }
 
 public interface DynamicLauncherIcon : LauncherIcon {

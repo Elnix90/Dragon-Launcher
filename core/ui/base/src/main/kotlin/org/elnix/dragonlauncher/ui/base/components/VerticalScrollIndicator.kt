@@ -29,7 +29,7 @@ import org.elnix.dragonlauncher.ui.base.animation.slideOutVerticalBouncy
  * @param content Composable lambda to render each item
  */
 @Composable
-fun <T> LazyColumnWithScrollIndicator(
+public fun <T> LazyColumnWithScrollIndicator(
     items: List<T>,
     modifier: Modifier = Modifier,
     content: @Composable (T) -> Unit
@@ -61,7 +61,7 @@ fun <T> LazyColumnWithScrollIndicator(
  * @param visible Whether to display the scroll indicator
  */
 @Composable
-fun BoxScope.VerticalScrollIndicator(visible: Boolean) {
+public fun BoxScope.VerticalScrollIndicator(visible: Boolean) {
     AnimatedVisibility(
         visible = visible,
         modifier = Modifier.align(Alignment.BottomCenter),
