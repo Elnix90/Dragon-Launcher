@@ -75,8 +75,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import java.io.File
@@ -242,7 +241,7 @@ public fun LogsTab(
             }
         }
 
-        SettingsSwitchRow(DebugSettingsStore.enableLogging)
+        Setting(DebugSettingsStore.enableLogging)
 
         AnimatedVisibility(enableLogging) {
             Column(
@@ -250,12 +249,12 @@ public fun LogsTab(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                SettingsSlider(
+                Setting(
                     setting = DebugSettingsStore.snackBarLogLevel,
                     customDesc = { it.logLevelName }
                 )
 
-                SettingsSlider(
+                Setting(
                     setting = DebugSettingsStore.filesLogLevel,
                     customDesc = { it.logLevelName }
                 )

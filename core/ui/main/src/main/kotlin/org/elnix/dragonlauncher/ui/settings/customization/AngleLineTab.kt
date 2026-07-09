@@ -51,8 +51,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSectionMode
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsColorPicker
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -261,7 +260,7 @@ public fun AngleLineTab(onBack: () -> Unit) {
         }
     ) {
         ExpandableSection(lineObjectExpandableSectionState) {
-            SettingsSwitchRow(AngleLineSettingsStore.showLineObjectPreview)
+            Setting(AngleLineSettingsStore.showLineObjectPreview)
 
             AnimatedVisibility(showLineObjectPreview) {
                 EditCustomObjectBlock(
@@ -277,7 +276,7 @@ public fun AngleLineTab(onBack: () -> Unit) {
         }
 
         ExpandableSection(angleObjectExpandableSectionState) {
-            SettingsSwitchRow(AngleLineSettingsStore.showAngleLineObjectPreview)
+            Setting(AngleLineSettingsStore.showAngleLineObjectPreview)
 
             AnimatedVisibility(showAngleLineObjectPreview) {
                 EditCustomObjectBlock(
@@ -288,7 +287,7 @@ public fun AngleLineTab(onBack: () -> Unit) {
         }
 
         ExpandableSection(startObjectExpandableSectionState) {
-            SettingsSwitchRow(AngleLineSettingsStore.showStartObjectPreview)
+            Setting(AngleLineSettingsStore.showStartObjectPreview)
 
             AnimatedVisibility(showStartObjectPreview) {
                 EditCustomObjectBlock(
@@ -299,7 +298,7 @@ public fun AngleLineTab(onBack: () -> Unit) {
         }
 
         ExpandableSection(endObjectExpandableSectionState) {
-            SettingsSwitchRow(AngleLineSettingsStore.showEndObjectPreview)
+            Setting(AngleLineSettingsStore.showEndObjectPreview)
 
             AnimatedVisibility(showEndObjectPreview) {
                 EditCustomObjectBlock(
@@ -313,8 +312,8 @@ public fun AngleLineTab(onBack: () -> Unit) {
             title = R.string.other,
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
         ) {
-            SettingsSwitchRow(AngleLineSettingsStore.rgbLine)
-            SettingsColorPicker(ColorSettingsStore.angleLineColor)
+            Setting(AngleLineSettingsStore.rgbLine)
+            Setting(ColorSettingsStore.angleLineColor)
         }
     }
 

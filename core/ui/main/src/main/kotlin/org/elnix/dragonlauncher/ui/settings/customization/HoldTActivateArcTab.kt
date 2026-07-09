@@ -49,9 +49,7 @@ import org.elnix.dragonlauncher.ui.dialogs.HoldSettingsOrderSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsColorPicker
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
 import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
@@ -184,15 +182,15 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
             title = R.string.configuration,
             contentPadding = PaddingValues(top = 12.dp)
         ) {
-            SettingsSlider(
+            Setting(
                 setting = HoldToActivateArcSettingsStore.longCLickSettingsDuration,
                 modifier = Modifier.settingsGroupHorizontalPadding()
             )
-            SettingsSlider(
+            Setting(
                 setting = HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings,
                 modifier = Modifier.settingsGroupHorizontalPadding()
             )
-            SettingsSlider(
+            Setting(
                 setting = HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance,
                 modifier = Modifier.settingsGroupHorizontalPadding()
             )
@@ -200,7 +198,7 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
             ) {
-                SettingsSlider(
+                Setting(
                     setting = HoldToActivateArcSettingsStore.rotationPerSecond,
                     modifier = Modifier
                         .padding(start = 16.dp)
@@ -228,9 +226,9 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
             ) {
                 showHoldSettingsOrderDialog = true
             }
-            SettingsSwitchRow(HoldToActivateArcSettingsStore.showToleranceOnMainScreen)
-            SettingsSwitchRow(HoldToActivateArcSettingsStore.rgbLoading)
-            SettingsColorPicker(ColorSettingsStore.holdToActivateColor)
+            Setting(HoldToActivateArcSettingsStore.showToleranceOnMainScreen)
+            Setting(HoldToActivateArcSettingsStore.rgbLoading)
+            Setting(ColorSettingsStore.holdToActivateColor)
         }
     }
 

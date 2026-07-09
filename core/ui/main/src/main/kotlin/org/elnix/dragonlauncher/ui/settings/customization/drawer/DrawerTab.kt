@@ -49,8 +49,7 @@ import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSectionMode
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.settings.DrawerActionSelector
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.dragon.settings.toIntRange
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -121,28 +120,22 @@ public fun DrawerTab(
         }
 
         DragonSettingsGroup(R.string.behavior) {
-            SettingsSwitchRow(DrawerSettingsStore.autoOpenSingleMatch)
-
-            AnimatedVisibility(autoLaunchSingleMatch) {
-                SettingsSwitchRow(DrawerSettingsStore.disableAutoLaunchOnSpaceFirstChar)
-            }
-
-            SettingsSwitchRow(DrawerSettingsStore.autoShowKeyboardOnDrawer)
+            Setting(DrawerSettingsStore.autoOpenSingleMatch)
+            Setting(DrawerSettingsStore.disableAutoLaunchOnSpaceFirstChar, enabled = autoLaunchSingleMatch)
+            Setting(DrawerSettingsStore.autoShowKeyboardOnDrawer)
         }
 
         DragonSettingsGroup(R.string.drawer_pull_down_settings) {
-            SettingsSwitchRow(DrawerSettingsStore.pullDownAnimations)
-            SettingsSwitchRow(DrawerSettingsStore.pullDownWallPaperDim)
-            SettingsSwitchRow(DrawerSettingsStore.pullDownScaleIn)
+            Setting(DrawerSettingsStore.pullDownAnimations)
+            Setting(DrawerSettingsStore.pullDownWallPaperDim)
+            Setting(DrawerSettingsStore.pullDownScaleIn)
         }
 
-
-
         DragonSettingsGroup(R.string.recently_used_apps) {
-            SettingsSwitchRow(DrawerSettingsStore.showRecentlyUsedApps)
+            Setting(DrawerSettingsStore.showRecentlyUsedApps)
 
             AnimatedVisibility(showRecentlyUsed) {
-                SettingsSlider(
+                Setting(
                     setting = DrawerSettingsStore.recentlyUsedAppsCount,
                     backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
                     modifier = Modifier
@@ -158,20 +151,19 @@ public fun DrawerTab(
                 icon = R.drawable._123
             ) { showToolbarsOrderDialog = true }
 
-            SettingsSwitchRow(DrawerSettingsStore.showAppIconsInDrawer)
-
-            SettingsSwitchRow(DrawerSettingsStore.showAppLabelInDrawer)
+            Setting(DrawerSettingsStore.showAppIconsInDrawer)
+            Setting(DrawerSettingsStore.showAppLabelInDrawer)
 
             ExpandableSection(drawerCategorySettingsState) {
-                SettingsSwitchRow(DrawerSettingsStore.useCategory)
-                SettingsSwitchRow(DrawerSettingsStore.showCategoryName, enabled = useCategory)
-                SettingsSlider(DrawerSettingsStore.categoryGridCells)
+                Setting(DrawerSettingsStore.useCategory)
+                Setting(DrawerSettingsStore.showCategoryName, enabled = useCategory)
+                Setting(DrawerSettingsStore.categoryGridCells)
             }
 
             ExpandableSection(drawerNormalSettingsState) {
-                SettingsSlider(DrawerSettingsStore.iconSize)
-                SettingsSlider(DrawerSettingsStore.iconsSpacingHorizontal)
-                SettingsSlider(DrawerSettingsStore.iconsSpacingVertical)
+                Setting(DrawerSettingsStore.iconSize)
+                Setting(DrawerSettingsStore.iconsSpacingHorizontal)
+                Setting(DrawerSettingsStore.iconsSpacingVertical)
             }
 
             DrawerIconShapePicker()

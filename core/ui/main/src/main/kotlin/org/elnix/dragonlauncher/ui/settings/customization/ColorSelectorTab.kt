@@ -75,8 +75,7 @@ import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSectionState
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsColorPicker
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -220,7 +219,7 @@ public fun ColorSelectorTab(
 
         HorizontalDivider()
 
-        SettingsSwitchRow(ColorModesSettingsStore.useCustomColorChannels)
+        Setting(ColorModesSettingsStore.useCustomColorChannels)
 
         AnimatedVisibility(defaultTheme == Dark || defaultTheme == Amoled) {
             SwitchRow(
@@ -236,7 +235,7 @@ public fun ColorSelectorTab(
 
         // Only show the dynamic colors switch when in SYSTEM view
         AnimatedVisibility(defaultTheme == System) {
-            SettingsSwitchRow(ColorModesSettingsStore.dynamicColors)
+            Setting(ColorModesSettingsStore.dynamicColors)
         }
 
         AnimatedVisibility(colorTestMode) {
@@ -415,25 +414,25 @@ public fun ColorSelectorTab(
                             }
 
                             ColorSelectorModes.Custom -> {
-                                SettingsColorPicker(ColorSettingsStore.holdToActivateColor)
-                                SettingsColorPicker(ColorSettingsStore.angleLineColor)
-                                SettingsColorPicker(ColorSettingsStore.shapesColor)
-                                SettingsColorPicker(ColorSettingsStore.launchAppColor)
-                                SettingsColorPicker(ColorSettingsStore.openUrlColor)
-                                SettingsColorPicker(ColorSettingsStore.notificationShadeColor)
-                                SettingsColorPicker(ColorSettingsStore.controlPanelColor)
-                                SettingsColorPicker(ColorSettingsStore.openAppDrawerColor)
-                                SettingsColorPicker(ColorSettingsStore.launcherSettingsColor)
-                                SettingsColorPicker(ColorSettingsStore.lockColor)
-                                SettingsColorPicker(ColorSettingsStore.openFileColor)
-                                SettingsColorPicker(ColorSettingsStore.reloadColor)
-                                SettingsColorPicker(ColorSettingsStore.openRecentAppsColor)
-                                SettingsColorPicker(ColorSettingsStore.openCircleNestColor)
-                                SettingsColorPicker(ColorSettingsStore.goParentNestColor)
-                                SettingsColorPicker(ColorSettingsStore.toggleWifi)
-                                SettingsColorPicker(ColorSettingsStore.toggleBluetooth)
-                                SettingsColorPicker(ColorSettingsStore.toggleData)
-                                SettingsColorPicker(ColorSettingsStore.runAdbCommand)
+                                Setting(ColorSettingsStore.holdToActivateColor)
+                                Setting(ColorSettingsStore.angleLineColor)
+                                Setting(ColorSettingsStore.shapesColor)
+                                Setting(ColorSettingsStore.launchAppColor)
+                                Setting(ColorSettingsStore.openUrlColor)
+                                Setting(ColorSettingsStore.notificationShadeColor)
+                                Setting(ColorSettingsStore.controlPanelColor)
+                                Setting(ColorSettingsStore.openAppDrawerColor)
+                                Setting(ColorSettingsStore.launcherSettingsColor)
+                                Setting(ColorSettingsStore.lockColor)
+                                Setting(ColorSettingsStore.openFileColor)
+                                Setting(ColorSettingsStore.reloadColor)
+                                Setting(ColorSettingsStore.openRecentAppsColor)
+                                Setting(ColorSettingsStore.openCircleNestColor)
+                                Setting(ColorSettingsStore.goParentNestColor)
+                                Setting(ColorSettingsStore.toggleWifi)
+                                Setting(ColorSettingsStore.toggleBluetooth)
+                                Setting(ColorSettingsStore.toggleData)
+                                Setting(ColorSettingsStore.runAdbCommand)
                             }
                         }
                     }
@@ -541,7 +540,7 @@ private fun ColorsGroup(
     ExpandableSection(expandableSectionState) {
         examples?.let { it() }
         colors.forEach {
-            SettingsColorPicker(it)
+            Setting(it)
         }
     }
 }

@@ -51,7 +51,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
@@ -87,7 +87,7 @@ public fun DebugTab(
         onReset = null,
         resetText = null
     ) {
-        SettingsSwitchRow(DebugSettingsStore.debugEnabled)
+        Setting(DebugSettingsStore.debugEnabled)
 
         DragonSettingsGroup(R.string.more) {
             SettingsItem(
@@ -130,21 +130,21 @@ public fun DebugTab(
                 Text(text = "Show Welcome Screen")
             }
 
-            SettingsSwitchRow(DebugSettingsStore.forceAppLanguageSelector)
-            SettingsSwitchRow(PrivateSettingsStore.hideBetaVersionWarning)
-            SettingsSwitchRow(PrivateSettingsStore.showSetDefaultLauncherBanner)
-            SettingsSwitchRow(DebugSettingsStore.showFps)
-            SettingsSwitchRow(DebugSettingsStore.showKillLauncherActionInActionPicker)
-            SettingsSwitchRow(UiSettingsStore.doNotRemindMeAgainPinLockWarning)
+            Setting(DebugSettingsStore.forceAppLanguageSelector)
+            Setting(PrivateSettingsStore.hideBetaVersionWarning)
+            Setting(PrivateSettingsStore.showSetDefaultLauncherBanner)
+            Setting(DebugSettingsStore.showFps)
+            Setting(DebugSettingsStore.showKillLauncherActionInActionPicker)
+            Setting(UiSettingsStore.doNotRemindMeAgainPinLockWarning)
         }
 
         DragonSettingsGroup(R.string.debug_infos) {
-            SettingsSwitchRow(DebugSettingsStore.mainScreenDebugInfos)
-            SettingsSwitchRow(DebugSettingsStore.nestDebugInfo)
-            SettingsSwitchRow(DebugSettingsStore.nestDebugOverlay)
-            SettingsSwitchRow(DebugSettingsStore.settingsDebugInfo)
-            SettingsSwitchRow(DebugSettingsStore.widgetsDebugInfo)
-            SettingsSwitchRow(DebugSettingsStore.workspacesDebugInfo)
+            Setting(DebugSettingsStore.mainScreenDebugInfos)
+            Setting(DebugSettingsStore.nestDebugInfo)
+            Setting(DebugSettingsStore.nestDebugOverlay)
+            Setting(DebugSettingsStore.settingsDebugInfo)
+            Setting(DebugSettingsStore.widgetsDebugInfo)
+            Setting(DebugSettingsStore.workspacesDebugInfo)
         }
 
         DragonSettingsGroup(R.string.package_search) {
@@ -195,11 +195,8 @@ public fun DebugTab(
             title = R.string.accessibility_and_system,
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
         ) {
-            SettingsSwitchRow(DebugSettingsStore.useAccessibilityInsteadOfContextToExpandActionPanel,
-
-            )
-
-            SettingsSwitchRow(DebugSettingsStore.autoRaiseDragonOnSystemLauncher)
+            Setting(DebugSettingsStore.useAccessibilityInsteadOfContextToExpandActionPanel)
+            Setting(DebugSettingsStore.autoRaiseDragonOnSystemLauncher)
 
             DragonButton(
                 onClick = { SystemControl.openServiceSettings((ctx)) },
@@ -368,7 +365,7 @@ public fun DebugTab(
                     modifier = Modifier.fillMaxWidth()
                 ) { Text(text = "Re-initialize points") }
 
-                SettingsSwitchRow(DebugSettingsStore.disableExtensionSignatureCheck)
+                Setting(DebugSettingsStore.disableExtensionSignatureCheck)
             }
         }
     }

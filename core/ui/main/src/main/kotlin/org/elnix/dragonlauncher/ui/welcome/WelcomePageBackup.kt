@@ -7,13 +7,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import io.github.elnix90.runtime.asState
+import io.github.elnix90.runtime.asStateNull
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
-import io.github.elnix90.runtime.asState
-import io.github.elnix90.runtime.asStateNull
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.GradientBigButton
 import org.elnix.dragonlauncher.ui.remembers.rememberAutoBackupLauncher
 
@@ -33,7 +33,7 @@ public fun WelcomePageBackup() {
         title = stringResource(R.string.enable_backup),
         icon = R.drawable.cloud_upload
     ) {
-        SettingsSwitchRow(BackupSettingsStore.autoBackupEnabled) {
+        Setting(BackupSettingsStore.autoBackupEnabled) {
             // If the user disabled the backup, also remove the uri
             if (!it) {
                 scope.launch {

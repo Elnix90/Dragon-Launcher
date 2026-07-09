@@ -31,8 +31,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSectionMode
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.statusbar.showChargingAnimation
 
@@ -66,7 +65,7 @@ public fun AppDisplayTab(
         }
     ) {
         DragonSettingsGroup(R.string.common_settings) {
-            SettingsSwitchRow(UiSettingsStore.fullScreen)
+            Setting(UiSettingsStore.fullScreen)
 
             val showChargingAnimation by showChargingAnimation()
 
@@ -90,18 +89,17 @@ public fun AppDisplayTab(
         }
 
         ExpandableSection(topOverlaySettingsState) {
-
-            SettingsSwitchRow(UiSettingsStore.showLaunchingAppLabel)
-            SettingsSwitchRow(UiSettingsStore.showPreviewPoint)
-            SettingsSlider(
+            Setting(UiSettingsStore.showLaunchingAppLabel)
+            Setting(UiSettingsStore.showPreviewPoint)
+            Setting(
                 setting = UiSettingsStore.appLabelIconOverlayTopPadding,
                 color = MaterialTheme.colorScheme.primary
             )
-            SettingsSlider(
+            Setting(
                 setting = UiSettingsStore.appLabelOverlaySize,
                 color = MaterialTheme.colorScheme.primary
             )
-            SettingsSlider(
+            Setting(
                 setting = UiSettingsStore.appIconOverlaySize,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -111,10 +109,10 @@ public fun AppDisplayTab(
             title = R.string.dragging_display,
             contentPadding = PaddingValues(vertical = 12.dp)
         ) {
-            SettingsSwitchRow(UiSettingsStore.showAppLaunchingPreview)
-            SettingsSwitchRow(UiSettingsStore.showAllActionsOnCurrentShape)
+            Setting(UiSettingsStore.showAppLaunchingPreview)
+            Setting(UiSettingsStore.showAllActionsOnCurrentShape)
 
-            SettingsSwitchRow(UiSettingsStore.showAllActionsOnCurrentShape) {
+            Setting(UiSettingsStore.showAllActionsOnCurrentShape) {
                 if (!it) {
                     scope.launch {
                         UiSettingsStore.showAllActionsOnCurrentNest.set(ctx, false)
@@ -122,9 +120,9 @@ public fun AppDisplayTab(
                 }
             }
 
-            SettingsSwitchRow(UiSettingsStore.showAllActionsOnCurrentNest, enabled = showAllActionsOnCurrentCircle)
-            SettingsSwitchRow(UiSettingsStore.showPointPreviewCenterStartPosition)
-            SettingsSwitchRow(UiSettingsStore.linePreviewSnapToAction) {
+            Setting(UiSettingsStore.showAllActionsOnCurrentNest, enabled = showAllActionsOnCurrentCircle)
+            Setting(UiSettingsStore.showPointPreviewCenterStartPosition)
+            Setting(UiSettingsStore.linePreviewSnapToAction) {
                 if (!it) {
                     scope.launch {
                         UiSettingsStore.showAllActionsOnCurrentNest.set(ctx, false)
@@ -133,17 +131,17 @@ public fun AppDisplayTab(
             }
 
             val snap by UiSettingsStore.linePreviewSnapToAction.asState()
-            SettingsSwitchRow(UiSettingsStore.animationWhenSnapping, enabled = snap)
+            Setting(UiSettingsStore.animationWhenSnapping, enabled = snap)
 
-            SettingsSwitchRow(UiSettingsStore.multiplyOrSubtractOpacityInLiveNests)
+            Setting(UiSettingsStore.multiplyOrSubtractOpacityInLiveNests)
         }
 
         DragonSettingsGroup(
             title = R.string.depth,
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
         ) {
-            SettingsSlider(UiSettingsStore.maxNestsDepth)
-            SettingsSlider(UiSettingsStore.maxLiveNestsDepth)
+            Setting(UiSettingsStore.maxNestsDepth)
+            Setting(UiSettingsStore.maxLiveNestsDepth)
         }
     }
 

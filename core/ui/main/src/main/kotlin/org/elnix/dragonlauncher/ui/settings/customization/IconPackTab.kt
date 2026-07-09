@@ -19,8 +19,7 @@ import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.LazyRowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsColorPicker
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.IconPackListContent
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerIconShapePicker
@@ -61,19 +60,19 @@ public fun IconPackTab(
 
         Spacer(30.dp)
 
-        SettingsSwitchRow(IconsSettingsStore.useIconTint)
+        Setting(IconsSettingsStore.useIconTint)
 
         val useIconTint by IconsSettingsStore.useIconTint.asState()
-        SettingsColorPicker(IconsSettingsStore.iconsTint, enabled = useIconTint) {
+        Setting(IconsSettingsStore.iconsTint, enabled = useIconTint) {
             iconsViewModel.reinstallAllIconPacks()
         }
 
-        SettingsSwitchRow(IconsSettingsStore.themedIcons)
+        Setting(IconsSettingsStore.themedIcons)
 
         val themedIcons by IconsSettingsStore.themedIcons.asState()
-        SettingsSwitchRow(IconsSettingsStore.forceThemed, enabled = themedIcons)
+        Setting(IconsSettingsStore.forceThemed, enabled = themedIcons)
 
-        SettingsSwitchRow(IconsSettingsStore.adaptify)
+        Setting(IconsSettingsStore.adaptify)
 
         DrawerIconShapePicker()
 

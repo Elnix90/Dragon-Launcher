@@ -54,7 +54,7 @@ import org.elnix.dragonlauncher.ui.dialogs.ImportSettingsDialog
 import org.elnix.dragonlauncher.ui.dialogs.SelectedActionRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumn
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.GradientBigButton
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -142,7 +142,7 @@ public fun BackupTab(
         )
 
         DragonSettingsGroup(R.string.automatic_backups) {
-            SettingsSwitchRow(BackupSettingsStore.autoBackupEnabled) {
+            Setting(BackupSettingsStore.autoBackupEnabled) {
                 // If the user disabled the backup, also remove the uri
                 if (!it) {
                     scope.launch {

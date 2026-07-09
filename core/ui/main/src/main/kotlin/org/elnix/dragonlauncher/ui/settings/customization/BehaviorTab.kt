@@ -31,8 +31,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSectionMode
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.SettingActionSelector
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -86,12 +85,12 @@ public fun BehaviorTab(onBack: () -> Unit) {
         }
 
         DragonSettingsGroup(R.string.common_settings) {
-            SettingsSwitchRow(BehaviorSettingsStore.keepScreenOn)
-            SettingsSwitchRow(BehaviorSettingsStore.disableHapticFeedbackGlobally)
-            SettingsSwitchRow(BehaviorSettingsStore.promptForShortcutsWhenAddingApp)
-            SettingsSwitchRow(BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint)
+            Setting(BehaviorSettingsStore.keepScreenOn)
+            Setting(BehaviorSettingsStore.disableHapticFeedbackGlobally)
+            Setting(BehaviorSettingsStore.promptForShortcutsWhenAddingApp)
+            Setting(BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint)
 
-            SettingsSlider(
+            Setting(
                 setting = BehaviorSettingsStore.offScreenTimeout,
                 modifier = Modifier
                     .settingsGroupHorizontalPadding()
@@ -100,10 +99,10 @@ public fun BehaviorTab(onBack: () -> Unit) {
         }
 
         ExpandableSection(paddingState) {
-            SettingsSlider(BehaviorSettingsStore.rightPadding)
-            SettingsSlider(BehaviorSettingsStore.leftPadding)
-            SettingsSlider(BehaviorSettingsStore.topPadding)
-            SettingsSlider(BehaviorSettingsStore.bottomPadding)
+            Setting(BehaviorSettingsStore.rightPadding)
+            Setting(BehaviorSettingsStore.leftPadding)
+            Setting(BehaviorSettingsStore.topPadding)
+            Setting(BehaviorSettingsStore.bottomPadding)
         }
 
         DragonSettingsGroup(R.string.security) {
@@ -114,27 +113,27 @@ public fun BehaviorTab(onBack: () -> Unit) {
             ) { showLockMethodPicker = true }
 
             ExpandableSection(superWarningState) {
-                SettingsSwitchRow(
+                Setting(
                     setting = BehaviorSettingsStore.superWarningMode,
                     enabled = superWarningModeEnabled
                 )
 
-                SettingsSwitchRow(
+                Setting(
                     setting = BehaviorSettingsStore.vibrateOnError,
                     enabled = superWarningModeEnabled
                 )
 
-                SettingsSwitchRow(
+                Setting(
                     setting = BehaviorSettingsStore.alarmSound,
                     enabled = superWarningModeEnabled
                 )
 
-                SettingsSwitchRow(
+                Setting(
                     setting = BehaviorSettingsStore.metalPipesSound,
                     enabled = superWarningModeEnabled
                 )
 
-                SettingsSlider(
+                Setting(
                     setting = BehaviorSettingsStore.superWarningModeSound,
                     enabled = superWarningModeEnabled
                 )

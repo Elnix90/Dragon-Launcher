@@ -20,8 +20,7 @@ import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsColorPicker
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.statusbar.EditStatusBar
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
@@ -70,8 +69,8 @@ public fun StatusBarTab(
             Column(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                SettingsColorPicker(StatusBarSettingsStore.barBackgroundColor)
-                SettingsColorPicker(StatusBarSettingsStore.barTextColor,)
+                Setting(StatusBarSettingsStore.barBackgroundColor)
+                Setting(StatusBarSettingsStore.barTextColor)
 
                 EditStatusBar()
 
@@ -79,10 +78,10 @@ public fun StatusBarTab(
                     title = R.string.padding,
                     contentPadding = PaddingValues(12.dp)
                 ) {
-                    SettingsSlider(StatusBarSettingsStore.leftPadding)
-                    SettingsSlider(StatusBarSettingsStore.rightPadding)
-                    SettingsSlider(StatusBarSettingsStore.topPadding)
-                    SettingsSlider(StatusBarSettingsStore.bottomPadding)
+                    Setting(StatusBarSettingsStore.leftPadding)
+                    Setting(StatusBarSettingsStore.rightPadding)
+                    Setting(StatusBarSettingsStore.topPadding)
+                    Setting(StatusBarSettingsStore.bottomPadding)
                 }
             }
         }

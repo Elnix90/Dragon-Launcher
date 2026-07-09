@@ -53,8 +53,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
@@ -102,11 +101,11 @@ public fun WellbeingTab(
     ) {
 
         DragonSettingsGroup(R.string.social_media_pause) {
-            SettingsSwitchRow(WellbeingSettingsStore.socialMediaPauseEnabled)
+            Setting(WellbeingSettingsStore.socialMediaPauseEnabled)
 
             AnimatedVisibility(visible = socialMediaPauseEnabled) {
                 Column {
-                    SettingsSwitchRow(
+                    Setting(
                         WellbeingSettingsStore.guiltModeEnabled,
                         enabled = true,
                     ) { newValue ->
@@ -119,7 +118,7 @@ public fun WellbeingTab(
                         }
                     }
 
-                    SettingsSlider(
+                    Setting(
                         setting = WellbeingSettingsStore.pauseDurationSeconds,
 
                         modifier = Modifier.settingsGroupHorizontalPadding()
@@ -131,7 +130,7 @@ public fun WellbeingTab(
 
 
         DragonSettingsGroup(R.string.reminder_mode_title) {
-            SettingsSwitchRow(
+            Setting(
                 WellbeingSettingsStore.reminderEnabled,
                 enabled = socialMediaPauseEnabled,
             ) { newValue ->
@@ -142,7 +141,7 @@ public fun WellbeingTab(
 
             AnimatedVisibility(visible = socialMediaPauseEnabled && reminderEnabled) {
                 Column {
-                    SettingsSlider(
+                    Setting(
                         setting = WellbeingSettingsStore.reminderIntervalMinutes,
                         modifier = Modifier.settingsGroupHorizontalPadding()
                     )
@@ -164,13 +163,13 @@ public fun WellbeingTab(
                 }
 
 
-                SettingsSwitchRow(WellbeingSettingsStore.popupShowSessionTime,)
-                SettingsSwitchRow(WellbeingSettingsStore.popupShowTodayTime)
-                SettingsSwitchRow(WellbeingSettingsStore.popupShowRemainingTime)
+                Setting(WellbeingSettingsStore.popupShowSessionTime)
+                Setting(WellbeingSettingsStore.popupShowTodayTime)
+                Setting(WellbeingSettingsStore.popupShowRemainingTime)
             }
         }
 
-        SettingsSwitchRow(WellbeingSettingsStore.returnToLauncherEnabled, enabled = socialMediaPauseEnabled,)
+        Setting(WellbeingSettingsStore.returnToLauncherEnabled, enabled = socialMediaPauseEnabled)
 
         DragonSettingsGroup(
             title = R.string.paused_apps,

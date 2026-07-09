@@ -104,7 +104,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonColumn
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.SmallShapeRow
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -504,7 +504,7 @@ public fun WidgetsTab(
                 }
             }
 
-            SettingsSlider(UiSettingsStore.widgetsCellSizeDp)
+            Setting(UiSettingsStore.widgetsCellSizeDp)
         }
     }
 

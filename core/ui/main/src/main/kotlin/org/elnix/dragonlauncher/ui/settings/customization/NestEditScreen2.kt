@@ -88,7 +88,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.SelfCheckNestPresent
 import org.elnix.dragonlauncher.ui.helpers.ShapePreview
@@ -117,7 +117,7 @@ public fun NestEditScreen2(
     val snapShapeAngle by UiSettingsStore.snapShapeAngle.asState()
 
     val cellSizeDp by UiSettingsStore.widgetsCellSizeDp.asState()
-    val cellSizePx = cellSizeDp.px
+    val cellSizePx = cellSizeDp.px // TODO
     var showMoreSheet by remember { mutableStateOf(false) }
 
 
@@ -592,7 +592,7 @@ public fun NestEditScreen2(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                SettingsSlider(UiSettingsStore.nestsCellSizeDp)
+                Setting(UiSettingsStore.nestsCellSizeDp)
             }
 
             DragonSettingsGroup(
