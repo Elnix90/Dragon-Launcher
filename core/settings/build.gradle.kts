@@ -1,42 +1,33 @@
-import com.android.build.api.dsl.LibraryExtension
-
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.settings) // My plugin 🤎
 }
 
-kotlin {
-    jvmToolchain(21)
-}
-
-extensions.configure<LibraryExtension> {
+android {
     namespace = "org.elnix.dragonlauncher.settings"
-    compileSdk {
-        version = release(37)
-    }
-
-    defaultConfig {
-        minSdk = 26
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.datastore.core)
     implementation(libs.timber)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.compose.material3)
 
     api(libs.androidx.datastore.preferences.core)
     api(libs.kotlinx.coroutines.core)
 
+    // My plugin 🤎
+    implementation(libs.settings.core)
+    implementation(libs.settings.runtime)
+    implementation(libs.settings.annotations)
+
+    implementation(libs.dragon.logging)
+
     implementation(project(":core:base"))
-    implementation(project(":core:logging"))
     api(project(":core:common"))
     api(project(":core:enumsui"))
 }

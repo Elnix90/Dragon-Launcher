@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Shape
 
 /** Default shape for the leading button in a connected button group */
-val connectedTopButtonShape: Shape
+public val connectedTopButtonShape: Shape
     @Composable
     get() =
         RoundedCornerShape(
@@ -19,7 +19,7 @@ val connectedTopButtonShape: Shape
         )
 
 /** Default shape for the pressed state for the leading button in a connected button group. */
-val connectedTopButtonPressShape: Shape
+public val connectedTopButtonPressShape: Shape
     @Composable
     get() =
         RoundedCornerShape(
@@ -31,7 +31,7 @@ val connectedTopButtonPressShape: Shape
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun connectedTopButtonShapes(
+public fun connectedTopButtonShapes(
     shape: Shape = connectedTopButtonShape,
     pressedShape: Shape = connectedTopButtonPressShape,
     checkedShape: Shape = connectedButtonCheckedShape,
@@ -43,7 +43,7 @@ fun connectedTopButtonShapes(
 
 
 /** Default shape for the leading button in a connected button group */
-val connectedBottomButtonShape: Shape
+public val connectedBottomButtonShape: Shape
     @Composable
     get() =
         RoundedCornerShape(
@@ -54,7 +54,7 @@ val connectedBottomButtonShape: Shape
         )
 
 /** Default shape for the pressed state for the leading button in a connected button group. */
-val connectedBottomButtonPressShape: Shape
+public val connectedBottomButtonPressShape: Shape
     @Composable
     get() =
         RoundedCornerShape(
@@ -66,7 +66,7 @@ val connectedBottomButtonPressShape: Shape
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun connectedBottomButtonShapes(
+public fun connectedBottomButtonShapes(
     shape: Shape = connectedBottomButtonShape,
     pressedShape: Shape = connectedBottomButtonPressShape,
     checkedShape: Shape = connectedButtonCheckedShape,

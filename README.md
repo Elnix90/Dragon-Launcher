@@ -45,7 +45,6 @@
 
 The reason is likely that Dragon asks for _sensitive permissions_ - normal, that's a launcher
 
-
 ---
 # 🎉 Thank you very much to the stargazers !
 ---
@@ -180,8 +179,6 @@ The reason is likely that Dragon asks for _sensitive permissions_ - normal, that
     </p>
 </details>
 
-
-
 ## Usage
 
 * **Long click 3 seconds to access settings**
@@ -190,16 +187,6 @@ The reason is likely that Dragon asks for _sensitive permissions_ - normal, that
 * Change background for main screen / drawer, add blur to it
 
 ---
-
-### What's this icon ?
-
-| Icons                                  | Meaning                                                                                                           |
-|----------------------------------------|-------------------------------------------------------------------------------------------------------------------|
-| <img src="/assets/1.png" height="80"/> | Enter / Exit the nest (click before on the nest you created on one circle)                                        |
-| <img src="/assets/3.png" height="60"/> | Toggle points snapping (if not enabled, you can move freely the points, else they snap in rounded position - 15°) |
-| <img src="/assets/2.png" height="60"/> | Toggle auto-separate points when you drag them                                                                    |
-| <img src="/assets/4.png" height="60"/> | Enter the nest management dialog, where you can view, add and remove the nests                                    |
-
 ## Signing
 
 Releases / F-Droid signing key (SHA-256):
@@ -219,11 +206,8 @@ apksigner verify --print-certs DragonLauncher-*.apk
 * Contributions are welcome! Feel free to submit pull requests or open issues.
 * Check [CONTRIBUTING.md](https://github.com/Elnix90/Dragon-Launcher/blob/main/CONTRIBUTING.MD) for contributions
   guidelines
-
 * You may join the [Discord server](https://discord.gg/6UyuP8EBWS) to discuss more easily about changes in the project.
-
-
-If you want to help translating, check out the project on [Weblate](https://hosted.weblate.org/engage/dragon-launcher).
+* If you want to help translating, check out the project on [Weblate](https://hosted.weblate.org/engage/dragon-launcher).
 
 ---
 

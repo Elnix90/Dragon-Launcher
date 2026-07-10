@@ -1,12 +1,10 @@
 package org.elnix.dragonlauncher.ui.helpers
 
+import android.os.Process
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -16,47 +14,44 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.resolveShape
-import org.elnix.dragonlauncher.common.serializables.IconPackInfo
-import org.elnix.dragonlauncher.common.serializables.dummyAppModel
-import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.icons.IconPack
+import org.elnix.dragonlauncher.models.DrawerViewModel
+import org.elnix.dragonlauncher.models.IconsViewModel
+import org.elnix.dragonlauncher.ui.actions.AppIcon
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.composition.LocalDrawerIconsCache
-import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-fun IconPackListContent(
-    appsViewModel: AppsViewModel = activityViewModel(),
-    packs: List<IconPackInfo>,
+public fun IconPackListContent(
+    drawerViewModel: DrawerViewModel = activityViewModel(),
+    iconViewModel: IconsViewModel = activityViewModel(),
+    packs: List<IconPack>,
     selectedPackPackage: String?,
     showClearOption: Boolean,
-    onReloadPacks: () -> Unit,
-    onPackClick: (IconPackInfo) -> Unit,
+    onPackClick: (IconPack) -> Unit,
     onClearClick: () -> Unit
 ) {
-    val icons = LocalDrawerIconsCache.current
     var isLoading by remember { mutableStateOf(false) }
 
     LaunchedEffect(isLoading) {
-        delay(2000L)
+        delay(2000.milliseconds)
         isLoading = false
     }
 
@@ -80,7 +75,7 @@ fun IconPackListContent(
                     contentDescription = stringResource(R.string.reload)
                 ) {
                     isLoading = true
-                    onReloadPacks()
+                    iconViewModel.updateIconPacks()
                 }
             }
         }
@@ -88,60 +83,35 @@ fun IconPackListContent(
 
     packs.forEach { pack ->
 
-        DragonRow(
-            { onPackClick(pack) }
+        val packPkg = pack.packageName
+        val packApp by drawerViewModel.findOne(packPkg, Process.myUserHandle()).collectAsState(null)
+
+        PackItem(
+            selected = selectedPackPackage == packPkg,
+            text = pack.name,
+            description = pack.packageName,
+            onClick = { onPackClick(pack) }
         ) {
-            val packPkg = pack.packageName
-            val packCacheKey = dummyAppModel(packPkg).iconCacheKey
-
-            val packIcon = icons.getOrLazyCompute(packCacheKey) {
-                appsViewModel.reloadAppIcon(dummyAppModel(packPkg))
-            }
-
-            Box(
-                Modifier.size(40.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                if (packIcon != null) {
-                    Image(
-                        bitmap = packIcon,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(LocalIconShape.current.resolveShape()),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(R.drawable.palette),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-
-            Spacer(12.dp)
-
-            TextWithDescription(
-                text = pack.name,
-                description = pack.packageName,
-            )
-
-            Spacer()
-
-            AnimatedVisibility(selectedPackPackage == pack.packageName) {
+            if (packApp != null) {
+                AppIcon(packApp!!, size = 56.dp)
+            } else {
                 Icon(
-                    painter = painterResource(R.drawable.check),
+                    painter = painterResource(R.drawable.palette),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(56.dp)
                 )
             }
         }
     }
 
     if (showClearOption) {
-        DragonRow(
-            { onClearClick() }
+
+        PackItem(
+            selected = selectedPackPackage.isNullOrEmpty(),
+            text = stringResource(R.string.default_text),
+            description = stringResource(R.string.use_original_app_icon),
+            onClick = onClearClick
         ) {
             Icon(
                 painter = painterResource(R.drawable.close),
@@ -149,23 +119,38 @@ fun IconPackListContent(
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(40.dp)
             )
-            Spacer(12.dp)
+        }
+    }
+}
 
 
-            TextWithDescription(
-                text = stringResource(R.string.default_text),
-                description = stringResource(R.string.use_original_app_icon)
+@Composable
+private fun PackItem(
+    selected: Boolean,
+    text: String,
+    description: String,
+    onClick: () -> Unit,
+    icon: @Composable () -> Unit
+) {
+    DragonRow(onClick = onClick) {
+
+        icon()
+
+        Spacer(12.dp)
+
+        TextWithDescription(
+            text = text,
+            description = description,
+        )
+
+        Spacer()
+
+        AnimatedVisibility(selected) {
+            Icon(
+                painter = painterResource(R.drawable.check),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
             )
-
-            Spacer()
-
-            AnimatedVisibility(selectedPackPackage == null) {
-                Icon(
-                    painter = painterResource(R.drawable.check),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
         }
     }
 }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -14,7 +15,7 @@ import androidx.compose.ui.zIndex
 
 
 @Composable
-fun OverlayHost(
+public fun OverlayHost(
     modifier: Modifier = Modifier,
     contentAlignment: Alignment = Alignment.TopStart,
     content: @Composable BoxScope.() -> Unit,
@@ -41,10 +42,10 @@ fun OverlayHost(
     }
 }
 
-val LocalOverlayManager = compositionLocalOf {
+public val LocalOverlayManager: ProvidableCompositionLocal<OverlayManager> = compositionLocalOf {
     OverlayManager()
 }
 
-val LocalZIndex = compositionLocalOf {
+public val LocalZIndex: ProvidableCompositionLocal<Float> = compositionLocalOf {
     0f
 }

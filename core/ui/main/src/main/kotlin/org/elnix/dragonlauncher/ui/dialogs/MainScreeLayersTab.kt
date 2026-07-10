@@ -18,7 +18,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -35,17 +34,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.isNotBlankJson
-import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
-import org.elnix.dragonlauncher.common.serializables.MainScreenLayerJson
-import org.elnix.dragonlauncher.common.serializables.copyWithEnabled
-import org.elnix.dragonlauncher.common.serializables.defaultMainScreenLayers
-import org.elnix.dragonlauncher.common.serializables.enabled
-import org.elnix.dragonlauncher.common.serializables.label
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.copyWithEnabled
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.defaultMainScreenLayers
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.enabled
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.label
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayerJson
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.asState
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -53,16 +51,14 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
-fun MainScreeLayersTab(
+public fun MainScreeLayersTab(
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
     val order by rememberMainScreenLayerOrder()
-
-    var objects by remember { mutableStateOf(order) }
-    LaunchedEffect(order) { objects = order }
+    var objects by remember(order) { mutableStateOf(order) }
 
     fun save() {
         scope.launch {
@@ -223,17 +219,14 @@ fun MainScreeLayersTab(
 }
 
 @Composable
-fun rememberMainScreenLayerOrder(): MutableState<List<MainScreenLayer>> {
+public fun rememberMainScreenLayerOrder(): MutableState<List<MainScreenLayer>> {
     val orderString by UiSettingsStore.mainScreenLayers.asState()
 
     return remember(orderString) {
-        val decoded =
-            orderString
-                .takeIf { it.isNotBlankJson }
-                ?.let {
-                    MainScreenLayerJson.decode(orderString)
-                        .takeIf { it.size == 6 } // Ensure they have been saved
-                } ?: defaultMainScreenLayers
+        val decoded = MainScreenLayerJson
+            .decode<List<MainScreenLayer>>(orderString)
+            ?.takeIf { it.size == 6 } // Ensure they have been saved
+            ?: defaultMainScreenLayers
 
         mutableStateOf(decoded)
     }

@@ -18,7 +18,7 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.dragon.text.SettingsWithTitle
 
 @Composable
-fun DragonSettingsGroup(
+public fun DragonSettingsGroup(
     title: Int?,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),

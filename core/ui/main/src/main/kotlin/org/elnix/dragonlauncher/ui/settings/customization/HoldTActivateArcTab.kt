@@ -9,11 +9,12 @@ import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,8 +27,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -35,33 +34,32 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.serializables.ColorSerializer
-import org.elnix.dragonlauncher.common.serializables.CustomObjectSerializable
-import org.elnix.dragonlauncher.settings.stores.HoldToActivateArcSettingsStore
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
-import org.elnix.dragonlauncher.ui.base.UiConstants
-import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.getCenter
+import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.base.withHaptic
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.dialogs.HoldSettingsOrderSheet
+import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
 import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
+import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson
+import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
-fun HoldToActivateArcTab(onBack: () -> Unit) {
+public fun HoldToActivateArcTab(onBack: () -> Unit) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -71,6 +69,7 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
     val holdToActivateSettingsTolerance by HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance.asState()
     val showToleranceOnMainScreen by HoldToActivateArcSettingsStore.showToleranceOnMainScreen.asState()
     val rotationPerSecond by HoldToActivateArcSettingsStore.rotationPerSecond.asState()
+    val rgbLoading by HoldToActivateArcSettingsStore.rgbLoading.asState()
 
     val holdCustomObject = LocalHoldCustomObject.current
 
@@ -79,18 +78,11 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
     var playAnimation by remember { mutableStateOf(true) }
 
 
-    val rgbLoading by UiSettingsStore.rgbLoading.asState()
 
     val progress = remember { Animatable(0f) }
 
-    val json = Json {
-        serializersModule = SerializersModule {
-            contextual(Color::class, ColorSerializer)
-        }
-    }
-
     fun save() {
-        val newAngleJson = json.encodeToString(CustomObjectSerializable.serializer(), mutableHoldObject)
+        val newAngleJson = CustomObjectJson.encode(mutableHoldObject)
         scope.launch {
             HoldToActivateArcSettingsStore.holdToActivateArcCustomObject.set(ctx, newAngleJson)
         }
@@ -123,7 +115,6 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
                     AnimatedPlayPauseIcon(playAnimation)
                 }
 
-
                 SliderWithLabel(
                     label = stringResource(R.string.animated_progress),
                     showValue = false,
@@ -136,23 +127,20 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
                 }
             }
 
-            Box(
+            BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
                     .onSizeChanged { boxSize = it }
             ) {
-                val center = Offset(
-                    x = boxSize.width / 2f,
-                    y = boxSize.height / 2f - 15f
-                )
+                val center = this.constraints.getCenter()
 
                 HoldToActivateArc(
                     center = center,
                     progress = progress.value,
                     rgbLoading = rgbLoading,
                     rotationsPerSecond = rotationPerSecond,
-                    customObjectSerializable = mutableHoldObject,
+                    customObject = mutableHoldObject,
                     playAnimation = playAnimation,
                     showHoldTolerance = if (showToleranceOnMainScreen) {
                         { holdToActivateSettingsTolerance }
@@ -168,8 +156,7 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
         ) {
             while (playAnimation) {
                 progress.snapTo(0f)
-
-                delay(holdDelayBeforeStartingLongClickSettings.toLong())
+                delay(holdDelayBeforeStartingLongClickSettings.milliseconds)
 
                 progress.animateTo(
                     targetValue = 1f,
@@ -187,48 +174,51 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
         ) {
             EditCustomObjectBlock(
                 editObject = mutableHoldObject,
-                default = UiConstants.defaultAngleCustomObject
+                default = defaultAngleCustomObject
             ) { mutableHoldObject = it }
         }
-
 
         DragonSettingsGroup(
             title = R.string.configuration,
             contentPadding = PaddingValues(top = 12.dp)
         ) {
-            SettingsSlider(
+            Setting(
                 setting = HoldToActivateArcSettingsStore.longCLickSettingsDuration,
-                title = stringResource(R.string.long_click_settings_duration),
-                description = stringResource(R.string.long_click_settings_duration_desc),
-                valueRange = 0..5000,
                 modifier = Modifier.settingsGroupHorizontalPadding()
             )
-
-            SettingsSlider(
+            Setting(
                 setting = HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings,
-                title = stringResource(R.string.hold_delay_before_starting_long_click_settings),
-                description = stringResource(R.string.hold_delay_before_starting_long_click_settings_desc),
-                valueRange = 0..2000,
                 modifier = Modifier.settingsGroupHorizontalPadding()
             )
-
-            SettingsSlider(
+            Setting(
                 setting = HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance,
-                title = stringResource(R.string.hold_to_activate_tolerance),
-                description = stringResource(R.string.hold_to_activate_tolerance_desc),
-                valueRange = 1f..200f,
                 modifier = Modifier.settingsGroupHorizontalPadding()
             )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
+            ) {
+                Setting(
+                    setting = HoldToActivateArcSettingsStore.rotationPerSecond,
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                        .weight(1f)
+                )
+                DragonIconButton(
+                    icon = R.drawable.flash_auto,
+                    contentDescription = R.string.automatic_magic_number
+                ) {
+                    scope.launch {
+                        val duration = HoldToActivateArcSettingsStore.longCLickSettingsDuration.get(ctx)
 
-
-            SettingsSlider(
-                setting = HoldToActivateArcSettingsStore.rotationPerSecond,
-                title = stringResource(R.string.rotation_per_second),
-                description = stringResource(R.string.rotation_per_second_desc),
-                valueRange = 0f..5f,
-                modifier = Modifier.settingsGroupHorizontalPadding()
-            )
-
+                        /**
+                         * The number of rotations to achieve the same speed in both sides of the shape when playing (works best with circle)
+                         */
+                        val magicNumber = 1000f / duration
+                        HoldToActivateArcSettingsStore.rotationPerSecond.set(ctx, magicNumber)
+                    }
+                }
+            }
             SettingsItem(
                 title = stringResource(R.string.edit_hold_to_activate_elements),
                 description = stringResource(R.string.edit_hold_to_activate_elements_desc),
@@ -236,18 +226,9 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
             ) {
                 showHoldSettingsOrderDialog = true
             }
-
-            SettingsSwitchRow(
-                setting = HoldToActivateArcSettingsStore.showToleranceOnMainScreen,
-                title = stringResource(R.string.show_tolerance_on_main_screen),
-                description = stringResource(R.string.show_tolerance_on_main_screen_desc),
-            )
-
-            SettingsSwitchRow(
-                setting = UiSettingsStore.rgbLoading,
-                title = stringResource(R.string.rgb_loading_settings),
-                description = stringResource(R.string.rgb_loading_description)
-            )
+            Setting(HoldToActivateArcSettingsStore.showToleranceOnMainScreen)
+            Setting(HoldToActivateArcSettingsStore.rgbLoading)
+            Setting(ColorSettingsStore.holdToActivateColor)
         }
     }
 
@@ -258,7 +239,7 @@ fun HoldToActivateArcTab(onBack: () -> Unit) {
 
 
 @Composable
-fun AnimatedPlayPauseIcon(
+public fun AnimatedPlayPauseIcon(
     isPlaying: Boolean,
     modifier: Modifier = Modifier,
     size: Dp = 24.dp

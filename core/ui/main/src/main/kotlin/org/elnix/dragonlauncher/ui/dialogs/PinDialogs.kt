@@ -65,16 +65,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.RoundedPolygon
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.SecurityHelper
-import org.elnix.dragonlauncher.common.utils.HapticUtils.vibrate
-import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
-import org.elnix.dragonlauncher.ui.base.UiConstants.allMaterialShapes
-import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
+import org.elnix.dragonlauncher.base.util.HapticUtils.vibrate
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.models.LockScreenViewModel
+import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+import org.elnix.dragonlauncher.ui.base.UiConstants.pinMaterialShapes
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
@@ -82,9 +83,10 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
  * Dialog for entering a PIN to unlock settings.
  */
 @Composable
-fun PinUnlock(
+public fun PinUnlock(
     onDismiss: () -> Unit,
     onValidate: () -> Unit,
+    lockScreenViewModel: LockScreenViewModel = activityViewModel()
 ) {
     val haptic = LocalHapticFeedback.current
     val pinHash by PrivateSettingsStore.lockPinHash.asState()
@@ -108,7 +110,7 @@ fun PinUnlock(
             pin = newValue
             if (pinShapes.size < newValue.length) {
                 repeat(newValue.length - pinShapes.size) {
-                    pinShapes.add(allMaterialShapes.random())
+                    pinShapes.add(pinMaterialShapes.random())
                 }
             } else {
                 repeat(pinShapes.size - newValue.length) {
@@ -121,7 +123,7 @@ fun PinUnlock(
             onDismiss()
         }
     ) {
-        if (SecurityHelper.verifyPin(pin, pinHash)) {
+        if (lockScreenViewModel.verifyPin(pin, pinHash)) {
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
             onValidate()
         } else {
@@ -139,7 +141,7 @@ fun PinUnlock(
  * Dialog for setting up a new PIN (enter + confirm).
  */
 @Composable
-fun PinSetup(
+public fun PinSetup(
     onDismiss: () -> Unit,
     onPinSet: (String) -> Unit
 ) {
@@ -170,7 +172,7 @@ fun PinSetup(
             errorMessage = null
             if (pinShapes.size < newValue.length) {
                 repeat(newValue.length - pinShapes.size) {
-                    pinShapes.add(allMaterialShapes.random())
+                    pinShapes.add(pinMaterialShapes.random())
                 }
             } else {
                 repeat(pinShapes.size - newValue.length) {
@@ -309,7 +311,7 @@ private fun PinPrompt(
                 backgroundOverlayColor.animateTo(Color.Red)
 
                 if (vibrateOnError) {
-                    vibrate(ctx, 500L)
+                    ctx.vibrate(500L)
                 }
 
                 backgroundOverlayColor.animateTo(Color.Transparent)
@@ -601,7 +603,7 @@ private fun Modifier.keyPadModifier(
 
 
 @Composable
-fun PlayWarningSounds(
+public fun PlayWarningSounds(
     failedTries: Int,
     superWarningMode: Boolean,
     superWarningModeSound: Int,

@@ -7,16 +7,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 
 
-sealed class ExpandableSectionMode {
-    data class ModalSheet(
+public sealed class ExpandableSectionMode {
+    public data class ModalSheet(
         val skipPartiallyExpanded: Boolean = false
     ) : ExpandableSectionMode()
 
-    data object Expandable : ExpandableSectionMode()
+    public data object Expandable : ExpandableSectionMode()
 }
 
 
-data class ExpandableSectionState(
+public data class ExpandableSectionState(
     val isExpanded: () -> Boolean,
     val enabled: () -> Boolean,
     val title: String,
@@ -25,7 +25,7 @@ data class ExpandableSectionState(
 )
 
 @Composable
-fun rememberExpandableSection(
+public fun rememberExpandableSection(
     title: String,
     mode: ExpandableSectionMode = ExpandableSectionMode.ModalSheet(),
     enabled: () -> Boolean = { true }

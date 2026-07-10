@@ -11,12 +11,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -43,22 +40,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
+import io.github.elnix90.logging.HAPTIC_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.HAPTIC_TAG
-import org.elnix.dragonlauncher.common.messyfolder.showToast
-import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedbackSerializable
-import org.elnix.dragonlauncher.common.serializables.hapticFeedbackSerializablePresets
+import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
+import org.elnix.dragonlauncher.base.model.serializables.HapticEntry
+import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.pasteClipboard
-import org.elnix.dragonlauncher.common.utils.HapticUtils.performCustomHaptic
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logE
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -68,36 +63,21 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
-private data class HapticEntry(
-    val id: Long, // stable key for reorderable list
-    val isVibration: Boolean,
-    val durationMs: Int
-)
 
 @Composable
-fun HapticFeedbackEditor(
-    initial: CustomHapticFeedbackSerializable? = null,
+public fun HapticFeedbackEditor(
+    initial: CustomHapticFeedback? = null,
     onDismiss: () -> Unit,
-    onPicked: (CustomHapticFeedbackSerializable?) -> Unit
+    onPicked: (CustomHapticFeedback?) -> Unit
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
+    val lazyListState = rememberLazyListState()
 
-    val initialEntries = remember(initial) {
-        initial?.haptics
-            ?.mapIndexed { i, (isVibration, duration) ->
-                HapticEntry(
-                    id = System.nanoTime() + i,
-                    isVibration = isVibration,
-                    durationMs = duration
-                )
-            }
-            ?: emptyList()
+    val entries = remember(initial) {
+        mutableStateListOf<HapticEntry>().also { it.addAll(initial?.haptics ?: emptyList()) }
     }
 
-    val entries = remember { mutableStateListOf<HapticEntry>().also { it.addAll(initialEntries) } }
-
-    val lazyListState = rememberLazyListState()
 
     val reorderState = rememberReorderableLazyListState(
         lazyListState = lazyListState,
@@ -107,10 +87,10 @@ fun HapticFeedbackEditor(
     )
 
 
-    fun currentEditingSnapshot(): CustomHapticFeedbackSerializable? {
+    fun currentEditingSnapshot(): CustomHapticFeedback? {
         val snapshot = if (entries.isEmpty()) null
-        else CustomHapticFeedbackSerializable(
-            haptics = entries.map { Pair(it.isVibration, it.durationMs) }
+        else CustomHapticFeedback(
+            haptics = entries.map { HapticEntry(it.isVibration, it.durationMs) }
         )
         logD(HAPTIC_TAG) { "Got snapshot: $snapshot" }
         return snapshot
@@ -118,23 +98,21 @@ fun HapticFeedbackEditor(
 
     fun playTest() {
         scope.launch {
-            performCustomHaptic(ctx, currentEditingSnapshot())
+            currentEditingSnapshot()?.perform(ctx)
         }
     }
 
-    fun selectPreset(customFeedback: CustomHapticFeedbackSerializable) {
-        entries.clear()
-        customFeedback.haptics.mapIndexed { i, (isVibration, duration) ->
-            entries.add(
-                HapticEntry(
-                    id = System.nanoTime() + i,
-                    isVibration = isVibration,
-                    durationMs = duration
-                )
-            )
-        }
+    fun selectPreset(customFeedback: CustomHapticFeedback) {
         scope.launch {
-            delay(50)
+            entries.clear()
+            customFeedback.haptics.forEach { (isVibration, duration) ->
+                entries.add(
+                    HapticEntry(
+                        isVibration = isVibration,
+                        durationMs = duration
+                    )
+                )
+            }
             playTest()
         }
     }
@@ -150,7 +128,7 @@ fun HapticFeedbackEditor(
         val clipboardContent = ctx.pasteClipboard() ?: ""
 
         try {
-            val decoded = Json.decodeFromString<CustomHapticFeedbackSerializable>(clipboardContent)
+            val decoded = Json.decodeFromString<CustomHapticFeedback>(clipboardContent)
 
             selectPreset(decoded)
             ctx.showToast("✅ Successfully imported!")
@@ -196,8 +174,7 @@ fun HapticFeedbackEditor(
                         contentDescription = stringResource(R.string.copy)
                     )
                 }
-                Spacer(Modifier.height(5.dp))
-
+                Spacer(5.dp)
 
 
                 DragonSettingsGroup(R.string.presets) {
@@ -206,11 +183,11 @@ fun HapticFeedbackEditor(
                         horizontalArrangement = Arrangement.spacedBy(5.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(DragonShape)
+                            .clip(MaterialTheme.shapes.large)
                             .horizontalScroll(rememberScrollState())
                             .background(MaterialTheme.colorScheme.surfaceVariant)
                     ) {
-                        hapticFeedbackSerializablePresets.forEach { (name, preset) ->
+                        CustomHapticFeedback.allPresets.forEach { (name, preset) ->
                             DragonButton(
                                 onClick = { selectPreset(preset) }
                             ) {
@@ -235,8 +212,6 @@ fun HapticFeedbackEditor(
         },
         text = {
             DragonSettingsGroup(R.string.steps) {
-
-                // ── Add buttons ──────────────────────────────────────────────
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -253,7 +228,6 @@ fun HapticFeedbackEditor(
                     ) {
                         entries.add(
                             HapticEntry(
-                                id = System.nanoTime(),
                                 isVibration = true,
                                 durationMs = 50
                             )
@@ -272,7 +246,6 @@ fun HapticFeedbackEditor(
                     ) {
                         entries.add(
                             HapticEntry(
-                                id = System.nanoTime(),
                                 isVibration = false,
                                 durationMs = 100
                             )
@@ -282,12 +255,11 @@ fun HapticFeedbackEditor(
                     RotatingPlayIcon(enabled = entries.isNotEmpty(), onClick = ::playTest)
                 }
 
-                // ── Reorderable list ─────────────────────────────────────────
                 if (entries.isEmpty()) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(DragonShape)
+                            .clip(MaterialTheme.shapes.large)
                             .background(MaterialTheme.colorScheme.surface.alphaMultiplier(0.7f))
                             .padding(24.dp),
                         contentAlignment = Alignment.Center
@@ -334,7 +306,6 @@ fun HapticFeedbackEditor(
                                             .padding(horizontal = 12.dp, vertical = 8.dp),
                                         verticalArrangement = Arrangement.spacedBy(4.dp)
                                     ) {
-                                        // ── Row: checkbox · label · delete · drag ──
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
                                             modifier = Modifier.fillMaxWidth()
@@ -363,7 +334,7 @@ fun HapticFeedbackEditor(
                                                     MaterialTheme.colorScheme.secondary
                                             )
 
-                                            Spacer(Modifier.width(8.dp))
+                                            Spacer(8.dp)
 
                                             Text(
                                                 text = stringResource(if (entry.isVibration) R.string.vibration else R.string.delay),
@@ -373,7 +344,7 @@ fun HapticFeedbackEditor(
 
                                             DragonIconButton(
                                                 onClick = {
-                                                    entries.add(index + 1, entries[index].copy(id = System.nanoTime()))
+                                                    entries.add(index + 1, entries[index].copy())
                                                 },
                                                 colors = AppObjectsColors.iconButtonColors(),
                                                 icon = R.drawable.copy,
@@ -394,7 +365,6 @@ fun HapticFeedbackEditor(
                                             )
                                         }
 
-                                        // ── Duration slider ──────────────────
                                         SliderWithLabel(
                                             label = stringResource(R.string.duration_ms),
                                             value = entry.durationMs,
@@ -421,7 +391,7 @@ fun HapticFeedbackEditor(
 
 @Composable
 private fun RotatingPlayIcon(
-    enabled: Boolean,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -460,7 +430,7 @@ private fun AddStepButton(
         modifier = modifier
     ) {
         icon()
-        Spacer(Modifier.width(6.dp))
+        Spacer(6.dp)
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall
@@ -470,8 +440,8 @@ private fun AddStepButton(
 
 
 @Composable
-fun HapticFeedBackEditorButtonWithPlayTest(
-    customHapticFeedbackSerializable: CustomHapticFeedbackSerializable,
+public fun HapticFeedBackEditorButtonWithPlayTest(
+    customHapticFeedback: CustomHapticFeedback,
     titleExt: String = "",
     onClick: () -> Unit
 ) {
@@ -490,15 +460,13 @@ fun HapticFeedBackEditorButtonWithPlayTest(
                 painter = painterResource(R.drawable.haptic),
                 contentDescription = stringResource(R.string.haptic_feedback_editor)
             )
-            Spacer(Modifier.width(5.dp))
+            Spacer(5.dp)
             Text("${stringResource(R.string.haptic_feedback_editor)}$titleExt")
         }
 
-        RotatingPlayIcon(
-            enabled = true
-        ) {
+        RotatingPlayIcon {
             scope.launch {
-                performCustomHaptic(ctx, customHapticFeedbackSerializable)
+                customHapticFeedback.perform(ctx)
             }
         }
     }

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
@@ -27,16 +26,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 
 
 @Composable
-fun UserValidation(
+public fun UserValidation(
     title: String? = null,
     message: String?,
     validateText: String = stringResource(R.string.ok),
@@ -70,7 +69,7 @@ fun UserValidation(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .padding(bottom = 4.dp)
-                        .clip(DragonShape)
+                        .clip(MaterialTheme.shapes.large)
                         .background(MaterialTheme.colorScheme.surface.copy(0.5f))
                         .padding(8.dp)
 
@@ -94,12 +93,12 @@ fun UserValidation(
                         modifier = Modifier.padding(top = 8.dp)
                     )
                     if (doNotRemindMeAgain != null || copy) {
-                        Spacer(Modifier.height(15.dp))
+                        Spacer(15.dp)
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = Modifier
-                                .clip(DragonShape)
+                                .clip(MaterialTheme.shapes.large)
                                 .clickable {
                                     doNotRemindMeAgainChecked = !doNotRemindMeAgainChecked
                                 }
@@ -144,6 +143,6 @@ fun UserValidation(
         },
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 6.dp,
-        shape = DragonShape
+        shape = MaterialTheme.shapes.large
     )
 }

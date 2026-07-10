@@ -21,28 +21,28 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.WallpaperHelper
-import org.elnix.dragonlauncher.common.messyfolder.showToast
-import org.elnix.dragonlauncher.enumsui.other.WallpaperTarget
+import org.elnix.dragonlauncher.base.model.models.WallpaperTarget
+import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
+import org.elnix.dragonlauncher.common.WallpaperHelper
 import org.elnix.dragonlauncher.enumsui.select.WallpaperEditMode
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
-import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelector
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
-import org.elnix.dragonlauncher.ui.helpers.WallpaperDim
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
+import org.elnix.dragonlauncher.ui.helpers.wallpaper.WallpaperDim
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 
 @SuppressLint("LocalContextResourcesRead", "LocalContextGetResourceValueCall")
 @Composable
-fun WallpaperTab(onBack: () -> Unit) {
+public fun WallpaperTab(onBack: () -> Unit) {
     val ctx = LocalContext.current
 
     val scope = rememberCoroutineScope()
@@ -76,10 +76,6 @@ fun WallpaperTab(onBack: () -> Unit) {
             showTargetDialog = false
         }
     }
-
-
-    /** ───────────────────────────────────────────────────────────────── */
-
 
     SettingsScaffold(
         title = stringResource(R.string.wallpaper),
@@ -120,7 +116,8 @@ fun WallpaperTab(onBack: () -> Unit) {
         }
 
         ColorPickerRow(
-            label = stringResource(R.string.plain_wallpaper_color),
+            title = stringResource(R.string.plain_wallpaper_color),
+            description = null,
             currentColor = plainColor
         ) {
             plainColor = it ?: Color.Black
@@ -136,9 +133,8 @@ fun WallpaperTab(onBack: () -> Unit) {
 
             SliderWithLabel(
                 modifier = Modifier.padding(10.dp),
-                label = stringResource(R.string.wallpaper_dim_amount),
-                value = if (selectedView == WallpaperEditMode.Main) wallpaperDimMainScreen
-                else wallpaperDimDrawerScreen,
+                label = stringResource(UiSettingsStore.wallpaperDimMainScreen.title!!),
+                value = if (selectedView == WallpaperEditMode.Main) wallpaperDimMainScreen else wallpaperDimDrawerScreen,
                 valueRange = 0f..1f,
                 color = MaterialTheme.colorScheme.primary,
                 backgroundColor = MaterialTheme.colorScheme.surface.alphaMultiplier(0.5f),
@@ -164,7 +160,6 @@ fun WallpaperTab(onBack: () -> Unit) {
         }
     }
     StatusBar(null)
-
 
 
     if (showTargetDialog && originalBitmap != null) {

@@ -16,6 +16,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 
 /**
@@ -30,7 +31,7 @@ import kotlinx.coroutines.launch
  * @return
  */
 @Composable
-fun rememberHoldToOpenSettings(
+public fun rememberHoldToOpenSettings(
     onSettings: (Offset) -> Unit,
     holdDelay: Long,     // ms before arc appears
     loadDuration: Long, // ms to fill arc
@@ -66,8 +67,7 @@ fun rememberHoldToOpenSettings(
                     val holdJob = scope.launch {
                         progress.snapTo(0f)
 
-                        delay(holdDelay)
-
+                        delay(holdDelay.milliseconds)
 
                         progress.animateTo(
                             targetValue = 1f,
@@ -113,8 +113,8 @@ fun rememberHoldToOpenSettings(
 }
 
 /** Container for the produced gesture state. */
-class HoldGestureState(
-    val pointerModifier: Modifier,
-    val progressProvider: () -> Float,
-    val centerProvider: () -> Offset?
+public class HoldGestureState(
+    public val pointerModifier: Modifier,
+    public val progressProvider: () -> Float,
+    public val centerProvider: () -> Offset?
 )

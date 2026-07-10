@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui.dragon.colors
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -28,11 +27,11 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 
 @Composable
-fun DefaultColorPicker(
+public fun DefaultColorPicker(
     initialColor: Color,
     onColorSelected: (Color) -> Unit
 ) {
@@ -86,19 +85,11 @@ fun DefaultColorPicker(
                     rowColors.forEach { color ->
                         val isSelected = color == selectedColor
 
-                        val backgroundColor by animateColorAsState(
-                            targetValue = with(MaterialTheme.colorScheme) {
-                                if (isSelected) primary
-                                else surface
-                            }
-                        )
-
                         val scale by animateFloatAsState(
                             targetValue = if (isSelected) 1f else 0f,
                             animationSpec = tween(durationMillis = 300),
                             label = "Check Scale Animation"
                         )
-
 
                         Box(
                             contentAlignment = Alignment.Center,
@@ -123,7 +114,6 @@ fun DefaultColorPicker(
                                         shape = CircleShape
                                     )
                             )
-
 
                             Box(
                                 modifier = Modifier

@@ -8,8 +8,7 @@
     "icon_pack_tint": "FFFF0000",
     "appLabelIconOverlayTopPadding": 107,
     "globalFont": "Monospace",
-    "maxNestsDepth": 3,
-    "mainScreenLayers": "[{\"type\":\"org.elnix.dragonlauncher.common.serializables.MainScreenLayer.ChargingAnimation\"},{\"type\":\"org.elnix.dragonlauncher.common.serializables.MainScreenLayer.StatusBar\",\"enabled\":false},{\"type\":\"org.elnix.dragonlauncher.common.serializables.MainScreenLayer.Widgets\"},{\"type\":\"org.elnix.dragonlauncher.common.serializables.MainScreenLayer.CustomDim\"},{\"type\":\"org.elnix.dragonlauncher.common.serializables.MainScreenLayer.DragOverlay\"},{\"type\":\"org.elnix.dragonlauncher.common.serializables.MainScreenLayer.HoldToActivate\"}]"
+    "maxNestsDepth": 3
   },
   "color_mode": {
     "colorPickerMode": "GRADIENT",
@@ -53,17 +52,10 @@
     "toggleBluetooth": "FFFF0000",
     "runAdbCommand": "FFFF0000"
   },
-  "angle_line": {
-    "lineJson": "{\"stroke\":2.0,\"glow\":{\"radius\":10.0},\"eraseBackground\":false}",
-    "angleLineJson": "{\"stroke\":2.0,\"glow\":{\"radius\":20.0},\"rotation\":90,\"shape\":{\"type\":\"org.elnix.dragonlauncher.common.serializables.IconShape.Circle\"},\"size\":50.0,\"eraseBackground\":false}",
-    "startLineJson": "{\"stroke\":4.0,\"glow\":{\"radius\":32.0},\"rotation\":0,\"shape\":{\"type\":\"org.elnix.dragonlauncher.common.serializables.IconShape.Circle\"},\"size\":30.0,\"eraseBackground\":true}",
-    "endLineJson": "{\"stroke\":0.0,\"glow\":{\"radius\":12.0},\"rotation\":0,\"shape\":{\"type\":\"org.elnix.dragonlauncher.common.serializables.IconShape.Circle\"},\"size\":8.0,\"eraseBackground\":false}"
-  },
   "hold_to_activate": {
     "holdDelayBeforeStartingLongClickSettings": 200,
     "longCLickSettingsDuration": 500,
     "holdToActivateSettingsTolerance": 43.096153,
-    "holdToActivateArcCustomObject": "{\"stroke\":4.9102955,\"glow\":{\"radius\":20.426828},\"rotation\":-1,\"shape\":{\"type\":\"org.elnix.dragonlauncher.common.serializables.IconShape.Pebble\"},\"size\":120.25094,\"eraseBackground\":false}",
     "rotationPerSecond": 2
   }
 }

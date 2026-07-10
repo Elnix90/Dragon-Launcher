@@ -2,53 +2,47 @@ package org.elnix.dragonlauncher.ui.actions
 
 import android.os.Build
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Settings.routeResId
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.messyfolder.PackageManagerCompat
-import org.elnix.dragonlauncher.common.messyfolder.getFilePathFromUri
-import org.elnix.dragonlauncher.ui.composition.LocalNests
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Profile
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeResId
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.getFilePathFromUri
+import org.elnix.dragonlauncher.models.DrawerViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 @Composable
-fun actionLabel(action: SwipeActionSerializable): String {
+public fun actionLabel(
+    action: Action,
+    drawerViewModel: DrawerViewModel = activityViewModel(),
+    pointsViewModel: PointsViewModel = activityViewModel()
+): String {
     val ctx = LocalContext.current
-    val nests = LocalNests.current
-
-    val pm = ctx.packageManager
-    val packageManagerCompat = PackageManagerCompat(pm, ctx)
+    val pointsService = pointsViewModel.pointsService
 
     return when (action) {
 
-        is SwipeActionSerializable.LaunchApp -> {
-            try {
-                pm.getApplicationLabel(
-                    pm.getApplicationInfo(action.packageName, 0)
-                ).toString()
-            } catch (_: Exception) {
-                action.packageName
-            }
+        is Action.LaunchApp -> {
+            val app by drawerViewModel.findOne(action.packageName, action.profile.userHandle).collectAsState(null)
+            app?.label ?: action.packageName
         }
 
-        is SwipeActionSerializable.LaunchShortcut -> {
+        is Action.LaunchShortcut -> {
             // Empty package = sentinel for "Pinned Shortcuts" chooser entry
             if (action.packageName.isEmpty()) {
                 return stringResource(R.string.pinned_shortcuts)
             }
 
-            val appLabel = try {
-                pm.getApplicationLabel(
-                    pm.getApplicationInfo(action.packageName, 0)
-                ).toString()
-            } catch (_: Exception) {
-                action.packageName
-            }
+            val appLabel = actionLabel(Action.LaunchApp(action.packageName, Profile.dummy()))
 
             val shortcutLabel = try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    packageManagerCompat.queryAppShortcuts(action.packageName)
+                    drawerViewModel.queryAppShortcuts(action.packageName)
                         .firstOrNull { it.id == action.shortcutId }
                         ?.shortLabel
                         ?.toString()
@@ -64,40 +58,26 @@ fun actionLabel(action: SwipeActionSerializable): String {
         }
 
 
-        is SwipeActionSerializable.OpenUrl -> action.url
+        is Action.OpenUrl -> action.url
 
-        SwipeActionSerializable.NotificationShade -> stringResource(R.string.notifications)
 
-        SwipeActionSerializable.ControlPanel -> stringResource(R.string.control_panel)
+        is Action.OpenDragonLauncherSettings -> "${stringResource(R.string.dragon_launcher_settings)} (${stringResource(routeResId(action.route))})"
 
-        is SwipeActionSerializable.OpenAppDrawer -> stringResource(R.string.app_drawer)
 
-        is SwipeActionSerializable.OpenDragonLauncherSettings -> "${stringResource(R.string.dragon_launcher_settings)} (${stringResource(routeResId(action.route))})"
+        is Action.OpenFile ->
+            ctx.getFilePathFromUri(action.uri.toUri())
 
-        SwipeActionSerializable.Lock -> stringResource(R.string.lock)
 
-        is SwipeActionSerializable.OpenFile ->
-            getFilePathFromUri(ctx, action.uri.toUri())
-
-        SwipeActionSerializable.ReloadApps -> stringResource(R.string.reload_apps)
-
-        SwipeActionSerializable.OpenRecentApps -> stringResource(R.string.recent_apps)
-
-        is SwipeActionSerializable.OpenCircleNest -> {
-            nests
+        is Action.OpenCircleNest -> {
+            pointsService.nests.value
                 .find { it.id == action.nestId }
                 ?.name
                 ?.takeIf { it.trim().isNotEmpty() }
-                ?: stringResource(R.string.open_nest_circle)
+                ?: stringResource(R.string.open_nest)
         }
 
-        SwipeActionSerializable.GoParentNest -> stringResource(R.string.go_parent_nest)
-        is SwipeActionSerializable.OpenWidget -> stringResource(R.string.widgets)
-        is SwipeActionSerializable.RunAdbCommand -> action.command.trim().takeIf { it.isNotEmpty() } ?: stringResource(R.string.run_adb_command)
-        is SwipeActionSerializable.ToggleBluetooth -> stringResource(R.string.toggle_bluetooth)
-        is SwipeActionSerializable.ToggleData -> stringResource(R.string.toggle_mobile_data)
-        is SwipeActionSerializable.ToggleWifi -> stringResource(R.string.toggle_wifi)
-        SwipeActionSerializable.None -> "None"
-        SwipeActionSerializable.KillLauncher -> stringResource(R.string.kill_launcher)
+        is Action.RunAdbCommand -> action.command.trim().takeIf { it.isNotEmpty() } ?: stringResource(R.string.run_adb_command)
+
+        else -> stringResource(action.resId)
     }
 }

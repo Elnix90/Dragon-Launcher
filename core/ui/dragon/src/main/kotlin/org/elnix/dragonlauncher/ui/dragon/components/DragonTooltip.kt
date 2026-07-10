@@ -15,11 +15,10 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 
 
 @Composable
-fun DragonTooltipInternal(
+public fun DragonTooltipInternal(
     text: String,
     enabled: Boolean,
     modifier: Modifier,
@@ -41,7 +40,7 @@ fun DragonTooltipInternal(
         ),
         tooltip = {
             PlainTooltip(
-                shape = DragonShape,
+                shape = MaterialTheme.shapes.large,
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 containerColor = MaterialTheme.colorScheme.surface,
                 tonalElevation = 5.dp,
@@ -58,7 +57,7 @@ fun DragonTooltipInternal(
 }
 
 @Composable
-fun DragonTooltip(
+public fun DragonTooltip(
     resId: Int,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -76,7 +75,7 @@ fun DragonTooltip(
 
 
 @Composable
-fun DragonTooltip(
+public fun DragonTooltip(
     description: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,

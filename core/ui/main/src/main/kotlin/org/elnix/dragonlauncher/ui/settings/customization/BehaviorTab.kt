@@ -6,7 +6,6 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,56 +19,41 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
-import org.elnix.dragonlauncher.models.PrivateSpaceViewModel
-import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
-import org.elnix.dragonlauncher.settings.stores.PrivateAppsSettingsStore
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
-import org.elnix.dragonlauncher.ui.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.dialogs.LockMethodDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSectionMode
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
-import org.elnix.dragonlauncher.ui.helpers.CustomActionSelector
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
+import org.elnix.dragonlauncher.ui.helpers.SettingActionSelector
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-fun BehaviorTab(
-    onBack: () -> Unit,
-    privateSpaceViewModel: PrivateSpaceViewModel = activityViewModel()
-) {
+public fun BehaviorTab(onBack: () -> Unit) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val backAction by BehaviorSettingsStore.backAction.asState()
-    val doubleClickAction by BehaviorSettingsStore.doubleClickAction.asState()
-    val homeAction by BehaviorSettingsStore.homeAction.asState()
     val leftPadding by BehaviorSettingsStore.leftPadding.asState()
     val rightPadding by BehaviorSettingsStore.rightPadding.asState()
     val topPadding by BehaviorSettingsStore.topPadding.asState()
     val bottomPadding by BehaviorSettingsStore.bottomPadding.asState()
 
     val lockMethod by PrivateSettingsStore.lockMethod.asState()
-    val superWarningModeEnabled = lockMethod != LockMethod.NONE
+    val superWarningModeEnabled = lockMethod != LockMethod.None
 
     val paddingState = rememberExpandableSection(stringResource(R.string.drag_zone_padding), mode = ExpandableSectionMode.Expandable)
-
     val showAppPreviewOverlay = paddingState.isExpanded()
 
-
-    // Lock settings state
     var showLockMethodPicker by remember { mutableStateOf(false) }
 
     val superWarningState = rememberExpandableSection(
@@ -78,9 +62,9 @@ fun BehaviorTab(
 
 
     val lockDescription = when (lockMethod) {
-        LockMethod.NONE -> stringResource(R.string.lock_none)
-        LockMethod.PIN -> stringResource(R.string.lock_pin)
-        LockMethod.DEVICE_UNLOCK -> stringResource(R.string.lock_device_unlock)
+        LockMethod.None -> stringResource(R.string.lock_none)
+        LockMethod.Pin -> stringResource(R.string.lock_pin)
+        LockMethod.Device -> stringResource(R.string.lock_device_unlock)
     }
 
     SettingsScaffold(
@@ -95,102 +79,19 @@ fun BehaviorTab(
     ) {
 
         DragonSettingsGroup(R.string.action_settings) {
-            CustomActionSelector(
-                currentAction = backAction,
-                label = stringResource(R.string.back_action),
-                onToggle = {
-                    scope.launch {
-                        BehaviorSettingsStore.backAction.reset(ctx)
-                    }
-                }
-            ) {
-                scope.launch {
-                    BehaviorSettingsStore.backAction.set(ctx, it)
-                }
-            }
-
-            CustomActionSelector(
-                currentAction = doubleClickAction,
-                label = stringResource(R.string.double_click_action),
-                onToggle = {
-                    scope.launch {
-                        BehaviorSettingsStore.doubleClickAction.reset(ctx)
-                    }
-                }
-            ) {
-                scope.launch {
-                    BehaviorSettingsStore.doubleClickAction.set(ctx, it)
-                }
-            }
-            CustomActionSelector(
-                currentAction = homeAction,
-                label = stringResource(R.string.home_action),
-                onToggle = {
-                    scope.launch {
-                        BehaviorSettingsStore.homeAction.reset(ctx)
-                    }
-                }
-            ) {
-                scope.launch {
-                    BehaviorSettingsStore.homeAction.set(ctx, it)
-                }
-            }
+            SettingActionSelector(BehaviorSettingsStore.backAction)
+            SettingActionSelector(BehaviorSettingsStore.doubleClickAction)
+            SettingActionSelector(BehaviorSettingsStore.homeAction)
         }
 
         DragonSettingsGroup(R.string.common_settings) {
-            SettingsSwitchRow(
-                setting = BehaviorSettingsStore.keepScreenOn,
-                title = stringResource(R.string.keep_screen_on),
-                description = stringResource(R.string.keep_screen_on_desc)
-            )
+            Setting(BehaviorSettingsStore.keepScreenOn)
+            Setting(BehaviorSettingsStore.disableHapticFeedbackGlobally)
+            Setting(BehaviorSettingsStore.promptForShortcutsWhenAddingApp)
+            Setting(BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint)
 
-            SettingsSwitchRow(
-                setting = BehaviorSettingsStore.disableHapticFeedbackGlobally,
-                title = stringResource(R.string.disable_haptic_globally),
-                description = stringResource(R.string.disable_haptic_globally_desc)
-            )
-
-            SettingsSwitchRow(
-                setting = BehaviorSettingsStore.pointsActionSnapsToOuterCircle,
-                title = stringResource(R.string.point_action_snaps_to_outer_circle),
-                description = stringResource(R.string.point_action_snaps_to_outer_circle_desc)
-            )
-
-            SettingsSwitchRow(
-                setting = BehaviorSettingsStore.promptForShortcutsWhenAddingApp,
-                title = stringResource(R.string.prompt_shortcuts_when_adding_app),
-                description = stringResource(R.string.prompt_shortcuts_when_adding_app_desc)
-            )
-
-            SettingsSwitchRow(
-                setting = BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint,
-                title = stringResource(R.string.create_live_nest_by_default),
-                description = stringResource(R.string.create_live_nest_by_default_desc)
-            )
-
-            SettingsSwitchRow(
-                setting = BehaviorSettingsStore.useDifferentialLoadingForPrivateSpace,
-                title = stringResource(R.string.use_differential_loading_private_space),
-                description = stringResource(R.string.use_differential_loading_private_space_desc)
-            ) {
-                if (it) {
-                    scope.launch {
-                        ctx.showToast("Reloading apps")
-                        privateSpaceViewModel.onUnlockPrivateSpace()
-                    }
-                } else {
-                    scope.launch {
-                        ctx.showToast("Removing cache")
-                        PrivateAppsSettingsStore.resetAll(ctx)
-                    }
-                }
-            }
-
-            SettingsSlider(
+            Setting(
                 setting = BehaviorSettingsStore.offScreenTimeout,
-                title = stringResource(R.string.off_screen_timeout),
-                description = stringResource(R.string.off_screen_timeout_desc),
-                valueRange = -1..60,
                 modifier = Modifier
                     .settingsGroupHorizontalPadding()
                     .padding(bottom = 12.dp)
@@ -198,77 +99,10 @@ fun BehaviorTab(
         }
 
         ExpandableSection(paddingState) {
-            SliderWithLabel(
-                label = stringResource(R.string.left_padding),
-                value = leftPadding,
-                valueRange = 0..300,
-                color = MaterialTheme.colorScheme.primary,
-                showValue = true,
-                onReset = {
-                    scope.launch {
-                        BehaviorSettingsStore.leftPadding.reset(ctx)
-                    }
-                },
-                onChange = {
-                    scope.launch {
-                        BehaviorSettingsStore.leftPadding.set(ctx, it)
-                    }
-                }
-            )
-
-            SliderWithLabel(
-                label = stringResource(R.string.right_padding),
-                value = rightPadding,
-                valueRange = 0..300,
-                color = MaterialTheme.colorScheme.primary,
-                showValue = true,
-                onReset = {
-                    scope.launch {
-                        BehaviorSettingsStore.rightPadding.reset(ctx)
-                    }
-                },
-                onChange = {
-                    scope.launch {
-                        BehaviorSettingsStore.rightPadding.set(ctx, it)
-                    }
-                }
-            )
-
-            SliderWithLabel(
-                label = stringResource(R.string.top_padding),
-                value = topPadding,
-                valueRange = 0..300,
-                color = MaterialTheme.colorScheme.primary,
-                showValue = true,
-                onReset = {
-                    scope.launch {
-                        BehaviorSettingsStore.topPadding.reset(ctx)
-                    }
-                },
-                onChange = {
-                    scope.launch {
-                        BehaviorSettingsStore.topPadding.set(ctx, it)
-                    }
-                }
-            )
-
-            SliderWithLabel(
-                label = stringResource(R.string.bottom_padding),
-                value = bottomPadding,
-                valueRange = 0..300,
-                color = MaterialTheme.colorScheme.primary,
-                showValue = true,
-                onReset = {
-                    scope.launch {
-                        BehaviorSettingsStore.bottomPadding.reset(ctx)
-                    }
-                },
-                onChange = {
-                    scope.launch {
-                        BehaviorSettingsStore.bottomPadding.set(ctx, it)
-                    }
-                }
-            )
+            Setting(BehaviorSettingsStore.rightPadding)
+            Setting(BehaviorSettingsStore.leftPadding)
+            Setting(BehaviorSettingsStore.topPadding)
+            Setting(BehaviorSettingsStore.bottomPadding)
         }
 
         DragonSettingsGroup(R.string.security) {
@@ -279,40 +113,29 @@ fun BehaviorTab(
             ) { showLockMethodPicker = true }
 
             ExpandableSection(superWarningState) {
-                SettingsSwitchRow(
+                Setting(
                     setting = BehaviorSettingsStore.superWarningMode,
-                    enabled = superWarningModeEnabled,
-                    title = stringResource(R.string.super_warning_mode),
-                    description = stringResource(R.string.super_warning_mode_desc),
+                    enabled = superWarningModeEnabled
                 )
 
-                SettingsSwitchRow(
+                Setting(
                     setting = BehaviorSettingsStore.vibrateOnError,
-                    enabled = superWarningModeEnabled,
-                    title = stringResource(R.string.vibrate_on_error),
-                    description = stringResource(R.string.vibrate_on_error_desc),
+                    enabled = superWarningModeEnabled
                 )
 
-                SettingsSwitchRow(
+                Setting(
                     setting = BehaviorSettingsStore.alarmSound,
-                    enabled = superWarningModeEnabled,
-                    title = stringResource(R.string.alarm_sound),
-                    description = stringResource(R.string.super_warning_mode_desc),
+                    enabled = superWarningModeEnabled
                 )
 
-                SettingsSwitchRow(
+                Setting(
                     setting = BehaviorSettingsStore.metalPipesSound,
-                    enabled = superWarningModeEnabled,
-                    title = stringResource(R.string.metal_pipes_sound),
-                    description = stringResource(R.string.metal_pipes_sound_desc),
+                    enabled = superWarningModeEnabled
                 )
 
-                SettingsSlider(
+                Setting(
                     setting = BehaviorSettingsStore.superWarningModeSound,
-                    enabled = superWarningModeEnabled,
-                    title = stringResource(R.string.super_warning_mode_sound),
-                    description = stringResource(R.string.super_warning_mode_sound_desc),
-                    valueRange = 0..100
+                    enabled = superWarningModeEnabled
                 )
             }
         }
@@ -332,6 +155,10 @@ fun BehaviorTab(
                 )
             )
         }
+
+//        DeadZoneCanva(
+//            PaddingValues(leftPadding, topPadding, rightPadding, bottomPadding)
+//        )
     }
 
     if (showLockMethodPicker) {
@@ -339,3 +166,47 @@ fun BehaviorTab(
     }
 }
 
+//
+//private val boxColor = Color(0x55FF0000)
+//private val cornersColor = boxColor.alphaMultiplier(1.5f)
+//
+//@Composable
+//private fun DeadZoneCanva(
+//    paddingValues: PaddingValues
+//) {
+//    Canvas(
+//        Modifier
+//            .fillMaxSize()
+//            .padding(paddingValues)
+//    ) {
+//        drawRect(boxColor)
+//        for (corner in ResizeCorner.entries) {
+//            cornerAnchor(
+//                center = when (corner) {
+//                    TopLeft -> size
+//                    TopRight -> TODO()
+//                    BottomLeft -> TODO()
+//                    BottomRight -> TODO()
+//                },
+//                corner = corner
+//            )
+//        }
+//    }
+//}
+//
+//
+//
+//private fun DrawScope.cornerAnchor(center: Offset, corner: ResizeCorner) {
+//    rotate(when(corner) {
+//        TopLeft -> 0f
+//        TopRight -> 90f
+//        BottomLeft -> 180f
+//        BottomRight -> -90f
+//    }) {
+//        drawRect(
+//            color = cornersColor,
+//            topLeft = center,
+//            size = Size(50f,50f)
+//        )
+//    }
+//}

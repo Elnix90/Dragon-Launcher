@@ -10,10 +10,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SettingsWithTitle(
+public fun SettingsWithTitle(
     title: Int?,
     content: @Composable () -> Unit
-) = Column {
+): Unit = Column {
     title?.let {
         Text(
             text = stringResource(id = title),

@@ -1,21 +1,25 @@
 package org.elnix.dragonlauncher.ui.remembers
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
+import io.github.elnix90.logging.ANGLE_LINE_TAG
+import io.github.elnix90.logging.logE
+import io.github.elnix90.runtime.asState
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ANGLE_LINE_TAG
-import org.elnix.dragonlauncher.common.messyfolder.isNotBlankJson
-import org.elnix.dragonlauncher.common.serializables.ColorSerializer
-import org.elnix.dragonlauncher.common.serializables.CustomObjectSerializable
-import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.settings.stores.AngleLineSettingsStore
-import org.elnix.dragonlauncher.settings.stores.HoldToActivateArcSettingsStore
-import org.elnix.dragonlauncher.ui.base.UiConstants
-import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.base.model.DragonJson
+import org.elnix.dragonlauncher.base.model.json
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultEndCustomObject
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultHoldCustomObject
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultLineCustomObject
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultStartCustomObject
+import org.elnix.dragonlauncher.ktx.isNotBlankJson
+import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
 
 @Composable
 private inline fun <reified T> rememberDecodedObject(
@@ -23,7 +27,7 @@ private inline fun <reified T> rememberDecodedObject(
     default: T,
     json: Json,
     crossinline onError: (Exception) -> Unit = {}
-): T {
+): State<T> {
     return remember(jsonString) {
         derivedStateOf {
             if (jsonString.isNotBlankJson) {
@@ -37,58 +41,46 @@ private inline fun <reified T> rememberDecodedObject(
                 default
             }
         }
-    }.value
+    }
 }
 
 
-object CustomObjectJson {
-
-    private val json = Json {
-        serializersModule = SerializersModule {
-            contextual(Color::class, ColorSerializer)
-        }
-    }
-
-    fun encode(customObject: CustomObjectSerializable): String =
-        json.encodeToString(CustomObjectSerializable.serializer(), customObject)
-
-
-
-    data class AngleLineObjects(
-        val line: CustomObjectSerializable,
-        val angleLine: CustomObjectSerializable,
-        val startLine: CustomObjectSerializable,
-        val endLine: CustomObjectSerializable
+public object CustomObjectJson : DragonJson<CustomObject>() {
+    public data class AngleLineObjects(
+        val line: CustomObject,
+        val angleLine: CustomObject,
+        val startLine: CustomObject,
+        val endLine: CustomObject
     )
 
     @Composable
-    fun rememberAngleLineObjects(): AngleLineObjects {
+    public fun rememberAngleLineObjects(): AngleLineObjects {
         val lineJson by AngleLineSettingsStore.lineJson.asState()
         val angleLineJson by AngleLineSettingsStore.angleLineJson.asState()
         val startLineJson by AngleLineSettingsStore.startLineJson.asState()
         val endLineJson by AngleLineSettingsStore.endLineJson.asState()
 
-        val lineObject = rememberDecodedObject(
+        val lineObject by rememberDecodedObject(
             jsonString = lineJson,
-            default = UiConstants.defaultLineCustomObject,
+            default = defaultLineCustomObject,
             json = json
         ) { logE(ANGLE_LINE_TAG, it) { "Error decoding lineObject" } }
 
-        val angleLineObject = rememberDecodedObject(
+        val angleLineObject by rememberDecodedObject(
             jsonString = angleLineJson,
-            default = UiConstants.defaultAngleCustomObject,
+            default = defaultAngleCustomObject,
             json = json
         ) { logE(ANGLE_LINE_TAG, it) { "Error decoding angleLineObject" } }
 
-        val startLineObject = rememberDecodedObject(
+        val startLineObject by rememberDecodedObject(
             jsonString = startLineJson,
-            default = UiConstants.defaultStartCustomObject,
+            default = defaultStartCustomObject,
             json = json
         ) { logE(ANGLE_LINE_TAG, it) { "Error decoding startLineObject" } }
 
-        val endLineObject = rememberDecodedObject(
+        val endLineObject by rememberDecodedObject(
             jsonString = endLineJson,
-            default = UiConstants.defaultEndCustomObject,
+            default = defaultEndCustomObject,
             json = json
         ) { logE(ANGLE_LINE_TAG, it) { "Error decoding endLineObject" } }
 
@@ -101,13 +93,12 @@ object CustomObjectJson {
     }
 
 
-
     @Composable
-    fun rememberHoldCustomObject(): CustomObjectSerializable {
+    public fun rememberHoldCustomObject(): State<CustomObject> {
         val holdCustomObjectJson by HoldToActivateArcSettingsStore.holdToActivateArcCustomObject.asState()
         return rememberDecodedObject(
             jsonString = holdCustomObjectJson,
-            default = UiConstants.defaultHoldCustomObject,
+            default = defaultHoldCustomObject,
             json = json
         ) {
             logE(ANGLE_LINE_TAG, it) { "Error decoding endLineObject" }

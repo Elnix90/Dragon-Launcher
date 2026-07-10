@@ -2,55 +2,69 @@ package org.elnix.dragonlauncher.ui.helpers.customobjects
 
 import android.graphics.BlurMaskFilter
 import android.graphics.Paint
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 
 
-fun DrawScope.glowOverlay(
+public fun DrawScope.glowOverlay(
     center: Offset,
-    color: Color,
-    radius: Float
+    glow: CustomGlow
 ) {
-    if (radius > 0f) {
-        drawCircle(
-            brush = Brush.radialGradient(
-                0.0f to color,
-                1.0f to Color.Transparent,
-                center = center,
-                radius = radius
-            ),
-            radius = radius,
-            center = center
+    toPxOrNull(glow.radius)?.let { radius ->
+        drawIntoCanvas { canvas ->
+
+            val frameworkPaint = customGlowPaint(glow.color ?: Color.White, radius)
+
+            canvas.nativeCanvas.drawCircle(
+                center.x,
+                center.y,
+                radius,
+                frameworkPaint
+            )
+        }
+    }
+}
+
+@Composable
+public fun GlowOverlay(
+    center: Offset,
+    glow: CustomGlow
+) {
+    Canvas(Modifier.fillMaxSize()) {
+        glowOverlay(
+            center = center,
+            glow = glow
         )
     }
 }
 
 
-
-fun DrawScope.drawNeonGlowLine(
+public fun DrawScope.drawNeonGlowLine(
     start: Offset,
     end: Offset,
     color: Color,
     lineStrokeWidth: Float,
-    glowRadius: Float,
-    glowColor: Color?,
+    glow: CustomGlow?,
     erase: Boolean
 ) {
-
-    // Glow overlay (behind)
-    if (glowRadius > 0f) {
+    toPxOrNull(glow?.radius)?.let { radius ->
         drawIntoCanvas { canvas ->
-            val frameworkPaint = customGlowPaint(glowColor ?: color, glowRadius)
+            val frameworkPaint = customGlowPaint(glow.color ?: color, radius)
 
             canvas.nativeCanvas.drawLine(
                 start.x,
@@ -74,7 +88,6 @@ fun DrawScope.drawNeonGlowLine(
             )
         }
 
-        // Sharp center line
         drawLine(
             color = color,
             start = start,
@@ -85,40 +98,39 @@ fun DrawScope.drawNeonGlowLine(
     }
 }
 
-fun DrawScope.drawNeonGlowShapePath(
+public fun DrawScope.drawPathGlow(
     path: Path,
     color: Color,
     lineStrokeWidth: Float,
-    glowRadius: Float,
-    glowColor: Color?,
+    glow: CustomGlow?,
     erase: Boolean
 ) {
 
     val nativePath = path.asAndroidPath()
 
-    if (glowRadius > 0f) {
+    toPxOrNull(glow?.radius)?.let { radius ->
         drawIntoCanvas { canvas ->
-            val frameworkPaint = customGlowPaint(glowColor ?: color, glowRadius)
+            val frameworkPaint = customGlowPaint(glow.color ?: color, radius)
             canvas.nativeCanvas.drawPath(nativePath, frameworkPaint)
         }
     }
 
-    if (lineStrokeWidth > 0f) {
-        if (erase) {
-            drawPath(
-                path = path,
-                color = Color.Transparent,
-                style = Stroke(width = lineStrokeWidth, cap = StrokeCap.Round),
-                blendMode = BlendMode.Clear
-            )
-        }
 
+    val width = lineStrokeWidth * this.density
+    if (erase) {
         drawPath(
             path = path,
-            color = color,
-            style = Stroke(width = lineStrokeWidth, cap = StrokeCap.Round)
+            color = Color.Transparent,
+            style = Fill,
+            blendMode = BlendMode.Clear
         )
     }
+
+    drawPath(
+        path = path,
+        color = color,
+        style = if (width > 0f) Stroke(width, cap = StrokeCap.Round) else Fill
+    )
 }
 
 private fun customGlowPaint(glowColor: Color, glowPx: Float): Paint {

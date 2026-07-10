@@ -25,13 +25,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.milliseconds
 
 
 // Copied from Kvastisto
 // https://github.com/MM2-0/Kvaesitso/blob/07e3e9669f8990e76d9d4062492dc741793e49a5/app/ui/src/main/java/de/mm20/launcher2/ui/component/NavBarEffects.kt
 
 @Composable
-fun ChargingAnimation(
+public fun ChargingAnimation(
     modifier: Modifier = Modifier
 ) {
     val ctx = LocalContext.current
@@ -53,7 +54,7 @@ fun ChargingAnimation(
                     intensity = 5
                     //Workaround for delayed current updates
                     if (retryOnZeroCurrent) {
-                        delay(1000)
+                        delay(1000.milliseconds)
                         update(intent)
                     }
                     return
@@ -133,39 +134,39 @@ fun ChargingAnimation(
     }
 }
 
-typealias Bubble = FloatArray
+public typealias Bubble = FloatArray
 
-inline var Bubble.posX: Float
+public inline var Bubble.posX: Float
     get() = this[0]
     set(value) {
         this[0] = value
     }
 
-inline var Bubble.posY: Float
+public inline var Bubble.posY: Float
     get() = this[1]
     set(value) {
         this[1] = value
     }
 
-inline var Bubble.deltaX: Float
+public inline var Bubble.deltaX: Float
     get() = this[2]
     set(value) {
         this[2] = value
     }
 
-inline var Bubble.deltaY: Float
+public inline var Bubble.deltaY: Float
     get() = this[3]
     set(value) {
         this[3] = value
     }
 
-inline var Bubble.radius: Float
+public inline var Bubble.radius: Float
     get() = this[4]
     set(value) {
         this[4] = value
     }
 
-inline var Bubble.lifetime: Float
+public inline var Bubble.lifetime: Float
     get() = this[5]
     set(value) {
         this[5] = value

@@ -27,11 +27,11 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 
 @Composable
-fun WelcomePageIntro(
+public fun WelcomePageIntro(
     isVisible: () -> Boolean,
     onImport: () -> Unit
 ) {
@@ -68,7 +68,7 @@ fun WelcomePageIntro(
             modifier = Modifier.size(260.dp)
         )
 
-        Spacer(Modifier.height(32.dp))
+        Spacer(32.dp)
 
         Text(
             stringResource(R.string.welcome_to_dragon_launcher),
@@ -78,14 +78,14 @@ fun WelcomePageIntro(
         )
 
         Text(
-            text = "${stringResource(R.string.version)} $versionName",
+            text = stringResource(R.string.version, versionName),
             color = MaterialTheme.colorScheme.onBackground,
             fontSize = 12.sp,
             textAlign = TextAlign.Center,
             fontStyle = FontStyle.Italic
         )
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(12.dp)
 
         Text(
             stringResource(R.string.dragon_launcher_headline),

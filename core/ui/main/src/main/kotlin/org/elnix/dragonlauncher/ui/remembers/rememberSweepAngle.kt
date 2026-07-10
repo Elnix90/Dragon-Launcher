@@ -8,7 +8,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 
-data class SweepAngleState(
+public data class SweepAngleState(
     /**
      * The sweep angle to draw, in the range `-360f..360f`.
      * - Positive → clockwise fill
@@ -33,13 +33,13 @@ data class SweepAngleState(
 )
 
 @Composable
-fun rememberSweepAngle(): SweepAngleState {
+public fun rememberSweepAngle(): SweepAngleState {
     var cumulativeAngle by remember { mutableFloatStateOf(0f) }
     var lastRawAngle by remember { mutableFloatStateOf(0f) }
 
     return SweepAngleState(
         sweepAngle = {
-            // cumulativeAngle grows freely — map it into -360..360
+            // cumulativeAngle grows freely - map it into -360..360
             // by folding at every 360 boundary with alternating sign
             when (val wrapped = cumulativeAngle % 720f) { // fold into -720..720
                 // 0..360 → clockwise fill: 0 → 360
@@ -73,8 +73,8 @@ fun rememberSweepAngle(): SweepAngleState {
     )
 }
 
-/** Non-composable factory for SweepAngleState — creates a stateful angle tracker. */
-fun createSweepAngleState(): SweepAngleState {
+/** Non-composable factory for SweepAngleState - creates a stateful angle tracker. */
+public fun createSweepAngleState(): SweepAngleState {
     var cumulativeAngle = 0f
     var lastRawAngle = 0f
 

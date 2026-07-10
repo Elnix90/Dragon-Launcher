@@ -9,12 +9,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.pager.HorizontalPager
@@ -39,18 +37,18 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import `in`.hridayan.shapeindicators.ShapeIndicatorDefaults
 import `in`.hridayan.shapeindicators.ShapeIndicatorRow
+import io.github.elnix90.core.SettingsBackupManager
+import io.github.elnix90.logging.BACKUP_TAG
+import io.github.elnix90.logging.WELCOME_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.WELCOME_TAG
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logE
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
-import org.elnix.dragonlauncher.settings.SettingsBackupManager
-import org.elnix.dragonlauncher.settings.bases.DatastoreProvider
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.models.InitializationViewModel
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dialogs.ImportSettingsDialog
@@ -63,8 +61,9 @@ private const val pageNumber = 6
 @SuppressLint("LocalContextGetResourceValueCall", "FrequentlyChangingValue")
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun WelcomeScreen(
+public fun WelcomeScreen(
     backupViewModel: BackupViewModel = activityViewModel(),
+    initializationViewModel: InitializationViewModel = activityViewModel(),
     onEnterSettings: () -> Unit,
     onEnterApp: () -> Unit
 ) {
@@ -108,7 +107,6 @@ fun WelcomeScreen(
         }
     }
 
-    var selectedStoresForImport by remember { mutableStateOf(setOf<DatastoreProvider>()) }
     var importJson by remember { mutableStateOf<JSONObject?>(null) }
     var showImportDialog by remember { mutableStateOf(false) }
 
@@ -124,11 +122,9 @@ fun WelcomeScreen(
 
     fun setHasSeen() {
         scope.launch {
-            with(PrivateSettingsStore) {
-                hasSeenWelcome.set(ctx, true)
-                // Resets the pager, that is only used to scroll to the page the user left when it re-enters the welcome screen
-                welcomeScreenTempPage.reset(ctx)
-            }
+            PrivateSettingsStore.hasSeenWelcome.set(ctx, true)
+            // Resets the pager, that is only used to scroll to the page the user left when it re-enters the welcome screen
+            PrivateSettingsStore.welcomeScreenTempPage.reset(ctx)
         }
     }
 
@@ -142,7 +138,7 @@ fun WelcomeScreen(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(Modifier.height(24.dp))
+            Spacer(24.dp)
 
             HorizontalPager(
                 state = pagerState,
@@ -169,10 +165,18 @@ fun WelcomeScreen(
                     5 -> WelcomePageFinish(
                         onEnterSettings = {
                             setHasSeen()
+
+                            // Initialize only when exiting from the welcome screen, to avoid the initialization layer to override points/nests
+                            initializationViewModel.checkLauncherInitialization()
+
                             onEnterSettings()
                         },
                         onEnterApp = {
                             setHasSeen()
+
+                            // Initialize only when exiting from the welcome screen, to avoid the initialization layer to override points/nests
+                            initializationViewModel.checkLauncherInitialization()
+
                             onEnterApp()
                         }
                     )
@@ -218,31 +222,30 @@ fun WelcomeScreen(
                 },
                 onConfirm = { selectedStores ->
                     showImportDialog = false
-                    selectedStoresForImport = selectedStores.keys
 
                     scope.launch {
                         try {
-                            SettingsBackupManager.importSettingsFromJson(ctx, json, selectedStoresForImport)
-                            backupViewModel.setResult(
-                                BackupResult(
-                                    export = false,
-                                    error = false,
-                                    title = ctx.getString(R.string.import_successful)
-                                )
+                            SettingsBackupManager.importSettingsFromJson(ctx, json, selectedStores)
+                            backupViewModel.result.value = BackupResult(
+                                export = false,
+                                error = false,
+                                title = ctx.getString(R.string.import_successful)
                             )
+
                             importJson = null
                         } catch (e: Exception) {
                             logE(BACKUP_TAG, e) { "Import Failed" }
-                            backupViewModel.setResult(
-                                BackupResult(
-                                    export = false,
-                                    error = true,
-                                    title = ctx.getString(R.string.import_failed),
-                                    message = e.message ?: ""
-                                )
+                            backupViewModel.result.value = BackupResult(
+                                export = false,
+                                error = true,
+                                title = ctx.getString(R.string.import_failed),
+                                message = e.message ?: ""
                             )
                         }
+                        PrivateSettingsStore.hasInitialized.set(ctx, true)
                         setHasSeen()
+
+                        // Here I do not check the initialization of the launcher, as th user imports it's settings, and therefore, it is initialized!
                         onEnterApp()
                     }
                 }

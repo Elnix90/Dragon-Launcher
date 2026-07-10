@@ -5,7 +5,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
-val AmoledDragonColorScheme: ColorScheme = darkColorScheme(
+public val AmoledDragonColorScheme: ColorScheme = darkColorScheme(
     primary = Color(0xFF6650A4),
     onPrimary = Color(0xFFCECECE),
     primaryContainer = Color(0xFF4E3A8F),
@@ -54,7 +54,7 @@ val AmoledDragonColorScheme: ColorScheme = darkColorScheme(
     onTertiaryFixed = Color.Black,
     onTertiaryFixedVariant = Color(0xFFCECECE),
 
-    error = Color(0xFFCF6679),
+    error = Color.Red,
     onError = Color.Black,
     errorContainer = Color(0xFFB81C1C),
     onErrorContainer = Color(0xFFCECECE),
@@ -67,7 +67,7 @@ val AmoledDragonColorScheme: ColorScheme = darkColorScheme(
     inverseOnSurface = Color.Black
 )
 
-val DarkDragonColorScheme: ColorScheme = darkColorScheme(
+public val DarkDragonColorScheme: ColorScheme = darkColorScheme(
     primary = Color(0xFF9842B7),
     onPrimary = Color.Black,
     primaryContainer = Color(0xFF6E2A8A),
@@ -129,7 +129,7 @@ val DarkDragonColorScheme: ColorScheme = darkColorScheme(
     inverseOnSurface = Color.Black
 )
 
-val LightDragonColorScheme: ColorScheme = lightColorScheme(
+public val LightDragonColorScheme: ColorScheme = lightColorScheme(
     primary = Color(0xFFA351E7),
     onPrimary = Color.Black,
     primaryContainer = Color(0xFF7B2EB8),

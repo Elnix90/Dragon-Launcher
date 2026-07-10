@@ -1,30 +1,11 @@
-import com.android.build.api.dsl.LibraryExtension
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
 }
 
-kotlin {
-    jvmToolchain(21)
-}
-
-extensions.configure<LibraryExtension> {
+android {
     namespace = "org.elnix.dragonlauncher.ui.base"
-    compileSdk {
-        version = release(37)
-    }
-
-    defaultConfig {
-        minSdk = 26
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
 
     buildFeatures {
         compose = true
@@ -40,7 +21,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.material3)
-    implementation(libs.material3)
     implementation(libs.androidx.compose.animation.core)
     implementation(libs.androidx.compose.runtime.retain)
     implementation(libs.androidx.compose.ui.unit)
@@ -50,15 +30,20 @@ dependencies {
     implementation(libs.androidx.compose.ui.geometry)
     implementation(libs.androidx.lifecycle.common)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
+    implementation(libs.settings.runtime)
+
 
     runtimeOnly(libs.androidx.lifecycle.process)
 
     api(libs.androidx.compose.foundation)
     api(libs.androidx.compose.runtime)
     api(libs.androidx.graphics.shapes)
-
+    api(libs.androidx.activity.compose)
     api(libs.androidx.compose.animation)
+
     api(project(":core:enumsui"))
+    api(project(":core:models"))
     api(project(":core:common"))
     api(project(":core:settings"))
     api(project(":core:base"))

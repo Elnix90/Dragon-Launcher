@@ -27,8 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.packFloats
 import androidx.compose.ui.util.unpackFloat1
 import androidx.compose.ui.util.unpackFloat2
-import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
-import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import kotlin.math.roundToInt
 
@@ -39,7 +39,7 @@ private const val GRAPH_Y_AXIS_FPS_LIMIT = 144
 // https://gist.github.com/miredirex/e7d47d6f85e91cb897032204f2273e3b
 
 @Composable
-fun FpsCounterGraph(modifier: Modifier = Modifier) {
+public fun FpsCounterGraph(modifier: Modifier = Modifier) {
     val showFps by DebugSettingsStore.showFps.asState()
     if (!showFps) return
 

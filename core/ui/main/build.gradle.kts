@@ -1,30 +1,11 @@
-import com.android.build.api.dsl.LibraryExtension
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
 }
 
-kotlin {
-    jvmToolchain(21)
-}
-
-extensions.configure<LibraryExtension> {
+android {
     namespace = "org.elnix.dragonlauncher.ui.main"
-    compileSdk {
-        version = release(37)
-    }
-
-    defaultConfig {
-        minSdk = 26
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
 
     buildFeatures {
         compose = true
@@ -33,7 +14,7 @@ extensions.configure<LibraryExtension> {
 
 dependencies {
     implementation(libs.androidx.compose.animation.graphics)
-    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core)
     implementation(libs.androidx.lifecycle.process)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
@@ -43,11 +24,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.appcompat)
+    implementation(libs.material)
     implementation(libs.androidx.material3)
     implementation(libs.reorderable)
-    implementation(libs.android.image.cropper)
-    implementation(libs.material3)
-    implementation(libs.kotlinx.serialization.json)
     implementation(libs.shapeindicators)
     implementation(libs.shizuku.api)
     implementation(libs.androidx.annotation)
@@ -58,17 +37,20 @@ dependencies {
     implementation(libs.androidx.compose.ui.text)
     implementation(libs.androidx.compose.ui.unit)
     implementation(libs.androidx.compose.ui.util)
-    implementation(libs.androidx.core)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.kotlinx.serialization.core)
     implementation(libs.lazycolumnscrollbar)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.kotlinx.datetime)
     implementation(libs.timber)
+    implementation(libs.bundles.kotlin)
+    implementation(libs.coil.core)
+    implementation(libs.coil.compose)
+    implementation(libs.dragon.logging)
+    implementation(libs.settings.core)
+    implementation(libs.settings.runtime)
 
     api(libs.androidx.activity.compose)
     api(libs.androidx.activity)
@@ -83,14 +65,23 @@ dependencies {
     implementation(project(":core:ui:dragon"))
     implementation(project(":core:ui:theme"))
     implementation(project(":core:ui:composition"))
-
     api(project(":core:ui:base"))
+
     api(project(":core:base"))
+    api(project(":core:ktx"))
     api(project(":core:models"))
+    api(project(":core:i18n"))
     api(project(":core:common"))
     api(project(":core:enumsui"))
     api(project(":core:settings"))
+
+    implementation(project(":core:ktx"))
     implementation(project(":core:shizuku"))
-    implementation(project(":core:logging"))
-    implementation(project(":core:services"))
+    implementation(project(":core:profiles"))
+
+    implementation(project(":core:permissions"))
+    implementation(project(":data:notifications"))
+    implementation(project(":data:applications"))
+
+    implementation(project(":core:services:system"))
 }

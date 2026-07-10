@@ -1,77 +1,64 @@
 package org.elnix.dragonlauncher.ui.components
 
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
-import org.elnix.dragonlauncher.ui.helpers.nests.actionsInCircle
-import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.ktx.px
+import org.elnix.dragonlauncher.models.PointsViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 
 @Composable
-fun PointPreviewCanvas(
-    editPoint: SwipePointSerializable,
-    defaultPoint: SwipePointSerializable,
-    backgroundSurfaceColor: Color,
+public fun PointPreviewCanvas(
+    editPoint: Point,
     modifier: Modifier = Modifier,
+    pointsViewModel: PointsViewModel = activityViewModel()
 ) {
-    val drawParams = rememberSwipeDefaultParams(
-        defaultPointSerializable = defaultPoint,
-        backgroundColor = backgroundSurfaceColor
-    )
-
-    val defaultPoint = LocalDefaultPoint.current
+    val pointsService = pointsViewModel.pointsService
+    val defaultPoint by pointsService.defaultPoint.asState()
 
     val height =
         when (editPoint.action) {
-            is SwipeActionSerializable.OpenCircleNest -> 100
-            else -> (editPoint.size ?: defaultPoint.size ?: SwipePointSerializable.defaultSwipePointsValues.size!!) +
-                    (editPoint.innerPadding ?: defaultPoint.innerPadding ?: SwipePointSerializable.defaultSwipePointsValues.innerPadding!!) * 2
+            is Action.OpenCircleNest -> 100
+            else -> (editPoint.size ?: defaultPoint.size ?: Point.defaultSize) +
+                    (editPoint.innerPadding ?: defaultPoint.innerPadding ?: Point.defaultInnerPadding) * 2
 
         }
 
+    BoxWithConstraints(
+        modifier = modifier
+            .height(height.dp)
+    ) {
+        val width = this.maxWidth
+        val height = this.maxHeight
 
-    Canvas(modifier = modifier.height(height.dp)) {
-        drawIntoCanvas { canvas ->
+        val centerY = (height / 2f).px
+        val leftX = (width * 0.25f).px
+        val rightX = (width * 0.75f).px
 
-            val bounds = Rect(0f, 0f, size.width, size.height)
-            canvas.saveLayer(bounds, Paint())
+        // Left action
+        PointIcon(
+            selected = false,
+            point = editPoint,
+            center = Offset(leftX, centerY),
+            preventBgErasing = true,
+            showConfiguratorDecorations = true
+        )
 
-            val centerY = size.height / 2f
-            val leftX = size.width * 0.25f
-            val rightX = size.width * 0.75f
-
-            // Left action
-            actionsInCircle(
-                selected = false,
-                point = editPoint,
-                center = Offset(leftX, centerY),
-                depth = 1,
-                drawParams = drawParams,
-                preventBgErasing = true,
-                showConfiguratorDecorations = true,
-            )
-
-            // Right action
-            actionsInCircle(
-                selected = true,
-                point = editPoint,
-                center = Offset(rightX, centerY),
-                depth = 1,
-                drawParams = drawParams,
-                preventBgErasing = true,
-                showConfiguratorDecorations = true,
-            )
-
-            canvas.restore()
-        }
+        // Right action
+        PointIcon(
+            selected = true,
+            point = editPoint,
+            center = Offset(rightX, centerY),
+            preventBgErasing = true,
+            showConfiguratorDecorations = true
+        )
     }
 }

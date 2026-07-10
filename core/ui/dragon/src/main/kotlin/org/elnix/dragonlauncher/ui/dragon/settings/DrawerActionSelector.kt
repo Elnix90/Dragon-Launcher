@@ -9,16 +9,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import io.github.elnix90.core.objects.EnumSettingObject
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
-import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
-import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 
 @Composable
-fun DrawerActionSelector(
-    settingObject: BaseSettingObject<DrawerActions, String>,
-    label: String,
+public fun DrawerActionSelector(
+    settingObject: EnumSettingObject<DrawerActions>,
     allowNone: Boolean = false
 ) {
     val ctx = LocalContext.current
@@ -30,20 +29,20 @@ fun DrawerActionSelector(
 
     LaunchedEffect(state) { tempState = state }
 
-    val stateNotDisabled = tempState != DrawerActions.DISABLED
+    val stateNotDisabled = tempState != DrawerActions.Disabled
 
     val actions = DrawerActions.entries
-        .filter { it != DrawerActions.DISABLED }
-        .filter { if (!allowNone) it != DrawerActions.NONE else true }
+        .filter { it != DrawerActions.Disabled }
+        .filter { if (!allowNone) it != DrawerActions.None else true }
 
     ActionSelectorRow(
         options = actions,
         selected = tempState,
-        label = label,
+        label = stringResource(settingObject.title!!),
         optionLabel = { stringResource(it.resId) },
         toggled = stateNotDisabled
     ) {
-        tempState = it ?: DrawerActions.DISABLED
+        tempState = it ?: DrawerActions.Disabled
         scope.launch {
             settingObject.set(ctx, tempState)
         }

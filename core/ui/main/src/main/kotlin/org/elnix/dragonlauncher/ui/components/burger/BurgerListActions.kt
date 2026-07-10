@@ -17,7 +17,7 @@ import androidx.compose.ui.util.fastForEachIndexed
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun BurgerListAction(
+public fun BurgerListAction(
     actions: List<MoreOptions>,
     isExpanded: Boolean,
     modifier: Modifier = Modifier,
@@ -35,7 +35,10 @@ fun BurgerListAction(
         ) {
             actions.fastForEachIndexed { index, option ->
                 DropdownMenuItem(
-                    onClick = option.onClick,
+                    onClick = {
+                        option.onClick()
+                        onDismissRequest()
+                    },
                     enabled = option.enabled,
                     shape = when (index) {
                         0 -> MenuDefaults.leadingItemShape

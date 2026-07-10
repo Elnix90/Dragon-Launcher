@@ -6,15 +6,12 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,12 +24,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,54 +41,57 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import io.github.elnix90.logging.LOGS_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
+import io.github.elnix90.logging.logLevelName
+import io.github.elnix90.runtime.asState
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.LOGS_TAG
-import org.elnix.dragonlauncher.common.messyfolder.showToast
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.createShareableFile
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.shareContent
 import org.elnix.dragonlauncher.common.utils.DateUtils.formatDateTime
-import org.elnix.dragonlauncher.common.utils.PermissionsUtils.detectSystemLauncher
+import org.elnix.dragonlauncher.common.utils.detectSystemLauncher
 import org.elnix.dragonlauncher.common.utils.rememberIsDefaultLauncher
 import org.elnix.dragonlauncher.common.utils.rememberVersionCode
 import org.elnix.dragonlauncher.common.utils.rememberVersionName
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.logging.logLevelName
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.DragonLogViewModel
 import org.elnix.dragonlauncher.services.ExtensionManager
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
-import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
-import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import java.io.File
 
 @Composable
-fun LogsTab(
+public fun LogsTab(
     onNavigate: (NavigationRoute) -> Unit,
     onBack: () -> Unit,
     dragonLogViewModel: DragonLogViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
+    val scope = rememberCoroutineScope()
 
-    val enableLogging by dragonLogViewModel.isLoggingEnabled.collectAsState()
-    val snackBarLogLevel by dragonLogViewModel.snackBarLogLevel.collectAsState()
-    val filesLogLevel by dragonLogViewModel.filesLogsLevel.collectAsState()
-    val filterTag by dragonLogViewModel.filterTag.collectAsState()
+
+    val enableLogging by DebugSettingsStore.enableLogging.asState()
+    val filterTag by DebugSettingsStore.filterTag.asState()
 
     var tempFilterTag by remember(filterTag) { mutableStateOf(filterTag) }
 
@@ -106,10 +106,10 @@ fun LogsTab(
     val am = ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
     val memInfo = ActivityManager.MemoryInfo()
     am.getMemoryInfo(memInfo)
-    val currentLauncher = detectSystemLauncher(ctx)
-    val isDefault = rememberIsDefaultLauncher()
-    val versionName = rememberVersionName()
-    val versionCode = rememberVersionCode()
+    val currentLauncher = ctx.detectSystemLauncher()
+    val isDefault by rememberIsDefaultLauncher()
+    val versionName by rememberVersionName()
+    val versionCode by rememberVersionCode()
 
     // Build extension list by parsing the registry JSON directly (robust to field names)
     var finalExtensionText = "No extensions installed"
@@ -149,7 +149,7 @@ fun LogsTab(
 
     val deviceDetails = remember {
         buildString {
-            appendLine("─── DEVICE DETAILS ───")
+            appendLine(" DEVICE DETAILS ")
             appendLine("System: ${Build.MANUFACTURER} ${Build.MODEL} (${Build.PRODUCT})")
             appendLine("OS: Android ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})")
             if (Build.VERSION.SECURITY_PATCH.isNotEmpty()) {
@@ -167,10 +167,10 @@ fun LogsTab(
             appendLine("Default Launcher: ${if (isDefault) "Yes" else "No ($currentLauncher)"}")
             appendLine("App version: $versionName ($versionCode)")
 
-            appendLine("\n─── EXTENSIONS ───")
+            appendLine("\n EXTENSIONS ")
             appendLine(finalExtensionText)
 
-            appendLine("\n─── PERMISSIONS ───")
+            appendLine("\n PERMISSIONS ")
             try {
                 val info = ctx.packageManager.getPackageInfo(ctx.packageName, PackageManager.GET_PERMISSIONS)
                 info.requestedPermissions?.forEachIndexed { index, perm ->
@@ -190,13 +190,18 @@ fun LogsTab(
         onBack = onBack,
         helpText = "Logs, need more info?",
         onReset = null,
-        otherIcons = arrayOf(
-            Triple(
-                { refreshTrigger++; ctx.showToast("Refreshing...") },
-                R.drawable.refresh,
-                stringResource(R.string.refresh)
+        moreOptions = { dismiss ->
+            listOf(
+                MoreOptions(
+                    text = { stringResource(R.string.refresh) },
+                    onClick = {
+                        refreshTrigger++; ctx.showToast("Refreshing...")
+                        dismiss()
+                    },
+                    icon = R.drawable.refresh,
+                )
             )
-        )
+        }
     ) {
         ExpandableSection(rememberExpandableSection("Device info")) {
             Card(
@@ -223,7 +228,7 @@ fun LogsTab(
                             contentDescription = "Copy Info"
                         )
                     }
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(8.dp)
                     SelectionContainer {
                         Text(
                             text = deviceDetails,
@@ -236,58 +241,40 @@ fun LogsTab(
             }
         }
 
-        SwitchRow(
-            state = enableLogging,
-            title = "Enable logging",
-            description = "Store all logs in app storage, and can be copied or exported",
-        ) {
-            dragonLogViewModel.updateEnableLogging(it)
-        }
+        Setting(DebugSettingsStore.enableLogging)
 
         AnimatedVisibility(enableLogging) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(5.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                SliderWithLabel(
-                    label = "Snackbar log level",
-                    description = snackBarLogLevel.logLevelName,
-                    value = snackBarLogLevel,
-                    showValue = false,
-                    allowTextEditValue = false,
-                    valueRange = 2..7,
-                    onReset = {
-                        dragonLogViewModel.updateSnackBarLogLevel(Log.ERROR)
-                    }
-                ) {
-                    dragonLogViewModel.updateSnackBarLogLevel(it)
-                }
 
-                SliderWithLabel(
-                    label = "Files log level",
-                    description = filesLogLevel.logLevelName,
-                    value = filesLogLevel,
-                    showValue = false,
-                    allowTextEditValue = false,
-                    valueRange = 2..7,
-                    onReset = {
-                        dragonLogViewModel.updateFilesLogLevel(Log.DEBUG)
-                    }
-                ) {
-                    dragonLogViewModel.updateFilesLogLevel(it)
-                }
+                Setting(
+                    setting = DebugSettingsStore.snackBarLogLevel,
+                    customDesc = { it.logLevelName }
+                )
+
+                Setting(
+                    setting = DebugSettingsStore.filesLogLevel,
+                    customDesc = { it.logLevelName }
+                )
 
                 TextField(
                     value = tempFilterTag,
-                    onValueChange = {
-                        tempFilterTag = it
-                        dragonLogViewModel.updateFilterTag(it)
-                    },
-                    label = {
-                        Text("Filter tag")
-                    },
+                    onValueChange = { tempFilterTag = it },
+                    label = { Text(stringResource(R.string.filter_tag)) },
                     colors = AppObjectsColors.outlinedTextFieldColors(),
-                    modifier = Modifier.fillMaxWidth(1f)
+                    modifier = Modifier.fillMaxWidth(1f),
+                    trailingIcon = {
+                        DragonIconButton(
+                            icon = R.drawable.check,
+                            contentDescription = R.string.save
+                        ) {
+                            scope.launch {
+                                DebugSettingsStore.filterTag.set(ctx, tempFilterTag)
+                            }
+                        }
+                    }
                 )
 
                 DragonButton(

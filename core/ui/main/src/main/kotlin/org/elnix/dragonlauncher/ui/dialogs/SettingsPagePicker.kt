@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -17,20 +15,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Settings.routeResId
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Companion.settingsRoutes
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Companion.settingsRoutes
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeResId
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ui.base.components.LazyColumnWithScrollIndicator
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 
 @Composable
-fun SettingsPagePicker(
+public fun SettingsPagePicker(
     onDismissRequest: () -> Unit,
     onSelect: (NavigationRoute) -> Unit
 ) {
-    val routes = settingsRoutes
-
     CustomAlertDialog(
         modifier = Modifier.padding(40.dp),
         onDismissRequest = onDismissRequest,
@@ -44,30 +40,28 @@ fun SettingsPagePicker(
             )
         },
         text = {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(5.dp),
+            LazyColumnWithScrollIndicator(
+                items = settingsRoutes,
                 modifier = Modifier.heightIn(max = 500.dp)
-            ) {
-                items(routes) { route ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(DragonShape)
-                            .clickable { onSelect(route) }
-                            .padding(5.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(5.dp)
-                    ) {
-                        RadioButton(
-                            selected = false,
-                            onClick = null
-                        )
+            ) { route ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.large)
+                        .clickable { onSelect(route) }
+                        .padding(5.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    RadioButton(
+                        selected = false,
+                        onClick = null
+                    )
 
-                        Text(
-                            text = stringResource(routeResId(route)),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
+                    Text(
+                        text = stringResource(routeResId(route)),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                 }
             }
         }

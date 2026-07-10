@@ -9,14 +9,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import org.elnix.dragonlauncher.common.serializables.CycleActionStage
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.defaultSwipePointsValues
-import org.elnix.dragonlauncher.common.utils.HapticUtils.performCustomHaptic
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.CycleActionStage
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.models.PointsViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
-import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.defaultHapticFeedback
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * For each extra stage, [CycleActionStage.triggerTimeMs] is the **additional** hold time after the
@@ -31,8 +32,6 @@ private fun cumulativeTriggerThresholdsMs(stages: List<CycleActionStage>): List<
     }
 }
 
-/*  ─────────────  Cycle Actions public state  ─────────────  */
-
 /**
  * Snapshot of Cycle Actions state returned per recomposition.
  *
@@ -44,15 +43,13 @@ private fun cumulativeTriggerThresholdsMs(stages: List<CycleActionStage>): List<
  *   base stage is current (caller should fire the point's own action in that case).
  * @property clear Resets all cycle state; call after a launch or after a cancel.
  */
-data class CycleActionsState(
+public data class CycleActionsState(
     val isActive: Boolean,
     val currentStageIndex: Int,
-    val currentStageAction: SwipeActionSerializable?,
-    val resolveOnRelease: () -> SwipeActionSerializable?,
+    val currentStageAction: Action?,
+    val resolveOnRelease: () -> Action?,
     val clear: () -> Unit
 )
-
-/*  ─────────────  Controller composable  ─────────────  */
 
 /**
  * Composable controller that manages the Cycle Actions elapsed timer, stage derivation,
@@ -69,13 +66,16 @@ data class CycleActionsState(
  * @param isDragging    True while a finger is on screen.
  */
 @Composable
-fun rememberCycleActionsController(
-    currentAction: SwipePointSerializable?,
+public fun rememberCycleActionsController(
+    pointsViewModel: PointsViewModel = activityViewModel(),
+    currentAction: Point?,
     isDragging: Boolean
 ): CycleActionsState {
     val ctx = LocalContext.current
-    val disableHapticFeedbackGlobally= LocalDisableHapticFeedbackGlobally.current
-    val defaultPoint = LocalDefaultPoint.current
+    val pointsService = pointsViewModel.pointsService
+    val defaultPoint by pointsService.defaultPoint.asState()
+
+    val disableHapticFeedbackGlobally = LocalDisableHapticFeedbackGlobally.current
 
     val stages: List<CycleActionStage>? = currentAction?.cycleActions
 
@@ -95,7 +95,13 @@ fun rememberCycleActionsController(
         currentStageIndex = 0
         if (stages.isNullOrEmpty()) return@LaunchedEffect
 
-        val loopDelayMs = (currentAction.cycleActionsLoopDelayMs ?: defaultPoint.cycleActionsLoopDelayMs ?: defaultSwipePointsValues.cycleActionsLoopDelayMs!!).toLong().coerceAtLeast(1L)
+        val loopDelayMs = (
+                currentAction.cycleActionsLoopDelayMs
+                    ?: defaultPoint.cycleActionsLoopDelayMs
+                    ?: Point.defaultCycleActionsLoopDelayMs
+                ).toLong()
+            .coerceAtLeast(1L)
+
         val loopEnabled = loopDelayMs != -1L
 
         val cumulativeMs = cumulativeTriggerThresholdsMs(stages)
@@ -126,18 +132,18 @@ fun rememberCycleActionsController(
                 if (!disableHapticFeedbackGlobally && newIndex != lastFiredStageIndex) {
                     val haptic = when (newIndex) {
                         in 1..stages.size -> {
-                            stages[newIndex - 1].hapticFeedback ?: defaultHapticFeedback(newIndex)
+                            stages[newIndex - 1].hapticFeedback ?: defaultHapticFeedback()
                         }
 
                         0 if loopEnabled && lastFiredStageIndex == stages.size -> {
                             // Light haptic when the loop wraps back to the base action.
-                            defaultHapticFeedback(-1)
+                            defaultHapticFeedback()
                         }
 
                         else -> null
                     }
 
-                    haptic?.let { performCustomHaptic(ctx, it) }
+                    haptic?.perform(ctx)
                     lastFiredStageIndex = newIndex
                 }
             }
@@ -145,14 +151,11 @@ fun rememberCycleActionsController(
             // If looping is disabled, we stay in the last stage after it is reached.
             if (!loopEnabled && newIndex >= stages.size) break
 
-            delay(16L)
+            delay(16L.milliseconds)
         }
     }
 
-    /*  ─────────────  Release resolution helpers  ─────────────  */
-
-
-    val resolveOnRelease: () -> SwipeActionSerializable? = remember(stages) {
+    val resolveOnRelease: () -> Action? = remember(stages) {
         {
             val idx = currentStageIndex
             if (idx == 0 || stages.isNullOrEmpty()) null
@@ -165,7 +168,7 @@ fun rememberCycleActionsController(
 
     val safeStageIndex = currentStageIndex.coerceIn(0, stages?.size ?: 0)
 
-    val currentStageAction: SwipeActionSerializable? = when {
+    val currentStageAction: Action? = when {
         stages.isNullOrEmpty() -> null
         safeStageIndex == 0 -> null
         safeStageIndex in 1..stages.size -> stages[safeStageIndex - 1].action

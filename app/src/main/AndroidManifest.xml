@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="PackageVisibilityPolicy,QueryAllPackagesPermission" />
@@ -94,7 +95,7 @@
         tools:targetApi="33">
 
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activities.MainActivity"
             android:enableOnBackInvokedCallback="true"
             android:exported="true"
             android:launchMode="singleTask"
@@ -118,7 +119,7 @@
 
         <!-- Pinned Shortcuts: Receives pin shortcut requests from other apps -->
         <activity
-            android:name=".activity.PinnedShortcutActivity"
+            android:name=".activities.PinnedShortcutActivity"
             android:enableOnBackInvokedCallback="true"
             android:excludeFromRecents="true"
             android:exported="true"
@@ -129,66 +130,16 @@
             </intent-filter>
         </activity>
 
-
-        <activity
-            android:name="com.canhub.cropper.CropImageActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar" />
-
-        <activity
-            android:name="org.elnix.dragonlauncher.ui.wellbeing.DigitalPauseActivity"
-            android:enableOnBackInvokedCallback="true"
-            android:excludeFromRecents="true"
-            android:exported="false"
-            android:launchMode="singleTop"
-            android:theme="@style/DragonLauncherTheme" />
-
-        <activity
-            android:name="org.elnix.dragonlauncher.ui.wellbeing.TimeLimitExceededActivity"
-            android:excludeFromRecents="true"
-            android:exported="false"
-            android:launchMode="singleTop"
-            android:theme="@style/DragonLauncherTheme" />
-
-
-        <activity
-            android:name="org.elnix.dragonlauncher.activity.PrivateSpaceUnlockActivity"
-            android:exported="false"
-            android:theme="@style/DragonLauncherTheme" />
-
-
         <service
-            android:name="org.elnix.dragonlauncher.services.DragonNotificationListenerService"
-            android:exported="false"
-            android:label="@string/app_name"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
-            <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService" />
-            </intent-filter>
-        </service>
-
-        <service
-            android:name="org.elnix.dragonlauncher.ui.wellbeing.OverlayReminderService"
+            android:name="org.elnix.dragonlauncher.timer.OverlayReminderService"
             android:exported="false" />
 
         <service
-            android:name="org.elnix.dragonlauncher.ui.wellbeing.AppTimerService"
+            android:name="org.elnix.dragonlauncher.timer.AppTimerService"
             android:exported="false"
             android:foregroundServiceType="specialUse" />
 
 
-        <service
-            android:name=".services.SystemControlService"
-            android:exported="false"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
-            tools:ignore="AccessibilityPolicy">
-            <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/system_control_accessibility" />
-        </service>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -211,30 +162,12 @@
 
 
         <receiver
-            android:name=".receiver.BootReceiver"
-            android:exported="true">
+            android:name=".receiver.FontReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
             <intent-filter android:priority="999">
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="org.elnix.dragonlauncher.ACTION_FONTS_RESULT" />
             </intent-filter>
         </receiver>
-
-        <receiver
-            android:name=".receiver.PackageReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter android:priority="1000">
-                <action android:name="android.intent.action.PACKAGE_ADDED" />
-                <action android:name="android.intent.action.PACKAGE_REMOVED" />
-                <action android:name="android.intent.action.PACKAGE_REPLACED" />
-                <action android:name="android.intent.action.PACKAGES_SUSPENDED" />
-                <action android:name="android.intent.action.PACKAGES_UNSUSPENDED" />
-                <action android:name="android.intent.action.PACKAGE_CHANGED" />
-
-                <data android:scheme="package" />
-            </intent-filter>
-        </receiver>
-
     </application>
-
 </manifest>

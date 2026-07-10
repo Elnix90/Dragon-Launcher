@@ -30,7 +30,7 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants
 
 @Composable
-fun EditValueTextField(
+public fun EditValueTextField(
     value: String,
     onValueChange: (String) -> Unit,
     enabled: Boolean = true,
@@ -68,7 +68,7 @@ fun EditValueTextField(
 
     val shapeRound = remember {
         Animatable(
-            initialValue = UiConstants.DRAGON_SHAPE_CORNER_DP.value,
+            initialValue = UiConstants.DRAGON_SHAPE_CORNER_PERCENT.toFloat(),
         )
     }
 
@@ -79,9 +79,9 @@ fun EditValueTextField(
 
             shapeRound.animateTo(
                 if (isEditing) {
-                    UiConstants.PRESSED_DRAGON_SHAPE_CORNER_DP.value
+                    UiConstants.PRESSED_DRAGON_SHAPE_CORNER_PERCENT.toFloat()
                 } else {
-                    UiConstants.DRAGON_SHAPE_CORNER_DP.value
+                    UiConstants.DRAGON_SHAPE_CORNER_PERCENT.toFloat()
                 }
             )
         }

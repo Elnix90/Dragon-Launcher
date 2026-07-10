@@ -1,20 +1,23 @@
 package org.elnix.dragonlauncher.models
 
-import android.annotation.SuppressLint
 import android.app.Application
+import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.elnix90.logging.INIT_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logI
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.INIT_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
-import org.elnix.dragonlauncher.common.serializables.CircleNest
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
-import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
-import java.util.UUID
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Nest
+import org.elnix.dragonlauncher.base.model.serializables.Nests
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Points
+import org.elnix.dragonlauncher.models.utils.viewModelInitialized
+import org.elnix.dragonlauncher.points.PointsService
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import javax.inject.Inject
 
 /**
@@ -22,67 +25,63 @@ import javax.inject.Inject
  * I don't know the correct architecture I should use, but I invite contributors to come to me to talk about that. RN I pasted the actual initialization code I used since the beginning
  */
 @HiltViewModel
-class InitializationViewModel @Inject constructor(
-    application: Application
+public class InitializationViewModel @Inject constructor(
+    application: Application,
+    private val pointsService: PointsService,
 ) : AndroidViewModel(application) {
 
-    @SuppressLint("StaticFieldLeak")
-    private val ctx = application.applicationContext
-
-
     init {
-        logD(TAG) { "created InitializationViewModel ${System.identityHashCode(this)}" }
-        checkInitialization()
+        viewModelInitialized()
     }
 
-    fun checkInitialization() {
+    public fun checkLauncherInitialization() {
         viewModelScope.launch {
-            val hasInitialized = PrivateSettingsStore.hasInitialized.get(ctx)
+            val hasInitialized = PrivateSettingsStore.hasInitialized.get(application)
 
             if (!hasInitialized) {
-                logD(INIT_TAG) { "Initialisation not complete, initializing"}
+                logD(INIT_TAG) { "Initialisation not complete, initializing" }
                 initialize()
             }
         }
     }
 
-
-    suspend fun initializeSwipeSettings(
-        points: List<SwipePointSerializable>,
-        nests: List<CircleNest>
+    public fun initializeSwipeSettings(
+        points: Points,
+        nests: Nests,
+        defaultPoint: Point?
     ) {
-        SwipeSettingsStore.savePoints(ctx, points)
-        SwipeSettingsStore.saveNests(ctx, nests)
+        logI(INIT_TAG) { "Initializing:\nPoints = $points\nNests = $nests" }
 
-        PrivateSettingsStore.hasInitialized.set(ctx, true)
+        viewModelScope.launch {
+            pointsService.set(points, nests, defaultPoint)
+            PrivateSettingsStore.hasInitialized.set(application, true)
+        }
     }
 
-    suspend fun initialize() {
-        initializeSwipeSettings(defaultInitializationSetup, defaultNestsInitializationSetup)
+    public fun initialize() {
+        initializeSwipeSettings(defaultInitializationSetup, defaultNestsInitializationSetup, null)
     }
 }
 
 
-val defaultInitializationSetup = listOf(
-    SwipePointSerializable(
-        circleNumber = 0,
-        angleDeg = 0.toDouble(),
-        action = SwipeActionSerializable.OpenAppDrawer(),
-        id = UUID.randomUUID().toString()
+private val defaultInitializationSetup = setOf(
+    Point(
+        offset = Offset(0f, -200f),
+        action = Action.OpenAppDrawer(),
+        id = 0
     ),
-    SwipePointSerializable(
-        circleNumber = 1,
-        angleDeg = 200.toDouble(),
-        action = SwipeActionSerializable.NotificationShade,
-        id = UUID.randomUUID().toString()
+    Point(
+        offset = Offset(-150f, 100f),
+        action = Action.NotificationShade,
+        id = 1
     ),
-    SwipePointSerializable(
-        circleNumber = 1,
-        angleDeg = 160.toDouble(),
-        action = SwipeActionSerializable.ControlPanel,
-        id = UUID.randomUUID().toString()
+    Point(
+        offset = Offset(150f, 100f),
+        action = Action.ControlPanel,
+        id = 2
     )
 )
-val defaultNestsInitializationSetup = listOf(
-    CircleNest(0)
+
+public val defaultNestsInitializationSetup: Nests = setOf(
+    Nest(0)
 )

@@ -5,7 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.remembers.rememberAutoBackupLauncher
@@ -18,7 +18,7 @@ import org.elnix.dragonlauncher.ui.remembers.rememberAutoBackupLauncher
  * now since it auto get uri permissions on import
  */
 @Composable
-fun ReselectAutoBackupBanner() {
+public fun ReselectAutoBackupBanner() {
     val autoBackupLauncher = rememberAutoBackupLauncher()
 
     DragonRow(

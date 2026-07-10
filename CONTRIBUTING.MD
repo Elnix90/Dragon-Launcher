@@ -8,6 +8,7 @@
 ## Pull Requests:
 
 - If you plan to make big modifications, ask me before, to avoid wasting time
+- Document code
 
 ## My values
 
@@ -19,8 +20,18 @@
 ## Code styles
 
 - Use camelCase for variables and functions name, and globally everywhere
+```kotlin
+class AppsViewModel
+```
+
 - call Context instances `ctx`, not `context`
-- Use snake_case for resources like strings or images, and settings_keys
+```kotlin
+fun foo(ctx: Context) {
+    return ctx.someFunction()
+}
+```
+
+- Use snake_case for resources like strings or images
 - Always add spaces between brackets in function declaration, condition statement
 
 ```kotlin
@@ -29,20 +40,6 @@ fun foo() {
         bar()
     }
 }
-```
-
-- When possible, try to add lots of docstring and comments on code to make it more clear for
-  reviewing
-- Use this char in comments cause I like it
-
-```text
-─
-```
-
-Ex:
-
-```kotlin
-/*  ─────────────  Tags constants  ─────────────  */
 ```
 
 - Put else statements in the same line as the closing if:

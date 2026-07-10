@@ -26,8 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import kotlin.math.roundToInt
@@ -46,7 +46,7 @@ private fun commitEditText(
         onChange(newValue)
         onDragStateChange?.invoke(false)
     } catch (_: Exception) {
-        // Ignore malformed input — slider keeps its current value
+        // Ignore malformed input - slider keeps its current value
     }
 }
 
@@ -208,7 +208,7 @@ private fun SliderWithLabelInternal(
  * @param onChange Callback invoked when the value changes
  */
 @Composable
-fun SliderWithLabel(
+public fun SliderWithLabel(
     modifier: Modifier = Modifier,
     label: String,
     description: String? = null,
@@ -273,7 +273,7 @@ fun SliderWithLabel(
  * @param onChange Callback invoked when the value changes
  */
 @Composable
-fun SliderWithLabel(
+public fun SliderWithLabel(
     modifier: Modifier = Modifier,
     label: String,
     description: String? = null,

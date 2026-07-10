@@ -56,85 +56,84 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.elnix90.logging.WIDGET_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
-import org.elnix.dragonlauncher.base.ktx.toDp
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.WIDGET_TAG
-import org.elnix.dragonlauncher.common.serializables.FloatingAppObject
-import org.elnix.dragonlauncher.common.serializables.FloatingAppsJson
-import org.elnix.dragonlauncher.common.serializables.IconShape
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.undoredo.UndoRedoManager
+import org.elnix.dragonlauncher.base.model.models.ResizeSide
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
+import org.elnix.dragonlauncher.base.model.serializables.Widget
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.Center
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.ResetRotation
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.ResetZoom
-import org.elnix.dragonlauncher.enumsui.toggle.UndRedoEditTools
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsAddNestRemove
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsCenterReset
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsMoveUpDown
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsSnapping
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsUpDown
-import org.elnix.dragonlauncher.logging.logD
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.px
+import org.elnix.dragonlauncher.ktx.rotateBy
+import org.elnix.dragonlauncher.ktx.toDp
 import org.elnix.dragonlauncher.models.WidgetsViewModel
-import org.elnix.dragonlauncher.models.WidgetsViewModel.ResizeCorner
-import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
-import org.elnix.dragonlauncher.settings.stores.WidgetsSettingsStore
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
-import org.elnix.dragonlauncher.ui.composition.LocalWidgetsViewModel
+import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
-import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonColumn
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.SmallShapeRow
+import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
+import org.elnix.dragonlauncher.ui.helpers.swipe.backgroundGrid
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WidgetsTab(
+public fun WidgetsTab(
     onBack: () -> Unit,
+    widgetsViewModel: WidgetsViewModel = activityViewModel(),
     onLaunchSystemWidgetPicker: (nestId: Int) -> Unit,
     onResetWidgetSize: (id: Int, widgetId: Int) -> Unit,
-    onRemoveWidget: (FloatingAppObject) -> Unit,
+    onRemoveWidget: (Widget) -> Unit,
     initialNestId: Int = 0
 ) {
-    val ctx = LocalContext.current
-
-    val floatingAppsViewModel = LocalWidgetsViewModel.current
-    val cellSizePx by floatingAppsViewModel.cellSizePx.collectAsState()
-    val cellSizeDp by floatingAppsViewModel.cellSizeDp.collectAsState()
+    val cellSizeDp by UiSettingsStore.widgetsCellSizeDp.asState()
+    val cellSizePx = cellSizeDp.px
+    val widgets by widgetsViewModel.widgets.asState()
     val scope = rememberCoroutineScope()
 
     val widgetsDebugInfos by DebugSettingsStore.widgetsDebugInfo.asState()
 
-    val floatingApps by floatingAppsViewModel.floatingApps.collectAsState()
-
-    var selected by remember { mutableStateOf<FloatingAppObject?>(null) }
+    var selected by remember { mutableStateOf<Widget?>(null) }
     val aWidgetIsSelected = selected != null
 
     var snapMove by remember { mutableStateOf(true) }
@@ -148,60 +147,9 @@ fun WidgetsTab(
     var isPrecisionModeActive by remember { mutableStateOf(false) }
 
 
-
-    /* ───────────────────────────────────────────────────────────────── */
-
-    fun snapshotWidgets(): List<FloatingAppObject> = floatingApps.map { it.copy() }
-
-
-    val undoRedo = remember { UndoRedoManager() }
-
-    LaunchedEffect(Unit) {
-        undoRedo.register(
-            key = "floatingApps",
-            snapshot = { snapshotWidgets() },
-            restore = {
-                floatingAppsViewModel.restoreFloatingApps(it)
-                selected = floatingApps.find { p -> p.id == (selected?.id ?: "") }
-            }
-        )
-    }
-
-    fun save() {
-        scope.launch {
-            WidgetsSettingsStore.jsonSetting.set(ctx, FloatingAppsJson.encodeFloatingApps(snapshotWidgets()))
-        }
-    }
-
-    fun applyChange(mutator: () -> Unit) {
-        undoRedo.applyChange(mutator)
-        save()
-    }
-
-    fun undo() {
-        undoRedo.undo()
-        save()
-    }
-
-    fun redo() {
-        undoRedo.redo()
-        save()
-    }
-
-    fun undoAll() {
-        undoRedo.undoAll()
-        save()
-    }
-
-    fun redoAll() {
-        undoRedo.redoAll()
-        save()
-    }
-
-
-    fun removeWidget(floatingApp: FloatingAppObject) {
-        onRemoveWidget(floatingApp)
-        if (selected == floatingApp) selected = null
+    fun removeWidget(widget: Widget) {
+        onRemoveWidget(widget)
+        if (selected == widget) selected = null
     }
 
     val handleBack = {
@@ -222,24 +170,22 @@ fun WidgetsTab(
     SettingsScaffold(
         title = stringResource(R.string.widgets),
         onBack = handleBack,
-        helpText = stringResource(R.string.floating_apps_tab_help),
-        onReset = {
-            scope.launch {
-                applyChange {
-                    floatingAppsViewModel.resetAllFloatingApps()
-                }
-            }
-        },
+        helpText = stringResource(R.string.widgets_tab_help),
+        onReset = { widgetsViewModel.resetAllWidgets() },
         applyPadding = false,
         scrollableContent = false,
-        otherIcons = arrayOf(
-            Triple(
-                {
-                    showMoreSheet = !showMoreSheet
-                }, R.drawable.more_vert,
-                stringResource(R.string.more)
+        moreOptions = { dismiss ->
+            listOf(
+                MoreOptions(
+                    text = { stringResource(R.string.show_more_sheet) },
+                    onClick = {
+                        showMoreSheet = !showMoreSheet
+                        dismiss()
+                    },
+                    icon = R.drawable.more_vert,
+                )
             )
-        ),
+        },
         bottomContent = {
             RowWithScrollIndicator(rowsScrollStates[0]) {
                 MultiSelectConnectedButtonRow(
@@ -252,49 +198,24 @@ fun WidgetsTab(
                         }
                     }
                 ) { entry ->
-                    scope.launch {
-                        when (entry) {
-                            WidgetsToolsSnapping.SnapGrid -> {
-                                snapMove = !snapMove
-                            }
+                    when (entry) {
+                        WidgetsToolsSnapping.SnapGrid -> {
+                            snapMove = !snapMove
+                        }
 
-                            WidgetsToolsSnapping.SnapResize -> {
-                                snapResize = !snapResize
-                            }
+                        WidgetsToolsSnapping.SnapResize -> {
+                            snapResize = !snapResize
+                        }
 
-                            WidgetsToolsSnapping.SnapRotation -> {
-                                snapRotation = !snapRotation
-                            }
+                        WidgetsToolsSnapping.SnapRotation -> {
+                            snapRotation = !snapRotation
                         }
                     }
+
                 }
 
                 Spacer(12.dp)
-
-                // Undo/Redo bar
-                val undoButtonEnabled = undoRedo.canUndo
-                val redoButtonEnabled = undoRedo.canRedo
-
-                MultiSelectConnectedButtonRow(
-                    entries = UndRedoEditTools.entries,
-                    enabled = {
-                        when (it) {
-                            UndRedoEditTools.UndoAll -> undoButtonEnabled
-                            UndRedoEditTools.Undo -> undoButtonEnabled
-                            UndRedoEditTools.Redo -> redoButtonEnabled
-                            UndRedoEditTools.RedoAll -> redoButtonEnabled
-                        }
-                    }
-                ) { entry ->
-                    scope.launch {
-                        when (entry) {
-                            UndRedoEditTools.UndoAll -> undoAll()
-                            UndRedoEditTools.Undo -> undo()
-                            UndRedoEditTools.Redo -> redo()
-                            UndRedoEditTools.RedoAll -> redoAll()
-                        }
-                    }
-                }
+                UndoRedoBlock(widgetsViewModel.undoRedo)
             }
 
 
@@ -314,23 +235,17 @@ fun WidgetsTab(
                         }
                     }
                 ) { entry ->
-                    scope.launch {
-                        when (entry) {
-                            WidgetsToolsAddNestRemove.Add -> {
-                                showAddDialog = true
-                            }
+                    when (entry) {
+                        WidgetsToolsAddNestRemove.Add -> {
+                            showAddDialog = true
+                        }
 
-                            WidgetsToolsAddNestRemove.Nests -> {
-                                showNestPickerDialog = true
-                            }
+                        WidgetsToolsAddNestRemove.Nests -> {
+                            showNestPickerDialog = true
+                        }
 
-                            WidgetsToolsAddNestRemove.Remove -> {
-                                selected?.let {
-                                    applyChange {
-                                        removeWidget(it)
-                                    }
-                                }
-                            }
+                        WidgetsToolsAddNestRemove.Remove -> {
+                            selected?.let { removeWidget(it) }
                         }
                     }
                 }
@@ -347,25 +262,19 @@ fun WidgetsTab(
                         checked = { true },
                         enabled = { aWidgetIsSelected }
                     ) { entry ->
-                        scope.launch {
-                            when (entry) {
-                                WidgetsToolsCenterReset.Center -> {
-                                    selected?.let {
-                                        applyChange {
-                                            floatingAppsViewModel.centerFloatingApp(it.id)
-                                        }
-                                    }
+                        when (entry) {
+                            WidgetsToolsCenterReset.Center -> {
+                                selected?.let {
+                                    widgetsViewModel.centerWidget(it.id)
                                 }
+                            }
 
-                                WidgetsToolsCenterReset.Reset -> {
-                                    selected?.let {
-                                        applyChange {
-                                            if (it.action is SwipeActionSerializable.OpenWidget) {
-                                                onResetWidgetSize(it.id, (it.action as SwipeActionSerializable.OpenWidget).widgetId)
-                                            } else {
-                                                floatingAppsViewModel.resetFloatingAppSize(it.id)
-                                            }
-                                        }
+                            WidgetsToolsCenterReset.Reset -> {
+                                selected?.let {
+                                    if (it.action is Action.OpenWidget) {
+                                        onResetWidgetSize(it.id, (it.action as Action.OpenWidget).widgetId)
+                                    } else {
+                                        widgetsViewModel.resetWidgetSize(it.id)
                                     }
                                 }
                             }
@@ -377,28 +286,26 @@ fun WidgetsTab(
                         showLabel = false,
                         checked = { true }
                     ) { entry ->
-                        scope.launch {
-                            when (entry) {
-                                WidgetsToolsUpDown.Up -> {
-                                    if (floatingApps.isNotEmpty()) {
-                                        val idx = floatingApps.indexOfFirst { it == selected }
-                                        val next = if (idx <= 0) floatingApps.last() else floatingApps[idx - 1]
-                                        selected = next
-                                    }
+                        when (entry) {
+                            WidgetsToolsUpDown.Up -> {
+                                if (widgets.isNotEmpty()) {
+                                    val idx = widgets.indexOfFirst { it == selected }
+                                    val next = if (idx <= 0) widgets.last() else widgets[idx - 1]
+                                    selected = next
                                 }
+                            }
 
-                                WidgetsToolsUpDown.Down -> {
-                                    if (floatingApps.isNotEmpty()) {
-                                        val idx = floatingApps.indexOfFirst { it == selected }
-                                        val next = if (idx == -1 || idx == floatingApps.lastIndex) floatingApps.first() else floatingApps[idx + 1]
-                                        selected = next
-                                    }
+                            WidgetsToolsUpDown.Down -> {
+                                if (widgets.isNotEmpty()) {
+                                    val idx = widgets.indexOfFirst { it == selected }
+                                    val next = if (idx == -1 || idx == widgets.lastIndex) widgets.first() else widgets[idx + 1]
+                                    selected = next
                                 }
                             }
                         }
                     }
 
-                    val upDownEnabled = aWidgetIsSelected && floatingApps.size > 1
+                    val upDownEnabled = aWidgetIsSelected && widgets.size > 1
 
                     MultiSelectConnectedButtonColumn(
                         entries = WidgetsToolsMoveUpDown.entries,
@@ -406,22 +313,17 @@ fun WidgetsTab(
                         enabled = { upDownEnabled },
                         checked = { upDownEnabled }
                     ) { entry ->
-                        scope.launch {
-                            when (entry) {
-                                WidgetsToolsMoveUpDown.MoveUp -> {
-                                    selected?.let {
-                                        applyChange {
-                                            floatingAppsViewModel.moveFloatingAppDown(it.id)
-                                        }
-                                    }
-                                }
+                        when (entry) {
+                            WidgetsToolsMoveUpDown.MoveUp -> {
+                                selected?.let {
+                                    widgetsViewModel.moveWidgetDown(it.id)
 
-                                WidgetsToolsMoveUpDown.MoveDown -> {
-                                    selected?.let {
-                                        applyChange {
-                                            floatingAppsViewModel.moveFloatingAppUp(it.id)
-                                        }
-                                    }
+                                }
+                            }
+
+                            WidgetsToolsMoveUpDown.MoveDown -> {
+                                selected?.let {
+                                    widgetsViewModel.moveWidgetUp(it.id)
                                 }
                             }
                         }
@@ -476,60 +378,29 @@ fun WidgetsTab(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .border(1.dp, MaterialTheme.colorScheme.primary, DragonShape)
+                        .border(1.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large)
                         .conditional(snapMove) {
                             drawWithCache {
                                 onDrawBehind {
-                                    val lineWidth = 1f
-                                    val color = Color.White.copy(alpha = 0.25f)
-
-                                    // Vertical lines
-                                    var x = 0f
-                                    while (x <= size.width) {
-                                        drawLine(
-                                            color = color,
-                                            start = Offset(x, 0f),
-                                            end = Offset(x, size.height),
-                                            strokeWidth = lineWidth
-                                        )
-                                        x += cellSizePx
-                                    }
-
-                                    // Horizontal lines
-                                    var y = 0f
-                                    while (y <= size.height) {
-                                        drawLine(
-                                            color = color,
-                                            start = Offset(0f, y),
-                                            end = Offset(size.width, y),
-                                            strokeWidth = lineWidth
-                                        )
-                                        y += cellSizePx
-                                    }
+                                    backgroundGrid(cellSizePx)
                                 }
                             }
                         }
                 )
 
-                floatingApps
+                widgets
                     .filter { it.nestId == nestId }
-                    .forEach { floatingApp ->
-                        DraggableFloatingApp(
-                            widgetsViewModel = floatingAppsViewModel,
-                            app = floatingApp,
+                    .forEach { widget ->
+                        DraggableWidget(
+                            widgetsViewModel = widgetsViewModel,
+                            app = widget,
                             snapRotation = { snapRotation },
                             snapMove = { snapMove },
                             snapResize = { snapResize },
-                            selected = floatingApp.id == selected?.id,
+                            selected = widget.id == selected?.id,
                             onPrecisionModeChange = { isPrecisionModeActive = it },
-                            onSelect = { selected = floatingApp },
-                            onEdit = {
-                                applyChange {
-                                    logD(WIDGET_TAG) { "applyChange\nold widget: ${floatingApp.shape}\new one: ${it.shape}" }
-
-                                    floatingAppsViewModel.editFloatingApp(it)
-                                }
-                            }
+                            onSelect = { selected = widget },
+                            onEdit = { widgetsViewModel.editWidget(it) }
                         )
                     }
             }
@@ -555,9 +426,9 @@ fun WidgetsTab(
                 }
             }
 
-            if (widgetsDebugInfos && floatingApps.isNotEmpty()) {
+            if (widgetsDebugInfos && widgets.isNotEmpty()) {
                 DragonColumnGroup {
-                    floatingApps.forEach {
+                    widgets.forEach {
                         Text(it.toString())
                     }
                 }
@@ -570,26 +441,13 @@ fun WidgetsTab(
     if (showAddDialog) {
         AddPointDialog(
             onDismiss = { showAddDialog = false },
-            actions = setOf(
-                SwipeActionSerializable.OpenWidget(0, "", ""),
-                SwipeActionSerializable.OpenCircleNest(0),
-                SwipeActionSerializable.GoParentNest,
-                SwipeActionSerializable.LaunchShortcut("", ""),
-                SwipeActionSerializable.LaunchApp("", false, 0),
-                SwipeActionSerializable.OpenUrl(""),
-                SwipeActionSerializable.OpenFile(""),
-                SwipeActionSerializable.NotificationShade,
-                SwipeActionSerializable.ControlPanel,
-                SwipeActionSerializable.OpenAppDrawer(),
-                SwipeActionSerializable.Lock,
-                SwipeActionSerializable.ReloadApps,
-                SwipeActionSerializable.OpenRecentApps,
-                SwipeActionSerializable.OpenDragonLauncherSettings()
-            ),
+            actions = Action.defaultChoosableActions.toMutableList().apply {
+                add(0, Action.OpenWidget.dummy)
+            },
             onActionSelected = { action ->
                 when (action) {
-                    is SwipeActionSerializable.OpenWidget -> onLaunchSystemWidgetPicker(nestId)
-                    else -> floatingAppsViewModel.addFloatingApp(action, nestId = nestId)
+                    is Action.OpenWidget -> onLaunchSystemWidgetPicker(nestId)
+                    else -> widgetsViewModel.addWidget(action, nestId = nestId)
                 }
                 showAddDialog = false
             }
@@ -601,9 +459,9 @@ fun WidgetsTab(
         DragonModalBottomSheet(
             onDismissRequest = { showMoreSheet = false },
         ) {
-            Text("${stringResource(R.string.widget_number_total)}: ${floatingApps.size}")
-            Text("${stringResource(R.string.widget_number_nest)}: ${floatingApps.count { it.nestId == nestId }}")
-            Text("${stringResource(R.string.current_nest)}: $nestId")
+            Text(stringResource(R.string.widget_number_total, widgets.size))
+            Text(stringResource(R.string.widget_number_nest, widgets.count { it.nestId == nestId }))
+            Text(stringResource(R.string.current_nest, nestId))
 
             HorizontalDivider()
 
@@ -646,27 +504,14 @@ fun WidgetsTab(
                 }
             }
 
-            SliderWithLabel(
-                label = stringResource(R.string.cell_size),
-                description = stringResource(R.string.cell_size_help),
-                value = cellSizeDp,
-                valueRange = 1..100,
-                onReset = {
-                    floatingAppsViewModel.updateCellSize(null)
-                },
-            ) {
-                floatingAppsViewModel.updateCellSize(it)
-            }
+            Setting(UiSettingsStore.widgetsCellSizeDp)
         }
     }
 
     if (showNestPickerDialog) {
         NestManagementDialog(
             onDismissRequest = { showNestPickerDialog = false },
-            title = stringResource(R.string.pick_a_nest),
-            onDelete = null,
-            onNewNest = null,
-            onNameChange = null
+            title = stringResource(R.string.pick_a_nest)
         ) {
             logD(WIDGET_TAG) { it.toString() }
             nestId = it.id
@@ -700,12 +545,12 @@ fun WidgetsTab(
  * @param snapResize Returns true if span should snap to whole cell units.
  * @param onPrecisionModeChange Called when the long-press precision mode toggles on or off.
  * @param onSelect Called when the widget is tapped or a drag starts on it.
- * @param onEdit Called at the end of any drag (move, resize, rotate) with the updated [FloatingAppObject].
+ * @param onEdit Called at the end of any drag (move, resize, rotate) with the updated [Widget].
  */
 @Composable
-private fun DraggableFloatingApp(
+private fun DraggableWidget(
     widgetsViewModel: WidgetsViewModel,
-    app: FloatingAppObject,
+    app: Widget,
     selected: Boolean,
 
     snapRotation: () -> Boolean,
@@ -714,7 +559,7 @@ private fun DraggableFloatingApp(
 
     onPrecisionModeChange: (Boolean) -> Unit,
     onSelect: () -> Unit,
-    onEdit: (FloatingAppObject) -> Unit
+    onEdit: (Widget) -> Unit
 ) {
     val haptic = LocalHapticFeedback.current
     val borderColor = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent
@@ -754,7 +599,7 @@ private fun DraggableFloatingApp(
     }
 
 
-    fun commitChange(newApp: FloatingAppObject? = null) {
+    fun commitChange(newApp: Widget? = null) {
         onEdit(
             newApp ?: app.copy(
                 spanX = widgetWidth,
@@ -766,7 +611,7 @@ private fun DraggableFloatingApp(
         )
     }
 
-    fun resizeFloatingApp(corner: ResizeCorner, dxPx: Float, dyPx: Float) {
+    fun resizeWidget(corner: ResizeSide, dxPx: Float, dyPx: Float) {
         val deltaSpanX = dxPx / cellSizePx
         val deltaSpanY = dyPx / cellSizePx
         val deltaPosX = dxPx / widthPixels
@@ -781,21 +626,21 @@ private fun DraggableFloatingApp(
 
 
         when (corner) {
-            ResizeCorner.Left -> {
+            ResizeSide.Left -> {
                 rawWidgetWidth = (rawWidgetWidth - deltaSpanX).coerceAtLeast(minSize)
                 localDeltaX = deltaPosX
             }
 
-            ResizeCorner.Right -> {
+            ResizeSide.Right -> {
                 rawWidgetWidth = (rawWidgetWidth + deltaSpanX).coerceAtLeast(minSize)
             }
 
-            ResizeCorner.Top -> {
+            ResizeSide.Top -> {
                 rawWidgetHeight = (rawWidgetHeight - deltaSpanY).coerceAtLeast(minSize)
                 localDeltaY = deltaPosY
             }
 
-            ResizeCorner.Bottom -> {
+            ResizeSide.Bottom -> {
                 rawWidgetHeight = (rawWidgetHeight + deltaSpanY).coerceAtLeast(minSize)
             }
         }
@@ -844,13 +689,13 @@ private fun DraggableFloatingApp(
             .border(
                 width = if (selected) 2.dp else 0.dp,
                 color = borderColor,
-                shape = DragonShape
+                shape = MaterialTheme.shapes.large
             )
     ) {
 
         // Widget / App content (touch blocked during editing)
         WidgetHostView(
-            floatingAppObject = app,
+            widget = app,
             blockTouches = true,
             cellSizePx = cellSizePx
         ) { }
@@ -866,7 +711,7 @@ private fun DraggableFloatingApp(
                             isPrecisionMode = false
                             onSelect()
                             try {
-                                withTimeout(viewConfiguration.longPressTimeoutMillis) {
+                                withTimeout(viewConfiguration.longPressTimeoutMillis.milliseconds) {
                                     tryAwaitRelease()
                                 }
                             } catch (_: TimeoutCancellationException) {
@@ -1019,12 +864,12 @@ private fun DraggableFloatingApp(
                     .size(dotSize + hitboxPadding * 2)
                     .clip(CircleShape)
                     .background(Color.Transparent)
-                    .pointerInput(ResizeCorner.Top, app.spanX, app.spanY) {
+                    .pointerInput(ResizeSide.Top, app.spanX, app.spanY) {
                         detectDragGestures(
                             onDragEnd = ::commitChange
                         ) { change, dragAmount ->
                             change.consume()
-                            resizeFloatingApp(ResizeCorner.Top, 0f, dragAmount.y)
+                            resizeWidget(ResizeSide.Top, 0f, dragAmount.y)
                         }
                     }
             ) {
@@ -1044,12 +889,12 @@ private fun DraggableFloatingApp(
                     .size(dotSize + hitboxPadding * 2)
                     .clip(CircleShape)
                     .background(Color.Transparent)
-                    .pointerInput(ResizeCorner.Bottom, app.spanX, app.spanY) {
+                    .pointerInput(ResizeSide.Bottom, app.spanX, app.spanY) {
                         detectDragGestures(
                             onDragEnd = ::commitChange
                         ) { change, dragAmount ->
                             change.consume()
-                            resizeFloatingApp(ResizeCorner.Bottom, 0f, dragAmount.y)
+                            resizeWidget(ResizeSide.Bottom, 0f, dragAmount.y)
                         }
                     }
             ) {
@@ -1069,12 +914,12 @@ private fun DraggableFloatingApp(
                     .size(dotSize + hitboxPadding * 2)
                     .clip(CircleShape)
                     .background(Color.Transparent)
-                    .pointerInput(ResizeCorner.Left, app.spanX, app.spanY) {
+                    .pointerInput(ResizeSide.Left, app.spanX, app.spanY) {
                         detectDragGestures(
                             onDragEnd = ::commitChange
                         ) { change, dragAmount ->
                             change.consume()
-                            resizeFloatingApp(ResizeCorner.Left, dragAmount.x, 0f)
+                            resizeWidget(ResizeSide.Left, dragAmount.x, 0f)
                         }
                     }
             ) {
@@ -1094,12 +939,12 @@ private fun DraggableFloatingApp(
                     .size(dotSize + hitboxPadding * 2)
                     .clip(CircleShape)
                     .background(Color.Transparent)
-                    .pointerInput(ResizeCorner.Right, app.spanX, app.spanY) {
+                    .pointerInput(ResizeSide.Right, app.spanX, app.spanY) {
                         detectDragGestures(
                             onDragEnd = ::commitChange
                         ) { change, dragAmount ->
                             change.consume()
-                            resizeFloatingApp(ResizeCorner.Right, dragAmount.x, 0f)
+                            resizeWidget(ResizeSide.Right, dragAmount.x, 0f)
                         }
                     }
             ) {

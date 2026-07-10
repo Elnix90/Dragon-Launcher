@@ -22,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,31 +34,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.serializables.AppModel
-import org.elnix.dragonlauncher.common.serializables.WorkspaceState
-import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.ui.activityViewModel
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.models.DrawerViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AppAliasesDialog(
-    appsViewModel: AppsViewModel = activityViewModel(),
-    app: AppModel,
+public fun AppAliasesDialog(
+    app: Application,
+    workspaceViewModel: DrawerViewModel = activityViewModel(),
     onDismiss: () -> Unit
 ) {
     val hapticFeedback = LocalHapticFeedback.current
 
     var showAliasEditScreen by remember { mutableStateOf<String?>(null) }
-    val cacheKey = app.iconCacheKey
+    val cacheKey = app.key
 
-    val state by appsViewModel.enabledState
-        .collectAsState(WorkspaceState())
-
-    @Suppress("UselessCallOnNotNull")
-    val aliases = state.appAliases.orEmpty()
+    val appOverridesManager = workspaceViewModel.appOverrideManager
+    val aliases = appOverridesManager.getAliasesForApp(app)
 
 
     AlertDialog(
@@ -86,7 +82,7 @@ fun AppAliasesDialog(
                 }
 
                 Text(
-                    text = app.name,
+                    text = app.label,
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -123,9 +119,8 @@ fun AppAliasesDialog(
                             )
                         }
                     }
-                    val items = aliases[cacheKey]?.toList() ?: emptyList()
                     items(
-                        items = items
+                        items = aliases.toList()
                     ) { alias ->
                         val interactionSource = rememberInteractionSource()
                         val isPressed by interactionSource.collectIsPressedAsState()
@@ -134,7 +129,7 @@ fun AppAliasesDialog(
                         var canDelete by remember { mutableStateOf(false) }
                         LaunchedEffect(isPressed) {
                             if (isPressed) {
-                                delay(250)
+                                delay(250.milliseconds)
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                                 canDelete = true
                             } else {
@@ -152,7 +147,7 @@ fun AppAliasesDialog(
                             modifier = Modifier.animateItem(),
                             onClick = {
                                 if (canDelete) {
-                                    appsViewModel.removeAliasFromWorkspace(alias, cacheKey)
+                                    appOverridesManager.removeAliasFromApp(cacheKey, alias)
                                 } else {
                                     showAliasEditScreen = alias
                                 }
@@ -178,24 +173,23 @@ fun AppAliasesDialog(
         },
         dismissButton = {},
         containerColor = MaterialTheme.colorScheme.surface,
-        shape = DragonShape
+        shape = MaterialTheme.shapes.large
     )
 
     if (showAliasEditScreen != null) {
 
-        val aliasToEdit = showAliasEditScreen!!
+        val old = showAliasEditScreen!!
 
         TextEditorDialog(
             title = {
-                if (aliasToEdit == "") stringResource(R.string.create_alias)
+                if (old == "") stringResource(R.string.create_alias)
                 else stringResource(R.string.edit_alias)
             },
             placeHolder = { stringResource(R.string.alias) },
-            initialText = aliasToEdit,
+            initialText = old,
             onDismiss = { showAliasEditScreen = null }
-        ) {
-            appsViewModel.removeAliasFromWorkspace(aliasToEdit, cacheKey)
-            appsViewModel.addAliasToApp(it, cacheKey)
+        ) { new ->
+            appOverridesManager.updateAliasToApp(old, new, cacheKey)
             showAliasEditScreen = null
         }
     }

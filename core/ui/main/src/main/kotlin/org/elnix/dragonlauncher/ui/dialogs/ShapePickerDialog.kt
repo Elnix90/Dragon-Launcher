@@ -10,14 +10,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.serializables.IconShape
-import org.elnix.dragonlauncher.common.serializables.allShapes
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
+import org.elnix.dragonlauncher.base.model.serializables.IconShape.Companion.allShapes
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
+import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
 import org.elnix.dragonlauncher.ui.helpers.ShapePreview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShapePickerDialog(
+public fun ShapePickerDialog(
     selected: IconShape,
     onDismiss: () -> Unit,
     onPicked: (IconShape) -> Unit
@@ -31,13 +32,18 @@ fun ShapePickerDialog(
         ) {
 
             items(allShapes) { shape ->
-                ShapePreview(
-                    iconShape = shape,
+                DragonTooltip(
                     modifier = Modifier.height(70.dp),
-                    selected = shape == selected
+                    description = shape.toString()
                 ) {
-                    onPicked(shape)
-                    onDismiss()
+                    ShapePreview(
+                        iconShape = shape,
+                        modifier = it,
+                        selected = shape == selected
+                    ) {
+                        onPicked(shape)
+                        onDismiss()
+                    }
                 }
             }
         }

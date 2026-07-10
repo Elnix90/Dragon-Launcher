@@ -1,0 +1,87 @@
+name: Build Release From Tag
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Extract versionName
+        id: version
+        run: |
+          VER=$(grep -oP 'versionName\s*=\s*"\K[0-9.]+' app/build.gradle* | head -n1)
+          echo "VERSION=$VER" >> $GITHUB_ENV
+          echo "Detected versionName: $VER" 
+
+      - name: Read latest changelog
+        id: changelog
+        shell: bash
+        run: |
+          echo "changelog<<EOF" >> "$GITHUB_OUTPUT"
+          .github/scripts/read-changelog.sh >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"      
+
+      - name: Decode keystore
+        env:
+          KEYSTORE_FILE_B64: ${{ secrets.KEYSTORE_FILE_B64 }}
+        run: echo "$KEYSTORE_FILE_B64" | base64 -d > my-release-key.jks
+
+      - name: Export signing env
+        run: |
+          {
+            echo "KEYSTORE_FILE=$PWD/my-release-key.jks"
+            echo "KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}"
+            echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}"
+            echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}"
+          } >> $GITHUB_ENV
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease --parallel --no-daemon --no-build-cache
+
+      - name: Rename APK
+        run: |
+          NAME="DragonLauncher-${{ env.VERSION }}.apk"
+          mv app/build/outputs/apk/release/app-release.apk "$NAME"
+
+          MAPPING="Mappings-${{ env.VERSION }}.txt"
+          mv app/build/outputs/mapping/release/mapping.txt "$MAPPING"
+          
+          echo "Release file: $NAME"
+          echo "Mapping file: $MAPPING"
+          
+          {
+            echo "APK=$NAME"
+            echo "MAPPING=$MAPPING"
+          } >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.VERSION }}
+          name: ${{ env.VERSION }}
+          files: |
+            ${{ env.APK }}
+            ${{ env.MAPPING }}
+          body: |
+            ${{ steps.changelog.outputs.changelog }}
+
+            ## ⚠️ Play Protect Warning
+            Due to Android restrictions, disable Play Protect during installation to avoid Dragon being blocked.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

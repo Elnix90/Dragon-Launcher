@@ -30,20 +30,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.logging.ANGLE_LINE_TAG
+import io.github.elnix90.logging.logE
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ANGLE_LINE_TAG
-import org.elnix.dragonlauncher.enumsui.other.AngleLineObjects
-import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.settings.stores.AngleLineSettingsStore
+import org.elnix.dragonlauncher.base.model.models.AngleLineObjects
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
-fun AngleLineObjectsOrderDialog(
+public fun AngleLineObjectsOrderDialog(
     onDismiss: () -> Unit
 ) {
     val ctx = LocalContext.current
@@ -147,7 +147,8 @@ fun AngleLineObjectsOrderDialog(
 }
 
 
-@Composable fun rememberLineObjectsOrder(): MutableState<List<AngleLineObjects>> {
+@Composable
+public fun rememberLineObjectsOrder(): MutableState<List<AngleLineObjects>> {
     val orderString by AngleLineSettingsStore.angleLineObjectsOrder.asState()
 
     return remember(orderString) {

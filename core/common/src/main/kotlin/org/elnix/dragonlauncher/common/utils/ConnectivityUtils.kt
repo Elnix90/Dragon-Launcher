@@ -14,27 +14,26 @@ import android.provider.Settings
 import android.telephony.TelephonyManager
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.STATUS_BAR_TAG
-import org.elnix.dragonlauncher.common.messyfolder.showToast
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isDefaultLauncher
-import org.elnix.dragonlauncher.logging.logE
+import org.elnix.dragonlauncher.ktx.showToast
+import io.github.elnix90.logging.STATUS_BAR_TAG
+import io.github.elnix90.logging.logE
 
-object ConnectivityUtils {
+public object ConnectivityUtils {
 
-    fun Context.isBluetoothEnabled(): Boolean {
+    public fun Context.isBluetoothEnabled(): Boolean {
         val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         return bluetoothManager.adapter?.isEnabled == true
     }
 
-    fun Context.isHotspotEnabled(): Boolean {
+    public fun Context.isHotspotEnabled(): Boolean {
         val wifiManager = getSystemService(Context.WIFI_SERVICE) as WifiManager
         return try {
             val method = wifiManager.javaClass.getDeclaredMethod("isWifiApEnabled")
@@ -49,7 +48,7 @@ object ConnectivityUtils {
         }
     }
 
-    fun Context.isWifiEnabled(): Boolean {
+    public fun Context.isWifiEnabled(): Boolean {
         return try {
             val wifiManager = getSystemService(Context.WIFI_SERVICE) as WifiManager
             wifiManager.isWifiEnabled
@@ -61,13 +60,13 @@ object ConnectivityUtils {
     }
 
     @SuppressLint("MissingPermission")
-    fun Context.getMobileDataStatus(): Pair<Boolean, String> {
+    public fun Context.getMobileDataStatus(): Pair<Boolean, String> {
 
         val resolver = contentResolver
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
 
-        /*  ─────────────  Mobile data status  ─────────────  */
+        /*    Mobile data status    */
         // 1. Check if mobile data is enabled (check multiple SIMs)
         val mobileDataEnabled = try {
             Settings.Global.getInt(resolver, "mobile_data", 0) == 1 ||
@@ -111,7 +110,7 @@ object ConnectivityUtils {
         return true to "Data ON"
     }
 
-    fun Context.isVpnEnabled(): Boolean {
+    public fun Context.isVpnEnabled(): Boolean {
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         return connectivityManager.allNetworks.any { network ->
@@ -119,10 +118,10 @@ object ConnectivityUtils {
         }
     }
 
-    fun Context.isAirplaneMode(): Boolean {
+    public fun Context.isAirplaneMode(): Boolean {
         return Settings.Global.getInt(contentResolver, Settings.Global.AIRPLANE_MODE_ON, 0) == 1
     }
-    val Context.isDefaultLauncher: Boolean
+    public val Context.isDefaultLauncher: Boolean
         get() {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val roleManager = getSystemService(Context.ROLE_SERVICE) as RoleManager
@@ -141,18 +140,19 @@ object ConnectivityUtils {
             }
         }
 }
+
 @Composable
-fun rememberIsDefaultLauncher(): Boolean {
+public fun rememberIsDefaultLauncher(): State<Boolean> {
     val ctx = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    var isDefaultLauncher by remember { mutableStateOf(ctx.isDefaultLauncher) }
+    val isDefaultLauncher = remember { mutableStateOf(ctx.isDefaultLauncher) }
 
     LaunchedEffect(lifecycleOwner) {
         snapshotFlow { lifecycleOwner.lifecycle.currentState }
             .collect { state ->
                 if (state == Lifecycle.State.RESUMED) {
-                    isDefaultLauncher = ctx.isDefaultLauncher
+                    isDefaultLauncher.value = ctx.isDefaultLauncher
                 }
             }
     }

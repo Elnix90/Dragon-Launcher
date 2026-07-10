@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 /**
  * Used in modal sheets to give padding to the content to avoid it being directly on the edges
  */
-val modalWindowInsets: @Composable (() -> WindowInsets)
+public val modalWindowInsets: @Composable (() -> WindowInsets)
     get() = {
         WindowInsets.safeDrawing.add(
             WindowInsets(
@@ -40,7 +40,7 @@ val modalWindowInsets: @Composable (() -> WindowInsets)
 
 @Composable
 @ExperimentalMaterial3Api
-fun DragonModalBottomSheet(
+public fun DragonModalBottomSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(),

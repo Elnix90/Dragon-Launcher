@@ -23,13 +23,13 @@ import androidx.compose.material3.ToggleButtonColors
 import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
+import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.ui.composition.LocalUseCustomColorChannels
 
-object AppObjectsColors {
+public object AppObjectsColors {
 
     @Composable
-    fun switchColors(): SwitchColors {
+    public fun switchColors(): SwitchColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 SwitchDefaults.colors(
@@ -51,7 +51,7 @@ object AppObjectsColors {
     }
 
     @Composable
-    fun buttonColors(): ButtonColors {
+    public fun buttonColors(): ButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 ButtonDefaults.buttonColors(
@@ -63,7 +63,7 @@ object AppObjectsColors {
     }
 
     @Composable
-    fun cancelButtonColors(): ButtonColors {
+    public fun cancelButtonColors(): ButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 ButtonDefaults.outlinedButtonColors(
@@ -78,7 +78,7 @@ object AppObjectsColors {
 
 
     @Composable
-    fun sliderColors(
+    public fun sliderColors(
         activeTrackColor: Color? = null,
         backgroundColor: Color? = null
     ): SliderColors {
@@ -99,7 +99,7 @@ object AppObjectsColors {
     }
 
     @Composable
-    fun checkboxColors(): CheckboxColors {
+    public fun checkboxColors(): CheckboxColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 CheckboxDefaults.colors(
@@ -115,7 +115,7 @@ object AppObjectsColors {
     }
 
     @Composable
-    fun outlinedTextFieldColors(
+    public fun outlinedTextFieldColors(
         backgroundColor: Color? = null,
         onBackgroundColor: Color? = null,
         removeBorder: Boolean = false
@@ -181,7 +181,7 @@ object AppObjectsColors {
     }
 
     @Composable
-    fun radioButtonColors(): RadioButtonColors {
+    public fun radioButtonColors(): RadioButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 RadioButtonDefaults.colors(
@@ -195,7 +195,7 @@ object AppObjectsColors {
     }
 
     @Composable
-    fun iconButtonColors(): IconButtonColors {
+    public fun iconButtonColors(): IconButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 IconButtonDefaults.iconButtonColors(
@@ -210,7 +210,7 @@ object AppObjectsColors {
 
 
     @Composable
-    fun iconToggleButtonColors(): IconToggleButtonColors {
+    public fun iconToggleButtonColors(): IconToggleButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 IconButtonDefaults.iconToggleButtonColors(
@@ -226,7 +226,7 @@ object AppObjectsColors {
     }
 
     @Composable
-    fun cancelIconButtonColors(): IconButtonColors {
+    public fun cancelIconButtonColors(): IconButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 IconButtonDefaults.iconButtonColors(
@@ -240,7 +240,7 @@ object AppObjectsColors {
     }
 
     @Composable
-    fun cardColors(): CardColors {
+    public fun cardColors(): CardColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 CardDefaults.cardColors(
@@ -255,7 +255,7 @@ object AppObjectsColors {
 
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Composable
-    fun toggleButtonColors(): ToggleButtonColors {
+    public fun toggleButtonColors(): ToggleButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 ToggleButtonDefaults.toggleButtonColors(

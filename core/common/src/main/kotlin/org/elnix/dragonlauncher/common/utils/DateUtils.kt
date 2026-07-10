@@ -6,19 +6,25 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.provider.AlarmClock
 import android.provider.CalendarContract
-import androidx.compose.runtime.Composable
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.PackageNameLists.knownClockPackages
-import org.elnix.dragonlauncher.logging.logD
-import java.text.SimpleDateFormat
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.DateTimeFormat
+import kotlinx.datetime.format.MonthNames
+import kotlinx.datetime.toLocalDateTime
+import org.elnix.dragonlauncher.base.Constants.PackageNameLists.knownClockPackages
+import org.elnix.dragonlauncher.base.model.models.DateTimeFormats
+import org.elnix.dragonlauncher.common.utils.DateUtils.defaultDateTimeFormatter
+import io.github.elnix90.logging.TAG
+import io.github.elnix90.logging.logD
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.util.Date
-import java.util.Locale
+import kotlin.time.Clock
+import kotlin.time.Instant
 
-object DateUtils {
-    fun Context.openAlarmApp2(): Boolean {
+public object DateUtils {
+    public fun Context.openAlarmApp2(): Boolean {
         val pm = this.packageManager
 
         // 1. Official alarm UI
@@ -94,7 +100,7 @@ object DateUtils {
         return false
     }
 
-    fun Context.openAlarmApp() {
+    public fun Context.openAlarmApp() {
         val pm = this.packageManager
 
         // Try official alarm actions in priority order
@@ -121,7 +127,7 @@ object DateUtils {
     }
 
 
-    fun Context.openCalendar() {
+    public fun Context.openCalendar() {
         try {
             val calendarUri = CalendarContract.CONTENT_URI
                 .buildUpon()
@@ -145,25 +151,70 @@ object DateUtils {
 
 
     /**
-     * Takes a timestamp [Long] and return the formatted date in `MMM dd, yyyy HH:mm:ss` format
-     * It uis used by the logs tab and the backup tab to format file dates in a readable output
-     *
-     * @return [String] the formatted [this] timestamp
+     * Default date time formatter
+     * Outputs `MMM dd, yyyy HH:mm:ss`
      */
-    fun Long.formatDateTime(): String {
-        return SimpleDateFormat("MMM dd, yyyy HH:mm:ss", Locale.getDefault())
-            .format(Date(this))
+    private val defaultDateTimeFormatter = LocalDateTime.Format {
+        monthName(MonthNames.ENGLISH_ABBREVIATED)
+        chars(" ")
+        day()
+        chars(", ")
+        year()
+        chars(" ")
+        hour()
+        chars(":")
+        minute()
+        chars(":")
+        second()
     }
 
     /**
-     * Today - returns the today's date, formatted in the given format
+     * Format a timestamp (milliseconds) to a readable datetime string.
+     * Used by logs and backup tabs to format file dates.
      *
-     * @param format the date format
-     * @return [String] today's date
+     * @return [String] formatted as [defaultDateTimeFormatter]
      */
-    fun today(format: String = "MMM dd, yyyy"): String =
-        SimpleDateFormat(format, Locale.getDefault()).format(Date())
+    public fun Long.formatDateTime(format: DateTimeFormat<LocalDateTime> = defaultDateTimeFormatter): String {
+        val instant = Instant.fromEpochMilliseconds(this)
+        val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+        return localDateTime.format(format)
+    }
 
+    /**
+     * Format the current moment as a datetime string.
+     *
+     * @param format the datetime format to apply
+     * @return [String] the current datetime formatted according to the specified format
+     */
+    public fun nowFormattedDateTime(format: DateTimeFormat<LocalDateTime> = defaultDateTimeFormatter): String {
+        val instant = Clock.System.now()
+        val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+        return localDateTime.format(format)
+    }
+
+    /**
+     * Format the current time as a time string.
+     *
+     * @param format the time format to apply (default: 24-hour with seconds)
+     * @return [String] the current time formatted according to the specified format
+     */
+    public fun nowFormattedTime(format: DateTimeFormat<kotlinx.datetime.LocalTime> = DateTimeFormats.time24HourSeconds): String {
+        val instant = Clock.System.now()
+        val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+        return localDateTime.time.format(format)
+    }
+
+    /**
+     * Format the current date as a date string.
+     *
+     * @param format the date format to apply (default: European format)
+     * @return [String] the current date formatted according to the specified format
+     */
+    public fun nowFormattedDate(format: DateTimeFormat<kotlinx.datetime.LocalDate> = DateTimeFormats.dateEu): String {
+        val instant = Clock.System.now()
+        val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+        return localDateTime.date.format(format)
+    }
 
     /**
      * Format duration
@@ -172,7 +223,7 @@ object DateUtils {
      *
      * @return [String] the formatted duration
      */
-    fun Long.formatDuration(): String {
+    public fun Long.formatDuration(): String {
         return when {
             this >= 60 -> {
                 val hours = this / 60
@@ -184,8 +235,7 @@ object DateUtils {
         }
     }
 
-    @Composable
-    fun isValidTimeFormat(formatter: String): Boolean = try {
+    public fun isValidTimeFormat(formatter: String): Boolean = try {
         val timeFormatter = DateTimeFormatter.ofPattern(formatter)
         val now = LocalTime.now()
         now.format(timeFormatter)
@@ -195,8 +245,7 @@ object DateUtils {
         false
     }
 
-    @Composable
-    fun isValidDateFormat(formatter: String): Boolean = try {
+    public fun isValidDateFormat(formatter: String): Boolean = try {
         val dateFormatter = DateTimeFormatter.ofPattern(formatter)
         val today = LocalDate.now()
         today.format(dateFormatter)
@@ -205,6 +254,8 @@ object DateUtils {
         println("❌ Date format validation failed: '$formatter' -> ${e.message}")
         false
     }
+
+
 
 //fun Long.timeAgo(): String {
 //    val seconds = (System.currentTimeMillis() - this) / 1000

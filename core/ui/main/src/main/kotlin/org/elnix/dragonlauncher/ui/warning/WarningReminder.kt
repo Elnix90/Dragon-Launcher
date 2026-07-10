@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,10 +31,11 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 
 @Composable
-fun WarningReminder(modifier: Modifier = Modifier) {
+public fun WarningReminder(modifier: Modifier = Modifier) {
 
     Card(
         modifier = modifier,
@@ -77,7 +77,7 @@ fun WarningReminder(modifier: Modifier = Modifier) {
 
             val uriHandler = LocalUriHandler.current
 
-            Button(
+            DragonButton(
                 onClick = { uriHandler.openUri("https://keepandroidopen.org/") },
                 modifier = Modifier.fillMaxWidth()
             ) {

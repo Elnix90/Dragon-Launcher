@@ -27,21 +27,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.ui.helpers.MonospaceScrollableText
 import org.elnix.dragonlauncher.ui.remembers.rememberSafeSettingsExportLauncher
 
 
 @Composable
-fun CrashScreen(
+public fun CrashScreen(
     stackTrace: String,
     onDismiss: () -> Unit
 ) {
     val ctx = LocalContext.current
     val lines = remember(stackTrace) { stackTrace.lines() }
-    val settingsExportLauncher = rememberSafeSettingsExportLauncher(backupableStores.keys)
+    val settingsExportLauncher = rememberSafeSettingsExportLauncher(backupableStores)
 
     Column(
         verticalArrangement = Arrangement.spacedBy(5.dp),

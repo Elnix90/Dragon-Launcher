@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
@@ -21,29 +19,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.R
+import io.github.elnix90.core.stores.SettingsStore
 import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons
 import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons.DeselectAll
 import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons.Invert
 import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons.SelectAll
-import org.elnix.dragonlauncher.settings.bases.DatastoreProvider
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.backupableStores
-import org.elnix.dragonlauncher.settings.bases.BaseSettingsStore
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.ui.base.components.LazyColumnWithScrollIndicator
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 
 @Composable
-fun ExportSettingsDialog(
+public fun ExportSettingsDialog(
     onDismiss: () -> Unit,
-    availableStores: Map<DatastoreProvider, BaseSettingsStore<*, *>> = backupableStores,
-    defaultStores: Map<DatastoreProvider, BaseSettingsStore<*, *>> = backupableStores,
-    onConfirm: (selectedStores: Map<DatastoreProvider, BaseSettingsStore<*, *>>) -> Unit
+    title: Int = R.string.select_settings_to_export,
+    availableStores: Set<SettingsStore<*, *>> = backupableStores,
+    defaultStores: Set<SettingsStore<*, *>> = backupableStores,
+    onConfirm: (selectedStores: Set<SettingsStore<*, *>>) -> Unit
 ) {
 
-    val selected = remember(availableStores) {
-        mutableStateMapOf<DatastoreProvider, Boolean>().apply {
-            availableStores.forEach { put(it.key, it.value in defaultStores.values) }
+    val selected = remember(availableStores, defaultStores) {
+        mutableStateMapOf<SettingsStore<*, *>, Boolean>().apply {
+            availableStores.forEach { store ->
+                put(store, store in defaultStores)
+            }
         }
     }
 
@@ -53,34 +53,31 @@ fun ExportSettingsDialog(
             ValidateCancelButtons(
                 onCancel = onDismiss
             ) {
-                onConfirm(availableStores.filter { selected[it.key] == true })
+                onConfirm(selected.filterValues { it }.keys)
             }
         },
-        title = { Text(stringResource(R.string.select_settings_to_export)) },
+        title = { Text(stringResource(title)) },
         text = {
-            LazyColumn(
-                modifier = Modifier.heightIn(max = 600.dp)
-            ) {
-                item {
-                    SelectedActionRow(selected, availableStores.size) { }
-                }
+            SelectedActionRow(selected, availableStores.size)
 
-                items(availableStores.entries.toList()) { entry ->
-                    StoreItem(selected, entry.key, entry.value)
-                }
+            LazyColumnWithScrollIndicator(
+                items = availableStores.toList(),
+                modifier = Modifier.heightIn(max = 600.dp)
+            ) { store ->
+                StoreItem(selected, store)
             }
         },
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 6.dp,
-        shape = DragonShape
+        shape = MaterialTheme.shapes.large
     )
 }
 
 @Composable
-fun <T> SelectedActionRow(
+public fun <T> SelectedActionRow(
     selected: SnapshotStateMap<T, Boolean>,
     totalNumber: Int,
-    onAnyAction: () -> Unit
+    onAnyAction: (() -> Unit)? = null
 ) {
     MultiSelectConnectedButtonRow(
         entries = BackupSelectStoresButtons.entries,
@@ -98,21 +95,21 @@ fun <T> SelectedActionRow(
                 selected.forEach { (store, _) ->
                     selected[store] = false
                 }
-                onAnyAction()
+                onAnyAction?.invoke()
             }
 
             SelectAll -> {
                 selected.forEach { (store, _) ->
                     selected[store] = true
                 }
-                onAnyAction()
+                onAnyAction?.invoke()
             }
 
             Invert -> {
                 selected.forEach { (store, isSelected) ->
                     selected[store] = !isSelected
                 }
-                onAnyAction()
+                onAnyAction?.invoke()
             }
         }
     }
@@ -120,25 +117,24 @@ fun <T> SelectedActionRow(
 
 
 @Composable
-fun StoreItem(
-    selected: SnapshotStateMap<DatastoreProvider, Boolean>,
-    dataStoreName: DatastoreProvider,
-    settingsStore: BaseSettingsStore<*, *>
+public fun StoreItem(
+    selected: SnapshotStateMap<SettingsStore<*,*>, Boolean>,
+    settingsStore: SettingsStore<*, *>
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(DragonShape)
+            .clip(MaterialTheme.shapes.large)
             .padding(vertical = 4.dp)
             .toggleable(
-                value = selected[dataStoreName] ?: true,
-            ) { selected[dataStoreName] = it },
+                value = selected[settingsStore] ?: true,
+            ) { selected[settingsStore] = it },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(settingsStore.name)
         Checkbox(
-            checked = selected[dataStoreName] ?: true,
+            checked = selected[settingsStore] ?: true,
             onCheckedChange = null
         )
     }

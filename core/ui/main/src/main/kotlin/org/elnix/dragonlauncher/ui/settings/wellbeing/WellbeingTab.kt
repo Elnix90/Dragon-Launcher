@@ -5,7 +5,6 @@ package org.elnix.dragonlauncher.ui.settings.wellbeing
 import android.content.Intent
 import android.provider.Settings
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,66 +27,58 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.PackageNameLists.knownSocialMediaApps
-import org.elnix.dragonlauncher.common.messyfolder.resolveShape
-import org.elnix.dragonlauncher.common.serializables.AppModel
-import org.elnix.dragonlauncher.common.utils.PermissionsUtils.hasUsageStatsPermission
-import org.elnix.dragonlauncher.enumsui.other.ReminderMode
+import org.elnix.dragonlauncher.base.Constants.PackageNameLists.knownSocialMediaApps
+import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.models.ReminderMode
 import org.elnix.dragonlauncher.enumsui.toggle.WellbeingPausedAppActions
-import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.settings.stores.WellbeingSettingsStore
-import org.elnix.dragonlauncher.settings.stores.WellbeingSettingsStore.pausedApps
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.models.AppLaunchViewModel
+import org.elnix.dragonlauncher.models.DrawerViewModel
+import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.actions.appIcon
-import org.elnix.dragonlauncher.ui.activityViewModel
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
-import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.actions.AppIcon
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
-import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSlider
-import org.elnix.dragonlauncher.ui.dragon.settings.SettingsSwitchRow
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
+import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
-fun WellbeingTab(
+public fun WellbeingTab(
     onBack: () -> Unit,
-    appsViewModel: AppsViewModel = activityViewModel()
-) {
+    drawerViewModel: DrawerViewModel = activityViewModel(),
+    appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
+    ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
     val socialMediaPauseEnabled by WellbeingSettingsStore.socialMediaPauseEnabled.asState()
-    val guiltModeEnabled by WellbeingSettingsStore.guiltModeEnabled.asState()
-    val pauseDuration by WellbeingSettingsStore.pauseDurationSeconds.asState()
-    val pausedApps by pausedApps.asState()
+    val pausedApps by WellbeingSettingsStore.pausedApps.asState()
+    val reminderEnabled by WellbeingSettingsStore.reminderEnabled.asState()
+    val reminderMode by WellbeingSettingsStore.reminderMode.asState()
 
-    val allApps by appsViewModel.allApps.collectAsState()
 
     var showAppPicker by remember { mutableStateOf(false) }
     var showPermissionDialog by remember { mutableStateOf(false) }
     var showOverlayPermissionDialog by remember { mutableStateOf(false) }
 
-    val reminderEnabled by WellbeingSettingsStore.reminderEnabled.asState()
-    val reminderInterval by WellbeingSettingsStore.reminderIntervalMinutes.asState()
-    val reminderMode by WellbeingSettingsStore.reminderMode.asState()
-    val returnToLauncherEnabled by WellbeingSettingsStore.returnToLauncherEnabled.asState()
+
+    val allApps by drawerViewModel.allApps.collectAsState()
+    val hasUsageStatsPermission by appLaunchViewModel.hasUsageStatsPermission.collectAsState()
 
     LaunchedEffect(reminderEnabled, reminderMode) {
         if (reminderEnabled && reminderMode == ReminderMode.Overlay && !Settings.canDrawOverlays(ctx)) {
@@ -111,21 +101,15 @@ fun WellbeingTab(
     ) {
 
         DragonSettingsGroup(R.string.social_media_pause) {
-            SettingsSwitchRow(
-                setting = WellbeingSettingsStore.socialMediaPauseEnabled,
-                title = stringResource(R.string.social_media_pause),
-                description = stringResource(R.string.social_media_pause_description)
-            )
+            Setting(WellbeingSettingsStore.socialMediaPauseEnabled)
 
             AnimatedVisibility(visible = socialMediaPauseEnabled) {
                 Column {
-                    SwitchRow(
-                        state = guiltModeEnabled,
-                        title = stringResource(R.string.guilt_mode),
-                        description = stringResource(R.string.guilt_mode_description),
+                    Setting(
+                        WellbeingSettingsStore.guiltModeEnabled,
                         enabled = true,
                     ) { newValue ->
-                        if (newValue && !hasUsageStatsPermission(ctx)) {
+                        if (newValue && hasUsageStatsPermission) {
                             showPermissionDialog = true
                         } else {
                             scope.launch {
@@ -134,14 +118,9 @@ fun WellbeingTab(
                         }
                     }
 
-                    SettingsSlider(
+                    Setting(
                         setting = WellbeingSettingsStore.pauseDurationSeconds,
-                        title = stringResource(R.string.pause_duration),
-                        description = stringResource(
-                            R.string.pause_duration_description,
-                            pauseDuration
-                        ),
-                        valueRange = 3..60,
+
                         modifier = Modifier.settingsGroupHorizontalPadding()
                     )
                 }
@@ -151,31 +130,19 @@ fun WellbeingTab(
 
 
         DragonSettingsGroup(R.string.reminder_mode_title) {
-            SwitchRow(
-                state = reminderEnabled,
-                title = stringResource(R.string.reminder_mode_title),
-                description = stringResource(R.string.reminder_mode_description),
+            Setting(
+                WellbeingSettingsStore.reminderEnabled,
                 enabled = socialMediaPauseEnabled,
             ) { newValue ->
                 if (newValue && reminderMode == ReminderMode.Overlay && !Settings.canDrawOverlays(ctx)) {
                     showOverlayPermissionDialog = true
-                } else {
-                    scope.launch {
-                        WellbeingSettingsStore.reminderEnabled.set(ctx, newValue)
-                    }
                 }
             }
 
             AnimatedVisibility(visible = socialMediaPauseEnabled && reminderEnabled) {
                 Column {
-                    SettingsSlider(
+                    Setting(
                         setting = WellbeingSettingsStore.reminderIntervalMinutes,
-                        title = stringResource(R.string.reminder_interval),
-                        description = stringResource(
-                            R.string.reminder_interval_description,
-                            reminderInterval
-                        ),
-                        valueRange = 1..30,
                         modifier = Modifier.settingsGroupHorizontalPadding()
                     )
                 }
@@ -196,34 +163,13 @@ fun WellbeingTab(
                 }
 
 
-                SettingsSwitchRow(
-                    setting = WellbeingSettingsStore.popupShowSessionTime,
-                    title = stringResource(R.string.popup_show_session_time),
-                    description = stringResource(R.string.popup_show_session_time_desc)
-                )
-                SettingsSwitchRow(
-                    setting = WellbeingSettingsStore.popupShowTodayTime,
-                    title = stringResource(R.string.popup_show_today_time),
-                    description = stringResource(R.string.popup_show_today_time_desc)
-                )
-                SettingsSwitchRow(
-                    setting = WellbeingSettingsStore.popupShowRemainingTime,
-                    title = stringResource(R.string.popup_show_remaining_time),
-                    description = stringResource(R.string.popup_show_remaining_time_desc)
-                )
+                Setting(WellbeingSettingsStore.popupShowSessionTime)
+                Setting(WellbeingSettingsStore.popupShowTodayTime)
+                Setting(WellbeingSettingsStore.popupShowRemainingTime)
             }
         }
 
-        SwitchRow(
-            state = returnToLauncherEnabled,
-            title = stringResource(R.string.return_to_launcher_title),
-            description = stringResource(R.string.return_to_launcher_description),
-            enabled = socialMediaPauseEnabled,
-        ) { newValue ->
-            scope.launch {
-                WellbeingSettingsStore.returnToLauncherEnabled.set(ctx, newValue)
-            }
-        }
+        Setting(WellbeingSettingsStore.returnToLauncherEnabled, enabled = socialMediaPauseEnabled)
 
         DragonSettingsGroup(
             title = R.string.paused_apps,
@@ -372,15 +318,13 @@ fun WellbeingTab(
 
 @Composable
 private fun PausedAppItem(
-    app: AppModel,
+    app: Application,
     onRemove: () -> Unit
 ) {
-    val iconShape = LocalIconShape.current
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(DragonShape)
+            .clip(MaterialTheme.shapes.large)
             .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -392,36 +336,19 @@ private fun PausedAppItem(
             modifier = Modifier.weight(1f)
         ) {
 
-            Image(
-                painter = appIcon(app),
-                contentDescription = app.name,
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(iconShape.resolveShape()),
-                contentScale = ContentScale.Fit
+            AppIcon(app, 30.dp)
+
+            TextWithDescription(
+                text = app.label,
+                description = app.packageName
             )
-
-            Column {
-                Text(
-                    text = app.name,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium
-                )
-                Text(
-                    text = app.packageName,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
-                    fontSize = 10.sp,
-                    maxLines = 1
-                )
-            }
         }
-
-        DragonIconButton(
-            onClick = onRemove,
-            icon = R.drawable.close,
-            contentDescription = stringResource(R.string.remove),
-            colors = AppObjectsColors.cancelIconButtonColors()
-        )
     }
+
+    DragonIconButton(
+        onClick = onRemove,
+        icon = R.drawable.close,
+        contentDescription = stringResource(R.string.remove),
+        colors = AppObjectsColors.cancelIconButtonColors()
+    )
 }

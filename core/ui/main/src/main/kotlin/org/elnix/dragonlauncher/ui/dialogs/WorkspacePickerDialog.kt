@@ -4,9 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
@@ -19,20 +17,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.ui.activityViewModel
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.models.DrawerViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 
 @Composable
-fun WorkspacePickerDialog(
-    appsViewModel: AppsViewModel = activityViewModel(),
+public fun WorkspacePickerDialog(
+    drawerViewModel: DrawerViewModel = activityViewModel(),
     onDismiss: () -> Unit,
-    onActionPicked: (SwipeActionSerializable.OpenAppDrawer) -> Unit
+    onActionPicked: (Action.OpenAppDrawer) -> Unit
 ) {
-    val workspaces by appsViewModel.enabledState.collectAsState()
-    val availableWorkspaces = workspaces.workspaces
+    val workspaces by drawerViewModel.workspaceManager.workspacesState.collectAsState()
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -47,16 +44,16 @@ fun WorkspacePickerDialog(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(0.7f)
                 )
-                Spacer(Modifier.height(8.dp))
+                Spacer(8.dp)
 
                 // "Default" option (no specific workspace)
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(DragonShape)
+                        .clip(MaterialTheme.shapes.large)
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .clickable {
-                            onActionPicked(SwipeActionSerializable.OpenAppDrawer())
+                            onActionPicked(Action.OpenAppDrawer())
                         }
                         .padding(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -69,15 +66,15 @@ fun WorkspacePickerDialog(
                 }
 
                 // Specific workspaces
-                availableWorkspaces.forEach { workspace ->
+                workspaces.forEach { workspace ->
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(DragonShape)
+                            .clip(MaterialTheme.shapes.large)
                             .background(MaterialTheme.colorScheme.surface)
                             .clickable {
                                 onActionPicked(
-                                    SwipeActionSerializable.OpenAppDrawer(workspace.id)
+                                    Action.OpenAppDrawer(workspace.id)
                                 )
                             }
                             .padding(12.dp),
@@ -93,6 +90,6 @@ fun WorkspacePickerDialog(
             }
         },
         containerColor = MaterialTheme.colorScheme.surface,
-        shape = DragonShape
+        shape = MaterialTheme.shapes.large
     )
 }

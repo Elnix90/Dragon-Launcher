@@ -5,10 +5,7 @@ package org.elnix.dragonlauncher.ui.dialogs
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -16,33 +13,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.SecurityHelper
-import org.elnix.dragonlauncher.common.messyfolder.findFragmentActivity
-import org.elnix.dragonlauncher.common.messyfolder.showToast
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.findFragmentActivity
+import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.models.LockScreenViewModel
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
-@Suppress("VariableNeverRead")
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-fun LockMethodDialog(
+public fun LockMethodDialog(
+    lockScreenViewModel: LockScreenViewModel = activityViewModel(),
     onDismiss: () -> Unit
 ) {
     val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
 
     val currentLockMethod by PrivateSettingsStore.lockMethod.asState()
     var showPinSetupDialog by remember { mutableStateOf(false) }
@@ -65,41 +61,36 @@ fun LockMethodDialog(
                         color = MaterialTheme.colorScheme.onSurface.copy(0.7f)
                     )
 
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(8.dp)
                     LockMethod.entries.forEach { method ->
 
-                        val unavailableText = if (method == LockMethod.DEVICE_UNLOCK && !SecurityHelper.isDeviceUnlockAvailable(ctx)) {
+                        val unavailableText = if (method == LockMethod.Device && !lockScreenViewModel.isDeviceUnlockAvailable()) {
                             stringResource(R.string.device_credentials_not_available)
                         } else null
 
 
                         fun onClick() {
                             when (method) {
-                                LockMethod.PIN -> {
-                                    pendingLockMethod = LockMethod.PIN
+                                LockMethod.Pin -> {
+                                    pendingLockMethod = LockMethod.Pin
                                     showPinSetupDialog = true
                                 }
 
-                                LockMethod.NONE -> {
-                                    scope.launch {
-                                        PrivateSettingsStore.lockPinHash.reset(ctx)
-                                        PrivateSettingsStore.lockMethod.reset(ctx)
-                                        onDismiss()
-                                    }
+                                LockMethod.None -> {
+                                    lockScreenViewModel.removeLock()
+                                    onDismiss()
+
                                 }
 
-                                LockMethod.DEVICE_UNLOCK -> {
+                                LockMethod.Device -> {
                                     // Test biometric authentication immediately
                                     val activity = ctx.findFragmentActivity()
-                                    if (activity != null && SecurityHelper.isDeviceUnlockAvailable(ctx)) {
-                                        SecurityHelper.showDeviceUnlockPrompt(
+                                    if (activity != null && lockScreenViewModel.isDeviceUnlockAvailable()) {
+                                        lockScreenViewModel.showDeviceUnlockPrompt(
                                             activity = activity,
                                             onSuccess = {
-                                                scope.launch {
-                                                    PrivateSettingsStore.lockPinHash.reset(ctx)
-                                                    PrivateSettingsStore.lockMethod.set(ctx, LockMethod.DEVICE_UNLOCK)
-                                                    onDismiss()
-                                                }
+                                                lockScreenViewModel.setLockScreenMethod()
+                                                onDismiss()
                                             },
                                             onError = { msg ->
                                                 ctx.showToast(ctx.getString(R.string.authentication_error, msg))
@@ -125,7 +116,7 @@ fun LockMethodDialog(
                                 description = unavailableText
                             )
 
-                            Spacer(Modifier.width(8.dp))
+                            Spacer(8.dp)
                             RadioButton(
                                 selected = method == currentLockMethod,
                                 onClick = ::onClick,
@@ -143,16 +134,12 @@ fun LockMethodDialog(
                 pendingLockMethod = null
             },
             onPinSet = { pin ->
-                scope.launch {
-                    val hash = SecurityHelper.hashPin(pin)
-                    PrivateSettingsStore.lockPinHash.set(ctx, hash)
-                    PrivateSettingsStore.lockMethod.set(ctx, LockMethod.PIN)
-                    ctx.showToast(ctx.getString(R.string.pin_set_success))
+                lockScreenViewModel.setPinLockMethod(pin)
 
-                    showPinSetupDialog = false
-                    pendingLockMethod = null
-                    onDismiss()
-                }
+                showPinSetupDialog = false
+                pendingLockMethod = null
+                onDismiss()
+
             }
         )
     }

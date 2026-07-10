@@ -1,0 +1,22 @@
+package org.elnix.dragonlauncher.fonts
+
+import android.content.Context
+import androidx.compose.ui.text.font.FontFamily
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+
+
+public interface FontService {
+    public val fontFamily: Flow<FontFamily>
+}
+
+internal class FontServiceImpl(
+    private val ctx: Context
+) : FontService {
+    private val globalFontNameFlow = UiSettingsStore.globalFont.flow(ctx)
+
+    override val fontFamily: Flow<FontFamily> = globalFontNameFlow.map { fontName ->
+        fontNameToFont(fontName, ctx)
+    }
+}

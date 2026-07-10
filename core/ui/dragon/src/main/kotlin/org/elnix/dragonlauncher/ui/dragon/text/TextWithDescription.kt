@@ -10,11 +10,11 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun TextWithDescription(
+public fun TextWithDescription(
     text: String,
     description: String?,
     modifier: Modifier = Modifier
-) = Column(
+): Unit = Column(
     modifier = modifier,
     verticalArrangement = Arrangement.spacedBy(5.dp)
 ) {
@@ -25,6 +25,37 @@ fun TextWithDescription(
     if (description != null) {
         Text(
             text = description,
+            style = MaterialTheme.typography.labelSmall
+        )
+    }
+}
+
+
+
+@Composable
+public fun TextWithDescription(
+    text: String,
+    description1: String?,
+    description2: String?,
+    modifier: Modifier = Modifier
+): Unit = Column(
+    modifier = modifier,
+    verticalArrangement = Arrangement.spacedBy(5.dp)
+) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelMedium
+    )
+    if (description1 != null) {
+        Text(
+            text = description1,
+            style = MaterialTheme.typography.labelSmall
+        )
+    }
+
+    if (description2 != null) {
+        Text(
+            text = description2,
             style = MaterialTheme.typography.labelSmall
         )
     }

@@ -20,18 +20,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.serializables.StatusBarSerializable
+import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.getMobileDataStatus
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isAirplaneMode
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isBluetoothEnabled
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isHotspotEnabled
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isVpnEnabled
 import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isWifiEnabled
+import org.elnix.dragonlauncher.i18n.R
 
 @Composable
-fun StatusBarConnectivity(
-    element: StatusBarSerializable.Connectivity,
+public fun StatusBarConnectivity(
+    element: StatusBar.Connectivity,
     modifier: Modifier = Modifier,
     previewMode: Boolean = false
 ) {
@@ -137,7 +137,7 @@ fun StatusBarConnectivity(
     }
 }
 
-data class ConnectivityState(
+public data class ConnectivityState(
     val isAirplaneMode: Boolean = false,
     val isWifiEnabled: Boolean = false,
     val isVpnEnabled: Boolean = false,

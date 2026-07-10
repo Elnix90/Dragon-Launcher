@@ -9,19 +9,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import io.github.elnix90.logging.BACKUP_TAG
+import io.github.elnix90.logging.logD
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.BACKUP_TAG
-import org.elnix.dragonlauncher.logging.logD
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
-import org.elnix.dragonlauncher.ui.activityViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.json.JSONObject
 
 @Composable
-fun rememberSettingsImportLauncher(
+public fun rememberSettingsImportLauncher(
     backupViewModel: BackupViewModel = activityViewModel(),
     onJsonReady: (JSONObject) -> Unit
 ): ManagedActivityResultLauncher<Array<String>, Uri?> {
@@ -33,13 +33,11 @@ fun rememberSettingsImportLauncher(
 
 
     fun onError(msg: String) {
-        backupViewModel.setResult(
-            BackupResult(
-                export = false,
-                error = true,
-                title = importFailedText,
-                message = msg
-            )
+        backupViewModel.result.value = BackupResult(
+            export = false,
+            error = true,
+            title = importFailedText,
+            message = msg
         )
     }
 
@@ -50,12 +48,10 @@ fun rememberSettingsImportLauncher(
         logD(BACKUP_TAG) { "File picked: $uri" }
 
         if (uri == null) {
-            backupViewModel.setResult(
-                BackupResult(
-                    export = false,
-                    error = true,
-                    title = importCancelledText
-                )
+            backupViewModel.result.value = BackupResult(
+                export = false,
+                error = true,
+                title = importCancelledText
             )
 
             return@rememberLauncherForActivityResult

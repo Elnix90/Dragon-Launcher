@@ -17,22 +17,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.resolveShape
-import org.elnix.dragonlauncher.common.serializables.IconShape
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
+import org.elnix.dragonlauncher.base.resolveShape
+import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 
 @Composable
-fun ShapePreview(
+public fun ShapePreview(
     iconShape: IconShape,
     modifier: Modifier = Modifier,
     selected: Boolean = false,
+    onLongClick: (() -> Unit)? = null,
     onClick: (() -> Unit)? = null
 ) {
-
     val bgColor by animateColorAsState(
         if (selected) MaterialTheme.colorScheme.primary
         else MaterialTheme.colorScheme.surface
@@ -43,9 +42,9 @@ fun ShapePreview(
             .padding(5.dp)
             .then(modifier)
             .aspectRatio(1f, true)
-            .clip(DragonShape)
+            .clip(MaterialTheme.shapes.large)
             .conditional(onClick) {
-                shapedClickable(onClick = it)
+                shapedClickable(onLongClick = onLongClick, onClick = it)
             },
         contentAlignment = Alignment.Center
     ) {
@@ -69,9 +68,9 @@ fun ShapePreview(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(5.dp)
-                    .clip(DragonShape)
+                    .clip(MaterialTheme.shapes.large)
                     .background(bgColor.alphaMultiplier(0.5f))
-                    .border(1.dp, MaterialTheme.colorScheme.secondary, DragonShape)
+                    .border(1.dp, MaterialTheme.colorScheme.secondary, MaterialTheme.shapes.large)
             )
         }
     }

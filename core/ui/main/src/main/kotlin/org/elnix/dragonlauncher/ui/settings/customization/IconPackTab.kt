@@ -2,56 +2,42 @@ package org.elnix.dragonlauncher.ui.settings.customization
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.ColorUtils.definedOrNull
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.models.DrawerViewModel
+import org.elnix.dragonlauncher.models.IconsViewModel
+import org.elnix.dragonlauncher.settings.stores.map.IconsSettingsStore
 import org.elnix.dragonlauncher.ui.actions.AppIcon
-import org.elnix.dragonlauncher.ui.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asStateNull
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.LazyRowWithScrollIndicator
-import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
+import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.IconPackListContent
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
+import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerIconShapePicker
 
 @Composable
-fun IconPackTab(
+public fun IconPackTab(
     onBack: () -> Unit,
-    appsViewModel: AppsViewModel = activityViewModel()
+    drawerViewModel: DrawerViewModel = activityViewModel(),
+    iconsViewModel: IconsViewModel = activityViewModel()
 ) {
+    val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val apps by appsViewModel.userApps.collectAsState(initial = emptyList())
+    val apps by drawerViewModel.userApps.collectAsState(initial = emptyList())
+    val packs by drawerViewModel.getInstalledIconPacks().collectAsState(emptyList())
 
-    val selectedPack by appsViewModel.selectedIconPack.collectAsState()
-    val packs by appsViewModel.iconPacksList.collectAsState()
-
-    val iconPackTint by UiSettingsStore.iconPackTint.asStateNull()
-
-
-    // Used to delay the grid showing up, to prevent lag
-    var showPreview by remember { mutableStateOf(false) }
-
-
-    LaunchedEffect(Unit) {
-
-        // Let compose draw at least one frame before showing grid, saves display fps
-        withFrameNanos { }
-        showPreview = true
-    }
+    val iconSettings by iconsViewModel.iconSettings.collectAsState()
+    val selectedPack = iconSettings.iconPack
 
     SettingsScaffold(
         title = stringResource(R.string.icon_pack),
@@ -59,43 +45,49 @@ fun IconPackTab(
         helpText = stringResource(R.string.icon_pack_help),
         onReset = {
             scope.launch {
-                appsViewModel.clearIconPack()
+                IconsSettingsStore.resetAll(ctx)
             }
         },
         topContent = {
-            if (showPreview) {
-                LazyRowWithScrollIndicator(
-                    items = apps,
-                    modifier = Modifier.height(70.dp),
-                ) { app ->
-                    AppIcon(app, 56.dp)
-                }
+            LazyRowWithScrollIndicator(
+                items = apps,
+                modifier = Modifier.height(70.dp),
+            ) { app ->
+                AppIcon(app, size = 56.dp)
             }
         }
     ) {
 
-        ColorPickerRow(
-            label = stringResource(R.string.icon_pack_tint),
-            currentColor = iconPackTint ?: Color.Unspecified
-        ) {
-            scope.launch { appsViewModel.setIconPackTint(it.definedOrNull()) }
+        Spacer(30.dp)
+
+        Setting(IconsSettingsStore.useIconTint)
+
+        val useIconTint by IconsSettingsStore.useIconTint.asState()
+        Setting(IconsSettingsStore.iconsTint, enabled = useIconTint) {
+            iconsViewModel.reinstallAllIconPacks()
         }
+
+        Setting(IconsSettingsStore.themedIcons)
+
+        val themedIcons by IconsSettingsStore.themedIcons.asState()
+        Setting(IconsSettingsStore.forceThemed, enabled = themedIcons)
+
+        Setting(IconsSettingsStore.adaptify)
+
+        DrawerIconShapePicker()
 
         IconPackListContent(
             packs = packs,
-            selectedPackPackage = selectedPack?.packageName,
+            selectedPackPackage = selectedPack,
             showClearOption = true,
-            onReloadPacks = {
-                appsViewModel.loadIconPacks()
-            },
             onPackClick = { pack ->
                 scope.launch {
-                    appsViewModel.selectIconPack(pack)
+                    IconsSettingsStore.selectedIconPack.set(ctx, pack.packageName)
                 }
             },
             onClearClick = {
                 scope.launch {
-                    appsViewModel.clearIconPack()
+                    IconsSettingsStore.selectedIconPack.reset(ctx)
                 }
             }
         )

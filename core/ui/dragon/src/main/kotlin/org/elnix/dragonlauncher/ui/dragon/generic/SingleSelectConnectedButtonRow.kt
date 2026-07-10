@@ -23,7 +23,7 @@ import org.elnix.dragonlauncher.ui.base.withHapticParam
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun <T : SelectButtonOption> SingleSelectConnectedButtonRow(
+public fun <T : SelectButtonOption> SingleSelectConnectedButtonRow(
     entries: List<T>,
     modifier: Modifier = Modifier,
     checked: (T) -> Boolean,
@@ -32,8 +32,8 @@ fun <T : SelectButtonOption> SingleSelectConnectedButtonRow(
 ) {
     val interactionSources = List(entries.size) { rememberInteractionSource() }
 
-    @Suppress("DEPRECATION")
     ButtonGroup(
+        overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
         modifier = modifier.padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
     ) {
@@ -41,40 +41,45 @@ fun <T : SelectButtonOption> SingleSelectConnectedButtonRow(
 
             val checked = checked(entry)
 
-            ToggleButton(
-                checked = checked,
-                onCheckedChange = withHapticParam { onCheck(entry) },
-                interactionSource = interactionSources[idx],
-                modifier = Modifier
-                    .weight(1f)
-                    .animateWidth(interactionSources[idx]),
-                enabled = enabled,
-                shapes = when (idx) {
-                    0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                    entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                }
-            ) {
-                entry.iconResId?.let { icon ->
-                    Icon(
-                        painter = painterResource(icon),
-                        contentDescription = null
-                    )
-                }
+            customItem(
+                buttonGroupContent = {
+                    ToggleButton(
+                        checked = checked,
+                        onCheckedChange = withHapticParam { onCheck(entry) },
+                        interactionSource = interactionSources[idx],
+                        modifier = Modifier
+                            .weight(1f)
+                            .animateWidth(interactionSources[idx]),
+                        enabled = enabled,
+                        shapes = when (idx) {
+                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                            entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                        }
+                    ) {
+                        entry.iconResId?.let { icon ->
+                            Icon(
+                                painter = painterResource(icon),
+                                contentDescription = null
+                            )
+                        }
 
-                if (entry.resId != null && entry.iconResId != null) {
-                    Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
-                }
+                        if (entry.resId != null && entry.iconResId != null) {
+                            Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
+                        }
 
-                entry.resId?.let { res ->
-                    Text(
-                        stringResource(res),
-                        maxLines = 1,
-                        softWrap = false,
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                }
-            }
+                        entry.resId?.let { res ->
+                            Text(
+                                stringResource(res),
+                                maxLines = 1,
+                                softWrap = false,
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+                    }
+                },
+                menuContent = { }
+            )
         }
     }
 }

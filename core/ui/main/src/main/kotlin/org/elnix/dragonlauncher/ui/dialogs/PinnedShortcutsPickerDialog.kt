@@ -4,19 +4,15 @@ import android.annotation.SuppressLint
 import android.content.pm.LauncherApps
 import android.content.pm.ShortcutInfo
 import android.os.Process
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -34,7 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,16 +37,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ICONS_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.PINNED_SHORTCUTS
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.utils.ImageUtils.loadDrawableAsBitmap
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.logging.logW
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
-import org.elnix.dragonlauncher.ui.helpers.AppDrawerSearch
+import io.github.elnix90.logging.PINNED_SHORTCUTS
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Action.LaunchShortcut.Companion.toAction
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ui.actions.ShortcutIcon
+import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.helpers.workspace.AppDrawerSearch
 
 /**
  * Represents a pinned shortcut with extra metadata for display.
@@ -77,9 +71,9 @@ private fun PinnedShortcutItem.matchesShortcutSearch(q: String): Boolean {
  * grouped by app. Allows the user to pick one to add as a swipe action.
  */
 @Composable
-fun PinnedShortcutsPickerDialog(
+public fun PinnedShortcutsPickerDialog(
     onDismiss: () -> Unit,
-    onShortcutSelected: (SwipeActionSerializable.LaunchShortcut) -> Unit
+    onShortcutSelected: (Action.LaunchShortcut) -> Unit
 ) {
     val ctx = LocalContext.current
 
@@ -178,9 +172,9 @@ fun PinnedShortcutsPickerDialog(
                             var isFirst = true
                             filteredGrouped.forEach { (appName, shortcuts) ->
                                 if (!isFirst) {
-                                    Spacer(Modifier.height(8.dp))
+                                    Spacer(8.dp)
                                     HorizontalDivider()
-                                    Spacer(Modifier.height(8.dp))
+                                    Spacer(8.dp)
                                 }
                                 isFirst = false
 
@@ -197,9 +191,10 @@ fun PinnedShortcutsPickerDialog(
                                         shortcut = item.shortcutInfo,
                                         onClick = {
                                             onShortcutSelected(
-                                                SwipeActionSerializable.LaunchShortcut(
+                                                Action.LaunchShortcut(
                                                     packageName = item.packageName,
-                                                    shortcutId = item.shortcutInfo.id
+                                                    shortcutId = item.shortcutInfo.id,
+                                                    user = item.shortcutInfo.userHandle
                                                 )
                                             )
                                         }
@@ -217,7 +212,7 @@ fun PinnedShortcutsPickerDialog(
             }
         },
         containerColor = MaterialTheme.colorScheme.surface,
-        shape = DragonShape
+        shape = MaterialTheme.shapes.large
     )
 }
 
@@ -226,47 +221,16 @@ private fun ShortcutRow(
     shortcut: ShortcutInfo,
     onClick: () -> Unit
 ) {
-    val ctx = LocalContext.current
-
-    val drawable = remember(shortcut.id, shortcut.`package`) {
-        try {
-            val launcherApps = ctx.getSystemService(LauncherApps::class.java)
-            launcherApps?.getShortcutIconDrawable(shortcut, 0)
-        } catch (_: Exception) {
-            null
-        }
-    }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .clip(DragonShape)
+            .clip(MaterialTheme.shapes.large)
             .clickable(onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
-        if (drawable != null) {
-            val bitmapPainter = remember(drawable) {
-                try {
-                    val bmp = loadDrawableAsBitmap(drawable, 48, 48)
-                    BitmapPainter(bmp)
-                } catch (e: Exception) {
-                    logW(ICONS_TAG, e) { "Unable to load icon via loadDrawableAsBitmap" }
-                    null
-                }
-            }
-
-            if (bitmapPainter != null) {
-                Image(
-                    painter = bitmapPainter,
-                    contentDescription = shortcut.shortLabel?.toString(),
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(DragonShape)
-                )
-                Spacer(Modifier.width(12.dp))
-            }
-        }
+        ShortcutIcon(shortcut.toAction(), 36.dp)
 
         Column(modifier = Modifier.weight(1f)) {
             Text(

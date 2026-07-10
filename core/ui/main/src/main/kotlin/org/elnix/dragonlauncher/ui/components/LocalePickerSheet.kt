@@ -30,7 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import java.util.Locale
@@ -41,7 +41,7 @@ private data class AppLocale(val locale: Locale, val name: String)
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun LocalePickerSheet(onDismissRequest: () -> Unit) {
+public fun LocalePickerSheet(onDismissRequest: () -> Unit) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -147,14 +147,14 @@ fun LocalePickerSheet(onDismissRequest: () -> Unit) {
 }
 
 @Composable
-fun listItemColors(): ListItemColors {
+public fun listItemColors(): ListItemColors {
     return ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 }
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun segmentedListItemShapes(
+public fun segmentedListItemShapes(
     index: Int,
     count: Int,
     singleElement: Boolean = count == 1,

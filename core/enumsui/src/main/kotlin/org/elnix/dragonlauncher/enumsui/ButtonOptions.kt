@@ -1,12 +1,12 @@
 package org.elnix.dragonlauncher.enumsui
 
-interface ToggleButtonOption {
-    val resId: Int?
-    val iconEnabled: Int?
-    val iconDisabled: Int?
+public interface ToggleButtonOption {
+    public val resId: Int?
+    public val iconEnabled: Int?
+    public val iconDisabled: Int?
 }
 
-interface SelectButtonOption {
-    val resId: Int?
-    val iconResId: Int?
+public interface SelectButtonOption {
+    public val resId: Int?
+    public val iconResId: Int?
 }

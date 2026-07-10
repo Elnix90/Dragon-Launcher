@@ -1,9 +1,9 @@
 package org.elnix.dragonlauncher.enumsui.toggle
 
-import org.elnix.dragonlauncher.common.R
 import org.elnix.dragonlauncher.enumsui.ToggleButtonOption
+import org.elnix.dragonlauncher.i18n.R
 
-enum class WidgetsToolsAddNestRemove(
+public enum class WidgetsToolsAddNestRemove(
     override val resId: Int?,
     override val iconEnabled: Int,
     override val iconDisabled: Int? = null
@@ -14,7 +14,7 @@ enum class WidgetsToolsAddNestRemove(
 }
 
 
-enum class WidgetsToolsCenterReset(
+public enum class WidgetsToolsCenterReset(
     override val resId: Int?,
     override val iconEnabled: Int,
     override val iconDisabled: Int? = null
@@ -23,7 +23,7 @@ enum class WidgetsToolsCenterReset(
     Reset(R.string.reset_widget, R.drawable.reset)
 }
 
-enum class WidgetsToolsUpDown(
+public enum class WidgetsToolsUpDown(
     override val resId: Int?,
     override val iconEnabled: Int,
     override val iconDisabled: Int? = null
@@ -33,7 +33,7 @@ enum class WidgetsToolsUpDown(
 }
 
 
-enum class WidgetsToolsMoveUpDown(
+public enum class WidgetsToolsMoveUpDown(
     override val resId: Int?,
     override val iconEnabled: Int,
     override val iconDisabled: Int? = null
@@ -42,7 +42,7 @@ enum class WidgetsToolsMoveUpDown(
     MoveDown(R.string.move_selected_widget_down, R.drawable.move_down)
 }
 
-enum class WidgetsToolsSnapping(
+public enum class WidgetsToolsSnapping(
     override val resId: Int?,
     override val iconEnabled: Int,
     override val iconDisabled: Int? = null

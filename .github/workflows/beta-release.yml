@@ -1,0 +1,96 @@
+name: Beta Release
+
+on:
+  push:
+    branches:
+      - app-refactor
+    paths:
+      - '**.yml'
+      - '**.kt'
+      - '**.kts'
+  workflow_dispatch:
+    inputs:
+      disable_gradle_cache:
+        description: 'Disable Gradle cache'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: ${{ inputs.disable_gradle_cache && '' || 'gradle' }}
+
+      - name: Extract versionName
+        id: version
+        run: |
+          VER=$(grep -oP 'versionName\s*=\s*"\K[0-9.]+' app/build.gradle* | head -n1)
+          echo "versionName=$VER" >> $GITHUB_OUTPUT
+          echo "Detected versionName: $VER"
+
+      - name: Decode keystore
+        env:
+          KEYSTORE_FILE_B64: ${{ secrets.KEYSTORE_FILE_B64 }}
+        run: echo "$KEYSTORE_FILE_B64" | base64 -d > my-release-key.jks
+
+      - name: Export signing env
+        run: |
+          {
+            echo "KEYSTORE_FILE=$PWD/my-release-key.jks"
+            echo "KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}"
+            echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}"
+            echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}"
+          } >> $GITHUB_ENV
+
+      - name: Build APKs
+        run: ./gradlew assembleBetaRelease assembleBetaDebug --parallel --no-daemon ${{ inputs.disable_gradle_cache && '--no-build-cache' || '--build-cache' }} -x lint
+
+      - name: Prepare release artifacts
+        run: |
+          VER="${{ steps.version.outputs.versionName }}"
+          RUN="${{ github.run_number }}"
+          
+          MIN="DragonLauncher-v${VER}-beta-${RUN}.apk"
+          DEBUG="DragonLauncher-v${VER}-beta-${RUN}-debug.apk"
+          MAPPING="Mappings-${{ env.VERSION }}.txt"
+          
+          # Rename APKs and mapping
+          mv app/build/outputs/apk/beta/release/app-beta-release.apk "$MIN"
+          mv app/build/outputs/apk/beta/debug/app-beta-debug.apk "$DEBUG"
+          mv app/build/outputs/mapping/betaRelease/mapping.txt "$MAPPING"
+          
+          {
+            echo "APK_MIN=$MIN"
+            echo "APK_DEBUG=DEBUG"
+            echo "MAPPING=$MAPPING"
+            echo "TAG_NAME=v${VER}-beta-${RUN}"
+          } >> $GITHUB_ENV
+
+      - name: Upload pre-release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG_NAME }}
+          name: ${{ env.TAG_NAME }}
+          prerelease: true
+          files: |
+            ${{ env.APK_DEBUG }}
+            ${{ env.APK_MIN }}
+            ${{ env.MAPPING }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

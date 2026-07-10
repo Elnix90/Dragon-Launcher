@@ -33,59 +33,59 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import io.github.elnix90.runtime.asState
+import io.github.elnix90.runtime.asStateNull
 import kotlinx.coroutines.delay
-import org.elnix.dragonlauncher.base.ktx.toDp
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.circles.rememberNestNavigation
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute.Settings.routeResId
-import org.elnix.dragonlauncher.common.serializables.FloatingAppObject
-import org.elnix.dragonlauncher.common.serializables.MainScreenLayer
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.dummySwipePoint
-import org.elnix.dragonlauncher.common.serializables.enabled
-import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
-import org.elnix.dragonlauncher.settings.stores.HoldToActivateArcSettingsStore
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.enabled
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
+import org.elnix.dragonlauncher.base.model.serializables.Widget
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeResId
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.toDp
+import org.elnix.dragonlauncher.models.PointsViewModel
+import org.elnix.dragonlauncher.models.WidgetsViewModel
+import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.asStateNull
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
-import org.elnix.dragonlauncher.ui.composition.LocalWidgetsViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
-import org.elnix.dragonlauncher.ui.composition.LocalNests
 import org.elnix.dragonlauncher.ui.dialogs.rememberHoldMenuEntries
 import org.elnix.dragonlauncher.ui.helpers.ChargingAnimation
-import org.elnix.dragonlauncher.ui.helpers.CustomDim
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
-import org.elnix.dragonlauncher.ui.helpers.WallpaperDim
+import org.elnix.dragonlauncher.ui.helpers.wallpaper.CustomDim
+import org.elnix.dragonlauncher.ui.helpers.wallpaper.WallpaperDim
 import org.elnix.dragonlauncher.ui.remembers.rememberHoldToOpenSettings
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
+import kotlin.time.Duration.Companion.milliseconds
 
 
 @SuppressLint("LocalContextResourcesRead")
 @Composable
-fun MainScreen(
+public fun MainScreen(
     onNavigate: (NavigationRoute) -> Unit,
-    onLaunchAction: (SwipePointSerializable) -> Unit
+    onLaunchAction: (Point) -> Unit,
+    widgetsViewModel: WidgetsViewModel = activityViewModel(),
+            pointsViewModel: PointsViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
-    val nests = LocalNests.current
     val holdCustomObject = LocalHoldCustomObject.current
     val mainScreenLayers = LocalMainScreenLayers.current
-    val floatingAppsViewModel = LocalWidgetsViewModel.current
 
     var lastClickTime by remember { mutableLongStateOf(0L) }
 
-    val floatingAppObjects by floatingAppsViewModel.floatingApps.collectAsState()
+    val widgetsObjects by widgetsViewModel.widgets.asState()
 
-    /* ───────────── Custom Actions ─────────────*/
     val doubleClickAction by BehaviorSettingsStore.doubleClickAction.asStateNull()
     val backAction by BehaviorSettingsStore.backAction.asStateNull()
-
     val leftPadding by BehaviorSettingsStore.leftPadding.asState()
     val rightPadding by BehaviorSettingsStore.rightPadding.asState()
     val topPadding by BehaviorSettingsStore.topPadding.asState()
@@ -98,7 +98,7 @@ fun MainScreen(
     val showToleranceOnMainScreen by HoldToActivateArcSettingsStore.showToleranceOnMainScreen.asState()
     val rotationPerSecond by HoldToActivateArcSettingsStore.rotationPerSecond.asState()
 
-    val rgbLoading by UiSettingsStore.rgbLoading.asState()
+    val rgbLoading by HoldToActivateArcSettingsStore.rgbLoading.asState()
 
 
     var start by remember { mutableStateOf<Offset?>(null) }
@@ -111,26 +111,25 @@ fun MainScreen(
     var showDropDownMenuSettings by remember { mutableStateOf(false) }
 
 
-    /* ───────────── status bar things ───────────── */
 
     LaunchedEffect(Unit) { lastClickTime = 0 }
 
-    val nestNavigation = rememberNestNavigation(nests)
-    val nestId = nestNavigation.currentNest.id
+    val nestNavigation = pointsViewModel.nestsNavigationService
+    val nestId by pointsViewModel.currentNestId.collectAsState()
 
-    val filteredFloatingAppObjects by remember(floatingAppObjects, nestId) {
+    val filteredWidgetObjects by remember(widgetsObjects, nestId) {
         derivedStateOf {
-            floatingAppObjects.filter { it.nestId == nestId }
+            widgetsObjects.filter { it.nestId == nestId }
         }
     }
 
 
     val dm = ctx.resources.displayMetrics
     val density = LocalDensity.current
-    val cellSizePx by floatingAppsViewModel.cellSizePx.collectAsState()
+    val cellSizePx by widgetsViewModel.cellSizePx.collectAsState()
 
 
-    fun launchAction(point: SwipePointSerializable) {
+    fun launchAction(point: Point) {
         start = null
         current = null
         lastClickTime = 0
@@ -138,8 +137,8 @@ fun MainScreen(
 
         // Handle nest related actions here, and let the rest pass through
         when (val action = point.action) {
-            SwipeActionSerializable.GoParentNest -> nestNavigation.goBack()
-            is SwipeActionSerializable.OpenCircleNest -> nestNavigation.goToNest(action.nestId)
+            Action.GoParentNest -> nestNavigation.goBack()
+            is Action.OpenCircleNest -> nestNavigation.goToNest(action.nestId)
             else -> {
                 nestNavigation.clearStack()
                 onLaunchAction(point)
@@ -148,7 +147,7 @@ fun MainScreen(
     }
 
 
-    val holdMenuEntries = rememberHoldMenuEntries()
+    val holdMenuEntries by rememberHoldMenuEntries()
 
     val hold = rememberHoldToOpenSettings(
         onSettings = { offset ->
@@ -168,7 +167,7 @@ fun MainScreen(
 
                 else -> {
                     // If list is empty, directly navigate to settings root. Never block the user out of settings
-                    onNavigate(NavigationRoute.PointsSettings)
+                    onNavigate(NavigationRoute.PointsSettings(nestId))
                 }
             }
 
@@ -195,11 +194,8 @@ fun MainScreen(
         }
     }
 
-
-    /* Dim wallpaper system */
-    val mainBlurRadius by UiSettingsStore.wallpaperDimMainScreen.asState()
-
-    WallpaperDim(mainBlurRadius)
+    val mainDimAmount by UiSettingsStore.wallpaperDimMainScreen.asState()
+    WallpaperDim(mainDimAmount)
 
     Box(
         modifier = Modifier
@@ -228,7 +224,7 @@ fun MainScreen(
 
                         if (isInsideForegroundWidget(
                                 pos = pos,
-                                floatingAppObjects = filteredFloatingAppObjects,
+                                widgets = filteredWidgetObjects,
                                 dm = dm,
                                 cellSizePx = cellSizePx
                             )
@@ -291,7 +287,7 @@ fun MainScreen(
 
                         LaunchedEffect(start) {
                             if (start != null) {
-                                delay(layer.showAfter.toLong())
+                                delay(layer.showAfter.milliseconds)
                                 showCustomDim = true
                             } else {
                                 showCustomDim = false
@@ -307,7 +303,7 @@ fun MainScreen(
                         MainScreenOverlay(
                             start = start,
                             current = current,
-                            currentNest = nestNavigation.currentNest,
+                            currentNestId = nestId,
                             onLaunch = { launchAction(it) }
                         )
                     }
@@ -319,7 +315,7 @@ fun MainScreen(
                             progress = hold.progressProvider(),
                             rgbLoading = rgbLoading,
                             rotationsPerSecond = rotationPerSecond,
-                            customObjectSerializable = holdCustomObject,
+                            customObject = holdCustomObject,
                             showHoldTolerance = if (showToleranceOnMainScreen) {
                                 { holdToActivateSettingsTolerance }
                             } else null
@@ -351,7 +347,6 @@ fun MainScreen(
                                 BurgerListAction(
                                     actions = actions,
                                     isExpanded = showDropDownMenuSettings,
-//                                    offset = dpOffset,
                                     onDismissRequest = {
                                         showDropDownMenuSettings = false
                                         holdOffset = null
@@ -368,34 +363,34 @@ fun MainScreen(
                     }
 
                     is MainScreenLayer.Widgets -> {
-                        filteredFloatingAppObjects.forEach { floatingAppObject ->
-                            key(floatingAppObject.id, nestId) {
+                        filteredWidgetObjects.forEach { widgetObject ->
+                            key(widgetObject.id, nestId) {
                                 WidgetHostView(
-                                    floatingAppObject = floatingAppObject,
+                                    widget = widgetObject,
                                     cellSizePx = cellSizePx,
                                     modifier = Modifier
                                         .offset {
                                             IntOffset(
-                                                x = (floatingAppObject.x * dm.widthPixels).toInt(),
-                                                y = (floatingAppObject.y * dm.heightPixels).toInt()
+                                                x = (widgetObject.x * dm.widthPixels).toInt(),
+                                                y = (widgetObject.y * dm.heightPixels).toInt()
                                             )
                                         }
                                         .size(
-                                            width = (floatingAppObject.spanX * cellSizePx).toDp,
-                                            height = (floatingAppObject.spanY * cellSizePx).toDp
+                                            width = (widgetObject.spanX * cellSizePx).toDp,
+                                            height = (widgetObject.spanY * cellSizePx).toDp
                                         )
                                         .graphicsLayer {
-                                            rotationZ = floatingAppObject.angle
+                                            rotationZ = widgetObject.angle
                                             transformOrigin = TransformOrigin.Center
                                         },
                                     onLaunchAction = {
                                         launchAction(
                                             dummySwipePoint(
-                                                action = floatingAppObject.action
+                                                action = widgetObject.action
                                             )
                                         )
                                     },
-                                    blockTouches = floatingAppObject.ghosted == true
+                                    blockTouches = widgetObject.ghosted == true
                                 )
                             }
 
@@ -404,8 +399,6 @@ fun MainScreen(
                 }
             }
         }
-
-
     }
 }
 
@@ -446,11 +439,11 @@ private fun isInsideActiveZone(
  */
 private fun isInsideForegroundWidget(
     pos: Offset,
-    floatingAppObjects: List<FloatingAppObject>,
+    widgets: List<Widget>,
     dm: DisplayMetrics,
     cellSizePx: Float
 ): Boolean {
-    return floatingAppObjects.any { widget ->
+    return widgets.any { widget ->
         if (widget.foreground == false) return@any false
 
         val left = widget.x * dm.widthPixels

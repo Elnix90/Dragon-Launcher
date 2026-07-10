@@ -5,12 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsIgnoringVisibility
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,20 +30,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.R
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
+import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 @OptIn(ExperimentalLayoutApi::class)
-@Suppress("AssignedValueIsNeverRead")
 @Composable
-fun SettingsScaffold(
+public fun SettingsScaffold(
     title: String,
     onBack: () -> Unit,
     helpText: String,
     onReset: (() -> Unit)?,
-    vararg otherIcons: Triple<(() -> Unit), Int, String>,
     modifier: Modifier = Modifier,
+    moreOptions: ((() -> Unit) -> List<MoreOptions>)? = null,
     horizontalPadding: Dp = 16.dp,
     applyPadding: Boolean = true,
     resetTitle: String = stringResource(R.string.reset_default_settings),
@@ -83,7 +82,7 @@ fun SettingsScaffold(
             ) {
                 if (bottomContent != null) {
                     bottomContent()
-                    Spacer(Modifier.height(5.dp))
+                    Spacer(5.dp)
                 }
 
                 if (specialSettingsTitle != null) {
@@ -91,7 +90,7 @@ fun SettingsScaffold(
                 } else {
                     SettingsTitle(
                         title = title,
-                        otherIcons = otherIcons,
+                        moreOptions = moreOptions,
                         helpIcon = { showHelpDialog = true },
                         resetIcon = if (onReset != null) {
                             { showResetDialog = true }

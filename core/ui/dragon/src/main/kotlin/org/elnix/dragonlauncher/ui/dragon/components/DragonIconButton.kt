@@ -4,17 +4,17 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun DragonIconButtonImpl(
+public fun DragonIconButtonImpl(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -26,13 +26,13 @@ fun DragonIconButtonImpl(
         modifier = modifier,
         enabled = enabled,
         colors = colors,
-        shapes = UiConstants.dragonIconButtonShapes(),
+        shapes = IconButtonDefaults.shapes(),
         content = content
     )
 }
 
 @Composable
-fun DragonIconButton(
+public fun DragonIconButton(
     modifier: Modifier = Modifier,
     enabled: () -> Boolean = { true },
     colors: IconButtonColors = AppObjectsColors.iconButtonColors(),
@@ -57,7 +57,7 @@ fun DragonIconButton(
 }
 
 @Composable
-fun DragonIconButton(
+public fun DragonIconButton(
     icon: Int,
     contentDescription: String,
     modifier: Modifier = Modifier,

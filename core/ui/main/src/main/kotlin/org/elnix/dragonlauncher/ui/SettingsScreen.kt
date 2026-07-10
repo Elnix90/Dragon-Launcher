@@ -31,25 +31,26 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.core.util.clearAllData
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.ColorUtils.alphaMultiplier
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.Constants.URLs.ELNIX90_GITHUB_PROFILE_LINK
-import org.elnix.dragonlauncher.common.messyfolder.Constants.URLs.EXTENSIONS_GITHUB_REPO_LINK
-import org.elnix.dragonlauncher.common.messyfolder.Constants.URLs.GITHUB_REPO_ISSUES_LINK
-import org.elnix.dragonlauncher.common.messyfolder.Constants.URLs.GITHUB_REPO_LINK
-import org.elnix.dragonlauncher.common.messyfolder.Constants.URLs.GITHUB_REPO_RELEASES_LINK
-import org.elnix.dragonlauncher.common.messyfolder.openUrl
-import org.elnix.dragonlauncher.common.messyfolder.showToast
-import org.elnix.dragonlauncher.common.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.Constants.URLs.ELNIX90_GITHUB_PROFILE_LINK
+import org.elnix.dragonlauncher.base.Constants.URLs.EXTENSIONS_GITHUB_REPO_LINK
+import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_ISSUES_LINK
+import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_LINK
+import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_RELEASES_LINK
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.LifecycleUtils.closeApp
 import org.elnix.dragonlauncher.common.utils.VersionsUtils.isBetaVersion
 import org.elnix.dragonlauncher.common.utils.rememberVersionCode
-import org.elnix.dragonlauncher.settings.clearAllData
-import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
-import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.common.utils.rememberVersionName
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.openUrl
+import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.components.BetaVersionType
 import org.elnix.dragonlauncher.ui.components.BetaVersionWarning
 import org.elnix.dragonlauncher.ui.components.LocalePickerSheet
@@ -63,19 +64,19 @@ import org.elnix.dragonlauncher.ui.warning.WarningReminder
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-fun AdvancedSettingsScreen(
+public fun SettingsScreen(
     onNavigate: (NavigationRoute) -> Unit,
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val versionCode = rememberVersionCode()
+    val versionCode by rememberVersionCode()
+    val versionName by rememberVersionName()
 
     val isDebugModeEnabled by DebugSettingsStore.debugEnabled.asState()
 
     var toast by remember { mutableStateOf<Toast?>(null) }
-    val versionName = ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName ?: "unknown"
     var timesClickedOnVersion by remember { mutableIntStateOf(0) }
 
     var showLanguageSheet by remember { mutableStateOf(false) }
@@ -99,11 +100,11 @@ fun AdvancedSettingsScreen(
             }
         }
     ) {
-        if (showBetaVersionWarning) {
+        AnimatedVisibility(showBetaVersionWarning) {
             BetaVersionWarning(BetaVersionType.App)
         }
 
-        if (WarningManager.showWarning()) {
+        AnimatedVisibility(WarningManager.showWarning()) {
             WarningReminder()
         }
 
@@ -137,11 +138,6 @@ fun AdvancedSettingsScreen(
                 title = stringResource(R.string.app_drawer),
                 icon = R.drawable.grid_on
             ) { onNavigate(NavigationRoute.DrawerSettings) }
-
-            SettingsItem(
-                title = stringResource(R.string.workspaces),
-                icon = R.drawable.workspaces
-            ) { onNavigate(NavigationRoute.Workspace) }
 
             SettingsItem(
                 title = stringResource(R.string.wellbeing),

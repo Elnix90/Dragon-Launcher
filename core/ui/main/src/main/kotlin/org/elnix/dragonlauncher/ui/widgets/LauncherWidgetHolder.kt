@@ -11,26 +11,26 @@ import android.util.SparseArray
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.LAUNCHER_WIDGET_HOLDER_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.WIDGET_TAG
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logE
+import io.github.elnix90.logging.LAUNCHER_WIDGET_HOLDER_TAG
+import io.github.elnix90.logging.WIDGET_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logE
 import java.lang.ref.WeakReference
 
 /**
  * A robust wrapper for AppWidgetHost, inspired by Lawnchair's LauncherWidgetHolder.
  * Provides better lifecycle management and view recycling.
  */
-class LauncherWidgetHolder(private val ctx: Context) : DefaultLifecycleObserver {
+public class LauncherWidgetHolder(private val ctx: Context) : DefaultLifecycleObserver {
 
-    companion object {
+    public companion object {
         private const val HOST_ID = 1024
 
         @SuppressLint("StaticFieldLeak")
         @Volatile
         private var instance: LauncherWidgetHolder? = null
 
-        fun getInstance(ctx: Context): LauncherWidgetHolder {
+        public fun getInstance(ctx: Context): LauncherWidgetHolder {
             return instance ?: synchronized(this) {
                 instance ?: LauncherWidgetHolder(ctx.applicationContext).also { instance = it }
             }
@@ -63,7 +63,7 @@ class LauncherWidgetHolder(private val ctx: Context) : DefaultLifecycleObserver 
         stopListening()
     }
 
-    fun startListening() {
+    public fun startListening() {
         if (!isListening) {
             try {
                 appWidgetHost.startListening()
@@ -75,7 +75,7 @@ class LauncherWidgetHolder(private val ctx: Context) : DefaultLifecycleObserver 
         }
     }
 
-    fun stopListening() {
+    public fun stopListening() {
         if (isListening) {
             try {
                 appWidgetHost.stopListening()
@@ -87,7 +87,7 @@ class LauncherWidgetHolder(private val ctx: Context) : DefaultLifecycleObserver 
         }
     }
 
-    fun allocateAppWidgetId(): Int {
+    public fun allocateAppWidgetId(): Int {
         val id = appWidgetHost.allocateAppWidgetId()
         logD(WIDGET_TAG) { "DRAGON_WIDGET: Allocated new ID: $id" }
         return id
@@ -100,33 +100,33 @@ class LauncherWidgetHolder(private val ctx: Context) : DefaultLifecycleObserver 
 //        return result
 //    }
 
-    fun deleteAppWidgetId(appWidgetId: Int) {
+    public fun deleteAppWidgetId(appWidgetId: Int) {
         logD(WIDGET_TAG) { "DRAGON_WIDGET: Deleting ID $appWidgetId" }
         appWidgetHost.deleteAppWidgetId(appWidgetId)
         views.remove(appWidgetId)
     }
 
-    fun createView(appWidgetId: Int, info: AppWidgetProviderInfo): AppWidgetHostView {
+    public fun createView(appWidgetId: Int, info: AppWidgetProviderInfo): AppWidgetHostView {
         logD(WIDGET_TAG) { "DRAGON_WIDGET: Creating view for ID $appWidgetId (Provider: ${info.provider})" }
         val view = appWidgetHost.createView(ctx, appWidgetId, info)
         views.put(appWidgetId, WeakReference(view))
         return view
     }
 
-    fun getAppWidgetInfo(appWidgetId: Int): AppWidgetProviderInfo? {
+    public fun getAppWidgetInfo(appWidgetId: Int): AppWidgetProviderInfo? {
         val info = appWidgetManager.getAppWidgetInfo(appWidgetId)
         logD(WIDGET_TAG) { "DRAGON_WIDGET: getAppWidgetInfo for ID $appWidgetId: ${info?.provider ?: "NULL"}" }
         return info
     }
 
-    fun updateAppWidgetOptions(appWidgetId: Int, options: Bundle) {
+    public fun updateAppWidgetOptions(appWidgetId: Int, options: Bundle) {
         appWidgetManager.updateAppWidgetOptions(appWidgetId, options)
     }
 
     /**
      * Custom AppWidgetHostView that handles common launcher requirements.
      */
-    class DragonAppWidgetHostView(ctx: Context) : AppWidgetHostView(ctx) {
+    public class DragonAppWidgetHostView(ctx: Context) : AppWidgetHostView(ctx) {
         override fun getErrorView(): android.view.View {
             // Can be customized to show a "Lawnchair-style" error layout
             return super.getErrorView()

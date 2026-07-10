@@ -16,12 +16,12 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import org.elnix.dragonlauncher.common.serializables.StatusBarSerializable
-import org.elnix.dragonlauncher.common.messyfolder.showToast
+import org.elnix.dragonlauncher.base.model.serializables.StatusBar
+import org.elnix.dragonlauncher.ktx.showToast
 
 @Composable
-fun StatusBarBattery(
-    element: StatusBarSerializable.Battery
+public fun StatusBarBattery(
+    element: StatusBar.Battery
 ) {
     val ctx = LocalContext.current
     

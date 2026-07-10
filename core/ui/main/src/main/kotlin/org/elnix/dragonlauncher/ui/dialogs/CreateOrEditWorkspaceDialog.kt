@@ -16,15 +16,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.serializables.WorkspaceType
+import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateOrEditWorkspaceDialog(
+public fun CreateOrEditWorkspaceDialog(
     visible: Boolean,
     title: String,
     name: String,
@@ -35,7 +35,7 @@ fun CreateOrEditWorkspaceDialog(
 ) {
     if (!visible) return
 
-    var selectedType by remember { mutableStateOf(type ?: WorkspaceType.CUSTOM) }
+    var selectedType by remember { mutableStateOf(type ?: WorkspaceType.Custom) }
 
     DragonModalBottomSheet(onDismissRequest = onDismiss) {
         Text(

@@ -7,9 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.delay
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import kotlin.time.Duration.Companion.milliseconds
 
-/*  ─────────────  Hold & Run public state  ─────────────  */
 
 /**
  * Snapshot of Hold & Run state returned per recomposition.
@@ -18,20 +18,19 @@ import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
  *   Remains true until [clear] is called (on pointer-up or point exit).
  * @property clear Resets all state; call it from the overlay release guard.
  */
-data class HoldAndRunState(
+public data class HoldAndRunState(
     val firedThisGesture: Boolean,
     val clear: () -> Unit
 )
 
-/*  ─────────────  Controller composable  ─────────────  */
 
 /**
  * Composable controller for Hold & Run behavior.
  *
- * Fires [onFire] once with the current [SwipePointSerializable] after the configured
- * [SwipePointSerializable.holdAndRunDelayMs] of continuous hold on the same point.
- * If [SwipePointSerializable.holdAndRunAction] is set, the launched point uses that action;
- * otherwise the point’s main [SwipePointSerializable.action] is used.
+ * Fires [onFire] once with the current [Point] after the configured
+ * [Point.holdAndRunDelayMs] of continuous hold on the same point.
+ * If [Point.holdAndRunAction] is set, the launched point uses that action;
+ * otherwise the point’s main [Point.action] is used.
  *
  * - If the finger exits the point before the delay elapses, the coroutine is cancelled
  *   because [currentPoint] changes (or becomes null), restarting with a new key.
@@ -43,15 +42,13 @@ data class HoldAndRunState(
  * @param onFire        Lambda invoked on the UI thread when the hold delay elapses
  */
 @Composable
-fun rememberHoldAndRunController(
-    currentPoint: SwipePointSerializable?,
+public fun rememberHoldAndRunController(
+    currentPoint: Point?,
     isDragging: Boolean,
-    onFire: (point: SwipePointSerializable) -> Unit
+    onFire: (point: Point) -> Unit
 ): HoldAndRunState {
 
     var firedThisGesture by remember { mutableStateOf(false) }
-
-    /*  ─────────────  Timer  ─────────────  */
 
     LaunchedEffect(currentPoint?.id, isDragging) {
         // Always reset when the point changes or drag ends.
@@ -61,7 +58,7 @@ fun rememberHoldAndRunController(
 
         val delayMs = currentPoint.holdAndRunDelayMs?.toLong() ?: return@LaunchedEffect
 
-        delay(delayMs)
+        delay(delayMs.milliseconds)
 
         // Guard: still on the same point and not yet fired (safety for rapid transitions).
         if (!firedThisGesture) {
@@ -72,8 +69,6 @@ fun rememberHoldAndRunController(
             onFire(pointToLaunch)
         }
     }
-
-    /*  ─────────────  Release helper  ─────────────  */
 
     val clear: () -> Unit = remember { { firedThisGesture = false } }
 

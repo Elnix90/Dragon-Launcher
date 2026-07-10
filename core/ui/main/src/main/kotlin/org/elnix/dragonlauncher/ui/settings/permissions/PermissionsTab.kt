@@ -31,15 +31,14 @@ import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.components.BetaVersionType
 import org.elnix.dragonlauncher.ui.components.BetaVersionWarning
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
-fun PermissionsTab(onBack: () -> Unit) {
+public fun PermissionsTab(onBack: () -> Unit) {
     val ctx = LocalContext.current
     val permissionStates = remember { mutableStateMapOf<String, Boolean>() }
 
@@ -118,7 +117,7 @@ fun PermissionsTab(onBack: () -> Unit) {
                     painter = painterResource(R.drawable.refresh),
                     contentDescription = stringResource(R.string.reload),
                     modifier = Modifier
-                        .clip(DragonShape)
+                        .clip(MaterialTheme.shapes.large)
                         .clickable { checkPermissions() }
                         .padding(5.dp)
                 )

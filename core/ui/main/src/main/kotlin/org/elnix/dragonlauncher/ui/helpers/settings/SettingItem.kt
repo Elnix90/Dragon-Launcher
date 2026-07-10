@@ -6,19 +6,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.base.ColorUtils.semiTransparentIfDisabled
+import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
-fun SettingsItem(
+public fun SettingsItem(
     title: String,
     modifier: Modifier = Modifier,
     description: String? = null,
@@ -33,6 +35,7 @@ fun SettingsItem(
     Row(
         modifier = modifier
             .combinedClickable(
+                enabled = enabled,
                 onLongClick = onLongClick,
                 onClick = onClick
             )
@@ -48,11 +51,15 @@ fun SettingsItem(
             )
         }
 
-        TextWithDescription(
-            text = title,
-            description = description,
-            modifier = Modifier.weight(1f)
-        )
+        CompositionLocalProvider(
+            LocalContentColor provides MaterialTheme.colorScheme.onSurface.semiTransparentIfDisabled(enabled)
+        ) {
+            TextWithDescription(
+                text = title,
+                description = description,
+                modifier = Modifier.weight(1f)
+            )
+        }
 
         if (trailingIcon != null) {
             Icon(

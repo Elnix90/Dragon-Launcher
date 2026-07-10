@@ -1,18 +1,19 @@
 package org.elnix.dragonlauncher.ui
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector2D
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
@@ -20,58 +21,64 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.compose.ui.util.fastRoundToInt
+import io.github.elnix90.logging.POINTS_TAG
+import io.github.elnix90.logging.SWIPE_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logI
+import io.github.elnix90.runtime.asState
+import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.SWIPE_TAG
-import org.elnix.dragonlauncher.common.messyfolder.circles.computePosition
-import org.elnix.dragonlauncher.common.messyfolder.circles.scaleDragDistances
-import org.elnix.dragonlauncher.common.messyfolder.resolveShape
-import org.elnix.dragonlauncher.common.serializables.CircleNest
-import org.elnix.dragonlauncher.common.serializables.CustomHapticFeedbackSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.defaultSwipePointsValues
-import org.elnix.dragonlauncher.common.utils.HapticUtils.performCustomHaptic
-import org.elnix.dragonlauncher.logging.logI
-import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.settings.stores.AngleLineSettingsStore
-import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
-import org.elnix.dragonlauncher.ui.base.UiConstants
+import org.elnix.dragonlauncher.models.IconsViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
+import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
-import org.elnix.dragonlauncher.ui.components.AppPreviewTitle
+import org.elnix.dragonlauncher.ui.components.PointPreviewTitle
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
-import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
 import org.elnix.dragonlauncher.ui.composition.LocalEndLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalStartLineObject
 import org.elnix.dragonlauncher.ui.dialogs.rememberLineObjectsOrder
-import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
+import org.elnix.dragonlauncher.ui.helpers.DebugZone
+import org.elnix.dragonlauncher.ui.helpers.PointerLocation
 import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine
-import org.elnix.dragonlauncher.ui.helpers.nests.circlesSettingsOverlay
+import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
+import org.elnix.dragonlauncher.ui.helpers.swipe.rememberDrawParams
 import org.elnix.dragonlauncher.ui.remembers.LiveNestState
+import org.elnix.dragonlauncher.ui.remembers.geTopLeftAndTM
 import org.elnix.dragonlauncher.ui.remembers.rememberCycleActionsController
 import org.elnix.dragonlauncher.ui.remembers.rememberHoldAndRunController
 import org.elnix.dragonlauncher.ui.remembers.rememberLiveNestControllerStack
-import org.elnix.dragonlauncher.ui.remembers.rememberSwipeDefaultParams
+import org.elnix.dragonlauncher.ui.remembers.rememberPointTextStyle
 
 @Composable
-fun MainScreenOverlay(
-    appsViewModel: AppsViewModel = activityViewModel(),
+public fun MainScreenOverlay(
+    iconsViewModel: IconsViewModel = activityViewModel(),
+    pointsViewModel: PointsViewModel = activityViewModel(),
     start: Offset?,
     current: Offset?,
-    currentNest: CircleNest,
-    onLaunch: ((SwipePointSerializable) -> Unit)?
+    currentNestId: Int,
+    onLaunch: ((Point) -> Unit)?
 ) {
     val ctx = LocalContext.current
     val extraColors = LocalExtraColors.current
-    val defaultPoint = LocalDefaultPoint.current
+    val pointsService = pointsViewModel.pointsService
+
+    val defaultPoint by pointsService.defaultPoint.asState()
     val disableHapticFeedbackGlobally = LocalDisableHapticFeedbackGlobally.current
 
     val lineObject = LocalLineObject.current
@@ -79,17 +86,15 @@ fun MainScreenOverlay(
     val startObject = LocalStartLineObject.current
     val endObject = LocalEndLineObject.current
 
-    val rgbLine by UiSettingsStore.rgbLine.asState()
-    val debugInfos by DebugSettingsStore.debugInfos.asState()
+    val rgbLine by AngleLineSettingsStore.rgbLine.asState()
 
     val showLaunchingAppLabel by UiSettingsStore.showLaunchingAppLabel.asState()
-    val showLaunchingAppIcon by UiSettingsStore.showLaunchingAppIcon.asState()
+    val showLaunchingAppIcon by UiSettingsStore.showPreviewPoint.asState()
 
     val appLabelIconOverlayTopPadding by UiSettingsStore.appLabelIconOverlayTopPadding.asState()
-    val appLabelOverlaySize by UiSettingsStore.appLabelOverlaySize.asState()
-    val appIconOverlaySize by UiSettingsStore.appIconOverlaySize.asState()
 
     val linePreviewSnapToAction by UiSettingsStore.linePreviewSnapToAction.asState()
+    val animationWhenSnapping by UiSettingsStore.animationWhenSnapping.asState()
 
     val isDragging = start != null && current != null
 
@@ -99,25 +104,73 @@ fun MainScreenOverlay(
         isDragging = isDragging,
         current = current,
         rootStartPos = start,
-        rootNest = currentNest
+        rootNestId = currentNestId
     )
 
     // Find which level is currently active (deepest active one)
     val activeLevelIndex = liveNestControllersStack.indexOfLast { it.isActive }
-    val deepestController = liveNestControllersStack[activeLevelIndex]
+    assert(activeLevelIndex > -1)
 
-    val targetCircle = deepestController.hostPoint?.circleNumber ?: -1
+    val deepestController = liveNestControllersStack[activeLevelIndex]
 
     val isAnyLiveNestActive = activeLevelIndex > 0
 
-    val selectedPointsPerLevel: List<SwipePointSerializable?> =
+    val selectedPointsPerLevel: List<Point?> =
         buildList {
             for (i in 0..activeLevelIndex) {
                 add(liveNestControllersStack[i].nestedHit?.selectedPoint)
             }
         }
 
+    val scope = rememberCoroutineScope()
     val hoveredPoint = selectedPointsPerLevel.findLast { it != null }
+
+    val animatedCurrent: Animatable<Offset, AnimationVector2D> = remember(start) { Animatable(start ?: Offset.Unspecified, Offset.VectorConverter) }
+
+    // Uses to avoid the strange animation where the end block comes from half a universe away because it wasn't ever initialized (Offset.Unspecified)
+    LaunchedEffect(start) {
+        scope.launch {
+            animatedCurrent.snapTo(Offset.Zero)
+        }
+    }
+
+    LaunchedEffect(hoveredPoint) {
+        pointsService.selectOnyOne(hoveredPoint?.id)
+
+        logD(POINTS_TAG) {
+            "deepestController.hostPoint?.id : ${deepestController.hostPoint?.id}\nhoveredPoint.id: ${hoveredPoint?.id}"
+        }
+
+        // Reset it to center when no point is selected or that we select a live nest center (host point)
+        if (hoveredPoint == null || (isAnyLiveNestActive && deepestController.hostPoint?.id == hoveredPoint.id)) {
+            scope.launch {
+                animatedCurrent.animateTo(
+                    targetValue = Offset.Zero,
+                    animationSpec = bouncySpec()
+                )
+            }
+        } else if (animationWhenSnapping) {
+            pointsService.findPointById(hoveredPoint.id)?.let { p ->
+
+                // TODO the animated thing still moves from the start instead of snapping to current pos and then animating
+                val liveNestCenter =
+                    if (isAnyLiveNestActive) { deepestController.liveNestCenter }
+                    else { start }
+                        ?: return@LaunchedEffect
+
+
+                if (current != null) {
+                    scope.launch {
+                        animatedCurrent.snapTo(current - liveNestCenter)
+                        animatedCurrent.animateTo(
+                            targetValue = pointsService.computePointOffset(p),
+                            animationSpec = bouncySpec()
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     val cycleActionsController = rememberCycleActionsController(
         currentAction = hoveredPoint,
@@ -128,14 +181,14 @@ fun MainScreenOverlay(
     // so actionsInCircle and AppPreviewTitle reflect the action that will fire on release.
     // Loop Over reuses the last stage's action with a temporary label; customIcon is cleared
     // whenever either the base or staged action is OpenCircleNest (mini-nest rings need null icon).
-    val displayPoint: SwipePointSerializable? = hoveredPoint?.let { hp ->
+    val displayPoint: Point? = hoveredPoint?.let { hp ->
         val ca = hp.cycleActions
         if (ca.isNullOrEmpty()) return@let hp
 
         val idx = cycleActionsController.currentStageIndex
         if (idx > 0) {
             val staged = ca.getOrNull(idx - 1)?.action ?: return@let hp
-            if (staged is SwipeActionSerializable.OpenCircleNest || hp.action is SwipeActionSerializable.OpenCircleNest)
+            if (staged is Action.OpenCircleNest || hp.action is Action.OpenCircleNest)
                 hp.copy(action = staged, customIcon = null)
             else {
                 hp.copy(action = staged)
@@ -151,7 +204,7 @@ fun MainScreenOverlay(
         val hp = hoveredPoint ?: return@LaunchedEffect
         if (hp.cycleActions.isNullOrEmpty()) return@LaunchedEffect
         val dp = displayPoint ?: return@LaunchedEffect
-        appsViewModel.reloadPointIcon(dp)
+        iconsViewModel.reloadIcon(dp)
     }
 
 
@@ -166,19 +219,22 @@ fun MainScreenOverlay(
     LaunchedEffect(hoveredPoint?.id, liveNestControllersStack.count { it.isActive }) {
         hoveredPoint?.let { point ->
             if (!disableHapticFeedbackGlobally) {
-                // Determine which circle/haptic map to use
-                val hapticMap = deepestController.nestedNest?.haptic ?: emptyMap()
-                val targetCircle = deepestController.nestedHit?.targetCircle ?: return@LaunchedEffect
+                val hitNestId = deepestController.nestedNestId ?: return@let
+                val hitNest = pointsService.findNestByIdOrNull(hitNestId) ?: return@let
 
-                performCustomHaptic(ctx, (point.hapticFeedback ?: hapticMap[targetCircle] ?: defaultHapticFeedback(targetCircle)))
+                val targetShape =
+                    hitNest.intersectionShapes.find { deepestController.nestedHit?.selectedPoint?.collidingShapeId == it.id }
+
+                val hapticToPerform = (point.haptic ?: targetShape?.haptic ?: defaultHapticFeedback())
+                hapticToPerform.perform(ctx)
             }
         }
     }
 
-    // Haptic when entering the "cancel zone" of the Live Nest (Case B).
+    val haptic = LocalHapticFeedback.current
     LaunchedEffect(deepestController.nestedHit?.isInCancelZone) {
         if (isAnyLiveNestActive && deepestController.isActive && deepestController.nestedHit?.isInCancelZone == true && !disableHapticFeedbackGlobally) {
-            performCustomHaptic(ctx, defaultHapticFeedback(-1))
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
         }
     }
 
@@ -219,31 +275,27 @@ fun MainScreenOverlay(
     val showStartObjectPreview by AngleLineSettingsStore.showStartObjectPreview.asState()
     val showEndObjectPreview by AngleLineSettingsStore.showEndObjectPreview.asState()
 
+
+    // All of these uses the isDragging key as remember key to allow the random shape and/or angle to be recomputed each times
     val pickedRememberShapeAngle = remember(isDragging) {
-        (angleLineObject.shape ?: UiConstants.defaultAngleCustomObject.shape).resolveShape()
+        angleLineObject.shape.resolveShape()
     }
     val pickedRememberRotationAngle = remember(isDragging) {
-        angleLineObject.rotation
-            ?.takeIf { it != -1 }
-            ?: (0..360).random()
+        angleLineObject.rotation.takeIf { it != -1 } ?: (0..360).random()
     }
 
     val pickedRememberShapeStart = remember(isDragging) {
-        (startObject.shape ?: UiConstants.defaultStartCustomObject.shape).resolveShape()
+        startObject.shape.resolveShape()
     }
     val pickedRememberRotationStart = remember(isDragging) {
-        startObject.rotation
-            ?.takeIf { it != -1 }
-            ?: (0..360).random()
+        startObject.rotation.takeIf { it != -1 } ?: (0..360).random()
     }
 
     val pickedRememberShapeEnd = remember(isDragging) {
-        (endObject.shape ?: UiConstants.defaultEndCustomObject.shape).resolveShape()
+        endObject.shape.resolveShape()
     }
     val pickedRememberRotationEnd = remember(isDragging) {
-        endObject.rotation
-            ?.takeIf { it != -1 }
-            ?: (0..360).random()
+        endObject.rotation.takeIf { it != -1 } ?: (0..360).random()
     }
 
     val multiplyOrSubtractOpacityInLiveNests by UiSettingsStore.multiplyOrSubtractOpacityInLiveNests.asState()
@@ -258,8 +310,10 @@ fun MainScreenOverlay(
         liveNestControllersStack.filter { it.isActive }.forEach { controller ->
             add(alpha)
 
-            val percent = (controller.hostPoint?.liveNestMainNestOpacityPercent ?: defaultPoint.liveNestMainNestOpacityPercent).takeIf { it != -1 }
-                ?: defaultSwipePointsValues.liveNestMainNestOpacityPercent!!
+            val percent =
+                (controller.hostPoint?.liveNestMainNestOpacityPercent ?: defaultPoint.liveNestMainNestOpacityPercent)
+                    .takeIf { it != -1 } ?: Point.defaultLiveNestMainNestOpacityPercent
+
             if (multiplyOrSubtractOpacityInLiveNests) {
                 alpha -= percent.coerceIn(0, 100) / 100f
             } else {
@@ -268,142 +322,131 @@ fun MainScreenOverlay(
         }
     }.reversed()
 
-    Box(Modifier.fillMaxSize()) {
+    val drawParams = rememberDrawParams(
+        preventBgErasing = false,
+        showConfiguratorDecorations = false,
+        forceShowAllActionsInCurrentNest = false,
+        allowShowPointCenter = false,
+        hideSelectedPoint = false
+    )
 
-        AnimatedVisibility(debugInfos) {
-            MainScreenOverlayDebugInfos(
-                hoveredPoint = hoveredPoint,
-                selectedPointPerLevel = selectedPointsPerLevel,
-                currentNest = currentNest,
-                activeLevel = activeLevelIndex,
-                isAliveNestActive = isAnyLiveNestActive,
-                start = start,
-                current = current,
-                sweepAngle = deepestController.sweepAngleState.sweepAngle(),
-                angle360 = deepestController.sweepAngleState.angle360(),
-                isDragging = isDragging,
-                targetCircle = targetCircle
-            )
+    Box(Modifier.fillMaxSize()) {
+        val debugInfo by DebugSettingsStore.mainScreenDebugInfos.asState()
+
+        DebugZone(debugInfo) {
+            Text("start = ${start?.let { "%.1f, %.1f".format(it.x, it.y) } ?: "-"}")
+            Text("current = ${current?.let { "%.1f, %.1f".format(it.x, it.y) } ?: "-"}")
+            Text("sweep raw = %.1f°".format(deepestController.sweepAngleState.sweepAngle()))
+            Text("angle 0–360 = %.1f°".format(deepestController.sweepAngleState.angle360()))
+            Text("drag = $isDragging")
+            Text("activeLevel = $activeLevelIndex")
+            Text("isAliveNestActive = $isAnyLiveNestActive")
+            Text("selectedPointPerLevel = ${selectedPointsPerLevel.map { it?.id }}")
+            Text("current nest = $currentNestId")
+            Text("current point = $hoveredPoint")
         }
 
-        val drawParams = rememberSwipeDefaultParams(allowShowIconInCenter = true)
+        if (debugInfo) {
+            DebugPointer(animatedCurrent, deepestController.liveNestCenter)
+        }
 
-        /**
-         *  Main nest (lines + rings + icons) and Live Nest overlay are split so the host can
-         *  dim the main layer via [SwipePointSerializable.liveNestMainNestOpacityPercent].
-         */
         if (isDragging) {
-            Box(Modifier.fillMaxSize()) {
-                liveNestControllersStack.forEachIndexed { idx, controller ->
-//                    val isRoot = idx == 0
+            for ((idx, controller) in liveNestControllersStack.withIndex()) {
+                if (controller.isActive) {
 
-                    val liveNestOpacity = liveNestLayersAlphas.getOrNull(idx) ?: return@forEachIndexed
+                    val liveNestOpacity = liveNestLayersAlphas.getOrNull(idx) ?: continue
+                    val nestedNestForDraw = pointsService.findNestByIdOrNull(controller.nestedNestId!!) ?: continue
 
-                    if (controller.isActive) {
-                        val isDeepestController = idx == activeLevelIndex
+                    val isDeepestController = idx == activeLevelIndex
 
-                        val nestedNestForDraw = controller.nestedNest!!
-                        val liveNestCenterForDraw = controller.liveNestCenter!!
-                        val hitResult = controller.nestedHit
-                        val outerSelectedPoint = hitResult?.selectedPoint
+                    val liveNestCenterForDraw = controller.liveNestCenter!!
+                    val hitResult = controller.nestedHit
+                    val outerSelectedPoint = hitResult?.selectedPoint
 
-                        val sweepAngle = controller.sweepAngleState.sweepAngle()
-                        val angle360 = controller.sweepAngleState.angle360()
+                    val sweepAngle = controller.sweepAngleState.sweepAngle()
+                    val angle360 = controller.sweepAngleState.angle360()
 
-                        val effectiveCurrentPos: Offset = remember(current, hoveredPoint, isAnyLiveNestActive, activeLevelIndex) {
+                    val effectiveCurrentPos: Offset =
+                        remember(animatedCurrent.value, isDeepestController, current, hoveredPoint, isAnyLiveNestActive, activeLevelIndex) {
                             when {
-                                linePreviewSnapToAction && outerSelectedPoint != null -> {
-                                    val dragRadii = scaleDragDistances(nestedNestForDraw.dragDistances, controller.liveNestScale)
-                                    val targetCircle = hitResult.targetCircle
-                                    val radius = (dragRadii[targetCircle] ?: dragRadii[targetCircle])!!
-
-                                    outerSelectedPoint.computePosition(
-                                        radius = radius,
-                                        center = liveNestCenterForDraw
-                                    )
-                                }
-
                                 // Means that the live HAS to snap to action, because otherwise it would move around under the top activated live nest
                                 !isDeepestController -> {
                                     liveNestControllersStack[idx + 1].liveNestCenter!!
+                                }
+
+                                linePreviewSnapToAction && outerSelectedPoint != null -> {
+                                    if (animationWhenSnapping && animatedCurrent.value != Offset.Unspecified) {
+                                        animatedCurrent.value + liveNestCenterForDraw
+                                    } else {
+                                        pointsService.computePointOffset(outerSelectedPoint) + liveNestCenterForDraw
+                                    }
                                 }
 
                                 else -> current
                             }
                         }
 
-                        // Main canva, uses drawWithCache to improve drawing performances
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .graphicsLayer {
-                                    alpha = liveNestOpacity
-                                    compositingStrategy = CompositingStrategy.Offscreen
-                                }
-                                .drawWithCache {
-                                    onDrawBehind {
+                    // Main canvas, uses drawWithCache to improve drawing performances
+                    Canvas(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .graphicsLayer {
+                                alpha = liveNestOpacity
+                                compositingStrategy = CompositingStrategy.Offscreen
+                            }
+                            .drawBehind {
+                                NestOverlay(
+                                    center = liveNestCenterForDraw,
+                                    nest = nestedNestForDraw,
+                                    depth = 1,
+                                    drawParams = drawParams,
+                                    selectedAll = false,
+                                )
+                            }
+                    ) {
 
-                                        val lineColor: Color =
-                                            if (rgbLine) Color.hsv(angle360, 1f, 1f)
-                                            else extraColors.angleLine
+                        drawIntoCanvas { canvas ->
+                            val bounds = Rect(0f, 0f, size.width, size.height)
+                            canvas.saveLayer(bounds, Paint())
 
-                                        actionLine(
-                                            start = liveNestCenterForDraw,
-                                            end = effectiveCurrentPos,
-                                            sweepAngle = sweepAngle,
-                                            lineColor = lineColor,
-                                            order = order,
-                                            showLineObjectPreview = showLineObjectPreview,
-                                            showAngleLineObjectPreview = showAngleLineObjectPreview,
-                                            showStartObjectPreview = showStartObjectPreview,
-                                            showEndObjectPreview = showEndObjectPreview,
-                                            pickedRememberShapeAngle = pickedRememberShapeAngle,
-                                            pickedRememberRotationAngle = pickedRememberRotationAngle,
-                                            pickedRememberRotationStart = pickedRememberRotationStart,
-                                            pickedRememberShapeStart = pickedRememberShapeStart,
-                                            pickedRememberRotationEnd = pickedRememberRotationEnd,
-                                            pickedRememberShapeEnd = pickedRememberShapeEnd,
-                                            lineCustomObject = lineObject,
-                                            angleLineCustomObject = angleLineObject,
-                                            startCustomObject = startObject,
-                                            endCustomObject = endObject
-                                        )
+                            val lineColor: Color =
+                                if (rgbLine) Color.hsv(angle360, 1f, 1f)
+                                else extraColors.angleLine
 
-                                        drawIntoCanvas { canvas ->
-                                            val bounds = Rect(0f, 0f, size.width, size.height)
-                                            canvas.saveLayer(bounds, Paint())
-
-                                            val effectiveTargetCircle: Int = controller.nestedHit?.targetCircle ?: -1
-                                            circlesSettingsOverlay(
-                                                drawParams = drawParams,
-                                                center = liveNestCenterForDraw,
-                                                depth = 1,
-                                                currentCircle = effectiveTargetCircle,
-                                                circles = controller.scaledUiCircles,
-                                                selectedPoint = outerSelectedPoint,
-                                                nestId = nestedNestForDraw.id,
-                                            )
-
-                                            canvas.restore()
-                                        }
-                                    }
-                                }
-                        )
+                            actionLine(
+                                start = liveNestCenterForDraw,
+                                end = effectiveCurrentPos,
+                                sweepAngle = sweepAngle,
+                                lineColor = lineColor,
+                                order = order,
+                                showLineObjectPreview = showLineObjectPreview,
+                                showAngleLineObjectPreview = showAngleLineObjectPreview,
+                                showStartObjectPreview = showStartObjectPreview,
+                                showEndObjectPreview = showEndObjectPreview,
+                                pickedRememberShapeAngle = pickedRememberShapeAngle,
+                                pickedRememberRotationAngle = pickedRememberRotationAngle,
+                                pickedRememberRotationStart = pickedRememberRotationStart,
+                                pickedRememberShapeStart = pickedRememberShapeStart,
+                                pickedRememberRotationEnd = pickedRememberRotationEnd,
+                                pickedRememberShapeEnd = pickedRememberShapeEnd,
+                                lineCustomObject = lineObject,
+                                angleLineCustomObject = angleLineObject,
+                                startCustomObject = startObject,
+                                endCustomObject = endObject
+                            )
+                        }
                     }
-                }
+                } else break
             }
         }
     }
 
-
     // Label on top of the screen.
     // Priority: inner Live Nest selection → outer Live Nest selection (with cycle stage) → main nest.
     if (showLaunchingAppLabel || showLaunchingAppIcon) {
-        AppPreviewTitle(
+        PointPreviewTitle(
             point = displayPoint,
             topPadding = appLabelIconOverlayTopPadding.dp,
-            labelSize = appLabelOverlaySize,
-            iconSize = appIconOverlaySize,
             showLabel = showLaunchingAppLabel,
             showIcon = showLaunchingAppIcon
         )
@@ -411,53 +454,36 @@ fun MainScreenOverlay(
 }
 
 
-@Composable
-private fun MainScreenOverlayDebugInfos(
-    hoveredPoint: SwipePointSerializable?,
-    selectedPointPerLevel: List<SwipePointSerializable?>,
-    currentNest: CircleNest,
-    activeLevel: Int,
-    isAliveNestActive: Boolean,
-    start: Offset?,
-    current: Offset?,
-    sweepAngle: Float,
-    angle360: Float,
-    isDragging: Boolean,
-    targetCircle: Int
-) {
-
-    DragonColumnGroup {
-        CompositionLocalProvider(
-            LocalContentColor provides Color.White,
-            LocalTextStyle provides TextStyle(
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
-                lineHeight = 12.sp
-            )
-        ) {
-            Text("start = ${start?.let { "%.1f, %.1f".format(it.x, it.y) } ?: "—"}")
-            Text("current = ${current?.let { "%.1f, %.1f".format(it.x, it.y) } ?: "—"}")
-            Text("sweep raw = %.1f°".format(sweepAngle))
-            Text("angle 0–360 = %.1f°".format(angle360))
-            Text("drag = $isDragging")
-            Text("activeLevel = $activeLevel")
-            Text("isAliveNestActive = $isAliveNestActive")
-            Text("target circle = $targetCircle")
-            Text("selectedPointPerLevel = ${selectedPointPerLevel.map { it?.id?.substring(0, 5) }}")
-            Text("current nest = $currentNest")
-            Text("current point = $hoveredPoint")
-        }
-    }
+public fun defaultHapticFeedback(): CustomHapticFeedback = CustomHapticFeedback.build {
+    haptic(20)
 }
 
 
-fun defaultHapticFeedback(id: Int): CustomHapticFeedbackSerializable = CustomHapticFeedbackSerializable(
-    listOf(
-        true to
-                when (id) {
-                    -1 -> 5 // Cancel Zone, small feedback
-                    0 -> 20  // First circle 20ms
-                    else -> 20 + 20 * id // others: add 20ms each
-                }
-    )
-)
+@Composable
+private fun DebugPointer(
+    animatedCurrent: Animatable<Offset, AnimationVector2D>,
+    start: Offset?
+) {
+    val textMeasurer = rememberTextMeasurer()
+    val textStyle = rememberPointTextStyle()
+    val text = remember(animatedCurrent.value) {
+        val textOffset = animatedCurrent.value
+        val x = textOffset.x.fastRoundToInt()
+        val y = textOffset.y.fastRoundToInt()
+        val offsetText = "$x ; $y"
+
+        geTopLeftAndTM(
+            text = offsetText,
+            textStyle = textStyle,
+            sizePx = 50f,
+            textMeasurer = textMeasurer
+        )
+    }
+
+    Canvas(Modifier.fillMaxSize()) {
+        PointerLocation(
+            offset = animatedCurrent.value + (start ?: Offset.Zero),
+            centerText = text
+        )
+    }
+}

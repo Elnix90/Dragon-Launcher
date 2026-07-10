@@ -18,31 +18,32 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.loadChangelogs
-import org.elnix.dragonlauncher.common.messyfolder.openUrl
+import org.elnix.dragonlauncher.common.loader.loadChangelogs
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.rememberVersionCode
-import org.elnix.dragonlauncher.settings.stores.PrivateSettingsStore
-import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.openUrl
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 
 // I hate the behavior of this shitty modal sheet that force showing the system bars, even in fullscreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WhatsNewBottomSheet() {
+public fun WhatsNewBottomSheet() {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
     val lastSeenVersionCodeWhatsNew by PrivateSettingsStore.lastSeenVersionCodeWhatsNew.asState()
-    val versionCode = rememberVersionCode()
+    val versionCode by rememberVersionCode()
 
     if (lastSeenVersionCodeWhatsNew >= versionCode) return
 
     val updates by produceState(initialValue = emptyList()) {
         value = loadChangelogs(ctx, versionCode)
     }
+
     DragonModalBottomSheet(
         onDismissRequest = {
             scope.launch {

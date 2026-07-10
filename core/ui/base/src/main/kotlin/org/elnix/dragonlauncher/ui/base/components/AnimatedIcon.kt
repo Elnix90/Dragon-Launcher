@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -14,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.ui.base.animation.AnimatedIcon
 import org.elnix.dragonlauncher.ui.base.animation.barsContentTransform
 import org.elnix.dragonlauncher.ui.base.animation.icon
-
+import org.elnix.dragonlauncher.ui.base.asState
 
 
 /**
@@ -27,11 +26,11 @@ import org.elnix.dragonlauncher.ui.base.animation.icon
  * @param onClick Callback when icon is clicked
  */
 @Composable
-fun AnimatedIcon.Icon(
+public fun AnimatedIcon.Icon(
     defaultIcon: Int,
     onClick: () -> Unit
 ) {
-    val status by this.status.collectAsState()
+    val status by this.status.asState()
 
     AnimatedContent(
         targetState = status,

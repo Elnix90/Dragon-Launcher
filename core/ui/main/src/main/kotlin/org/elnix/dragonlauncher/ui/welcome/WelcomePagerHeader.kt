@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun WelcomePagerHeader(
+public fun WelcomePagerHeader(
     title: String,
     icon: Int,
     content: @Composable ColumnScope.() -> Unit

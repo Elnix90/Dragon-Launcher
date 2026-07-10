@@ -4,4 +4,4 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-fun Modifier.settingsGroupHorizontalPadding(): Modifier = this.padding(horizontal = 16.dp)
+public fun Modifier.settingsGroupHorizontalPadding(): Modifier = this.padding(horizontal = 16.dp)

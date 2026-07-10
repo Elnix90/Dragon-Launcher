@@ -3,39 +3,30 @@ package org.elnix.dragonlauncher.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.ICONS_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.STATUS_BAR_TAG
-import org.elnix.dragonlauncher.common.serializables.StatusBarJson
-import org.elnix.dragonlauncher.common.serializables.SwipePointSerializable.Companion.defaultSwipePointsValues
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logV
-import org.elnix.dragonlauncher.models.AppsViewModel
-import org.elnix.dragonlauncher.settings.stores.BehaviorSettingsStore
-import org.elnix.dragonlauncher.settings.stores.DrawerSettingsStore
-import org.elnix.dragonlauncher.settings.stores.StatusBarJsonSettingsStore
-import org.elnix.dragonlauncher.settings.stores.SwipeSettingsStore
-import org.elnix.dragonlauncher.settings.stores.UiSettingsStore
+import io.github.elnix90.logging.ICONS_TAG
+import io.github.elnix90.logging.logD
+import io.github.elnix90.runtime.asState
+import org.elnix.dragonlauncher.base.model.serializables.StatusBar
+import org.elnix.dragonlauncher.base.model.serializables.StatusBarJson
+import org.elnix.dragonlauncher.models.IconsViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
+import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalAppItemSettings
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
-import org.elnix.dragonlauncher.ui.base.compositionslocals.rememberAppItemSettings
+import org.elnix.dragonlauncher.ui.base.compositionslocals.ProvideCurrentTime
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
-import org.elnix.dragonlauncher.ui.composition.LocalDefaultPoint
-import org.elnix.dragonlauncher.ui.composition.LocalDrawerIconsCache
 import org.elnix.dragonlauncher.ui.composition.LocalEndLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
-import org.elnix.dragonlauncher.ui.composition.LocalIconShape
 import org.elnix.dragonlauncher.ui.composition.LocalLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
-import org.elnix.dragonlauncher.ui.composition.LocalNests
-import org.elnix.dragonlauncher.ui.composition.LocalPointIconsCache
-import org.elnix.dragonlauncher.ui.composition.LocalPoints
+import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 import org.elnix.dragonlauncher.ui.composition.LocalShowLabelsInAddPointDialog
 import org.elnix.dragonlauncher.ui.composition.LocalStartLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalStatusBarElements
@@ -44,52 +35,37 @@ import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberAngleLineO
 import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberHoldCustomObject
 
 @Composable
-fun ProvideGlobalCompositionLocals(
-    appsViewModel: AppsViewModel = activityViewModel(),
+public fun ProvideGlobalCompositionLocals(
+    iconsViewModel: IconsViewModel = activityViewModel(),
+    pointsViewModel: PointsViewModel = activityViewModel(),
     content: @Composable () -> Unit
 ) {
-    val ctx = LocalContext.current
-
-    val disableHapticFeedbackGlobally by BehaviorSettingsStore.disableHapticFeedbackGlobally.asState()
-
-
-    val nests by SwipeSettingsStore.getNestsFlow(ctx).collectAsState(initial = emptyList())
-    val defaultPoint by SwipeSettingsStore.getDefaultPointFlow(ctx)
-        .collectAsState(defaultSwipePointsValues)
-
-    val points by SwipeSettingsStore.getPointsFlow(ctx).collectAsState(emptyList())
-    val pointsIconCache = appsViewModel.pointsIconsCache
-    LaunchedEffect(points.size) {
+    val pointsService = pointsViewModel.pointsService
+    val points by pointsService.points.asState()
+    LaunchedEffect(points.size) { // TODO pu this into the points viewmodel
         logD(ICONS_TAG) { "Updating icons cache size to ${points.size}" }
-        pointsIconCache.updateMaxCacheSize(points.size)
+        iconsViewModel.updateMaxCacheSize(points.size)
     }
 
-    val drawerIconCache = appsViewModel.drawerIconCache
 
+    val disableHapticFeedbackGlobally by BehaviorSettingsStore.disableHapticFeedbackGlobally.asState()
     val elementsJson by StatusBarJsonSettingsStore.jsonSetting.asState()
 
     val elements by remember(elementsJson) {
-
         derivedStateOf {
-            StatusBarJson.decodeStatusBarElements(elementsJson).also {
-                logV(STATUS_BAR_TAG) { "Element: $elementsJson, decoded: $it" }
-            }
+            StatusBarJson.decode<List<StatusBar>>(elementsJson, emptyList())
         }
     }
 
-    val iconsShape by DrawerSettingsStore.iconsShape.asState()
-    // Used internally by the app view model
-    // Caches the icon shape inside to avoid having to pass the shape through each call of a reload icon
-    // Crashes if shape not defined, but as it is passed soon enough, this should be ok (never saw any crash tough)
-    LaunchedEffect(iconsShape) {
-        appsViewModel.cacheIconShape(iconsShape)
-    }
+
 
     val lineObjects = rememberAngleLineObjects()
-    val holdCustomObject = rememberHoldCustomObject()
+    val holdCustomObject by rememberHoldCustomObject()
     val layersOrder by rememberMainScreenLayerOrder()
 
     val showTooltipsOnAddPointDialog by UiSettingsStore.showTooltipsOnAddPointDialog.asState()
+
+    val nestDebugOverlay by DebugSettingsStore.nestDebugOverlay.asState()
 
 
     /**
@@ -97,14 +73,7 @@ fun ProvideGlobalCompositionLocals(
      * I know that I should carefully review what global locals I add, but until now it worked to I'll keep it that way until I notice lag
      */
     CompositionLocalProvider(
-        LocalDefaultPoint provides defaultPoint,
 
-        LocalDrawerIconsCache provides drawerIconCache,
-        LocalPointIconsCache provides pointsIconCache,
-
-        LocalIconShape provides iconsShape,
-        LocalPoints provides points,
-        LocalNests provides nests,
         LocalStatusBarElements provides elements,
 
         LocalLineObject provides lineObjects.line,
@@ -118,9 +87,10 @@ fun ProvideGlobalCompositionLocals(
         LocalShowLabelsInAddPointDialog provides showTooltipsOnAddPointDialog,
 
         LocalDisableHapticFeedbackGlobally provides disableHapticFeedbackGlobally,
-
-        LocalAppItemSettings provides rememberAppItemSettings()
+        LocalNestDebugOverlay provides nestDebugOverlay
     ) {
-        content()
+        ProvideCurrentTime {
+            content()
+        }
     }
 }

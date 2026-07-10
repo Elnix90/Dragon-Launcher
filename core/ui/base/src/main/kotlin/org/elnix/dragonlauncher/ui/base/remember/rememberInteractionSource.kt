@@ -5,6 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 
 @Composable
-fun rememberInteractionSource(): MutableInteractionSource {
+public fun rememberInteractionSource(): MutableInteractionSource {
     return remember { MutableInteractionSource() }
 }

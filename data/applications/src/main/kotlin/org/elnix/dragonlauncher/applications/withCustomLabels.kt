@@ -1,0 +1,26 @@
+package org.elnix.dragonlauncher.applications
+
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.collectLatest
+import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
+import org.elnix.dragonlauncher.base.model.models.Application
+
+public fun Flow<ImmutableList<Application>>.withCustomLabels(
+    appOverridesManager: AppOverridesManager
+): Flow<ImmutableList<Application>> = channelFlow {
+    this@withCustomLabels.collectLatest { items ->
+        appOverridesManager.appOverrideState.collectLatest { state ->
+            send(items.map { item ->
+                val customLabel = state[item.key]?.customName
+                if (customLabel != null) {
+                    item.overrideLabel(customLabel)
+                } else {
+                    item
+                }
+            }.toImmutableList())
+        }
+    }
+}

@@ -1,75 +1,60 @@
 package org.elnix.dragonlauncher.models
 
-import android.annotation.SuppressLint
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.elnix90.core.objects.BooleanSettingObject
+import io.github.elnix90.logging.FileLoggingTree
+import io.github.elnix90.logging.LOGS_TAG
+import io.github.elnix90.logging.LogAlert
+import io.github.elnix90.logging.logE
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.LOGS_TAG
-import org.elnix.dragonlauncher.common.messyfolder.Constants.Logging.TAG
-import org.elnix.dragonlauncher.logging.FileLoggingTree
-import org.elnix.dragonlauncher.logging.LogAlert
-import org.elnix.dragonlauncher.logging.logD
-import org.elnix.dragonlauncher.logging.logE
-import org.elnix.dragonlauncher.settings.stores.DebugSettingsStore
+import org.elnix.dragonlauncher.models.utils.viewModelInitialized
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.ConcurrentLinkedQueue
 import javax.inject.Inject
 
 @HiltViewModel
-class DragonLogViewModel @Inject constructor(
+public class DragonLogViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
-
-    @SuppressLint("StaticFieldLeak")
-    private val ctx = application.applicationContext
-    private val _isLoggingEnabled = MutableStateFlow(true)
-    val isLoggingEnabled = _isLoggingEnabled.asStateFlow()
-
-    private val _snackBarLogLevel = MutableStateFlow(7) // No Logging
-    val snackBarLogLevel = _snackBarLogLevel.asStateFlow()
-    private val _filesLogsLevel = MutableStateFlow(Log.DEBUG)
-    val filesLogsLevel = _filesLogsLevel.asStateFlow()
-
-    private val _filterTag = MutableStateFlow("")
-    val filterTag = _filterTag.asStateFlow()
-
     private var fileTree: FileLoggingTree? = null
-
 
     private val recentLogs = ConcurrentLinkedQueue<LogAlert>()
     private val _alertFlow = MutableStateFlow<LogAlert?>(null)
-    val alertFlow: StateFlow<LogAlert?> = _alertFlow
+    public val alertFlow: StateFlow<LogAlert?> = _alertFlow
 
+
+    private val enableLogging: BooleanSettingObject = DebugSettingsStore.enableLogging
 
     private val maxRecentLogs = 50
 
+
     init {
-        Timber.plant(Timber.DebugTree())
-
         viewModelScope.launch {
-            fileTree = FileLoggingTree(ctx, ::onHighPriorityLog)
+            fileTree = FileLoggingTree(application, ::onHighPriorityLog)
 
-            _isLoggingEnabled.value = DebugSettingsStore.enableLogging.get(ctx)
+            DebugSettingsStore.snackBarLogLevel.flow(application).collect {
+                fileTree?.snackBarLogLevel = it
+            }
 
-            _snackBarLogLevel.value = DebugSettingsStore.snackBarLogLevel.get(ctx)
-            fileTree?.snackBarLogLevel = _snackBarLogLevel.value
+            DebugSettingsStore.filesLogLevel.flow(application).collect {
+                fileTree?.filesLogsLevel = it
+            }
 
-            _filesLogsLevel.value = DebugSettingsStore.filesLogLevel.get(ctx)
-            fileTree?.filesLogsLevel = _filesLogsLevel.value
+            DebugSettingsStore.filterTag.flow(application).collect {
+                fileTree?.filterTag = it
+            }
 
-            _filterTag.value = DebugSettingsStore.filterTag.get(ctx)
-            fileTree?.filterTag = filterTag.value
+            updateLoggingState()
         }
-
-        updateLoggingState()
-        logD(TAG) { "created DragonLogsViewModel ${System.identityHashCode(this)}" }
+        viewModelInitialized()
     }
 
     private fun onHighPriorityLog(level: Int, message: String) {
@@ -81,46 +66,43 @@ class DragonLogViewModel @Inject constructor(
         _alertFlow.value = alert
     }
 
-    fun updateEnableLogging(enable: Boolean) {
-        if (_isLoggingEnabled.value == enable) return
-
-        _isLoggingEnabled.value = enable
+    public fun updateEnableLogging(enable: Boolean) {
         viewModelScope.launch {
-            DebugSettingsStore.enableLogging.set(ctx, enable)
-        }
 
-        updateLoggingState()
-    }
+            if (enableLogging.get(application) == enable) {
+                return@launch
+            }
 
-
-    fun updateSnackBarLogLevel(newLevel: Int) {
-        _snackBarLogLevel.value = newLevel
-        fileTree?.snackBarLogLevel = newLevel
-        viewModelScope.launch {
-            DebugSettingsStore.snackBarLogLevel.set(ctx, newLevel)
+            DebugSettingsStore.enableLogging.set(application, enable)
+            updateLoggingState()
         }
     }
 
-    fun updateFilesLogLevel(newLevel: Int) {
-        _filesLogsLevel.value = newLevel
-        fileTree?.filesLogsLevel = newLevel
-        viewModelScope.launch {
-            DebugSettingsStore.filesLogLevel.set(ctx, newLevel)
-        }
-    }
+//    public fun updateSnackBarLogLevel(newLevel: Int) {
+//        fileTree?.snackBarLogLevel = newLevel
+//        viewModelScope.launch {
+//            DebugSettingsStore.snackBarLogLevel.set(application, newLevel)
+//        }
+//    }
+//
+//    public fun updateFilesLogLevel(newLevel: Int) {
+//        fileTree?.filesLogsLevel = newLevel
+//        viewModelScope.launch {
+//            DebugSettingsStore.filesLogLevel.set(application, newLevel)
+//        }
+//    }
+//
+//    public fun updateFilterTag(newTag: String) {
+//        fileTree?.filterTag = newTag
+//        viewModelScope.launch {
+//            DebugSettingsStore.filterTag.set(application, newTag)
+//        }
+//    }
 
-    fun updateFilterTag(newTag: String) {
-        _filterTag.value = newTag
-        fileTree?.filterTag = newTag
-        viewModelScope.launch {
-            DebugSettingsStore.filterTag.set(ctx, newTag)
-        }
-    }
-
-    private fun updateLoggingState() {
+    private suspend fun updateLoggingState() {
         val tree = fileTree ?: return
         val plantedTrees = Timber.forest()
-        if (_isLoggingEnabled.value) {
+        if (enableLogging.get(application)) {
             if (tree !in plantedTrees) {
                 Timber.plant(tree)
             }
@@ -131,26 +113,26 @@ class DragonLogViewModel @Inject constructor(
         }
     }
 
-    fun getAllLogFiles(): List<File> {
+    public fun getAllLogFiles(): List<File> {
         return fileTree?.getAllLogFiles() ?: emptyList()
     }
 
-    fun clearLogs() {
+    public fun clearLogs() {
         fileTree?.clearAllLogs()
         recentLogs.clear()
         _alertFlow.value = null
     }
 
-    fun readLogFile(file: File): String {
+    public fun readLogFile(file: File): String {
         return try {
             file.readText()
         } catch (e: Exception) {
-            logE(LOGS_TAG, e) { "Failed to read log file: ${file.absolutePath}"}
+            logE(LOGS_TAG, e) { "Failed to read log file: ${file.absolutePath}" }
             "Failed to read log file: $e"
         }
     }
 
-    fun deleteLogFile(file: File) {
+    public fun deleteLogFile(file: File) {
         try {
             file.delete()
         } catch (e: Exception) {

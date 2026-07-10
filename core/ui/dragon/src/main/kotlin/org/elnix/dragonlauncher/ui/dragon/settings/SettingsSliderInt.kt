@@ -13,25 +13,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import io.github.elnix90.core.objects.IntSettingObject
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.settings.bases.BaseSettingObject
-import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 
 @Composable
-fun SettingsSlider(
-    setting: BaseSettingObject<Int, Int>,
-    title: String,
-    valueRange: IntRange,
+
+public fun Setting(
+    setting: IntSettingObject,
     modifier: Modifier = Modifier,
-    description: String? = null,
     color: Color = MaterialTheme.colorScheme.primary,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     showValue: Boolean = true,
     enabled: Boolean = true,
     allowTextEditValue: Boolean = true,
-    onReset: (() -> Unit)? = null,
-    onDragStateChange: ((Boolean) -> Unit)? = null,
+    customDesc: ((Int) -> String)? = null,
     onChange: ((Int) -> Unit)? = null,
 ) {
     val ctx = LocalContext.current
@@ -45,22 +43,18 @@ fun SettingsSlider(
 
     SliderWithLabel(
         modifier = modifier,
-        label = title,
-        description = description,
+        label = stringResource(setting.title!!),
+        description = customDesc?.invoke(state) ?: stringResource(setting.description!!),
         value = tempState,
-        valueRange = valueRange,
+        valueRange = setting.allowedRange,
         color = color,
         enabled = enabled,
         allowTextEditValue = allowTextEditValue,
         backgroundColor = backgroundColor,
         showValue = showValue,
-        onReset = {
-            scope.launch { setting.reset(ctx) }
-            onReset?.invoke()
-        },
+        onReset = { scope.launch { setting.reset(ctx) } },
         onDragStateChange = {
             scope.launch { setting.set(ctx, tempState) }
-            onDragStateChange?.invoke(it)
         }
     ) {
         tempState = it

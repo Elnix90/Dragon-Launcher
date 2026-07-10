@@ -1,4 +1,3 @@
-
 import com.android.build.api.dsl.ApplicationExtension
 import java.io.InputStream
 import java.io.OutputStream
@@ -28,19 +27,19 @@ kotlin {
     jvmToolchain(21)
 }
 
-// Configure Android
 extensions.configure<ApplicationExtension> {
     namespace = "org.elnix.dragonlauncher"
+
     compileSdk {
-        version = release(37)
+        version = release(libs.versions.compileSdk.get().toInt())
     }
 
     defaultConfig {
         applicationId = "org.elnix.dragonlauncher"
-        minSdk = 26
-        targetSdk = 37
-        versionName = "3.2.2"
-        versionCode = 56
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
+        versionName = "4.0.0"
+        versionCode = 57
     }
 
     lint {
@@ -72,6 +71,16 @@ extensions.configure<ApplicationExtension> {
         }
     }
 
+
+    flavorDimensions += listOf("version")
+    productFlavors {
+        create("beta") {
+            dimension = "version"
+            applicationIdSuffix = ".beta"
+            versionNameSuffix = "-beta"
+            resValue("string", "app_name", "Dragon Launcher Beta")
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -94,7 +103,7 @@ extensions.configure<ApplicationExtension> {
 
 
             applicationIdSuffix = ".debug"
-            versionNameSuffix =  " (${property("version.code") as String})-beta"
+            versionNameSuffix =  " (${property("version.code") as String})-debug"
         }
     }
 
@@ -106,6 +115,7 @@ extensions.configure<ApplicationExtension> {
     buildFeatures {
         compose = true
         buildConfig = true
+        resValues = true
     }
 
     packaging {
@@ -121,7 +131,7 @@ extensions.configure<ApplicationExtension> {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
@@ -131,7 +141,6 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.compose.animation)
-    implementation(libs.androidx.core)
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.lifecycle.common)
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -142,11 +151,11 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
     implementation(libs.dagger)
     implementation(libs.hilt.core)
-    implementation(libs.timber)
+    implementation(libs.dragon.logging)
+    implementation(libs.settings.core)
+    implementation(libs.settings.runtime)
 
     ksp(libs.hilt.compiler)
-
-    runtimeOnly(libs.android.image.cropper)
 
     implementation(project(":core:ui:base"))
     implementation(project(":core:ui:main"))
@@ -155,8 +164,9 @@ dependencies {
 
     implementation(project(":core:common"))
     implementation(project(":core:models"))
-    implementation(project(":core:logging"))
     implementation(project(":core:settings"))
+
+    implementation(project(":core:permissions"))
 }
 
 

@@ -14,13 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.common.messyfolder.Update
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import java.text.SimpleDateFormat
 import androidx.compose.ui.platform.LocalLocale
+import org.elnix.dragonlauncher.base.model.serializables.Update
 
 @Composable
-fun UpdateCard(
+public fun UpdateCard(
     update: Update,
     onLongCLick: (() -> Unit)? = null,
     onCLick: () -> Unit
@@ -35,7 +34,7 @@ fun UpdateCard(
                 onClick = onCLick,
                 onLongClick = onLongCLick
             ),
-        shape = DragonShape,
+        shape = MaterialTheme.shapes.large,
         elevation = CardDefaults.cardElevation(3.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primary

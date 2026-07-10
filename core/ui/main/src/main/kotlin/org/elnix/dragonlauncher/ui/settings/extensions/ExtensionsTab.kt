@@ -24,9 +24,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import org.elnix.dragonlauncher.common.R
-import org.elnix.dragonlauncher.common.messyfolder.loadExtensionRegistry
-import org.elnix.dragonlauncher.common.serializables.ExtensionModel
+import org.elnix.dragonlauncher.base.model.serializables.ExtensionModel
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.common.loader.loadExtensionRegistry
 import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.ui.components.BetaVersionType
 import org.elnix.dragonlauncher.ui.components.BetaVersionWarning
@@ -37,7 +37,7 @@ import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
-fun ExtensionsTab(
+public fun ExtensionsTab(
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current

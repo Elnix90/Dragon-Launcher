@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
  * In the example above, the background and padding are only applied
  * when `isSelected` is true.
  */
-inline fun Modifier.conditional(
+public inline fun Modifier.conditional(
     condition: Boolean,
     block: Modifier.() -> Modifier
 ): Modifier =
@@ -38,7 +38,7 @@ inline fun Modifier.conditional(
  * Order is preserved:
  * `this then selectedModifier`
  */
-inline fun Modifier.conditional(
+public inline fun Modifier.conditional(
     condition: Boolean,
     fallback: Modifier.() -> Modifier,
     block: Modifier.() -> Modifier
@@ -61,7 +61,7 @@ inline fun Modifier.conditional(
  *     }
  * ```
  */
-inline fun <T> Modifier.conditional(
+public inline fun <T> Modifier.conditional(
     value: T?,
     block: Modifier.(T) -> Modifier
 ): Modifier =

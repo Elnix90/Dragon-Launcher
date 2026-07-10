@@ -31,7 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants.DragonShape
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
@@ -40,7 +39,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 
 @Composable
-fun <T> ActionSelectorRow(
+public fun <T> ActionSelectorRow(
     options: List<T>,
     selected: T,
     enabled: Boolean = true,
@@ -119,7 +118,7 @@ fun <T> ActionSelectorRow(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun <T> ActionSelector(
+public fun <T> ActionSelector(
     label: String?,
     options: List<T>,
     optionLabel: @Composable (T) -> String = { it.toString() },
@@ -148,7 +147,7 @@ fun <T> ActionSelector(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(DragonShape)
+                    .clip(MaterialTheme.shapes.large)
                     .shapedClickable {
                         onSelected(option)
                         onDismiss()
