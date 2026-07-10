@@ -3,7 +3,7 @@ name: Beta Release
 on:
   push:
     branches:
-      - app-refactor
+      - main
     paths:
       - '**.yml'
       - '**.kt'

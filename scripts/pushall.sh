@@ -1,1 +1,1 @@
-git push origin app-refactor && git push gitlab app-refactor && git push codeberg app-refactor
+git push origin main && git push gitlab main && git push codeberg main
