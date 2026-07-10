@@ -27,9 +27,11 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
+import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
 import org.elnix.dragonlauncher.ui.helpers.customobjects.mirrorVertically
 import org.elnix.dragonlauncher.ui.helpers.customobjects.shapeToPath
@@ -51,14 +53,17 @@ private fun DrawScope.holdTolerance(
 public fun HoldToActivateArc(
     center: Offset?,
     progress: Float,
-    rgbLoading: Boolean,
-    rotationsPerSecond: Float,
     customObject: CustomObject,
     erase: Boolean = false,
     playAnimation: Boolean = true,
-    showHoldTolerance: (() -> Float)? = null
 ) {
     if (center == null || progress <= 0f) return
+
+    val rotationsPerSecond by HoldToActivateArcSettingsStore.rotationsPerSecond.asState()
+    val rgbLoading by HoldToActivateArcSettingsStore.rgbLoading.asState()
+    val holdToActivateSettingsTolerance by HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance.asState()
+    val showToleranceOnMainScreen by HoldToActivateArcSettingsStore.showToleranceOnMainScreen.asState()
+
 
     val ctx = LocalContext.current
     val extraColors = LocalExtraColors.current
@@ -144,8 +149,8 @@ public fun HoldToActivateArc(
                         )
                     }
 
-                    showHoldTolerance?.let {
-                        holdTolerance(center, it())
+                    if (showToleranceOnMainScreen) {
+                        holdTolerance(center, holdToActivateSettingsTolerance)
                     }
                 }
             }

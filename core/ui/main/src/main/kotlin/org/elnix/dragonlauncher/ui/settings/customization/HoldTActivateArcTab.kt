@@ -5,9 +5,6 @@ package org.elnix.dragonlauncher.ui.settings.customization
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.graphics.res.animatedVectorResource
-import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
-import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,9 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,34 +21,35 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
+import org.elnix.dragonlauncher.enumsui.toggle.HoldActions
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
-import org.elnix.dragonlauncher.ui.base.withHaptic
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.dialogs.HoldSettingsOrderSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
+import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
 import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson
+import org.elnix.dragonlauncher.ui.remembers.rememberHoldToOpenSettings
 import kotlin.time.Duration.Companion.milliseconds
 
 
@@ -62,22 +57,16 @@ import kotlin.time.Duration.Companion.milliseconds
 public fun HoldToActivateArcTab(onBack: () -> Unit) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
-
+    val holdCustomObject = LocalHoldCustomObject.current
 
     val holdDelayBeforeStartingLongClickSettings by HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings.asState()
     val longCLickSettingsDuration by HoldToActivateArcSettingsStore.longCLickSettingsDuration.asState()
-    val holdToActivateSettingsTolerance by HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance.asState()
-    val showToleranceOnMainScreen by HoldToActivateArcSettingsStore.showToleranceOnMainScreen.asState()
-    val rotationPerSecond by HoldToActivateArcSettingsStore.rotationPerSecond.asState()
-    val rgbLoading by HoldToActivateArcSettingsStore.rgbLoading.asState()
 
-    val holdCustomObject = LocalHoldCustomObject.current
 
     var mutableHoldObject by remember(holdCustomObject) { mutableStateOf(holdCustomObject) }
     var showHoldSettingsOrderDialog by remember { mutableStateOf(false) }
     var playAnimation by remember { mutableStateOf(true) }
-
-
+    var manualMode by remember { mutableStateOf(false) }
 
     val progress = remember { Animatable(0f) }
 
@@ -87,6 +76,12 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
             HoldToActivateArcSettingsStore.holdToActivateArcCustomObject.set(ctx, newAngleJson)
         }
     }
+
+    val hold = rememberHoldToOpenSettings(
+        onSettings = { },
+        holdDelay = holdDelayBeforeStartingLongClickSettings.toLong(),
+        loadDuration = longCLickSettingsDuration.toLong()
+    )
 
     SettingsScaffold(
         title = stringResource(R.string.hold_settings),
@@ -108,13 +103,25 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
-
-                IconButton(
-                    onClick = withHaptic(HapticFeedbackType.LongPress) { playAnimation = !playAnimation }
+                MultiSelectConnectedButtonRow(
+                    entries = HoldActions.entries,
+                    checked = {
+                        when (it) {
+                            HoldActions.ManualMode -> manualMode
+                            HoldActions.PlayPause -> playAnimation
+                        }
+                    }
                 ) {
-                    AnimatedPlayPauseIcon(playAnimation)
+                    when (it) {
+                        HoldActions.ManualMode -> manualMode = !manualMode
+                        HoldActions.PlayPause -> {
+                            playAnimation = !playAnimation
+                            manualMode = false
+                        }
+                    }
                 }
 
+                Spacer(5.dp)
                 SliderWithLabel(
                     label = stringResource(R.string.animated_progress),
                     showValue = false,
@@ -131,20 +138,22 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
+                    .then(hold.pointerModifier)
                     .onSizeChanged { boxSize = it }
             ) {
-                val center = this.constraints.getCenter()
+                val center = if (!manualMode){
+                    this.constraints.getCenter()
+                } else hold.centerProvider()
+
+                val progress = if(!manualMode) {
+                    progress.value
+                } else hold.progressProvider()
 
                 HoldToActivateArc(
                     center = center,
-                    progress = progress.value,
-                    rgbLoading = rgbLoading,
-                    rotationsPerSecond = rotationPerSecond,
+                    progress = progress,
                     customObject = mutableHoldObject,
-                    playAnimation = playAnimation,
-                    showHoldTolerance = if (showToleranceOnMainScreen) {
-                        { holdToActivateSettingsTolerance }
-                    } else null
+                    playAnimation = playAnimation
                 )
             }
         }
@@ -152,19 +161,22 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
         LaunchedEffect(
             holdDelayBeforeStartingLongClickSettings,
             longCLickSettingsDuration,
-            playAnimation
+            playAnimation,
+            manualMode
         ) {
-            while (playAnimation) {
-                progress.snapTo(0f)
-                delay(holdDelayBeforeStartingLongClickSettings.milliseconds)
+            if (!manualMode) {
+                while (playAnimation) {
+                    progress.snapTo(0f)
+                    delay(holdDelayBeforeStartingLongClickSettings.milliseconds)
 
-                progress.animateTo(
-                    targetValue = 1f,
-                    animationSpec = tween(
-                        durationMillis = longCLickSettingsDuration,
-                        easing = LinearEasing
+                    progress.animateTo(
+                        targetValue = 1f,
+                        animationSpec = tween(
+                            durationMillis = longCLickSettingsDuration,
+                            easing = LinearEasing
+                        )
                     )
-                )
+                }
             }
         }
 
@@ -199,7 +211,7 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
             ) {
                 Setting(
-                    setting = HoldToActivateArcSettingsStore.rotationPerSecond,
+                    setting = HoldToActivateArcSettingsStore.rotationsPerSecond,
                     modifier = Modifier
                         .padding(start = 16.dp)
                         .weight(1f)
@@ -215,7 +227,7 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
                          * The number of rotations to achieve the same speed in both sides of the shape when playing (works best with circle)
                          */
                         val magicNumber = 1000f / duration
-                        HoldToActivateArcSettingsStore.rotationPerSecond.set(ctx, magicNumber)
+                        HoldToActivateArcSettingsStore.rotationsPerSecond.set(ctx, magicNumber)
                     }
                 }
             }
@@ -235,23 +247,4 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
     if (showHoldSettingsOrderDialog) {
         HoldSettingsOrderSheet { showHoldSettingsOrderDialog = false }
     }
-}
-
-
-@Composable
-public fun AnimatedPlayPauseIcon(
-    isPlaying: Boolean,
-    modifier: Modifier = Modifier,
-    size: Dp = 24.dp
-) {
-    val playToPause = rememberAnimatedVectorPainter(
-        animatedImageVector = AnimatedImageVector.animatedVectorResource(R.drawable.pause_to_play),
-        atEnd = !isPlaying
-    )
-
-    Icon(
-        painter = playToPause,
-        contentDescription = null,
-        modifier = modifier.size(size)
-    )
 }

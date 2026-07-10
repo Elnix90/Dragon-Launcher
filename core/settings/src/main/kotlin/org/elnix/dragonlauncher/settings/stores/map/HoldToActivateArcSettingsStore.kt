@@ -53,7 +53,7 @@ public object HoldToActivateArcSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val rotationPerSecond: FloatSettingObject = float(
+    public val rotationsPerSecond: FloatSettingObject = float(
         title = R.string.rotation_per_second,
         description = R.string.rotation_per_second_desc,
         default = 0f,

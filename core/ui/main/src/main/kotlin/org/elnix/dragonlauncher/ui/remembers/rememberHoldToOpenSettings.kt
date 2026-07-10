@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ui.remembers
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -14,37 +15,34 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
 import kotlin.time.Duration.Companion.milliseconds
 
 
 /**
  * Remember hold to open settings
- * Handles the drawing of the [org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc]
  *
  * @param onSettings callback that fires when fully loaded
- * @param holdDelay how long to wait before circle starts showing
- * @param loadDuration how long to hold to fully load
- * @param tolerance how much finger can move awai from the starting point before canceling the loading
- * @receiver
- * @return
+ * @param holdDelay how long to wait before circle starts showing (ms)
+ * @param loadDuration how long to hold to fully load (ms)
+ * @return [HoldGestureState] used in UI to get the pointer pos and the progress
  */
 @Composable
 public fun rememberHoldToOpenSettings(
     onSettings: (Offset) -> Unit,
-    holdDelay: Long,     // ms before arc appears
-    loadDuration: Long, // ms to fill arc
-    tolerance: Float     // max movement allowed
+    holdDelay: Long,
+    loadDuration: Long,
 ): HoldGestureState {
-
     val scope = rememberCoroutineScope()
+    val tolerance by HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance.asState()
 
-    var anchor by remember { mutableStateOf<Offset?>(null) }
-    val progress = remember {
+    var anchor: Offset? by remember { mutableStateOf(null) }
+    val progress: Animatable<Float, AnimationVector1D> = remember {
         Animatable(0f)
     }
-
 
     fun reset() {
         anchor = null
@@ -52,8 +50,6 @@ public fun rememberHoldToOpenSettings(
             progress.snapTo(0f)
         }
     }
-
-
 
     return remember(holdDelay, loadDuration, tolerance, onSettings) {
         HoldGestureState(

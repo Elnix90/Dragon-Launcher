@@ -45,6 +45,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Widget
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeResId
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.isInsideActiveZone
 import org.elnix.dragonlauncher.ktx.toDp
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.models.WidgetsViewModel
@@ -94,11 +95,6 @@ public fun MainScreen(
 
     val holdDelayBeforeStartingLongClickSettings by HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings.asState()
     val longCLickSettingsDuration by HoldToActivateArcSettingsStore.longCLickSettingsDuration.asState()
-    val holdToActivateSettingsTolerance by HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance.asState()
-    val showToleranceOnMainScreen by HoldToActivateArcSettingsStore.showToleranceOnMainScreen.asState()
-    val rotationPerSecond by HoldToActivateArcSettingsStore.rotationPerSecond.asState()
-
-    val rgbLoading by HoldToActivateArcSettingsStore.rgbLoading.asState()
 
 
     var start by remember { mutableStateOf<Offset?>(null) }
@@ -175,8 +171,7 @@ public fun MainScreen(
             current = null
         },
         holdDelay = holdDelayBeforeStartingLongClickSettings.toLong(),
-        loadDuration = longCLickSettingsDuration.toLong(),
-        tolerance = holdToActivateSettingsTolerance
+        loadDuration = longCLickSettingsDuration.toLong()
     )
 
 
@@ -209,8 +204,7 @@ public fun MainScreen(
                         val down = event.changes.firstOrNull { it.changedToDown() } ?: continue
                         val pos = down.position
 
-                        val allowed = isInsideActiveZone(
-                            pos = pos,
+                        val allowed = pos.isInsideActiveZone(
                             size = size,
                             left = leftPadding,
                             right = rightPadding,
@@ -222,8 +216,7 @@ public fun MainScreen(
                             continue
                         }
 
-                        if (isInsideForegroundWidget(
-                                pos = pos,
+                        if (pos.isInsideForegroundWidget(
                                 widgets = filteredWidgetObjects,
                                 dm = dm,
                                 cellSizePx = cellSizePx
@@ -313,12 +306,7 @@ public fun MainScreen(
                         HoldToActivateArc(
                             center = hold.centerProvider(),
                             progress = hold.progressProvider(),
-                            rgbLoading = rgbLoading,
-                            rotationsPerSecond = rotationPerSecond,
                             customObject = holdCustomObject,
-                            showHoldTolerance = if (showToleranceOnMainScreen) {
-                                { holdToActivateSettingsTolerance }
-                            } else null
                         )
 
                         if (holdOffset != null) {
@@ -404,58 +392,24 @@ public fun MainScreen(
 
 
 /**
- * Determines whether a pointer position lies within the allowed interaction zone.
- *
- * The active zone is defined as the rectangular area of the screen obtained by
- * excluding padding margins from each edge. Any position inside this rectangle
- * is considered valid for gesture handling.
- *
- * @param pos Pointer position in screen coordinates.
- * @param size Full size of the available surface.
- * @param left Excluded distance from the left edge.
- * @param right Excluded distance from the right edge.
- * @param top Excluded distance from the top edge.
- * @param bottom Excluded distance from the bottom edge.
- *
- * @return `true` if the position is inside the active zone, `false` otherwise.
- */
-private fun isInsideActiveZone(
-    pos: Offset,
-    size: IntSize,
-    left: Int,
-    right: Int,
-    top: Int,
-    bottom: Int
-): Boolean {
-    return pos.x >= left &&
-            pos.x <= size.width - right &&
-            pos.y >= top &&
-            pos.y <= size.height - bottom
-}
-
-
-/**
  * Checks if pointer position is inside any foreground widget bounds.
  */
-private fun isInsideForegroundWidget(
-    pos: Offset,
+private fun Offset.isInsideForegroundWidget(
     widgets: List<Widget>,
     dm: DisplayMetrics,
     cellSizePx: Float
-): Boolean {
-    return widgets.any { widget ->
-        if (widget.foreground == false) return@any false
+): Boolean = widgets.any { widget ->
+    if (widget.foreground == false) return@any false
 
-        val left = widget.x * dm.widthPixels
-        val top = widget.y * dm.heightPixels
+    val left = widget.x * dm.widthPixels
+    val top = widget.y * dm.heightPixels
 
-        val width = widget.spanX * cellSizePx
-        val height = widget.spanY * cellSizePx
+    val width = widget.spanX * cellSizePx
+    val height = widget.spanY * cellSizePx
 
-        val right = left + width
-        val bottom = top + height
+    val right = left + width
+    val bottom = top + height
 
-        pos.x in left..right &&
-                pos.y in top..bottom
-    }
+    x in left..right &&
+            y in top..bottom
 }

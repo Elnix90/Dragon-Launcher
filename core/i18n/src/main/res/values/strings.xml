@@ -1047,4 +1047,5 @@
     <string name="automatic_magic_number">Automatic magic number</string>
     <string name="hold_to_activate_color">Hold to activate color</string>
     <string name="shapes_color">Shapes color</string>
+    <string name="manual_mode_or_auto">Manual or auto mode</string>
 </resources>
