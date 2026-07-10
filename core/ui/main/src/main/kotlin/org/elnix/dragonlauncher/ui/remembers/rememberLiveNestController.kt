@@ -72,12 +72,9 @@ private data class NestLevelState(
     val sweepAngleState: SweepAngleState,
 
     // Refs
-    val currentRef: MutableReference<Offset?> = MutableReference(null),
-    val releaseHitRef: MutableReference<HitResult?> = MutableReference(null)
+    var currentRef: Offset? = null,
+    var releaseHitRef: HitResult? = null
 )
-
-private class MutableReference<T>(var value: T)
-
 
 @Composable
 public fun rememberLiveNestControllerStack(
@@ -105,7 +102,7 @@ public fun rememberLiveNestControllerStack(
     // SideEffect: keep refs up-to-date
     SideEffect {
         nestStack.forEach { level ->
-            level.currentRef.value = current
+            level.currentRef = current
         }
     }
 
@@ -142,58 +139,44 @@ public fun rememberLiveNestControllerStack(
         val isRoot = idx == 0
 
         // No need to remember since current is changing always
-//        remember(
-//            resetTrigger,
-//            isRoot,
-//            level.liveNestActive,
-//            level.liveNestCenter,
-//            current,
-//            level.nestedNest,
-//            level.liveNestScale,
-//            level.hostPoint,
-//            activeLevelIndex
-//        ) {
-            when {
-                isRoot -> rootHit
+        when {
+            isRoot -> rootHit
 
-                // If a deeper level is active, FREEZE this level's hit
-                activeLevelIndex > idx -> {
-                    // Return the last cached hit (don't update)
-                    level.releaseHitRef.value
-                }
+            // If a deeper level is active, FREEZE this level's hit
+            activeLevelIndex > idx -> {
+                // Return the last cached hit (don't update)
+                level.releaseHitRef
+            }
+            
+            !level.liveNestActive || level.liveNestCenter == null || current == null || level.nestedNestId == null -> null
 
+            else -> {
+                val graceDistancePx =
+                    level.hostPoint
+                        ?.liveNestGraceDistancePx
+                        ?: defaultPoint.liveNestGraceDistancePx
+                        ?: Point.defaultLiveNestGraceDistancePx
 
-                !level.liveNestActive || level.liveNestCenter == null || current == null || level.nestedNestId == null -> null
+                val normalizedPos = current - level.liveNestCenter!!
 
-
-                else -> {
-                    val graceDistancePx =
-                        level.hostPoint
-                            ?.liveNestGraceDistancePx
-                            ?: defaultPoint.liveNestGraceDistancePx
-                            ?: Point.defaultLiveNestGraceDistancePx
-
-                    val normalizedPos = current - level.liveNestCenter!!
-
-                    pointsService.resolveLiveNestHit(
-                        normalizedPos = normalizedPos,
-                        nestId = level.nestedNestId!!,
-                        liveNestScale = level.liveNestScale,
-                        graceDistancePx = graceDistancePx
-                    ).also {
-                        sweepAngleStateStack[idx].onAngleChanged(it.angle360)
-                    }
+                pointsService.resolveLiveNestHit(
+                    normalizedPos = normalizedPos,
+                    nestId = level.nestedNestId!!,
+                    liveNestScale = level.liveNestScale,
+                    graceDistancePx = graceDistancePx
+                ).also {
+                    sweepAngleStateStack[idx].onAngleChanged(it.angle360)
                 }
             }
         }
-//    }
+    }
 
     // Keep releaseHitRef up-to-date BEFORE they freeze
     SideEffect {
         hitTests.forEachIndexed { idx, hit ->
             if (hit != null && activeLevelIndex <= idx) {
                 // Only cache if this level is NOT frozen (not deeper than active)
-                nestStack[idx].releaseHitRef.value = hit
+                nestStack[idx].releaseHitRef = hit
             }
         }
     }
@@ -283,7 +266,7 @@ public fun rememberLiveNestControllerStack(
             val center = if (snapToCenterPos) {
                 currentPointOffset
             } else {
-                level.currentRef.value ?: return@LaunchedEffect
+                level.currentRef ?: return@LaunchedEffect
             }
 
 
@@ -319,11 +302,11 @@ public fun rememberLiveNestControllerStack(
             liveNestScale = level.liveNestScale,
             liveNestCenter = if (isRoot) rootStartPos else level.liveNestCenter,
 //            scaledIntersectionShapes = scaledCircles[idx],
-            nestedHit = level.releaseHitRef.value,
+            nestedHit = level.releaseHitRef,
             suppressMainLaunch = level.suppressMainLaunch,
             sweepAngleState = sweepAngleStateStack[idx],
             resolveOnRelease = {
-                val lastHit = level.releaseHitRef.value
+                val lastHit = level.releaseHitRef
                 logD(SWIPE_TAG) { "Last hit: $lastHit" }
                 when {
                     !level.liveNestActive -> null
@@ -340,7 +323,7 @@ public fun rememberLiveNestControllerStack(
                 level.nestedNestId = null
                 level.liveNestCenter = null
                 level.suppressMainLaunch = false
-                level.releaseHitRef.value = null
+                level.releaseHitRef = null
 
                 resetTrigger++
             }

@@ -1,13 +1,18 @@
 package org.elnix.dragonlauncher.ui.helpers.swipe
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.ui.base.asState
@@ -33,18 +38,24 @@ public fun NestOverlay(
     forceShowAllActionsInCurrentNest: Boolean = false,
     allowShowPointCenter: Boolean = false,
     hideSelectedPoint: Boolean = false,
+    showCancelZone: Boolean = false,
 ) {
     val drawParams = rememberDrawParams(
         preventBgErasing = preventBgErasing,
         showConfiguratorDecorations = showConfiguratorDecorations,
         forceShowAllActionsInCurrentNest = forceShowAllActionsInCurrentNest,
         allowShowPointCenter = allowShowPointCenter,
+        showCancelZone = showCancelZone,
         hideSelectedPoint = hideSelectedPoint
     )
     val iconTrigger by PointStableCache.cacheTrigger.asState()
 
     key(iconTrigger) {
-        Canvas(modifier) {
+        Canvas(
+            modifier = Modifier
+                .fillMaxSize()
+                .then(modifier)
+        ) {
             this.NestOverlay(
                 nest = nest,
                 depth = depth,
@@ -66,6 +77,24 @@ public fun DrawScope.NestOverlay(
 
     selectedAll: Boolean = false,
 ) {
+    if (drawParams.showCancelZone) {
+        drawCircle(
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    Color.Red,
+                    Color.Yellow,
+                    Color.Green,
+                    Color.Cyan,
+                    Color.Blue,
+                    Color.Magenta
+                )
+            ),
+            radius = nest.cancelZone.dp.toPx(),
+            center = center,
+            style = Stroke(Stroke.HairlineWidth)
+        )
+    }
+
     repeat(2) { pass ->
         nest.intersectionShapes.forEach { shape ->
             // This is computed here, because I cannot draw shapes reactively otherwise in the nest edit screen
@@ -93,8 +122,8 @@ public fun DrawScope.NestOverlay(
             val endOffset: Offset = if (drawPoint.collidingShapeId == null) {
                 center
             } else {
-                nest.intersectionShapes.firstOrNull { it.id == drawPoint.collidingShapeId }?.let {
-                    center + it.offset
+                nest.intersectionShapes.firstOrNull { it.id == drawPoint.collidingShapeId }?.let { shape ->
+                    center + shape.offset
                 } ?: center
             }
 

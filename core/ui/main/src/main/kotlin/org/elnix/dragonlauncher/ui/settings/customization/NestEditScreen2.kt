@@ -120,7 +120,6 @@ public fun NestEditScreen2(
     val cellSizePx = cellSizeDp.px // TODO
     var showMoreSheet by remember { mutableStateOf(false) }
 
-
     val nests by pointsService.nests.asState()
     val rowsScrollStates = List(3) { rememberScrollState() }
 
@@ -147,6 +146,8 @@ public fun NestEditScreen2(
         }
     } ?: return
 
+    var tempCancelZone by remember { mutableIntStateOf(currentNest.cancelZone) }
+    var tempCustomName by remember { mutableStateOf(currentNest.name ?: "") }
 
     SelfCheckNestPresent()
 
@@ -208,7 +209,8 @@ public fun NestEditScreen2(
         showConfiguratorDecorations = false,
         forceShowAllActionsInCurrentNest = true,
         allowShowPointCenter = false,
-        hideSelectedPoint = false
+        hideSelectedPoint = false,
+        showCancelZone = true
     )
 
     SettingsScaffold(
@@ -434,7 +436,7 @@ public fun NestEditScreen2(
              * - If the selected point is a live nest, it is drawn in transparency on top of it.
              *   **Only if the nest isn't a OpenCircleNest that points to the same nest action**
              */
-            key(nests.size, currentNest, recomposeTrigger) {
+            key(nests.size, currentNest, recomposeTrigger, tempCancelZone) {
                 Box(
                     Modifier
                         .fillMaxSize()
@@ -450,11 +452,7 @@ public fun NestEditScreen2(
                     val primaryColor = MaterialTheme.colorScheme.primary
 
                     Canvas(Modifier.fillMaxSize()) {
-
                         centerOfNest(center)
-
-//                        backgroundGrid(cellSizePx)
-
                         repeat(2) { pass ->
                             paths.forEach { (shape, path) ->
                                 val selected = shape.id == selectedShapeId
@@ -471,12 +469,16 @@ public fun NestEditScreen2(
 
                     NestOverlay(
                         center = center,
-                        nest = currentNest.copy(intersectionShapes = emptySet()),
+                        nest = currentNest.copy(
+                            intersectionShapes = emptySet(),
+                            cancelZone = tempCancelZone
+                        ),
                         depth = Int.MAX_VALUE,
                         preventBgErasing = true,
                         showConfiguratorDecorations = true,
                         forceShowAllActionsInCurrentNest = true,
-                        hideSelectedPoint = true
+                        hideSelectedPoint = true,
+                        showCancelZone = true
                     )
                 }
             }
@@ -570,10 +572,6 @@ public fun NestEditScreen2(
         }
     }
 
-    var tempCancelZone by remember { mutableIntStateOf(currentNest.cancelZone) }
-    var tempCustomName by remember { mutableStateOf(currentNest.name ?: "") }
-
-
     if (showMoreSheet) {
         DragonModalBottomSheet(
             onDismissRequest = { showMoreSheet = false },
@@ -634,7 +632,7 @@ public fun NestEditScreen2(
                     label = stringResource(R.string.cancel_zone),
                     description = stringResource(R.string.cancel_zone_desc),
                     value = tempCancelZone,
-                    valueRange = 0..1000,
+                    valueRange = 0..300,
                     onReset = { tempCancelZone = Nest.defaultCancelZone },
                     onDragStateChange = { isDragging ->
                         if (!isDragging) {
@@ -753,28 +751,31 @@ public fun NestEditScreen2(
 //}
 
 
+private val lineSize = 30.dp
 public fun DrawScope.centerOfNest(center: Offset) {
-    val horizontalStart = Offset(center.x - 50.dp.toPx(), center.y)
-    val horizontalEnd = Offset(center.x - 50.dp.toPx(), center.y)
+    val linePx = lineSize.toPx()
 
-    val verticalStart = Offset(center.x - 50.dp.toPx(), center.y)
-    val verticalEnd = Offset(center.x - 50.dp.toPx(), center.y)
+    val horizontalStart = Offset(center.x - linePx, center.y)
+    val horizontalEnd = Offset(center.x + linePx, center.y)
+
+    val verticalStart = Offset(center.x, center.y - linePx)
+    val verticalEnd = Offset(center.x, center.y + linePx)
 
     drawNeonGlowLine(
         start = horizontalStart,
         end = horizontalEnd,
         color = Color.Red,
-        lineStrokeWidth = 5.dp.toPx(),
+        lineStrokeWidth = 1f,
         erase = false,
-        glow = CustomGlow(20f)
+        glow = CustomGlow(5f)
     )
 
     drawNeonGlowLine(
         start = verticalStart,
         end = verticalEnd,
         color = Color.Red,
-        lineStrokeWidth = 5.dp.toPx(),
+        lineStrokeWidth = 1f,
         erase = false,
-        glow = CustomGlow(20f)
+        glow = CustomGlow(5f)
     )
 }

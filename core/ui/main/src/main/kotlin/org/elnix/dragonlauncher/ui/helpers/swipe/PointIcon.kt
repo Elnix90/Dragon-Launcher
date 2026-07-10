@@ -33,9 +33,10 @@ public fun PointIcon(
         preventBgErasing = preventBgErasing,
         showConfiguratorDecorations = showConfiguratorDecorations,
         forceShowAllActionsInCurrentNest = forceShowAllActionsInCurrentNest,
+        showCancelZone = false,
         allowShowPointCenter = false,
         hideSelectedPoint = false
-    )
+)
 
     Canvas(modifier = modifier) {
         this.PointIcon(

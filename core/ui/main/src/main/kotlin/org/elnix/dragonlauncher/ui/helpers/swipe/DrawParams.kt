@@ -43,6 +43,7 @@ public data class DrawParams(
     val hideSelectedPoint: Boolean,
 
     val nestDebugOverlay: Boolean,
+    val showCancelZone: Boolean,
     val textMeasurer: TextMeasurer
 )
 
@@ -67,6 +68,7 @@ public fun rememberDrawParams(
     forceShowAllActionsInCurrentNest: Boolean,
     allowShowPointCenter: Boolean,
     hideSelectedPoint: Boolean,
+    showCancelZone: Boolean,
     pointsViewModel: PointsViewModel = activityViewModel()
 ): DrawParams {
     val ctx = LocalContext.current
@@ -92,7 +94,13 @@ public fun rememberDrawParams(
         showPointInCenter,
         showAllActionInCurrentShape,
         showPointPreviewCenterStartPosition,
-        textMeasurer
+        textMeasurer,
+        nestDebugOverlay,
+        showConfiguratorDecorations,
+        forceShowAllActionsInCurrentNest,
+        allowShowPointCenter,
+        hideSelectedPoint,
+        showCancelZone
     ) {
         DrawParams(
             ctx = ctx,
@@ -108,6 +116,7 @@ public fun rememberDrawParams(
             showAllActionsInCurrentNest = forceShowAllActionsInCurrentNest || showPointPreviewCenterStartPosition,
             hideSelectedPoint = hideSelectedPoint,
             nestDebugOverlay = nestDebugOverlay,
+            showCancelZone = showCancelZone,
             textMeasurer = textMeasurer
         )
     }

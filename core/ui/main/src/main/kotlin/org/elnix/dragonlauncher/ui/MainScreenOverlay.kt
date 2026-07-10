@@ -13,7 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
@@ -51,6 +51,7 @@ import org.elnix.dragonlauncher.ui.components.PointPreviewTitle
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalEndLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalLineObject
+import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 import org.elnix.dragonlauncher.ui.composition.LocalStartLineObject
 import org.elnix.dragonlauncher.ui.dialogs.rememberLineObjectsOrder
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
@@ -154,8 +155,11 @@ public fun MainScreenOverlay(
 
                 // TODO the animated thing still moves from the start instead of snapping to current pos and then animating
                 val liveNestCenter =
-                    if (isAnyLiveNestActive) { deepestController.liveNestCenter }
-                    else { start }
+                    if (isAnyLiveNestActive) {
+                        deepestController.liveNestCenter
+                    } else {
+                        start
+                    }
                         ?: return@LaunchedEffect
 
 
@@ -322,16 +326,18 @@ public fun MainScreenOverlay(
         }
     }.reversed()
 
+    val debugInfo by DebugSettingsStore.mainScreenDebugInfos.asState()
+
     val drawParams = rememberDrawParams(
         preventBgErasing = false,
         showConfiguratorDecorations = false,
         forceShowAllActionsInCurrentNest = false,
         allowShowPointCenter = false,
-        hideSelectedPoint = false
+        hideSelectedPoint = false,
+        showCancelZone = LocalNestDebugOverlay.current
     )
 
     Box(Modifier.fillMaxSize()) {
-        val debugInfo by DebugSettingsStore.mainScreenDebugInfos.asState()
 
         DebugZone(debugInfo) {
             Text("start = ${start?.let { "%.1f, %.1f".format(it.x, it.y) } ?: "-"}")
@@ -394,14 +400,16 @@ public fun MainScreenOverlay(
                                 alpha = liveNestOpacity
                                 compositingStrategy = CompositingStrategy.Offscreen
                             }
-                            .drawBehind {
-                                NestOverlay(
-                                    center = liveNestCenterForDraw,
-                                    nest = nestedNestForDraw,
-                                    depth = 1,
-                                    drawParams = drawParams,
-                                    selectedAll = false,
-                                )
+                            .drawWithCache {
+                                onDrawBehind {
+                                    NestOverlay(
+                                        center = liveNestCenterForDraw,
+                                        nest = nestedNestForDraw,
+                                        depth = 1,
+                                        drawParams = drawParams,
+                                        selectedAll = false,
+                                    )
+                                }
                             }
                     ) {
 

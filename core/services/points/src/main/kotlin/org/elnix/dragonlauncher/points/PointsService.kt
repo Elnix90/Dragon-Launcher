@@ -120,7 +120,7 @@ public interface PointsService {
         normalizedPos: Offset,
         nestId: Int,
         liveNestScale: Float,
-        graceDistancePx: Int = 0
+        graceDistancePx: Int
     ): HitResult
 
     /**
@@ -588,7 +588,7 @@ internal class PointsServiceImpl(
         }
 
         val nest = findNestById(nestId)
-        val isInCancelZone = dist <= nest.cancelZone
+        val isInCancelZone = dist <= nest.cancelZone * density
 
         // When inside the cancel zone there is no point to select.
         val selectedPoint = if (isInCancelZone) {

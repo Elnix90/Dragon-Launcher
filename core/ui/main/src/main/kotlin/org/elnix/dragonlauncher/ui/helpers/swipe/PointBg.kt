@@ -35,6 +35,7 @@ public fun DrawScope.PointBg(
     val cached = PointStableCache[point.id] ?: return
 
 
+    // THIS IS EXPENSIVE TO DRAW THAT'S WHY THEY ARE ONLY DRAWN IN DEBUG
     val customTexts = customText ?: cached.customTexts
     val offsetScopeText = customTexts?.first
     if (offsetScopeText != null) {
