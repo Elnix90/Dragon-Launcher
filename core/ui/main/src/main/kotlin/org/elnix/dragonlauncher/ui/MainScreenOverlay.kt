@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
@@ -24,7 +25,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastRoundToInt
 import io.github.elnix90.logging.POINTS_TAG
@@ -60,11 +60,10 @@ import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
 import org.elnix.dragonlauncher.ui.helpers.swipe.rememberDrawParams
 import org.elnix.dragonlauncher.ui.remembers.LiveNestState
-import org.elnix.dragonlauncher.ui.remembers.geTopLeftAndTM
+import org.elnix.dragonlauncher.ui.remembers.rememberCustomText
 import org.elnix.dragonlauncher.ui.remembers.rememberCycleActionsController
 import org.elnix.dragonlauncher.ui.remembers.rememberHoldAndRunController
 import org.elnix.dragonlauncher.ui.remembers.rememberLiveNestControllerStack
-import org.elnix.dragonlauncher.ui.remembers.rememberPointTextStyle
 
 @Composable
 public fun MainScreenOverlay(
@@ -472,26 +471,19 @@ private fun DebugPointer(
     animatedCurrent: Animatable<Offset, AnimationVector2D>,
     start: Offset?
 ) {
-    val textMeasurer = rememberTextMeasurer()
-    val textStyle = rememberPointTextStyle()
-    val text = remember(animatedCurrent.value) {
+    val text = retain(animatedCurrent.value) {
         val textOffset = animatedCurrent.value
         val x = textOffset.x.fastRoundToInt()
         val y = textOffset.y.fastRoundToInt()
-        val offsetText = "$x ; $y"
-
-        geTopLeftAndTM(
-            text = offsetText,
-            textStyle = textStyle,
-            sizePx = 50f,
-            textMeasurer = textMeasurer
-        )
+        "$x ; $y"
     }
+
+    val drawScopeText = rememberCustomText(text)
 
     Canvas(Modifier.fillMaxSize()) {
         PointerLocation(
             offset = animatedCurrent.value + (start ?: Offset.Zero),
-            centerText = text
+            centerText = drawScopeText
         )
     }
 }

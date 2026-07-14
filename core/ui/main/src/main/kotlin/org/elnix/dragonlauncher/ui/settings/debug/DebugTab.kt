@@ -8,7 +8,6 @@ import android.system.Os.kill
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -46,6 +45,7 @@ import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.timer.OverlayReminderService
+import org.elnix.dragonlauncher.ui.base.UiConstants.dragonSettingGroupPaddingValues
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -107,7 +107,7 @@ public fun DebugTab(
 
         DragonSettingsGroup(
             title = R.string.ui_flow_and_debug,
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+            contentPadding = dragonSettingGroupPaddingValues
         ) {
             DragonButton(
                 onClick = { scope.launch { PrivateSettingsStore.lastSeenVersionCodeWhatsNew.reset(ctx) } },
@@ -193,7 +193,7 @@ public fun DebugTab(
 
         DragonSettingsGroup(
             title = R.string.accessibility_and_system,
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+            contentPadding = dragonSettingGroupPaddingValues
         ) {
             Setting(DebugSettingsStore.useAccessibilityInsteadOfContextToExpandActionPanel)
             Setting(DebugSettingsStore.autoRaiseDragonOnSystemLauncher)
@@ -260,7 +260,7 @@ public fun DebugTab(
 
         DragonSettingsGroup(
             title = R.string.test_overlays,
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+            contentPadding = dragonSettingGroupPaddingValues
         ) {
             DragonButton(
                 onClick = {

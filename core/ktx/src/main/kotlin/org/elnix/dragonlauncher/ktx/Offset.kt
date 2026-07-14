@@ -4,6 +4,7 @@ package org.elnix.dragonlauncher.ktx
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.util.fastRoundToInt
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -134,3 +135,7 @@ public fun Offset.isInsideActiveZone(
         y >= top &&
         y <= size.height - bottom
 
+
+
+public fun Offset.cleanString(): String =
+    "${x.fastRoundToInt()} ; ${y.fastRoundToInt()}"

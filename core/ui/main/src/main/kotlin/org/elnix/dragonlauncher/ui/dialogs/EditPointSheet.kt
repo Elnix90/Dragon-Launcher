@@ -54,6 +54,7 @@ import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.actionLabel
+import org.elnix.dragonlauncher.ui.base.UiConstants.dragonSettingGroupPaddingValues
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -65,6 +66,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
@@ -227,7 +229,8 @@ public fun EditPointSheet(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(40.dp),
+                    .height(40.dp)
+                    .padding(12.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -938,7 +941,10 @@ public fun EditPointSheet(
             }
 
             // Can not edit the haptic feedback in default mode, has to go to nest settings to edit it circle by circle
-            DragonColumnGroup {
+            DragonSettingsGroup(
+                title = R.string.haptic_feedback,
+                contentPadding = dragonSettingGroupPaddingValues
+            ) {
                 if (!isDefaultEditing) {
                     HapticFeedBackEditorButtonWithPlayTest(
                         customHapticFeedback = editPoint.haptic ?: defaultHapticFeedback(),
@@ -955,7 +961,6 @@ public fun EditPointSheet(
         ) {
             onConfirm(editPoint)
         }
-
     }
 
     if (showEditIconDialog) {

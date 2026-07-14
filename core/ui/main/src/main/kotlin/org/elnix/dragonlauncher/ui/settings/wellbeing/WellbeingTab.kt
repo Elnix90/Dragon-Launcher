@@ -8,7 +8,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -45,6 +44,7 @@ import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.AppIcon
+import org.elnix.dragonlauncher.ui.base.UiConstants.dragonSettingGroupPaddingValues
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
@@ -173,7 +173,7 @@ public fun WellbeingTab(
 
         DragonSettingsGroup(
             title = R.string.paused_apps,
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+            contentPadding = dragonSettingGroupPaddingValues
         ) {
 
             MultiSelectConnectedButtonRow(

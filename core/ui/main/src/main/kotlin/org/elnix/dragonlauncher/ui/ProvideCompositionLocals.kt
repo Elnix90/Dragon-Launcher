@@ -6,6 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.text.rememberTextMeasurer
 import io.github.elnix90.logging.ICONS_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
@@ -27,12 +28,15 @@ import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.composition.LocalLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
+import org.elnix.dragonlauncher.ui.composition.LocalPointTextStyle
 import org.elnix.dragonlauncher.ui.composition.LocalShowLabelsInAddPointDialog
 import org.elnix.dragonlauncher.ui.composition.LocalStartLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalStatusBarElements
+import org.elnix.dragonlauncher.ui.composition.LocalTextMeasurer
 import org.elnix.dragonlauncher.ui.dialogs.rememberMainScreenLayerOrder
 import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberAngleLineObjects
 import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberHoldCustomObject
+import org.elnix.dragonlauncher.ui.remembers.rememberPointTextStyle
 
 @Composable
 public fun ProvideGlobalCompositionLocals(
@@ -73,6 +77,8 @@ public fun ProvideGlobalCompositionLocals(
      * I know that I should carefully review what global locals I add, but until now it worked to I'll keep it that way until I notice lag
      */
     CompositionLocalProvider(
+        LocalTextMeasurer provides rememberTextMeasurer(),
+        LocalPointTextStyle provides rememberPointTextStyle(),
 
         LocalStatusBarElements provides elements,
 

@@ -244,8 +244,8 @@ public object AppObjectsColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 CardDefaults.cardColors(
-                    containerColor = surface,
-                    contentColor = onSurface,
+                    containerColor = surfaceContainerHigh,
+                    contentColor = onSecondaryContainer,
                     disabledContainerColor = surfaceVariant,
                     disabledContentColor = onSurfaceVariant,
                 )

@@ -14,6 +14,7 @@ import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
+import org.elnix.dragonlauncher.ui.remembers.rememberPointTextStyle
 
 @Composable
 public fun PointPreviewCanvas(
@@ -42,6 +43,8 @@ public fun PointPreviewCanvas(
         val centerY = (height / 2f).px
         val leftX = (width * 0.25f).px
         val rightX = (width * 0.75f).px
+
+        val customTexts = rememberPointTextStyle()
 
         // Left action
         PointIcon(

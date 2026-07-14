@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -72,6 +71,7 @@ import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.base.UiConstants.dragonSettingGroupPaddingValues
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
@@ -578,7 +578,7 @@ public fun NestEditScreen2(
         ) {
             DragonSettingsGroup(
                 title = R.string.nest_info,
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+                contentPadding = dragonSettingGroupPaddingValues
 
             ) {
                 Text(
@@ -595,7 +595,7 @@ public fun NestEditScreen2(
 
             DragonSettingsGroup(
                 title = R.string.nest_edition,
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+                contentPadding = dragonSettingGroupPaddingValues
             ) {
                 TextField(
                     value = tempCustomName,

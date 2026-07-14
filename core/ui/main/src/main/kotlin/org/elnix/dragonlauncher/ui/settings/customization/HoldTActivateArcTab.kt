@@ -35,6 +35,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
+import org.elnix.dragonlauncher.ui.base.UiConstants.dragonSettingGroupPaddingValues
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
@@ -182,7 +183,7 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
 
         DragonSettingsGroup(
             title = R.string.object_properties,
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+            contentPadding = dragonSettingGroupPaddingValues
         ) {
             EditCustomObjectBlock(
                 editObject = mutableHoldObject,

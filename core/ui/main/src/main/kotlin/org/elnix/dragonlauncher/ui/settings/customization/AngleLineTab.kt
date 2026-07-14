@@ -6,7 +6,6 @@ import androidx.compose.animation.core.VectorConverter
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,7 +27,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
@@ -43,6 +41,7 @@ import org.elnix.dragonlauncher.ktx.angle360FromOffset
 import org.elnix.dragonlauncher.ktx.distanceSquaredTo
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
+import org.elnix.dragonlauncher.ui.base.UiConstants.dragonSettingGroupPaddingValues
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dialogs.AngleLineObjectsOrderDialog
@@ -310,7 +309,7 @@ public fun AngleLineTab(onBack: () -> Unit) {
 
         DragonSettingsGroup(
             title = R.string.other,
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+            contentPadding = dragonSettingGroupPaddingValues
         ) {
             Setting(AngleLineSettingsStore.rgbLine)
             Setting(ColorSettingsStore.angleLineColor)
