@@ -19,6 +19,9 @@ public object UiConstants {
 
     public val dragonSettingGroupPaddingValues: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
 
+    /**
+     * A selection of shapes for the pin that makes them pretty. not all of the [MaterialShapes] fit
+     */
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     public val pinMaterialShapes: Set<RoundedPolygon> = setOf(
         MaterialShapes.Circle,
@@ -38,6 +41,11 @@ public object UiConstants {
     )
 
 
+    /**
+     * The shapes that are allowed to be picked into the nest shape picker.
+     * This limitation is due to the heavy math required to compute the shape boundary.
+     * The Ideal shape is the circle as we can very easily compute the intersection using simple math, but as soon as this becomes a more complicated shape, the result starts to be approximated.
+     */
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     public val allowedNestShapes: Set<RoundedPolygon> = setOf(
         MaterialShapes.Circle,
