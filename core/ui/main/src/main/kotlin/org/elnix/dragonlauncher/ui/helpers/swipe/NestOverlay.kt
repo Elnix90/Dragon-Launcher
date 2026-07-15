@@ -39,6 +39,7 @@ public fun NestOverlay(
     allowShowPointCenter: Boolean = false,
     hideSelectedPoint: Boolean = false,
     showCancelZone: Boolean = false,
+    hideShapes: Boolean = false
 ) {
     val drawParams = rememberDrawParams(
         preventBgErasing = preventBgErasing,
@@ -46,7 +47,8 @@ public fun NestOverlay(
         forceShowAllActionsInCurrentNest = forceShowAllActionsInCurrentNest,
         allowShowPointCenter = allowShowPointCenter,
         showCancelZone = showCancelZone,
-        hideSelectedPoint = hideSelectedPoint
+        hideSelectedPoint = hideSelectedPoint,
+        hideShapes = hideShapes
     )
     val iconTrigger by PointStableCache.cacheTrigger.asState()
 

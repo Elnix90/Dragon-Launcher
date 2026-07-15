@@ -125,6 +125,10 @@ public fun AppDisplayTab(
             Setting(UiSettingsStore.showPointPreviewCenterStartPosition)
             Setting(UiSettingsStore.linePreviewSnapToAction)
 
+            val showAllShapes by UiSettingsStore.showAllShapesInNest.asState()
+            Setting(UiSettingsStore.showShape, enabled = showAllShapes)
+            Setting(UiSettingsStore.showAllShapesInNest)
+
             val snap by UiSettingsStore.linePreviewSnapToAction.asState()
             Setting(UiSettingsStore.animationWhenSnapping, enabled = snap)
 

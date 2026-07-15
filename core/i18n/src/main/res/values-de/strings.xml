@@ -237,7 +237,6 @@
     <string name="rgb_loading_settings">RGB-Ladeeinstellungen</string>
     <string name="rgb_line_selector">RGB-Zeilenwähler</string>
     <string name="show_app_launch_preview">Startvorschau der Show App</string>
-    <string name="show_app_circle_preview">Show App Circle Vorschau</string>
     <string name="show_app_line_preview">Show App Line Vorschau</string>
     <string name="do_you_hate_it">„Hasst du es\?“</string>
     <string name="line_preview_snap_to_action">Die Linienvorschau lässt sich an die Aktion anpassen</string>
@@ -273,8 +272,6 @@
     <string name="move_selected_widget_up">Ausgewähltes Widget nach oben verschieben</string>
     <string name="move_selected_widget_down">Ausgewähltes Widget nach unten verschieben</string>
     <string name="enable_scale_snap">Skalenfang aktivieren</string>
-    <string name="add_circle">Kreis hinzufügen</string>
-    <string name="remove_circle">Kreis entfernen</string>
     <string name="home_action">Home-Aktion</string>
     <string name="drawer_home_action">Schubladen-Home-Aktion</string>
     <string name="wallpaper_dim_amount">Tapetendimmmenge</string>
@@ -284,7 +281,6 @@
     <string name="show_launching_app_label_description">Ob die App-/Aktionsbezeichnung sichtbar ist, wenn oben auf dem Bildschirm eine Aktion ausgewählt wird</string>
     <string name="show_launching_app_icon_description">Ob das App-/Aktionssymbol angezeigt werden soll, wenn eine Aktion oben auf dem Bildschirm ausgewählt wird</string>
     <string name="show_app_launch_preview_description">Zeigen Sie die ausgewählte App im Kreis an, wenn Sie sie freigeben und starten (eine Vorschau).</string>
-    <string name="show_app_circle_preview_description">Zeigt den aktuellen Vorschau-Zielkreis an, zu dem die aktuell ausgewählte App gehört</string>
     <string name="show_app_line_preview_description">Ob die Spur angezeigt werden soll, die von der Startposition des Ziehens bis zum Finger führt (bezogen auf die RGB-Linie)</string>
     <string name="show_app_angle_preview_description">Zeigen Sie den Winkelindikator auf der Linie an</string>
     <string name="show_app_icon_start_drag_position_description">Zeigen Sie die aktuell ausgewählte App in der Mitte der Stelle an, an der Sie sie mit der Maus gezogen haben</string>

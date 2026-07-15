@@ -261,7 +261,6 @@
     <string name="rgb_loading_settings">RGB loading settings</string>
     <string name="rgb_line_selector">RGB line selector</string>
     <string name="show_app_launch_preview">Show App launch preview</string>
-    <string name="show_app_circle_preview">Show App circle preview</string>
     <string name="show_app_line_preview">Show App line preview</string>
     <string name="line_preview_snap_to_action">Line Preview snap to action</string>
     <string name="icon_packs_found">%1$d icon packs found</string>
@@ -296,8 +295,6 @@
     <string name="move_selected_widget_up">Move selected widget up</string>
     <string name="move_selected_widget_down">Move selected widget down</string>
     <string name="enable_scale_snap">Enable scale snap</string>
-    <string name="add_circle">Add circle</string>
-    <string name="remove_circle">Remove Circle</string>
     <string name="home_action">Home Action</string>
     <string name="drawer_home_action">Drawer Home action</string>
     <string name="wallpaper_dim_amount">Wallpaper dim amount</string>
@@ -307,7 +304,6 @@
     <string name="show_launching_app_label_description">Whether the app / action label is visible when an action is selected in the top of the screen</string>
     <string name="show_launching_app_icon_description">Whether to display the app / action icon when an action is selected on top of the screen</string>
     <string name="show_app_launch_preview_description">Show the selected app in the circle when releasing launch it (a preview)</string>
-    <string name="show_app_circle_preview_description">Display the current preview target circle, the one the current selected app belongs to</string>
     <string name="show_app_line_preview_description">Whether to display the trail that goes from the start dragging position to the finger(related to rgb line)</string>
     <string name="show_app_angle_preview_description">Display the angle indicator on the line</string>
     <string name="show_app_icon_start_drag_position_description">Display the current selected app in the center of where you starred to drag</string>
@@ -745,7 +741,6 @@
     <string name="android_permissions">Android Permissions</string>
     <string name="manage_in_system_settings">Manage in system settings.</string>
     <string name="snap_points">Snap Points</string>
-    <string name="show_circle">Show Circle</string>
     <string name="undo">Undo</string>
     <string name="undo_all">Undo All</string>
     <string name="redo">Redo</string>
@@ -1048,4 +1043,8 @@
     <string name="hold_to_activate_color">Hold to activate color</string>
     <string name="shapes_color">Shapes color</string>
     <string name="manual_mode_or_auto">Manual or auto mode</string>
+    <string name="show_shape">Show Shape</string>
+    <string name="show_all_shapes">Show all Shapes</string>
+    <string name="show_shape_desc">Show the current selected shape</string>
+    <string name="show_all_shapes_desc">Show all the shapes in the current nest</string>
 </resources>

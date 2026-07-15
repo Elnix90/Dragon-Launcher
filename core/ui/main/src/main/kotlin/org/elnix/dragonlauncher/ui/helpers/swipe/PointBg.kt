@@ -18,8 +18,8 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
 import org.elnix.dragonlauncher.ui.helpers.customobjects.shapeToPath
+import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.DrawScopeText
 import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.PointStableCache
-import org.elnix.dragonlauncher.ui.remembers.CustomTexts
 
 
 @Suppress("FunctionName")
@@ -28,7 +28,7 @@ public fun DrawScope.PointBg(
     selected: Boolean,
     center: Offset,
     drawParams: DrawParams,
-    customText: CustomTexts
+    customText: Pair<DrawScopeText?, DrawScopeText?>?
 ) {
     val extraColors = drawParams.extraColors
     val defaultPoint = drawParams.pointsService.defaultPoint.value
@@ -41,6 +41,7 @@ public fun DrawScope.PointBg(
     if (offsetScopeText != null) {
         drawText(
             textLayoutResult = offsetScopeText.offsetTextLayoutResult,
+            color = extraColors.shapes,
             topLeft = center - offsetScopeText.topLeft
         )
     }
@@ -49,6 +50,7 @@ public fun DrawScope.PointBg(
     if (idScopeText != null) {
         drawText(
             textLayoutResult = idScopeText.offsetTextLayoutResult,
+            color = extraColors.shapes,
             topLeft = center - idScopeText.topLeft
         )
     }
@@ -89,9 +91,9 @@ public fun DrawScope.PointBg(
 
 
     val glowRadius: Float = if (selected) {
-        point.glow?.radius ?: defaultPoint.glow?.radius ?: Point.defaultGlow.radius!!
+        point.glow?.radius ?: defaultPoint.glow?.radius ?: Point.defaultGlow.radius
     } else {
-        point.glowSelected?.radius ?: defaultPoint.glowSelected?.radius ?: Point.defaultGlowSelected.radius!!
+        point.glowSelected?.radius ?: defaultPoint.glowSelected?.radius ?: Point.defaultGlowSelected.radius
     }
 
     val glowColor: Color = if (selected) {

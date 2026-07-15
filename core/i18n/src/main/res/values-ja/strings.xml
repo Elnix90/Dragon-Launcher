@@ -236,7 +236,6 @@
     <string name="rgb_loading_settings">RGB読み込み設定</string>
     <string name="rgb_line_selector">RGBラインセレクター</string>
     <string name="show_app_launch_preview">アプリ起動プレビューを表示</string>
-    <string name="show_app_circle_preview">アプリサークルのプレビューを表示</string>
     <string name="show_app_line_preview">アプリラインのプレビューを表示</string>
     <string name="do_you_hate_it">「嫌いですか？」</string>
     <string name="line_preview_snap_to_action">ラインプレビューのアクションへのスナップ</string>

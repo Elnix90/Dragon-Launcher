@@ -162,6 +162,7 @@ public fun NestEditScreen2(
 
     val density = LocalDensity.current
     val paths: SnapshotStateMap<IntersectionShape, Path> = remember { mutableStateMapOf() }
+    val shapes: Set<IntersectionShape> = paths.keys
 
     fun addPath(shape: IntersectionShape) {
         paths[shape] = shapeToPath(shape.shape.resolveShape(), shape.getSize(density.density), density)
@@ -185,7 +186,7 @@ public fun NestEditScreen2(
     fun saveCurrentNest() {
         pointsService.editNest(nestId) { old ->
             old.copy(
-                intersectionShapes = paths.keys.mapTo(mutableSetOf()) { shape -> shape.snap() }
+                intersectionShapes = shapes.mapTo(mutableSetOf()) { shape -> shape.snap() }
             )
         }
     }
@@ -203,14 +204,15 @@ public fun NestEditScreen2(
 //    TODO("Make snapping tools global (not only with the center of the nest")
 //    TODO("Mark center of the nest with some graphical stuff for users")
 
-    val recomposeTrigger by pointsService.recomposeTRigger.asState()
+    val recomposeTrigger by pointsService.recomposeTrigger.asState()
     val drawParams = rememberDrawParams(
         preventBgErasing = true,
         showConfiguratorDecorations = false,
         forceShowAllActionsInCurrentNest = true,
         allowShowPointCenter = false,
         hideSelectedPoint = false,
-        showCancelZone = true
+        showCancelZone = true,
+        hideShapes = false
     )
 
     SettingsScaffold(
@@ -323,7 +325,7 @@ public fun NestEditScreen2(
                     AnimatedContent(isInDragAroundMode) {
                         val selectedShape = if (it) null else {
                             selectedShapeId?.let { shapeId ->
-                                paths.keys.firstOrNull { shape -> shape.id == shapeId }
+                                shapes.firstOrNull { shape -> shape.id == shapeId }
                             }
                         }
 
@@ -360,7 +362,7 @@ public fun NestEditScreen2(
                         DropdownMenuGroup(
                             shapes = MenuDefaults.groupShapes()
                         ) {
-                            val filteredShapes = paths.keys.filter { it.id != selectedShapeId }
+                            val filteredShapes = shapes.filter { it.id != selectedShapeId }
                             filteredShapes.forEachIndexed { idx, shape ->
                                 DropdownMenuItem(
                                     text = {
@@ -470,7 +472,7 @@ public fun NestEditScreen2(
                     NestOverlay(
                         center = center,
                         nest = currentNest.copy(
-                            intersectionShapes = emptySet(),
+                            intersectionShapes = shapes,
                             cancelZone = tempCancelZone
                         ),
                         depth = Int.MAX_VALUE,
@@ -478,7 +480,8 @@ public fun NestEditScreen2(
                         showConfiguratorDecorations = true,
                         forceShowAllActionsInCurrentNest = true,
                         hideSelectedPoint = true,
-                        showCancelZone = true
+                        showCancelZone = true,
+                        hideShapes = true
                     )
                 }
             }
@@ -517,25 +520,17 @@ public fun NestEditScreen2(
                                 }
                             } else {
                                 val shapeId = selectedShapeId ?: return@detectTransformGestures
-                                val shape = paths.keys.firstOrNull { it.id == shapeId } ?: return@detectTransformGestures
+                                val shape = shapes.firstOrNull { it.id == shapeId } ?: return@detectTransformGestures
 
                                 val oldScale = shape.scale
                                 val newScale = oldScale * gestureZoom
                                 val newAngle = shape.angle + gestureRotate
 
-                                // Convert centroid and pan from screen space to canvas space
-                                // by undoing the graphicsLayer transform (ManipulationSystem).
-                                // The graphicsLayer applies: scale(zoom) then rotate(angle)
-                                // then translate(-offset*zoom). Its inverse converts screen
-                                // coordinates back to canvas space.
-                                val canvasCentroid =
-                                    (centroid / zoom.value + offset.value).rotateBy(-angle.value)
-                                val canvasPan =
-                                    (pan / zoom.value).rotateBy(-angle.value)
+                                val canvasCentroid = manipulationSystem.normalize(manipulationSystem.transform(centroid))
 
-                                // Relative position of the gesture centroid from the screen
-                                // center, expressed in canvas (un-transformed) coordinates.
-                                val r = canvasCentroid - center
+                                // Same thing as above but there's no need to apply the offset (and in fact it'll break the whole thing)
+                                // because the pan if the amount of drag
+                                val canvasPan = (pan / zoom.value).rotateBy(-angle.value)
 
                                 // Compute the new offset that keeps the gesture centroid
                                 // visually fixed during rotation and scaling.
@@ -552,11 +547,10 @@ public fun NestEditScreen2(
                                 // Solving for N with C' = C + pan:
                                 //   N = (C - center) + pan
                                 //       - R(Δθ) * (C - center - O) * (newScale / oldScale)
-                                val safeOldScale = maxOf(oldScale, 0.01f)
                                 val newOffset =
-                                    canvasPan + r -
-                                            (r - shape.offset).rotateBy(gestureRotate) *
-                                            (newScale / safeOldScale)
+                                    canvasPan + canvasCentroid -
+                                            (canvasCentroid - shape.offset).rotateBy(gestureRotate) *
+                                            (newScale / oldScale)
 
                                 val newShape = shape.copy(
                                     offset = newOffset,
@@ -660,7 +654,7 @@ public fun NestEditScreen2(
 
     if (showShapesManagementDialog) {
         IntersectionShapeManagementDialog(
-            shapes = paths.keys,
+            shapes = shapes,
             onSelectShape = { newShape ->
                 selectedShapeId = newShape
                 showShapesManagementDialog = false

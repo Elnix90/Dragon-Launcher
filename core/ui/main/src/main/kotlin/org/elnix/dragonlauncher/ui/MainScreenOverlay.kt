@@ -333,7 +333,8 @@ public fun MainScreenOverlay(
         forceShowAllActionsInCurrentNest = false,
         allowShowPointCenter = false,
         hideSelectedPoint = false,
-        showCancelZone = LocalNestDebugOverlay.current
+        showCancelZone = LocalNestDebugOverlay.current,
+        hideShapes = false
     )
 
     Box(Modifier.fillMaxSize()) {

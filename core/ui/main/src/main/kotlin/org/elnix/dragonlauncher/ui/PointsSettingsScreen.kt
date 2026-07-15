@@ -326,7 +326,7 @@ public fun PointsSettingsScreen(
         }
     }
 
-    val recomposeTrigger by pointsService.recomposeTRigger.asState()
+    val recomposeTrigger by pointsService.recomposeTrigger.asState()
     LaunchedEffect(recomposeTrigger) {
         selectedPointsIds.forEach { id ->
             val point = pointsService.findPointById(id) ?: return@forEach

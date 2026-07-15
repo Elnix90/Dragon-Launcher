@@ -19,12 +19,13 @@ public class ManipulationSystem(
     /**
      * Normalize a [org.elnix.dragonlauncher.base.model.serializables.Point.offset]
      *
-     * It should take a **non-transformed** offset in entry and returns its offset normalized around [Offset.Zero], effectively subtracting the center from it
+     * It should take a **non-transformed** offset in entry and returns its offset normalized around [Offset.Zero], effectively subtracting [center] from it
      */
     public fun normalize(offset: Offset): Offset = offset - center
 
     /**
      * Undo normalization of a [org.elnix.dragonlauncher.base.model.serializables.Point.offset]
+     * Basically adds [center]
      * @returns the `transformed` [Offset] corresponding to the offset in local coordinates space, when transformations are applied
      */
     public fun undoNormalization(offset: Offset): Offset = offset + center
@@ -54,6 +55,6 @@ public class ManipulationSystem(
     )
 
 
+    /** [undoNormalization] then [undoTransformation] */
     public fun undoBoth(offset: Offset): Offset = undoTransformation(undoNormalization(offset))
-//        pointsService.computePointOffset(this).undoNormalization().undoTransformation()
 }

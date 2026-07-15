@@ -144,6 +144,20 @@ public object UiSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
+    public val showShape: BooleanSettingObject = boolean(
+        title = R.string.show_shape,
+        description = R.string.show_shape_desc,
+        default = true
+    )
+
+    @SettingKey
+    public val showAllShapesInNest: BooleanSettingObject = boolean(
+        title = R.string.show_all_shapes,
+        description = R.string.show_all_shapes_desc,
+        default = true
+    )
+
+    @SettingKey
     public val wallpaperDimMainScreen: FloatSettingObject = float(
         title = R.string.wallpaper_dim_amount,
         default = 0f,

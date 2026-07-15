@@ -1,6 +1,6 @@
 package org.elnix.dragonlauncher.ui.remembers
 
-import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.geometry.Offset
@@ -17,7 +17,7 @@ public fun rememberCustomText(
     sizePx: Float = 50f
 ): DrawScopeText {
     val textMeasurer: TextMeasurer = LocalTextMeasurer.current
-    val textStyle = LocalTextStyle.current
+    val textStyle = MaterialTheme.typography.labelSmall
 
     return retain(text, sizePx) {
         getTopLeftAndTextMeasure(

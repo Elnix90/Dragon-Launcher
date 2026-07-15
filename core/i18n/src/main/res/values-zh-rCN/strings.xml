@@ -258,7 +258,6 @@
     <string name="rgb_loading_settings">RGB 加载设置</string>
     <string name="rgb_line_selector">RGB 动作选择线</string>
     <string name="show_app_launch_preview">显示应用启动预览</string>
-    <string name="show_app_circle_preview">显示应用圆圈预览</string>
     <string name="show_app_line_preview">显示应用轨迹线预览</string>
     <string name="show_app_angle_preview">显示应用角度预览。 %1$s</string>
     <string name="do_you_hate_it">" 你讨厌它吗？"</string>
@@ -293,8 +292,6 @@
     <string name="move_selected_widget_up">向上移动选中部件</string>
     <string name="move_selected_widget_down">向下移动选中部件</string>
     <string name="enable_scale_snap">启用缩放吸附</string>
-    <string name="add_circle">添加圆圈</string>
-    <string name="remove_circle">移除圆圈</string>
     <string name="home_action">主页键动作</string>
     <string name="drawer_home_action">抽屉内主页键动作</string>
     <string name="wallpaper_dim_amount">壁纸暗化程度</string>
@@ -304,7 +301,6 @@
     <string name="show_launching_app_label_description">当在屏幕顶部选中某个动作时，是否显示对应的应用/动作标签</string>
     <string name="show_launching_app_icon_description">当在屏幕顶部选中某个动作时，是否显示对应的应用/动作图标</string>
     <string name="show_app_launch_preview_description">在松开手势启动时，在圆圈内显示所选应用的缩略预览</string>
-    <string name="show_app_circle_preview_description">显示当前预览的目标圆圈（即当前所选应用所属的圆圈）</string>
     <string name="show_app_line_preview_description">是否显示从拖动起点到手指当前位置的轨迹线（与 rgb 选择线相关）</string>
     <string name="show_app_angle_preview_description">在轨迹线上显示角度指示器</string>
     <string name="show_app_icon_start_drag_position_description">在您开始拖动的位置中心显示当前选中的应用</string>
@@ -702,7 +698,6 @@
     <string name="manage_in_system_settings">跳转至安卓原生系统设置中进行细节更改。</string>
     <string name="free_move_dragged_point">允许自由任意挪动被拖拽的各个定位触点</string>
     <string name="snap_points">控制触点自动吸附对齐规则</string>
-    <string name="show_circle">显示参考圆圈几何线</string>
     <string name="undo">撤销</string>
     <string name="undo_all">全盘撤销</string>
     <string name="redo">重做</string>

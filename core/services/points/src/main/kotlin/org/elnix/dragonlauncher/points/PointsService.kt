@@ -5,10 +5,8 @@ import androidx.compose.ui.geometry.Offset
 import io.github.elnix90.logging.POINTS_TAG
 import io.github.elnix90.logging.logD
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.models.HitResult
@@ -42,7 +40,7 @@ public interface PointsService {
     public val points: SettingFlow<Points>
     public val nests: SettingFlow<Nests>
 
-    public val recomposeTRigger: SettingFlow<Int>
+    public val recomposeTrigger: SettingFlow<Int>
 
     /**
      * Selected points ids, a [List] of all selected points, by order of selection.
@@ -136,6 +134,8 @@ public interface PointsService {
         skipSelected: Boolean
     ): Points
 
+//    public fun getSelectedShapes(): Set<IntersectionShape>
+
     /**
      * Compute the closest point relative to the [normalizedPos] given their [Point.offset] and the eventual [shape][Point.collidingShapeId] they are tied to
      *
@@ -156,8 +156,6 @@ public interface PointsService {
         normalizedPos: Offset,
         nestId: Int
     ): Point?
-
-    public fun getFurthestPoint(nestId: Int): Point?
 
     public fun autoSeparate(
         nestId: Int,
@@ -184,7 +182,7 @@ internal class PointsServiceImpl(
 
     override val nests: SettingFlow<Nests> = SettingFlow(emptySet())
 
-    override val recomposeTRigger: SettingFlow<Int> = SettingFlow(0)
+    override val recomposeTrigger: SettingFlow<Int> = SettingFlow(0)
 
     override val selectedPointsIds: SettingFlow<List<Int>> = SettingFlow(emptyList())
 
@@ -213,7 +211,8 @@ internal class PointsServiceImpl(
 
     private inline fun applyChange(mutator: () -> Unit) {
         undoRedo.applyChange(mutator)
-        recomposeTRigger.value++
+        resetGrids()
+        recomposeTrigger.value++
     }
 
     override fun select(id: Int) {
@@ -243,28 +242,28 @@ internal class PointsServiceImpl(
 
             }
         }
-        recomposeTRigger.value++
+        recomposeTrigger.value++
     }
 
     override fun deselect(id: Int) {
         if (id !in selectedPointsIds.value) return
         selectedPointsIds.value -= id
-        recomposeTRigger.value++
+        recomposeTrigger.value++
     }
 
     override fun selectAll(nestId: Int) {
         selectedPointsIds.value = points.value.filter { it.nestId == nestId }.map { it.id }
-        recomposeTRigger.value++
+        recomposeTrigger.value++
     }
 
     override fun deselectAll() {
         selectedPointsIds.value = emptyList()
-        recomposeTRigger.value++
+        recomposeTrigger.value++
     }
 
     override fun invertSelection(nestId: Int) {
         selectedPointsIds.value = points.value.filter { it.nestId == nestId }.map { it.id } - selectedPointsIds.value.toSet()
-        recomposeTRigger.value++
+        recomposeTrigger.value++
     }
 
     override fun selectOnyOne(id: Int?) {
@@ -289,21 +288,16 @@ internal class PointsServiceImpl(
 
             else -> {
                 selectedPointsIds.value = listOf(newSel.id)
-
             }
         }
-        recomposeTRigger.value++
+        recomposeTrigger.value++
     }
 
     init {
         scope.launch {
-            async(start = CoroutineStart.ATOMIC) {
-                loadPoints()
-                loadNests()
-                loadDefaultPoint()
-            }.await()
-
+            load()
             resetGrids()
+            recomposeTrigger.value++
         }
     }
 
@@ -315,7 +309,6 @@ internal class PointsServiceImpl(
         applyChange { points.value += newPoint }
 
         if (select) select(newId)
-        resetGrids()
         return newId
     }
 
@@ -323,8 +316,6 @@ internal class PointsServiceImpl(
         val pointToRemove = points.value.find { it.id == id } ?: return false
 
         applyChange { points.value -= pointToRemove }
-
-        resetGrids()
         return true
     }
 
@@ -336,8 +327,6 @@ internal class PointsServiceImpl(
             points.value -= oldPoint
             points.value += editedPoint
         }
-
-        resetGrids()
 
         return true
     }
@@ -406,7 +395,6 @@ internal class PointsServiceImpl(
 
         if (newPoints != null) {
             points.value = newPoints
-            resetGrids()
         }
 
         if (newNests != null) {
@@ -418,7 +406,8 @@ internal class PointsServiceImpl(
         }
 
         persist()
-        recomposeTRigger.value++
+        resetGrids()
+        recomposeTrigger.value++
     }
 
 
@@ -433,7 +422,6 @@ internal class PointsServiceImpl(
             if (resetPoints) {
                 points.value = emptySet()
                 selectedPointsIds.value = emptyList()
-                resetGrids()
             }
             if (resetNests) {
                 nests.value = emptySet()
@@ -444,23 +432,12 @@ internal class PointsServiceImpl(
         }
 
         persist()
-        recomposeTRigger.value++
     }
 
-    private suspend fun loadPoints() {
+    private suspend fun load() {
         points.value = PointsJson.decode<Points>(PointsSettingsStore.jsonSetting.get(ctx), emptySet())
-        resetGrids()
-        recomposeTRigger.value++
-    }
-
-    private suspend fun loadNests() {
         nests.value = NestJson.decode<Nests>(NestsSettingsStore.jsonSetting.get(ctx), emptySet())
-        recomposeTRigger.value++
-    }
-
-    private suspend fun loadDefaultPoint() {
         defaultPoint.value = PointJson.decode(DefaultPointSettingsStore.jsonSetting.get(ctx), Point.defaultSwipePointsValues)
-        recomposeTRigger.value++
     }
 
 
@@ -478,6 +455,10 @@ internal class PointsServiceImpl(
      * Now since the points shouldn't be updated when you usually drag in the main screen
      */
     private fun resetGrids() {
+        for (point in points.value) {
+            point.pos = null
+        }
+
         grid = points.value.groupByTo(mutableMapOf<GridCase, MutablePoints>()) { point ->
             cellKey(computePointOffset(point))
         }
@@ -498,9 +479,6 @@ internal class PointsServiceImpl(
         lastTarget = Offset.Zero
         searchRadius = 1
     }
-
-
-    override fun getFurthestPoint(nestId: Int): Point? = furthestPointGrid[nestId]
 
     override fun computeClosestExcept(
         ignoredPointId: Array<Int>?,
@@ -545,8 +523,8 @@ internal class PointsServiceImpl(
                 lastTarget = normalizedPos
 
                 candidates.minBy { p ->
-                    val dx: Float = normalizedPos.x - p.offset.x
-                    val dy: Float = normalizedPos.y - p.offset.y
+                    val dx: Float = normalizedPos.x - p.getPos().x
+                    val dy: Float = normalizedPos.y - p.getPos().y
                     dx * dx + dy * dy
                 }
             }
@@ -564,6 +542,15 @@ internal class PointsServiceImpl(
         )
 
 
+    /**
+     * Compute the size of a nest.
+     *
+     * @param nestId which nest to process
+     * @return the furthest point of the nest or `null` if the nest is empty or absent
+     */
+    private fun computeOuterRadius(nestId: Int): Float? = furthestPointGrid[nestId]?.getPos()?.getDistance()
+
+
     override fun resolveLiveNestHit(
         normalizedPos: Offset,
         nestId: Int,
@@ -574,7 +561,7 @@ internal class PointsServiceImpl(
         val angle360 = normalizedPos.angleDeg()
 
         // If there's no point in that nest, the HitResult returns a out-of-bounds hit
-        val outerRadius = getFurthestPoint(nestId)?.offset?.getDistance()
+        val outerRadius = computeOuterRadius(nestId)
 
         graceDistancePx.takeIf { it > -1 }?.let {
             if (outerRadius == null || outerRadius > 0f && dist > outerRadius + graceDistancePx) {
@@ -606,8 +593,10 @@ internal class PointsServiceImpl(
     }
 
     override fun computePointOffset(point: Point): Offset {
-        val nest = findNestByIdOrNull(point.nestId) ?: return point.offset
+        point.pos?.let { return it }
+
         val shapeId = point.collidingShapeId ?: return point.offset
+        val nest = findNestByIdOrNull(point.nestId) ?: return point.offset
         val shape = nest.intersectionShapes.find { it.id == shapeId } ?: return point.offset
 
         val angleRad = point.angle
@@ -617,7 +606,11 @@ internal class PointsServiceImpl(
 
         val boundary = computeShapeBoundary(shape.shape, halfSize, angleRad, rotationRad)
         logD(POINTS_TAG) { "Boundary: $boundary" }
-        return shape.offset + boundary
+
+        val pos = shape.offset + boundary
+
+        point.pos = pos
+        return pos
     }
 
     override fun getPointsForNest(
@@ -631,6 +624,19 @@ internal class PointsServiceImpl(
 
         return pointsInTheNest.filterNotTo(mutableSetOf()) { it.id in selectedPoints }
     }
+
+//    override fun getSelectedShapes(): Set<IntersectionShape> {
+//        val selectedPoints = selectedPointsIds.value.takeIf { it.isNotEmpty() } ?: return emptySet()
+//
+//        return selectedPoints.mapNotNullTo(mutableSetOf()) { selPointID ->
+//            val point = findPointById(selPointID) ?: return@mapNotNullTo null
+//            if (point.collidingShapeId == null) return@mapNotNullTo null
+//
+//            val nest = findNestByIdOrNull(point.nestId) ?: return@mapNotNullTo null
+//
+//            nest.intersectionShapes.firstOrNull { it.id == point.collidingShapeId }
+//        }
+//    }
 
 
     override fun findPointById(id: Int): Point? = points.value.find { it.id == id }

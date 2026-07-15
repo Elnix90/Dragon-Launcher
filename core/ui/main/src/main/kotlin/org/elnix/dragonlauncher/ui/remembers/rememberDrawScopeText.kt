@@ -10,9 +10,7 @@ import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.DrawScopeText
 public fun rememberDrawScopeText(
     point: Point,
     sizePx: Float
-): CustomTexts {
+): Pair<DrawScopeText?, DrawScopeText?>? {
     if (!LocalNestDebugOverlay.current) return null
     return rememberCustomText(point.offset.cleanString()) to rememberCustomText(point.id.toString())
 }
-
-public typealias CustomTexts = Pair<DrawScopeText, DrawScopeText>?

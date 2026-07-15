@@ -44,6 +44,8 @@ public data class DrawParams(
 
     val nestDebugOverlay: Boolean,
     val showCancelZone: Boolean,
+    val showShape: Boolean,
+    val showAllShapesInNest: Boolean,
     val textMeasurer: TextMeasurer
 )
 
@@ -69,6 +71,7 @@ public fun rememberDrawParams(
     allowShowPointCenter: Boolean,
     hideSelectedPoint: Boolean,
     showCancelZone: Boolean,
+    hideShapes: Boolean,
     pointsViewModel: PointsViewModel = activityViewModel()
 ): DrawParams {
     val ctx = LocalContext.current
@@ -80,6 +83,9 @@ public fun rememberDrawParams(
 
     val showAllActionInCurrentShape by UiSettingsStore.showAllActionsOnCurrentShape.asState()
     val showPointPreviewCenterStartPosition by UiSettingsStore.showPointPreviewCenterStartPosition.asState()
+
+    val showShape by UiSettingsStore.showShape.asState()
+    val showAllShapesInNest by UiSettingsStore.showAllShapesInNest.asState()
 
     val textMeasurer = rememberTextMeasurer()
     val nestDebugOverlay = LocalNestDebugOverlay.current
@@ -100,6 +106,9 @@ public fun rememberDrawParams(
         forceShowAllActionsInCurrentNest,
         allowShowPointCenter,
         hideSelectedPoint,
+        showShape,
+        showAllShapesInNest,
+        hideShapes,
         showCancelZone
     ) {
         DrawParams(
@@ -117,6 +126,8 @@ public fun rememberDrawParams(
             hideSelectedPoint = hideSelectedPoint,
             nestDebugOverlay = nestDebugOverlay,
             showCancelZone = showCancelZone,
+            showShape = if (hideShapes) false else showShape,
+            showAllShapesInNest = if (hideShapes) false else showAllActionInCurrentShape,
             textMeasurer = textMeasurer
         )
     }

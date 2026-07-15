@@ -238,7 +238,6 @@
     <string name="rgb_loading_settings">Paramètres de chargement RVB</string>
     <string name="rgb_line_selector">Sélecteur de ligne RVB</string>
     <string name="show_app_launch_preview">Afficher l\'aperçu du lancement de l\'application</string>
-    <string name="show_app_circle_preview">Afficher l\'aperçu du cercle d\'applications</string>
     <string name="show_app_line_preview">Afficher l\'aperçu de la ligne d\'application</string>
     <string name="do_you_hate_it">\" Est-ce que tu détestes ça \? \"</string>
     <string name="line_preview_snap_to_action">Aperçu de la ligne instantané à l\'action</string>
@@ -274,8 +273,6 @@
     <string name="move_selected_widget_up">Déplacer le widget sélectionné vers le haut</string>
     <string name="move_selected_widget_down">Déplacer le widget sélectionné vers le bas</string>
     <string name="enable_scale_snap">Activer l\'accrochage à l\'échelle</string>
-    <string name="add_circle">Ajouter un cercle</string>
-    <string name="remove_circle">Supprimer le cercle</string>
     <string name="home_action">Action à domicile</string>
     <string name="drawer_home_action">Action de la maison du tiroir</string>
     <string name="wallpaper_dim_amount">Quantité de papier peint</string>
@@ -285,7 +282,6 @@
     <string name="show_launching_app_label_description">Si l\'étiquette de l\'application/de l\'action est visible lorsqu\'une action est sélectionnée en haut de l\'écran</string>
     <string name="show_launching_app_icon_description">S\'il faut afficher l\'icône d\'application/action lorsqu\'une action est sélectionnée en haut de l\'écran</string>
     <string name="show_app_launch_preview_description">Afficher l\'application sélectionnée dans le cercle lors de la libération, lancez-la (un aperçu)</string>
-    <string name="show_app_circle_preview_description">Afficher le cercle cible d\'aperçu actuel, celui auquel appartient l\'application actuellement sélectionnée</string>
     <string name="show_app_line_preview_description">S\'il faut afficher la trace qui va de la position de début de glissement jusqu\'au doigt (lié à la ligne RVB)</string>
     <string name="show_app_angle_preview_description">Afficher l\'indicateur d\'angle sur la ligne</string>
     <string name="show_app_icon_start_drag_position_description">Affichez l\'application actuellement sélectionnée au centre de l\'endroit où vous avez commencé à faire glisser</string>
@@ -684,7 +680,6 @@
     <string name="lucky_desc">Contributeur majeur (Bien-être numérique et rappels)</string>
     <string name="version_copied_to_clipboard">Version copiée dans le presse-papiers</string>
     <string name="snap_points">Accroche les points aux angles</string>
-    <string name="show_circle">Afficher le cercle</string>
     <string name="undo">Annuler</string>
     <string name="undo_all">Tout annuler</string>
     <string name="redo">Refaire</string>

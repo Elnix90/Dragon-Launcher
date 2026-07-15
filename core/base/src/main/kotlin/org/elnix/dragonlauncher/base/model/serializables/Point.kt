@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.elnix.dragonlauncher.base.model.DragonJson
 import org.elnix.dragonlauncher.base.model.serializables.serializers.OffsetSerializer
 import org.elnix.dragonlauncher.ktx.angleRad
@@ -268,6 +269,21 @@ public data class Point(
 
 ) : Comparable<Point> {
 
+    /**
+     * Relative position of this point.
+     * It is computed by the `PointService` (no access here) located at `core/services/points/src/main/kotlin/org/elnix/dragonlauncher/points/PointsService.kt`
+     *
+     * ## This is the real position you want to use,
+     * as the [offset] parameter is not aware of the potential [shapes][IntersectionShape] in the [Nest]
+     */
+    @Transient
+    var pos: Offset? = null
+
+    public fun getPos(): Offset {
+        if (this.collidingShapeId == null) return this.offset
+        return this.pos ?: this.offset
+    }
+
     val key: CacheKey = CacheKey(this)
 
     public fun getSize(defaultPoint: Point): Dp = (size ?: defaultPoint.size ?: defaultSize).coerceAtLeast(1).dp
@@ -276,9 +292,9 @@ public data class Point(
 
     public val angle: Float by lazy { offset.angleRad() }
 
-//    override fun toString(): String = "Point(id = ${this.id})"
-
     override fun compareTo(other: Point): Int = this.id.compareTo(other.id)
+
+//    override fun toString(): String = "Point(id = ${this.id})"
 
     override fun toString(): String =
         "Point(\n" +

@@ -254,24 +254,24 @@ public fun EditPointSheet(
             }
 
             DragonColumnGroup {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(20.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Text(
-                        text = stringResource(R.string.unselected_action),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.labelSmall
-                    )
-
-                    Text(
-                        text = stringResource(R.string.selected_action),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                }
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(20.dp),
+//                    horizontalArrangement = Arrangement.SpaceEvenly
+//                ) {
+//                    Text(
+//                        text = stringResource(R.string.unselected_action),
+//                        color = MaterialTheme.colorScheme.onSurface,
+//                        style = MaterialTheme.typography.labelSmall
+//                    )
+//
+//                    Text(
+//                        text = stringResource(R.string.selected_action),
+//                        color = MaterialTheme.colorScheme.onSurface,
+//                        style = MaterialTheme.typography.labelSmall
+//                    )
+//                }
 
                 PointPreviewCanvas(
                     editPoint = editPoint,

@@ -28,7 +28,6 @@ import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.composition.LocalLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
-import org.elnix.dragonlauncher.ui.composition.LocalPointTextStyle
 import org.elnix.dragonlauncher.ui.composition.LocalShowLabelsInAddPointDialog
 import org.elnix.dragonlauncher.ui.composition.LocalStartLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalStatusBarElements
@@ -36,7 +35,6 @@ import org.elnix.dragonlauncher.ui.composition.LocalTextMeasurer
 import org.elnix.dragonlauncher.ui.dialogs.rememberMainScreenLayerOrder
 import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberAngleLineObjects
 import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberHoldCustomObject
-import org.elnix.dragonlauncher.ui.remembers.rememberPointTextStyle
 
 @Composable
 public fun ProvideGlobalCompositionLocals(
@@ -78,7 +76,6 @@ public fun ProvideGlobalCompositionLocals(
      */
     CompositionLocalProvider(
         LocalTextMeasurer provides rememberTextMeasurer(),
-        LocalPointTextStyle provides rememberPointTextStyle(),
 
         LocalStatusBarElements provides elements,
 

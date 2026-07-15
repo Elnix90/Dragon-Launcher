@@ -235,7 +235,6 @@
     <string name="rgb_loading_settings">आरजीबी लोडिंग सेटिंग्स</string>
     <string name="rgb_line_selector">आरजीबी लाइन चयनकर्ता</string>
     <string name="show_app_launch_preview">ऐप लॉन्च पूर्वावलोकन दिखाएँ</string>
-    <string name="show_app_circle_preview">ऐप सर्कल पूर्वावलोकन दिखाएँ</string>
     <string name="show_app_line_preview">ऐप लाइन पूर्वावलोकन दिखाएँ</string>
     <string name="do_you_hate_it">\"क्या तुम्हें इससे नफरत है\?\"</string>
     <string name="line_preview_snap_to_action">कार्रवाई के लिए लाइन पूर्वावलोकन स्नैप</string>
@@ -271,8 +270,6 @@
     <string name="move_selected_widget_up">चयनित विजेट को ऊपर ले जाएँ</string>
     <string name="move_selected_widget_down">चयनित विजेट को नीचे ले जाएँ</string>
     <string name="enable_scale_snap">स्केल स्नैप सक्षम करें</string>
-    <string name="add_circle">वृत्त जोड़ें</string>
-    <string name="remove_circle">सर्कल हटाएं</string>
     <string name="home_action">होम एक्शन</string>
     <string name="drawer_home_action">दराज गृह क्रिया</string>
     <string name="wallpaper_dim_amount">वॉलपेपर मंद राशि</string>
@@ -282,7 +279,6 @@
     <string name="show_launching_app_label_description">क्या स्क्रीन के शीर्ष पर कोई क्रिया चयनित होने पर ऐप/एक्शन लेबल दिखाई देता है</string>
     <string name="show_launching_app_icon_description">स्क्रीन के शीर्ष पर कोई क्रिया चयनित होने पर ऐप/एक्शन आइकन प्रदर्शित करना है या नहीं</string>
     <string name="show_app_launch_preview_description">रिलीज़ करते समय चयनित ऐप को सर्कल में दिखाएं, इसे लॉन्च करें (एक पूर्वावलोकन)</string>
-    <string name="show_app_circle_preview_description">वर्तमान पूर्वावलोकन लक्ष्य सर्कल प्रदर्शित करें, जिससे वर्तमान चयनित ऐप संबंधित है</string>
     <string name="show_app_line_preview_description">क्या उस पथ को प्रदर्शित करना है जो प्रारंभिक खींचने की स्थिति से उंगली तक जाता है (आरजीबी लाइन से संबंधित)</string>
     <string name="show_app_angle_preview_description">लाइन पर कोण सूचक प्रदर्शित करें</string>
     <string name="show_app_icon_start_drag_position_description">वर्तमान चयनित ऐप को उस स्थान के केंद्र में प्रदर्शित करें जहां आपने खींचने के लिए तारांकित किया था</string>

@@ -371,7 +371,6 @@
     <string name="rgb_loading_settings">إعدادات تحميل RGB</string>
     <string name="rgb_line_selector">محدد خط RGB</string>
     <string name="show_app_launch_preview">إظهار معاينة تشغيل التطبيق</string>
-    <string name="show_app_circle_preview">إظهار معاينة دائرة التطبيق</string>
     <string name="show_app_line_preview">إظهار معاينة خط التطبيق</string>
     <string name="show_app_angle_preview">إظهار معاينة زاوية التطبيق. %1$s</string>
     <string name="do_you_hate_it">" هل تكره ذلك؟"</string>
@@ -408,8 +407,6 @@
     <string name="move_selected_widget_up">تحريك الأداة المصغرة المحددة للأعلى</string>
     <string name="move_selected_widget_down">تحريك الأداة المصغرة المحددة للأسفل</string>
     <string name="enable_scale_snap">تفعيل محاذاة المقياس</string>
-    <string name="add_circle">إضافة دائرة</string>
-    <string name="remove_circle">إزالة دائرة</string>
     <string name="home_action">إجراء الرئيسية</string>
     <string name="drawer_home_action">إجراء الرئيسية في الدرج</string>
     <string name="wallpaper_dim_amount">مقدار تعتيم الخلفية</string>
@@ -419,7 +416,6 @@
     <string name="show_launching_app_label_description">ما إذا كان اسم التطبيق / الإجراء مرئياً عند تحديد إجراء في الجزء العلوي من الشاشة</string>
     <string name="show_launching_app_icon_description">ما إذا كان سيتم عرض أيقونة التطبيق / الإجراء عند تحديد إجراء في الجزء العلوي من الشاشة</string>
     <string name="show_app_launch_preview_description">إظهار التطبيق المحدد في الدائرة عند تحريره لتشغيله (معاينة)</string>
-    <string name="show_app_circle_preview_description">عرض دائرة الهدف الحالية للمعاينة، التي ينتمي إليها التطبيق المحدد حالياً</string>
     <string name="show_app_line_preview_description">ما إذا كان سيتم عرض الأثر الذي يمتد من موضع بدء السحب إلى الإصبع (متعلق بخط اللون الأحمر والأخضر والأزرق \"أرجبي\")</string>
     <string name="show_app_angle_preview_description">عرض مؤشر الزاوية على الخط</string>
     <string name="show_app_icon_start_drag_position_description">عرض التطبيق المحدد حالياً في مركز المكان الذي بدأت منه السحب</string>
@@ -810,7 +806,6 @@
     <string name="manage_in_system_settings">الإدارة في إعدادات النظام.</string>
     <string name="free_move_dragged_point">حركة حرة للنقطة المسحوبة</string>
     <string name="snap_points">نقاط المحاذاة</string>
-    <string name="show_circle">إظهار الدائرة</string>
     <string name="undo">تراجع</string>
     <string name="undo_all">تراجع عن الكل</string>
     <string name="redo">إعادة</string>

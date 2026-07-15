@@ -13,7 +13,7 @@ import java.util.Locale.getDefault
  * This is a lightweight structural check and does not validate
  * whether the string is well-formed JSON.
  */
-public val String?.isBlankJson: Boolean
+public inline val String?.isBlankJson: Boolean
     get() {
         if (this == null) return true
         val trimmed = trim()
@@ -31,7 +31,7 @@ public val String?.isBlankJson: Boolean
  * This is a lightweight structural check and does not validate
  * whether the string is well-formed JSON.
  */
-public val String?.isNotBlankJson: Boolean
+public inline val String?.isNotBlankJson: Boolean
     get() = !isBlankJson
 
 
