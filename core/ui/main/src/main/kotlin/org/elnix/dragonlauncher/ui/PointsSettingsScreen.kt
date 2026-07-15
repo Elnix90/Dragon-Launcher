@@ -31,6 +31,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -175,6 +176,18 @@ public fun PointsSettingsScreen(
 
     SelfCheckNestPresent()
 
+    /**
+     * Computes the new offset for the selected point.
+     *
+     * When [snapPoints] is `false`, it simply skips the computation and returns the normalized offset.
+     * Otherwise, the function checks for each potential shapes the closest and determines the most probable shape to collide with
+     *
+     * TODO: when the point has already a shape, stick to it no matter what, except if the end point is really far away.
+     *
+     * @param point which point to move
+     * @param normalizedOffset the offset in which the gesture ends (normalized)
+     * @return a [Pair] with the final normalized offset and the optional shape id
+     */
     fun computePointMoved(
         point: Point,
         normalizedOffset: Offset
@@ -217,7 +230,7 @@ public fun PointsSettingsScreen(
         }
     }
 
-    val manipulationSystem = remember { ManipulationSystem(center) }
+    val manipulationSystem = retain { ManipulationSystem(center) }
     LaunchedEffect(center) {
         manipulationSystem.center = center
     }
@@ -234,7 +247,7 @@ public fun PointsSettingsScreen(
          * Original offset, in normal screen coordinates
          * It will be transformed to give the actual useful values
          */
-        val offset: Offset
+        private val offset: Offset
     ) {
         /**
          * Transformed offset, represents the coordinated in space of the [offset] after undoing the
@@ -295,14 +308,14 @@ public fun PointsSettingsScreen(
     /**
      * Compute position of a point in the screen.
      *
-     * @return the `transformed offset` of the point.
      * ### NEVER TOUCH THAT AGAIN IT WORKS!!
      * Mb I touched it but it still works :)
+     * @return the `transformed offset` of the point.
      */
     fun Point.computePosition(): Offset = manipulationSystem.undoBoth(pointsService.computePointOffset(this))
 
 
-    val selectedPointTempOffset = remember { mutableStateMapOf<Int, Offset>() }
+    val selectedPointTempOffset = retain { mutableStateMapOf<Int, Offset>() }
 
 
     fun select(id: Int) {
@@ -648,7 +661,7 @@ public fun PointsSettingsScreen(
                         val tr = offset.toTr()
 
                         val pointSize = point.getSize(defaultPoint).px
-                        val customText = rememberDrawScopeText(point.copy(offset = tr.normalizedOffset), pointSize)
+                        val customText = rememberDrawScopeText(point.copy(offset = tr.normalizedOffset), pointSize, defaultPoint)
 
                         if (LocalNestDebugOverlay.current) {
                             Canvas(Modifier.fillMaxSize()) {

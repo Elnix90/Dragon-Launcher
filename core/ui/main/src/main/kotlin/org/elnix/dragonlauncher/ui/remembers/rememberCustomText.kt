@@ -14,15 +14,15 @@ import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.DrawScopeText
 @Composable
 public fun rememberCustomText(
     text: String,
-    sizePx: Float = 50f
+    verticalPadding: Float
 ): DrawScopeText {
     val textMeasurer: TextMeasurer = LocalTextMeasurer.current
     val textStyle = MaterialTheme.typography.labelSmall
 
-    return retain(text, sizePx) {
+    return retain(text, verticalPadding) {
         getTopLeftAndTextMeasure(
             text = text,
-            sizePx = sizePx,
+            verticalPadding = verticalPadding,
             textStyle = textStyle,
             textMeasurer = textMeasurer
         )
@@ -31,7 +31,7 @@ public fun rememberCustomText(
 
 private fun getTopLeftAndTextMeasure(
     text: String,
-    sizePx: Float,
+    verticalPadding: Float,
     textStyle: TextStyle,
     textMeasurer: TextMeasurer
 ): DrawScopeText {
@@ -48,7 +48,7 @@ private fun getTopLeftAndTextMeasure(
         offsetTextLayoutResult = textLayoutResult,
         topLeft = Offset(
             x = textWidth / 2f,
-            y = textHeight + sizePx
+            y = textHeight / 2 + verticalPadding
         )
     )
 }

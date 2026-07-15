@@ -90,7 +90,7 @@ private fun RememberPointStableCacheEntry(
     }
 
     val imageBitmap by loadPointIconBitmap(point, iconsViewModel, renderSettings)
-    val customTexts= rememberDrawScopeText(point, sizePx)
+    val customTexts= rememberDrawScopeText(point, sizePx, defaultPoint)
 
     LaunchedEffect(
         point.id,

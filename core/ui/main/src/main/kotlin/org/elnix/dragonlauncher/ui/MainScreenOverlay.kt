@@ -479,7 +479,7 @@ private fun DebugPointer(
         "$x ; $y"
     }
 
-    val drawScopeText = rememberCustomText(text)
+    val drawScopeText = rememberCustomText(text, 0f)
 
     Canvas(Modifier.fillMaxSize()) {
         PointerLocation(

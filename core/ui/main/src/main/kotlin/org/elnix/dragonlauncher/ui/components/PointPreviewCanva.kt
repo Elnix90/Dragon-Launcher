@@ -36,6 +36,8 @@ public fun PointPreviewCanvas(
 
         }
 
+    val pointSize = editPoint.getSize(defaultPoint).px
+
     BoxWithConstraints(
         modifier = modifier
             .height(height.dp)
@@ -47,8 +49,8 @@ public fun PointPreviewCanvas(
         val leftX = (width * 0.25f).px
         val rightX = (width * 0.75f).px
 
-        val selected = rememberCustomText(stringResource(R.string.selected_text))
-        val unselected = rememberCustomText(stringResource(R.string.unselected))
+        val selected = rememberCustomText(stringResource(R.string.selected_text),  pointSize)
+        val unselected = rememberCustomText(stringResource(R.string.unselected),  pointSize)
 
         val customTextsSelected: Pair<DrawScopeText?, DrawScopeText?> = selected to null
         val customTextsUnselected: Pair<DrawScopeText?, DrawScopeText?> = unselected to null

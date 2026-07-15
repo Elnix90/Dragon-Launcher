@@ -10,6 +10,11 @@ import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 
+/**
+ * Used to ensure that there is always the requested [nest][org.elnix.dragonlauncher.base.model.serializables.Nest]
+ *
+ * Fires at every nest updates from the [PointService][org.elnix.dragonlauncher.points.PointsService] and checks whether if a nest with the [id][org.elnix.dragonlauncher.base.model.serializables.Nest.id] `0` exists
+ */
 @Composable
 public fun SelfCheckNestPresent(
     pointsViewModel: PointsViewModel = activityViewModel()
@@ -18,9 +23,7 @@ public fun SelfCheckNestPresent(
 
     val nestId by pointsViewModel.currentNestId.collectAsState()
     val nests by pointsService.nests.asState()
-    /**
-     * Used to ensure that there is always the requested nest
-     */
+
     LaunchedEffect(Unit, nestId, nests.size) {
         if (nests.none { it.id == nestId }) {
             logD(NESTS_TAG) { "Creating missing nest $nestId" }
