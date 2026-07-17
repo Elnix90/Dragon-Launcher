@@ -42,7 +42,6 @@ public fun ShapePreview(
             .padding(5.dp)
             .then(modifier)
             .aspectRatio(1f, true)
-            .clip(MaterialTheme.shapes.large)
             .conditional(onClick) {
                 shapedClickable(onLongClick = onLongClick, onClick = it)
             },

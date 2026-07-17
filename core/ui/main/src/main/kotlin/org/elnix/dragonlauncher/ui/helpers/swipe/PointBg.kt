@@ -12,14 +12,14 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.unit.IntSize
 import org.elnix.dragonlauncher.base.cache.DrawPathCache
+import org.elnix.dragonlauncher.base.cache.DrawScopeText
+import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
-import org.elnix.dragonlauncher.ui.helpers.customobjects.shapeToPath
-import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.DrawScopeText
-import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.PointStableCache
+import org.elnix.dragonlauncher.ui.helpers.customobjects.toPath
 
 
 @Suppress("FunctionName")
@@ -105,7 +105,7 @@ public fun DrawScope.PointBg(
     val borderShape = borderIconShape.resolveShape()
 
     val path = DrawPathCache.getOrCompute(Pair(borderIconShape, iconSize)) {
-        shapeToPath(borderShape, iconSize)
+        toPath(borderShape, iconSize)
     }
 
 
@@ -140,7 +140,7 @@ public fun DrawScope.PointBg(
         val iconPath = DrawPathCache.getOrCompute(
             Pair(borderIconShape, Size(sizePx, sizePx))
         ) {
-            shapeToPath(borderShape, Size(sizePx, sizePx))
+            toPath(borderShape, Size(sizePx, sizePx))
         }
 
         translate(
@@ -156,7 +156,7 @@ public fun DrawScope.PointBg(
         }
     }
 
-    if (drawParams.showConfiguratorDecorations) {
+    if (drawParams.pointSettingsDisplay) {
         DecorationIcons(
             ctx = drawParams.ctx,
             center = center,

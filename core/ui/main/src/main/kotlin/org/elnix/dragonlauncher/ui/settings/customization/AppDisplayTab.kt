@@ -5,14 +5,16 @@ package org.elnix.dragonlauncher.ui.settings.customization
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asMutableState
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
@@ -24,7 +26,6 @@ import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.UiConstants.dragonSettingGroupPaddingValues
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.components.PointPreviewTitle
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -44,12 +45,6 @@ public fun AppDisplayTab(
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
-
-    val showLaunchingAppLabel by UiSettingsStore.showLaunchingAppLabel.asState()
-    val showLaunchingAppIcon by UiSettingsStore.showPreviewPoint.asState()
-    val appLabelIconOverlayTopPadding by UiSettingsStore.appLabelIconOverlayTopPadding.asState()
-    val showAllActionsOnCurrentCircle by UiSettingsStore.showAllActionsOnCurrentShape.asState()
-
     val mainScreenLayers = LocalMainScreenLayers.current
 
     val topOverlaySettingsState = rememberExpandableSection(stringResource(R.string.app_preview_settings), mode = ExpandableSectionMode.Expandable)
@@ -92,18 +87,9 @@ public fun AppDisplayTab(
         ExpandableSection(topOverlaySettingsState) {
             Setting(UiSettingsStore.showLaunchingAppLabel)
             Setting(UiSettingsStore.showPreviewPoint)
-            Setting(
-                setting = UiSettingsStore.appLabelIconOverlayTopPadding,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Setting(
-                setting = UiSettingsStore.appLabelOverlaySize,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Setting(
-                setting = UiSettingsStore.appIconOverlaySize,
-                color = MaterialTheme.colorScheme.primary
-            )
+            Setting(UiSettingsStore.appLabelIconOverlayTopPadding)
+            Setting(UiSettingsStore.appLabelOverlaySize)
+            Setting(UiSettingsStore.appIconOverlaySize)
         }
 
         DragonSettingsGroup(
@@ -111,26 +97,23 @@ public fun AppDisplayTab(
             contentPadding = PaddingValues(vertical = 12.dp)
         ) {
             Setting(UiSettingsStore.showAppLaunchingPreview)
-            Setting(UiSettingsStore.showAllActionsOnCurrentShape)
 
-            Setting(UiSettingsStore.showAllActionsOnCurrentShape) {
-                if (!it) {
-                    scope.launch {
-                        UiSettingsStore.showAllActionsOnCurrentNest.set(ctx, false)
-                    }
-                }
-            }
+            var showAllActionsOnCurrentNest by UiSettingsStore.showAllPointsInCurrentNest.asMutableState()
+            Setting(UiSettingsStore.showAllPointsInCurrentShape) { enabled -> if (!enabled) { showAllActionsOnCurrentNest = false } }
 
-            Setting(UiSettingsStore.showAllActionsOnCurrentNest, enabled = showAllActionsOnCurrentCircle)
+            val showAllActionsOnCurrentCircle by UiSettingsStore.showAllPointsInCurrentShape.asState()
+            Setting(UiSettingsStore.showAllPointsInCurrentNest, enabled = showAllActionsOnCurrentCircle)
+
             Setting(UiSettingsStore.showPointPreviewCenterStartPosition)
+
             Setting(UiSettingsStore.linePreviewSnapToAction)
-
-            val showAllShapes by UiSettingsStore.showAllShapesInNest.asState()
-            Setting(UiSettingsStore.showShape, enabled = showAllShapes)
-            Setting(UiSettingsStore.showAllShapesInNest)
-
             val snap by UiSettingsStore.linePreviewSnapToAction.asState()
             Setting(UiSettingsStore.animationWhenSnapping, enabled = snap)
+
+            val showAllShapes by UiSettingsStore.showAllShapesInNest.asState()
+            var showShape by UiSettingsStore.showShape.asMutableState()
+            Setting(UiSettingsStore.showShape, enabled = !showAllShapes)
+            Setting(UiSettingsStore.showAllShapesInNest) { enabled -> if (enabled) showShape = true }
 
             Setting(UiSettingsStore.multiplyOrSubtractOpacityInLiveNests)
         }
@@ -144,15 +127,17 @@ public fun AppDisplayTab(
         }
     }
 
+    val points by pointsViewModel.pointsService.points.collectAsState()
+    val randomPoint = remember { points.values.random() }
 
-    val pointsService = pointsViewModel.pointsService
-    val points by pointsService.points.asState()
-    val randomPoint = remember { points.random() }
+    val showLaunchingAppLabel by UiSettingsStore.showLaunchingAppLabel.asState()
+    val showLaunchingAppIcon by UiSettingsStore.showPreviewPoint.asState()
+    val appLabelIconOverlayTopPadding by UiSettingsStore.appLabelIconOverlayTopPadding.asState()
 
     if (topOverlaySettingsState.isExpanded()) {
         PointPreviewTitle(
             point = randomPoint.copy(customName = "Preview"),
-            topPadding = appLabelIconOverlayTopPadding.dp,
+            topPadding = appLabelIconOverlayTopPadding,
             showLabel = showLaunchingAppLabel,
             showIcon = showLaunchingAppIcon
         )

@@ -69,8 +69,7 @@ public fun actionLabel(
 
 
         is Action.OpenCircleNest -> {
-            pointsService.nests.value
-                .find { it.id == action.nestId }
+            pointsService.nests.value[action.nestId]
                 ?.name
                 ?.takeIf { it.trim().isNotEmpty() }
                 ?: stringResource(R.string.open_nest)

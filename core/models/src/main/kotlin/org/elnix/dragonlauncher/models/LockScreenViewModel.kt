@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.models
 import android.app.Application
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import androidx.navigation3.runtime.NavKey
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 public class LockScreenViewModel @Inject constructor(
-    private val application: Application,
+    application: Application,
     private val securityService: SecurityService,
 ) : AndroidViewModel(application) {
 

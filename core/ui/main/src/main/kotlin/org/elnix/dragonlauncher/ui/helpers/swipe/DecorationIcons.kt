@@ -1,31 +1,16 @@
 package org.elnix.dragonlauncher.ui.helpers.swipe
 
 import android.content.Context
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.DragonCache
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.util.ImageUtils.loadDrawableResAsImageBitmap
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.models.PointsViewModel
-import org.elnix.dragonlauncher.points.PointsService
-import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
 
 
 @Suppress("FunctionName")
@@ -90,42 +75,3 @@ public fun DrawScope.DecorationIcons(
 }
 
 private object DecorationCache : DragonCache<Int, ImageBitmap>(2)
-
-
-@Deprecated("Using the drawscope one")
-@Composable
-private fun BoxScope.DecorationIcons(
-    showConfiguratorDecorations: Boolean,
-    point: Point,
-    pointsViewModel: PointsViewModel = activityViewModel()
-) {
-    val pointsService: PointsService = pointsViewModel.pointsService
-    val defaultPoint: Point by pointsService.defaultPoint.asState()
-
-    val badgeSize: Dp = remember(defaultPoint, point.size) {
-        val size: Dp = point.getSize(defaultPoint)
-        (size / 3f).coerceIn(14.dp, 36.dp)
-    }
-
-    // Small `+1` icon top left to indicate a Cycle Actions
-    if (showConfiguratorDecorations && !point.cycleActions.isNullOrEmpty()) {
-        Icon(
-            painter = painterResource(R.drawable.ic_plus_one),
-            contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .size(badgeSize)
-        )
-    }
-
-    // Small bolt icon top right to indicate a Hold & Run
-    if (showConfiguratorDecorations && point.holdAndRunDelayMs != null) {
-        Icon(
-            painter = painterResource(R.drawable.ic_hold_and_run_bolt),
-            contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .size(badgeSize)
-        )
-    }
-}

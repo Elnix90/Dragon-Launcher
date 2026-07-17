@@ -25,7 +25,7 @@ public abstract class DragonCache <K,V> (initialMaxSize: Int) {
         maxSize += increment
     }
 
-    private val icons = Collections.synchronizedMap(
+    private val items = Collections.synchronizedMap(
         object : LinkedHashMap<K, V>(
             maxSize, 0.75f, true
         ) {
@@ -36,7 +36,7 @@ public abstract class DragonCache <K,V> (initialMaxSize: Int) {
     )
 
 
-    public operator fun get(key: K): V? = icons[key]
+    public operator fun get(key: K): V? = items[key]
 
 
     /**
@@ -51,7 +51,7 @@ public abstract class DragonCache <K,V> (initialMaxSize: Int) {
         key: K,
         compute: () -> V
     ): V =
-        icons.getOrPut(key) {
+        items.getOrPut(key) {
             cacheTrigger.update { it + 1 }
             compute()
         }
@@ -67,7 +67,7 @@ public abstract class DragonCache <K,V> (initialMaxSize: Int) {
         key: K,
         compute: () -> Unit
     ): V? {
-        val result = icons[key]
+        val result = items[key]
         if (result == null) {
             compute()
             logD(ICONS_TAG) { "Failed to get object for $key. Computing it lazily\ncacheUUID: $cacheUUID\nmaxSize: $maxSize, size: $size" }
@@ -78,24 +78,24 @@ public abstract class DragonCache <K,V> (initialMaxSize: Int) {
     /** Compute simply a new object, don't return it */
     public fun compute(key: K, compute: () -> V) {
         cacheTrigger.update { it + 1 }
-        icons[key] = compute()
+        items[key] = compute()
     }
 
-    public fun getRandom(): K? = if (icons.isNotEmpty()) {
-        icons.keys.random()
+    public fun getRandom(): K? = if (items.isNotEmpty()) {
+        items.keys.random()
     } else null
 
     public fun evict(key: K) {
-        icons.remove(key)
+        items.remove(key)
     }
 
-    public fun evictAll() {
-        icons.clear()
+    public fun clear() {
+        items.clear()
     }
 
     /**
      * The current number of entries held in the cache.
      * Useful for debugging or logging cache pressure.
      */
-    public val size: Int get() = icons.size
+    public val size: Int get() = items.size
 }

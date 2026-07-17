@@ -38,10 +38,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
@@ -52,11 +50,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
+import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape.Companion.highlightedIfSelected
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.navigaton.ManipulationSystem
 import org.elnix.dragonlauncher.base.resolveShape
+import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools
 import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.EnterNest
 import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.GoParentNest
@@ -65,7 +64,6 @@ import org.elnix.dragonlauncher.enumsui.toggle.ShapesEditTools
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ktx.rotateBy
-import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.ktx.snapToRound
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
@@ -73,7 +71,6 @@ import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.dragonSettingGroupPaddingValues
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -93,12 +90,11 @@ import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.SelfCheckNestPresent
 import org.elnix.dragonlauncher.ui.helpers.ShapePreview
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
-import org.elnix.dragonlauncher.ui.helpers.customobjects.drawNeonGlowLine
-import org.elnix.dragonlauncher.ui.helpers.customobjects.shapeToPath
+import org.elnix.dragonlauncher.ui.helpers.customobjects.toPath
 import org.elnix.dragonlauncher.ui.helpers.detectTransformGestures
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
-import org.elnix.dragonlauncher.ui.helpers.swipe.rememberDrawParams
+import org.elnix.dragonlauncher.ui.helpers.swipe.centerOfNest
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
@@ -109,18 +105,36 @@ public fun NestEditScreen2(
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
+    val density = LocalDensity.current
     val scope = rememberCoroutineScope()
     val pointsService = pointsViewModel.pointsService
+
+    val nestNavigation = pointsViewModel.nestsNavigationService
+    LaunchedEffect(Unit) {
+        nestNavigation.goToNest(initialNestId)
+    }
+
+    val nestId by pointsViewModel.nestsNavigationService.currentNestId.collectAsState()
+    val currentNest = pointsService.findNestById(nestId)
+    SelfCheckNestPresent()
+
 
     val snapShapesOffset by UiSettingsStore.snapShapesOffset.asState()
     val snapShapesScale by UiSettingsStore.snapShapesScale.asState()
     val snapShapeAngle by UiSettingsStore.snapShapeAngle.asState()
+    val snapOffsetThreshold = 30.dp.px
+
+    fun IntersectionShape.snap(): IntersectionShape = this.copy(
+        offset = if (snapShapesOffset) this.offset.snapToRound(Offset.Zero, snapOffsetThreshold) else this.offset,
+        scale = if (snapShapesScale) this.scale.snapToRound(1f, 0.1f) else this.scale,
+        angle = if (snapShapeAngle) this.angle.snapToRound(0f, 20f) else this.angle
+    )
 
     val cellSizeDp by UiSettingsStore.widgetsCellSizeDp.asState()
     val cellSizePx = cellSizeDp.px // TODO
     var showMoreSheet by remember { mutableStateOf(false) }
 
-    val nests by pointsService.nests.asState()
+    val nests by pointsService.nests.collectAsState()
     val rowsScrollStates = List(3) { rememberScrollState() }
 
     var showShapesManagementDialog by remember { mutableStateOf(false) }
@@ -130,26 +144,9 @@ public fun NestEditScreen2(
     var selectedShapeId: Int? by remember { mutableStateOf(null) }
     val isInDragAroundMode: Boolean = selectedShapeId == null
 
-    val nestNavigation = pointsViewModel.nestsNavigationService
-    LaunchedEffect(Unit) {
-        nestNavigation.goToNest(initialNestId)
-    }
-
-    val nestId by pointsViewModel.currentNestId.collectAsState()
-    val currentNest = remember(nestId) {
-        pointsService.findNestByIdOrNull(nestId) ?: run {
-            // The nest isn't found in the list, create a new one with this id
-            pointsService.addNest()
-            ctx.showToast("Saved missing nest!")
-            onBack()
-            null
-        }
-    } ?: return
-
     var tempCancelZone by remember { mutableIntStateOf(currentNest.cancelZone) }
     var tempCustomName by remember { mutableStateOf(currentNest.name ?: "") }
 
-    SelfCheckNestPresent()
 
     val manipulationSystem = remember { ManipulationSystem(center) }
     LaunchedEffect(center) {
@@ -160,33 +157,24 @@ public fun NestEditScreen2(
     val angle = manipulationSystem.angle
     val zoom = manipulationSystem.zoom
 
-    val density = LocalDensity.current
-    val paths: SnapshotStateMap<IntersectionShape, Path> = remember { mutableStateMapOf() }
-    val shapes: Set<IntersectionShape> = paths.keys
+    val paths: SnapshotStateMap<Int, Pair<IntersectionShape, Path>> = remember { mutableStateMapOf() }
+    val shapes: Set<IntersectionShape> = paths.values.mapTo(mutableSetOf()) { it.first }
 
-    fun addPath(shape: IntersectionShape) {
-        paths[shape] = shapeToPath(shape.shape.resolveShape(), shape.getSize(density.density), density)
+    fun updatePath(shape: IntersectionShape) {
+        paths[shape.id] = shape to shape.shape.resolveShape().toPath(shape.getSize(density.density), density)
     }
 
     LaunchedEffect(currentNest.intersectionShapes) {
         paths.clear()
         currentNest.intersectionShapes.forEach { shape ->
-            addPath(shape)
+            updatePath(shape)
         }
     }
-
-    val snapOffsetThreshold = 30.dp.px
-
-    fun IntersectionShape.snap(): IntersectionShape = this.copy(
-        offset = if (snapShapesOffset) this.offset.snapToRound(Offset.Zero, snapOffsetThreshold) else this.offset,
-        scale = if (snapShapesScale) this.scale.snapToRound(1f, 0.1f) else this.scale,
-        angle = if (snapShapeAngle) this.angle.snapToRound(0f, 20f) else this.angle
-    )
 
     fun saveCurrentNest() {
         pointsService.editNest(nestId) { old ->
             old.copy(
-                intersectionShapes = shapes.mapTo(mutableSetOf()) { shape -> shape.snap() }
+                intersectionShapes = paths.values.mapTo(mutableSetOf()) { it.first.snap() }
             )
         }
     }
@@ -202,18 +190,9 @@ public fun NestEditScreen2(
 
 
 //    TODO("Make snapping tools global (not only with the center of the nest")
-//    TODO("Mark center of the nest with some graphical stuff for users")
 
-    val recomposeTrigger by pointsService.recomposeTrigger.asState()
-    val drawParams = rememberDrawParams(
-        preventBgErasing = true,
-        showConfiguratorDecorations = false,
-        forceShowAllActionsInCurrentNest = true,
-        allowShowPointCenter = false,
-        hideSelectedPoint = false,
-        showCancelZone = true,
-        hideShapes = false
-    )
+//    var recomposeTrigger by pointsService.recomposeTrigger.asMutableState()
+    var recomposeTrigger by remember { mutableIntStateOf(0) }
 
     SettingsScaffold(
         title = stringResource(R.string.edit_nest_arg, nestId),
@@ -452,17 +431,17 @@ public fun NestEditScreen2(
                         }
                 ) {
                     val primaryColor = MaterialTheme.colorScheme.primary
+                    val extraColors = LocalExtraColors.current
 
                     Canvas(Modifier.fillMaxSize()) {
-                        centerOfNest(center)
                         repeat(2) { pass ->
-                            paths.forEach { (shape, path) ->
-                                val selected = shape.id == selectedShapeId
+                            paths.forEach { (shapeId, pair) ->
+                                val selected = shapeId == selectedShapeId
                                 this.IntersectionShape(
-                                    path = path,
-                                    shape = shape.snap().copy(glow = if (selected) CustomGlow(color = primaryColor, radius = 30f) else shape.glow),
+                                    path = pair.second,
+                                    shape = pair.first.snap().highlightedIfSelected(selected, primaryColor),
                                     center = center,
-                                    drawParams = drawParams,
+                                    shapesColor = extraColors.shapes,
                                     erase = pass == 0
                                 )
                             }
@@ -472,26 +451,33 @@ public fun NestEditScreen2(
                     NestOverlay(
                         center = center,
                         nest = currentNest.copy(
-                            intersectionShapes = shapes,
+                            intersectionShapes = shapes.mapTo(mutableSetOf()) { it.snap() },
                             cancelZone = tempCancelZone
                         ),
                         depth = Int.MAX_VALUE,
                         preventBgErasing = true,
-                        showConfiguratorDecorations = true,
-                        forceShowAllActionsInCurrentNest = true,
-                        hideSelectedPoint = true,
+                        pointSettingsDisplay = true,
                         showCancelZone = true,
                         hideShapes = true
                     )
+
+                    Canvas(Modifier.fillMaxSize()) {
+                        centerOfNest(center)
+                    }
                 }
             }
 
             Box(
                 Modifier
                     .fillMaxSize()
-                    .pointerInput(Unit, isInDragAroundMode, nestId) {
+                    .pointerInput(Unit, selectedShapeId, isInDragAroundMode, nestId) {
                         detectTransformGestures(
                             panZoomLock = true,
+//                            onGestureStart = { down ->
+//                                shapes.minByOrNull { manipulationSystem.normalize(manipulationSystem.transform(it.offset)) distanceTo down }?.let {
+//                                    selectedShapeId = it.id
+//                                }
+//                            },
                             onGestureEnd = {
                                 if (!isInDragAroundMode) {
                                     saveCurrentNest()
@@ -522,6 +508,9 @@ public fun NestEditScreen2(
                                 val shapeId = selectedShapeId ?: return@detectTransformGestures
                                 val shape = shapes.firstOrNull { it.id == shapeId } ?: return@detectTransformGestures
 
+
+//                                pointsService.updateNestShape(nestId, shapeId) {}
+//                                pointsService.updateNestShape(nestId, shapeId) { oldShape ->
                                 val oldScale = shape.scale
                                 val newScale = oldScale * gestureZoom
                                 val newAngle = shape.angle + gestureRotate
@@ -529,7 +518,7 @@ public fun NestEditScreen2(
                                 val canvasCentroid = manipulationSystem.normalize(manipulationSystem.transform(centroid))
 
                                 // Same thing as above but there's no need to apply the offset (and in fact it'll break the whole thing)
-                                // because the pan if the amount of drag
+                                // because the pan is the amount of drag
                                 val canvasPan = (pan / zoom.value).rotateBy(-angle.value)
 
                                 // Compute the new offset that keeps the gesture centroid
@@ -557,8 +546,18 @@ public fun NestEditScreen2(
                                     scale = newScale,
                                     angle = newAngle
                                 )
-                                paths -= shape
-                                addPath(newShape)
+//
+                                updatePath(newShape)
+
+//                                    newShape
+//                                }
+
+//                                pointsService.points.value
+//                                    .filter { (_, point) -> point.nestId == nestId && point.shapeId == shapeId }
+//                                    .forEach { (_, point) ->
+//                                        point.pos = pointsService.computePointOffsetRealTime(point, newShape)
+//                                    }
+                                recomposeTrigger++
                             }
                         }
                     }
@@ -576,7 +575,7 @@ public fun NestEditScreen2(
 
             ) {
                 Text(
-                    text = stringResource(R.string.shapes_number, paths.size),
+                    text = stringResource(R.string.shapes_number, currentNest.intersectionShapes.size),
                     modifier = Modifier.fillMaxWidth()
                 )
                 Text(
@@ -646,6 +645,7 @@ public fun NestEditScreen2(
             onDismissRequest = { showNestManagementDialog = false },
             onSelect = {
                 saveCurrentNest()
+                selectedShapeId = null
                 nestNavigation.goToNest(it.id)
                 showNestManagementDialog = false
             }
@@ -657,21 +657,23 @@ public fun NestEditScreen2(
             shapes = shapes,
             onSelectShape = { newShape ->
                 selectedShapeId = newShape
+                recomposeTrigger++
                 showShapesManagementDialog = false
             },
             onSave = { newShapes ->
-                paths.clear()
-                newShapes.forEach { shape ->
-                    addPath(shape)
+                pointsService.editNest(nestId) { old ->
+                    old.copy(intersectionShapes = newShapes)
                 }
             }
-        ) { showShapesManagementDialog = false }
+        ) {
+            recomposeTrigger++
+            showShapesManagementDialog = false
+        }
     }
 
     DebugZone(DebugSettingsStore.nestDebugInfo) {
-        Text("Current nest: $nestId")
-        Text("${paths.size} shapes inside this nest")
-        Text("Selected shape: $selectedShapeId")
+        Text("Paths size: ${paths.size}")
+        Text("RecomposeTrigger: $recomposeTrigger")
     }
 }
 
@@ -743,33 +745,3 @@ public fun NestEditScreen2(
 //                "   distance = $distance${if (!distanceSmallEnough) " (Too Far!)" else ""}\n" +
 //                ")"
 //}
-
-
-private val lineSize = 30.dp
-public fun DrawScope.centerOfNest(center: Offset) {
-    val linePx = lineSize.toPx()
-
-    val horizontalStart = Offset(center.x - linePx, center.y)
-    val horizontalEnd = Offset(center.x + linePx, center.y)
-
-    val verticalStart = Offset(center.x, center.y - linePx)
-    val verticalEnd = Offset(center.x, center.y + linePx)
-
-    drawNeonGlowLine(
-        start = horizontalStart,
-        end = horizontalEnd,
-        color = Color.Red,
-        lineStrokeWidth = 1f,
-        erase = false,
-        glow = CustomGlow(5f)
-    )
-
-    drawNeonGlowLine(
-        start = verticalStart,
-        end = verticalEnd,
-        color = Color.Red,
-        lineStrokeWidth = 1f,
-        erase = false,
-        glow = CustomGlow(5f)
-    )
-}

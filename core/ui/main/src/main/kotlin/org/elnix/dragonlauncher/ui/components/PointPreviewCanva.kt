@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.base.cache.DrawScopeText
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.i18n.R
@@ -16,7 +17,6 @@ import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
-import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.DrawScopeText
 import org.elnix.dragonlauncher.ui.remembers.rememberCustomText
 
 @Composable
@@ -62,7 +62,7 @@ public fun PointPreviewCanvas(
             depth = Int.MAX_VALUE,
             center = Offset(leftX, centerY),
             preventBgErasing = true,
-            showConfiguratorDecorations = true,
+            pointSettingsDisplay = false,
             customText = customTextsUnselected
         )
 
@@ -73,7 +73,7 @@ public fun PointPreviewCanvas(
             depth = Int.MAX_VALUE,
             center = Offset(rightX, centerY),
             preventBgErasing = true,
-            showConfiguratorDecorations = true,
+            pointSettingsDisplay = false,
             customText = customTextsSelected
         )
     }

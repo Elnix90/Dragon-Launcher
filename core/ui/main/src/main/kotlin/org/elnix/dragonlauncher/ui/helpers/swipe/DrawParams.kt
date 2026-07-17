@@ -15,8 +15,7 @@ import org.elnix.dragonlauncher.points.PointsService
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
-import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.RememberPointStableCaches
-import org.elnix.dragonlauncher.ui.helpers.swipe.cache.points.RememberNestsStableCaches
+import org.elnix.dragonlauncher.ui.helpers.swipe.cache.points.RememberPointStableCaches
 
 
 /**
@@ -33,14 +32,17 @@ public data class DrawParams(
 
     val maxNestsDepth: Int,
 
+    /** Settings Screen only */
     val preventBgErasing: Boolean,
-    val allowShowPointInCenter: Boolean,
+    /** Settings Screen only */
     val preventDrawingSubNests: Boolean,
-    val showConfiguratorDecorations: Boolean,
+    /** Settings Screen only */
+    val pointSettingsDisplay: Boolean,
+
     val showCurrentPoint: Boolean,
-    val showAllActionsInCurrentShape: Boolean,
-    val showAllActionsInCurrentNest: Boolean,
-    val hideSelectedPoint: Boolean,
+    val showAllPointsInCurrentShape: Boolean,
+    val showAllPointsInCurrentNest: Boolean,
+    val allowShowPointInCenter: Boolean,
 
     val nestDebugOverlay: Boolean,
     val showCancelZone: Boolean,
@@ -56,20 +58,13 @@ public data class DrawParams(
  * [PointsService.defaultPoint], or any observed UI / debug setting changes.
  *
  * As a side effect this function also drives [RememberPointStableCaches] which keeps
- * [org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.PointStableCache] synchronised with the current point set.
- *
- * @param pointsViewModel source of point/nest data
- * @param preventBgErasing when true the nest background is preserved (not cleared)
- * @param showConfiguratorDecorations when true shows cycle/hold-and-run badges
- * @param forceShowAllActionsInCurrentNest when true every point of the nest is drawn
+ * [org.elnix.dragonlauncher.base.cache.PointStableCache] synchronised with the current point set.
  */
 @Composable
 public fun rememberDrawParams(
     preventBgErasing: Boolean,
-    showConfiguratorDecorations: Boolean,
-    forceShowAllActionsInCurrentNest: Boolean,
     allowShowPointCenter: Boolean,
-    hideSelectedPoint: Boolean,
+    pointSettingsDisplay: Boolean,
     showCancelZone: Boolean,
     hideShapes: Boolean,
     pointsViewModel: PointsViewModel = activityViewModel()
@@ -81,7 +76,9 @@ public fun rememberDrawParams(
     val maxNestsDepth by UiSettingsStore.maxNestsDepth.asState()
     val showPointInCenter by UiSettingsStore.showPointPreviewCenterStartPosition.asState()
 
-    val showAllActionInCurrentShape by UiSettingsStore.showAllActionsOnCurrentShape.asState()
+    val showAllPointsInCurrentShape by UiSettingsStore.showAllPointsInCurrentShape.asState()
+    val showAllPointsInCurrentNest by UiSettingsStore.showAllPointsInCurrentNest.asState()
+
     val showPointPreviewCenterStartPosition by UiSettingsStore.showPointPreviewCenterStartPosition.asState()
 
     val showShape by UiSettingsStore.showShape.asState()
@@ -90,26 +87,23 @@ public fun rememberDrawParams(
     val textMeasurer = rememberTextMeasurer()
     val nestDebugOverlay = LocalNestDebugOverlay.current
 
-    RememberPointStableCaches()
-    RememberNestsStableCaches()
 
     return remember(
         extraColors,
-        showCurrentPoint,
         maxNestsDepth,
+        preventBgErasing,
         showPointInCenter,
-        showAllActionInCurrentShape,
-        showPointPreviewCenterStartPosition,
-        textMeasurer,
-        nestDebugOverlay,
-        showConfiguratorDecorations,
-        forceShowAllActionsInCurrentNest,
         allowShowPointCenter,
-        hideSelectedPoint,
+        showCurrentPoint,
+        showAllPointsInCurrentShape,
+        showPointPreviewCenterStartPosition,
+        pointSettingsDisplay,
+        nestDebugOverlay,
+        showCancelZone,
+        hideShapes,
         showShape,
         showAllShapesInNest,
-        hideShapes,
-        showCancelZone
+        textMeasurer
     ) {
         DrawParams(
             ctx = ctx,
@@ -119,15 +113,14 @@ public fun rememberDrawParams(
             preventBgErasing = preventBgErasing,
             allowShowPointInCenter = allowShowPointCenter && showPointInCenter,
             preventDrawingSubNests = false,
-            showConfiguratorDecorations = showConfiguratorDecorations,
             showCurrentPoint = showCurrentPoint,
-            showAllActionsInCurrentShape = showAllActionInCurrentShape,
-            showAllActionsInCurrentNest = forceShowAllActionsInCurrentNest || showPointPreviewCenterStartPosition,
-            hideSelectedPoint = hideSelectedPoint,
+            showAllPointsInCurrentShape = showAllPointsInCurrentShape,
+            showAllPointsInCurrentNest = showAllPointsInCurrentNest,
+            pointSettingsDisplay = pointSettingsDisplay,
             nestDebugOverlay = nestDebugOverlay,
             showCancelZone = showCancelZone,
             showShape = if (hideShapes) false else showShape,
-            showAllShapesInNest = if (hideShapes) false else showAllActionInCurrentShape,
+            showAllShapesInNest = if (hideShapes) false else showAllShapesInNest,
             textMeasurer = textMeasurer
         )
     }

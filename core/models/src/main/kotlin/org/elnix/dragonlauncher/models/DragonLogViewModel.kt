@@ -38,17 +38,17 @@ public class DragonLogViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            fileTree = FileLoggingTree(application, ::onHighPriorityLog)
+            fileTree = FileLoggingTree(application.applicationContext, ::onHighPriorityLog)
 
-            DebugSettingsStore.snackBarLogLevel.flow(application).collect {
+            DebugSettingsStore.snackBarLogLevel.flow(application.applicationContext).collect {
                 fileTree?.snackBarLogLevel = it
             }
 
-            DebugSettingsStore.filesLogLevel.flow(application).collect {
+            DebugSettingsStore.filesLogLevel.flow(application.applicationContext).collect {
                 fileTree?.filesLogsLevel = it
             }
 
-            DebugSettingsStore.filterTag.flow(application).collect {
+            DebugSettingsStore.filterTag.flow(application.applicationContext).collect {
                 fileTree?.filterTag = it
             }
 
@@ -69,11 +69,11 @@ public class DragonLogViewModel @Inject constructor(
     public fun updateEnableLogging(enable: Boolean) {
         viewModelScope.launch {
 
-            if (enableLogging.get(application) == enable) {
+            if (enableLogging.get(application.applicationContext) == enable) {
                 return@launch
             }
 
-            DebugSettingsStore.enableLogging.set(application, enable)
+            DebugSettingsStore.enableLogging.set(application.applicationContext, enable)
             updateLoggingState()
         }
     }
@@ -81,28 +81,28 @@ public class DragonLogViewModel @Inject constructor(
 //    public fun updateSnackBarLogLevel(newLevel: Int) {
 //        fileTree?.snackBarLogLevel = newLevel
 //        viewModelScope.launch {
-//            DebugSettingsStore.snackBarLogLevel.set(application, newLevel)
+//            DebugSettingsStore.snackBarLogLevel.set(application.applicationContext, newLevel)
 //        }
 //    }
 //
 //    public fun updateFilesLogLevel(newLevel: Int) {
 //        fileTree?.filesLogsLevel = newLevel
 //        viewModelScope.launch {
-//            DebugSettingsStore.filesLogLevel.set(application, newLevel)
+//            DebugSettingsStore.filesLogLevel.set(application.applicationContext, newLevel)
 //        }
 //    }
 //
 //    public fun updateFilterTag(newTag: String) {
 //        fileTree?.filterTag = newTag
 //        viewModelScope.launch {
-//            DebugSettingsStore.filterTag.set(application, newTag)
+//            DebugSettingsStore.filterTag.set(application.applicationContext, newTag)
 //        }
 //    }
 
     private suspend fun updateLoggingState() {
         val tree = fileTree ?: return
         val plantedTrees = Timber.forest()
-        if (enableLogging.get(application)) {
+        if (enableLogging.get(application.applicationContext)) {
             if (tree !in plantedTrees) {
                 Timber.plant(tree)
             }

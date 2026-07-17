@@ -75,6 +75,7 @@ import org.elnix.dragonlauncher.timer.AppTimerService.Companion.EXTRA_APP_NAME
 import org.elnix.dragonlauncher.timer.AppTimerService.Companion.SHOW_LAUNCHER
 import org.elnix.dragonlauncher.ui.actions.launchAction
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asMutableState
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.dialogs.AdbCommandInputDialog
@@ -88,8 +89,11 @@ import org.elnix.dragonlauncher.ui.dialogs.ShizukuUnavailableDialog
 import org.elnix.dragonlauncher.ui.dialogs.WidgetPickerDialog
 import org.elnix.dragonlauncher.ui.drawer.AppDrawerScreen
 import org.elnix.dragonlauncher.ui.helpers.BottomBanners
+import org.elnix.dragonlauncher.ui.helpers.CacheDebugOverlay
 import org.elnix.dragonlauncher.ui.helpers.FpsCounterGraph
 import org.elnix.dragonlauncher.ui.helpers.LauncherSnackbarHost
+import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.RememberNestsStableCaches
+import org.elnix.dragonlauncher.ui.helpers.swipe.cache.points.RememberPointStableCaches
 import org.elnix.dragonlauncher.ui.navigation.drawerMetadata
 import org.elnix.dragonlauncher.ui.navigation.horizontalMetadata
 import org.elnix.dragonlauncher.ui.navigation.verticalMetadata
@@ -348,6 +352,8 @@ public fun MainAppUi(
     }
 
     ProvideGlobalCompositionLocals {
+        RememberPointStableCaches()
+
         Scaffold(
             floatingActionButton = {
                 if (colorTestMode) {
@@ -357,9 +363,8 @@ public fun MainAppUi(
                     )
                 }
             },
-            snackbarHost = {
-                LauncherSnackbarHost()
-            },
+            topBar = { FpsCounterGraph() },
+            snackbarHost = { LauncherSnackbarHost() },
             contentWindowInsets = WindowInsets(),
             containerColor = containerColor,
         ) { paddingValues ->
@@ -495,13 +500,6 @@ public fun MainAppUi(
                                 pointsService.persist()
                             }
                         )
-//                        NestEditingScreen(
-//                            nestId = key.nestId,
-//                            onBack = {
-//                                backStack.navigateBack()
-//                                pointsService.persist()
-//                            }
-//                        )
                     }
 
                     entry<NavigationRoute.Widgets>(metadata = horizontalMetadata) { key ->
@@ -539,65 +537,65 @@ public fun MainAppUi(
                     }
                 }
             )
-        }
 
 
-        if (showFilePicker != null) {
-            val currentPoint = showFilePicker!!
 
-            FilePickerDialog(
-                onDismiss = { showFilePicker = null },
-                onFileSelected = { newAction ->
-                    val updatedPoint = currentPoint.copy(action = newAction)
-                    pointsService.editPoint(currentPoint.id) { updatedPoint }
-                    showFilePicker = null
-                    launchAction(updatedPoint)
-                }
-            )
-        }
+            if (showFilePicker != null) {
+                val currentPoint = showFilePicker!!
 
-
-        if (showWidgetPicker != null) {
-            val nestToBind = showWidgetPicker!!
-            WidgetPickerDialog(
-                onBindCustomWidget = { id, info ->
-                    onBindCustomWidget(id, info, nestToBind)
-                }
-            ) { showWidgetPicker = null }
-        }
+                FilePickerDialog(
+                    onDismiss = { showFilePicker = null },
+                    onFileSelected = { newAction ->
+                        val updatedPoint = currentPoint.copy(action = newAction)
+                        pointsService.editPoint(currentPoint.id) { updatedPoint }
+                        showFilePicker = null
+                        launchAction(updatedPoint)
+                    }
+                )
+            }
 
 
-        if (showShizukuCommandPromter != null) {
-            AdbCommandInputDialog(
-                onDismiss = { showShizukuCommandPromter = null },
-                showLeaveEmptyNotice = false
-            ) {
-                if (it.command.trim().isNotEmpty()) {
-                    runShisukuCommandNotEmpty(it)
+            if (showWidgetPicker != null) {
+                val nestToBind = showWidgetPicker!!
+                WidgetPickerDialog(
+                    onBindCustomWidget = { id, info ->
+                        onBindCustomWidget(id, info, nestToBind)
+                    }
+                ) { showWidgetPicker = null }
+            }
+
+
+            if (showShizukuCommandPromter != null) {
+                AdbCommandInputDialog(
+                    onDismiss = { showShizukuCommandPromter = null },
+                    showLeaveEmptyNotice = false
+                ) {
+                    if (it.command.trim().isNotEmpty()) {
+                        runShisukuCommandNotEmpty(it)
+                    }
                 }
             }
-        }
 
-        if (showShizukuUnavailableDialog) {
-            ShizukuUnavailableDialog(
-                onDismiss = {
-                    shizukuViewModel.dismissUnavailableDialog()
-                },
-                onConfirm = {
-                    if (isShizukuInstalled) launchAction(Action.LaunchApp(SHIZUKU_PACKAGE_NAME, Profile.dummy()))
-                    else ctx.openUrl(
-                        url = URL_SHIZUKU_SITE
-                    )
-                }
-            )
-        }
+            if (showShizukuUnavailableDialog) {
+                ShizukuUnavailableDialog(
+                    onDismiss = {
+                        shizukuViewModel.dismissUnavailableDialog()
+                    },
+                    onConfirm = {
+                        if (isShizukuInstalled) launchAction(Action.LaunchApp(SHIZUKU_PACKAGE_NAME, Profile.dummy()))
+                        else ctx.openUrl(
+                            url = URL_SHIZUKU_SITE
+                        )
+                    }
+                )
+            }
 
-        val pendingAppToLaunch by appLaunchViewModel.pendingAppLaunch.collectAsState(null)
+            var pendingAppToLaunch by appLaunchViewModel.pendingAppLaunch.asMutableState()
 
-        if (pendingAppToLaunch != null) {
-            val pendingApp = pendingAppToLaunch!!
-            DigitalPauseScreen(
-                application = pendingApp,
+            if (pendingAppToLaunch != null) {
+                val pendingApp = pendingAppToLaunch!!
+                DigitalPauseScreen(
+                    application = pendingApp,
 //                                    onProceedWithTimer = { timeLimitMinutes ->
 //                                        val data = Intent().apply {
 //                                            putExtra(RESULT_EXTRA_TIME_LIMIT, timeLimitMinutes)
@@ -609,53 +607,54 @@ public fun MainAppUi(
 //                                        finish()
 //                                    },
 
-                onCancel = backStack::navigateBack
-            )
-        }
+                    onCancel = { pendingAppToLaunch = null }
+                )
+            }
 
-        BottomBanners(currentRoute)
-        ShizukuOutputDialog()
-        FpsCounterGraph()
-        WhatsNewBottomSheet()
-        BackupResultDialog()
-        GoogleLockingWarningDialog()
+            BottomBanners(currentRoute)
+            ShizukuOutputDialog()
+            WhatsNewBottomSheet()
+            BackupResultDialog()
+            CacheDebugOverlay()
+            GoogleLockingWarningDialog()
 
 
-        if (screenToUnlock != null && lockMethod == LockMethod.Pin) {
-            PinUnlock(
-                onDismiss = {
-                    lockScreenViewModel.cancelUnlock()
-                },
-                onValidate = {
-                    lockScreenViewModel.unlock()
+            if (screenToUnlock != null && lockMethod == LockMethod.Pin) {
+                PinUnlock(
+                    onDismiss = {
+                        lockScreenViewModel.cancelUnlock()
+                    },
+                    onValidate = {
+                        lockScreenViewModel.unlock()
 
-                    backStack.remove(screenToUnlock!!)
-                    backStack.add(screenToUnlock!!)
-                }
-            )
-        }
+                        backStack.remove(screenToUnlock!!)
+                        backStack.add(screenToUnlock!!)
+                    }
+                )
+            }
 
-        if (screenToUnlock != null && lockMethod == LockMethod.Device) {
-            LaunchedEffect(screenToUnlock) {
-                val activity = ctx.findFragmentActivity()
-                if (activity != null && lockScreenViewModel.isDeviceUnlockAvailable()) {
-                    lockScreenViewModel.showDeviceUnlockPrompt(
-                        activity = activity,
-                        onSuccess = {
-                            lockScreenViewModel.unlock()
+            if (screenToUnlock != null && lockMethod == LockMethod.Device) {
+                LaunchedEffect(screenToUnlock) {
+                    val activity = ctx.findFragmentActivity()
+                    if (activity != null && lockScreenViewModel.isDeviceUnlockAvailable()) {
+                        lockScreenViewModel.showDeviceUnlockPrompt(
+                            activity = activity,
+                            onSuccess = {
+                                lockScreenViewModel.unlock()
 
-                            backStack.remove(screenToUnlock!!)
-                            backStack.add(screenToUnlock!!)
-                        },
-                        onError = { msg ->
-                            ctx.showToast(ctx.getString(R.string.authentication_error, msg))
-                            lockScreenViewModel.cancelUnlock()
-                        },
-                        onFailed = {
-                            ctx.showToast(ctx.getString(R.string.authentication_failed))
-                            lockScreenViewModel.cancelUnlock()
-                        }
-                    )
+                                backStack.remove(screenToUnlock!!)
+                                backStack.add(screenToUnlock!!)
+                            },
+                            onError = { msg ->
+                                ctx.showToast(ctx.getString(R.string.authentication_error, msg))
+                                lockScreenViewModel.cancelUnlock()
+                            },
+                            onFailed = {
+                                ctx.showToast(ctx.getString(R.string.authentication_failed))
+                                lockScreenViewModel.cancelUnlock()
+                            }
+                        )
+                    }
                 }
             }
         }

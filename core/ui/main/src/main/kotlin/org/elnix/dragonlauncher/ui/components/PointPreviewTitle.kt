@@ -50,6 +50,7 @@ public fun PointPreviewTitle(
     val label = point.customName ?: actionLabel(point.action)
 
     val appLabelOverlaySize by UiSettingsStore.appLabelOverlaySize.asState()
+    val appIconOverlaySize by UiSettingsStore.appIconOverlaySize.asState()
 
     val alpha = remember { Animatable(initialValue = 0f) }
     val offsetY = remember { Animatable(initialValue = -20f) }
@@ -89,7 +90,7 @@ public fun PointPreviewTitle(
 
 
                 if (showIcon) {
-                    FinalPointIcon(point)
+                    FinalPointIcon(point, size = appIconOverlaySize)
                 }
 
                 if (showLabel) {

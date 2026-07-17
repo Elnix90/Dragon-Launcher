@@ -23,7 +23,7 @@ public data class IntersectionShape(
     val id: Int,
 
     @SerialName("shape")
-    val shape: IconShape,
+    val shape: IconShape = IconShape.Circle,
 
     @SerialName("size")
     val scale: Float = 1f,
@@ -33,7 +33,7 @@ public data class IntersectionShape(
 
     @SerialName("offset")
     @Serializable(with = OffsetSerializer::class)
-    val offset: Offset,
+    val offset: Offset = Offset.Zero,
 
     @SerialName("haptic")
     val haptic: CustomHapticFeedback? = null,
@@ -76,6 +76,10 @@ public data class IntersectionShape(
     public companion object {
         public const val borderStrokeDefault: Float = 2f
         public const val defaultSize: Float = 300f
+
+        @Suppress("NOTHING_TO_INLINE")
+        public inline fun IntersectionShape.highlightedIfSelected(selected: Boolean, color: Color): IntersectionShape =
+            if (selected) this.copy(glow = CustomGlow(color = color, radius = 30f)) else this
     }
 }
 

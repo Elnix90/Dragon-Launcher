@@ -31,7 +31,7 @@ public class BackupViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    public val result: SettingFlow<BackupResult?> = SettingFlow<BackupResult?>(null)
+    public val result: SettingFlow<BackupResult?> = SettingFlow(null)
     private val _backupTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     init {

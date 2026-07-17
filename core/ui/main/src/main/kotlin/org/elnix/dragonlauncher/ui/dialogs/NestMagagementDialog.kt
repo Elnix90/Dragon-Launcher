@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,7 +44,6 @@ import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -58,7 +58,7 @@ public fun NestManagementDialog(
     onSelect: ((Nest) -> Unit)? = null
 ) {
     val pointsService = pointsViewModel.pointsService
-    val nests by pointsService.nests.asState()
+    val nests by pointsService.nests.collectAsState()
 
     var hasClickedNewNest by remember { mutableStateOf<Int?>(null) }
     val listState = rememberLazyListState()
@@ -102,7 +102,7 @@ public fun NestManagementDialog(
                     }
                 }
 
-                items(nests.toList()) { nest ->
+                items(nests.toList()) { (_, nest) ->
                     NestManagementItem(
                         nest = nest,
                         modifier = Modifier.animateItem(),
@@ -221,7 +221,7 @@ private fun NestManagementItem(
 
         DragonIconButton(
             icon = R.drawable.close,
-            contentDescription = stringResource(if (enabled) R.string.delete_nest else R.string.cannor_delete_nest_0),
+            contentDescription = stringResource(if (enabled) R.string.delete_nest else R.string.cannot_delete_nest_0),
             colors = AppObjectsColors.cancelIconButtonColors(),
             enabled = { enabled }
         ) {

@@ -6,7 +6,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.ktx.cleanString
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
-import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.DrawScopeText
+import org.elnix.dragonlauncher.base.cache.DrawScopeText
 
 @Composable
 public fun rememberDrawScopeText(

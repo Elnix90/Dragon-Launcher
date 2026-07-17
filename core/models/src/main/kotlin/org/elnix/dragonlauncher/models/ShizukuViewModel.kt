@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.models
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,9 +16,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-public class ShizukuViewModel @Inject constructor(
-    application: Application
-) : AndroidViewModel(application) {
+public class ShizukuViewModel @Inject constructor() : ViewModel() {
     private val shellCommandExecutor = ShellCommandExecutor()
     private val shizukuPermissionHandler = ShizukuPermissionHandler()
 

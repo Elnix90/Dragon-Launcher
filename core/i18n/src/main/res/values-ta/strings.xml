@@ -307,7 +307,6 @@
     <string name="rgb_line_selector_description">ஆக்சன் செலக்டரை (உங்கள் விரலைப் பின்தொடரும் கோடு) கோணத்தைப் பொறுத்து RGB சாய்வில் காட்டவும்</string>
     <string name="show_launching_app_label_description">திரையின் மேற்புறத்தில் ஒரு செயலைத் தேர்ந்தெடுக்கும்போது, ஆப்ச்/செயல் சிட்டை தெரிகிறதா</string>
     <string name="show_launching_app_icon_description">திரையின் மேல் ஒரு செயலைத் தேர்ந்தெடுக்கும்போது ஆப்ச்/செயல் ஐகானைக் காட்ட வேண்டுமா</string>
-    <string name="show_app_launch_preview_description">தேர்ந்தெடுக்கப்பட்ட பயன்பாட்டை வெளியிடும் போது வட்டத்தில் காட்டவும் (ஒரு முன்னோட்டம்)</string>
     <string name="show_app_line_preview_description">தொடக்க இழுக்கும் நிலையிலிருந்து விரல் வரை செல்லும் பாதையைக் காட்ட வேண்டுமா (rgb வரியுடன் தொடர்புடையது)</string>
     <string name="show_app_angle_preview_description">கோட்டில் கோணக் காட்டியைக் காட்டவும்</string>
     <string name="show_app_icon_start_drag_position_description">நீங்கள் நட்சத்திரமிட்ட இடத்தின் மையத்தில் தற்போதைய தேர்ந்தெடுக்கப்பட்ட பயன்பாட்டை இழுத்து காண்பிக்கவும்</string>
@@ -666,8 +665,6 @@
     <string name="angle_object">கோண பொருள்</string>
     <string name="start_object">தொடக்க பொருள்</string>
     <string name="end_object">இறுதி பொருள்</string>
-    <string name="show_all_actions_on_current_nest">தற்போதைய கூட்டில் அனைத்து நடவடிக்கைகளையும் காட்டு</string>
-    <string name="show_all_actions_on_current_nest_desc">இழுக்கும்போது தற்போதைய கூட்டின் அனைத்து வட்டங்களையும் புள்ளிகளையும் காட்டவும்</string>
     <string name="disable_auto_launch_on_space_first_char">ச்பேச் ஃபர்ச்ட் சார்சில் தானாக ஏவுதலை முடக்கு</string>
     <string name="disable_auto_launch_on_space_first_char_desc">தேடுவதற்கு முன் ச்பேசை அழுத்தினால், தானியங்கு வெளியீடு செயல்படாது</string>
     <string name="configure_draw_order">டிரா ஆர்டரை உள்ளமைக்கவும்</string>

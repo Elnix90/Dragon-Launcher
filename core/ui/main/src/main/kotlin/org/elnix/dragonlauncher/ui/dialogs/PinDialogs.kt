@@ -41,7 +41,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -64,9 +63,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.graphics.shapes.RoundedPolygon
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
+import org.elnix.dragonlauncher.base.model.serializables.IconShape.Companion.pinMaterialShapes
+import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.base.util.HapticUtils.vibrate
 import org.elnix.dragonlauncher.i18n.R
@@ -74,7 +75,6 @@ import org.elnix.dragonlauncher.models.LockScreenViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.ui.base.UiConstants.pinMaterialShapes
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
@@ -92,7 +92,7 @@ public fun PinUnlock(
     val pinHash by PrivateSettingsStore.lockPinHash.asState()
 
     var pin by remember { mutableStateOf("") }
-    val pinShapes = remember { mutableStateListOf<RoundedPolygon>() }
+    val pinShapes = remember { mutableStateListOf<IconShape>() }
     var failedTries by remember { mutableIntStateOf(0) }
     var pinError by remember { mutableStateOf<String?>(null) }
 
@@ -158,7 +158,7 @@ public fun PinSetup(
     var failedTries by remember { mutableIntStateOf(0) }
     val pinMismatch = stringResource(R.string.pin_mismatch)
 
-    val pinShapes = remember(isConfirmStep) { mutableStateListOf<RoundedPolygon>() }
+    val pinShapes = remember(isConfirmStep) { mutableStateListOf<IconShape>() }
     val currentPin = if (isConfirmStep) confirmPin else firstPin
 
     PinPrompt(
@@ -251,7 +251,7 @@ private fun PinPrompt(
     title: String,
     subtitle: String,
     pinValue: String,
-    pinShapes: List<RoundedPolygon>,
+    pinShapes: List<IconShape>,
     errorMessage: String? = null,
     failedTries: Int,
     minDigits: Int = 1,
@@ -421,7 +421,7 @@ private fun PinPrompt(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PinIndicator(
-    shapes: List<RoundedPolygon>
+    shapes: List<IconShape>
 ) {
     val scope = rememberCoroutineScope()
     val lazyState = rememberLazyListState()
@@ -459,7 +459,7 @@ private fun PinIndicator(
                     .graphicsLayer(scaleX = scale, scaleY = scale)
                     .background(
                         color = MaterialTheme.colorScheme.primary,
-                        shape = shape.toShape()
+                        shape = shape.resolveShape()
                     )
             )
         }

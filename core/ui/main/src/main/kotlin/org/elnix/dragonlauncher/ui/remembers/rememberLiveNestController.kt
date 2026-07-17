@@ -126,7 +126,7 @@ public fun rememberLiveNestControllerStack(
                 normalizedPos = current - rootStartPos,
                 nestId = rootNestId,
                 liveNestScale = 1f,
-                graceDistancePx = -1
+                graceDistancePx = null
             ).also {
                 sweepAngleStateStack[0].onAngleChanged(it.angle360)
             }
@@ -256,7 +256,7 @@ public fun rememberLiveNestControllerStack(
             val previousLiveNestCenter = nestStack[idx - 1].liveNestCenter ?: return@LaunchedEffect
 
 
-            val currentPointOffset = pointsService.computePointOffset(currentPoint) + previousLiveNestCenter
+            val currentPointOffset = currentPoint.getPos() + previousLiveNestCenter
 
             delay(delayMs.milliseconds)
 

@@ -29,6 +29,7 @@ import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
+import org.elnix.dragonlauncher.ui.dialogs.GamblingInputDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 
 @Composable
@@ -134,10 +135,13 @@ public fun SpecialSettingsTitle(
     onEditDefaultPoint: () -> Unit,
     onEditNest: () -> Unit,
     onResetPoints: () -> Unit,
+    onGamble: (Int) -> Unit,
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
+
+    var showGambleDialog by remember { mutableStateOf(false) }
 
     val showAdvancedPointTools by SwipeMapSettingsStore.showAdvancedPointTools.asState()
 
@@ -162,6 +166,14 @@ public fun SpecialSettingsTitle(
                             SwipeMapSettingsStore.showAdvancedPointTools.set(ctx, !showAdvancedPointTools)
                             dismiss()
                         }
+                    }
+                ),
+                MoreOptions(
+                    text = { stringResource(R.string.gamble_apps) },
+                    icon = R.drawable.casino,
+                    onClick = {
+                        dismiss()
+                        showGambleDialog = true
                     }
                 ),
                 MoreOptions(
@@ -195,5 +207,10 @@ public fun SpecialSettingsTitle(
             onClick = onSettings,
             icon = R.drawable.settings
         )
+    }
+
+
+    if (showGambleDialog) {
+        GamblingInputDialog(onGamble) { showGambleDialog = false }
     }
 }

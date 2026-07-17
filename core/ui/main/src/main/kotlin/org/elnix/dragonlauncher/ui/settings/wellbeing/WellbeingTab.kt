@@ -48,6 +48,7 @@ import org.elnix.dragonlauncher.ui.base.UiConstants.dragonSettingGroupPaddingVal
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
+import org.elnix.dragonlauncher.ui.dialogs.AppUsagePermissionDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -261,28 +262,7 @@ public fun WellbeingTab(
     }
 
     if (showPermissionDialog) {
-        AlertDialog(
-            onDismissRequest = { showPermissionDialog = false },
-            title = { Text(stringResource(R.string.usage_permission_required)) },
-            text = { Text(stringResource(R.string.usage_permission_description)) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showPermissionDialog = false
-                        ctx.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        })
-                    }
-                ) {
-                    Text(stringResource(R.string.open_settings))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showPermissionDialog = false }) {
-                    Text(stringResource(R.string.cancel))
-                }
-            }
-        )
+        AppUsagePermissionDialog { showPermissionDialog = false}
     }
 
     if (showOverlayPermissionDialog) {

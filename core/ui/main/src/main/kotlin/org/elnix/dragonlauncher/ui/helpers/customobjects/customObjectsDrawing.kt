@@ -33,7 +33,7 @@ public fun DrawScope.customObject(
 
     val sizePx = customObject.size.dp.toPx()
     val size = Size(sizePx, sizePx)
-    val path = shapeToPath(shape, size)
+    val path = toPath(shape, size)
 
     withTransform(
         {

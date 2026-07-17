@@ -17,17 +17,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.navigation3.runtime.NavKey
-import org.elnix.dragonlauncher.base.model.serializables.StatusBar
+import io.github.elnix90.runtime.asState
+import io.github.elnix90.runtime.asStateNull
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.common.utils.rememberIsDefaultLauncher
 import org.elnix.dragonlauncher.ktx.hasUriReadWritePermission
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
-import io.github.elnix90.runtime.asState
-import io.github.elnix90.runtime.asStateNull
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 
 @Composable
 public fun BottomBanners(currentRoute: NavKey) {
+    if (currentRoute == NavigationRoute.Welcome) return
+
+
     val ctx = LocalContext.current
 
     val showSetDefaultLauncherBanner by PrivateSettingsStore.showSetDefaultLauncherBanner.asStateNull()
@@ -38,11 +41,6 @@ public fun BottomBanners(currentRoute: NavKey) {
     val autoBackupUri by remember(autoBackupUriString) {
         derivedStateOf { autoBackupUriString?.toUri() }
     }
-
-
-    val showSetAsDefaultBanner = (showSetDefaultLauncherBanner == true) &&
-            !isDefaultLauncher &&
-            currentRoute != NavigationRoute.Welcome
 
 
     var hasAutoBackupPermission by remember {
@@ -57,12 +55,8 @@ public fun BottomBanners(currentRoute: NavKey) {
         }
     }
 
-    val showReselectAutoBackupFile =
-        autoBackupEnabled &&
-                hasAutoBackupPermission == false &&
-                autoBackupUri != null &&
-                currentRoute != NavigationRoute.Welcome
-
+    val showReselectAutoBackupFile = autoBackupEnabled && hasAutoBackupPermission == false && autoBackupUri != null
+    val showSetAsDefaultBanner = (showSetDefaultLauncherBanner == true) && !isDefaultLauncher
 
 
     if (showSetAsDefaultBanner || showReselectAutoBackupFile) {
@@ -72,7 +66,7 @@ public fun BottomBanners(currentRoute: NavKey) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            StatusBar.Spacer()
+            Spacer()
             AnimatedVisibility(showSetAsDefaultBanner) {
                 SetDefaultLauncherBanner()
             }

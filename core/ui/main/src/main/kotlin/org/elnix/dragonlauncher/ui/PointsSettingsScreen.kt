@@ -24,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateMapOf
@@ -33,31 +32,42 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.elnix90.logging.POINTS_TAG
+import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.Constants
 import org.elnix.dragonlauncher.base.Constants.Settings.COLLIDING_SHAPE_THRESHOLD_PX
 import org.elnix.dragonlauncher.base.Constants.Settings.TOUCH_THRESHOLD_PX
+import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
+import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
-import org.elnix.dragonlauncher.base.model.serializables.Nest
+import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
+import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape.Companion.highlightedIfSelected
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.navigaton.ManipulationSystem
+import org.elnix.dragonlauncher.base.resolveShape
+import org.elnix.dragonlauncher.base.theme.LocalExtraColors
+import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.Center
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.ResetRotation
@@ -75,6 +85,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.distanceTo
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ktx.rotateBy
+import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.models.InitializationViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
@@ -92,24 +103,24 @@ import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.components.ToggleAnimatedFab
 import org.elnix.dragonlauncher.ui.base.modifiers.selfAlignHorizontally
+import org.elnix.dragonlauncher.ui.components.IntersectionShape
 import org.elnix.dragonlauncher.ui.components.SelectedPointsTopBar
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
 import org.elnix.dragonlauncher.ui.dialogs.EditPointSheet
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.SelfCheckNestPresent
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowOverlay
+import org.elnix.dragonlauncher.ui.helpers.customobjects.toPath
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.settings.SpecialSettingsTitle
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
 import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 import org.elnix.dragonlauncher.ui.remembers.rememberDrawScopeText
-import kotlin.math.sqrt
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -117,16 +128,21 @@ import kotlin.time.Duration.Companion.milliseconds
 public fun PointsSettingsScreen(
     iconsViewModel: IconsViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel(),
+    drawerViewModel: DrawerViewModel = activityViewModel(),
     initializationViewModel: InitializationViewModel = activityViewModel(),
     onAdvSettings: () -> Unit,
     onNestEdit: (nest: Int) -> Unit,
     onBack: () -> Unit
 ) {
+    val density = LocalDensity.current
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
     val pointsService = pointsViewModel.pointsService
     val defaultPoint by pointsService.defaultPoint.asState()
+
+    val points by pointsService.points.collectAsState()
+    val nests by pointsService.nests.collectAsState()
 
     val showAdvancedEditTools by SwipeMapSettingsStore.showAdvancedPointTools.asState()
     val isInDragAroundMode by isInDragAroundMode.asState()
@@ -141,11 +157,10 @@ public fun PointsSettingsScreen(
 
     var center by remember { mutableStateOf(Offset.Zero) }
 
-    val points by pointsService.points.asState()
-    val nests by pointsService.nests.asState()
-
     val selectedPointsIds: List<Int> by pointsService.selectedPointsIds.asState()
     val aSinglePointIsSelected = selectedPointsIds.size == 1
+
+    var temporarySelectedShape by remember { mutableStateOf<Int?>(null) }
 
     var closestHoveredPoint by remember { mutableStateOf<Point?>(null) }
     var closestHoveredTempOffset by remember { mutableStateOf<Offset?>(null) }
@@ -170,9 +185,9 @@ public fun PointsSettingsScreen(
 
     val rowsScrollStates = List(2) { rememberScrollState() }
 
-    val nestService = pointsViewModel.nestsNavigationService
-    val nestId by pointsViewModel.currentNestId.collectAsState()
-    val currentNest = pointsService.findNestByIdOrNull(nestId) ?: Nest(0)
+    val nestsNavigationService = pointsViewModel.nestsNavigationService
+    val nestId by nestsNavigationService.currentNestId.collectAsState()
+    val currentNest = pointsService.findNestById(nestId)
 
     SelfCheckNestPresent()
 
@@ -186,47 +201,40 @@ public fun PointsSettingsScreen(
      *
      * @param point which point to move
      * @param normalizedOffset the offset in which the gesture ends (normalized)
-     * @return a [Pair] with the final normalized offset and the optional shape id
+     * @return the optional [shapeId][Int] the point will take if dropped here
      */
     fun computePointMoved(
         point: Point,
         normalizedOffset: Offset
-    ): Pair<Offset, Int?> {
-        // Early return: if use don't want to snap to shapes, no need to compute them as it is a bit expensive
-        if (!snapPoints) return normalizedOffset to point.collidingShapeId
+    ): Int? {
+        // Early return: if user don't want to snap to shapes, no need to compute them as it is a bit expensive
+        if (!snapPoints) return point.shapeId
 
-        val newPointRaw: Point = point.copy(
-            offset = normalizedOffset,
-            collidingShapeId = null
-        )
+        val shapes = currentNest.intersectionShapes
+        if (shapes.isEmpty()) return null
+
+        val (minOffset, shapeId) = shapes
+            .map { shape ->
+                pointsService.computePointOffset(
+                    point.copy(
+                        offset = normalizedOffset,
+                        shapeId = shape.id
+                    )
+                ) to shape.id
+            }
+            .minBy { (offset, _) -> offset distanceTo normalizedOffset }
 
         /**
-         * A set of all offsets the point could have if it collides with the shapes.
-         * Later on I'll take the closest one, and if it is < [COLLIDING_SHAPE_THRESHOLD_PX]
+         * The distance between the landing [Offset] and the finger's position
          */
-        val collidingShapesOffsets: Set<Pair<Offset, Int>> = currentNest.intersectionShapes.mapTo(mutableSetOf()) { shape ->
-            pointsService.computePointOffset(newPointRaw.copy(collidingShapeId = shape.id)) to shape.id
-        }
+        val minOffsetDistanceToNormalized: Float = minOffset distanceTo normalizedOffset
 
+        logD(POINTS_TAG) { "normalizedOffset: $normalizedOffset; Min Offset : $minOffset, dist: $minOffsetDistanceToNormalized , shapeId: $shapeId" }
 
-        var minOffsetShapeId: Int? = null
-        var minOffset: Offset? = null
-        var minDistSquared: Float = Float.MAX_VALUE
-
-        for ((offset, shapeId) in collidingShapesOffsets) {
-            val offsetLength = offset.getDistanceSquared()
-            if (offsetLength < minDistSquared) {
-                minDistSquared = offsetLength
-                minOffsetShapeId = shapeId
-                minOffset = offset
-            }
-        }
-
-        val minOffsetLength: Float = sqrt(minDistSquared)
-        return if (minOffsetLength < COLLIDING_SHAPE_THRESHOLD_PX) {
-            minOffset!! to minOffsetShapeId
+        return if (minOffsetDistanceToNormalized < COLLIDING_SHAPE_THRESHOLD_PX) {
+            shapeId
         } else {
-            normalizedOffset to null
+            null
         }
     }
 
@@ -278,7 +286,7 @@ public fun PointsSettingsScreen(
         }
 
         private val distance: Float by lazy {
-            val betsPOffset = this.bestP?.let { pointsService.computePointOffset(it) } ?: return@lazy Float.MAX_VALUE
+            val betsPOffset = this.bestP?.getPos() ?: return@lazy Float.MAX_VALUE
             betsPOffset distanceTo this.normalizedOffset
         }
 
@@ -312,7 +320,7 @@ public fun PointsSettingsScreen(
      * Mb I touched it but it still works :)
      * @return the `transformed offset` of the point.
      */
-    fun Point.computePosition(): Offset = manipulationSystem.undoBoth(pointsService.computePointOffset(this))
+    fun Point.computePosition(): Offset = manipulationSystem.undoBoth(this.getPos())
 
 
     val selectedPointTempOffset = retain { mutableStateMapOf<Int, Offset>() }
@@ -345,7 +353,7 @@ public fun PointsSettingsScreen(
             val point = pointsService.findPointById(id) ?: return@forEach
             selectedPointTempOffset[id] = point.computePosition()
         }
-        selectedPointTempOffset.keys.forEach {  key ->
+        selectedPointTempOffset.keys.forEach { key ->
             if (key !in selectedPointsIds) {
                 selectedPointTempOffset.remove(key)
             }
@@ -361,16 +369,25 @@ public fun PointsSettingsScreen(
         }
     }
 
-    val filteredPoints by remember(points, nestId) {
-        derivedStateOf {
-            points.filter { it.nestId == nestId }
+    val paths: SnapshotStateMap<IntersectionShape, Path> = remember { mutableStateMapOf() }
+
+    fun addPath(shape: IntersectionShape) {
+        paths[shape] = shape.shape.resolveShape().toPath(shape.getSize(density.density), density)
+    }
+
+    LaunchedEffect(currentNest.intersectionShapes) {
+        paths.clear()
+        currentNest.intersectionShapes.forEach { shape ->
+            addPath(shape)
         }
     }
+
+    val extraColors = LocalExtraColors.current
 
     val handleBack = {
         if (isInManualPlacementMode) manualPlacementQueue = emptyList()
         else if (selectedPointsIds.isNotEmpty()) pointsService.deselectAll()
-        else if (nestId != 0) nestService.goBack()
+        else if (nestId != 0) nestsNavigationService.goBack()
         else if (isEditing) isEditing = false
         else onBack()
     }
@@ -390,8 +407,29 @@ public fun PointsSettingsScreen(
                 onSettings = onAdvSettings,
                 onSelectAll = { pointsService.selectAll(nestId) },
                 onEditDefaultPoint = { showEditDefaultPoint = true },
-                onEditNest = { onNestEdit(nestId) },
+                onEditNest = {
+                    pointsService.deselectAll()
+                    onNestEdit(nestId)
+                },
                 onResetPoints = { showResetPointsAndNestsDialog = true },
+                onGamble = {
+                    repeat(it) {
+                        pointsService.addPoint { id ->
+                            val newOffset = Offset(
+                                x = (-1000..1000).random().toFloat(),
+                                y = (-1000..1000).random().toFloat()
+                            )
+                            val newAction = Action.LaunchApp(drawerViewModel.userApps.value.random())
+                            Point(
+                                id = id,
+                                offset = newOffset,
+                                nestId = nestId,
+                                action = newAction,
+                                shapeId = null
+                            )
+                        }
+                    }
+                },
                 onBack = handleBack
             )
         },
@@ -430,13 +468,13 @@ public fun PointsSettingsScreen(
                             }
 
                             GoParentNest -> {
-                                nestService.goBack()
+                                nestsNavigationService.goBack()
                                 pointsService.deselectAll()
                             }
 
                             EnterNest -> {
                                 nestToGo?.let {
-                                    nestService.goToNest(it)
+                                    nestsNavigationService.goToNest(it)
                                     pointsService.deselectAll()
                                 }
                             }
@@ -540,26 +578,6 @@ public fun PointsSettingsScreen(
                         R.drawable.pan_tool
                     }
                 }
-
-                DragonIconButton(
-                    icon = R.drawable.add,
-                    contentDescription = R.string.add_point
-                ) {
-                    pointsService.addPoint { id ->
-                        val newOffset = Offset(
-                            x = (-1000..1000).random().toFloat(),
-                            y = (-1000..1000).random().toFloat()
-                        )
-                        Point(
-                            id = id,
-                            offset = newOffset,
-                            nestId = nestId,
-                            action = Action.OpenDragonLauncherSettings(),
-                            collidingShapeId = 0
-                        )
-                    }
-                }
-
                 MultiSelectConnectedButtonRow(
                     entries = SelectedPointEditTools.entries,
                     checked = {
@@ -633,7 +651,7 @@ public fun PointsSettingsScreen(
              * - If the selected point is a live nest, it is drawn in transparency on top of it.
              *   **Only if the nest isn't a OpenCircleNest that points to the same nest action**
              */
-            key(selectedPointTempOffset, points.size, nests.size, defaultPoint) {
+            key(selectedPointsIds, points.size, nests.size, defaultPoint) {
                 Box(
                     Modifier
                         .fillMaxSize()
@@ -646,13 +664,30 @@ public fun PointsSettingsScreen(
                             transformOrigin = TransformOrigin(0f, 0f)
                         }
                 ) {
+                    Canvas(Modifier.fillMaxSize()) {
+
+                        repeat(2) { pass ->
+                            paths.forEach { (shape, path) ->
+                                val selected: Boolean = temporarySelectedShape == shape.id
+                                this.IntersectionShape(
+                                    path = path,
+                                    shape = shape.highlightedIfSelected(selected, primaryColor),
+                                    center = center,
+                                    shapesColor = extraColors.shapes,
+                                    erase = pass == 0
+                                )
+                            }
+                        }
+
+                        drawRect(color = Color.Blue.alphaMultiplier(0.2f))
+                    }
+
                     NestOverlay(
                         center = center,
                         nest = currentNest,
                         preventBgErasing = true,
-                        showConfiguratorDecorations = true,
-                        forceShowAllActionsInCurrentNest = true,
-                        hideSelectedPoint = true
+                        pointSettingsDisplay = true,
+                        hideShapes = true
                     )
 
                     // Animated Selected point
@@ -660,16 +695,14 @@ public fun PointsSettingsScreen(
                         val point = pointsService.findPointById(id) ?: return@forEach
                         val tr = offset.toTr()
 
-                        val pointSize = point.getSize(defaultPoint).px
-                        val customText = rememberDrawScopeText(point.copy(offset = tr.normalizedOffset), pointSize, defaultPoint)
 
                         if (LocalNestDebugOverlay.current) {
                             Canvas(Modifier.fillMaxSize()) {
 
-                                val endOffset: Offset = if (point.collidingShapeId == null) {
+                                val endOffset: Offset = if (point.shapeId == null) {
                                     center
                                 } else {
-                                    currentNest.intersectionShapes.firstOrNull { it.id == point.collidingShapeId }?.let {
+                                    currentNest.intersectionShapes.firstOrNull { it.id == point.shapeId }?.let {
                                         center + it.offset
                                     } ?: center
                                 }
@@ -681,24 +714,25 @@ public fun PointsSettingsScreen(
                                 )
                             }
                         }
+                        val pointSize = point.getSize(defaultPoint).px
+                        val customText = rememberDrawScopeText(point.copy(offset = tr.normalizedOffset), pointSize, defaultPoint)
 
                         PointIcon(
                             center = tr.transformedOffset,
                             point = point,
                             selected = true,
+                            pointSettingsDisplay = true,
                             preventBgErasing = true,
-                            showConfiguratorDecorations = true,
                             customText = customText
                         )
 
 
-                        // Live Nest: semi-transparent target nest preview at the selected point (nest editor only).
                         val liveTargetId = point.liveNestTargetNestId ?: return@forEach
 
                         // Don't draw if the action is opening the same nest it is displaying
                         if (point.action is Action.OpenCircleNest && (point.action as Action.OpenCircleNest).nestId == liveTargetId) return@forEach
 
-                        val nestedNest = nests.find { it.id == liveTargetId } ?: return@forEach
+                        val nestedNest = nests[liveTargetId] ?: return@forEach
                         val nestScale = point.liveNestScale ?: Point.defaultLiveNestScale
                         val scaledNest = nestedNest scaledBy nestScale
 
@@ -707,8 +741,7 @@ public fun PointsSettingsScreen(
                             center = tr.transformedOffset,
                             nest = scaledNest,
                             preventBgErasing = true,
-                            showConfiguratorDecorations = true,
-                            forceShowAllActionsInCurrentNest = true
+                            pointSettingsDisplay = true
                         )
                     }
 
@@ -728,7 +761,7 @@ public fun PointsSettingsScreen(
             Box(
                 Modifier
                     .fillMaxSize()
-                    .pointerInput(Unit, isInDragAroundMode, nestId, filteredPoints) {
+                    .pointerInput(Unit, isInDragAroundMode, nestId) {
                         if (isInDragAroundMode) {
                             detectTransformGestures(true) { centroid, pan, gestureZoom, gestureRotate ->
 
@@ -764,24 +797,47 @@ public fun PointsSettingsScreen(
                                         // Since it is a delegated property, its update comes right after the newt line of code runs,
                                         // and therefore it ain't present in the list
                                         // In Any cases, if it weren't to be in the list it would be overriden with the same value.
-                                        selectedPointTempOffset[newSelectedPoint.id] = newSelectedPoint.computePosition()
+//                                        selectedPointTempOffset[newSelectedPoint.id] = newSelectedPoint.computePosition()
                                     }
 
-                                    selectedPointsIds.forEach { id ->
-                                        val point = pointsService.findPointById(id) ?: return@forEach
-                                        selectedPointTempOffset[id] = point.computePosition()
-                                    }
+//                                    selectedPointsIds.forEach { id ->
+//                                        val point = pointsService.findPointById(id) ?: return@forEach
+//                                        selectedPointTempOffset[id] = point.computePosition()
+//                                    }
                                 },
                                 onDrag = { change, dragAmount ->
                                     change.consume()
+                                    val tr = change.position.toTr()
 
+                                    // When dragging:
+                                    // 1. the selected points are updated in real time to provide visual feedback
+                                    // 2. If snapShapes is enabled, the closest shape should light up to indicate
+                                    //    that when the user releases its finger, the point snaps to the shape
+                                    // 3. If autoMerge is enabled, the closest point is analyzed and optionally light up
+                                    //    to indicate a merge with the current dragged point
+
+
+                                    // 1. selected points updating
                                     selectedPointsIds.forEach { id ->
                                         val previousOffset = selectedPointTempOffset[id] ?: return@forEach
                                         selectedPointTempOffset[id] = previousOffset + dragAmount
                                     }
 
+
+                                    // 2. snapShapes
+                                    if (snapPoints) {
+                                        selectedPointTempOffset.forEach { (id, _) ->
+                                            val point = pointsService.findPointById(id) ?: return@forEach
+                                            val pos = selectedPointTempOffset[id] ?: return@forEach
+                                            val tr = pos.toTr()
+                                            val shapeId = computePointMoved(point, tr.normalizedOffset)
+                                            temporarySelectedShape = shapeId
+                                        }
+                                    }
+
+
+                                    // 3. autoMerge computing
                                     if (autoMerge) {
-                                        val tr = change.position.toTr()
                                         val bestPExcept = pointsService.computeClosestExcept(
                                             ignoredPointId = selectedPointsIds.toTypedArray(),
                                             normalizedPos = tr.normalizedOffset,
@@ -852,12 +908,12 @@ public fun PointsSettingsScreen(
                                             val tr = offset.toTr()
 
                                             val point = pointsService.findPointById(id) ?: return@forEach
-                                            val (newOffsetNormalized, shapeId) = computePointMoved(point, tr.normalizedOffset)
+                                            val shapeId = computePointMoved(point, tr.normalizedOffset)
 
                                             pointsService.editPoint(id) { old ->
                                                 old.copy(
-                                                    offset = newOffsetNormalized,
-                                                    collidingShapeId = shapeId
+                                                    offset = tr.normalizedOffset,
+                                                    shapeId = shapeId
                                                 )
                                             }
 
@@ -867,20 +923,21 @@ public fun PointsSettingsScreen(
                                         }
                                     }
 
-//                                    selectedPointTempOffset.clear()
+                                    temporarySelectedShape = null
                                     closestHoveredPoint = null
                                     ableToLaunchHoverAction = false
                                 },
                                 onDragCancel = {
                                     selectedPointTempOffset.clear()
                                     pointsService.deselectAll()
+                                    temporarySelectedShape = null
                                     closestHoveredPoint = null
                                     ableToLaunchHoverAction = false
                                 }
                             )
                         }
                     }
-                    .pointerInput(isInManualPlacementMode, isInDragAroundMode, nestId, filteredPoints) {
+                    .pointerInput(isInManualPlacementMode, isInDragAroundMode, nestId) {
                         detectTapGestures(
                             onTap = { tapOffset ->
                                 val tr = tapOffset.toTr()
@@ -894,13 +951,19 @@ public fun PointsSettingsScreen(
                                             action.nestId
                                         } else null
 
+                                    val newPoint = Point(
+                                        id = -1,
+                                        offset = tr.normalizedOffset,
+                                        action = action,
+                                        nestId = nestId,
+                                        liveNestTargetNestId = newLiveNest
+                                    )
+                                    val shapeId = computePointMoved(newPoint, tr.normalizedOffset)
+
                                     val newPointId = pointsService.addPoint { id ->
-                                        Point(
+                                        newPoint.copy(
                                             id = id,
-                                            offset = tr.normalizedOffset,
-                                            action = action,
-                                            nestId = nestId,
-                                            liveNestTargetNestId = newLiveNest
+                                            shapeId = shapeId
                                         )
                                     }
 
@@ -926,7 +989,8 @@ public fun PointsSettingsScreen(
                                     if (selectedPointsIds.size == 1 && id in selectedPointsIds) {
                                         // Same point tapped -> if circle nest, open it, else edit point
                                         if (bestP.action is Action.OpenCircleNest) {
-                                            nestService.goToNest((bestP.action as Action.OpenCircleNest).nestId)
+                                            pointsService.deselectAll()
+                                            nestsNavigationService.goToNest((bestP.action as Action.OpenCircleNest).nestId)
                                         } else {
                                             showEditDialog = bestP.id
                                         }
@@ -984,7 +1048,7 @@ public fun PointsSettingsScreen(
         NestManagementDialog(
             onDismissRequest = { showNestManagementDialog = false },
             onSelect = {
-                nestService.goToNest(it.id)
+                nestsNavigationService.goToNest(it.id)
                 pointsService.deselectAll()
                 showNestManagementDialog = false
             }
@@ -1079,6 +1143,9 @@ public fun PointsSettingsScreen(
                 resetDefaultPoint = true
             )
 
+            PointStableCache.clear()
+            NestIntersectionShapesPathCache.clear()
+
             initializationViewModel.initialize()
             pointsService.deselectAll()
             showResetPointsAndNestsDialog = false
@@ -1100,5 +1167,3 @@ public fun PointsSettingsScreen(
         Text("first selected point: $firstPoint")
     }
 }
-
-

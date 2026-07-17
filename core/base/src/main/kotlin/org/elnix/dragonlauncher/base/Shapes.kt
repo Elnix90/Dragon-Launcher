@@ -10,16 +10,22 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asComposePath
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.graphics.shapes.CornerRounding
 import androidx.graphics.shapes.RoundedPolygon
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.material.shapes.toShape
 import kotlin.math.abs
 import kotlin.math.cbrt
+import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.math.sin
 
 
 /**
@@ -42,9 +48,15 @@ public fun IconShape?.resolveShape(default: IconShape = IconShape.PlatformDefaul
             IconShape.Pebble -> PebbleShape
             IconShape.Squircle -> SquircleShape
             IconShape.Teardrop -> TeardropShape
-            IconShape.EasterEgg -> EasterEggShape
             IconShape.Square -> RoundedCornerShape(0)
             IconShape.Circle -> CircleShape
+            IconShape.Pentagon -> PentagonShape
+            IconShape.Decagon -> DecagonShape
+            IconShape.Heptagon -> HeptagonShape
+            IconShape.Hexagon -> HexagonShape
+            IconShape.Octagon -> OctagonShape
+            IconShape.Heart -> EasterEggShape
+
 
             /** Compute first the [RoundedPolygon] and then use the [toShape] from the library  I copied to convert it to a shape. */
             else -> when (shapeToResolve) {
@@ -58,7 +70,6 @@ public fun IconShape?.resolveShape(default: IconShape = IconShape.PlatformDefaul
                 IconShape.Triangle -> MaterialShapes.Triangle
                 IconShape.Diamond -> MaterialShapes.Diamond
                 IconShape.ClamShell -> MaterialShapes.ClamShell
-                IconShape.Pentagon -> MaterialShapes.Pentagon
                 IconShape.Gem -> MaterialShapes.Gem
                 IconShape.VerySunny -> MaterialShapes.VerySunny
                 IconShape.Sunny -> MaterialShapes.Sunny
@@ -80,14 +91,6 @@ public fun IconShape?.resolveShape(default: IconShape = IconShape.PlatformDefaul
                 IconShape.PixelCircle -> MaterialShapes.PixelCircle
                 IconShape.PixelTriangle -> MaterialShapes.PixelTriangle
                 IconShape.Bun -> MaterialShapes.Bun
-                IconShape.Heart -> MaterialShapes.Heart
-
-                IconShape.Hexagon -> RoundedPolygon(
-                    numVertices = 6,
-                    radius = 1f,
-                    centerX = 0f,
-                    centerY = 0f
-                )
 
                 IconShape.RoundedSquare -> RoundedPolygon(
                     numVertices = 4,
@@ -276,3 +279,40 @@ private val EasterEggShape: Shape
         )
         close()
     }
+
+
+
+private val PentagonShape = Polygon(5)
+private val HexagonShape = Polygon(6)
+private val HeptagonShape = Polygon(7)
+private val OctagonShape = Polygon(8)
+private val DecagonShape = Polygon(10)
+
+
+private class Polygon(val sides: Int, val rotation: Float = 0f) : Shape {
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density
+    ): Outline {
+        return Outline.Generic(
+            androidx.compose.ui.graphics.Path().apply {
+                val radius = if (size.width > size.height) size.width / 2f else size.height / 2f
+                val angle = 2.0 * Math.PI / sides
+                val cx = size.width / 2f
+                val cy = size.height / 2f
+                val r = rotation * (Math.PI / 180)
+                moveTo(
+                    cx + (radius * cos(0.0 + r).toFloat()),
+                    cy + (radius * sin(0.0 + r).toFloat())
+                )
+                for (i in 1 until sides) {
+                    lineTo(
+                        cx + (radius * cos(angle * i + r).toFloat()),
+                        cy + (radius * sin(angle * i + r).toFloat())
+                    )
+                }
+                close()
+            })
+    }
+}

@@ -158,7 +158,7 @@ public fun SelectedPointsTopBar(
                 modifier = Modifier.heightIn(min = 200.dp)
             ) {
                 items(selectedPointsIds) { pointId ->
-                    points.find { it.id == pointId }?.let { point ->
+                    points[pointId]?.let { point ->
                         PointItem(point) {
                             onDeselect(point.id)
                         }
@@ -183,7 +183,7 @@ private fun PointItem(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        FinalPointIcon(point)
+        FinalPointIcon(point, size = null)
         Text(
             text = point.id.toString(),
             color = color,

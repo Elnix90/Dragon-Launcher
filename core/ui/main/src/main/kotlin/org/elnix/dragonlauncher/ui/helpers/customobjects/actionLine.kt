@@ -149,7 +149,7 @@ private fun DrawScope.angleObject(
     val radius = angleLineCustomObject.size.dp.toPx() / 2
     val diameterPx = radius * 2
 
-    val path = shapeToPath(
+    val path = toPath(
         shape = shape,
         size = Size(diameterPx, diameterPx)
     )

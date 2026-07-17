@@ -1,5 +1,7 @@
 package org.elnix.dragonlauncher.ui.dialogs
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
@@ -28,7 +30,7 @@ public fun ImportSettingsDialog(
     val availableStores = backupableStores.filter { backupJson.has(it.name) }.toSet()
 
     val selected = remember(availableStores) {
-        mutableStateMapOf<SettingsStore<*,*>, Boolean>().apply {
+        mutableStateMapOf<SettingsStore<*, *>, Boolean>().apply {
             availableStores.forEach { put(it, true) }
         }
     }
@@ -44,12 +46,16 @@ public fun ImportSettingsDialog(
         },
         title = { Text(stringResource(R.string.select_settings_to_import)) },
         text = {
-            SelectedActionRow(selected, availableStores.size)
-            LazyColumnWithScrollIndicator(
-                items = availableStores.toList(),
-                modifier = Modifier.heightIn(max = 600.dp)
-            ) { store ->
-                StoreItem(selected, store)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                SelectedActionRow(selected, availableStores.size)
+                LazyColumnWithScrollIndicator(
+                    items = availableStores.toList(),
+                    modifier = Modifier.heightIn(max = 600.dp)
+                ) { store ->
+                    StoreItem(selected, store)
+                }
             }
         },
         containerColor = MaterialTheme.colorScheme.surface,

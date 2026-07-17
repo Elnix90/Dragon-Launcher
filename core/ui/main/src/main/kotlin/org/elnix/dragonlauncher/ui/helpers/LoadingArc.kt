@@ -34,7 +34,7 @@ import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
 import org.elnix.dragonlauncher.ui.helpers.customobjects.mirrorVertically
-import org.elnix.dragonlauncher.ui.helpers.customobjects.shapeToPath
+import org.elnix.dragonlauncher.ui.helpers.customobjects.toPath
 
 private fun DrawScope.holdTolerance(
     center: Offset,
@@ -75,7 +75,7 @@ public fun HoldToActivateArc(
     }
 
     // Remembers for each new click the random or not rotation it applies (if -1)
-    val rotationAngleStart = remember(center) {
+    val rotationAngleStart = remember(center, customObject.rotation) {
         customObject.rotation.takeIf { it != -1 } ?: (0..360).random()
     }
     // Remembers the shape for each new click, but keeps the same when holding
@@ -90,6 +90,7 @@ public fun HoldToActivateArc(
         1f
     )
 
+    // TODO
     val rotationTween = if (rotationsPerSecond > 0f) {
         (1000f / rotationsPerSecond / animationScale).toInt()
     } else 1
@@ -113,7 +114,7 @@ public fun HoldToActivateArc(
             .fillMaxSize()
             .drawWithCache {
                 val diameterPx = customObject.size.dp.toPx() * 2
-                val path = shapeToPath(resolvedShape, Size(diameterPx, diameterPx), this)
+                val path = resolvedShape.toPath(Size(diameterPx, diameterPx), this)
 
                 matrix.reset()
                 matrix.translate(-diameterPx / 2f, -diameterPx / 2f)

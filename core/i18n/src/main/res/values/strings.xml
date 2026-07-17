@@ -303,7 +303,6 @@
     <string name="rgb_line_selector_description">Show the action selector (the line that follows your finger) in a RGB gradient depending no the angle</string>
     <string name="show_launching_app_label_description">Whether the app / action label is visible when an action is selected in the top of the screen</string>
     <string name="show_launching_app_icon_description">Whether to display the app / action icon when an action is selected on top of the screen</string>
-    <string name="show_app_launch_preview_description">Show the selected app in the circle when releasing launch it (a preview)</string>
     <string name="show_app_line_preview_description">Whether to display the trail that goes from the start dragging position to the finger(related to rgb line)</string>
     <string name="show_app_angle_preview_description">Display the angle indicator on the line</string>
     <string name="show_app_icon_start_drag_position_description">Display the current selected app in the center of where you starred to drag</string>
@@ -709,8 +708,8 @@
     <string name="angle_object">Angle object</string>
     <string name="start_object">Start Object</string>
     <string name="end_object">End Object</string>
-    <string name="show_all_actions_on_current_nest">Show all action on current nest</string>
-    <string name="show_all_actions_on_current_nest_desc">Display all circles and points of the current  nest while dragging</string>
+    <string name="show_all_actions_in_current_nest">Show all actions in current nest</string>
+    <string name="show_all_actions_in_current_nest_desc">Display all and points of the current nest while dragging</string>
     <string name="disable_auto_launch_on_space_first_char">Disable auto launch on space first char</string>
     <string name="disable_auto_launch_on_space_first_char_desc">When you press space before searching, the auto launch wont activate</string>
     <string name="configure_draw_order">Configure Draw Order</string>
@@ -1005,9 +1004,9 @@
     <string name="use_icon_tint_desc">Whether to enable or not the icon tint</string>
     <string name="no_profile_found">No profile found in phone</string>
     <string name="need_to_be_default_launcher_to_access_profile">Dragon needs to be the default launcher in order to access this profile</string>
-    <string name="cannor_delete_nest_0">Cannot delete nest 0 (main nest)</string>
+    <string name="cannot_delete_nest_0">Cannot delete nest 0 (main nest)</string>
     <string name="show_all_actions_on_current_shape">Show all actions in current shape</string>
-    <string name="show_all_actions_on_current_shape_desc">When you use intersectino shapes, all points on the current selected one will be showed</string>
+    <string name="show_all_actions_on_current_shape_desc">When you use intersection shapes, all points on the current selected one will be showed</string>
     <string name="open_nest">Open Nest</string>
     <string name="delete_nest">Delete Nest</string>
     <string name="nest_debug_overlay">Nest debug overlay</string>
@@ -1047,4 +1046,16 @@
     <string name="show_all_shapes">Show all Shapes</string>
     <string name="show_shape_desc">Show the current selected shape</string>
     <string name="show_all_shapes_desc">Show all the shapes in the current nest</string>
+    <string name="app_label_icon_overlay_top_padding_desc">How much padding is applied on top for the top overlay</string>
+    <string name="self_explanatory">Self-explanatory</string>
+    <string name="dangerous_actions">Dangerous Actions</string>
+    <string name="caches_debug_overlay">Caches debug overlay</string>
+    <string name="caches_debug_overlay_desc">Display an overlay with the real time size of certain caches</string>
+    <string name="start_ang_angle_share_same_random_angle_desc">The angle object and the start will have the same random angle, to have clean drawing whan they are the same shape</string>
+    <string name="start_ang_angle_share_same_random_angle">Angle and start share the same angle</string>
+    <string name="align_with_angle">Align with angle</string>
+    <string name="align_with_angle_desc">Used to rotate the shape according to the drag angle, might be used to get clean results</string>
+    <string name="how_many_question">How many?</string>
+    <string name="gamble_apps">Gamble apps</string>
+    <string name="show_app_launch_preview_desc">Show the selected point in the main screen</string>
 </resources>

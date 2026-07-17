@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.text.drawText
-import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.DrawScopeText
+import org.elnix.dragonlauncher.base.cache.DrawScopeText
 
 @Suppress("FunctionName")
 public fun DrawScope.PointerLocation(

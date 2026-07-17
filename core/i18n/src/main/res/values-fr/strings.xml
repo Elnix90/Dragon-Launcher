@@ -281,7 +281,6 @@
     <string name="rgb_line_selector_description">Afficher le sélecteur d\'action (la ligne qui suit votre doigt) dans un dégradé RVB en fonction de l\'angle</string>
     <string name="show_launching_app_label_description">Si l\'étiquette de l\'application/de l\'action est visible lorsqu\'une action est sélectionnée en haut de l\'écran</string>
     <string name="show_launching_app_icon_description">S\'il faut afficher l\'icône d\'application/action lorsqu\'une action est sélectionnée en haut de l\'écran</string>
-    <string name="show_app_launch_preview_description">Afficher l\'application sélectionnée dans le cercle lors de la libération, lancez-la (un aperçu)</string>
     <string name="show_app_line_preview_description">S\'il faut afficher la trace qui va de la position de début de glissement jusqu\'au doigt (lié à la ligne RVB)</string>
     <string name="show_app_angle_preview_description">Afficher l\'indicateur d\'angle sur la ligne</string>
     <string name="show_app_icon_start_drag_position_description">Affichez l\'application actuellement sélectionnée au centre de l\'endroit où vous avez commencé à faire glisser</string>
@@ -633,8 +632,6 @@
     <string name="angle_object">Objet en angle</string>
     <string name="start_object">Objet de départ</string>
     <string name="end_object">Fin de l’objet</string>
-    <string name="show_all_actions_on_current_nest">Afficher toutes les actions sur le nid actuel</string>
-    <string name="show_all_actions_on_current_nest_desc">Afficher tous les cercles et tous les points de l\'imbrication actuelle pendant le glissement</string>
     <string name="disable_auto_launch_on_space_first_char">Désactiver le lancement automatique sur le premier personnage spatial</string>
     <string name="disable_auto_launch_on_space_first_char_desc">Quand vous appuyez sur espace avant de chercher, le lancement automatique ne s’active pas</string>
     <string name="configure_draw_order">Configurer l’ordre de dessin</string>

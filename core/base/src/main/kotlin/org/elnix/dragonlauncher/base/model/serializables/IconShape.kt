@@ -1,9 +1,7 @@
 package org.elnix.dragonlauncher.base.model.serializables
 
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
 import androidx.graphics.shapes.CornerRounding
-import androidx.graphics.shapes.RoundedPolygon
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.DragonJson
@@ -14,177 +12,140 @@ import org.elnix.dragonlauncher.base.model.serializables.serializers.CornerRound
 public sealed class IconShape {
 
     @Serializable
-    @SerialName("PlatformDefault")
     public object PlatformDefault : IconShape()
 
     @Serializable
-    @SerialName("Circle")
     public object Circle : IconShape()
-
-    @Serializable
-    @SerialName("Square")
-    public object Square : IconShape()
-
-    @Serializable
-    @SerialName("RoundedSquare")
-    public object RoundedSquare : IconShape()
-
-
-    @Serializable
-    @SerialName("Squircle")
-    public object Squircle : IconShape()
-
-    @Serializable
-    @SerialName("Hexagon")
-    public object Hexagon : IconShape()
-
-
-    @Serializable
-    @SerialName("Teardrop")
-    public object Teardrop : IconShape()
 
     @Serializable
     @SerialName("Pebble")
     public object Pebble : IconShape()
 
     @Serializable
-    @SerialName("EasterEgg")
-    public object EasterEgg : IconShape()
+    public object Square : IconShape()
 
     @Serializable
-    @SerialName("Slanted")
-    public object Slanted : IconShape()
-
-    @Serializable
-    @SerialName("Arch")
-    public object Arch : IconShape()
-
-    @Serializable
-    @SerialName("Fan")
-    public object Fan : IconShape()
-
-    @Serializable
-    @SerialName("Arrow")
-    public object Arrow : IconShape()
-
-    @Serializable
-    @SerialName("SemiCircle")
-    public object SemiCircle : IconShape()
-
-    @Serializable
-    @SerialName("Oval")
-    public object Oval : IconShape()
-
-    @Serializable
-    @SerialName("Pill")
-    public object Pill : IconShape()
-
-    @Serializable
-    @SerialName("Triangle")
-    public object Triangle : IconShape()
-
-    @Serializable
-    @SerialName("Diamond")
-    public object Diamond : IconShape()
-
-    @Serializable
-    @SerialName("ClamShell")
-    public object ClamShell : IconShape()
-
-    @Serializable
-    @SerialName("Pentagon")
     public object Pentagon : IconShape()
 
     @Serializable
-    @SerialName("Gem")
-    public object Gem : IconShape()
+    public object Hexagon : IconShape()
 
     @Serializable
-    @SerialName("VerySunny")
-    public object VerySunny : IconShape()
+    public object Heptagon : IconShape()
 
     @Serializable
-    @SerialName("Sunny")
-    public object Sunny : IconShape()
+    public object Octagon : IconShape()
 
     @Serializable
-    @SerialName("Cookie4Sided")
-    public object Cookie4Sided : IconShape()
+    public object Decagon : IconShape()
 
     @Serializable
-    @SerialName("Cookie6Sided")
-    public object Cookie6Sided : IconShape()
+    public object RoundedSquare : IconShape()
+
 
     @Serializable
-    @SerialName("Cookie7Sided")
-    public object Cookie7Sided : IconShape()
+    public object Squircle : IconShape()
 
     @Serializable
-    @SerialName("Cookie9Sided")
-    public object Cookie9Sided : IconShape()
+    public object Teardrop : IconShape()
 
     @Serializable
-    @SerialName("Cookie12Sided")
-    public object Cookie12Sided : IconShape()
-
-    @Serializable
-    @SerialName("Ghostish")
-    public object Ghostish : IconShape()
-
-    @Serializable
-    @SerialName("Clover4Leaf")
-    public object Clover4Leaf : IconShape()
-
-    @Serializable
-    @SerialName("Clover8Leaf")
-    public object Clover8Leaf : IconShape()
-
-    @Serializable
-    @SerialName("Burst")
-    public object Burst : IconShape()
-
-    @Serializable
-    @SerialName("SoftBurst")
-    public object SoftBurst : IconShape()
-
-    @Serializable
-    @SerialName("Boom")
-    public object Boom : IconShape()
-
-    @Serializable
-    @SerialName("SoftBoom")
-    public object SoftBoom : IconShape()
-
-    @Serializable
-    @SerialName("Flower")
-    public object Flower : IconShape()
-
-    @Serializable
-    @SerialName("Puffy")
-    public object Puffy : IconShape()
-
-    @Serializable
-    @SerialName("PuffyDiamond")
-    public object PuffyDiamond : IconShape()
-
-    @Serializable
-    @SerialName("PixelCircle")
-    public object PixelCircle : IconShape()
-
-    @Serializable
-    @SerialName("PixelTriangle")
-    public object PixelTriangle : IconShape()
-
-    @Serializable
-    @SerialName("Bun")
-    public object Bun : IconShape()
-
-    @Serializable
-    @SerialName("Heart")
     public object Heart : IconShape()
 
     @Serializable
-    @SerialName("Random")
+    public object Slanted : IconShape()
+
+    @Serializable
+    public object Arch : IconShape()
+
+    @Serializable
+    public object Fan : IconShape()
+
+    @Serializable
+    public object Arrow : IconShape()
+
+    @Serializable
+    public object SemiCircle : IconShape()
+
+    @Serializable
+    public object Oval : IconShape()
+
+    @Serializable
+    public object Pill : IconShape()
+
+    @Serializable
+    public object Triangle : IconShape()
+
+    @Serializable
+    public object Diamond : IconShape()
+
+    @Serializable
+    public object ClamShell : IconShape()
+
+    @Serializable
+    public object Gem : IconShape()
+
+    @Serializable
+    public object VerySunny : IconShape()
+
+    @Serializable
+    public object Sunny : IconShape()
+
+    @Serializable
+    public object Cookie4Sided : IconShape()
+
+    @Serializable
+    public object Cookie6Sided : IconShape()
+
+    @Serializable
+    public object Cookie7Sided : IconShape()
+
+    @Serializable
+    public object Cookie9Sided : IconShape()
+
+    @Serializable
+    public object Cookie12Sided : IconShape()
+
+    @Serializable
+    public object Ghostish : IconShape()
+
+    @Serializable
+    public object Clover4Leaf : IconShape()
+
+    @Serializable
+    public object Clover8Leaf : IconShape()
+
+    @Serializable
+    public object Burst : IconShape()
+
+    @Serializable
+    public object SoftBurst : IconShape()
+
+    @Serializable
+    public object Boom : IconShape()
+
+    @Serializable
+    public object SoftBoom : IconShape()
+
+    @Serializable
+    public object Flower : IconShape()
+
+    @Serializable
+    public object Puffy : IconShape()
+
+    @Serializable
+    public object PuffyDiamond : IconShape()
+
+    @Serializable
+    public object PixelCircle : IconShape()
+
+    @Serializable
+    public object PixelTriangle : IconShape()
+
+    @Serializable
+    public object Bun : IconShape()
+
+    @Serializable
     public object Random : IconShape()
 
     @Serializable
@@ -203,101 +164,114 @@ public sealed class IconShape {
 
     override fun toString(): String =
         when (this) {
-            Arch -> "Arch"
-            Arrow -> "Arrow"
-            Boom -> "Boom"
-            Bun -> "Bun"
-            Burst -> "Burst"
-            Circle -> "Circle"
-            ClamShell -> "ClamShell"
-            Clover4Leaf -> "Clover4Leaf"
-            Clover8Leaf -> "Clover8Leaf"
-            Cookie12Sided -> "Cookie12Sided"
-            Cookie4Sided -> "Cookie4Sided"
-            Cookie6Sided -> "Cookie6Sided"
-            Cookie7Sided -> "Cookie7Sided"
-            Cookie9Sided -> "Cookie9Sided"
             is Custom -> "Custom"
-            Diamond -> "Diamond"
-            EasterEgg -> "EasterEgg"
-            Fan -> "Fan"
-            Flower -> "Flower"
-            Gem -> "Gem"
-            Ghostish -> "Ghostish"
-            Heart -> "Heart"
-            Hexagon -> "Hexagon"
-            Oval -> "Oval"
-            Pebble -> "Pebble"
-            Pentagon -> "Pentagon"
-            Pill -> "Pill"
-            PixelCircle -> "PixelCircle"
-            PixelTriangle -> "PixelTriangle"
-            PlatformDefault -> "PlatformDefault"
-            Puffy -> "Puffy"
-            PuffyDiamond -> "PuffyDiamond"
-            Random -> "Random"
-            RoundedSquare -> "RoundedSquare"
-            SemiCircle -> "SemiCircle"
-            Slanted -> "Slanted"
-            SoftBoom -> "SoftBoom"
-            SoftBurst -> "SoftBurst"
-            Square -> "Square"
-            Squircle -> "Squircle"
-            Sunny -> "Sunny"
-            Teardrop -> "Teardrop"
-            Triangle -> "Triangle"
-            VerySunny -> "VerySunny"
+            else -> this.javaClass.simpleName
         }
+
+
+//    override fun toString(): String =
+//        when (this) {
+//            Arch -> "Arch"
+//            Arrow -> "Arrow"
+//            Boom -> "Boom"
+//            Bun -> "Bun"
+//            Burst -> "Burst"
+//            Circle -> "Circle"
+//            ClamShell -> "ClamShell"
+//            Clover4Leaf -> "Clover4Leaf"
+//            Clover8Leaf -> "Clover8Leaf"
+//            Cookie12Sided -> "Cookie12Sided"
+//            Cookie4Sided -> "Cookie4Sided"
+//            Cookie6Sided -> "Cookie6Sided"
+//            Cookie7Sided -> "Cookie7Sided"
+//            Cookie9Sided -> "Cookie9Sided"
+//            is Custom -> "Custom"
+//            Diamond -> "Diamond"
+//            EasterEgg -> "EasterEgg"
+//            Fan -> "Fan"
+//            Flower -> "Flower"
+//            Gem -> "Gem"
+//            Ghostish -> "Ghostish"
+//            Heart -> "Heart"
+//            Hexagon -> "Hexagon"
+//            Oval -> "Oval"
+//            Pebble -> "Pebble"
+//            Pentagon -> "Pentagon"
+//            Pill -> "Pill"
+//            PixelCircle -> "PixelCircle"
+//            PixelTriangle -> "PixelTriangle"
+//            PlatformDefault -> "PlatformDefault"
+//            Puffy -> "Puffy"
+//            PuffyDiamond -> "PuffyDiamond"
+//            Random -> "Random"
+//            RoundedSquare -> "RoundedSquare"
+//            SemiCircle -> "SemiCircle"
+//            Slanted -> "Slanted"
+//            SoftBoom -> "SoftBoom"
+//            SoftBurst -> "SoftBurst"
+//            Square -> "Square"
+//            Squircle -> "Squircle"
+//            Sunny -> "Sunny"
+//            Teardrop -> "Teardrop"
+//            Triangle -> "Triangle"
+//            VerySunny -> "VerySunny"
+//            Decagon -> "Decagon"
+//            Heptagon -> "Heptagon"
+//            Octagon -> "Octagon"
+//        }
 
 
     public companion object {
 
-        @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-        public val allMaterialShapes: List<RoundedPolygon> by lazy {
-            listOf(
-                MaterialShapes.Circle,
-                MaterialShapes.Square,
-                MaterialShapes.Slanted,
-                MaterialShapes.Arch,
-                MaterialShapes.Fan,
-                MaterialShapes.Arrow,
-                MaterialShapes.SemiCircle,
-                MaterialShapes.Oval,
-                MaterialShapes.Pill,
-                MaterialShapes.Triangle,
-                MaterialShapes.Diamond,
-                MaterialShapes.ClamShell,
-                MaterialShapes.Pentagon,
-                MaterialShapes.Gem,
-                MaterialShapes.VerySunny,
-                MaterialShapes.Sunny,
-                MaterialShapes.Cookie4Sided,
-                MaterialShapes.Cookie6Sided,
-                MaterialShapes.Cookie7Sided,
-                MaterialShapes.Cookie9Sided,
-                MaterialShapes.Cookie12Sided,
-                MaterialShapes.Ghostish,
-                MaterialShapes.Clover4Leaf,
-                MaterialShapes.Clover8Leaf,
-                MaterialShapes.Burst,
-                MaterialShapes.SoftBurst,
-                MaterialShapes.Boom,
-                MaterialShapes.SoftBoom,
-                MaterialShapes.Flower,
-                MaterialShapes.Puffy,
-                MaterialShapes.PuffyDiamond,
-                MaterialShapes.PixelCircle,
-                MaterialShapes.PixelTriangle,
-                MaterialShapes.Bun,
-                MaterialShapes.Heart
-            )
-        }
+        /**
+         * A selection of shapes for the pin that makes them pretty. not all of the [MaterialShapes] fit
+         */
+        public val pinMaterialShapes: Set<IconShape> = setOf(
+            Circle,
+            Slanted,
+            Arch,
+            Arrow,
+            Oval,
+            Pill,
+            Triangle,
+            Diamond,
+            Pentagon,
+            Gem,
+            Cookie4Sided,
+            Cookie7Sided,
+            Cookie9Sided,
+            Cookie12Sided
+        )
+
+
+        /**
+         * The shapes that are allowed to be picked into the nest shape picker.
+         * This limitation is due to the heavy math required to compute the shape boundary.
+         * The Ideal shape is the circle as we can very easily compute the intersection using simple math, but as soon as this becomes a more complicated shape, the result starts to be approximated.
+         */
+        public val allowedNestShapes: Set<IconShape> = setOf(
+            Circle,
+            Pentagon,
+            Heptagon,
+            Octagon,
+            Decagon
+        )
+
 
         public val allShapes: List<IconShape> by lazy {
             listOf(
                 PlatformDefault,
                 Circle,
+                Pebble,
                 Square,
+                Pentagon,
+                Hexagon,
+                Heptagon,
+                Octagon,
+                Decagon,
+                RoundedSquare,
+                Squircle,
+                Teardrop,
                 Slanted,
                 Arch,
                 Fan,
@@ -308,7 +282,6 @@ public sealed class IconShape {
                 Triangle,
                 Diamond,
                 ClamShell,
-                Pentagon,
                 Gem,
                 VerySunny,
                 Sunny,

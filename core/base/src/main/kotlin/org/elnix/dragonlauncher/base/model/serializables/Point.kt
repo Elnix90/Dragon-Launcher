@@ -11,7 +11,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import org.elnix.dragonlauncher.base.model.DragonJson
 import org.elnix.dragonlauncher.base.model.serializables.serializers.OffsetSerializer
-import org.elnix.dragonlauncher.ktx.angleRad
 import org.jetbrains.annotations.ApiStatus
 import kotlin.random.Random
 
@@ -31,7 +30,7 @@ import kotlin.random.Random
  *
  * ## Collision & Shape Snapping
  *
- * By default, a point stays at its [offset]. When [collidingShapeId] is set, the point's visual
+ * By default, a point stays at its [offset]. When [shapeId] is set, the point's visual
  * and touch position snap to the intersection between its [offset] ray and the target shape's
  * boundary. If no intersection exists, the point reverts to [offset]. This enables points to
  * align cleanly to polygon outlines without manual coordinate tweaking.
@@ -100,8 +99,9 @@ public data class Point(
     /**
      * The main parameter of any point; it's offset from center position
      *
-     * DO NOT USE DIRECTLY, this property is made public to allow usage in other libraries, but it isn't meant to be directly accessed.
-     * Use **`computePointOffset`** in `org/elnix/dragonlauncher/points/PointsService.kt:89` rather
+     * # DO NOT USE DIRECTLY
+     * This property is made public to allow usage in other libraries, but it isn't meant to be directly accessed.
+     * Use [getPos] rather
      */
     @ApiStatus.Internal
     @Serializable(with = OffsetSerializer::class)
@@ -126,7 +126,7 @@ public data class Point(
      * If no intersection is found, the point uses its [offset]
      * @see [Nest]
      */
-    val collidingShapeId: Int? = null,
+    val shapeId: Int? = null,
 
     /** Fully customizable icon definition overriding default visuals. */
     val customIcon: CustomIcon? = null,
@@ -280,58 +280,66 @@ public data class Point(
     var pos: Offset? = null
 
     public fun getPos(): Offset {
-        if (this.collidingShapeId == null) return this.offset
+        if (this.shapeId == null) return this.offset
         return this.pos ?: this.offset
     }
 
-    val key: CacheKey = CacheKey(this)
+//    public fun getPos(compute: () -> Offset): Offset {
+//        if (this.collidingShapeId == null) return this.offset
+//        return this.pos ?: run {
+//            val pos = compute()
+//            this.pos = pos
+//            pos
+//        }
+//    }
+
+    val key: CacheKey by lazy { CacheKey(this) }
 
     public fun getSize(defaultPoint: Point): Dp = (size ?: defaultPoint.size ?: defaultSize).coerceAtLeast(1).dp
     public fun getInnerPadding(defaultPoint: Point): Dp = (innerPadding ?: defaultPoint.innerPadding ?: defaultInnerPadding).coerceAtLeast(1).dp
 
 
-    public val angle: Float by lazy { offset.angleRad() }
 
     override fun compareTo(other: Point): Int = this.id.compareTo(other.id)
 
-//    override fun toString(): String = "Point(id = ${this.id})"
+    override fun toString(): String = "Point(id = ${this.id}, offset = ${this.offset})"
 
-    override fun toString(): String =
-        "Point(\n" +
-                "  offset = ${offset}\n" +
-                "  action = ${action}\n" +
-                "  id = $id\n" +
-                "  nestId = $nestId\n" +
-                "  collidingShapeId = $collidingShapeId\n" +
-                "  customIcon = ${customIcon}\n" +
-                "  glow = ${glow}\n" +
-                "  glowSelected = ${glowSelected}\n" +
-                "  borderStroke = ${borderStroke}\n" +
-                "  borderStrokeSelected = ${borderStrokeSelected}\n" +
-                "  borderColor = ${borderColor}\n" +
-                "  backgroundColor = ${backgroundColor}\n" +
-                "  borderColorSelected = ${borderColorSelected}\n" +
-                "  backgroundColorSelected = ${backgroundColorSelected}\n" +
-                "  opacity = ${opacity}\n" +
-                "  haptic = ${haptic}\n" +
-                "  customName = ${customName}\n" +
-                "  innerPadding = ${innerPadding}\n" +
-                "  customActionColor = ${customActionColor}\n" +
-                "  size = ${size}\n" +
-                "  borderShape = ${borderShape}\n" +
-                "  borderShapeSelected = ${borderShapeSelected}\n" +
-                "  liveNestTargetNestId = ${liveNestTargetNestId}\n" +
-                "  liveNestPreviewDelayMs = ${liveNestPreviewDelayMs}\n" +
-                "  liveNestScale = ${liveNestScale}\n" +
-                "  liveNestGraceDistancePx = ${liveNestGraceDistancePx}\n" +
-                "  liveNestMainNestOpacityPercent = ${liveNestMainNestOpacityPercent}\n" +
-                "  liveNestSnapsToFingerPosition = ${liveNestSnapsToFingerPosition}\n" +
-                "  cycleActions = ${cycleActions}\n" +
-                "  cycleActionStageDefaultDelay = ${cycleActionStageDefaultDelay}\n" +
-                "  cycleActionsLoopDelayMs = ${cycleActionsLoopDelayMs}\n" +
-                "  holdAndRunDelayMs = ${holdAndRunDelayMs}\n" +
-                "  holdAndRunAction = ${holdAndRunAction}\n" +
-                ")"
+//    override fun toString(): String =
+//        "Point(\n" +
+//                "  offset = ${offset}\n" +
+//                "  action = ${action}\n" +
+//                "  id = $id\n" +
+//                "  nestId = $nestId\n" +
+//                "  collidingShapeId = $collidingShapeId\n" +
+//                "  customIcon = ${customIcon}\n" +
+//                "  glow = ${glow}\n" +
+//                "  glowSelected = ${glowSelected}\n" +
+//                "  borderStroke = ${borderStroke}\n" +
+//                "  borderStrokeSelected = ${borderStrokeSelected}\n" +
+//                "  borderColor = ${borderColor}\n" +
+//                "  backgroundColor = ${backgroundColor}\n" +
+//                "  borderColorSelected = ${borderColorSelected}\n" +
+//                "  backgroundColorSelected = ${backgroundColorSelected}\n" +
+//                "  opacity = ${opacity}\n" +
+//                "  haptic = ${haptic}\n" +
+//                "  customName = ${customName}\n" +
+//                "  innerPadding = ${innerPadding}\n" +
+//                "  customActionColor = ${customActionColor}\n" +
+//                "  size = ${size}\n" +
+//                "  borderShape = ${borderShape}\n" +
+//                "  borderShapeSelected = ${borderShapeSelected}\n" +
+//                "  liveNestTargetNestId = ${liveNestTargetNestId}\n" +
+//                "  liveNestPreviewDelayMs = ${liveNestPreviewDelayMs}\n" +
+//                "  liveNestScale = ${liveNestScale}\n" +
+//                "  liveNestGraceDistancePx = ${liveNestGraceDistancePx}\n" +
+//                "  liveNestMainNestOpacityPercent = ${liveNestMainNestOpacityPercent}\n" +
+//                "  liveNestSnapsToFingerPosition = ${liveNestSnapsToFingerPosition}\n" +
+//                "  cycleActions = ${cycleActions}\n" +
+//                "  cycleActionStageDefaultDelay = ${cycleActionStageDefaultDelay}\n" +
+//                "  cycleActionsLoopDelayMs = ${cycleActionsLoopDelayMs}\n" +
+//                "  holdAndRunDelayMs = ${holdAndRunDelayMs}\n" +
+//                "  holdAndRunAction = ${holdAndRunAction}\n" +
+//                ")"
 
 
     public companion object {
@@ -385,9 +393,9 @@ public data class Point(
             glowSelected = defaultGlowSelected
         )
 
-        public object PointsJson: DragonJson<Points>()
+        public object PointsJson: DragonJson<Set<Point>>()
         public object PointJson: DragonJson<Point>()
     }
 }
 
-public typealias Points = Set<Point>
+public typealias Points = Map<Int, Point>

@@ -8,7 +8,6 @@ import io.github.elnix90.logging.NESTS_TAG
 import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
 
 /**
  * Used to ensure that there is always the requested [nest][org.elnix.dragonlauncher.base.model.serializables.Nest]
@@ -21,11 +20,11 @@ public fun SelfCheckNestPresent(
 ) {
     val pointsService = pointsViewModel.pointsService
 
-    val nestId by pointsViewModel.currentNestId.collectAsState()
-    val nests by pointsService.nests.asState()
+    val nestId by pointsViewModel.nestsNavigationService.currentNestId.collectAsState()
+    val nests by pointsService.nests.collectAsState()
 
     LaunchedEffect(Unit, nestId, nests.size) {
-        if (nests.none { it.id == nestId }) {
+        if (nests[nestId] == null) {
             logD(NESTS_TAG) { "Creating missing nest $nestId" }
             pointsService.addNest(nestId)
         }

@@ -12,32 +12,26 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastRoundToInt
-import io.github.elnix90.logging.POINTS_TAG
 import io.github.elnix90.logging.SWIPE_TAG
-import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logI
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
+import org.elnix.dragonlauncher.ktx.cleanString
 import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
@@ -57,6 +51,7 @@ import org.elnix.dragonlauncher.ui.dialogs.rememberLineObjectsOrder
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.PointerLocation
 import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine
+import org.elnix.dragonlauncher.ui.helpers.customobjects.resolveRotation
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
 import org.elnix.dragonlauncher.ui.helpers.swipe.rememberDrawParams
 import org.elnix.dragonlauncher.ui.remembers.LiveNestState
@@ -135,42 +130,33 @@ public fun MainScreenOverlay(
     }
 
     LaunchedEffect(hoveredPoint) {
-        pointsService.selectOnyOne(hoveredPoint?.id)
+        val hoveredPointId = hoveredPoint?.id
+        pointsService.selectOnyOne(hoveredPointId)
 
-        logD(POINTS_TAG) {
-            "deepestController.hostPoint?.id : ${deepestController.hostPoint?.id}\nhoveredPoint.id: ${hoveredPoint?.id}"
-        }
-
-        // Reset it to center when no point is selected or that we select a live nest center (host point)
-        if (hoveredPoint == null || (isAnyLiveNestActive && deepestController.hostPoint?.id == hoveredPoint.id)) {
-            scope.launch {
-                animatedCurrent.animateTo(
-                    targetValue = Offset.Zero,
-                    animationSpec = bouncySpec()
-                )
-            }
-        } else if (animationWhenSnapping) {
-            pointsService.findPointById(hoveredPoint.id)?.let { p ->
-
-                // TODO the animated thing still moves from the start instead of snapping to current pos and then animating
-                val liveNestCenter =
-                    if (isAnyLiveNestActive) {
-                        deepestController.liveNestCenter
-                    } else {
-                        start
-                    }
-                        ?: return@LaunchedEffect
-
-
+        if (hoveredPointId != null && animationWhenSnapping) {
+            pointsService.findPointById(hoveredPointId)?.let { p ->
                 if (current != null) {
                     scope.launch {
-                        animatedCurrent.snapTo(current - liveNestCenter)
                         animatedCurrent.animateTo(
-                            targetValue = pointsService.computePointOffset(p),
+                            targetValue = p.getPos(),
                             animationSpec = bouncySpec()
                         )
                     }
                 }
+            }
+        }
+    }
+
+    LaunchedEffect(current) {
+        if (hoveredPoint == null && current != null) {
+            val liveNestCenter = if (isAnyLiveNestActive) {
+                deepestController.liveNestCenter
+            } else {
+                start
+            } ?: return@LaunchedEffect
+
+            scope.launch {
+                animatedCurrent.snapTo(current - liveNestCenter)
             }
         }
     }
@@ -223,10 +209,10 @@ public fun MainScreenOverlay(
         hoveredPoint?.let { point ->
             if (!disableHapticFeedbackGlobally) {
                 val hitNestId = deepestController.nestedNestId ?: return@let
-                val hitNest = pointsService.findNestByIdOrNull(hitNestId) ?: return@let
+                val hitNest = pointsService.findNestById(hitNestId)
 
                 val targetShape =
-                    hitNest.intersectionShapes.find { deepestController.nestedHit?.selectedPoint?.collidingShapeId == it.id }
+                    hitNest.intersectionShapes.find { deepestController.nestedHit?.selectedPoint?.shapeId == it.id }
 
                 val hapticToPerform = (point.haptic ?: targetShape?.haptic ?: defaultHapticFeedback())
                 hapticToPerform.perform(ctx)
@@ -279,28 +265,6 @@ public fun MainScreenOverlay(
     val showEndObjectPreview by AngleLineSettingsStore.showEndObjectPreview.asState()
 
 
-    // All of these uses the isDragging key as remember key to allow the random shape and/or angle to be recomputed each times
-    val pickedRememberShapeAngle = remember(isDragging) {
-        angleLineObject.shape.resolveShape()
-    }
-    val pickedRememberRotationAngle = remember(isDragging) {
-        angleLineObject.rotation.takeIf { it != -1 } ?: (0..360).random()
-    }
-
-    val pickedRememberShapeStart = remember(isDragging) {
-        startObject.shape.resolveShape()
-    }
-    val pickedRememberRotationStart = remember(isDragging) {
-        startObject.rotation.takeIf { it != -1 } ?: (0..360).random()
-    }
-
-    val pickedRememberShapeEnd = remember(isDragging) {
-        endObject.shape.resolveShape()
-    }
-    val pickedRememberRotationEnd = remember(isDragging) {
-        endObject.rotation.takeIf { it != -1 } ?: (0..360).random()
-    }
-
     val multiplyOrSubtractOpacityInLiveNests by UiSettingsStore.multiplyOrSubtractOpacityInLiveNests.asState()
 
     /**
@@ -329,14 +293,13 @@ public fun MainScreenOverlay(
 
     val drawParams = rememberDrawParams(
         preventBgErasing = false,
-        showConfiguratorDecorations = false,
-        forceShowAllActionsInCurrentNest = false,
         allowShowPointCenter = false,
-        hideSelectedPoint = false,
+        pointSettingsDisplay = false,
         showCancelZone = LocalNestDebugOverlay.current,
         hideShapes = false
     )
 
+    val iconsTrigger by PointStableCache.cacheTrigger.asState()
     Box(Modifier.fillMaxSize()) {
 
         DebugZone(debugInfo) {
@@ -361,7 +324,7 @@ public fun MainScreenOverlay(
                 if (controller.isActive) {
 
                     val liveNestOpacity = liveNestLayersAlphas.getOrNull(idx) ?: continue
-                    val nestedNestForDraw = pointsService.findNestByIdOrNull(controller.nestedNestId!!) ?: continue
+                    val nestedNestForDraw = pointsService.findNestById(controller.nestedNestId!!)
 
                     val isDeepestController = idx == activeLevelIndex
 
@@ -384,13 +347,25 @@ public fun MainScreenOverlay(
                                     if (animationWhenSnapping && animatedCurrent.value != Offset.Unspecified) {
                                         animatedCurrent.value + liveNestCenterForDraw
                                     } else {
-                                        pointsService.computePointOffset(outerSelectedPoint) + liveNestCenterForDraw
+                                        outerSelectedPoint.getPos() + liveNestCenterForDraw
                                     }
                                 }
 
                                 else -> current
                             }
                         }
+
+
+                    val sweep = sweepAngle.toInt()
+
+                    val pickedRememberShapeAngle = angleLineObject.shape.resolveShape()
+                    val pickedRememberRotationAngle = angleLineObject.resolveRotation(true, sweep, controller.liveNestCenter)
+
+                    val pickedRememberShapeStart = startObject.shape.resolveShape()
+                    val pickedRememberRotationStart = startObject.resolveRotation(true, sweep, controller.liveNestCenter)
+
+                    val pickedRememberShapeEnd = endObject.shape.resolveShape()
+                    val pickedRememberRotationEnd = endObject.resolveRotation(false, sweep, controller.liveNestCenter)
 
                     // Main canvas, uses drawWithCache to improve drawing performances
                     Canvas(
@@ -402,6 +377,7 @@ public fun MainScreenOverlay(
                             }
                             .drawWithCache {
                                 onDrawBehind {
+                                    iconsTrigger
                                     NestOverlay(
                                         center = liveNestCenterForDraw,
                                         nest = nestedNestForDraw,
@@ -413,9 +389,9 @@ public fun MainScreenOverlay(
                             }
                     ) {
 
-                        drawIntoCanvas { canvas ->
-                            val bounds = Rect(0f, 0f, size.width, size.height)
-                            canvas.saveLayer(bounds, Paint())
+//                        drawIntoCanvas { canvas ->
+//                            val bounds = Rect(0f, 0f, size.width, size.height)
+//                            canvas.saveLayer(bounds, Paint())
 
                             val lineColor: Color =
                                 if (rgbLine) Color.hsv(angle360, 1f, 1f)
@@ -442,7 +418,7 @@ public fun MainScreenOverlay(
                                 startCustomObject = startObject,
                                 endCustomObject = endObject
                             )
-                        }
+//                        }
                     }
                 } else break
             }
@@ -454,7 +430,7 @@ public fun MainScreenOverlay(
     if (showLaunchingAppLabel || showLaunchingAppIcon) {
         PointPreviewTitle(
             point = displayPoint,
-            topPadding = appLabelIconOverlayTopPadding.dp,
+            topPadding = appLabelIconOverlayTopPadding,
             showLabel = showLaunchingAppLabel,
             showIcon = showLaunchingAppIcon
         )
@@ -472,14 +448,7 @@ private fun DebugPointer(
     animatedCurrent: Animatable<Offset, AnimationVector2D>,
     start: Offset?
 ) {
-    val text = retain(animatedCurrent.value) {
-        val textOffset = animatedCurrent.value
-        val x = textOffset.x.fastRoundToInt()
-        val y = textOffset.y.fastRoundToInt()
-        "$x ; $y"
-    }
-
-    val drawScopeText = rememberCustomText(text, 0f)
+    val drawScopeText = rememberCustomText(animatedCurrent.value.cleanString(), 0f)
 
     Canvas(Modifier.fillMaxSize()) {
         PointerLocation(

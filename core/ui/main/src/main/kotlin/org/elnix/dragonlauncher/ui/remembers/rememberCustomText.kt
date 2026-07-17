@@ -8,8 +8,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Constraints
+import org.elnix.dragonlauncher.base.cache.DrawScopeText
 import org.elnix.dragonlauncher.ui.composition.LocalTextMeasurer
-import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.DrawScopeText
 
 @Composable
 public fun rememberCustomText(
@@ -19,7 +19,7 @@ public fun rememberCustomText(
     val textMeasurer: TextMeasurer = LocalTextMeasurer.current
     val textStyle = MaterialTheme.typography.labelSmall
 
-    return retain(text, verticalPadding) {
+    return retain(text, textStyle, verticalPadding) {
         getTopLeftAndTextMeasure(
             text = text,
             verticalPadding = verticalPadding,
@@ -29,7 +29,7 @@ public fun rememberCustomText(
     }
 }
 
-private fun getTopLeftAndTextMeasure(
+public fun getTopLeftAndTextMeasure(
     text: String,
     verticalPadding: Float,
     textStyle: TextStyle,

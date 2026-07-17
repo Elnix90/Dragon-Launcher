@@ -4,7 +4,7 @@ import android.view.Choreographer
 import androidx.collection.MutableLongList
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,9 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.packFloats
 import androidx.compose.ui.util.unpackFloat1
 import androidx.compose.ui.util.unpackFloat2
-import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import io.github.elnix90.runtime.asState
-import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
+import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import kotlin.math.roundToInt
 
 private const val UPDATE_FPS_EVERY_MS = 60
@@ -47,16 +48,21 @@ public fun FpsCounterGraph(modifier: Modifier = Modifier) {
     var fps by remember { mutableIntStateOf(0) }
     var updateCount by remember { mutableIntStateOf(0) }
 
-    DragonRow(
-        modifier = modifier.height(IntrinsicSize.Max)
+    Row(
+        modifier = modifier
+            .height(50.dp)
+            .background(MaterialTheme.colorScheme.surfaceContainerLow.alphaMultiplier(0.5f))
+            .padding(5.dp)
     ) {
         Text(
             modifier = Modifier
                 .weight(1 / 3f)
                 .align(Alignment.CenterVertically),
             text = "FPS: $fps",
+            style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurface
         )
+        Spacer(5.dp)
         FrameRateGraph(
             modifier = Modifier
                 .weight(2 / 3f)

@@ -31,7 +31,6 @@ public fun AdbCommandInputDialog(
     var commandText by remember { mutableStateOf("adb ") }
     var toast by remember { mutableStateOf(false) }
 
-
     CustomAlertDialog(
         scroll = false,
         alignment = Alignment.Center,

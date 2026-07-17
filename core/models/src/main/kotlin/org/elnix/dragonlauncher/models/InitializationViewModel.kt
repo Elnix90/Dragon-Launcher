@@ -36,7 +36,7 @@ public class InitializationViewModel @Inject constructor(
 
     public fun checkLauncherInitialization() {
         viewModelScope.launch {
-            val hasInitialized = PrivateSettingsStore.hasInitialized.get(application)
+            val hasInitialized = PrivateSettingsStore.hasInitialized.get(application.applicationContext)
 
             if (!hasInitialized) {
                 logD(INIT_TAG) { "Initialisation not complete, initializing" }
@@ -59,29 +59,29 @@ public class InitializationViewModel @Inject constructor(
     }
 
     public fun initialize() {
-        initializeSwipeSettings(defaultInitializationSetup, defaultNestsInitializationSetup, null)
+        initializeSwipeSettings(defaultInitializationPoints, defaultNestsInitializationSetup, null)
     }
 }
 
 
-private val defaultInitializationSetup = setOf(
-    Point(
+private val defaultInitializationPoints: Points = mapOf(
+    0 to Point(
         offset = Offset(0f, -200f),
         action = Action.OpenAppDrawer(),
         id = 0
     ),
-    Point(
+    1 to Point(
         offset = Offset(-150f, 100f),
         action = Action.NotificationShade,
         id = 1
     ),
-    Point(
+    2 to Point(
         offset = Offset(150f, 100f),
         action = Action.ControlPanel,
         id = 2
     )
 )
 
-public val defaultNestsInitializationSetup: Nests = setOf(
-    Nest(0)
+public val defaultNestsInitializationSetup: Nests = mapOf(
+    0 to Nest(0)
 )

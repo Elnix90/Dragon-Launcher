@@ -50,7 +50,9 @@ public data class Nest(
 //    override fun toString(): String = "Nest(id = $id, contains ${intersectionShapes.size} shapes)"
 //    override fun toString(): String = "Nest N°$id"
 
-    public infix fun scaledBy(scale: Float): Nest = this.copy(intersectionShapes = this.intersectionShapes.mapTo(mutableSetOf()) { it scaledBy scale })
+    // TODO
+    public infix fun scaledBy(scale: Float): Nest = this
+        //this.copy(intersectionShapes = this.intersectionShapes.mapTo(mutableSetOf()) { it scaledBy scale })
 
     public fun name(): String = this.name ?: id.toString()
 
@@ -81,11 +83,11 @@ public data class Nest(
         )
 
 
-        public const val defaultCancelZone: Int = 150
+        public const val defaultCancelZone: Int = 50
 
-        public object NestJson: DragonJson<List<Nest>>()
+        public object NestJson: DragonJson<Set<Nest>>()
     }
 }
 
 
-public typealias Nests = Set<Nest>
+public typealias Nests = Map<Int, Nest>

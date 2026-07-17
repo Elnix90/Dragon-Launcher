@@ -1,10 +1,10 @@
 package org.elnix.dragonlauncher.models
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.appwidget.AppWidgetProviderInfo
 import android.util.DisplayMetrics
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -29,16 +29,14 @@ public class WidgetsViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    @SuppressLint("StaticFieldLeak")
-    private val ctx = application.applicationContext
 
-    public val widgets: SettingFlow<List<Widget>> = SettingFlow<List<Widget>>(emptyList())
+    public val widgets: SettingFlow<List<Widget>> = SettingFlow(emptyList())
 
 
-    public val dm: DisplayMetrics = ctx.resources.displayMetrics
+    public val dm: DisplayMetrics = application.applicationContext.resources.displayMetrics
 
 
-    public val cellSizePx: StateFlow<Float> = widgetsCellSizeDp.flow(ctx).map { it.value * dm.density }.stateIn(
+    public val cellSizePx: StateFlow<Float> = widgetsCellSizeDp.flow(application.applicationContext).map { it.value * dm.density }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
         initialValue = 30 * dm.density
@@ -69,7 +67,7 @@ public class WidgetsViewModel @Inject constructor(
 
     public fun save() {
         viewModelScope.launch {
-            WidgetsSettingsStore.jsonSetting.set(ctx, WidgetsJson.encode(snapshotWidgets()))
+            WidgetsSettingsStore.jsonSetting.set(application.applicationContext, WidgetsJson.encode(snapshotWidgets()))
         }
     }
 
@@ -168,7 +166,7 @@ public class WidgetsViewModel @Inject constructor(
         widgets.value = emptyList()
 
         viewModelScope.launch {
-            WidgetsSettingsStore.resetAll(ctx)
+            WidgetsSettingsStore.resetAll(application.applicationContext)
         }
     }
 
@@ -194,7 +192,7 @@ public class WidgetsViewModel @Inject constructor(
 
     private fun loadWidgets() {
         viewModelScope.launch {
-            val widgetsJsonString = WidgetsSettingsStore.jsonSetting.get(ctx)
+            val widgetsJsonString = WidgetsSettingsStore.jsonSetting.get(application.applicationContext)
             widgets.value = WidgetsJson.decode<List<Widget>>(widgetsJsonString, emptyList())
         }
     }

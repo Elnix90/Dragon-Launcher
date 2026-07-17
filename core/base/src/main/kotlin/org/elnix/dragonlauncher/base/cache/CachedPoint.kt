@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests
+package org.elnix.dragonlauncher.base.cache
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -28,16 +28,7 @@ public data class StablePointValues(
     val imageBitmap: ImageBitmap?
 )
 
-/**
- * LRU cache of [StablePointValues] keyed by point identifier.
- *
- * The cache is populated by [RememberPointStableCaches] and should be
- * read inside DrawScope functions such as [org.elnix.dragonlauncher.ui.helpers.swipe.PointBg]. Lookups that
- * return null fall back to inline computation (first-frame window).
- *
- * @see RememberPointStableCaches
- * @see org.elnix.dragonlauncher.ui.helpers.swipe.PointBg
- */
+
 public object PointStableCache : DragonCache<Int, StablePointValues>(200)
 
 public data class DrawScopeText(

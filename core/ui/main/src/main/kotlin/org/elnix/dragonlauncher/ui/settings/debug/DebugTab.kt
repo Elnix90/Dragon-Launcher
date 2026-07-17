@@ -3,6 +3,7 @@
 package org.elnix.dragonlauncher.ui.settings.debug
 
 import android.content.Intent
+import android.os.Build
 import android.provider.Settings
 import android.system.Os.kill
 import androidx.activity.ComponentActivity
@@ -31,9 +32,10 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
+import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.common.utils.LifecycleUtils
-import org.elnix.dragonlauncher.common.utils.VersionsUtils.getVersionCode
 import org.elnix.dragonlauncher.common.utils.detectSystemLauncher
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
@@ -47,6 +49,7 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.timer.OverlayReminderService
 import org.elnix.dragonlauncher.ui.base.UiConstants.dragonSettingGroupPaddingValues
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.dialogs.AppUsagePermissionDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
@@ -67,13 +70,13 @@ public fun DebugTab(
     val systemLauncherPackageName by DebugSettingsStore.systemLauncherPackageName.asState()
 
     var pendingSystemLauncher by remember { mutableStateOf<String?>(null) }
-    var showEditAppOverrides by remember { mutableStateOf(false) }
+//    var showEditAppOverrides by remember { mutableStateOf(false) }
 
     val storeResetSectionState = rememberExpandableSection(stringResource(R.string.store_reset))
-    val dangerousActionsSectionState = rememberExpandableSection("Dangerous Actions")
 
     var packageQuery by remember { mutableStateOf("") }
     var packageResult by remember { mutableStateOf<String?>(null) }
+    var showPermissionDialog by remember { mutableStateOf(false) }
 
 
     LaunchedEffect(Unit) {
@@ -142,6 +145,7 @@ public fun DebugTab(
             Setting(DebugSettingsStore.mainScreenDebugInfos)
             Setting(DebugSettingsStore.nestDebugInfo)
             Setting(DebugSettingsStore.nestDebugOverlay)
+            Setting(DebugSettingsStore.cachesDebugOverlay)
             Setting(DebugSettingsStore.settingsDebugInfo)
             Setting(DebugSettingsStore.widgetsDebugInfo)
             Setting(DebugSettingsStore.workspacesDebugInfo)
@@ -168,7 +172,15 @@ public fun DebugTab(
                             val info = ctx.packageManager.getPackageInfo(packageQuery.trim(), 0)
                             buildString {
                                 appendLine("Package: ${info.packageName}")
-                                appendLine("Version: ${info.versionName} (${ctx.getVersionCode()}")
+
+                                val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                    info.longVersionCode
+                                } else {
+                                    @Suppress("DEPRECATION")
+                                    info.versionCode
+                                }
+                                appendLine("Version: ${info.versionName} (${versionCode})")
+
                                 appendLine("Enabled: ${info.applicationInfo?.enabled ?: "unknown"}")
                                 appendLine("Data Dir: ${info.applicationInfo?.dataDir ?: "unknown"}")
                             }
@@ -262,20 +274,22 @@ public fun DebugTab(
             title = R.string.test_overlays,
             contentPadding = dragonSettingGroupPaddingValues
         ) {
+
             DragonButton(
                 onClick = {
                     if (!Settings.canDrawOverlays(ctx)) {
+                        showPermissionDialog = true
                         ctx.showToast("Overlay permission not granted")
                         return@DragonButton
                     }
                     OverlayReminderService.show(
-                        ctx,
-                        "TikTok",
-                        "15 min",
-                        "42 min",
-                        "10 min",
-                        true,
-                        "reminder"
+                        ctx = ctx,
+                        appName = "(Fuck) TikTok",
+                        sessionTime = "15 min",
+                        todayTime = "42 min",
+                        remainingTime = "10 min",
+                        hasLimit = true,
+                        mode = "reminder"
                     )
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -286,17 +300,18 @@ public fun DebugTab(
             DragonButton(
                 onClick = {
                     if (!Settings.canDrawOverlays(ctx)) {
+                        showPermissionDialog = true
                         ctx.showToast("Overlay permission not granted")
                         return@DragonButton
                     }
                     OverlayReminderService.show(
-                        ctx,
-                        "(Fuck) TikTok",
-                        "25 min",
-                        "58 min",
-                        "5 min",
-                        true,
-                        "time_warning"
+                        ctx = ctx,
+                        appName = "(Fuck) TikTok",
+                        sessionTime = "25 min",
+                        todayTime = "58 min",
+                        remainingTime = "5 min",
+                        hasLimit = true,
+                        mode = "time_warning"
                     )
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -305,7 +320,64 @@ public fun DebugTab(
             }
         }
 
-        DragonSettingsGroup(R.string.risky) {
+        DragonSettingsGroup(
+            title = R.string.risky,
+            contentPadding = dragonSettingGroupPaddingValues
+        ) {
+
+            DragonButton(
+                onClick = {
+                    @Suppress("DIVISION_BY_ZERO")
+                    5 / 0
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) { Text(text = "What is 5 / 0? \uD83E\uDD2F") }
+
+            DragonButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { LifecycleUtils.closeApp(ctx as ComponentActivity) }
+            ) { Text("Close app (gently)") }
+
+            DragonButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { kill(9, 9) }
+            ) { Text("☠\uFE0F Kill Process") }
+
+        }
+
+        DragonSettingsGroup(
+            title = R.string.dangerous_actions,
+            contentPadding = dragonSettingGroupPaddingValues
+        ) {
+            DragonButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    ctx.startActivity(
+                        Intent(Intent.ACTION_DELETE).apply {
+                            data = "package:${ctx.packageName}".toUri()
+                        }
+                    )
+                }
+            ) { Text("☠\uFE0F Uninstall Launcher") }
+
+//            DragonButton(
+//                onClick = {
+//                    showEditAppOverrides = true
+//                },
+//                modifier = Modifier.fillMaxWidth()
+//            ) { Text(text = "Edit ALL app overrides \uD83D\uDE08") }
+
+            DragonButton(
+                onClick = {
+                    PointStableCache.clear()
+                    NestIntersectionShapesPathCache.clear()
+                    initializationViewModel.initialize()
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) { Text(text = "Re-initialize points") }
+
+            Setting(DebugSettingsStore.disableExtensionSignatureCheck)
+
             ExpandableSection(storeResetSectionState) {
                 AllStores.forEach { store ->
                     DragonButton(
@@ -322,52 +394,11 @@ public fun DebugTab(
                     }
                 }
             }
-
-            ExpandableSection(dangerousActionsSectionState) {
-                DragonButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { LifecycleUtils.closeApp(ctx as ComponentActivity) }
-                ) { Text("Close app (gently)") }
-
-                DragonButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { kill(9, 9) }
-                ) { Text("☠\uFE0F Kill Process") }
-
-                DragonButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        ctx.startActivity(
-                            Intent(Intent.ACTION_DELETE).apply {
-                                data = "package:${ctx.packageName}".toUri()
-                            }
-                        )
-                    }
-                ) { Text("☠\uFE0F Uninstall Launcher") }
-
-                DragonButton(
-                    onClick = {
-                        showEditAppOverrides = true
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) { Text(text = "Edit ALL app overrides \uD83D\uDE08") }
-
-                DragonButton(
-                    onClick = {
-                        @Suppress("DIVISION_BY_ZERO")
-                        5 / 0
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) { Text(text = "What is 5 / 0? \uD83E\uDD2F") }
-
-                DragonButton(
-                    onClick = { initializationViewModel.initialize() },
-                    modifier = Modifier.fillMaxWidth()
-                ) { Text(text = "Re-initialize points") }
-
-                Setting(DebugSettingsStore.disableExtensionSignatureCheck)
-            }
         }
+    }
+
+    if (showPermissionDialog) {
+        AppUsagePermissionDialog { showPermissionDialog = false }
     }
 
 //    if (showEditAppOverrides) {

@@ -6,9 +6,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.scale
+import org.elnix.dragonlauncher.base.cache.DrawScopeText
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.DrawScopeText
 
 /**
  * Composable wrapper that renders a single point icon inside a [Canvas].
@@ -26,18 +26,16 @@ public fun PointIcon(
     selected: Boolean = false,
 
     preventBgErasing: Boolean = false,
-    showConfiguratorDecorations: Boolean = false,
-    forceShowAllActionsInCurrentNest: Boolean = false,
+    pointSettingsDisplay: Boolean = false,
     customText: Pair<DrawScopeText?, DrawScopeText?>? = null,
-    hideShapes: Boolean = false
+    hideShapes: Boolean = false,
+    forceShowShapes: Boolean = false
 ) {
     val drawParams = rememberDrawParams(
         preventBgErasing = preventBgErasing,
-        showConfiguratorDecorations = showConfiguratorDecorations,
-        forceShowAllActionsInCurrentNest = forceShowAllActionsInCurrentNest,
+        pointSettingsDisplay = pointSettingsDisplay,
         showCancelZone = false,
         allowShowPointCenter = false,
-        hideSelectedPoint = false,
         hideShapes = hideShapes
     )
 
@@ -79,8 +77,7 @@ public fun DrawScope.PointIcon(
             customText = customText
         )
     } else {
-        drawParams.pointsService.nests.value
-            .find { it.id == action.nestId }
+        drawParams.pointsService.nests.value[action.nestId]
             ?.let { nest ->
                 val newDepth = depth + 1
                 val newScale = 1f / newDepth

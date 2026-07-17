@@ -1,10 +1,11 @@
-package org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests
+package org.elnix.dragonlauncher.ui.helpers.swipe.cache.points
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.produceState
@@ -17,6 +18,8 @@ import androidx.compose.ui.platform.LocalDensity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import org.elnix.dragonlauncher.base.cache.PointStableCache
+import org.elnix.dragonlauncher.base.cache.StablePointValues
 import org.elnix.dragonlauncher.base.icons.DynamicLauncherIcon
 import org.elnix.dragonlauncher.base.icons.LauncherIconRenderSettings
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
@@ -28,7 +31,7 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.remembers.rememberDrawScopeText
 
 /**
- * Observes `points] and keeps [PointStableCache] synchronised with their
+ * Observes `points] and keeps [org.elnix.dragonlauncher.base.cache.PointStableCache] synchronised with their
  * current configuration.
  *
  * Each point is processed in an isolated [key]ed sub-composition so that
@@ -39,14 +42,11 @@ public fun RememberPointStableCaches(
     pointsViewModel: PointsViewModel = activityViewModel(),
     iconsViewModel: IconsViewModel = activityViewModel()
 ) {
-    val points by pointsViewModel.pointsService.points.asState()
+    val points by pointsViewModel.pointsService.points.collectAsState()
     val defaultPoint by pointsViewModel.pointsService.defaultPoint.asState()
 
-    LaunchedEffect(points.size) {
-        PointStableCache.updateMaxCacheSize(points.size)
-    }
 
-    for (point in points) {
+    for ((_, point) in points) {
         RememberPointStableCacheEntry(
             point = point,
             defaultPoint = defaultPoint,
@@ -56,7 +56,7 @@ public fun RememberPointStableCaches(
 }
 
 /**
- * Per-point composable that computes [StablePointValues] and writes them
+ * Per-point composable that computes [org.elnix.dragonlauncher.base.cache.StablePointValues] and writes them
  * into [PointStableCache] when any dependency changes.
  */
 @Composable
@@ -69,7 +69,7 @@ private fun RememberPointStableCacheEntry(
     val colorScheme = MaterialTheme.colorScheme
 
     val systemInDarkTheme = isSystemInDarkTheme()
-    val renderSettings = remember(defaultPoint) {
+    val renderSettings = remember(defaultPoint, systemInDarkTheme) {
         LauncherIconRenderSettings(
             size = with(density) { defaultPoint.getSize(defaultPoint).toPx() }.toInt().coerceAtLeast(8) * 2,
             fgThemeColor = colorScheme.onPrimaryContainer.toArgb(),
@@ -94,10 +94,10 @@ private fun RememberPointStableCacheEntry(
 
     LaunchedEffect(
         point.id,
+        renderSettings,
         sizePx,
         innerPaddingPx,
         borderRadii,
-        renderSettings,
         imageBitmap,
         customTexts
     ) {

@@ -73,7 +73,7 @@ public class AppTimerService : Service() {
             application: Application,
             reminderEnabled: Boolean,
             reminderIntervalMinutes: Int,
-            reminderMode: ReminderMode,
+            reminderMode: String,
             timeLimitMinutes: Int?
         ) {
             val intent = Intent(ctx, AppTimerService::class.java).apply {

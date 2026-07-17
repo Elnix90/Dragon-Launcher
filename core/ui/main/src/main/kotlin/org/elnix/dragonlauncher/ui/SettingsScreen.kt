@@ -164,7 +164,6 @@ public fun SettingsScreen(
             SettingsItem(
                 title = stringResource(R.string.extensions),
                 icon = R.drawable.extension,
-                trailingIcon = R.drawable.open_in_new,
                 onExternalClick = { ctx.openUrl(EXTENSIONS_GITHUB_REPO_LINK) }
             ) { onNavigate(NavigationRoute.Extensions) }
 

@@ -104,6 +104,15 @@ public fun EditCustomObjectBlock(
                 onEdit(editObject.copy(mirror = it))
             }
         }
+        if (properties.allowAlignCustomization) {
+            SwitchRow(
+                state = editObject.alignsWithDragAngle,
+                title = stringResource(R.string.align_with_angle),
+                description = stringResource(R.string.align_with_angle_desc)
+            ) {
+                onEdit(editObject.copy(alignsWithDragAngle = it))
+            }
+        }
         if (properties.allowEraseBackgroundCustomization) {
             SwitchRow(
                 state = editObject.eraseBackground,

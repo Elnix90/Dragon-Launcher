@@ -13,12 +13,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.logging.POINTS_TAG
+import io.github.elnix90.logging.logD
+import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
+import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.components.IntersectionShape
-import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.PointStableCache
-import org.elnix.dragonlauncher.ui.helpers.swipe.cache.points.NestIntersectionShapesPathCache
 
 /**
  * Composable wrapper that renders a nest and its points inside a [Canvas].
@@ -34,20 +36,16 @@ public fun NestOverlay(
     modifier: Modifier = Modifier,
     depth: Int = 1,
     preventBgErasing: Boolean = false,
-    showConfiguratorDecorations: Boolean = false,
-    forceShowAllActionsInCurrentNest: Boolean = false,
     allowShowPointCenter: Boolean = false,
-    hideSelectedPoint: Boolean = false,
+    pointSettingsDisplay: Boolean = false,
     showCancelZone: Boolean = false,
     hideShapes: Boolean = false
 ) {
     val drawParams = rememberDrawParams(
         preventBgErasing = preventBgErasing,
-        showConfiguratorDecorations = showConfiguratorDecorations,
-        forceShowAllActionsInCurrentNest = forceShowAllActionsInCurrentNest,
         allowShowPointCenter = allowShowPointCenter,
         showCancelZone = showCancelZone,
-        hideSelectedPoint = hideSelectedPoint,
+        pointSettingsDisplay = pointSettingsDisplay,
         hideShapes = hideShapes
     )
     val iconTrigger by PointStableCache.cacheTrigger.asState()
@@ -74,11 +72,38 @@ public fun DrawScope.NestOverlay(
     nest: Nest,
     depth: Int,
     center: Offset,
-
     drawParams: DrawParams,
-
     selectedAll: Boolean = false,
 ) {
+
+    val isSettingDisplay = drawParams.pointSettingsDisplay
+
+    val selectedShapes = drawParams.pointsService.getSelectedShapeIds(nest.id)
+    repeat(2) { pass ->
+        nest.intersectionShapes.forEach { shape ->
+            // Trust me it works
+            // Only draw the shape if:
+            // - forced by settings display
+            // - allowed by settings
+            // - one of the selected points is on that shape
+            // - the shape is on the same nest (it caused issue where all the shapes  of id 0 were lightning up in every nest
+            val showShape = isSettingDisplay || drawParams.showAllShapesInNest || (drawParams.showShape && shape.id in selectedShapes)
+
+            if (showShape) {
+                // This is computed here, because I cannot draw shapes reactively otherwise in the nest edit screen
+                val path = NestIntersectionShapesPathCache[shape] ?: return
+
+                this.IntersectionShape(
+                    path = path,
+                    shape = shape,
+                    center = center,
+                    shapesColor = drawParams.extraColors.shapes,
+                    erase = pass == 0
+                )
+            }
+        }
+    }
+
     if (drawParams.showCancelZone) {
         drawCircle(
             brush = Brush.linearGradient(
@@ -97,34 +122,35 @@ public fun DrawScope.NestOverlay(
         )
     }
 
-    repeat(2) { pass ->
-        nest.intersectionShapes.forEach { shape ->
-            // This is computed here, because I cannot draw shapes reactively otherwise in the nest edit screen
-            val path = NestIntersectionShapesPathCache[shape] ?: return
-
-            this.IntersectionShape(
-                path = path,
-                shape = shape,
-                center = center,
-                drawParams = drawParams,
-                erase = pass == 0
-            )
-        }
+    if (isSettingDisplay) {
+        centerOfNest(center)
     }
 
-    val hideSelected = drawParams.hideSelectedPoint
-    val filteredPoints = drawParams.pointsService.getPointsForNest(nest.id, hideSelected)
-    val selectedPoints = drawParams.pointsService.selectedPointsIds.value
+    val selectedPointsIds = drawParams.pointsService.selectedPointsIds.value
 
-    filteredPoints.forEach { p ->
-        val drawPoint: Point = filteredPoints.firstOrNull { it.id == p.id } ?: p
-        val pointOffset = center + drawParams.pointsService.computePointOffset(p)
+    val filteredPoints = drawParams
+        .pointsService
+        .getPointsForNest(nest.id, isSettingDisplay)
+        .filter { (id, point) ->
+            when {
+                isSettingDisplay -> if (depth == 1) id !in selectedPointsIds else true
+                drawParams.showAllPointsInCurrentNest -> true
+                drawParams.showAllPointsInCurrentShape -> point.shapeId in selectedShapes
+                else -> drawParams.showCurrentPoint && id in selectedPointsIds
+            }
+        }
+
+    logD(POINTS_TAG) { "FilteredPoints size: ${filteredPoints.size}" }
+
+    filteredPoints.forEach { (id, p) ->
+        val drawPoint: Point = filteredPoints[id] ?: p
+        val pointOffset = center + p.getPos()
 
         if (drawParams.nestDebugOverlay) {
-            val endOffset: Offset = if (drawPoint.collidingShapeId == null) {
+            val endOffset: Offset = if (drawPoint.shapeId == null) {
                 center
             } else {
-                nest.intersectionShapes.firstOrNull { it.id == drawPoint.collidingShapeId }?.let { shape ->
+                nest.intersectionShapes.firstOrNull { it.id == drawPoint.shapeId }?.let { shape ->
                     center + shape.offset
                 } ?: center
             }
@@ -140,15 +166,15 @@ public fun DrawScope.NestOverlay(
             depth = depth,
             point = drawPoint,
             center = pointOffset,
-            selected = selectedAll || (p.id in selectedPoints),
+            selected = selectedAll || (p.id in selectedPointsIds),
             drawParams = drawParams,
             customText = null
         )
     }
 
     if (drawParams.allowShowPointInCenter) {
-        if (selectedPoints.size == 1) {
-            val point = filteredPoints.firstOrNull { it.id == selectedPoints.first() } ?: return
+        if (selectedPointsIds.size == 1) {
+            val point = filteredPoints[selectedPointsIds.first()] ?: return
             PointIcon(
                 point = point,
                 depth = depth,

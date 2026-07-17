@@ -1,3 +1,5 @@
+@file:Suppress("OVERRIDE_BY_INLINE")
+
 package org.elnix.dragonlauncher.points
 
 import android.content.Context
@@ -7,10 +9,15 @@ import io.github.elnix90.logging.logD
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.SettingFlow
+import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.models.HitResult
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
+import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.NestJson
 import org.elnix.dragonlauncher.base.model.serializables.Nests
@@ -26,10 +33,10 @@ import org.elnix.dragonlauncher.ktx.angleRad
 import org.elnix.dragonlauncher.ktx.distanceTo
 import org.elnix.dragonlauncher.ktx.getNextId
 import org.elnix.dragonlauncher.ktx.groupByTo
-import org.elnix.dragonlauncher.ktx.toRadians
 import org.elnix.dragonlauncher.settings.stores.array.NestsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.array.PointsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.objects.DefaultPointSettingsStore
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.cos
@@ -37,8 +44,8 @@ import kotlin.math.sin
 
 public interface PointsService {
     public val defaultPoint: SettingFlow<Point>
-    public val points: SettingFlow<Points>
-    public val nests: SettingFlow<Nests>
+    public val points: StateFlow<Points>
+    public val nests: StateFlow<Nests>
 
     public val recomposeTrigger: SettingFlow<Int>
 
@@ -48,24 +55,36 @@ public interface PointsService {
      * A *File* according to M.Morlong, thanks!
      */
     public val selectedPointsIds: SettingFlow<List<Int>>
+//    public val selectedPoints: StateFlow<Points>
 
     public val undoRedo: UndoRedoManager
 
     public fun addPoint(select: Boolean = true, newPoint: (Int) -> Point): Int
-    public fun removePoint(id: Int): Boolean
-    public fun editPoint(id: Int, editedPoint: (Point) -> Point): Boolean
+    public fun removePoint(id: Int)
+    public fun editPoint(
+        id: Int,
+        apply: Boolean = true,
+        editedPoint: (Point) -> Point
+    )
 
     public fun addNest(nestId: Int? = null): Int
-    public fun removeNest(id: Int): Boolean
-    public fun editNest(id: Int, editedNest: (Nest) -> Nest): Boolean
+    public fun removeNest(id: Int)
+    public fun editNest(
+        id: Int,
+        apply: Boolean = true,
+        editedNest: (Nest) -> Nest
+    )
+
     public fun resetNest(id: Int)
+
+
+    public fun updateNestShape(nestId: Int, shapeId: Int, newShape: (old: IntersectionShape) -> IntersectionShape)
 
     public fun editDefaultPoint(newDefaultPoint: Point)
 
 
     public fun findPointById(id: Int): Point?
     public fun findNestById(id: Int): Nest
-    public fun findNestByIdOrNull(id: Int): Nest?
 
 
     /**
@@ -118,7 +137,7 @@ public interface PointsService {
         normalizedPos: Offset,
         nestId: Int,
         liveNestScale: Float,
-        graceDistancePx: Int
+        graceDistancePx: Int?
     ): HitResult
 
     /**
@@ -129,15 +148,17 @@ public interface PointsService {
      */
     public fun computePointOffset(point: Point): Offset
 
+    public fun computePointOffsetRealTime(point: Point, shape: IntersectionShape): Offset
+
     public fun getPointsForNest(
         nestId: Int,
         skipSelected: Boolean
     ): Points
 
-//    public fun getSelectedShapes(): Set<IntersectionShape>
+    public fun getSelectedShapeIds(nestId: Int): Set<Int>
 
     /**
-     * Compute the closest point relative to the [normalizedPos] given their [Point.offset] and the eventual [shape][Point.collidingShapeId] they are tied to
+     * Compute the closest point relative to the [normalizedPos] given their [Point.offset] and the eventual [shape][Point.shapeId] they are tied to
      *
      * Special cases:
      *  - [points] is empty -> `null`
@@ -175,12 +196,15 @@ internal class PointsServiceImpl(
     private typealias FurthestGrid = MutableMap<Int, Point?>
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val density = ctx.resources.displayMetrics.density
+
 
     override val defaultPoint: SettingFlow<Point> = SettingFlow(dummySwipePoint())
+    private val _points = MutableStateFlow(ConcurrentHashMap<Int, Point>())
+    override val points: StateFlow<Map<Int, Point>> = _points.asStateFlow()
 
-    override val points: SettingFlow<Points> = SettingFlow(emptySet())
-
-    override val nests: SettingFlow<Nests> = SettingFlow(emptySet())
+    private val _nests = MutableStateFlow(ConcurrentHashMap<Int, Nest>())
+    override val nests: StateFlow<Map<Int, Nest>> = _nests.asStateFlow()
 
     override val recomposeTrigger: SettingFlow<Int> = SettingFlow(0)
 
@@ -190,16 +214,16 @@ internal class PointsServiceImpl(
     override val undoRedo: UndoRedoManager = UndoRedoManager(
         stacks = arrayOf(
             UndoRedoStack(
-                snapshot = { points.value.map { it.copy() } },
+                snapshot = { _points.value },
                 restore = { points ->
-                    set(newPoints = points.toSet())
+                    set(newPoints = points)
 
-                    selectedPointsIds.value = points.map { it.id }.filter { it in selectedPointsIds.value }
+                    selectedPointsIds.value = points.keys.filter { it in selectedPointsIds.value }
                 }
             ),
             UndoRedoStack(
-                snapshot = { nests.value.map { it.copy() } },
-                restore = { set(newNests = it.toSet()) }
+                snapshot = { _nests.value },
+                restore = { nests -> set(newNests = nests) }
             ),
             UndoRedoStack(
                 snapshot = { defaultPoint.value },
@@ -209,9 +233,13 @@ internal class PointsServiceImpl(
         scope = scope
     )
 
-    private inline fun applyChange(mutator: () -> Unit) {
-        undoRedo.applyChange(mutator)
-        resetGrids()
+    private inline fun applyChange(apply: Boolean, mutator: () -> Unit) {
+        if (apply) {
+            undoRedo.applyChange(mutator)
+            resetGrids()
+        } else {
+            mutator()
+        }
         recomposeTrigger.value++
     }
 
@@ -252,7 +280,7 @@ internal class PointsServiceImpl(
     }
 
     override fun selectAll(nestId: Int) {
-        selectedPointsIds.value = points.value.filter { it.nestId == nestId }.map { it.id }
+        selectedPointsIds.value = _points.value.filterValues { it.nestId == nestId }.keys.toList()
         recomposeTrigger.value++
     }
 
@@ -262,7 +290,7 @@ internal class PointsServiceImpl(
     }
 
     override fun invertSelection(nestId: Int) {
-        selectedPointsIds.value = points.value.filter { it.nestId == nestId }.map { it.id } - selectedPointsIds.value.toSet()
+        selectedPointsIds.value = _points.value.filterValues { it.nestId == nestId }.keys.toList() - selectedPointsIds.value.toSet()
         recomposeTrigger.value++
     }
 
@@ -302,83 +330,119 @@ internal class PointsServiceImpl(
     }
 
     override fun addPoint(select: Boolean, newPoint: (Int) -> Point): Int {
-        val existingIds = points.value.mapTo(mutableSetOf()) { it.id }
+        val existingIds = _points.value.keys
         val newId = existingIds.getNextId()
         val newPoint = newPoint(newId)
 
-        applyChange { points.value += newPoint }
+        PointStableCache.incrementCacheSize()
+        applyChange(true) { _points.value[newPoint.id] = newPoint }
 
         if (select) select(newId)
         return newId
     }
 
-    override fun removePoint(id: Int): Boolean {
-        val pointToRemove = points.value.find { it.id == id } ?: return false
-
-        applyChange { points.value -= pointToRemove }
-        return true
+    override fun removePoint(id: Int) {
+        applyChange(true) { _points.value.remove(id) }
     }
 
-    override fun editPoint(id: Int, editedPoint: (Point) -> Point): Boolean {
-        val oldPoint = points.value.find { it.id == id } ?: return false
-        val editedPoint = editedPoint(oldPoint)
-
-        applyChange {
-            points.value -= oldPoint
-            points.value += editedPoint
+    override fun editPoint(
+        id: Int,
+        apply: Boolean,
+        editedPoint: (Point) -> Point
+    ) {
+        val oldPoint = _points.value[id] ?: return
+        val edited = editedPoint(oldPoint)
+        logD(POINTS_TAG) { " \nUpdating point: $id, old = $oldPoint, edited = $edited, they are the same: ${edited == oldPoint}\n points before: ${_points.value}" }
+        applyChange(apply) {
+            _points.value[id] = edited
         }
 
-        return true
+        logD(POINTS_TAG) { "Points after: ${_points.value}" }
     }
 
     override fun addNest(nestId: Int?): Int {
-        val existingIds = nests.value.mapTo(mutableSetOf()) { it.id }
+        val existingIds = _nests.value.keys
         val newId = if (nestId != null && nestId !in existingIds) nestId else existingIds.getNextId()
-        val newNest = Nest(id = newId)
 
-        applyChange { nests.value += newNest }
+        applyChange(true) { _nests.value[newId] = Nest(id = newId) }
 
         return newId
     }
 
-    override fun removeNest(id: Int): Boolean {
-        val nestToDelete = findNestByIdOrNull(id) ?: return false
-
-        applyChange { nests.value -= nestToDelete }
-
-        return true
+    override fun removeNest(id: Int) {
+        applyChange(true) { _nests.value.remove(id) }
     }
 
-    override fun editNest(id: Int, editedNest: (Nest) -> Nest): Boolean {
-        val oldNest = findNestByIdOrNull(id) ?: return false
+    override fun editNest(
+        id: Int,
+        apply: Boolean,
+        editedNest: (Nest) -> Nest
+    ) {
+        val oldNest = findNestById(id)
 
-        applyChange {
-            nests.value -= oldNest
-            nests.value += editedNest(oldNest)
+        applyChange(apply) {
+            _nests.value[id] = editedNest(oldNest)
         }
-
-        return true
     }
 
     override fun resetNest(id: Int) {
-        val oldNest = findNestByIdOrNull(id) ?: return
+        applyChange(true) {
+            _nests.value[id] = Nest(id)
+        }
+    }
 
-        applyChange {
-            nests.value -= oldNest
-            nests.value += Nest(id)
+    override inline fun updateNestShape(
+        nestId: Int,
+        shapeId: Int,
+        crossinline newShape: (old: IntersectionShape) -> IntersectionShape
+    ) {
+        editNest(nestId, apply = false) { oldNest ->
+            val oldShape = oldNest.intersectionShapes.firstOrNull { it.id == shapeId } ?: IntersectionShape(shapeId)
+            val newShape = newShape(oldShape)
+
+            val newShapes = oldNest.intersectionShapes.mapTo(mutableSetOf()) {
+                if (it.id == shapeId) newShape else it
+            }
+
+//            val netOffsetChange = newShape.offset - oldShape.offset
+//            getPointsForNest(nestId, false).forEach { (id, point) ->
+//                if (point.shapeId == shapeId) {
+//                    val newPoint = point.copy(offset = point.offset + netOffsetChange)
+//
+//                    _points.value[id] = newPoint
+//
+//                    logD(POINTS_TAG) { "Netchange: $netOffsetChange" }
+//
+//                    point.pos = computePointOffsetRealTime(newPoint, newShapes)
+//                }
+//            }
+
+            oldNest.copy(intersectionShapes = newShapes)
         }
     }
 
     override fun editDefaultPoint(newDefaultPoint: Point) {
-        applyChange { set(newDefaultPoint = newDefaultPoint) }
+        applyChange(true) { set(newDefaultPoint = newDefaultPoint) }
+    }
+
+
+    private suspend fun load() {
+        val decodedPoints = PointsJson.decode<Set<Point>>(PointsSettingsStore.jsonSetting.get(ctx), emptySet())
+        _points.value = ConcurrentHashMap(decodedPoints.associateBy { it.id })
+
+        val decodedNests = NestJson.decode<Set<Nest>>(NestsSettingsStore.jsonSetting.get(ctx), emptySet())
+        _nests.value = ConcurrentHashMap(decodedNests.associateBy { it.id })
+
+        val decodedDefaultPoint = PointJson.decode(DefaultPointSettingsStore.jsonSetting.get(ctx), Point.defaultSwipePointsValues)
+        defaultPoint.value = decodedDefaultPoint
     }
 
     override fun persist() {
         scope.launch {
-            val encodedPoints = PointsJson.encode(points.value)
+            val encodedPoints = PointsJson.encode<Set<Point>>(_points.value.values.toSet())
             PointsSettingsStore.jsonSetting.set(ctx, encodedPoints)
 
-            val encodedNests = NestJson.encode(nests.value)
+            val encodedNests = NestJson.encode<Set<Nest>>(_nests.value.values.toSet())
             NestsSettingsStore.jsonSetting.set(ctx, encodedNests)
 
             val encodedDefaultPoint = PointJson.encode(defaultPoint.value)
@@ -394,11 +458,11 @@ internal class PointsServiceImpl(
         require(newPoints != null || newNests != null || newDefaultPoint != null) { "One of all 3 args must not bu null" }
 
         if (newPoints != null) {
-            points.value = newPoints
+            _points.value = ConcurrentHashMap(newPoints)
         }
 
         if (newNests != null) {
-            nests.value = newNests
+            _nests.value = ConcurrentHashMap(newNests)
         }
 
         if (newDefaultPoint != null) {
@@ -418,28 +482,19 @@ internal class PointsServiceImpl(
     ) {
         require(resetPoints || resetNests || resetDefaultPoint) { "Must at least reset something" }
 
-        applyChange {
+        applyChange(true) {
             if (resetPoints) {
-                points.value = emptySet()
+                _points.value.clear()
                 selectedPointsIds.value = emptyList()
             }
             if (resetNests) {
-                nests.value = emptySet()
+                _nests.value.clear()
             }
             if (resetDefaultPoint) {
                 defaultPoint.value = Point.defaultSwipePointsValues
             }
         }
-
-        persist()
     }
-
-    private suspend fun load() {
-        points.value = PointsJson.decode<Points>(PointsSettingsStore.jsonSetting.get(ctx), emptySet())
-        nests.value = NestJson.decode<Nests>(NestsSettingsStore.jsonSetting.get(ctx), emptySet())
-        defaultPoint.value = PointJson.decode(DefaultPointSettingsStore.jsonSetting.get(ctx), Point.defaultSwipePointsValues)
-    }
-
 
     private var grid: GridMap = mutableMapOf()
     private var nestGrid: NestGrid = mutableMapOf()
@@ -455,23 +510,24 @@ internal class PointsServiceImpl(
      * Now since the points shouldn't be updated when you usually drag in the main screen
      */
     private fun resetGrids() {
-        for (point in points.value) {
-            point.pos = null
+        val points: MutableCollection<Point> = _points.value.values
+
+        for (point in points) {
+            point.pos = computePointOffset(point)
         }
 
-        grid = points.value.groupByTo(mutableMapOf<GridCase, MutablePoints>()) { point ->
-            cellKey(computePointOffset(point))
+        grid = points.groupByTo(mutableMapOf<GridCase, MutablePoints>()) { point ->
+            cellKey(point.getPos())
         }
 
-        nestGrid = points.value.groupByTo(mutableMapOf<Int, MutablePoints>()) { point ->
+        nestGrid = points.groupByTo(mutableMapOf<Int, MutablePoints>()) { point ->
             point.nestId
         }
 
-
-        furthestPointGrid = points.value
+        furthestPointGrid = points
             .groupBy { it.nestId }
             .mapValues { (_, nestPoints) ->
-                nestPoints.maxByOrNull { computePointOffset(it).getDistanceSquared() }
+                nestPoints.maxByOrNull { it.getPos().getDistanceSquared() }
             }
             .toMutableMap()
 
@@ -486,11 +542,11 @@ internal class PointsServiceImpl(
         nestId: Int
     ): Point? {
         val pointsInNestFiltered = getPointsForNest(nestId = nestId, skipSelected = false)
-            .filter { (ignoredPointId == null || it.id !in ignoredPointId) }
+            .filterValues { (ignoredPointId == null || it.id !in ignoredPointId) }
 
         return when (pointsInNestFiltered.size) {
             0 -> null
-            1 -> pointsInNestFiltered.first()
+            1 -> pointsInNestFiltered.values.first()
             else -> {
 
                 @Suppress("LiftReturnOrAssignment")
@@ -555,16 +611,17 @@ internal class PointsServiceImpl(
         normalizedPos: Offset,
         nestId: Int,
         liveNestScale: Float,
-        graceDistancePx: Int
+        graceDistancePx: Int?
     ): HitResult {
+
         val dist = normalizedPos.getDistance()
         val angle360 = normalizedPos.angleDeg()
 
-        // If there's no point in that nest, the HitResult returns a out-of-bounds hit
+        // If there's no point in that nest, the HitResult returns an out-of-bounds hit
         val outerRadius = computeOuterRadius(nestId)
 
-        graceDistancePx.takeIf { it > -1 }?.let {
-            if (outerRadius == null || outerRadius > 0f && dist > outerRadius + graceDistancePx) {
+        graceDistancePx?.let { graceDist ->
+            if (outerRadius == null || outerRadius > 0f && dist > outerRadius + graceDist) {
                 return HitResult(
                     selectedPoint = null,
                     isOutsideBounds = true,
@@ -574,8 +631,7 @@ internal class PointsServiceImpl(
             }
         }
 
-        val nest = findNestById(nestId)
-        val isInCancelZone = dist <= nest.cancelZone * density
+        val isInCancelZone = dist <= findNestById(nestId).cancelZone * density
 
         // When inside the cancel zone there is no point to select.
         val selectedPoint = if (isInCancelZone) {
@@ -593,151 +649,166 @@ internal class PointsServiceImpl(
     }
 
     override fun computePointOffset(point: Point): Offset {
-        point.pos?.let { return it }
+//        logD(POINTS_TAG) { ". \nComputing point ${point.id} offset..."}
 
-        val shapeId = point.collidingShapeId ?: return point.offset
-        val nest = findNestByIdOrNull(point.nestId) ?: return point.offset
+        val shapeId = point.shapeId ?: run {
+//            logD(POINTS_TAG) { "Returning ${point.offset} cause it has no shape"}
+            return point.offset
+        }
+
+        val nest = findNestById(point.nestId)
         val shape = nest.intersectionShapes.find { it.id == shapeId } ?: return point.offset
 
-        val angleRad = point.angle
+//        logD(POINTS_TAG) { "Found shape: $shape"}
+
+        // The angle if computed from the center of the shape
+        val angleRad = (point.offset - shape.offset).angleRad()
+//        val angleRad = point.offset.angleRad()
+
         val halfSize = shape.getSize(density).width / 2
         val rotationRad = Math.toRadians(shape.angle.toDouble()).toFloat()
-        logD(POINTS_TAG) { "angleRad: $angleRad, halfSize: $halfSize" }
+//        logD(POINTS_TAG) { "angleRad: $angleRad, angleDeg: ${point.offset.angleDeg()}, halfSize: $halfSize" }
 
         val boundary = computeShapeBoundary(shape.shape, halfSize, angleRad, rotationRad)
-        logD(POINTS_TAG) { "Boundary: $boundary" }
+//        logD(POINTS_TAG) { "Boundary: $boundary" }
 
+//        return boundary
         val pos = shape.offset + boundary
 
-        point.pos = pos
+//        logD(POINTS_TAG) { "pos: $pos, boundary: $boundary, pod-b: ${pos - boundary}" }
+
         return pos
+    }
+
+    @Suppress("NOTHING_TO_INLINE")
+    override inline fun computePointOffsetRealTime(point: Point, shape: IntersectionShape): Offset {
+        val angleRad = (point.offset - shape.offset).angleRad()
+
+        val halfSize = shape.getSize(density).width / 2
+        val rotationRad = Math.toRadians(shape.angle.toDouble()).toFloat()
+
+        return shape.offset + computeShapeBoundary(shape.shape, halfSize, angleRad, rotationRad)
     }
 
     override fun getPointsForNest(
         nestId: Int,
         skipSelected: Boolean
     ): Points {
-        val pointsInTheNest: MutablePoints = nestGrid[nestId] ?: return emptySet()
-        if (!skipSelected) return pointsInTheNest
-
-        val selectedPoints = selectedPointsIds.value
-
-        return pointsInTheNest.filterNotTo(mutableSetOf()) { it.id in selectedPoints }
+        val pointsInTheNest: MutablePoints = nestGrid[nestId] ?: return emptyMap()
+        if (!skipSelected) return pointsInTheNest.associateBy { it.id }
+        return pointsInTheNest
+            .filterNotTo(mutableSetOf()) { it.id in selectedPointsIds.value }
+            .associateBy { it.id }
     }
 
-//    override fun getSelectedShapes(): Set<IntersectionShape> {
-//        val selectedPoints = selectedPointsIds.value.takeIf { it.isNotEmpty() } ?: return emptySet()
-//
-//        return selectedPoints.mapNotNullTo(mutableSetOf()) { selPointID ->
-//            val point = findPointById(selPointID) ?: return@mapNotNullTo null
-//            if (point.collidingShapeId == null) return@mapNotNullTo null
-//
-//            val nest = findNestByIdOrNull(point.nestId) ?: return@mapNotNullTo null
-//
-//            nest.intersectionShapes.firstOrNull { it.id == point.collidingShapeId }
-//        }
-//    }
+    override fun getSelectedShapeIds(nestId: Int): Set<Int> {
+        val selectedPointIds = selectedPointsIds.value.takeIf { it.isNotEmpty() } ?: return emptySet()
+
+        return selectedPointIds.mapNotNullTo(mutableSetOf()) { id ->
+            val point = findPointById(id) ?: return@mapNotNullTo null
+            if (point.shapeId == null || point.nestId != nestId) return@mapNotNullTo null
+
+            point.shapeId
+        }
+    }
 
 
-    override fun findPointById(id: Int): Point? = points.value.find { it.id == id }
+    override fun findPointById(id: Int): Point? = _points.value[id]
+    override fun findNestById(id: Int): Nest = _nests.value[id] ?: Nest(id)
 
-    override fun findNestById(id: Int): Nest = findNestByIdOrNull(id) ?: Nest()
-    override fun findNestByIdOrNull(id: Int): Nest? = nests.value.find { it.id == id }
-
-
-    private val density = ctx.resources.displayMetrics.density
 
     override fun autoSeparate(
         nestId: Int,
         draggedPointId: Int
     ): Boolean {
-        val draggedPoint = findPointById(draggedPointId) ?: return false
-        if (getPointsForNest(nestId, false).size < 2) return false
-
-        var hasMoved = false
-
-        /**
-         * Limit the number max of repetitions because otherwise the app could end up being unresponsive
-         * I mean; it shouldn't as I am a pretty good programmer and I anticipated all the edge cases in [computeClosestExcept]
-         * but we never know...
-         */
-        repeat(100) {
-            val draggedPointOffset = computePointOffset(draggedPoint)
-
-            val closest = computeClosestExcept(
-                ignoredPointId = arrayOf(draggedPointId),
-                normalizedPos = draggedPointOffset,
-                nestId = nestId
-            ) ?: return hasMoved
-
-            val closestOffset = computePointOffset(closest)
-            val distanceBetweenPoints = closestOffset distanceTo draggedPointOffset
-            val pointsSizeTogether = (closest.getSize(defaultPoint.value) / 2 + draggedPoint.getSize(defaultPoint.value) / 2).value * density
-
+        return false
+//        val draggedPoint = findPointById(draggedPointId) ?: return false
+//        if (getPointsForNest(nestId, false).size < 2) return false
+//
+//        var hasMoved = false
+//
+//        /**
+//         * Limit the number max of repetitions because otherwise the app could end up being unresponsive
+//         * I mean; it shouldn't as I am a pretty good programmer and I anticipated all the edge cases in [computeClosestExcept]
+//         * but we never know...
+//         */
+//        repeat(100) {
+//            val draggedPointOffset = computePointOffset(draggedPoint)
+//
+//            val closest = computeClosestExcept(
+//                ignoredPointId = arrayOf(draggedPointId),
+//                normalizedPos = draggedPointOffset,
+//                nestId = nestId
+//            ) ?: return hasMoved
+//
+//            val closestOffset = computePointOffset(closest)
+//            val distanceBetweenPoints = closestOffset distanceTo draggedPointOffset
+//            val pointsSizeTogether = (closest.getSize(defaultPoint.value) / 2 + draggedPoint.getSize(defaultPoint.value) / 2).value * density
+//
+////            logD(POINTS_TAG) {
+////                "draggedPoint: $draggedPoint\n" +
+////                        "draggedPointOffset: $draggedPointOffset\n" +
+////                        "closest: $closest\n" +
+////                        "closestOffset! $closestOffset\n" +
+////                        "distanceBetweenPoins: $distanceBetweenPoints\n" +
+////                        "pointSizeTogether: $pointsSizeTogether"
+////            }
+//
+//            if (distanceBetweenPoints > pointsSizeTogether) return hasMoved
+//
+//            val angleInRadians = if (distanceBetweenPoints == 0f) {
+//                val angle = (0..360).random().toFloat().toRadians().toFloat()
+//                logD(POINTS_TAG) { "Took random angle : $angle" }
+//                angle
+//            } else {
+//                /**
+//                 * Angle from the [Offset] that represents the vector to transform [closestOffset] into [draggedPointOffset]
+//                 */
+//                val offset = (draggedPointOffset - closestOffset)
+//
+//                val angle = offset.angleRad()
+//                logD(POINTS_TAG) {
+//                    "Took.. -> offset: $offset\n           angle: $angle"
+//                }
+//                angle
+//            }
+//
+//            val distanceToMove = distanceBetweenPoints.takeIf { it > 0f } ?: (pointsSizeTogether / 2)
+//
+//            val offsetToMove = Offset(
+//                x = distanceToMove * cos(angleInRadians),
+//                y = distanceToMove * sin(angleInRadians)
+//            )
+//
 //            logD(POINTS_TAG) {
-//                "draggedPoint: $draggedPoint\n" +
-//                        "draggedPointOffset: $draggedPointOffset\n" +
-//                        "closest: $closest\n" +
-//                        "closestOffset! $closestOffset\n" +
-//                        "distanceBetweenPoins: $distanceBetweenPoints\n" +
-//                        "pointSizeTogether: $pointsSizeTogether"
+//                "DistanceToMove: $distanceToMove\n" +
+//                        "offset to move: $offsetToMove\n" +
+//                        "offset to move angle: ${offsetToMove.angleRad()}\n "
 //            }
-
-            if (distanceBetweenPoints > pointsSizeTogether) return hasMoved
-
-            val angleInRadians = if (distanceBetweenPoints == 0f) {
-                val angle = (0..360).random().toFloat().toRadians().toFloat()
-                logD(POINTS_TAG) { "Took random angle : $angle" }
-                angle
-            } else {
-                /**
-                 * Angle from the [Offset] that represents the vector to transform [closestOffset] into [draggedPointOffset]
-                 */
-                val offset = (draggedPointOffset - closestOffset)
-
-                val angle = offset.angleRad()
-                logD(POINTS_TAG) {
-                    "Took.. -> offset: $offset\n           angle: $angle"
-                }
-                angle
-            }
-
-            val distanceToMove = distanceBetweenPoints.takeIf { it > 0f } ?: (pointsSizeTogether / 2)
-
-            val offsetToMove = Offset(
-                x = distanceToMove * cos(angleInRadians),
-                y = distanceToMove * sin(angleInRadians)
-            )
-
-            logD(POINTS_TAG) {
-                "DistanceToMove: $distanceToMove\n" +
-                        "offset to move: $offsetToMove\n" +
-                        "offset to move angle: ${offsetToMove.angleRad()}\n "
-            }
-
-            editPoint(draggedPoint.id) { old ->
-                old.copy(offset = old.offset - offsetToMove)
-            }
-
-            editPoint(closest.id) { old ->
-                old.copy(offset = old.offset + offsetToMove)
-            }
-
-//            logI(POINTS_TAG) {
-//                "Separating them by:\n" +
-//                        "distanceToMove: $distanceToMove\n" +
-//                        "offsetToMove: $offsetToMove\n\n" +
-//                        "Points before: ${points.value.map { it.offset }}"
+//
+//            editPoint(draggedPoint.id) { old ->
+//                old.copy(offset = old.offset - offsetToMove)
 //            }
-
-//            logW(POINTS_TAG) {
-//                "Points after: ${points.value.map { it.offset }}"
+//
+//            editPoint(closest.id) { old ->
+//                old.copy(offset = old.offset + offsetToMove)
 //            }
-
-            hasMoved = true
-
-        }
-        return hasMoved
+//
+////            logI(POINTS_TAG) {
+////                "Separating them by:\n" +
+////                        "distanceToMove: $distanceToMove\n" +
+////                        "offsetToMove: $offsetToMove\n\n" +
+////                        "Points before: ${points.value.map { it.offset }}"
+////            }
+//
+////            logW(POINTS_TAG) {
+////                "Points after: ${points.value.map { it.offset }}"
+////            }
+//
+//            hasMoved = true
+//
+//        }
+//        return hasMoved
     }
 
 
@@ -751,7 +822,7 @@ internal class PointsServiceImpl(
         angleRad: Float,
         rotationRad: Float,
     ): Offset {
-        logD(POINTS_TAG) { "Computing shape: $iconShape" }
+//        logD(POINTS_TAG) { "Computing shape: $iconShape" }
         return when (iconShape) {
             is IconShape.Circle -> circleBoundary(halfSize, angleRad)
 

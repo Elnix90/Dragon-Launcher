@@ -30,6 +30,7 @@ import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
+import org.elnix.dragonlauncher.base.model.serializables.CustomObjectBlockProperties
 import org.elnix.dragonlauncher.enumsui.toggle.HoldActions
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getCenter
@@ -187,7 +188,11 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
         ) {
             EditCustomObjectBlock(
                 editObject = mutableHoldObject,
-                default = defaultAngleCustomObject
+                default = defaultAngleCustomObject,
+                properties = CustomObjectBlockProperties(
+                    allowAlignCustomization = false,
+                    allowEraseBackgroundCustomization = false
+                )
             ) { mutableHoldObject = it }
         }
 
@@ -201,10 +206,6 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
             )
             Setting(
                 setting = HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings,
-                modifier = Modifier.settingsGroupHorizontalPadding()
-            )
-            Setting(
-                setting = HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance,
                 modifier = Modifier.settingsGroupHorizontalPadding()
             )
             Row(
@@ -239,6 +240,10 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
             ) {
                 showHoldSettingsOrderDialog = true
             }
+            Setting(
+                setting = HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance,
+                modifier = Modifier.settingsGroupHorizontalPadding()
+            )
             Setting(HoldToActivateArcSettingsStore.showToleranceOnMainScreen)
             Setting(HoldToActivateArcSettingsStore.rgbLoading)
             Setting(ColorSettingsStore.holdToActivateColor)

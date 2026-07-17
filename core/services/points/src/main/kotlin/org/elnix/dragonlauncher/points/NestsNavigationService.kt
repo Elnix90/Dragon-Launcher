@@ -1,10 +1,11 @@
 package org.elnix.dragonlauncher.points
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 public interface NestsNavigationService {
-    public val currentNestId: Flow<Int>
+    public val currentNestId: StateFlow<Int>
 
     public fun goBack()
     public fun goToNest(newNestId: Int)
@@ -18,29 +19,31 @@ internal class NestsNavigationServiceImpl : NestsNavigationService {
      */
     private val nestsStack: MutableList<Int> = mutableListOf()
 
+    private val _currentNestId = MutableStateFlow( 0)
     /**
      * Current nest id derived from the navigation stack.
      *
      * Falls back to root (0) when the stack is empty.
      */
-    private val nestId = nestsStack.lastOrNull() ?: 0
-
-    override val currentNestId: Flow<Int> = flowOf(nestsStack.lastOrNull() ?: 0)
+    override val currentNestId: StateFlow<Int> = _currentNestId.asStateFlow()
 
     override fun goBack() {
         if (nestsStack.isNotEmpty()) {
             nestsStack.removeAt(nestsStack.lastIndex)
+            _currentNestId.value = nestsStack.lastOrNull() ?: 0
         }
     }
 
     override fun goToNest(newNestId: Int) {
-        if (newNestId != nestId) {
-            nestsStack.removeAt(newNestId)
+        if (newNestId != _currentNestId.value) {
+            nestsStack.remove(newNestId)
             nestsStack.add(newNestId)
+            _currentNestId.value = newNestId
         }
     }
 
     override fun clearStack() {
         nestsStack.clear()
+        _currentNestId.value = 0
     }
 }

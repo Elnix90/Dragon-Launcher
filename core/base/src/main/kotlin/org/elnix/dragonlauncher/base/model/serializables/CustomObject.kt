@@ -53,7 +53,12 @@ public data class CustomObject(
     /**
      * Whether to use the [androidx.compose.ui.graphics.BlendMode.Clear] option when drawing to erase what's under the same canvas
      */
-    val eraseBackground: Boolean = false
+    val eraseBackground: Boolean = false,
+
+    /**
+     * In some cases, this can be used to align the shape direction with the angle of the drag to achieve cleaner results
+     */
+    val alignsWithDragAngle: Boolean = false
 
 ) {
     public companion object {
@@ -68,7 +73,8 @@ public data class CustomObject(
             size = 0f, // Unused for line (only stroke)
             rotation = 0, // No rotation for line, (it's nullable, but I use nul here to indicate that the rotation isn't available)
 
-            eraseBackground = false
+            eraseBackground = false,
+            alignsWithDragAngle = false
         )
 
 
@@ -80,8 +86,9 @@ public data class CustomObject(
             ),
             shape = IconShape.Circle,
             size = 50f,
-            rotation = 90,
-            eraseBackground = false
+            rotation = 0,
+            eraseBackground = false,
+            alignsWithDragAngle = false
         )
 
         public val defaultStartCustomObject: CustomObject = CustomObject(
@@ -93,7 +100,8 @@ public data class CustomObject(
             shape = IconShape.Circle,
             size = 30f,
             rotation = 0,
-            eraseBackground = true
+            eraseBackground = true,
+            alignsWithDragAngle = false
         )
 
         public val defaultEndCustomObject: CustomObject = CustomObject(
@@ -105,7 +113,8 @@ public data class CustomObject(
             shape = IconShape.Circle,
             size = 8f,
             rotation = 0,
-            eraseBackground = false
+            eraseBackground = false,
+            alignsWithDragAngle = false
         )
 
 
@@ -118,7 +127,8 @@ public data class CustomObject(
             shape = IconShape.Cookie12Sided,
             size = 70f,
             rotation = -1,
-            eraseBackground = false
+            eraseBackground = false,
+            alignsWithDragAngle = false // Unused for hold
         )
 
     }
@@ -138,6 +148,7 @@ public data class CustomObjectBlockProperties(
     val allowShapeCustomization: Boolean = true,
     val allowSizeCustomization: Boolean = true,
     val allowEraseBackgroundCustomization: Boolean = true,
+    val allowAlignCustomization: Boolean = true,
     val allowMirrorCustomization: Boolean = true,
     val allowRotationCustomization: Boolean = true,
 

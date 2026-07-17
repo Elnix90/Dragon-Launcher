@@ -37,24 +37,27 @@ public object UiSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val appLabelIconOverlayTopPadding: IntSettingObject = int(
+    public val appLabelIconOverlayTopPadding: DpSettingObject= dp(
         title = R.string.app_label_icon_overlay_top_padding,
-        default = 20,
-        allowedRange = 0..1000
+        description = R.string.app_label_icon_overlay_top_padding_desc,
+        default = 50.dp,
+        allowedRange = 0.dp..1000.dp
     )
 
     @SettingKey
     public val appLabelOverlaySize: IntSettingObject = int(
         title = R.string.app_label_overlay_size,
+        description = R.string.self_explanatory,
         default = 18,
         allowedRange = 0..100
     )
 
     @SettingKey
-    public val appIconOverlaySize: IntSettingObject = int(
+    public val appIconOverlaySize: DpSettingObject = dp(
         title = R.string.app_icon_overlay_size,
-        default = 22,
-        allowedRange = 0..400
+        description = R.string.self_explanatory,
+        default = 22.dp,
+        allowedRange = 0.dp..400.dp
     )
 
     @SettingKey
@@ -88,11 +91,10 @@ public object UiSettingsStore : MapSettingsStore() {
         default = false
     )
 
-
     @SettingKey
     public val snapShapeAngle: BooleanSettingObject = boolean(
         title = R.string.snap_shapes_angle,
-        default = true
+        default = false
     )
 
     @SettingKey
@@ -125,21 +127,21 @@ public object UiSettingsStore : MapSettingsStore() {
     @SettingKey
     public val showAppLaunchingPreview: BooleanSettingObject = boolean(
         title = R.string.show_app_launch_preview,
-        description = R.string.show_app_launch_preview_description,
+        description = R.string.show_app_launch_preview_desc,
         default = true
     )
 
     @SettingKey
-    public val showAllActionsOnCurrentShape: BooleanSettingObject = boolean(
+    public val showAllPointsInCurrentShape: BooleanSettingObject = boolean(
         title = R.string.show_all_actions_on_current_shape,
         description = R.string.show_all_actions_on_current_shape_desc,
         default = true
     )
 
     @SettingKey
-    public val showAllActionsOnCurrentNest: BooleanSettingObject = boolean(
-        title = R.string.show_all_actions_on_current_nest,
-        description = R.string.show_all_actions_on_current_nest_desc,
+    public val showAllPointsInCurrentNest: BooleanSettingObject = boolean(
+        title = R.string.show_all_actions_in_current_nest,
+        description = R.string.show_all_actions_in_current_nest_desc,
         default = false
     )
 
@@ -180,7 +182,7 @@ public object UiSettingsStore : MapSettingsStore() {
         title = R.string.depth,
         description = R.string.depth_desc,
         default = 2,
-        allowedRange = 1..10
+        allowedRange = 1..5
     )
 
     /** How many sub live nests can be drawn at once */

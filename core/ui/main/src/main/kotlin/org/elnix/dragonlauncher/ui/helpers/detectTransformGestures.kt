@@ -20,7 +20,8 @@ import kotlin.math.abs
  */
 public suspend fun PointerInputScope.detectTransformGestures(
     panZoomLock: Boolean = false,
-    onGestureEnd: () -> Unit,
+    onGestureStart: ((down: Offset) -> Unit)? = null,
+    onGestureEnd: (() -> Unit)? = null,
     onGesture: (centroid: Offset, pan: Offset, zoom: Float, rotation: Float) -> Unit
 ) {
     awaitEachGesture {
@@ -31,7 +32,9 @@ public suspend fun PointerInputScope.detectTransformGestures(
         val touchSlop = viewConfiguration.touchSlop
         var lockedToPanZoom = false
 
-        awaitFirstDown(requireUnconsumed = false)
+        val firstDown = awaitFirstDown(requireUnconsumed = false)
+        onGestureStart?.invoke(firstDown.position)
+
         do {
             val event = awaitPointerEvent()
             val canceled = event.changes.fastAny { it.isConsumed }
@@ -75,6 +78,6 @@ public suspend fun PointerInputScope.detectTransformGestures(
             }
         } while ((!canceled && event.changes.fastAny { it.pressed }))
 
-        onGestureEnd()
+        onGestureEnd?.invoke()
     }
 }

@@ -10,16 +10,14 @@ import io.github.elnix90.logging.APP_LAUNCH_TAG
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logW
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import org.elnix.dragonlauncher.applications.AppRepository
+import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.compat.PackageManagerCompat
@@ -91,8 +89,7 @@ public class AppLaunchViewModel @Inject constructor(
         false
     )
 
-    private val _pendingAppLaunch = MutableStateFlow<Application?>(null)
-    public val pendingAppLaunch: StateFlow<Application?> = _pendingAppLaunch.asStateFlow()
+    public val pendingAppLaunch: SettingFlow<Application?> = SettingFlow(null)
 
     private var currentLaunchJob: Job? = null
 
@@ -107,14 +104,13 @@ public class AppLaunchViewModel @Inject constructor(
     }
 
     public fun requestAppLaunch(application: Application) {
-        viewModelScope.launch{
-            val startAppTimer = combine(WellbeingSettingsStore.pausedApps.flow(ctx), WellbeingSettingsStore.socialMediaPauseEnabled.flow(ctx)) { pausedApps, socialMediaPauseEnabled ->
-                if (!socialMediaPauseEnabled) return@combine false
-                application.packageName in pausedApps
-            }
+        viewModelScope.launch {
+            val startAppTimer =
+                if (!WellbeingSettingsStore.socialMediaPauseEnabled.get(ctx)) false
+                else application.packageName in WellbeingSettingsStore.pausedApps.get(ctx)
 
-            if(startAppTimer.first()) {
-                _pendingAppLaunch.value = application
+            if (startAppTimer) {
+                pendingAppLaunch.value = application
                 return@launch
             }
 
@@ -129,17 +125,17 @@ public class AppLaunchViewModel @Inject constructor(
             application = app,
             reminderEnabled = WellbeingSettingsStore.reminderEnabled.flow(ctx).first(),
             reminderIntervalMinutes = WellbeingSettingsStore.reminderIntervalMinutes.flow(ctx).first(),
-            reminderMode = WellbeingSettingsStore.reminderMode.flow(ctx).first(),
+            reminderMode = WellbeingSettingsStore.reminderMode.flow(ctx).first().toString(),
             timeLimitMinutes = timeLimitMinutes
         )
     }
 
     public fun onAppTimerServiceStarted(duration: Int?): Boolean {
-        val pendingApp = _pendingAppLaunch.value
-        if (pendingApp!= null) {
+        val pendingApp = pendingAppLaunch.value
+        if (pendingApp != null) {
 
             if (duration != null) {
-                viewModelScope.launch{
+                viewModelScope.launch {
                     startTimer(duration, pendingApp)
                 }
             }

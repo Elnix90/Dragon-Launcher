@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ui.dialogs
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -58,13 +59,17 @@ public fun ExportSettingsDialog(
         },
         title = { Text(stringResource(title)) },
         text = {
-            SelectedActionRow(selected, availableStores.size)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                SelectedActionRow(selected, availableStores.size)
 
-            LazyColumnWithScrollIndicator(
-                items = availableStores.toList(),
-                modifier = Modifier.heightIn(max = 600.dp)
-            ) { store ->
-                StoreItem(selected, store)
+                LazyColumnWithScrollIndicator(
+                    items = availableStores.toList(),
+                    modifier = Modifier.heightIn(max = 600.dp)
+                ) { store ->
+                    StoreItem(selected, store)
+                }
             }
         },
         containerColor = MaterialTheme.colorScheme.surface,
@@ -118,7 +123,7 @@ public fun <T> SelectedActionRow(
 
 @Composable
 public fun StoreItem(
-    selected: SnapshotStateMap<SettingsStore<*,*>, Boolean>,
+    selected: SnapshotStateMap<SettingsStore<*, *>, Boolean>,
     settingsStore: SettingsStore<*, *>
 ) {
     Row(

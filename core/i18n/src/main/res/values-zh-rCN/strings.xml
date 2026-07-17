@@ -300,7 +300,6 @@
     <string name="rgb_line_selector_description">根据手指拖动的角度，以 RGB 渐变色显示动作选择线（随手指移动的线条）</string>
     <string name="show_launching_app_label_description">当在屏幕顶部选中某个动作时，是否显示对应的应用/动作标签</string>
     <string name="show_launching_app_icon_description">当在屏幕顶部选中某个动作时，是否显示对应的应用/动作图标</string>
-    <string name="show_app_launch_preview_description">在松开手势启动时，在圆圈内显示所选应用的缩略预览</string>
     <string name="show_app_line_preview_description">是否显示从拖动起点到手指当前位置的轨迹线（与 rgb 选择线相关）</string>
     <string name="show_app_angle_preview_description">在轨迹线上显示角度指示器</string>
     <string name="show_app_icon_start_drag_position_description">在您开始拖动的位置中心显示当前选中的应用</string>
@@ -666,8 +665,6 @@
     <string name="angle_object">角度指示实体样式</string>
     <string name="start_object">起点物件形状</string>
     <string name="end_object">终点物件形状</string>
-    <string name="show_all_actions_on_current_nest">拖动时显示当前层级的所有动作点</string>
-    <string name="show_all_actions_on_current_nest_desc">在您开始拖拽的过程中，把该圆环内涵盖的所有相关关联二级圆圈和各快捷点全部铺开渲染出来</string>
     <string name="disable_auto_launch_on_space_first_char">首字符为空格时阻断单匹配直启</string>
     <string name="disable_auto_launch_on_space_first_char_desc">如果您在抽屉搜索框第一个字符先敲了空格，那么哪怕后续完美过滤只剩下一个应用，也不会再霸道地自动打开它</string>
     <string name="configure_draw_order">配置元素图层渲染覆盖顺序</string>

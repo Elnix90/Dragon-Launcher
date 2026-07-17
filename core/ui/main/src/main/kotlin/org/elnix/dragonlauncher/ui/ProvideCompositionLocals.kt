@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -19,7 +20,6 @@ import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.base.compositionslocals.ProvideCurrentTime
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
@@ -42,8 +42,7 @@ public fun ProvideGlobalCompositionLocals(
     pointsViewModel: PointsViewModel = activityViewModel(),
     content: @Composable () -> Unit
 ) {
-    val pointsService = pointsViewModel.pointsService
-    val points by pointsService.points.asState()
+    val points by pointsViewModel.pointsService.points.collectAsState()
     LaunchedEffect(points.size) { // TODO pu this into the points viewmodel
         logD(ICONS_TAG) { "Updating icons cache size to ${points.size}" }
         iconsViewModel.updateMaxCacheSize(points.size)

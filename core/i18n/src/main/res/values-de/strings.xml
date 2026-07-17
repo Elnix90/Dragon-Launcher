@@ -280,7 +280,6 @@
     <string name="rgb_line_selector_description">Zeigen Sie den Aktionswähler (die Linie, die Ihrem Finger folgt) je nach Winkel in einem RGB-Verlauf an</string>
     <string name="show_launching_app_label_description">Ob die App-/Aktionsbezeichnung sichtbar ist, wenn oben auf dem Bildschirm eine Aktion ausgewählt wird</string>
     <string name="show_launching_app_icon_description">Ob das App-/Aktionssymbol angezeigt werden soll, wenn eine Aktion oben auf dem Bildschirm ausgewählt wird</string>
-    <string name="show_app_launch_preview_description">Zeigen Sie die ausgewählte App im Kreis an, wenn Sie sie freigeben und starten (eine Vorschau).</string>
     <string name="show_app_line_preview_description">Ob die Spur angezeigt werden soll, die von der Startposition des Ziehens bis zum Finger führt (bezogen auf die RGB-Linie)</string>
     <string name="show_app_angle_preview_description">Zeigen Sie den Winkelindikator auf der Linie an</string>
     <string name="show_app_icon_start_drag_position_description">Zeigen Sie die aktuell ausgewählte App in der Mitte der Stelle an, an der Sie sie mit der Maus gezogen haben</string>
@@ -631,8 +630,6 @@
     <string name="angle_object">Winkelobjekt</string>
     <string name="start_object">Startobjekt</string>
     <string name="end_object">Endobjekt</string>
-    <string name="show_all_actions_on_current_nest">Alle Aktionen auf aktuellem Nest anzeigen</string>
-    <string name="show_all_actions_on_current_nest_desc">Diasplaye alle Kreise und Punkte des aktuellen Nestes, während du ziehst</string>
     <string name="disable_auto_launch_on_space_first_char">Deaktivieren Sie den automatischen Start auf den Space First-Charakter</string>
     <string name="disable_auto_launch_on_space_first_char_desc">Wenn du vor der Suche auf Leertaste drückst, aktiviert sich der automatische Start nicht</string>
     <string name="configure_draw_order">Ziehreihenfolge konfigurieren</string>

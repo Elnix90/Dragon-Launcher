@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -89,7 +90,7 @@ public fun EditPointSheet(
     val pointsService = pointsViewModel.pointsService
 
     val defaultPoint by pointsService.defaultPoint.asState()
-    val nests by pointsService.nests.asState()
+    val nests by pointsService.nests.collectAsState()
 
     var editPoint by remember { mutableStateOf(point) }
     var showEditIconDialog by remember { mutableStateOf(false) }
@@ -311,7 +312,7 @@ public fun EditPointSheet(
                         PointFeaturePanel.LiveNest -> {
 
                             val liveNestEnabled = editPoint.liveNestTargetNestId != null
-                            val targetNest = nests.find { it.id == editPoint.liveNestTargetNestId }
+                            val targetNest = if (liveNestEnabled) nests[editPoint.liveNestTargetNestId] else null
                             val nestLabel = targetNest?.name ?: targetNest?.let { "Nest ${it.id}" } ?: ""
 
                             Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {

@@ -19,6 +19,7 @@ import org.elnix.dragonlauncher.ui.components.ShapedLauncherIcon
 @Composable
 public fun FinalPointIcon(
     point: Point,
+    size: Dp?,
     modifier: Modifier = Modifier,
     drawerViewModel: DrawerViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel()
@@ -26,7 +27,7 @@ public fun FinalPointIcon(
     val pointsService = pointsViewModel.pointsService
     val defaultPoint by pointsService.defaultPoint.asState()
 
-    val pointSize = point.getSize(defaultPoint)
+    val pointSize = size ?: point.getSize(defaultPoint)
 
     when (val action = point.action) {
 

@@ -278,7 +278,6 @@
     <string name="rgb_line_selector_description">कोण के आधार पर आरजीबी ग्रेडिएंट में क्रिया चयनकर्ता (वह रेखा जो आपकी उंगली का अनुसरण करती है) दिखाएं</string>
     <string name="show_launching_app_label_description">क्या स्क्रीन के शीर्ष पर कोई क्रिया चयनित होने पर ऐप/एक्शन लेबल दिखाई देता है</string>
     <string name="show_launching_app_icon_description">स्क्रीन के शीर्ष पर कोई क्रिया चयनित होने पर ऐप/एक्शन आइकन प्रदर्शित करना है या नहीं</string>
-    <string name="show_app_launch_preview_description">रिलीज़ करते समय चयनित ऐप को सर्कल में दिखाएं, इसे लॉन्च करें (एक पूर्वावलोकन)</string>
     <string name="show_app_line_preview_description">क्या उस पथ को प्रदर्शित करना है जो प्रारंभिक खींचने की स्थिति से उंगली तक जाता है (आरजीबी लाइन से संबंधित)</string>
     <string name="show_app_angle_preview_description">लाइन पर कोण सूचक प्रदर्शित करें</string>
     <string name="show_app_icon_start_drag_position_description">वर्तमान चयनित ऐप को उस स्थान के केंद्र में प्रदर्शित करें जहां आपने खींचने के लिए तारांकित किया था</string>
@@ -629,8 +628,6 @@
     <string name="angle_object">कोण वस्तु</string>
     <string name="start_object">ऑब्जेक्ट प्रारंभ करें</string>
     <string name="end_object">अंतिम वस्तु</string>
-    <string name="show_all_actions_on_current_nest">वर्तमान नेस्ट पर सभी क्रियाएँ दिखाएँ</string>
-    <string name="show_all_actions_on_current_nest_desc">खींचते समय वर्तमान घोंसले के सभी मंडलियों और बिंदुओं को डायस्प्ल करें</string>
     <string name="disable_auto_launch_on_space_first_char">अंतरिक्ष में पहले चार पर ऑटो लॉन्च अक्षम करें</string>
     <string name="disable_auto_launch_on_space_first_char_desc">जब आप खोज करने से पहले अंतरिक्ष दबाते हैं, तो ऑटो लॉन्च सक्रिय नहीं होगा</string>
     <string name="configure_draw_order">ड्रा ऑर्डर कॉन्फ़िगर करें</string>

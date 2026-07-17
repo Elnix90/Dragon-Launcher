@@ -23,6 +23,15 @@ public object AngleLineSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
+    public val startAndAngleShareSameRandomAngle: BooleanSettingObject = boolean(
+        title = R.string.start_ang_angle_share_same_random_angle,
+        description = R.string.start_ang_angle_share_same_random_angle_desc,
+        default = false
+    )
+
+
+
+    @SettingKey
     public val showLineObjectPreview: BooleanSettingObject = boolean(
         title = R.string.show_app_line_preview,
         description = R.string.show_app_line_preview_description,

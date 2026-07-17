@@ -249,7 +249,7 @@ public class IconService(
     }
 
     public fun reloadAllAppIcons() {
-        DrawerIconCache.evictAll()
+        DrawerIconCache.clear()
     }
 
     public fun incrementPointCacheSize() {
@@ -318,7 +318,7 @@ public class IconService(
     }
 
     public fun reloadAllPointIcons() {
-        PointIconCache.evictAll()
+        PointIconCache.clear()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

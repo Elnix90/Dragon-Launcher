@@ -53,6 +53,7 @@ import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine
+import org.elnix.dragonlauncher.ui.helpers.customobjects.resolveRotation
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson
 import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberAngleLineObjects
@@ -105,28 +106,20 @@ public fun AngleLineTab(onBack: () -> Unit) {
         sweepState.onAngleChanged(angleDeg)
     }
 
-    val sweep = sweepState.sweepAngle()
+    val sweepAngle = sweepState.sweepAngle()
+    val sweep = sweepAngle.toInt()
 
-    val pickedRememberShapeAngle = remember(mutableAngleLineObject.shape) {
-        mutableAngleLineObject.shape.resolveShape()
-    }
-    val pickedRememberRotationAngle = remember(mutableAngleLineObject.rotation) {
-        mutableAngleLineObject.rotation.takeIf { it != -1 } ?: (0..360).random()
-    }
 
-    val pickedRememberShapeStart = remember(mutableStartObject.shape) {
-        mutableStartObject.shape.resolveShape()
-    }
-    val pickedRememberRotationStart = remember(mutableStartObject.rotation) {
-        mutableStartObject.rotation.takeIf { it != -1 } ?: (0..360).random()
-    }
 
-    val pickedRememberShapeEnd = remember(mutableEndObject.shape) {
-        mutableEndObject.shape.resolveShape()
-    }
-    val pickedRememberRotationEnd = remember(mutableEndObject.rotation) {
-        mutableEndObject.rotation.takeIf { it != -1 } ?: (0..360).random()
-    }
+    val pickedRememberShapeAngle = remember(mutableAngleLineObject.shape) { mutableAngleLineObject.shape.resolveShape() }
+    val pickedRememberRotationAngle = mutableAngleLineObject.resolveRotation(true, sweep)
+
+    val pickedRememberShapeStart = remember(mutableStartObject.shape) { mutableStartObject.shape.resolveShape() }
+    val pickedRememberRotationStart = mutableStartObject.resolveRotation(true, sweep)
+
+    val pickedRememberShapeEnd = remember(mutableEndObject.shape) { mutableEndObject.shape.resolveShape() }
+    val pickedRememberRotationEnd = mutableEndObject.resolveRotation(false, sweep)
+
 
     fun saveAll() {
         scope.launch {
@@ -152,7 +145,7 @@ public fun AngleLineTab(onBack: () -> Unit) {
         actionLine(
             start = start.value,
             end = end.value,
-            sweepAngle = sweep,
+            sweepAngle = sweepAngle,
             lineColor = lineColor,
             order = order,
             showLineObjectPreview = showLineObjectPreview,
@@ -268,7 +261,8 @@ public fun AngleLineTab(onBack: () -> Unit) {
                     properties = CustomObjectBlockProperties(
                         allowSizeCustomization = false,
                         allowShapeCustomization = false,
-                        allowRotationCustomization = false
+                        allowRotationCustomization = false,
+                        allowAlignCustomization = false
                     )
                 ) { mutableLineObject = it }
             }
@@ -312,6 +306,7 @@ public fun AngleLineTab(onBack: () -> Unit) {
             contentPadding = dragonSettingGroupPaddingValues
         ) {
             Setting(AngleLineSettingsStore.rgbLine)
+            Setting(AngleLineSettingsStore.startAndAngleShareSameRandomAngle)
             Setting(ColorSettingsStore.angleLineColor)
         }
     }

@@ -330,6 +330,5 @@ public sealed class Action {
         public object ActionJson : DragonJson<Action>()
 
         public val actionsNumber: Int = Action::class.sealedSubclasses.size
-
     }
 }

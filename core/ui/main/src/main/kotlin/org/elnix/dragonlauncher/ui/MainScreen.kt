@@ -111,7 +111,7 @@ public fun MainScreen(
     LaunchedEffect(Unit) { lastClickTime = 0 }
 
     val nestNavigation = pointsViewModel.nestsNavigationService
-    val nestId by pointsViewModel.currentNestId.collectAsState()
+    val nestId by nestNavigation.currentNestId.collectAsState()
 
     val filteredWidgetObjects by remember(widgetsObjects, nestId) {
         derivedStateOf {
