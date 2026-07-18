@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.SettingFlow
+import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.models.HitResult
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
@@ -191,9 +192,7 @@ internal class PointsServiceImpl(
 
     private typealias GridCase = Pair<Int, Int>
     private typealias MutablePoints = MutableSet<Point>
-    private typealias GridMap = MutableMap<GridCase, MutablePoints>
     private typealias NestGrid = MutableMap<Int, MutablePoints>
-    private typealias FurthestGrid = MutableMap<Int, Point?>
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val density = ctx.resources.displayMetrics.density
@@ -334,7 +333,7 @@ internal class PointsServiceImpl(
         val newId = existingIds.getNextId()
         val newPoint = newPoint(newId)
 
-        PointStableCache.incrementCacheSize()
+//        PointStableCache.incrementCacheSize()
         applyChange(true) { _points.value[newPoint.id] = newPoint }
 
         if (select) select(newId)
@@ -482,13 +481,18 @@ internal class PointsServiceImpl(
     ) {
         require(resetPoints || resetNests || resetDefaultPoint) { "Must at least reset something" }
 
+
         applyChange(true) {
             if (resetPoints) {
                 _points.value.clear()
                 selectedPointsIds.value = emptyList()
+
+                PointStableCache.evictAll()
+                deselectAll()
             }
             if (resetNests) {
                 _nests.value.clear()
+                NestIntersectionShapesPathCache.evictAll()
             }
             if (resetDefaultPoint) {
                 defaultPoint.value = Point.defaultSwipePointsValues
@@ -496,9 +500,9 @@ internal class PointsServiceImpl(
         }
     }
 
-    private var grid: GridMap = mutableMapOf()
+    private var grid: MutableMap<GridCase, MutablePoints> = mutableMapOf()
     private var nestGrid: NestGrid = mutableMapOf()
-    private var furthestPointGrid: FurthestGrid = mutableMapOf()
+    private var furthestPointGrid: MutableMap<Int, Point?> = mutableMapOf()
 
     private var lastTarget: Offset = Offset.Zero
     private var searchRadius: Int = 1

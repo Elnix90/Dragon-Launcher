@@ -2,6 +2,9 @@ package org.elnix.dragonlauncher.ui.settings.customization
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.AnimationVector2D
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -65,12 +68,14 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ktx.rotateBy
 import org.elnix.dragonlauncher.ktx.snapToRound
+import org.elnix.dragonlauncher.ktx.toPath
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.dragonSettingGroupPaddingValues
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asMutableState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -87,10 +92,8 @@ import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
-import org.elnix.dragonlauncher.ui.helpers.SelfCheckNestPresent
 import org.elnix.dragonlauncher.ui.helpers.ShapePreview
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
-import org.elnix.dragonlauncher.ui.helpers.customobjects.toPath
 import org.elnix.dragonlauncher.ui.helpers.detectTransformGestures
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
@@ -99,7 +102,7 @@ import org.elnix.dragonlauncher.ui.helpers.swipe.centerOfNest
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-public fun NestEditScreen2(
+public fun NestEditScreen(
     pointsViewModel: PointsViewModel = activityViewModel(),
     initialNestId: Int,
     onBack: () -> Unit
@@ -116,7 +119,6 @@ public fun NestEditScreen2(
 
     val nestId by pointsViewModel.nestsNavigationService.currentNestId.collectAsState()
     val currentNest = pointsService.findNestById(nestId)
-    SelfCheckNestPresent()
 
 
     val snapShapesOffset by UiSettingsStore.snapShapesOffset.asState()
@@ -134,7 +136,6 @@ public fun NestEditScreen2(
     val cellSizePx = cellSizeDp.px // TODO
     var showMoreSheet by remember { mutableStateOf(false) }
 
-    val nests by pointsService.nests.collectAsState()
     val rowsScrollStates = List(3) { rememberScrollState() }
 
     var showShapesManagementDialog by remember { mutableStateOf(false) }
@@ -146,16 +147,6 @@ public fun NestEditScreen2(
 
     var tempCancelZone by remember { mutableIntStateOf(currentNest.cancelZone) }
     var tempCustomName by remember { mutableStateOf(currentNest.name ?: "") }
-
-
-    val manipulationSystem = remember { ManipulationSystem(center) }
-    LaunchedEffect(center) {
-        manipulationSystem.center = center
-    }
-
-    val offset = manipulationSystem.offset
-    val angle = manipulationSystem.angle
-    val zoom = manipulationSystem.zoom
 
     val paths: SnapshotStateMap<Int, Pair<IntersectionShape, Path>> = remember { mutableStateMapOf() }
     val shapes: Set<IntersectionShape> = paths.values.mapTo(mutableSetOf()) { it.first }
@@ -191,17 +182,23 @@ public fun NestEditScreen2(
 
 //    TODO("Make snapping tools global (not only with the center of the nest")
 
-//    var recomposeTrigger by pointsService.recomposeTrigger.asMutableState()
-    var recomposeTrigger by remember { mutableIntStateOf(0) }
+    var recomposeTrigger by pointsService.recomposeTrigger.asMutableState()
+
+    val manipulationSystem = remember { ManipulationSystem(center) }
+    LaunchedEffect(center) {
+        manipulationSystem.center = center
+    }
+
+    val offset: Animatable<Offset, AnimationVector2D> = manipulationSystem.offset
+    val angle: Animatable<Float, AnimationVector1D> = manipulationSystem.angle
+    val zoom: Animatable<Float, AnimationVector1D> = manipulationSystem.zoom
+
 
     SettingsScaffold(
         title = stringResource(R.string.edit_nest_arg, nestId),
         onBack = handleBack,
         helpText = "Nest",
-        onReset = {
-            pointsService.resetNest(nestId)
-            onBack()
-        },
+        onReset = { pointsService.resetNest(nestId) },
         resetText = stringResource(R.string.reset_nest_desc),
         resetTitle = stringResource(R.string.reset_nest),
         horizontalPadding = 0.dp,
@@ -417,7 +414,7 @@ public fun NestEditScreen2(
              * - If the selected point is a live nest, it is drawn in transparency on top of it.
              *   **Only if the nest isn't a OpenCircleNest that points to the same nest action**
              */
-            key(nests.size, currentNest, recomposeTrigger, tempCancelZone) {
+            key(currentNest, recomposeTrigger, tempCancelZone) {
                 Box(
                     Modifier
                         .fillMaxSize()
@@ -470,7 +467,7 @@ public fun NestEditScreen2(
             Box(
                 Modifier
                     .fillMaxSize()
-                    .pointerInput(Unit, selectedShapeId, isInDragAroundMode, nestId) {
+                    .pointerInput(Unit, isInDragAroundMode, nestId) {
                         detectTransformGestures(
                             panZoomLock = true,
 //                            onGestureStart = { down ->
@@ -508,8 +505,6 @@ public fun NestEditScreen2(
                                 val shapeId = selectedShapeId ?: return@detectTransformGestures
                                 val shape = shapes.firstOrNull { it.id == shapeId } ?: return@detectTransformGestures
 
-
-//                                pointsService.updateNestShape(nestId, shapeId) {}
 //                                pointsService.updateNestShape(nestId, shapeId) { oldShape ->
                                 val oldScale = shape.scale
                                 val newScale = oldScale * gestureZoom
@@ -552,12 +547,12 @@ public fun NestEditScreen2(
 //                                    newShape
 //                                }
 
-//                                pointsService.points.value
-//                                    .filter { (_, point) -> point.nestId == nestId && point.shapeId == shapeId }
-//                                    .forEach { (_, point) ->
-//                                        point.pos = pointsService.computePointOffsetRealTime(point, newShape)
-//                                    }
-                                recomposeTrigger++
+                                pointsService.points.value
+                                    .filter { (_, point) -> point.nestId == nestId && point.shapeId == shapeId }
+                                    .forEach { (_, point) ->
+                                        point.pos = pointsService.computePointOffsetRealTime(point, newShape)
+                                    }
+//                                recomposeTrigger++
                             }
                         }
                     }

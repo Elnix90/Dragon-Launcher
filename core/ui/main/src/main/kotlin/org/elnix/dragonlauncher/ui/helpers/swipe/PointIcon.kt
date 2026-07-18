@@ -61,14 +61,33 @@ public fun DrawScope.PointIcon(
     drawParams: DrawParams,
     customText: Pair<DrawScopeText?, DrawScopeText?>?
 ) {
+    require(depth > 0)
+
     val action = point.action
 
     if (
-        action !is Action.OpenCircleNest ||
-        point.customIcon != null ||
-        depth >= drawParams.maxNestsDepth ||
-        drawParams.preventDrawingSubNests
+        action is Action.OpenCircleNest &&
+        point.customIcon == null &&
+        depth < drawParams.maxNestsDepth &&
+        !drawParams.preventDrawingSubNests
     ) {
+        val nest = drawParams.pointsService.findNestById(action.nestId)
+        val newDepth = depth + 1
+        val newScale = 1f / newDepth
+
+        scale(
+            scale = newScale,
+            pivot = center
+        ) {
+            NestOverlay(
+                nest = nest,
+                depth = newDepth,
+                center = center,
+                drawParams = drawParams,
+                selectedAll = selected
+            )
+        }
+    } else {
         PointBg(
             point = point,
             selected = selected,
@@ -76,24 +95,5 @@ public fun DrawScope.PointIcon(
             drawParams = drawParams,
             customText = customText
         )
-    } else {
-        drawParams.pointsService.nests.value[action.nestId]
-            ?.let { nest ->
-                val newDepth = depth + 1
-                val newScale = 1f / newDepth
-
-                scale(
-                    scale = newScale,
-                    pivot = center
-                ) {
-                    NestOverlay(
-                        nest = nest,
-                        depth = newDepth,
-                        center = center,
-                        drawParams = drawParams,
-                        selectedAll = selected
-                    )
-                }
-            } ?: this.NestPlaceholder(center, drawParams) // This shouldn't render
     }
 }

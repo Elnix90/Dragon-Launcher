@@ -120,16 +120,6 @@ public fun AngleLineTab(onBack: () -> Unit) {
     val pickedRememberShapeEnd = remember(mutableEndObject.shape) { mutableEndObject.shape.resolveShape() }
     val pickedRememberRotationEnd = mutableEndObject.resolveRotation(false, sweep)
 
-
-    fun saveAll() {
-        scope.launch {
-            AngleLineSettingsStore.lineJson.set(ctx, CustomObjectJson.encode(mutableLineObject))
-            AngleLineSettingsStore.angleLineJson.set(ctx, CustomObjectJson.encode(mutableAngleLineObject))
-            AngleLineSettingsStore.startLineJson.set(ctx, CustomObjectJson.encode(mutableStartObject))
-            AngleLineSettingsStore.endLineJson.set(ctx, CustomObjectJson.encode(mutableEndObject))
-        }
-    }
-
     Canvas(
         modifier = Modifier
             .graphicsLayer {
@@ -169,8 +159,13 @@ public fun AngleLineTab(onBack: () -> Unit) {
     SettingsScaffold(
         title = stringResource(R.string.angle_line),
         onBack = {
-            saveAll()
-            onBack()
+            scope.launch {
+                AngleLineSettingsStore.lineJson.set(ctx, CustomObjectJson.encode(mutableLineObject))
+                AngleLineSettingsStore.angleLineJson.set(ctx, CustomObjectJson.encode(mutableAngleLineObject))
+                AngleLineSettingsStore.startLineJson.set(ctx, CustomObjectJson.encode(mutableStartObject))
+                AngleLineSettingsStore.endLineJson.set(ctx, CustomObjectJson.encode(mutableEndObject))
+                onBack()
+            }
         },
         helpText = stringResource(R.string.angle_line_help),
         onReset = {

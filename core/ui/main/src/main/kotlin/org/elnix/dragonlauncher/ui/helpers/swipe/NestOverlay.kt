@@ -13,8 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.logging.POINTS_TAG
-import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.serializables.Nest
@@ -50,6 +48,7 @@ public fun NestOverlay(
     )
     val iconTrigger by PointStableCache.cacheTrigger.asState()
 
+    // The key is actually useful, I tried to remove it, but it messed up the drawing in the PointSettingScreen
     key(iconTrigger) {
         Canvas(
             modifier = Modifier
@@ -75,6 +74,7 @@ public fun DrawScope.NestOverlay(
     drawParams: DrawParams,
     selectedAll: Boolean = false,
 ) {
+    require(depth > 0)
 
     val isSettingDisplay = drawParams.pointSettingsDisplay
 
@@ -87,7 +87,7 @@ public fun DrawScope.NestOverlay(
             // - allowed by settings
             // - one of the selected points is on that shape
             // - the shape is on the same nest (it caused issue where all the shapes  of id 0 were lightning up in every nest
-            val showShape = isSettingDisplay || drawParams.showAllShapesInNest || (drawParams.showShape && shape.id in selectedShapes)
+            val showShape = depth > 1 || isSettingDisplay || drawParams.showAllShapesInNest || (drawParams.showShape && shape.id in selectedShapes)
 
             if (showShape) {
                 // This is computed here, because I cannot draw shapes reactively otherwise in the nest edit screen
@@ -106,7 +106,7 @@ public fun DrawScope.NestOverlay(
 
     if (drawParams.showCancelZone) {
         drawCircle(
-            brush = Brush.linearGradient(
+            brush = Brush.sweepGradient(
                 colors = listOf(
                     Color.Red,
                     Color.Yellow,
@@ -133,14 +133,15 @@ public fun DrawScope.NestOverlay(
         .getPointsForNest(nest.id, isSettingDisplay)
         .filter { (id, point) ->
             when {
-                isSettingDisplay -> if (depth == 1) id !in selectedPointsIds else true
+                depth > 1 -> true
+                isSettingDisplay -> true
                 drawParams.showAllPointsInCurrentNest -> true
-                drawParams.showAllPointsInCurrentShape -> point.shapeId in selectedShapes
-                else -> drawParams.showCurrentPoint && id in selectedPointsIds
+                else -> {
+                    (drawParams.showCurrentPoint && (id in selectedPointsIds)) ||
+                            (drawParams.showAllPointsInCurrentShape && (point.shapeId in selectedShapes))
+                }
             }
         }
-
-    logD(POINTS_TAG) { "FilteredPoints size: ${filteredPoints.size}" }
 
     filteredPoints.forEach { (id, p) ->
         val drawPoint: Point = filteredPoints[id] ?: p

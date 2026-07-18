@@ -72,13 +72,6 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
 
     val progress = remember { Animatable(0f) }
 
-    fun save() {
-        val newAngleJson = CustomObjectJson.encode(mutableHoldObject)
-        scope.launch {
-            HoldToActivateArcSettingsStore.holdToActivateArcCustomObject.set(ctx, newAngleJson)
-        }
-    }
-
     val hold = rememberHoldToOpenSettings(
         onSettings = { },
         holdDelay = holdDelayBeforeStartingLongClickSettings.toLong(),
@@ -88,8 +81,11 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
     SettingsScaffold(
         title = stringResource(R.string.hold_settings),
         onBack = {
-            save()
-            onBack()
+            scope.launch {
+                val newAngleJson = CustomObjectJson.encode(mutableHoldObject)
+                HoldToActivateArcSettingsStore.holdToActivateArcCustomObject.set(ctx, newAngleJson)
+                onBack()
+            }
         },
         helpText = stringResource(R.string.hold_settings_help),
         onReset = {
@@ -245,7 +241,7 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
                 modifier = Modifier.settingsGroupHorizontalPadding()
             )
             Setting(HoldToActivateArcSettingsStore.showToleranceOnMainScreen)
-            Setting(HoldToActivateArcSettingsStore.rgbLoading)
+            Setting(HoldToActivateArcSettingsStore.holdRgbLoading)
             Setting(ColorSettingsStore.holdToActivateColor)
         }
     }

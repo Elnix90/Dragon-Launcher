@@ -31,10 +31,10 @@ import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
+import org.elnix.dragonlauncher.ktx.toPath
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
 import org.elnix.dragonlauncher.ui.helpers.customobjects.mirrorVertically
-import org.elnix.dragonlauncher.ui.helpers.customobjects.toPath
 
 private fun DrawScope.holdTolerance(
     center: Offset,
@@ -60,7 +60,7 @@ public fun HoldToActivateArc(
     if (center == null || progress <= 0f) return
 
     val rotationsPerSecond by HoldToActivateArcSettingsStore.rotationsPerSecond.asState()
-    val rgbLoading by HoldToActivateArcSettingsStore.rgbLoading.asState()
+    val rgbLoading by HoldToActivateArcSettingsStore.holdRgbLoading.asState()
     val holdToActivateSettingsTolerance by HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance.asState()
     val showToleranceOnMainScreen by HoldToActivateArcSettingsStore.showToleranceOnMainScreen.asState()
 

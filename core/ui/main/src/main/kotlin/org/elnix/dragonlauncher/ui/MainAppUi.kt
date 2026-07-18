@@ -89,11 +89,8 @@ import org.elnix.dragonlauncher.ui.dialogs.ShizukuUnavailableDialog
 import org.elnix.dragonlauncher.ui.dialogs.WidgetPickerDialog
 import org.elnix.dragonlauncher.ui.drawer.AppDrawerScreen
 import org.elnix.dragonlauncher.ui.helpers.BottomBanners
-import org.elnix.dragonlauncher.ui.helpers.CacheDebugOverlay
 import org.elnix.dragonlauncher.ui.helpers.FpsCounterGraph
 import org.elnix.dragonlauncher.ui.helpers.LauncherSnackbarHost
-import org.elnix.dragonlauncher.ui.helpers.swipe.cache.nests.RememberNestsStableCaches
-import org.elnix.dragonlauncher.ui.helpers.swipe.cache.points.RememberPointStableCaches
 import org.elnix.dragonlauncher.ui.navigation.drawerMetadata
 import org.elnix.dragonlauncher.ui.navigation.horizontalMetadata
 import org.elnix.dragonlauncher.ui.navigation.verticalMetadata
@@ -106,7 +103,7 @@ import org.elnix.dragonlauncher.ui.settings.customization.ColorSelectorTab
 import org.elnix.dragonlauncher.ui.settings.customization.FontTab
 import org.elnix.dragonlauncher.ui.settings.customization.HoldToActivateArcTab
 import org.elnix.dragonlauncher.ui.settings.customization.IconPackTab
-import org.elnix.dragonlauncher.ui.settings.customization.NestEditScreen2
+import org.elnix.dragonlauncher.ui.settings.customization.NestEditScreen
 import org.elnix.dragonlauncher.ui.settings.customization.StatusBarTab
 import org.elnix.dragonlauncher.ui.settings.customization.ThemesTab
 import org.elnix.dragonlauncher.ui.settings.customization.WallpaperTab
@@ -352,8 +349,6 @@ public fun MainAppUi(
     }
 
     ProvideGlobalCompositionLocals {
-        RememberPointStableCaches()
-
         Scaffold(
             floatingActionButton = {
                 if (colorTestMode) {
@@ -493,7 +488,7 @@ public fun MainAppUi(
                     }
 
                     entry<NavigationRoute.NestEdit>(metadata = horizontalMetadata) { key ->
-                        NestEditScreen2(
+                        NestEditScreen(
                             initialNestId = key.nestId,
                             onBack = {
                                 backStack.navigateBack()
@@ -615,7 +610,6 @@ public fun MainAppUi(
             ShizukuOutputDialog()
             WhatsNewBottomSheet()
             BackupResultDialog()
-            CacheDebugOverlay()
             GoogleLockingWarningDialog()
 
 

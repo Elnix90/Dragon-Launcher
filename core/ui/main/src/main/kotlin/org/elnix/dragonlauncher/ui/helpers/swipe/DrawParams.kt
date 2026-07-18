@@ -15,7 +15,6 @@ import org.elnix.dragonlauncher.points.PointsService
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
-import org.elnix.dragonlauncher.ui.helpers.swipe.cache.points.RememberPointStableCaches
 
 
 /**
@@ -57,8 +56,9 @@ public data class DrawParams(
  * The returned instance updates whenever [PointsService.points], [PointsService.nests],
  * [PointsService.defaultPoint], or any observed UI / debug setting changes.
  *
- * As a side effect this function also drives [RememberPointStableCaches] which keeps
- * [org.elnix.dragonlauncher.base.cache.PointStableCache] synchronised with the current point set.
+ * [org.elnix.dragonlauncher.base.cache.PointStableCache] is maintained by
+ * [org.elnix.dragonlauncher.models.PointsViewModel] - this function does not
+ * drive cache synchronization.
  */
 @Composable
 public fun rememberDrawParams(

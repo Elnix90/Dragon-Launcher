@@ -145,7 +145,7 @@ public fun DebugTab(
             Setting(DebugSettingsStore.mainScreenDebugInfos)
             Setting(DebugSettingsStore.nestDebugInfo)
             Setting(DebugSettingsStore.nestDebugOverlay)
-            Setting(DebugSettingsStore.cachesDebugOverlay)
+//            Setting(DebugSettingsStore.cachesDebugOverlay)
             Setting(DebugSettingsStore.settingsDebugInfo)
             Setting(DebugSettingsStore.widgetsDebugInfo)
             Setting(DebugSettingsStore.workspacesDebugInfo)
@@ -369,8 +369,8 @@ public fun DebugTab(
 
             DragonButton(
                 onClick = {
-                    PointStableCache.clear()
-                    NestIntersectionShapesPathCache.clear()
+                    PointStableCache.evictAll()
+                    NestIntersectionShapesPathCache.evictAll()
                     initializationViewModel.initialize()
                 },
                 modifier = Modifier.fillMaxWidth()

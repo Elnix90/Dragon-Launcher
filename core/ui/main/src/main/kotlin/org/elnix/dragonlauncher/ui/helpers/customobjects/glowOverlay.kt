@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 
 
@@ -76,13 +77,15 @@ public fun DrawScope.drawNeonGlowLine(
         }
     }
 
-    if (lineStrokeWidth > 0f) {
+
+    if (lineStrokeWidth >= 0f) {
+        val width = lineStrokeWidth.dp.toPx()
         if (erase) {
             drawLine(
                 color = Color.Transparent,
                 start = start,
                 end = end,
-                strokeWidth = lineStrokeWidth,
+                strokeWidth = width,
                 cap = StrokeCap.Round,
                 blendMode = BlendMode.Clear
             )
@@ -92,7 +95,7 @@ public fun DrawScope.drawNeonGlowLine(
             color = color,
             start = start,
             end = end,
-            strokeWidth = lineStrokeWidth,
+            strokeWidth = width,
             cap = StrokeCap.Round
         )
     }
@@ -115,8 +118,15 @@ public fun DrawScope.drawPathGlow(
         }
     }
 
-
     val width = lineStrokeWidth * this.density
+
+    val style = when {
+        lineStrokeWidth == -1f -> return
+        lineStrokeWidth < 0f -> Fill
+        lineStrokeWidth == 0.0f -> Stroke(Stroke.HairlineWidth)
+        else -> Stroke(width)
+    }
+
     if (erase) {
         drawPath(
             path = path,
@@ -129,7 +139,7 @@ public fun DrawScope.drawPathGlow(
     drawPath(
         path = path,
         color = color,
-        style = if (width > 0f) Stroke(width, cap = StrokeCap.Round) else Fill
+        style = style
     )
 }
 

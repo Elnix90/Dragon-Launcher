@@ -18,8 +18,8 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
+import org.elnix.dragonlauncher.ktx.toPath
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
-import org.elnix.dragonlauncher.ui.helpers.customobjects.toPath
 
 
 @Suppress("FunctionName")
@@ -32,7 +32,10 @@ public fun DrawScope.PointBg(
 ) {
     val extraColors = drawParams.extraColors
     val defaultPoint = drawParams.pointsService.defaultPoint.value
-    val cached = PointStableCache[point.id] ?: return
+    val cached = PointStableCache[point.id] ?: run {
+        missingPoint(drawParams, center)
+        return
+    }
 
 
     // THIS IS EXPENSIVE TO DRAW THAT'S WHY THEY ARE ONLY DRAWN IN DEBUG

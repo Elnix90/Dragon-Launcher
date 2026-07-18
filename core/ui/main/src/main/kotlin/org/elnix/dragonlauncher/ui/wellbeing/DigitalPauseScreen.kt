@@ -6,6 +6,7 @@ import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresPermission
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -89,7 +90,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import java.util.Calendar
 import kotlin.random.Random
-import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 
 private val ZenPurple = Color(0xFF6C5CE7)
@@ -114,7 +115,7 @@ public fun DigitalPauseScreen(
     val guiltModeEnabled by WellbeingSettingsStore.guiltModeEnabled.asState()
     val pauseDurationSeconds by WellbeingSettingsStore.pauseDurationSeconds.asState()
 
-    var countdown by remember { mutableIntStateOf(pauseDurationSeconds) }
+    var countdown by remember(pauseDurationSeconds) { mutableIntStateOf(pauseDurationSeconds) }
     var showChoice by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
     var countdownFinished by remember { mutableStateOf(false) }
@@ -135,9 +136,9 @@ public fun DigitalPauseScreen(
         if (guiltModeEnabled && hasUsageStatsPermission) getUsageStats(ctx, packageName) else null
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(pauseDurationSeconds) {
         while (countdown > 0) {
-            delay(1000.milliseconds)
+            delay(1.seconds)
             countdown--
             if (countdown % 3 == 0 && countdown > 0) {
                 currentPhraseIndex = (currentPhraseIndex + 1) % breathingPhrases.size
@@ -147,9 +148,12 @@ public fun DigitalPauseScreen(
         showChoice = true
     }
 
+    BackHandler(onBack = onCancel)
+
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color(0xFF0F111A)
+        color = Color(0xFF0F111A),
+        onClick = onCancel
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AuroraBackground()

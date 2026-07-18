@@ -90,7 +90,6 @@ public fun EditPointSheet(
     val pointsService = pointsViewModel.pointsService
 
     val defaultPoint by pointsService.defaultPoint.asState()
-    val nests by pointsService.nests.collectAsState()
 
     var editPoint by remember { mutableStateOf(point) }
     var showEditIconDialog by remember { mutableStateOf(false) }
@@ -311,8 +310,9 @@ public fun EditPointSheet(
                     when (expandedFeature) {
                         PointFeaturePanel.LiveNest -> {
 
-                            val liveNestEnabled = editPoint.liveNestTargetNestId != null
-                            val targetNest = if (liveNestEnabled) nests[editPoint.liveNestTargetNestId] else null
+                            val liveNestTargetNestId = editPoint.liveNestTargetNestId
+                            val liveNestEnabled = liveNestTargetNestId != null
+                            val targetNest = if (liveNestEnabled) pointsService.findNestById(liveNestTargetNestId) else null
                             val nestLabel = targetNest?.name ?: targetNest?.let { "Nest ${it.id}" } ?: ""
 
                             Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {

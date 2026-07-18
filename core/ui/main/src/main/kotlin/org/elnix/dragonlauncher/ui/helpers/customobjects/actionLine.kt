@@ -18,6 +18,7 @@ import org.elnix.dragonlauncher.base.model.models.AngleLineObjects.Start
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultLineCustomObject
+import org.elnix.dragonlauncher.ktx.toPath
 import kotlin.math.abs
 
 public fun DrawScope.actionLine(

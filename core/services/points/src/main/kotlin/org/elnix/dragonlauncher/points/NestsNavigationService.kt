@@ -12,7 +12,9 @@ public interface NestsNavigationService {
     public fun clearStack()
 }
 
-internal class NestsNavigationServiceImpl : NestsNavigationService {
+internal class NestsNavigationServiceImpl(
+    private val pointsService: PointsService
+) : NestsNavigationService {
     /**
      *  Navigation stack holding visited nest ids.
      *  The last element represents the current position.
@@ -35,6 +37,11 @@ internal class NestsNavigationServiceImpl : NestsNavigationService {
     }
 
     override fun goToNest(newNestId: Int) {
+        // Check the presence of that nest before entering it
+        if (newNestId !in pointsService.nests.value) {
+            pointsService.addNest(newNestId)
+        }
+
         if (newNestId != _currentNestId.value) {
             nestsStack.remove(newNestId)
             nestsStack.add(newNestId)

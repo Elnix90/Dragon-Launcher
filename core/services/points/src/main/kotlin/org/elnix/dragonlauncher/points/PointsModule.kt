@@ -17,5 +17,5 @@ internal object PointsModule {
 
     @Provides
     @Singleton
-    fun provideNestsService(): NestsNavigationService = NestsNavigationServiceImpl()
+    fun provideNestsService(pointsService: PointsService): NestsNavigationService = NestsNavigationServiceImpl(pointsService)
 }

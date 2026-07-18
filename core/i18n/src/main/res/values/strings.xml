@@ -1058,4 +1058,5 @@
     <string name="how_many_question">How many?</string>
     <string name="gamble_apps">Gamble apps</string>
     <string name="show_app_launch_preview_desc">Show the selected point in the main screen</string>
+    <string name="stroke_width_explanation">-1 = No draw; &lt; 0 = Fill; 0 = 1 pixel; &gt; 0 = value</string>
 </resources>

@@ -65,7 +65,7 @@ public object HoldToActivateArcSettingsStore : MapSettingsStore() {
 
     /** Use the computing of HSV color to produce a color that depends on the angle / progress */
     @SettingKey
-    public val rgbLoading: BooleanSettingObject = boolean(
+    public val holdRgbLoading: BooleanSettingObject = boolean(
         title = R.string.rgb_loading_settings,
         description = R.string.rgb_loading_description,
         default = true

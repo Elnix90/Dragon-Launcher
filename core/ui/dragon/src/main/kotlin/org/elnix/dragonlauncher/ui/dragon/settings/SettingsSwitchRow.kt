@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.ui.dragon.settings
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,20 +29,9 @@ public fun Setting(
 
     val state by setting.asState()
 
-    var tempState by remember { mutableStateOf(state) }
-
     var showConfirmPopup by remember { mutableStateOf<Boolean?>(null) }
 
-
-    LaunchedEffect(state) {
-        // Only sync tempState with setting when no popup is active
-        if (showConfirmPopup == null) {
-            tempState = state
-        }
-    }
-
     fun toggle(state: Boolean) {
-        tempState = state
         scope.launch {
             setting.set(ctx, state)
         }
@@ -51,7 +39,7 @@ public fun Setting(
     }
 
     SwitchRow(
-        state = tempState,
+        state = state,
         title = stringResource(setting.title!!),
         description = stringResource(setting.description!!),
         enabled = enabled

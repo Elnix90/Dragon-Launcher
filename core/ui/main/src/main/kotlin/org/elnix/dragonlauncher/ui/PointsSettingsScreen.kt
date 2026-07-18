@@ -32,18 +32,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -58,16 +55,11 @@ import org.elnix.dragonlauncher.base.Constants
 import org.elnix.dragonlauncher.base.Constants.Settings.COLLIDING_SHAPE_THRESHOLD_PX
 import org.elnix.dragonlauncher.base.Constants.Settings.TOUCH_THRESHOLD_PX
 import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
-import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
-import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
-import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape.Companion.highlightedIfSelected
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.navigaton.ManipulationSystem
-import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.Center
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.ResetRotation
@@ -112,10 +104,8 @@ import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
-import org.elnix.dragonlauncher.ui.helpers.SelfCheckNestPresent
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowOverlay
-import org.elnix.dragonlauncher.ui.helpers.customobjects.toPath
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.settings.SpecialSettingsTitle
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
@@ -134,7 +124,6 @@ public fun PointsSettingsScreen(
     onNestEdit: (nest: Int) -> Unit,
     onBack: () -> Unit
 ) {
-    val density = LocalDensity.current
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -142,7 +131,6 @@ public fun PointsSettingsScreen(
     val defaultPoint by pointsService.defaultPoint.asState()
 
     val points by pointsService.points.collectAsState()
-    val nests by pointsService.nests.collectAsState()
 
     val showAdvancedEditTools by SwipeMapSettingsStore.showAdvancedPointTools.asState()
     val isInDragAroundMode by isInDragAroundMode.asState()
@@ -188,8 +176,6 @@ public fun PointsSettingsScreen(
     val nestsNavigationService = pointsViewModel.nestsNavigationService
     val nestId by nestsNavigationService.currentNestId.collectAsState()
     val currentNest = pointsService.findNestById(nestId)
-
-    SelfCheckNestPresent()
 
     /**
      * Computes the new offset for the selected point.
@@ -366,19 +352,6 @@ public fun PointsSettingsScreen(
             closestHoveredTempOffset = it.computePosition()
             delay(Constants.Settings.HOVER_POINT_DURATION.milliseconds)
             ableToLaunchHoverAction = true
-        }
-    }
-
-    val paths: SnapshotStateMap<IntersectionShape, Path> = remember { mutableStateMapOf() }
-
-    fun addPath(shape: IntersectionShape) {
-        paths[shape] = shape.shape.resolveShape().toPath(shape.getSize(density.density), density)
-    }
-
-    LaunchedEffect(currentNest.intersectionShapes) {
-        paths.clear()
-        currentNest.intersectionShapes.forEach { shape ->
-            addPath(shape)
         }
     }
 
@@ -651,7 +624,7 @@ public fun PointsSettingsScreen(
              * - If the selected point is a live nest, it is drawn in transparency on top of it.
              *   **Only if the nest isn't a OpenCircleNest that points to the same nest action**
              */
-            key(selectedPointsIds, points.size, nests.size, defaultPoint) {
+            key(selectedPointsIds, points.size, defaultPoint) {
                 Box(
                     Modifier
                         .fillMaxSize()
@@ -664,23 +637,6 @@ public fun PointsSettingsScreen(
                             transformOrigin = TransformOrigin(0f, 0f)
                         }
                 ) {
-                    Canvas(Modifier.fillMaxSize()) {
-
-                        repeat(2) { pass ->
-                            paths.forEach { (shape, path) ->
-                                val selected: Boolean = temporarySelectedShape == shape.id
-                                this.IntersectionShape(
-                                    path = path,
-                                    shape = shape.highlightedIfSelected(selected, primaryColor),
-                                    center = center,
-                                    shapesColor = extraColors.shapes,
-                                    erase = pass == 0
-                                )
-                            }
-                        }
-
-                        drawRect(color = Color.Blue.alphaMultiplier(0.2f))
-                    }
 
                     NestOverlay(
                         center = center,
@@ -690,11 +646,26 @@ public fun PointsSettingsScreen(
                         hideShapes = true
                     )
 
+                    Canvas(Modifier.fillMaxSize()) {
+                        val shape = temporarySelectedShape?.let { selectedShapeId ->
+                            currentNest.intersectionShapes.firstOrNull { it.id == selectedShapeId }
+                        } ?: return@Canvas
+
+                        val path = NestIntersectionShapesPathCache[shape] ?: return@Canvas
+
+                        this.IntersectionShape(
+                            path = path,
+                            shape = shape.copy(borderStroke = -1f, glow = CustomGlow(color = primaryColor, radius = 30f)),
+                            center = center,
+                            shapesColor = extraColors.shapes,
+                            erase = false
+                        )
+                    }
+
                     // Animated Selected point
                     selectedPointTempOffset.forEach { (id, offset) ->
                         val point = pointsService.findPointById(id) ?: return@forEach
                         val tr = offset.toTr()
-
 
                         if (LocalNestDebugOverlay.current) {
                             Canvas(Modifier.fillMaxSize()) {
@@ -714,6 +685,7 @@ public fun PointsSettingsScreen(
                                 )
                             }
                         }
+
                         val pointSize = point.getSize(defaultPoint).px
                         val customText = rememberDrawScopeText(point.copy(offset = tr.normalizedOffset), pointSize, defaultPoint)
 
@@ -732,7 +704,7 @@ public fun PointsSettingsScreen(
                         // Don't draw if the action is opening the same nest it is displaying
                         if (point.action is Action.OpenCircleNest && (point.action as Action.OpenCircleNest).nestId == liveTargetId) return@forEach
 
-                        val nestedNest = nests[liveTargetId] ?: return@forEach
+                        val nestedNest = pointsService.findNestById(liveTargetId)
                         val nestScale = point.liveNestScale ?: Point.defaultLiveNestScale
                         val scaledNest = nestedNest scaledBy nestScale
 
@@ -1143,11 +1115,7 @@ public fun PointsSettingsScreen(
                 resetDefaultPoint = true
             )
 
-            PointStableCache.clear()
-            NestIntersectionShapesPathCache.clear()
-
             initializationViewModel.initialize()
-            pointsService.deselectAll()
             showResetPointsAndNestsDialog = false
         }
     }
@@ -1159,7 +1127,6 @@ public fun PointsSettingsScreen(
     DebugZone(DebugSettingsStore.settingsDebugInfo) {
         Text("current nests id: $nestId")
         Text("Points number: ${points.size}")
-        Text("Nests number: ${nests.size}")
         Text("current Nest shapes number: ${currentNest.intersectionShapes.size}")
         val firstPoint = selectedPointsIds.firstOrNull()?.let {
             pointsService.findPointById(it)

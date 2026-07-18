@@ -89,7 +89,7 @@ public abstract class DragonCache <K,V> (initialMaxSize: Int) {
         items.remove(key)
     }
 
-    public fun clear() {
+    public fun evictAll() {
         items.clear()
     }
 

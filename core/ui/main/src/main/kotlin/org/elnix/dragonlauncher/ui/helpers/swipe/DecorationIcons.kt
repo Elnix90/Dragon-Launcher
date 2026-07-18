@@ -3,10 +3,13 @@ package org.elnix.dragonlauncher.ui.helpers.swipe
 import android.content.Context
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.DragonCache
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.util.ImageUtils.loadDrawableResAsImageBitmap
@@ -74,4 +77,28 @@ public fun DrawScope.DecorationIcons(
     }
 }
 
-private object DecorationCache : DragonCache<Int, ImageBitmap>(2)
+
+
+public fun DrawScope.missingPoint(drawParams: DrawParams, center: Offset) {
+    val size = 30.dp.toPx().toInt()
+
+    val boltIcon =  DecorationCache.getOrCompute(3) {
+        drawParams.ctx.loadDrawableResAsImageBitmap(
+            resId = R.drawable.question_mark,
+            width = size,
+            height = size
+        )
+    }
+
+    val leftI = center.x.toInt() - size / 2
+    val topI = center.y.toInt() - size / 2
+
+    drawImage(
+        image = boltIcon,
+        dstOffset = IntOffset(leftI, topI),
+        dstSize = IntSize(size, size),
+        colorFilter = ColorFilter.tint(Color.White)
+    )
+}
+
+private object DecorationCache : DragonCache<Int, ImageBitmap>(3)

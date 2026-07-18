@@ -52,8 +52,9 @@ public fun EditCustomObjectBlock(
         if (properties.allowStrokeCustomization) {
             SliderWithLabel(
                 label = stringResource(R.string.stroke),
+                description = stringResource(R.string.stroke_width_explanation),
                 value = editObject.stroke,
-                valueRange = 0f..200f,
+                valueRange = -1f..200f,
                 backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
                 decimals = 1,
                 onReset = { onEdit(editObject.copy(stroke = default.stroke)) },

@@ -1,35 +1,24 @@
 package org.elnix.dragonlauncher.models
 
 import android.app.Application
-import android.app.UiModeManager
-import android.content.Context
-import android.content.res.Configuration
-import android.service.autofill.Validators.and
+import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalFontFamilyResolver
-import androidx.compose.ui.text.TextMeasurer
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.elnix90.logging.logD
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.elnix.dragonlauncher.base.cache.DrawScopeText
 import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.cache.StablePointValues
@@ -45,13 +34,32 @@ import org.elnix.dragonlauncher.ktx.toPath
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.points.NestsNavigationService
 import org.elnix.dragonlauncher.points.PointsService
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 /**
- * Point view model, responsible for holding different values related to the points
+ * ViewModel responsible for maintaining [PointStableCache] entries for all points
+ * and keeping [NestIntersectionShapesPathCache] synchronised with the current nests.
  *
- * it exposes the [PointsService] to let the UI access it and the [NestsNavigationService] to access the current nest and other navigation useful stuff
+ * ### Cache strategy
+ *
+ * Each point is tracked by an independent coroutine that combines:
+ * - The point's own data (via [PointsService.recomposeTrigger] change detection)
+ * - [PointsService.defaultPoint] configuration
+ * - [ColorService.colors] for theme-aware icon rendering
+ * - Per-point icon from [IconService.getPointIcon]
+ *
+ * When any dependency changes, only the affected cache entry is recomputed on
+ * [Dispatchers.Default]. Entries for removed points are evicted immediately.
+ *
+ * The UI layer may optionally override `customTexts` at draw time for debug overlays;
+ * the ViewModel cache intentionally leaves it as `null` since text measurement is
+ * inherently Compose-dependent.
+ *
+ * Exposes [PointsService] and [NestsNavigationService] for direct UI consumption.
  */
+@OptIn(ExperimentalAtomicApi::class)
 @HiltViewModel
 public class PointsViewModel @Inject constructor(
     application: Application,
@@ -63,171 +71,196 @@ public class PointsViewModel @Inject constructor(
 
     private val density: Density = Density(application.resources.displayMetrics.density)
 
-
-    private val pointsTextStyle = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
-    )
-
-    private val fontFamilyResolver = FontFamily.Resolver { fontFamily ->
-        // Return a Typeface for the given fontFamily
-        // Example: Load a font from assets
-        Typeface.createFromAsset(assets, "fonts/my_font.ttf")
-    }
-
-    private val textMeasurer = TextMeasurer(
-        defaultFontFamilyResolver = FontFamily.Monospace,
-        defaultDensity = density,
-        defaultLayoutDirection = LayoutDirection.Ltr
-    )
-
-    private fun isSystemDarkModeEnabled(context: Context): Boolean {
-        return (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-    }
+    private var isInitPhase = true
 
     init {
+        viewModelScope.launch(Dispatchers.Default) {
+            pointsService.recomposeTrigger.flow
+                .collect {
+                    if (isInitPhase) {
+                        isInitPhase = false
+                    } else {
 
-        // Points cache computing
-        viewModelScope.launch {
-            pointsService.points.collectLatest { points ->
-                PointStableCache.updateMaxCacheSize(points.size)
-            }
-        }
+                        val nests = pointsService.nests.value
 
-        // Nests cache computing
-        viewModelScope.launch {
-            pointsService.nests.collectLatest { nests ->
-                val uniqueShapes = nests.values.flatMap { it.intersectionShapes }
-                NestIntersectionShapesPathCache.updateMaxCacheSize(uniqueShapes.size)
+                        val uniqueShapes = nests.values.flatMap { it.intersectionShapes }
+                        NestIntersectionShapesPathCache.updateMaxCacheSize(uniqueShapes.size)
 
-                for (shape in uniqueShapes) {
-                    NestIntersectionShapesPathCache.compute(shape) {
-                        shape.shape.resolveShape().toPath(shape.getSize(density.density), density)
+                        for (shape in uniqueShapes) {
+                            NestIntersectionShapesPathCache.compute(shape) {
+                                shape.shape.resolveShape().toPath(shape.getSize(density.density), density)
+                            }
+                        }
+
+                        val points = pointsService.points.value
+
+                        PointStableCache.updateMaxCacheSize(points.size)
+                        synchronizePointTracking(points)
                     }
                 }
-            }
         }
 
         viewModelInitialized()
     }
 
+    /**
+     * Last known snapshot of each point, used to detect data changes via
+     * structural equality without requiring the [PointsService.points] StateFlow
+     * to emit on in-place mutations.
+     */
+    private val lastKnownPoints by lazy { ConcurrentHashMap<Int, Point>() }
+
+
+    /** Per-point cache observation jobs, keyed by point id. */
+    private val pointTrackingJobs by lazy { ConcurrentHashMap<Int, Job>() }
+
 
     /**
-     * Precomputes [StablePointValues] for all points whenever their data or icons change.
-     * Only recomputes values that actually changed, not the entire cache.
+     * Compares the current points with [lastKnownPoints] and starts, restarts, or
+     * cancels per-point cache observation as needed.
+     *
+     * Uses structural equality on [Point] (a data class) to detect additions,
+     * edits, and removals without relying on [org.elnix.dragonlauncher.base.SettingFlow]
+     * emission semantics.
+     *
+     * @param points the current points map read from [PointsService.points]
      */
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private suspend fun precomputePointCaches() {
-        pointsService.points
-            .flatMapLatest { points ->
-                // For each point, combine its data with its icon
-                if (points.isEmpty()) {
-                    return@flatMapLatest flowOf(emptyMap<Int, PrecomputeData>())
-                }
+    private fun synchronizePointTracking(points: Map<Int, Point>?) {
+        if (points == null) return
 
-                val iconFlows = points.values.associate { point ->
-                    point.id to iconService.getPointIcon(point).distinctUntilChanged()
-                }
+        val currentIds = points.keys
 
-                val flows = pointsService.defaultPoint.flow as Flow<Point> +
-                        flowOf(true) +
-                        iconFlows.values.toList()
+        // Cancel and evict tracking for points that no longer exist
+        val iterator = pointTrackingJobs.iterator()
+        while (iterator.hasNext()) {
+            val (id, job) = iterator.next()
+            if (id !in currentIds) {
+                job.cancel()
+                iterator.remove()
+                lastKnownPoints.remove(id)
+                PointStableCache.evict(id)
+            }
+        }
 
+        // Start or restart tracking for each current point whose data changed
+        for ((id, point) in points) {
+            val lastKnown = lastKnownPoints[id]
+            if (lastKnown == point) continue
+
+            lastKnownPoints[id] = point
+            pointTrackingJobs[id]?.cancel()
+            pointTrackingJobs[id] = viewModelScope.launch {
+                observePoint(id)
+            }
+        }
+    }
+
+    /**
+     * Observes a single point's dependencies and keeps [PointStableCache] up-to-date.
+     *
+     * The outer flow uses [PointsService.recomposeTrigger] to detect point-data changes
+     * (since [PointsService.points] does not emit on in-place mutations), combined with
+     * [distinctUntilChanged] to skip unchanged points. The inner [combine] tracks
+     * default configuration, color scheme, and per-point icon changes.
+     *
+     * Only [StablePointValues.customTexts] is left as `null`; the Compose layer
+     * supplies debug overlay text as a draw-time override when needed.
+     *
+     * @param pointId the id of the point to observe
+     */
+    private suspend fun observePoint(pointId: Int) {
+        pointsService.recomposeTrigger.flow
+            .mapNotNull { pointsService.findPointById(pointId) }
+            .distinctUntilChanged()
+            .collectLatest { currentPoint ->
                 combine(
                     pointsService.defaultPoint.flow,
-                    flowOf(true),
-                    iconFlows.values
-                ) {
-                    @Suppress("UNCHECKED_CAST")
-                    val defaultPoint = it[0] as Point
-                    val systemTheme = it[1] as SystemTheme // or whatever your theme type is
-                    val iconValues = it.drop(2)
-
-                    // Reconstruct map of point.id -> (Point, Icon)
-                    points.values.zip(iconValues).associate { (point, icon) ->
-                        point.id to PrecomputeData(
-                            point = point,
-                            defaultPoint = defaultPoint,
-                            icon = icon as? LauncherIcon,
-                            darkTheme = systemTheme
-                        )
-                    }
-                }
-            }
-            .collect { dataMap ->
-                withContext(Dispatchers.Default) {
-                    dataMap.forEach { (pointId, data) ->
-                        computePointCacheEntry(pointId, data)
-                    }
+                    colorService.colors,
+                    iconService.getPointIcon(currentPoint).distinctUntilChanged()
+                ) { defaultPoint, colorScheme, icon ->
+                    val isDark = colorScheme.background.luminance() < 0.5f
+                    computeStableValues(currentPoint, defaultPoint, colorScheme, isDark, icon)
+                }.collect { values ->
+                    PointStableCache.compute(pointId) { values }
                 }
             }
     }
 
-    private suspend fun computePointCacheEntry(pointId: Int, data: PrecomputeData) {
-        val (point, defaultPoint, icon, systemTheme) = data
-
+    /**
+     * Computes [StablePointValues] for a single point on [Dispatchers.Default].
+     *
+     * @param point the point to compute values for
+     * @param defaultPoint the default point configuration used for fallback sizes
+     * @param colorScheme the current Material 3 color scheme for icon rendering
+     * @param isDark whether the current theme is dark, affecting icon tones
+     * @param icon the resolved [LauncherIcon] for this point, or null
+     * @return the computed stable values ready for caching
+     */
+    private suspend fun computeStableValues(
+        point: Point,
+        defaultPoint: Point,
+        colorScheme: ColorScheme,
+        isDark: Boolean,
+        icon: LauncherIcon?
+    ): StablePointValues = withContext(Dispatchers.Default) {
         val sizePx = with(density) { point.getSize(defaultPoint).toPx() }
         val innerPaddingPx = with(density) { point.getInnerPadding(defaultPoint).toPx() }
         val borderRadii = (sizePx / 2 + innerPaddingPx).coerceAtLeast(0f)
 
-        // Render icon
-        val imageBitmap = when (icon) {
-            is DynamicLauncherIcon -> {
-                val staticIcon = icon.getIcon(System.currentTimeMillis())
-                val settings = LauncherIconRenderSettings(
-                    size = (defaultPoint.size ?: Point.defaultSize).coerceAtLeast(8) * 2,
-                    fgThemeColor = systemTheme.colorScheme.onPrimaryContainer.toArgb(),
-                    bgThemeColor = systemTheme.colorScheme.primaryContainer.toArgb(),
-                    fgTone = if (systemTheme.isDarkTheme) 90 else 10,
-                    bgTone = if (systemTheme.isDarkTheme) 30 else 90,
-                )
-                staticIcon?.render(settings)?.asImageBitmap()
-            }
+        val imageBitmap = renderPointIcon(icon, defaultPoint, colorScheme, isDark)
 
-            is StaticLauncherIcon -> {
-                val settings = LauncherIconRenderSettings(
-                    size = (defaultPoint.size ?: Point.defaultSize).toInt().coerceAtLeast(8) * 2,
-                    fgThemeColor = systemTheme.colorScheme.onPrimaryContainer.toArgb(),
-                    bgThemeColor = systemTheme.colorScheme.primaryContainer.toArgb(),
-                    fgTone = if (systemTheme.isDarkTheme) 90 else 10,
-                    bgTone = if (systemTheme.isDarkTheme) 30 else 90,
-                )
-                icon.render(settings)?.asImageBitmap()
-            }
-
-            null -> null
-        }
-
-        // Compute custom texts (you may need to adapt this — it originally used LocalDensity)
-        val customTexts = computeDrawScopeText(point, sizePx, defaultPoint)
-
-        val stableValues = StablePointValues(
+        StablePointValues(
             sizePx = sizePx.coerceAtLeast(1f),
             innerPaddingPx = innerPaddingPx,
             borderRadii = borderRadii,
             iconSize = Size(borderRadii * 2f, borderRadii * 2f),
             imageBitmap = imageBitmap,
-            customTexts = customTexts
+            customTexts = null
+        )
+    }
+
+    /**
+     * Renders a [LauncherIcon] into an [ImageBitmap]
+     * using the current theme colors.
+     *
+     * Delegates to [StaticLauncherIcon.render] or resolves [DynamicLauncherIcon]
+     * to its current frame before rendering.
+     *
+     * @param icon the launcher icon to render, or null
+     * @param defaultPoint the default point configuration (used for icon size)
+     * @param colorScheme the current Material 3 color scheme
+     * @param isDark whether the current theme is dark
+     * @return the rendered bitmap, or null if [icon] is null
+     */
+    private suspend fun renderPointIcon(
+        icon: LauncherIcon?,
+        defaultPoint: Point,
+        colorScheme: ColorScheme,
+        isDark: Boolean
+    ): ImageBitmap? {
+        val renderSettings = LauncherIconRenderSettings(
+            size = (defaultPoint.size ?: Point.defaultSize).coerceAtLeast(8) * 2,
+            fgThemeColor = colorScheme.onPrimaryContainer.toArgb(),
+            bgThemeColor = colorScheme.primaryContainer.toArgb(),
+            fgTone = if (isDark) 90 else 10,
+            bgTone = if (isDark) 30 else 90,
         )
 
-        PointStableCache.compute(pointId) { stableValues }
-        logD { "Precomputed cache for point $pointId" }
+        return when (icon) {
+            is DynamicLauncherIcon -> {
+                val staticIcon = icon.getIcon(System.currentTimeMillis())
+                staticIcon.render(renderSettings).asImageBitmap()
+            }
+
+            is StaticLauncherIcon -> icon.render(renderSettings).asImageBitmap()
+
+            null -> null
+        }
     }
 
-    private fun computeDrawScopeText(point: Point, sizePx: Float, defaultPoint: Point): List<DrawScopeText> {
-        // This was originally rememberDrawScopeText() in Compose.
-        // Extract its logic here, or provide a non-Compose helper function.
-        // For now, return an empty list as placeholder:
-        return emptyList()
+    override fun onCleared() {
+        pointTrackingJobs.values.forEach { it.cancel() }
+        pointTrackingJobs.clear()
+        lastKnownPoints.clear()
     }
-
-    private data class PrecomputeData(
-        val point: Point,
-        val defaultPoint: Point,
-        val icon: LauncherIcon?,
-        val darkTheme: Boolean
-    )
 }

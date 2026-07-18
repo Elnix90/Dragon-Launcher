@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
+import org.elnix.dragonlauncher.ktx.toPath
 
 public fun DrawScope.customObject(
     customObject: CustomObject,
@@ -16,20 +17,6 @@ public fun DrawScope.customObject(
     angleColor: Color,
     center: Offset,
 ) {
-
-//    // Apply glow first (background effect)
-//    customObject.glow?.let { glow ->
-//        val glowRadius = (glow.radius ?: default.glow!!.radius!!).dp.toPx()
-//        if (glowRadius > 0f) {
-//            glowOverlay(
-//                center = center,
-//                glow = CustomGlow(
-//                    color = glow.color ?: angleColor,
-//                    radius = glowRadius
-//                )
-//            )
-//        }
-//    }
 
     val sizePx = customObject.size.dp.toPx()
     val size = Size(sizePx, sizePx)
