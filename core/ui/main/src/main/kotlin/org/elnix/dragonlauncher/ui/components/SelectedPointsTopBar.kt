@@ -103,6 +103,7 @@ public fun SelectedPointsTopBar(
                     frozenIds.size,
                     frozenIds.size
                 ),
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(3.dp)
             )
 
