@@ -542,7 +542,7 @@ public fun PointsSettingsScreen(
                 ToggleAnimatedFab(
                     checked = isInDragAroundMode,
                     onCheckedChange = ::toggleDragAroundMode,
-                    minSize = 60.dp,
+                    minSize = 70.dp,
                     containerColor = MaterialTheme.colorScheme.secondary
                 ) {
                     if (it) {

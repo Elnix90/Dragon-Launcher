@@ -79,7 +79,7 @@ public fun ToggleAnimatedFab(
     val isActivated = if (buttonPressed) {
         !checked
     } else checked
-    val fabAnimation = rememberFancyAnimations(isActivated)
+    val fabAnimation = rememberFancyAnimations(buttonPressed)
 
     Box(
         modifier = modifier
