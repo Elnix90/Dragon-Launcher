@@ -507,7 +507,7 @@ public fun NestEditScreen(
 
                                 val oldScale = shape.scale
                                 val newScale = oldScale * gestureZoom
-                                val newAngle = shape.angle + gestureRotate
+                                val newAngle = (shape.angle + gestureRotate) % 360
 
                                 val canvasCentroid = manipulationSystem.normalize(manipulationSystem.transform(centroid))
 
