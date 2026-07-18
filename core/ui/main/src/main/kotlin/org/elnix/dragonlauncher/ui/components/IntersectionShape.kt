@@ -14,7 +14,8 @@ public fun DrawScope.IntersectionShape(
     shape: IntersectionShape,
     center: Offset,
     shapesColor: Color,
-    erase: Boolean
+    erase: Boolean,
+    eraseColor: Color?
 ) {
 
     val size = shape.getSize(this.density)
@@ -45,7 +46,8 @@ public fun DrawScope.IntersectionShape(
             color = color,
             lineStrokeWidth = strokeWith,
             glow = glow,
-            erase = erase
+            erase = erase,
+            eraseColor = eraseColor
         )
     }
 }

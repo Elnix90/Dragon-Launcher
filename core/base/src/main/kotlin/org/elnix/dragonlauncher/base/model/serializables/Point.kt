@@ -370,8 +370,8 @@ public data class Point(
         public const val defaultCycleActionsLoopDelayMs: Int = 500
         public const val defaultCycleActionStageDefaultDelay: Int = 500
         public const val defaultLiveNestMainNestOpacityPercent: Int = 50
-        public val defaultGlow: CustomGlow = CustomGlow(radius = defaultSize * 1.1f)
-        public val defaultGlowSelected: CustomGlow = CustomGlow(radius = defaultSize + 1.3f)
+        public val defaultGlow: CustomGlow = CustomGlow(radius = defaultSize * 1.05f)
+        public val defaultGlowSelected: CustomGlow = CustomGlow(radius = defaultSize * 1.1f)
 
         public val defaultSwipePointsValues: Point = dummySwipePoint(null, -1).copy(
             borderStroke = defaultBorderStroke,

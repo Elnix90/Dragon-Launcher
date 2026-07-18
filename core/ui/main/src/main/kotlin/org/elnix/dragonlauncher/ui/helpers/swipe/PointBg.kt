@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.ui.helpers.swipe
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
@@ -72,16 +71,14 @@ public fun DrawScope.PointBg(
 
     val borderColor: Color =
         if (selected) {
-            point.borderColorSelected?.let { Color(it) }
-                ?: defaultPoint.borderColorSelected?.let { Color(it) }
+            (point.borderColorSelected ?: defaultPoint.borderColorSelected)?.let { Color(it) }
         } else {
             point.borderColor?.let { Color(it) } ?: defaultPoint.borderColor?.let { Color(it) }
         } ?: extraColors.shapes
 
     val backgroundColor: Color =
         if (selected) {
-            point.backgroundColorSelected?.let { Color(it) }
-                ?: defaultPoint.backgroundColorSelected?.let { Color(it) }
+            (point.backgroundColorSelected ?: defaultPoint.backgroundColorSelected)?.let { Color(it) }
         } else {
             point.backgroundColor?.let { Color(it) } ?: defaultPoint.backgroundColor?.let { Color(it) }
         } ?: Color.Transparent
@@ -129,13 +126,13 @@ public fun DrawScope.PointBg(
                 radius = glowRadius,
                 color = glowColor,
             ),
-            erase = true
+            erase = true,
+            eraseColor =drawParams.eraseColor
         )
         drawPath(
             path = path,
             color = backgroundColor,
-            style = Fill,
-            blendMode = BlendMode.Clear
+            style = Fill
         )
     }
 

@@ -4,8 +4,10 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.graphicsLayer
 import org.elnix.dragonlauncher.base.cache.DrawScopeText
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
@@ -39,7 +41,12 @@ public fun PointIcon(
         hideShapes = hideShapes
     )
 
-    Canvas(modifier = modifier) {
+    Canvas(
+        modifier = modifier
+            .graphicsLayer {
+                compositingStrategy = CompositingStrategy.Offscreen
+            }
+    ) {
         this.PointIcon(
             point = point,
             depth = depth,

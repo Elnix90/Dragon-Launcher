@@ -100,7 +100,8 @@ public fun DrawScope.NestOverlay(
                         shape = shape,
                         center = center,
                         shapesColor = drawParams.extraColors.shapes,
-                        erase = pass == 0
+                        erase = pass == 0 && depth > 1,
+                        eraseColor = drawParams.eraseColor
                     )
                 }
             }

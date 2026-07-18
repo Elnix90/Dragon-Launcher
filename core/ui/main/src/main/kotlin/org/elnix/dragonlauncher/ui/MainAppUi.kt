@@ -204,7 +204,7 @@ public fun MainAppUi(
                 val offScreenUserTimeout = lastInteraction.takeIf { it != -1L }
 
                 if (offScreenUserTimeout != null) {
-                    val isInIgnoredRoutes = currentRoute.isInIgnoredReturnScreen()
+                    val isInIgnoredRoutes = currentRoute.isInIgnoredReturnScreen
 
                     val userHasExceededTimeout = appLifecycleViewModel.isTimeoutExceeded(offScreenUserTimeout)
 
@@ -334,7 +334,7 @@ public fun MainAppUi(
     }
 
     val containerColor by animateColorAsState(
-        if (currentRoute.isInTransparentScreen()) Color.Transparent
+        if (currentRoute.isInTransparentScreen) Color.Transparent
         else MaterialTheme.colorScheme.background
     )
 

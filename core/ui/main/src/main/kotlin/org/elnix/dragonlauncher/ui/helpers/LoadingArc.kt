@@ -54,7 +54,6 @@ public fun HoldToActivateArc(
     center: Offset?,
     progress: Float,
     customObject: CustomObject,
-    erase: Boolean = false,
     playAnimation: Boolean = true,
 ) {
     if (center == null || progress <= 0f) return
@@ -146,7 +145,8 @@ public fun HoldToActivateArc(
                             color = color,
                             lineStrokeWidth = customObject.stroke,
                             glow = customObject.glow,
-                            erase = erase
+                            erase = false,
+                            eraseColor = null
                         )
                     }
 

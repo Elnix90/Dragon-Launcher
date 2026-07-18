@@ -216,8 +216,8 @@ public sealed class NavigationRoute : NavKey {
 }
 
 /** List of routes that the routes killer ignores when the user leave the app for too long, usually files pickers */
-public fun NavKey.isInIgnoredReturnScreen(): Boolean =
-    when (this) {
+public val NavKey.isInIgnoredReturnScreen: Boolean
+    get() = when (this) {
         Welcome,
         Backup,
         Wallpaper,
@@ -227,12 +227,14 @@ public fun NavKey.isInIgnoredReturnScreen(): Boolean =
     }
 
 /** Screen that are transparents for the main scaffold, in order to see the wallpaper behind */
-public fun NavKey.isInTransparentScreen(): Boolean =
-    when (this) {
+public val NavKey.isInTransparentScreen: Boolean
+    get() = when (this) {
         Main,
         Drawer,
         DrawerSettings,
         Wallpaper,
+//        is PointsSettings,
+//        is NestEdit,
         is Widgets -> true
 
         else -> false

@@ -425,17 +425,16 @@ public fun NestEditScreen(
                     val extraColors = LocalExtraColors.current
 
                     Canvas(Modifier.fillMaxSize()) {
-                        repeat(2) { pass ->
-                            paths.forEach { (shape, path) ->
-                                val selected = shape.id == selectedShapeId
-                                this.IntersectionShape(
-                                    path = path,
-                                    shape = shape.snap().highlightedIfSelected(selected, primaryColor),
-                                    center = center,
-                                    shapesColor = extraColors.shapes,
-                                    erase = pass == 0
-                                )
-                            }
+                        paths.forEach { (shape, path) ->
+                            val selected = shape.id == selectedShapeId
+                            this.IntersectionShape(
+                                path = path,
+                                shape = shape.snap().highlightedIfSelected(selected, primaryColor),
+                                center = center,
+                                shapesColor = extraColors.shapes,
+                                erase = false,
+                                eraseColor = null
+                            )
                         }
                     }
 

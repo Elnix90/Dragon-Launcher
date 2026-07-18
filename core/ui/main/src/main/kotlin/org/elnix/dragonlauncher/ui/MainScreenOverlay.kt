@@ -403,6 +403,7 @@ public fun MainScreenOverlay(
                                 sweepAngle = sweepAngle,
                                 lineColor = lineColor,
                                 order = order,
+                                eraseColor = null,
                                 showLineObjectPreview = showLineObjectPreview,
                                 showAngleLineObjectPreview = showAngleLineObjectPreview,
                                 showStartObjectPreview = showStartObjectPreview,

@@ -16,6 +16,7 @@ public fun DrawScope.customObject(
     shape: Shape,
     angleColor: Color,
     center: Offset,
+    eraseColor: Color?
 ) {
 
     val sizePx = customObject.size.dp.toPx()
@@ -43,7 +44,8 @@ public fun DrawScope.customObject(
             color = customObject.color ?: angleColor,
             lineStrokeWidth = customObject.stroke,
             glow = customObject.glow,
-            erase = customObject.eraseBackground
+            erase = customObject.eraseBackground,
+            eraseColor = eraseColor
         )
     }
 }

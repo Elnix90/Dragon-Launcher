@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,8 +20,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.CompositingStrategy
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -66,6 +65,7 @@ public fun AngleLineTab(onBack: () -> Unit) {
     val extraColors = LocalExtraColors.current
     val scope = rememberCoroutineScope()
 
+    val backgroundColor = MaterialTheme.colorScheme.background
 
     // TODO create AngleLine View model, or even better, a swipe view model that hosts all the swipe related settings
     val showLineObjectPreview by AngleLineSettingsStore.showLineObjectPreview.asState()
@@ -120,14 +120,7 @@ public fun AngleLineTab(onBack: () -> Unit) {
     val pickedRememberShapeEnd = remember(mutableEndObject.shape) { mutableEndObject.shape.resolveShape() }
     val pickedRememberRotationEnd = mutableEndObject.resolveRotation(false, sweep)
 
-    Canvas(
-        modifier = Modifier
-            .graphicsLayer {
-                compositingStrategy = CompositingStrategy.Offscreen
-            }
-            .fillMaxSize()
-
-    ) {
+    Canvas(Modifier.fillMaxSize()) {
         val lineColor =
             if (rgbLine) Color.hsv(sweepState.angle360(), 1f, 1f)
             else extraColors.angleLine
@@ -138,6 +131,7 @@ public fun AngleLineTab(onBack: () -> Unit) {
             sweepAngle = sweepAngle,
             lineColor = lineColor,
             order = order,
+            eraseColor = backgroundColor,
             showLineObjectPreview = showLineObjectPreview,
             showAngleLineObjectPreview = showAngleLineObjectPreview,
             showStartObjectPreview = showStartObjectPreview,

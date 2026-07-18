@@ -1,9 +1,11 @@
 package org.elnix.dragonlauncher.ui.helpers.swipe
 
 import android.content.Context
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -33,6 +35,8 @@ public data class DrawParams(
 
     /** Settings Screen only */
     val preventBgErasing: Boolean,
+    /** Settings Screen only */
+    val eraseColor: Color?,
     /** Settings Screen only */
     val preventDrawingSubNests: Boolean,
     /** Settings Screen only */
@@ -73,6 +77,7 @@ public fun rememberDrawParams(
 ): DrawParams {
     val ctx = LocalContext.current
     val extraColors = LocalExtraColors.current
+    val backgroundColor = MaterialTheme.colorScheme.background
 
     val showCurrentPoint by UiSettingsStore.showPreviewPoint.asState()
     val maxNestsDepth by UiSettingsStore.maxNestsDepth.asState()
@@ -92,6 +97,7 @@ public fun rememberDrawParams(
 
     return remember(
         extraColors,
+        backgroundColor,
         maxNestsDepth,
         preventBgErasing,
         showPointInCenter,
@@ -111,6 +117,7 @@ public fun rememberDrawParams(
             ctx = ctx,
             pointsService = pointsViewModel.pointsService,
             extraColors = extraColors,
+            eraseColor = backgroundColor,
             maxNestsDepth = maxNestsDepth,
             preventBgErasing = preventBgErasing,
             allowShowPointInCenter = allowShowPointCenter && showPointInCenter,

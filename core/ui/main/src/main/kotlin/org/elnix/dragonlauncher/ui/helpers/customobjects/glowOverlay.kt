@@ -61,7 +61,8 @@ public fun DrawScope.drawNeonGlowLine(
     color: Color,
     lineStrokeWidth: Float,
     glow: CustomGlow?,
-    erase: Boolean
+    erase: Boolean,
+    eraseColor: Color?
 ) {
     toPxOrNull(glow?.radius)?.let { radius ->
         drawIntoCanvas { canvas ->
@@ -82,12 +83,12 @@ public fun DrawScope.drawNeonGlowLine(
         val width = lineStrokeWidth.dp.toPx()
         if (erase) {
             drawLine(
-                color = Color.Transparent,
+                color = eraseColor ?: Color.Transparent,
                 start = start,
                 end = end,
                 strokeWidth = width,
                 cap = StrokeCap.Round,
-                blendMode = BlendMode.Clear
+                blendMode = BlendMode.Dst
             )
         }
 
@@ -106,7 +107,8 @@ public fun DrawScope.drawPathGlow(
     color: Color,
     lineStrokeWidth: Float,
     glow: CustomGlow?,
-    erase: Boolean
+    erase: Boolean,
+    eraseColor: Color?
 ) {
 
     val nativePath = path.asAndroidPath()
@@ -130,9 +132,9 @@ public fun DrawScope.drawPathGlow(
     if (erase) {
         drawPath(
             path = path,
-            color = Color.Transparent,
+            color = eraseColor ?: Color.Transparent,
             style = Fill,
-            blendMode = BlendMode.Clear
+            blendMode = BlendMode.Src
         )
     }
 

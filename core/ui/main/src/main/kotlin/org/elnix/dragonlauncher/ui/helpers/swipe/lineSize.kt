@@ -23,6 +23,7 @@ public fun DrawScope.centerOfNest(center: Offset) {
         color = Color.Red,
         lineStrokeWidth = 1f,
         erase = false,
+        eraseColor = null,
         glow = CustomGlow(5f)
     )
 
@@ -32,6 +33,7 @@ public fun DrawScope.centerOfNest(center: Offset) {
         color = Color.Red,
         lineStrokeWidth = 1f,
         erase = false,
+        eraseColor = null,
         glow = CustomGlow(5f)
     )
 }

@@ -26,6 +26,7 @@ public fun DrawScope.actionLine(
     end: Offset,
     sweepAngle: Float,
     lineColor: Color,
+    eraseColor: Color?,
 
     order: List<AngleLineObjects>,
 
@@ -57,7 +58,8 @@ public fun DrawScope.actionLine(
                         start = start,
                         end = end,
                         lineColor = lineColor,
-                        lineCustomObject = lineCustomObject
+                        lineCustomObject = lineCustomObject,
+                        eraseColor = eraseColor
                     )
                 }
             }
@@ -71,7 +73,8 @@ public fun DrawScope.actionLine(
                         lineColor = lineColor,
                         angleLineCustomObject = angleLineCustomObject,
                         rotation = pickedRememberRotationAngle,
-                        shape = pickedRememberShapeAngle
+                        shape = pickedRememberShapeAngle,
+                        eraseColor = eraseColor
                     )
                 }
             }
@@ -83,7 +86,8 @@ public fun DrawScope.actionLine(
                         angleColor = lineColor,
                         center = start,
                         rotation = pickedRememberRotationStart,
-                        shape = pickedRememberShapeStart
+                        shape = pickedRememberShapeStart,
+                        eraseColor = eraseColor
                     )
                 }
             }
@@ -95,7 +99,8 @@ public fun DrawScope.actionLine(
                         angleColor = lineColor,
                         center = end,
                         rotation = pickedRememberRotationEnd,
-                        shape = pickedRememberShapeEnd
+                        shape = pickedRememberShapeEnd,
+                        eraseColor = eraseColor
                     )
                 }
             }
@@ -109,6 +114,7 @@ private fun DrawScope.lineObject(
     end: Offset,
     lineColor: Color,
     lineCustomObject: CustomObject,
+    eraseColor: Color?
 ) {
     drawNeonGlowLine(
         start = start,
@@ -116,7 +122,8 @@ private fun DrawScope.lineObject(
         color = lineCustomObject.color ?: lineColor,
         lineStrokeWidth = lineCustomObject.stroke,
         glow = lineCustomObject.glow ?: defaultLineCustomObject.glow,
-        erase = lineCustomObject.eraseBackground
+        erase = lineCustomObject.eraseBackground,
+        eraseColor = eraseColor
     )
 }
 
@@ -144,6 +151,7 @@ private fun DrawScope.angleObject(
     rotation: Int,
     shape: Shape,
     angleLineCustomObject: CustomObject,
+    eraseColor: Color?
 ) {
     if (angleLineCustomObject.stroke <= 0f) return
 
@@ -185,7 +193,8 @@ private fun DrawScope.angleObject(
             color = angleLineCustomObject.color ?: lineColor,
             lineStrokeWidth = angleLineCustomObject.stroke,
             glow = angleLineCustomObject.glow,
-            erase = angleLineCustomObject.eraseBackground
+            erase = angleLineCustomObject.eraseBackground,
+            eraseColor = eraseColor
         )
     }
 }

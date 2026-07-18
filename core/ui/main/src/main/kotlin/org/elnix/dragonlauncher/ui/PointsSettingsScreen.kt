@@ -658,7 +658,8 @@ public fun PointsSettingsScreen(
                             shape = shape.copy(borderStroke = -1f, glow = CustomGlow(color = primaryColor, radius = 30f)),
                             center = center,
                             shapesColor = extraColors.shapes,
-                            erase = false
+                            erase = false,
+                            eraseColor = null
                         )
                     }
 
