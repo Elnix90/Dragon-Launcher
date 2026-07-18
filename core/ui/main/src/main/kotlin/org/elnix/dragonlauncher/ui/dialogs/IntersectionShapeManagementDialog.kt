@@ -89,6 +89,7 @@ public fun IntersectionShapeManagementDialog(
                         shapesInternal.removeIf { it.id == shape.id }
                     },
                     onSelect = {
+                        onSave(shapesInternal)
                         onSelectShape(shape.id)
                         onDismiss()
                     }

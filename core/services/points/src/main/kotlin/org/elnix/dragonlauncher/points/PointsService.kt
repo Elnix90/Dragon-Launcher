@@ -4,8 +4,6 @@ package org.elnix.dragonlauncher.points
 
 import android.content.Context
 import androidx.compose.ui.geometry.Offset
-import io.github.elnix90.logging.POINTS_TAG
-import io.github.elnix90.logging.logD
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -347,13 +345,12 @@ internal class PointsServiceImpl(
         editedPoint: (Point) -> Point
     ) {
         val oldPoint = _points.value[id] ?: return
-        val edited = editedPoint(oldPoint)
-        logD(POINTS_TAG) { " \nUpdating point: $id, old = $oldPoint, edited = $edited, they are the same: ${edited == oldPoint}\n points before: ${_points.value}" }
-        applyChange {
-            _points.value[id] = edited
+        val newPoint = editedPoint(oldPoint)
+        if (oldPoint != newPoint) {
+            applyChange {
+                _points.value[id] = newPoint
+            }
         }
-
-        logD(POINTS_TAG) { "Points after: ${_points.value}" }
     }
 
     override inline fun updateNest(
@@ -395,9 +392,12 @@ internal class PointsServiceImpl(
         editedNest: (Nest) -> Nest
     ) {
         val oldNest = findNestById(id)
+        val newNest = editedNest(oldNest)
 
-        applyChange {
-            _nests.value[id] = editedNest(oldNest)
+        if (oldNest != newNest) {
+            applyChange {
+                _nests.value[id] = newNest
+            }
         }
     }
 
