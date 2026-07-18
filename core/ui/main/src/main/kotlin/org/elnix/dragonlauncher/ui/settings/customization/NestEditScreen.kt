@@ -46,11 +46,12 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.logging.logWtf
+import io.github.elnix90.runtime.asMutableState
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
@@ -107,10 +108,10 @@ public fun NestEditScreen(
     initialNestId: Int,
     onBack: () -> Unit
 ) {
-    val ctx = LocalContext.current
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()
     val pointsService = pointsViewModel.pointsService
+    val points by pointsService.points.collectAsState()
 
     val nestNavigation = pointsViewModel.nestsNavigationService
     LaunchedEffect(Unit) {
@@ -121,14 +122,14 @@ public fun NestEditScreen(
     val currentNest = pointsService.findNestById(nestId)
 
 
-    val snapShapesOffset by UiSettingsStore.snapShapesOffset.asState()
-    val snapShapesScale by UiSettingsStore.snapShapesScale.asState()
-    val snapShapeAngle by UiSettingsStore.snapShapeAngle.asState()
+    var snapShapesOffset by UiSettingsStore.snapShapesOffset.asMutableState()
+    var snapShapesScale by UiSettingsStore.snapShapesScale.asMutableState()
+    var snapShapeAngle by UiSettingsStore.snapShapeAngle.asMutableState()
     val snapOffsetThreshold = 30.dp.px
 
     fun IntersectionShape.snap(): IntersectionShape = this.copy(
         offset = if (snapShapesOffset) this.offset.snapToRound(Offset.Zero, snapOffsetThreshold) else this.offset,
-        scale = if (snapShapesScale) this.scale.snapToRound(1f, 0.1f) else this.scale,
+        scale = if (snapShapesScale) this.scale.snapToRound(1f, 0.5f) else this.scale,
         angle = if (snapShapeAngle) this.angle.snapToRound(0f, 20f) else this.angle
     )
 
@@ -148,24 +149,30 @@ public fun NestEditScreen(
     var tempCancelZone by remember { mutableIntStateOf(currentNest.cancelZone) }
     var tempCustomName by remember { mutableStateOf(currentNest.name ?: "") }
 
-    val paths: SnapshotStateMap<Int, Pair<IntersectionShape, Path>> = remember { mutableStateMapOf() }
-    val shapes: Set<IntersectionShape> = paths.values.mapTo(mutableSetOf()) { it.first }
-
-    fun updatePath(shape: IntersectionShape) {
-        paths[shape.id] = shape to shape.shape.resolveShape().toPath(shape.getSize(density.density), density)
+    val paths: SnapshotStateMap<IntersectionShape, Path> = remember { mutableStateMapOf() }
+    fun addPath(shape: IntersectionShape) {
+        paths[shape] = shape.shape.resolveShape().toPath(shape.getSize(density.density), density)
     }
 
     LaunchedEffect(currentNest.intersectionShapes) {
         paths.clear()
         currentNest.intersectionShapes.forEach { shape ->
-            updatePath(shape)
+            addPath(shape)
         }
     }
 
+
+    var witnessShape: IntersectionShape? by remember { mutableStateOf(null) }
+    var netOffsetChange by remember { mutableStateOf(Offset.Zero) }
+
     fun saveCurrentNest() {
-        pointsService.editNest(nestId) { old ->
+        pointsService.updateNest(
+            nestId = nestId,
+            shapeId = selectedShapeId,
+            netOffsetChange = netOffsetChange
+        ) { old ->
             old.copy(
-                intersectionShapes = paths.values.mapTo(mutableSetOf()) { it.first.snap() }
+                intersectionShapes = paths.keys.mapTo(mutableSetOf()) { it.snap() }
             )
         }
     }
@@ -261,12 +268,10 @@ public fun NestEditScreen(
                         }
                     }
                 ) {
-                    scope.launch {
-                        when (it) {
-                            ShapesEditTools.SnapOffset -> UiSettingsStore.snapShapesOffset.set(ctx, !snapShapesOffset)
-                            ShapesEditTools.SnapScale -> UiSettingsStore.snapShapesScale.set(ctx, !snapShapesScale)
-                            ShapesEditTools.SnapAngle -> UiSettingsStore.snapShapeAngle.set(ctx, !snapShapeAngle)
-                        }
+                    when (it) {
+                        ShapesEditTools.SnapOffset -> snapShapesOffset = !snapShapesOffset
+                        ShapesEditTools.SnapScale -> snapShapesScale = !snapShapesScale
+                        ShapesEditTools.SnapAngle -> snapShapeAngle = !snapShapeAngle
                     }
                 }
             }
@@ -301,7 +306,7 @@ public fun NestEditScreen(
                     AnimatedContent(isInDragAroundMode) {
                         val selectedShape = if (it) null else {
                             selectedShapeId?.let { shapeId ->
-                                shapes.firstOrNull { shape -> shape.id == shapeId }
+                                paths.keys.firstOrNull { shape -> shape.id == shapeId }
                             }
                         }
 
@@ -338,7 +343,7 @@ public fun NestEditScreen(
                         DropdownMenuGroup(
                             shapes = MenuDefaults.groupShapes()
                         ) {
-                            val filteredShapes = shapes.filter { it.id != selectedShapeId }
+                            val filteredShapes = paths.keys.filter { it.id != selectedShapeId }
                             filteredShapes.forEachIndexed { idx, shape ->
                                 DropdownMenuItem(
                                     text = {
@@ -403,17 +408,6 @@ public fun NestEditScreen(
                     center = Offset(w / 2f, h / 2f)
                 }
         ) {
-            /**
-             * Main Canva, draws the circles, and sub nests by recursivity.
-             *
-             * Uses [graphicsLayer] to apply transformation of [offset], [zoom] and [angle] and provide an easy way to navigate in the canvas
-             *
-             * - If the user drags a point, I draw it in the offset of where the finger is.
-             * - If the user has hovered a point for more than 500ms, a radial circle overlay spawns and indicates
-             *   that it can release to merge the 2 points
-             * - If the selected point is a live nest, it is drawn in transparency on top of it.
-             *   **Only if the nest isn't a OpenCircleNest that points to the same nest action**
-             */
             key(currentNest, recomposeTrigger, tempCancelZone) {
                 Box(
                     Modifier
@@ -432,11 +426,11 @@ public fun NestEditScreen(
 
                     Canvas(Modifier.fillMaxSize()) {
                         repeat(2) { pass ->
-                            paths.forEach { (shapeId, pair) ->
-                                val selected = shapeId == selectedShapeId
+                            paths.forEach { (shape, path) ->
+                                val selected = shape.id == selectedShapeId
                                 this.IntersectionShape(
-                                    path = pair.second,
-                                    shape = pair.first.snap().highlightedIfSelected(selected, primaryColor),
+                                    path = path,
+                                    shape = shape.snap().highlightedIfSelected(selected, primaryColor),
                                     center = center,
                                     shapesColor = extraColors.shapes,
                                     erase = pass == 0
@@ -448,7 +442,7 @@ public fun NestEditScreen(
                     NestOverlay(
                         center = center,
                         nest = currentNest.copy(
-                            intersectionShapes = shapes.mapTo(mutableSetOf()) { it.snap() },
+                            intersectionShapes = paths.keys.mapTo(mutableSetOf()) { it.snap() },
                             cancelZone = tempCancelZone
                         ),
                         depth = Int.MAX_VALUE,
@@ -470,14 +464,20 @@ public fun NestEditScreen(
                     .pointerInput(Unit, isInDragAroundMode, nestId) {
                         detectTransformGestures(
                             panZoomLock = true,
-//                            onGestureStart = { down ->
-//                                shapes.minByOrNull { manipulationSystem.normalize(manipulationSystem.transform(it.offset)) distanceTo down }?.let {
-//                                    selectedShapeId = it.id
-//                                }
-//                            },
-                            onGestureEnd = {
+                            onGestureStart = {
                                 if (!isInDragAroundMode) {
-                                    saveCurrentNest()
+                                    netOffsetChange = Offset.Zero
+                                    witnessShape = paths.keys.find { it.id == selectedShapeId }!!.snap()
+                                }
+                            },
+                            onGestureEnd = { totalPanChange: Offset, totalZoomChange: Float, totalRotationChange: Float ->
+                                if (!isInDragAroundMode) {
+                                    witnessShape = null
+
+                                    logWtf { "pan: $totalPanChange (dist = ${totalPanChange.getDistanceSquared()}\nzoom: $totalZoomChange, rotation: $totalRotationChange\n " }
+                                    if ((totalPanChange.getDistanceSquared() > 0f) || totalZoomChange != 0f || totalRotationChange != 0f) {
+                                        saveCurrentNest()
+                                    }
                                 }
                             }
                         ) { centroid, pan, gestureZoom, gestureRotate ->
@@ -503,9 +503,8 @@ public fun NestEditScreen(
                                 }
                             } else {
                                 val shapeId = selectedShapeId ?: return@detectTransformGestures
-                                val shape = shapes.firstOrNull { it.id == shapeId } ?: return@detectTransformGestures
+                                val shape = paths.keys.firstOrNull { it.id == shapeId } ?: return@detectTransformGestures
 
-//                                pointsService.updateNestShape(nestId, shapeId) { oldShape ->
                                 val oldScale = shape.scale
                                 val newScale = oldScale * gestureZoom
                                 val newAngle = shape.angle + gestureRotate
@@ -523,7 +522,9 @@ public fun NestEditScreen(
                                 //   C  = center + O + R(θ) * d       (pre-gesture)
                                 //   C' = center + N + R(θ+Δθ) * d'  (post-gesture)
                                 // where:
-                                //   C  = canvas centroid, O = old offset, θ = old angle,
+                                //   C  = canvas centroid,
+                                //   O = old offset
+                                //   θ = old angle
                                 //   d  = local point offset from shape center
                                 //   N  = new offset, Δθ = rotation delta,
                                 //   d' = d * (newScale / oldScale) (path scales linearly)
@@ -541,18 +542,21 @@ public fun NestEditScreen(
                                     scale = newScale,
                                     angle = newAngle
                                 )
-//
-                                updatePath(newShape)
 
-//                                    newShape
-//                                }
+                                val newSnappedShape = newShape.snap()
 
-                                pointsService.points.value
+                                netOffsetChange = newSnappedShape.offset - witnessShape!!.offset
+
+                                paths -= shape
+                                addPath(newShape)
+
+                                points
                                     .filter { (_, point) -> point.nestId == nestId && point.shapeId == shapeId }
                                     .forEach { (_, point) ->
-                                        point.pos = pointsService.computePointOffsetRealTime(point, newShape)
+
+                                        val pointChanged = point.copy(offset = point.offset + netOffsetChange)
+                                        point.pos = pointsService.computePointOffsetRealTime(pointChanged, newSnappedShape)
                                     }
-//                                recomposeTrigger++
                             }
                         }
                     }
@@ -649,11 +653,9 @@ public fun NestEditScreen(
 
     if (showShapesManagementDialog) {
         IntersectionShapeManagementDialog(
-            shapes = shapes,
+            shapes = paths.keys,
             onSelectShape = { newShape ->
                 selectedShapeId = newShape
-                recomposeTrigger++
-                showShapesManagementDialog = false
             },
             onSave = { newShapes ->
                 pointsService.editNest(nestId) { old ->
@@ -671,72 +673,3 @@ public fun NestEditScreen(
         Text("RecomposeTrigger: $recomposeTrigger")
     }
 }
-
-
-///**
-// * Holds an Offset and provides helper functions and value to manage its values and variants inside settings screens that allows objects manipulation
-// */
-//class TransformedOffset(
-//    private val manipulationSystem: ManipulationSystem,
-//    private val pointsService: PointsService,
-//    private val nestId: Int,
-//    /**
-//     * Original offset, in normal screen coordinates
-//     * It will be transformed to give the actual useful values
-//     */
-//    val offset: Offset
-//) {
-//
-//    /**
-//     * Transformed offset, represents the coordinated in space of the [offset] after undoing the
-//     * transformations of [angle], [zoom], and [offset] that are only for visual in the settings screen
-//     */
-//    public val transformedOffset: Offset by lazy {
-//        manipulationSystem.transform(this.offset)
-//    }
-//
-//    /**
-//     * Represents the offset of the point, if you do not account for both the [angle], [zoom], and [offset] transformations and the [center]
-//     * in the middle ot the screen.
-//     *
-//     * ### **It's the offset you want to save into the points property**
-//     * as it can be interpreted by the [PointsService] and be
-//     * converted back to screen coordinates.
-//     */
-//    public val normalizedOffset: Offset by lazy {
-//        manipulationSystem.normalize(this.transformedOffset)
-//    }
-//
-//    /**
-//     * Computes the closest point relative to this [transformedOffset].
-//     * @see PointsService.computeClosest
-//     */
-//    public val bestP: Point? by lazy {
-//        pointsService.computeClosest(this.normalizedOffset, nestId)
-//    }
-//
-//    private val distance: Float by lazy {
-//        val betsPOffset = this.bestP?.let { pointsService.computePointOffset(it) } ?: return@lazy Float.MAX_VALUE
-//        betsPOffset distanceTo this.normalizedOffset
-//    }
-//
-//    /**
-//     * Whether the distance to the closest point is inferior to an arbitrary [TOUCH_THRESHOLD_PX].
-//     *
-//     * TODO Make this threshold dependent on the [zoom]
-//     */
-//    public val distanceSmallEnough: Boolean by lazy { distance <= TOUCH_THRESHOLD_PX }
-//
-//
-//    /** Executes [block] if [distanceSmallEnough] */
-//    public inline infix fun ifDistanceIsSmallEnough(block: () -> Point?): Point? = if (distanceSmallEnough) block() else null
-//
-//    override fun toString(): String =
-//        "TR(\n" +
-//                "   offset = ${this.offset}\n" +
-//                "   transformedOffset = $transformedOffset\n" +
-//                "   normalizedOffset = $normalizedOffset\n" +
-//                "   bestP = $bestP\n" +
-//                "   distance = $distance${if (!distanceSmallEnough) " (Too Far!)" else ""}\n" +
-//                ")"
-//}

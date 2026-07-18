@@ -37,6 +37,8 @@ public data class DrawParams(
     val preventDrawingSubNests: Boolean,
     /** Settings Screen only */
     val pointSettingsDisplay: Boolean,
+    /** Settings Screen only */
+    val hideShapes: Boolean,
 
     val showCurrentPoint: Boolean,
     val showAllPointsInCurrentShape: Boolean,
@@ -119,8 +121,9 @@ public fun rememberDrawParams(
             pointSettingsDisplay = pointSettingsDisplay,
             nestDebugOverlay = nestDebugOverlay,
             showCancelZone = showCancelZone,
-            showShape = if (hideShapes) false else showShape,
-            showAllShapesInNest = if (hideShapes) false else showAllShapesInNest,
+            showShape = showShape,
+            showAllShapesInNest = showAllShapesInNest,
+            hideShapes = hideShapes,
             textMeasurer = textMeasurer
         )
     }

@@ -643,7 +643,7 @@ public fun PointsSettingsScreen(
                         nest = currentNest,
                         preventBgErasing = true,
                         pointSettingsDisplay = true,
-                        hideShapes = true
+                        hideShapes = false
                     )
 
                     Canvas(Modifier.fillMaxSize()) {

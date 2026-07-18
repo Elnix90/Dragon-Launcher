@@ -79,27 +79,30 @@ public fun DrawScope.NestOverlay(
     val isSettingDisplay = drawParams.pointSettingsDisplay
 
     val selectedShapes = drawParams.pointsService.getSelectedShapeIds(nest.id)
-    repeat(2) { pass ->
-        nest.intersectionShapes.forEach { shape ->
-            // Trust me it works
-            // Only draw the shape if:
-            // - forced by settings display
-            // - allowed by settings
-            // - one of the selected points is on that shape
-            // - the shape is on the same nest (it caused issue where all the shapes  of id 0 were lightning up in every nest
-            val showShape = depth > 1 || isSettingDisplay || drawParams.showAllShapesInNest || (drawParams.showShape && shape.id in selectedShapes)
+    if (!drawParams.hideShapes) {
+        repeat(2) { pass ->
+            nest.intersectionShapes.forEach { shape ->
+                // Trust me it works
+                // Only draw the shape if:
+                // - forced by settings display
+                // - allowed by settings
+                // - one of the selected points is on that shape
+                // - the shape is on the same nest (it caused issue where all the shapes  of id 0 were lightning up in every nest
+                val showShape =
+                    depth > 1 || isSettingDisplay || drawParams.showAllShapesInNest || (drawParams.showShape && shape.id in selectedShapes)
 
-            if (showShape) {
-                // This is computed here, because I cannot draw shapes reactively otherwise in the nest edit screen
-                val path = NestIntersectionShapesPathCache[shape] ?: return
+                if (showShape) {
+                    // This is computed here, because I cannot draw shapes reactively otherwise in the nest edit screen
+                    val path = NestIntersectionShapesPathCache[shape] ?: return@forEach
 
-                this.IntersectionShape(
-                    path = path,
-                    shape = shape,
-                    center = center,
-                    shapesColor = drawParams.extraColors.shapes,
-                    erase = pass == 0
-                )
+                    this.IntersectionShape(
+                        path = path,
+                        shape = shape,
+                        center = center,
+                        shapesColor = drawParams.extraColors.shapes,
+                        erase = pass == 0
+                    )
+                }
             }
         }
     }
