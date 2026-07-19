@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
+import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.specialObjects.ActionSettingObject
 import org.elnix.dragonlauncher.theme.AppObjectsColors

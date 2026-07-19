@@ -28,7 +28,7 @@ import androidx.compose.ui.util.packFloats
 import androidx.compose.ui.util.unpackFloat1
 import androidx.compose.ui.util.unpackFloat2
 import io.github.elnix90.runtime.asState
-import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
+import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import kotlin.math.roundToInt

@@ -25,8 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup

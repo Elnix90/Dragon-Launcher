@@ -13,8 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 

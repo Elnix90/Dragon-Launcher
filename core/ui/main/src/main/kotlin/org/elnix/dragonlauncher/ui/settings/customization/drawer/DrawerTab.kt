@@ -33,10 +33,10 @@ import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.Companion.notDisabled
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.Companion.notNone
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel

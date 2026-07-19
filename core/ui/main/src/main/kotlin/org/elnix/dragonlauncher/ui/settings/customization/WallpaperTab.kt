@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.WallpaperTarget
-import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
+import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.common.WallpaperHelper
 import org.elnix.dragonlauncher.enumsui.select.WallpaperEditMode
 import org.elnix.dragonlauncher.i18n.R

@@ -37,8 +37,8 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomIcon.Companion.ge
 import org.elnix.dragonlauncher.base.model.serializables.CustomIcon.Companion.setProperties
 import org.elnix.dragonlauncher.base.model.serializables.CustomIconProperties
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.util.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.definedOrNull
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore

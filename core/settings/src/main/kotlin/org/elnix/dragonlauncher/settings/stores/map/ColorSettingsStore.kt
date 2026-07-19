@@ -9,8 +9,8 @@ import io.github.elnix90.core.objects.color
 import io.github.elnix90.core.stores.MapSettingsStore
 import org.elnix.dragonlauncher.base.theme.AmoledDragonColorScheme
 import org.elnix.dragonlauncher.base.theme.DefaultExtraColors
-import org.elnix.dragonlauncher.base.util.ColorUtils
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.randomColor
 
 @SettingsStore
 public object ColorSettingsStore : MapSettingsStore() {
@@ -423,7 +423,7 @@ public object ColorSettingsStore : MapSettingsStore() {
 
 
     public suspend fun setAllRandomColors(ctx: Context) {
-        setAllColors(ctx) { ColorUtils.randomColor() }
+        setAllColors(ctx) { randomColor() }
     }
 
     public suspend fun setAllSameColors(ctx: Context, color: Color) {

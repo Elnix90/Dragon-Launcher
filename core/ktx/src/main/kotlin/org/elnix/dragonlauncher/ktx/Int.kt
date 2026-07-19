@@ -1,6 +1,6 @@
 package org.elnix.dragonlauncher.ktx
 
-import androidx.core.graphics.ColorUtils
+import androidx.core.graphics.ColorUtils.RGBToHSL
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
@@ -13,7 +13,7 @@ public fun Int.isBrightColor(): Boolean {
 public val Int.sat : Float
     get() {
         FloatArray(3).also {
-            ColorUtils.RGBToHSL(red, green, blue, it)
+            RGBToHSL(red, green, blue, it)
             return it[1]
         }
     }

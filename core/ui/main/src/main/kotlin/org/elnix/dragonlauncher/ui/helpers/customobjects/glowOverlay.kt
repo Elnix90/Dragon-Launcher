@@ -193,8 +193,8 @@ private inline fun DrawScope.path(lineStrokeWidth: Float, path: Path, color: Col
     val style = when {
         lineStrokeWidth == -1f -> return
         lineStrokeWidth < 0f -> Fill
-        lineStrokeWidth == 0.0f -> Stroke(Stroke.HairlineWidth)
-        else -> Stroke(width)
+        lineStrokeWidth == 0.0f -> Stroke(Stroke.HairlineWidth, cap = StrokeCap.Round)
+        else -> Stroke(width, cap = StrokeCap.Round)
     }
     drawPath(
         path = path,

@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.resolveShape
-import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
+import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 

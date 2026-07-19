@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.settings.customization
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable
@@ -19,6 +20,7 @@ import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
@@ -43,10 +45,13 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastCoerceAtMost
 import io.github.elnix90.logging.logWtf
 import io.github.elnix90.runtime.asMutableState
 import io.github.elnix90.runtime.asState
@@ -65,6 +70,7 @@ import org.elnix.dragonlauncher.enumsui.toggle.ShapesEditTools
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ktx.rotateBy
+import org.elnix.dragonlauncher.ktx.snapToGrid
 import org.elnix.dragonlauncher.ktx.snapToRound
 import org.elnix.dragonlauncher.ktx.toPath
 import org.elnix.dragonlauncher.models.PointsViewModel
@@ -96,9 +102,11 @@ import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.detectTransformGestures
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
+import org.elnix.dragonlauncher.ui.helpers.swipe.backgroundCenteredSquareGrid
 import org.elnix.dragonlauncher.ui.helpers.swipe.centerOfNest
 
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 public fun NestEditScreen(
@@ -106,6 +114,7 @@ public fun NestEditScreen(
     initialNestId: Int,
     onBack: () -> Unit
 ) {
+    val ctx = LocalContext.current
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()
     val pointsService = pointsViewModel.pointsService
@@ -121,18 +130,28 @@ public fun NestEditScreen(
 
 
     var snapShapesOffset by UiSettingsStore.snapShapesOffset.asMutableState()
+    var snapShapesCenter by UiSettingsStore.snapShapesCenter.asMutableState()
     var snapShapesScale by UiSettingsStore.snapShapesScale.asMutableState()
     var snapShapeAngle by UiSettingsStore.snapShapeAngle.asMutableState()
+
     val snapOffsetThreshold = 30.dp.px
 
+    val cellSizeDp by UiSettingsStore.nestsCellSizeDp.asState()
+    val cellSizePx = cellSizeDp.px
+
     fun IntersectionShape.snap(): IntersectionShape = this.copy(
-        offset = if (snapShapesOffset) this.offset.snapToRound(Offset.Zero, snapOffsetThreshold) else this.offset,
+        offset =
+            when {
+                snapShapesCenter && snapShapesOffset -> this.offset.snapToGrid(cellSizePx).snapToRound(Offset.Zero, snapOffsetThreshold)
+                snapShapesCenter -> this.offset.snapToRound(Offset.Zero, snapOffsetThreshold)
+                snapShapesOffset -> this.offset.snapToGrid(cellSizePx)
+                else -> this.offset
+            },
         scale = if (snapShapesScale) this.scale.snapToRound(1f, 0.5f) else this.scale,
         angle = if (snapShapeAngle) this.angle.snapToRound(0f, 20f) else this.angle
     )
 
-    val cellSizeDp by UiSettingsStore.widgetsCellSizeDp.asState()
-    val cellSizePx = cellSizeDp.px // TODO
+
     var showMoreSheet by remember { mutableStateOf(false) }
 
     val rowsScrollStates = List(3) { rememberScrollState() }
@@ -197,6 +216,22 @@ public fun NestEditScreen(
     val angle: Animatable<Float, AnimationVector1D> = manipulationSystem.angle
     val zoom: Animatable<Float, AnimationVector1D> = manipulationSystem.zoom
 
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+    val extraColors = LocalExtraColors.current
+    val config = LocalResources.current.configuration
+
+    /**
+     * I am soooooooooooooo proud of this thing actually
+     */
+    val cellNumber = remember(cellSizePx,zoom.value, offset.value) {
+        val dist = offset.value.getDistance()
+        val screenMaxDimension = with(density) {
+            maxOf(config.screenHeightDp, config.screenWidthDp).dp.toPx()
+        }
+
+        (((dist + screenMaxDimension) / cellSizePx) * 1.5 * (1 / zoom.value)).toInt().fastCoerceAtMost(5000)
+    }
 
     SettingsScaffold(
         title = stringResource(R.string.edit_nest_arg, nestId),
@@ -260,6 +295,7 @@ public fun NestEditScreen(
                     checked = {
                         when (it) {
                             ShapesEditTools.SnapOffset -> snapShapesOffset
+                            ShapesEditTools.SnapCenter -> snapShapesCenter
                             ShapesEditTools.SnapScale -> snapShapesScale
                             ShapesEditTools.SnapAngle -> snapShapeAngle
                         }
@@ -267,6 +303,7 @@ public fun NestEditScreen(
                 ) {
                     when (it) {
                         ShapesEditTools.SnapOffset -> snapShapesOffset = !snapShapesOffset
+                        ShapesEditTools.SnapCenter -> snapShapesCenter = !snapShapesCenter
                         ShapesEditTools.SnapScale -> snapShapesScale = !snapShapesScale
                         ShapesEditTools.SnapAngle -> snapShapeAngle = !snapShapeAngle
                     }
@@ -418,10 +455,16 @@ public fun NestEditScreen(
                             transformOrigin = TransformOrigin(0f, 0f)
                         }
                 ) {
-                    val primaryColor = MaterialTheme.colorScheme.primary
-                    val extraColors = LocalExtraColors.current
-
                     Canvas(Modifier.fillMaxSize()) {
+                        if (snapShapesOffset) {
+                            backgroundCenteredSquareGrid(
+                                cellSizePx = cellSizePx,
+                                color = onBackgroundColor,
+                                center = center,
+                                cells = cellNumber
+                            )
+                        }
+                        
                         paths.forEach { (shape, path) ->
                             val selected = shape.id == selectedShapeId
                             this.IntersectionShape(
@@ -579,6 +622,8 @@ public fun NestEditScreen(
                     text = stringResource(R.string.current_nest, nestId),
                     modifier = Modifier.fillMaxWidth()
                 )
+
+                HorizontalDivider()
 
                 Setting(UiSettingsStore.nestsCellSizeDp)
             }

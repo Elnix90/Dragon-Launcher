@@ -27,16 +27,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
-import org.elnix.dragonlauncher.base.util.ColorUtils.randomColor
-import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
-import org.elnix.dragonlauncher.base.util.ColorUtils.toHexWithAlpha
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Copy
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Paste
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Random
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Reset
+import org.elnix.dragonlauncher.ktx.alphaMultiplier
+import org.elnix.dragonlauncher.ktx.randomColor
+import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
+import org.elnix.dragonlauncher.ktx.toHexWithAlpha
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 
 
@@ -77,7 +77,7 @@ private fun ColorPickerButton(
                             onReset()
                         }
 
-                        Copy -> ctx.copyToClipboard(currentColor.toHexWithAlpha())
+                        Copy -> ctx.copyToClipboard(currentColor.toHexWithAlpha)
                         Paste -> {
                             val newColor = pasteColorHexFromClipboard(ctx)
                             newColor?.let { pasted ->

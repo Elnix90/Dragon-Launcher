@@ -32,7 +32,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.action
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Points
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
+import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.actions.FinalPointIcon
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec

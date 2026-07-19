@@ -13,7 +13,7 @@ import org.robolectric.RobolectricTestRunner
  *
  * These extensions operate on Android Color integers (ARGB format) using
  * [Color.red], [Color.green], [Color.blue] from `androidx.core:core-ktx`
- * and [androidx.core.graphics.ColorUtils.RGBToHSL] from `androidx.core:core-ktx`.
+ * and [androidx.core.graphics.RGBToHSL] from `androidx.core:core-ktx`.
  *
  * - [isBrightColor]: determines perceived brightness using the luminance formula
  *   (0.299R + 0.587G + 0.114B) and returns true if the color is "bright"

@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ktx
 
+import android.Manifest
 import android.app.Activity
 import android.app.SearchManager
 import android.content.ActivityNotFoundException
@@ -12,6 +13,9 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.provider.DocumentsContract
 import android.provider.OpenableColumns
 import android.provider.Settings
@@ -19,6 +23,7 @@ import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
@@ -285,4 +290,23 @@ public fun Context.disableKeyboard(disableSoftKey: Boolean) {
     } else {
         activity.window.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
     }
+}
+
+/**
+ * Vibrates the device for the given duration using the appropriate API for the current SDK level.
+ *
+ * @receiver [Context] The context used to retrieve the [Vibrator] or [VibratorManager] system service.
+ * @param milliseconds Duration of the vibration in milliseconds.
+ */
+@RequiresPermission(Manifest.permission.VIBRATE)
+public fun Context.vibrate(milliseconds: Long) {
+    val vibrator = if (Build.VERSION.SDK_INT >= 31) {
+        val manager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+        manager.defaultVibrator
+    } else {
+        @Suppress("DEPRECATION")
+        getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    }
+
+    vibrator.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
 }

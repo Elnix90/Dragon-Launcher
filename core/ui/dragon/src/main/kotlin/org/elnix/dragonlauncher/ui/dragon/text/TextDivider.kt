@@ -16,7 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
+import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 
 
 @Deprecated("use DragonSettingGroup instead")

@@ -40,13 +40,13 @@ import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_ISSUES_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_RELEASES_LINK
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.LifecycleUtils.closeApp
 import org.elnix.dragonlauncher.common.utils.VersionsUtils.isBetaVersion
 import org.elnix.dragonlauncher.common.utils.rememberVersionCode
 import org.elnix.dragonlauncher.common.utils.rememberVersionName
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ktx.openUrl
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore

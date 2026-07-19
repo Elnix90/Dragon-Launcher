@@ -47,10 +47,10 @@ import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.action
 import org.elnix.dragonlauncher.base.model.serializables.CycleActionStage
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.base.util.ColorUtils.definedOrNull
 import org.elnix.dragonlauncher.enumsui.select.PointFeaturePanel
 import org.elnix.dragonlauncher.enumsui.select.SelectedUnselectedViewMode
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.definedOrNull
 import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors

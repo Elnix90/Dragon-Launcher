@@ -108,6 +108,16 @@ public fun Offset.snapToRound(snapTo: Offset, threshold: Float): Offset {
     )
 }
 
+/**
+ * Snaps both x and y of the Offset to integers if they cross the threshold.
+ * @param cellSizePx The size of the virtual grid to be snapped on
+ */
+public fun Offset.snapToGrid(cellSizePx: Float): Offset {
+    return Offset(
+        x = (this.x / cellSizePx).toInt() * cellSizePx,
+        y = (this.y / cellSizePx).toInt() * cellSizePx
+    )
+}
 
 /**
  * Determines whether a pointer position lies within the allowed interaction zone.

@@ -86,6 +86,12 @@ public object UiSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
+    public val snapShapesCenter: BooleanSettingObject = boolean(
+        title = R.string.snap_shapes_center,
+        default = true
+    )
+
+    @SettingKey
     public val snapShapesScale: BooleanSettingObject = boolean(
         title = R.string.snap_shapes_scale,
         default = false

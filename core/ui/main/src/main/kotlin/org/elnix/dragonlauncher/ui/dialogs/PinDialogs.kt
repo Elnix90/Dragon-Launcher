@@ -68,9 +68,9 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.IconShape.Companion.pinMaterialShapes
 import org.elnix.dragonlauncher.base.resolveShape
-import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
-import org.elnix.dragonlauncher.base.util.HapticUtils.vibrate
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
+import org.elnix.dragonlauncher.ktx.vibrate
 import org.elnix.dragonlauncher.models.LockScreenViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore

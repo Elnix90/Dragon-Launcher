@@ -43,15 +43,15 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.util.ColorUtils.randomColor
-import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
-import org.elnix.dragonlauncher.base.util.ColorUtils.toHexWithAlpha
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.pasteClipboard
 import org.elnix.dragonlauncher.enumsui.select.ColorPickerMode
 import org.elnix.dragonlauncher.enumsui.toggle.ColorActions
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.randomColor
+import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.ktx.toHexWithAlpha
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -197,10 +197,10 @@ private fun ColorPicker(
     // Synchronize pager state with stored mode
     val pagerState = rememberPagerState(initialPage = initialPage) { pickerModes.size }
 
-    var hexText by remember { mutableStateOf(color.toHexWithAlpha()) }
+    var hexText by remember { mutableStateOf(color.toHexWithAlpha) }
 
     LaunchedEffect(color) {
-        hexText = color.toHexWithAlpha()
+        hexText = color.toHexWithAlpha
     }
 
     val currentMode = pickerModes[pagerState.currentPage]
@@ -274,7 +274,7 @@ private fun ColorPicker(
                     onClick = {
                         val newColor = pasteColorHexFromClipboard(ctx)
                         newColor?.let { pasted ->
-                            hexText = pasted.toHexWithAlpha()
+                            hexText = pasted.toHexWithAlpha
                             onColorSelected(pasted)
                         }
                     },

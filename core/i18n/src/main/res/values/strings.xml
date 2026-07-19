@@ -1024,6 +1024,7 @@
     <string name="animation_when_snapping">Animation when snapping</string>
     <string name="animation_when_snapping_desc">Use expressive animation to animate the snapping</string>
     <string name="snap_shapes_offset">Snap shapes offset</string>
+    <string name="snap_shapes_center">Snap shapes center</string>
     <string name="snap_shapes_scale">Snap shapes scale</string>
     <string name="snap_shapes_angle">Snap shapes angle</string>
     <string name="nest_debug_info">Nest debug info</string>

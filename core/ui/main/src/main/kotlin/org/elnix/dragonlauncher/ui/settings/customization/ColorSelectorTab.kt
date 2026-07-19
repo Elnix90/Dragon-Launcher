@@ -49,7 +49,7 @@ import androidx.compose.ui.window.DialogProperties
 import io.github.elnix90.core.objects.ColorSettingObject
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
+import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.enumsui.select.ColorSelectorModes
 import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes
 import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.Amoled

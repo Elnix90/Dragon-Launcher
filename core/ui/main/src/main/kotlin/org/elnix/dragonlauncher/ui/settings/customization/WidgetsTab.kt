@@ -372,6 +372,8 @@ public fun WidgetsTab(
                         transformOrigin = TransformOrigin(0f, 0f)
                     }
             ) {
+                val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+
                 /**
                  * Draw the grid of snapping that fills the entire screen
                  */
@@ -382,7 +384,7 @@ public fun WidgetsTab(
                         .conditional(snapMove) {
                             drawWithCache {
                                 onDrawBehind {
-                                    backgroundGrid(cellSizePx)
+                                    backgroundGrid(cellSizePx, onBackgroundColor)
                                 }
                             }
                         }
