@@ -792,21 +792,16 @@ internal class PointsServiceImpl(
         angleRad: Float,
         rotationRad: Float,
     ): Offset {
-//        logD(POINTS_TAG) { "Computing shape: $iconShape" }
         return when (iconShape) {
             is IconShape.Circle -> circleBoundary(halfSize, angleRad)
 
-            is IconShape.Square,
-            is IconShape.RoundedSquare,
-            is IconShape.Cookie4Sided ->
-                polygonBoundary(4, halfSize, angleRad, rotationRad)
-
-            is IconShape.Diamond ->
-                polygonBoundary(4, halfSize, angleRad, rotationRad + (PI / 4f).toFloat())
-
             is IconShape.Triangle,
-            is IconShape.PixelTriangle ->
+            is IconShape.RoundedTriangle ->
                 polygonBoundary(3, halfSize, angleRad, rotationRad)
+
+            is IconShape.Square,
+            is IconShape.RoundedSquare ->
+                polygonBoundary(4, halfSize, angleRad, rotationRad)
 
             is IconShape.Pentagon ->
                 polygonBoundary(5, halfSize, angleRad, rotationRad)
@@ -815,17 +810,24 @@ internal class PointsServiceImpl(
             is IconShape.Cookie6Sided ->
                 polygonBoundary(6, halfSize, angleRad, rotationRad)
 
+            is IconShape.Heptagon,
             is IconShape.Cookie7Sided ->
                 polygonBoundary(7, halfSize, angleRad, rotationRad)
+
+            is IconShape.Octagon ->
+                polygonBoundary(8, halfSize, angleRad, rotationRad)
 
             is IconShape.Cookie9Sided ->
                 polygonBoundary(9, halfSize, angleRad, rotationRad)
 
+            is IconShape.Decagon ->
+                polygonBoundary(10, halfSize, angleRad, rotationRad)
+
             is IconShape.Cookie12Sided ->
                 polygonBoundary(12, halfSize, angleRad, rotationRad)
 
-            is IconShape.Custom ->
-                polygonBoundary(iconShape.numVertices, halfSize, angleRad, rotationRad)
+//            is IconShape.Custom ->
+//                polygonBoundary(iconShape.numVertices, halfSize, angleRad, rotationRad)
 
             else -> circleBoundary(halfSize, angleRad)
         }

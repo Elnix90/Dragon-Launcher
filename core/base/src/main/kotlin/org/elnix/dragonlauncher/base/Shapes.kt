@@ -50,6 +50,7 @@ public fun IconShape?.resolveShape(default: IconShape = IconShape.PlatformDefaul
             IconShape.Teardrop -> TeardropShape
             IconShape.Square -> RoundedCornerShape(0)
             IconShape.Circle -> CircleShape
+            IconShape.Triangle -> TriangleShape
             IconShape.Pentagon -> PentagonShape
             IconShape.Decagon -> DecagonShape
             IconShape.Heptagon -> HeptagonShape
@@ -67,7 +68,7 @@ public fun IconShape?.resolveShape(default: IconShape = IconShape.PlatformDefaul
                 IconShape.SemiCircle -> MaterialShapes.SemiCircle
                 IconShape.Oval -> MaterialShapes.Oval
                 IconShape.Pill -> MaterialShapes.Pill
-                IconShape.Triangle -> MaterialShapes.Triangle
+                IconShape.RoundedTriangle -> MaterialShapes.Triangle
                 IconShape.Diamond -> MaterialShapes.Diamond
                 IconShape.ClamShell -> MaterialShapes.ClamShell
                 IconShape.Gem -> MaterialShapes.Gem
@@ -89,7 +90,6 @@ public fun IconShape?.resolveShape(default: IconShape = IconShape.PlatformDefaul
                 IconShape.Puffy -> MaterialShapes.Puffy
                 IconShape.PuffyDiamond -> MaterialShapes.PuffyDiamond
                 IconShape.PixelCircle -> MaterialShapes.PixelCircle
-                IconShape.PixelTriangle -> MaterialShapes.PixelTriangle
                 IconShape.Bun -> MaterialShapes.Bun
 
                 IconShape.RoundedSquare -> RoundedPolygon(
@@ -282,6 +282,7 @@ private val EasterEggShape: Shape
 
 
 
+private val TriangleShape = Polygon(3)
 private val PentagonShape = Polygon(5)
 private val HexagonShape = Polygon(6)
 private val HeptagonShape = Polygon(7)

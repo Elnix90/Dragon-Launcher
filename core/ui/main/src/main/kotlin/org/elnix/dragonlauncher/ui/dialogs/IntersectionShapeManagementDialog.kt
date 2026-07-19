@@ -159,7 +159,6 @@ private fun ShapeItem(
             )
         }
 
-
         DragonIconButton(
             icon = R.drawable.close,
             contentDescription = R.string.remove,
@@ -170,6 +169,7 @@ private fun ShapeItem(
     if (showShapeDialog) {
         ShapePickerDialog(
             selected = shape.shape,
+            allowedShapes = IconShape.allowedNestShapes,
             onDismiss = { showShapeDialog = false }
         ) {
             onChangeShape(it)

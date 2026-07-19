@@ -6,6 +6,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.DragonJson
 import org.elnix.dragonlauncher.base.model.serializables.serializers.CornerRoundingSerializer
+import kotlin.reflect.KClass
 
 @Serializable
 @SerialName("IconShape")
@@ -74,6 +75,8 @@ public sealed class IconShape {
     public object Pill : IconShape()
 
     @Serializable
+    public object RoundedTriangle : IconShape()
+    @Serializable
     public object Triangle : IconShape()
 
     @Serializable
@@ -138,9 +141,6 @@ public sealed class IconShape {
 
     @Serializable
     public object PixelCircle : IconShape()
-
-    @Serializable
-    public object PixelTriangle : IconShape()
 
     @Serializable
     public object Bun : IconShape()
@@ -249,17 +249,27 @@ public sealed class IconShape {
          * This limitation is due to the heavy math required to compute the shape boundary.
          * The Ideal shape is the circle as we can very easily compute the intersection using simple math, but as soon as this becomes a more complicated shape, the result starts to be approximated.
          */
-        public val allowedNestShapes: Set<IconShape> = setOf(
-            Circle,
-            Pentagon,
-            Heptagon,
-            Octagon,
-            Decagon
+        public val allowedNestShapes: Set<KClass< out IconShape>> = setOf(
+            Circle::class,
+            Triangle::class,
+            RoundedTriangle::class,
+            Square::class,
+            RoundedSquare::class,
+            Pentagon::class,
+            Hexagon::class,
+            Cookie6Sided::class,
+            Heptagon::class,
+            Cookie7Sided::class,
+            Hexagon::class,
+            Octagon::class,
+            Cookie9Sided::class,
+            Decagon::class,
+            Cookie12Sided::class
         )
 
 
-        public val allShapes: List<IconShape> by lazy {
-            listOf(
+        public val allShapes: Set<IconShape> by lazy {
+            setOf(
                 PlatformDefault,
                 Circle,
                 Pebble,
@@ -301,15 +311,14 @@ public sealed class IconShape {
                 Puffy,
                 PuffyDiamond,
                 PixelCircle,
-                PixelTriangle,
                 Bun,
                 Heart,
                 Random
             )
         }
 
-        public val allShapesWithoutRandom: List<IconShape> by lazy {
-            allShapes.filterNot { it == Random }
+        public val allShapesWithoutRandom: Set<IconShape> by lazy {
+            allShapes.filterNotTo(mutableSetOf()) { it == Random }
         }
 
         public object IconShapeJson : DragonJson<IconShape>()
