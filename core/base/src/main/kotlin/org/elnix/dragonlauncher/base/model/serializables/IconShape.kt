@@ -162,64 +162,7 @@ public sealed class IconShape {
         val perVertexRounding: List<CornerRounding>? = null
     ) : IconShape()
 
-    override fun toString(): String =
-        when (this) {
-            is Custom -> "Custom"
-            else -> this.javaClass.simpleName
-        }
-
-
-//    override fun toString(): String =
-//        when (this) {
-//            Arch -> "Arch"
-//            Arrow -> "Arrow"
-//            Boom -> "Boom"
-//            Bun -> "Bun"
-//            Burst -> "Burst"
-//            Circle -> "Circle"
-//            ClamShell -> "ClamShell"
-//            Clover4Leaf -> "Clover4Leaf"
-//            Clover8Leaf -> "Clover8Leaf"
-//            Cookie12Sided -> "Cookie12Sided"
-//            Cookie4Sided -> "Cookie4Sided"
-//            Cookie6Sided -> "Cookie6Sided"
-//            Cookie7Sided -> "Cookie7Sided"
-//            Cookie9Sided -> "Cookie9Sided"
-//            is Custom -> "Custom"
-//            Diamond -> "Diamond"
-//            EasterEgg -> "EasterEgg"
-//            Fan -> "Fan"
-//            Flower -> "Flower"
-//            Gem -> "Gem"
-//            Ghostish -> "Ghostish"
-//            Heart -> "Heart"
-//            Hexagon -> "Hexagon"
-//            Oval -> "Oval"
-//            Pebble -> "Pebble"
-//            Pentagon -> "Pentagon"
-//            Pill -> "Pill"
-//            PixelCircle -> "PixelCircle"
-//            PixelTriangle -> "PixelTriangle"
-//            PlatformDefault -> "PlatformDefault"
-//            Puffy -> "Puffy"
-//            PuffyDiamond -> "PuffyDiamond"
-//            Random -> "Random"
-//            RoundedSquare -> "RoundedSquare"
-//            SemiCircle -> "SemiCircle"
-//            Slanted -> "Slanted"
-//            SoftBoom -> "SoftBoom"
-//            SoftBurst -> "SoftBurst"
-//            Square -> "Square"
-//            Squircle -> "Squircle"
-//            Sunny -> "Sunny"
-//            Teardrop -> "Teardrop"
-//            Triangle -> "Triangle"
-//            VerySunny -> "VerySunny"
-//            Decagon -> "Decagon"
-//            Heptagon -> "Heptagon"
-//            Octagon -> "Octagon"
-//        }
-
+    override fun toString(): String = this.javaClass.simpleName
 
     public companion object {
 
@@ -289,6 +232,7 @@ public sealed class IconShape {
                 SemiCircle,
                 Oval,
                 Pill,
+                RoundedTriangle,
                 Triangle,
                 Diamond,
                 ClamShell,
