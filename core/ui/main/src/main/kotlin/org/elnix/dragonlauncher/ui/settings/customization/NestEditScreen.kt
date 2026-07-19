@@ -310,6 +310,8 @@ public fun NestEditScreen(
                 }
             }
 
+            Spacer(5.dp)
+
             RowWithScrollIndicator(rowsScrollStates[2]) {
                 ManipulationSystemReset(manipulationSystem)
 
