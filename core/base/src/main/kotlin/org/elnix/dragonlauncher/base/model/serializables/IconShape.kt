@@ -195,9 +195,7 @@ public sealed class IconShape {
         public val allowedNestShapes: Set<KClass< out IconShape>> = setOf(
             Circle::class,
             Triangle::class,
-            RoundedTriangle::class,
             Square::class,
-            RoundedSquare::class,
             Pentagon::class,
             Hexagon::class,
             Cookie6Sided::class,
