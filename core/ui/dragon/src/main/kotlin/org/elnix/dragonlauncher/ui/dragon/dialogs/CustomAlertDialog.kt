@@ -53,7 +53,7 @@ public fun CustomAlertDialog(
                     .fillMaxWidth()
                     .heightIn(max = maxDialogHeight)
                     .clip(MaterialTheme.shapes.large)
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
                     .padding(top = 15.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(15.dp)
