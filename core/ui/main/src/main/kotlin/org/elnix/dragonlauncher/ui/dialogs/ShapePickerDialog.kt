@@ -2,7 +2,7 @@ package org.elnix.dragonlauncher.ui.dialogs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.IconShape.Companion.allShapes
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
-import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
 import org.elnix.dragonlauncher.ui.helpers.ShapePreview
 import kotlin.reflect.KClass
 
@@ -28,32 +27,28 @@ public fun ShapePickerDialog(
 ) {
 
     val filteredShapes = remember(allowedShapes) {
-       if (allowedShapes != null) {
-           allShapes.filter { it::class in allowedShapes }
-       } else allShapes.toList()
+        if (allowedShapes != null) {
+            allShapes.filter { it::class in allowedShapes }
+        } else allShapes.toList()
     }
 
     DragonModalBottomSheet(onDismissRequest = onDismiss) {
         LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(top = 10.dp, bottom = 50.dp)
+            columns = GridCells.Fixed(4),
+            verticalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.Center,
+            contentPadding = PaddingValues(top = 10.dp, bottom = 50.dp),
+            modifier = Modifier.fillMaxWidth()
         ) {
 
             items(filteredShapes) { shape ->
-                DragonTooltip(
-                    modifier = Modifier.height(70.dp),
-                    description = shape.toString()
+                ShapePreview(
+                    iconShape = shape,
+                    size = 70.dp,
+                    selected = shape == selected
                 ) {
-                    ShapePreview(
-                        iconShape = shape,
-                        modifier = it,
-                        selected = shape == selected
-                    ) {
-                        onPicked(shape)
-                        onDismiss()
-                    }
+                    onPicked(shape)
+                    onDismiss()
                 }
             }
         }

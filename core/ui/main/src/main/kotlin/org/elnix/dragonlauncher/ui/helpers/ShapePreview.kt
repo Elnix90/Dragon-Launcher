@@ -3,10 +3,13 @@ package org.elnix.dragonlauncher.ui.helpers
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -16,18 +19,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.util.ColorUtils.alphaMultiplier
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
-import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 public fun ShapePreview(
     iconShape: IconShape,
     modifier: Modifier = Modifier,
+    size: Dp = 30.dp,
     selected: Boolean = false,
     onLongClick: (() -> Unit)? = null,
     onClick: (() -> Unit)? = null
@@ -38,39 +43,47 @@ public fun ShapePreview(
     )
 
     Box(
-        modifier = Modifier
-            .padding(5.dp)
-            .then(modifier)
+        modifier = modifier
             .aspectRatio(1f, true)
+            .size(size)
+            .clip(MaterialTheme.shapes.extraLarge)
             .conditional(onClick) {
-                shapedClickable(onLongClick = onLongClick, onClick = it)
+                combinedClickable(onLongClick = onLongClick, onClick = it)
             },
         contentAlignment = Alignment.Center
     ) {
-        if (iconShape !is IconShape.Random) {
-            val shape = iconShape.resolveShape()
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(size / 5)
+        ) {
+            when (iconShape) {
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(5.dp)
-                    .clip(shape)
-                    .background(bgColor.alphaMultiplier(0.5f))
-                    .border(1.dp, MaterialTheme.colorScheme.secondary, shape)
-            )
-        } else {
+                is IconShape.Random -> {
+                    Icon(
+                        painter = painterResource(R.drawable.shuffle),
+                        contentDescription = stringResource(R.string.random_shape),
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(MaterialTheme.shapes.large)
+                            .background(bgColor.alphaMultiplier(0.5f))
+                            .border(1.dp, MaterialTheme.colorScheme.secondary, MaterialTheme.shapes.large)
+                    )
+                }
 
-            Icon(
-                painter = painterResource(R.drawable.shuffle),
-                contentDescription = stringResource(R.string.random_shape),
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(5.dp)
-                    .clip(MaterialTheme.shapes.large)
-                    .background(bgColor.alphaMultiplier(0.5f))
-                    .border(1.dp, MaterialTheme.colorScheme.secondary, MaterialTheme.shapes.large)
-            )
+                else -> {
+                    val shape = iconShape.resolveShape()
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(shape)
+                            .background(bgColor.alphaMultiplier(0.5f))
+                            .border(1.dp, MaterialTheme.colorScheme.secondary, shape)
+                    )
+                }
+            }
         }
     }
 }
