@@ -445,7 +445,7 @@ public fun NestEditScreen(
                             cancelZone = tempCancelZone
                         ),
                         depth = Int.MAX_VALUE,
-                        preventBgErasing = true,
+                        eraseColor = MaterialTheme.colorScheme.background,
                         pointSettingsDisplay = true,
                         showCancelZone = true,
                         hideShapes = true

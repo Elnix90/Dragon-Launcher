@@ -191,7 +191,6 @@ internal class PointsServiceImpl(
 
     private typealias GridCase = Pair<Int, Int>
     private typealias MutablePoints = MutableSet<Point>
-    private typealias NestGrid = MutableMap<Int, MutablePoints>
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val density = ctx.resources.displayMetrics.density
@@ -232,11 +231,9 @@ internal class PointsServiceImpl(
     )
 
     private inline fun applyChange(mutator: () -> Unit) {
-
         undoRedo.applyChange(mutator)
         resetGrids()
-
-        recomposeTrigger.value++
+        recomposeTrigger.value += 1
     }
 
     override fun select(id: Int) {
@@ -488,7 +485,7 @@ internal class PointsServiceImpl(
     }
 
     private var grid: MutableMap<GridCase, MutablePoints> = mutableMapOf()
-    private var nestGrid: NestGrid = mutableMapOf()
+    private var nestGrid: MutableMap<Int, MutablePoints> = mutableMapOf()
     private var furthestPointGrid: MutableMap<Int, Point?> = mutableMapOf()
 
     private var lastTarget: Offset = Offset.Zero

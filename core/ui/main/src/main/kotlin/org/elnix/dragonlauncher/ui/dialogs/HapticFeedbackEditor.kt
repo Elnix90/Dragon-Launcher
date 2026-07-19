@@ -403,7 +403,7 @@ private fun RotatingPlayIcon(
 
     DragonIconButton(
         modifier = Modifier.rotate(playIconRotation.value),
-        enabled = { enabled },
+        enabled = enabled,
         icon = R.drawable.play_arrow,
         contentDescription = stringResource(R.string.play),
     ) {

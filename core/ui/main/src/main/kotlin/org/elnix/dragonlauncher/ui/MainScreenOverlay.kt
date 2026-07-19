@@ -292,7 +292,8 @@ public fun MainScreenOverlay(
     val debugInfo by DebugSettingsStore.mainScreenDebugInfos.asState()
 
     val drawParams = rememberDrawParams(
-        preventBgErasing = false,
+//        preventBgErasing = false,
+        eraseColor = Color.Transparent,
         allowShowPointCenter = false,
         pointSettingsDisplay = false,
         showCancelZone = LocalNestDebugOverlay.current,

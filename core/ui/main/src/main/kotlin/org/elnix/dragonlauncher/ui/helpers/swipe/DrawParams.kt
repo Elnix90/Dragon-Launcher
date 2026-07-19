@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.ui.helpers.swipe
 
 import android.content.Context
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -33,10 +32,10 @@ public data class DrawParams(
 
     val maxNestsDepth: Int,
 
+//    /** Settings Screen only */
+//    val preventBgErasing: Boolean,
     /** Settings Screen only */
-    val preventBgErasing: Boolean,
-    /** Settings Screen only */
-    val eraseColor: Color?,
+    val eraseColor: Color,
     /** Settings Screen only */
     val preventDrawingSubNests: Boolean,
     /** Settings Screen only */
@@ -68,7 +67,8 @@ public data class DrawParams(
  */
 @Composable
 public fun rememberDrawParams(
-    preventBgErasing: Boolean,
+//    preventBgErasing: Boolean,
+    eraseColor: Color,
     allowShowPointCenter: Boolean,
     pointSettingsDisplay: Boolean,
     showCancelZone: Boolean,
@@ -77,7 +77,6 @@ public fun rememberDrawParams(
 ): DrawParams {
     val ctx = LocalContext.current
     val extraColors = LocalExtraColors.current
-    val backgroundColor = MaterialTheme.colorScheme.background
 
     val showCurrentPoint by UiSettingsStore.showPreviewPoint.asState()
     val maxNestsDepth by UiSettingsStore.maxNestsDepth.asState()
@@ -97,9 +96,8 @@ public fun rememberDrawParams(
 
     return remember(
         extraColors,
-        backgroundColor,
         maxNestsDepth,
-        preventBgErasing,
+//        preventBgErasing,
         showPointInCenter,
         allowShowPointCenter,
         showCurrentPoint,
@@ -117,9 +115,9 @@ public fun rememberDrawParams(
             ctx = ctx,
             pointsService = pointsViewModel.pointsService,
             extraColors = extraColors,
-            eraseColor = backgroundColor,
+            eraseColor = eraseColor,
             maxNestsDepth = maxNestsDepth,
-            preventBgErasing = preventBgErasing,
+//            preventBgErasing = preventBgErasing,
             allowShowPointInCenter = allowShowPointCenter && showPointInCenter,
             preventDrawingSubNests = false,
             showCurrentPoint = showCurrentPoint,

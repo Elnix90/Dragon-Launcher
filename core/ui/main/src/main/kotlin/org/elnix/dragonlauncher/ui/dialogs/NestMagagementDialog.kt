@@ -17,8 +17,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -44,6 +44,7 @@ import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -58,6 +59,7 @@ public fun NestManagementDialog(
     onSelect: ((Nest) -> Unit)? = null
 ) {
     val pointsService = pointsViewModel.pointsService
+    val recomposeTrigger by pointsService.recomposeTrigger.asState()
     val nests by pointsService.nests.collectAsState()
 
     var hasClickedNewNest by remember { mutableStateOf<Int?>(null) }
@@ -68,6 +70,8 @@ public fun NestManagementDialog(
             hasClickedNewNest = null
         }
     }
+
+    val nestsList = remember(recomposeTrigger, nests.size) { nests.toList() }
 
     CustomAlertDialog(
         modifier = Modifier.padding(15.dp),
@@ -102,7 +106,7 @@ public fun NestManagementDialog(
                     }
                 }
 
-                items(nests.toList()) { (_, nest) ->
+                items(nestsList) { (_, nest) ->
                     NestManagementItem(
                         nest = nest,
                         modifier = Modifier.animateItem(),
@@ -126,34 +130,37 @@ private fun NestManagementItem(
     val pointsService = pointsViewModel.pointsService
 
     var tempCustomName by remember { mutableStateOf(nest.name ?: "") }
-
-    val editPoint = Point(
-        offset = Offset.Zero,
-        action = Action.OpenCircleNest(nest.id),
-        id = -3
-    )
+    val bgColor = MaterialTheme.colorScheme.surfaceVariant
 
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(120.dp)
             .clip(MaterialTheme.shapes.large)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(bgColor)
             .clickable { onSelect?.invoke() }
             .padding(5.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.End
     ) {
 
         BoxWithConstraints(
             modifier = Modifier
+                .weight(0.5f)
                 .size(100.dp)
         ) {
             val center = constraints.getCenter()
             PointIcon(
                 selected = false,
-                point = editPoint,
+                point = Point(
+                    offset = Offset.Zero,
+                    action = Action.OpenCircleNest(nest.id),
+                    id = -3
+                ),
+                alpha = 0.4f,
                 center = center,
-                preventBgErasing = true
+                preventBgErasing = true,
+                eraseColor = bgColor
             )
         }
 
@@ -163,7 +170,9 @@ private fun NestManagementItem(
 
             Row(
                 modifier = Modifier
+                    .align(Alignment.End)
                     .height(IntrinsicSize.Min)
+                    .padding(end = 8.dp)
                     .clip(MaterialTheme.shapes.large)
                     .clickable {
                         ctx.copyToClipboard(nest.id.toString())
@@ -176,21 +185,18 @@ private fun NestManagementItem(
                     color = MaterialTheme.colorScheme.onSurface.copy(0.9f),
                     fontSize = 10.sp
                 )
-
-                Icon(
-                    painter = painterResource(R.drawable.copy),
-                    contentDescription = stringResource(R.string.copy_id),
-                    modifier = Modifier.size(10.dp)
-                )
             }
 
-            TextField(
+            OutlinedTextField(
+                label = {
+                    Text(stringResource(R.string.custom_name))
+                },
                 value = tempCustomName,
                 onValueChange = {
                     tempCustomName = it
 
                     pointsService.editNest(nest.id) { nest ->
-                        nest.copy(name = it)
+                        nest.copy(name = it.takeIf { it.isNotEmpty() })
                     }
                 },
                 placeholder = {
@@ -208,11 +214,22 @@ private fun NestManagementItem(
                         )
                     }
                 },
-                colors = AppObjectsColors.outlinedTextFieldColors(removeBorder = true),
+                trailingIcon = {
+                    DragonIconButton(
+                        icon = R.drawable.reset,
+                        enabled = tempCustomName.isNotEmpty(),
+                        contentDescription = R.string.reset
+                    ) {
+                        tempCustomName = ""
+
+                        pointsService.editNest(nest.id) { nest ->
+                            nest.copy(name = null)
+                        }
+                    }
+                },
+                colors = AppObjectsColors.outlinedTextFieldColors(),
                 singleLine = true,
                 modifier = Modifier
-                    .clip(MaterialTheme.shapes.large)
-                    .weight(1f)
             )
         }
 
@@ -223,7 +240,7 @@ private fun NestManagementItem(
             icon = R.drawable.close,
             contentDescription = stringResource(if (enabled) R.string.delete_nest else R.string.cannot_delete_nest_0),
             colors = AppObjectsColors.cancelIconButtonColors(),
-            enabled = { enabled }
+            enabled = enabled
         ) {
             pointsService.removeNest(nest.id)
         }

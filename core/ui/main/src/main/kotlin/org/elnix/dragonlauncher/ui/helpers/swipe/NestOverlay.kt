@@ -33,14 +33,16 @@ public fun NestOverlay(
     center: Offset,
     modifier: Modifier = Modifier,
     depth: Int = 1,
-    preventBgErasing: Boolean = false,
+//    preventBgErasing: Boolean = false,
+    eraseColor: Color,
     allowShowPointCenter: Boolean = false,
     pointSettingsDisplay: Boolean = false,
     showCancelZone: Boolean = false,
     hideShapes: Boolean = false
 ) {
     val drawParams = rememberDrawParams(
-        preventBgErasing = preventBgErasing,
+//        preventBgErasing = preventBgErasing,
+        eraseColor = eraseColor,
         allowShowPointCenter = allowShowPointCenter,
         showCancelZone = showCancelZone,
         pointSettingsDisplay = pointSettingsDisplay,
@@ -92,7 +94,6 @@ public fun DrawScope.NestOverlay(
                     depth > 1 || isSettingDisplay || drawParams.showAllShapesInNest || (drawParams.showShape && shape.id in selectedShapes)
 
                 if (showShape) {
-                    // This is computed here, because I cannot draw shapes reactively otherwise in the nest edit screen
                     val path = NestIntersectionShapesPathCache[shape] ?: return@forEach
 
                     this.IntersectionShape(

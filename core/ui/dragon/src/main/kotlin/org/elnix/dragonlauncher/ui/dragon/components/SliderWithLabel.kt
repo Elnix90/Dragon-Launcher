@@ -161,7 +161,7 @@ private fun SliderWithLabelInternal(
                     onReset != null -> {
                         DragonIconButton(
                             onClick = onReset,
-                            enabled = { enabled },
+                            enabled = enabled,
                             icon = R.drawable.reset,
                             contentDescription = "Reset"
                         )

@@ -33,11 +33,11 @@ public fun DragonIconButtonImpl(
 
 @Composable
 public fun DragonIconButton(
-    modifier: Modifier = Modifier,
-    enabled: () -> Boolean = { true },
-    colors: IconButtonColors = AppObjectsColors.iconButtonColors(),
     icon: Int,
     contentDescription: Int,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    colors: IconButtonColors = AppObjectsColors.iconButtonColors(),
     onClick: () -> Unit
 ) {
 
@@ -45,7 +45,7 @@ public fun DragonIconButton(
         DragonIconButtonImpl(
             onClick = onClick,
             modifier = modifier,
-            enabled = enabled(),
+            enabled = enabled,
             colors = colors
         ) {
             Icon(
@@ -61,16 +61,15 @@ public fun DragonIconButton(
     icon: Int,
     contentDescription: String,
     modifier: Modifier = Modifier,
-    enabled: () -> Boolean = { true },
+    enabled: Boolean = true,
     colors: IconButtonColors = AppObjectsColors.iconButtonColors(),
     onClick: () -> Unit
 ) {
-
     DragonTooltip(contentDescription) {
         DragonIconButtonImpl(
             onClick = onClick,
             modifier = modifier,
-            enabled = enabled(),
+            enabled = enabled,
             colors = colors
         ) {
             Icon(

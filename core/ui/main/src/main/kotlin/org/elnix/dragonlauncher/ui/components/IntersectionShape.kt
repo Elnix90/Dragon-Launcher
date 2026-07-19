@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.withTransform
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
+import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowDrawOrder
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
 
 @Suppress("FunctionName")
@@ -46,6 +47,7 @@ public fun DrawScope.IntersectionShape(
             color = color,
             lineStrokeWidth = strokeWith,
             glow = glow,
+            drawOrder = GlowDrawOrder.AfterErase,
             erase = erase,
             eraseColor = eraseColor
         )

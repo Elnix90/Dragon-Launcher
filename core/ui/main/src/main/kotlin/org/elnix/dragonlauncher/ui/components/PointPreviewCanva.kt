@@ -2,6 +2,7 @@ package org.elnix.dragonlauncher.ui.components
 
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -61,7 +62,7 @@ public fun PointPreviewCanvas(
             point = editPoint,
             depth = Int.MAX_VALUE,
             center = Offset(leftX, centerY),
-            preventBgErasing = true,
+            eraseColor = MaterialTheme.colorScheme.background,
             pointSettingsDisplay = false,
             customText = customTextsUnselected
         )
@@ -72,7 +73,7 @@ public fun PointPreviewCanvas(
             point = editPoint,
             depth = Int.MAX_VALUE,
             center = Offset(rightX, centerY),
-            preventBgErasing = true,
+            eraseColor = MaterialTheme.colorScheme.background,
             pointSettingsDisplay = false,
             customText = customTextsSelected
         )

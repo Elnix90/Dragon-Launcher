@@ -195,21 +195,6 @@ public object AppObjectsColors {
     }
 
     @Composable
-    public fun iconButtonColors(): IconButtonColors {
-        return if (LocalUseCustomColorChannels.current) {
-            with(MaterialTheme.colorScheme) {
-                IconButtonDefaults.iconButtonColors(
-                    containerColor = surface,
-                    contentColor = primary,
-                    disabledContainerColor = surfaceVariant,
-                    disabledContentColor = onSurfaceVariant
-                )
-            }
-        } else IconButtonDefaults.iconButtonColors()
-    }
-
-
-    @Composable
     public fun iconToggleButtonColors(): IconToggleButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
@@ -226,14 +211,29 @@ public object AppObjectsColors {
     }
 
     @Composable
+    public fun iconButtonColors(): IconButtonColors {
+        return if (LocalUseCustomColorChannels.current) {
+            with(MaterialTheme.colorScheme) {
+                IconButtonDefaults.iconButtonColors(
+                    containerColor = surface,
+                    contentColor = primary,
+                    disabledContainerColor = Color.Transparent,
+                    disabledContentColor = primary.alphaMultiplier(0.5f)
+                )
+            }
+        } else IconButtonDefaults.iconButtonColors()
+    }
+
+
+    @Composable
     public fun cancelIconButtonColors(): IconButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 IconButtonDefaults.iconButtonColors(
+                    containerColor = surface,
                     contentColor = error,
-                    containerColor = errorContainer,
-                    disabledContentColor = error.alphaMultiplier(0.5f),
-                    disabledContainerColor = errorContainer.alphaMultiplier(0.5f)
+                    disabledContainerColor = Color.Transparent,
+                    disabledContentColor = error.alphaMultiplier(0.5f)
                 )
             }
         } else IconButtonDefaults.iconButtonColors()

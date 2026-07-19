@@ -641,7 +641,8 @@ public fun PointsSettingsScreen(
                     NestOverlay(
                         center = center,
                         nest = currentNest,
-                        preventBgErasing = true,
+                        eraseColor = MaterialTheme.colorScheme.background,
+//                        preventBgErasing = true,
                         pointSettingsDisplay = true,
                         hideShapes = false
                     )
@@ -695,7 +696,7 @@ public fun PointsSettingsScreen(
                             point = point,
                             selected = true,
                             pointSettingsDisplay = true,
-                            preventBgErasing = true,
+                            eraseColor = MaterialTheme.colorScheme.background,
                             customText = customText
                         )
 
@@ -707,13 +708,13 @@ public fun PointsSettingsScreen(
 
                         val nestedNest = pointsService.findNestById(liveTargetId)
                         val nestScale = point.liveNestScale ?: Point.defaultLiveNestScale
-                        val scaledNest = nestedNest scaledBy nestScale
+//                        val scaledNest = nestedNest scaledBy nestScale
 
                         NestOverlay(
                             modifier = Modifier.graphicsLayer { alpha = 0.4f },
                             center = tr.transformedOffset,
-                            nest = scaledNest,
-                            preventBgErasing = true,
+                            nest = nestedNest,
+                            eraseColor = MaterialTheme.colorScheme.background,
                             pointSettingsDisplay = true
                         )
                     }

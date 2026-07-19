@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -136,6 +137,7 @@ public fun WidgetHostView(
 
                 PointIcon(
                     selected = false,
+                    eraseColor = Color.Transparent,
                     point = editPoint,
                     center = center
                 )

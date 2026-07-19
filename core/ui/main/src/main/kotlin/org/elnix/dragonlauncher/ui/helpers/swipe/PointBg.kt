@@ -127,7 +127,7 @@ public fun DrawScope.PointBg(
                 color = glowColor,
             ),
             erase = true,
-            eraseColor =drawParams.eraseColor
+            eraseColor = drawParams.eraseColor
         )
         drawPath(
             path = path,

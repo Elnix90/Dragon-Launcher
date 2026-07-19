@@ -50,7 +50,7 @@ public data class IntersectionShape(
         color = color,
         radius = 5f
     )
-) {
+): Comparable<IntersectionShape> {
     public infix fun scaledBy(scale: Float): IntersectionShape = this.copy(scale = this.scale * scale)
 
 //    /**
@@ -71,6 +71,8 @@ public data class IntersectionShape(
 //    override fun hashCode(): Int {
 //        return (shape.hashCode()  + angle)
 //    }
+
+    override fun compareTo(other: IntersectionShape): Int = id
 
     @Suppress("ConstPropertyName")
     public companion object {

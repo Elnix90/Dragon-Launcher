@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.scale
@@ -23,8 +24,10 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
 public fun PointIcon(
     point: Point,
     center: Offset,
+    eraseColor: Color,
     modifier: Modifier = Modifier,
     depth: Int = 1,
+    alpha: Float = 1f,
     selected: Boolean = false,
 
     preventBgErasing: Boolean = false,
@@ -34,7 +37,7 @@ public fun PointIcon(
     forceShowShapes: Boolean = false
 ) {
     val drawParams = rememberDrawParams(
-        preventBgErasing = preventBgErasing,
+        eraseColor = eraseColor,
         pointSettingsDisplay = pointSettingsDisplay,
         showCancelZone = false,
         allowShowPointCenter = false,
