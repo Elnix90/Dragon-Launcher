@@ -1,11 +1,6 @@
 package org.elnix.dragonlauncher.ui.dragon.components
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.util.ColorUtils.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.base.animation.barsContentTransform
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import kotlin.math.roundToInt
 
@@ -142,10 +138,7 @@ private fun SliderWithLabelInternal(
 
             AnimatedContent(
                 targetState = isEditing,
-                transitionSpec = {
-                    fadeIn() + scaleIn(initialScale = 0.8f) togetherWith
-                            fadeOut() + scaleOut(targetScale = 0.8f)
-                },
+                transitionSpec = { barsContentTransform },
                 label = "icon_button_transition"
             ) { editing ->
                 when {
