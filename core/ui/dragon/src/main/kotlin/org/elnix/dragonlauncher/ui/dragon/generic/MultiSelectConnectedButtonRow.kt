@@ -35,9 +35,9 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
  * for multi-select filter rows, editor toolbars, or any set of orthogonal on/off options.
  *
  * Connected shapes are applied automatically based on position:
- * - First entry → [ButtonGroupDefaults.connectedLeadingButtonShapes]
- * - Last entry  → [ButtonGroupDefaults.connectedTrailingButtonShapes]
- * - Middle entries → [ButtonGroupDefaults.connectedMiddleButtonShapes]
+ * - First entry -> [ButtonGroupDefaults.connectedLeadingButtonShapes]
+ * - Last entry  -> [ButtonGroupDefaults.connectedTrailingButtonShapes]
+ * - Middle entries -> [ButtonGroupDefaults.connectedMiddleButtonShapes]
  *
  * @param T Any type implementing [ToggleButtonOption], typically an enum.
  * @param entries The ordered list of options to display as toggle buttons.

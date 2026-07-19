@@ -53,8 +53,8 @@ public value class CustomHapticFeedback(
      * Plays a custom haptic feedback pattern by sequentially resolving each step in [haptics].
      *
      * Each step is either a vibration or a silent delay, determined by its boolean key:
-     * - `true` → vibrate for the step's duration
-     * - `false` → wait silently for the step's duration
+     * - `true` -> vibrate for the step's duration
+     * - `false` -> wait silently for the step's duration
      *
      * Must be called from a coroutine as it suspends between steps.
      */

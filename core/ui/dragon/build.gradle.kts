@@ -6,6 +6,10 @@ plugins {
 android {
     namespace = "org.elnix.dragonlauncher.ui.dragon"
 
+    defaultConfig {
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
     buildFeatures {
         compose = true
     }
@@ -45,4 +49,12 @@ dependencies {
     implementation(project(":core:common"))
     api(project(":core:enumsui"))
     api(project(":core:settings"))
+
+    // Compose UI instrumented tests (src/androidTest/)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.compose.ui.test.junit4)
+    androidTestImplementation(libs.bundles.test)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.rules)
+    debugImplementation(libs.compose.ui.test.manifest)
 }

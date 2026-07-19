@@ -390,37 +390,33 @@ public fun MainScreenOverlay(
                             }
                     ) {
 
-//                        drawIntoCanvas { canvas ->
-//                            val bounds = Rect(0f, 0f, size.width, size.height)
-//                            canvas.saveLayer(bounds, Paint())
 
-                            val lineColor: Color =
-                                if (rgbLine) Color.hsv(angle360, 1f, 1f)
-                                else extraColors.angleLine
+                        val lineColor: Color =
+                            if (rgbLine) Color.hsv(angle360, 1f, 1f)
+                            else extraColors.angleLine
 
-                            actionLine(
-                                start = liveNestCenterForDraw,
-                                end = effectiveCurrentPos,
-                                sweepAngle = sweepAngle,
-                                lineColor = lineColor,
-                                order = order,
-                                eraseColor = null,
-                                showLineObjectPreview = showLineObjectPreview,
-                                showAngleLineObjectPreview = showAngleLineObjectPreview,
-                                showStartObjectPreview = showStartObjectPreview,
-                                showEndObjectPreview = showEndObjectPreview,
-                                pickedRememberShapeAngle = pickedRememberShapeAngle,
-                                pickedRememberRotationAngle = pickedRememberRotationAngle,
-                                pickedRememberRotationStart = pickedRememberRotationStart,
-                                pickedRememberShapeStart = pickedRememberShapeStart,
-                                pickedRememberRotationEnd = pickedRememberRotationEnd,
-                                pickedRememberShapeEnd = pickedRememberShapeEnd,
-                                lineCustomObject = lineObject,
-                                angleLineCustomObject = angleLineObject,
-                                startCustomObject = startObject,
-                                endCustomObject = endObject
-                            )
-//                        }
+                        actionLine(
+                            start = liveNestCenterForDraw,
+                            end = effectiveCurrentPos,
+                            sweepAngle = sweepAngle,
+                            lineColor = lineColor,
+                            order = order,
+                            eraseColor = null,
+                            showLineObjectPreview = showLineObjectPreview,
+                            showAngleLineObjectPreview = showAngleLineObjectPreview,
+                            showStartObjectPreview = showStartObjectPreview,
+                            showEndObjectPreview = showEndObjectPreview,
+                            pickedRememberShapeAngle = pickedRememberShapeAngle,
+                            pickedRememberRotationAngle = pickedRememberRotationAngle,
+                            pickedRememberRotationStart = pickedRememberRotationStart,
+                            pickedRememberShapeStart = pickedRememberShapeStart,
+                            pickedRememberRotationEnd = pickedRememberRotationEnd,
+                            pickedRememberShapeEnd = pickedRememberShapeEnd,
+                            lineCustomObject = lineObject,
+                            angleLineCustomObject = angleLineObject,
+                            startCustomObject = startObject,
+                            endCustomObject = endObject
+                        )
                     }
                 } else break
             }
@@ -428,7 +424,7 @@ public fun MainScreenOverlay(
     }
 
     // Label on top of the screen.
-    // Priority: inner Live Nest selection → outer Live Nest selection (with cycle stage) → main nest.
+    // Priority: inner Live Nest selection -> outer Live Nest selection (with cycle stage) -> main nest.
     if (showLaunchingAppLabel || showLaunchingAppIcon) {
         PointPreviewTitle(
             point = displayPoint,

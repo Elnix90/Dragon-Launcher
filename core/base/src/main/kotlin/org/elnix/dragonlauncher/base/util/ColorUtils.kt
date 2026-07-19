@@ -66,7 +66,7 @@ public object ColorUtils {
         if (enabled) this else alphaMultiplier(0.5f)
 
 
-    /** Utility: convert Color → #AARRGGBB */
+    /** Utility: convert Color -> #AARRGGBB */
     public fun Color.toHexWithAlpha(prefix: Boolean = true): String =
         "${if (prefix) "#" else ""}%08X".format(this.toArgb())
 

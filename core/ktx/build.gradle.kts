@@ -20,4 +20,11 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.dragon.logging)
+
+    testImplementation(libs.bundles.test)
+    testImplementation(libs.androidx.compose.ui.geometry)
+    testImplementation(libs.kotlinx.coroutines.core)
+
+    testDebugImplementation(libs.robolectric)
+    testDebugImplementation(platform(libs.androidx.compose.bom))
 }

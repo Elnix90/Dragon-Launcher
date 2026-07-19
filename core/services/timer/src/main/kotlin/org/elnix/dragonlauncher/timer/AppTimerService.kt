@@ -202,7 +202,7 @@ public class AppTimerService : Service() {
                     if (stats.isNotEmpty()) {
                         val mostRecentApp = stats.maxByOrNull { it.lastTimeUsed }
                         if (mostRecentApp != null && mostRecentApp.packageName != trackedPackage && mostRecentApp.lastTimeUsed > (now - 10000)) {
-                            // Another app is more recently used → tracked app is not foreground
+                            // Another app is more recently used -> tracked app is not foreground
                             mostRecentApp.packageName
                         }
                     }
@@ -253,7 +253,7 @@ public class AppTimerService : Service() {
                             // User has switched to a different app
                             notForegroundCount++
                             if (notForegroundCount >= maxNotForeground) {
-                                // User has left the app for 15+ seconds → stop service
+                                // User has left the app for 15+ seconds -> stop service
                                 isAppActive = false
                                 break
                             }

@@ -11,8 +11,8 @@ import androidx.compose.runtime.setValue
 public data class SweepAngleState(
     /**
      * The sweep angle to draw, in the range `-360f..360f`.
-     * - Positive → clockwise fill
-     * - Negative → anticlockwise fill
+     * - Positive -> clockwise fill
+     * - Negative -> anticlockwise fill
      * When a full clockwise turn is completed (cumulative hits 360),
      * continuing clockwise starts reducing from -360 upward, creating
      * a smooth unloading-then-reloading illusion.
@@ -42,9 +42,9 @@ public fun rememberSweepAngle(): SweepAngleState {
             // cumulativeAngle grows freely - map it into -360..360
             // by folding at every 360 boundary with alternating sign
             when (val wrapped = cumulativeAngle % 720f) { // fold into -720..720
-                // 0..360 → clockwise fill: 0 → 360
+                // 0..360 -> clockwise fill: 0 -> 360
                 in 0f..360f -> wrapped
-                // 360..720 → continue clockwise: start unloading anticlockwise -360 → 0
+                // 360..720 -> continue clockwise: start unloading anticlockwise -360 -> 0
                 in 360f..720f -> wrapped - 720f
                 // mirror for anticlockwise
                 in -360f..0f -> wrapped

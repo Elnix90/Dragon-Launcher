@@ -18,6 +18,7 @@ public inline infix fun Offset.distanceTo(b: Offset): Float =
 
 
 public fun angle360FromOffset(center: Offset, offset: Offset): Float {
+    if (center == offset) return 0f
     val dx = offset.x - center.x
     val dy = offset.y - center.y
     val angleRad = atan2(dx.toDouble(), -dy.toDouble())
