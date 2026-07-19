@@ -288,7 +288,6 @@
     <string name="apply_wallpaper_to">تطبيق الخلفية على</string>
     <string name="main_screen">الشاشة الرئيسية</string>
     <string name="drawer_screen">شاشة الدرج</string>
-    <string name="show_all_actions_on_current_circle">إظهار جميع الإجراءات في الدائرة الحالية</string>
     <string name="notifications">الإشعارات</string>
     <string name="drawer_action_clear">مسح</string>
     <string name="drawer_action_search_web">بحث في الويب</string>

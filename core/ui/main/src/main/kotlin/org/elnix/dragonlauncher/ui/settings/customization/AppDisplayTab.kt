@@ -111,8 +111,8 @@ public fun AppDisplayTab(
             Setting(UiSettingsStore.animationWhenSnapping, enabled = snap)
 
             val showAllShapes by UiSettingsStore.showAllShapesInNest.asState()
-            var showShape by UiSettingsStore.showShape.asMutableState()
-            Setting(UiSettingsStore.showShape, enabled = !showAllShapes)
+            var showShape by UiSettingsStore.showCurrentShape.asMutableState()
+            Setting(UiSettingsStore.showCurrentShape, enabled = !showAllShapes)
             Setting(UiSettingsStore.showAllShapesInNest) { enabled -> if (enabled) showShape = true }
 
             Setting(UiSettingsStore.multiplyOrSubtractOpacityInLiveNests)

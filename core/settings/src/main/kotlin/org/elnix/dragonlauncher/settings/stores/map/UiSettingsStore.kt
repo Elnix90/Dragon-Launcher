@@ -146,7 +146,7 @@ public object UiSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val showShape: BooleanSettingObject = boolean(
+    public val showCurrentShape: BooleanSettingObject = boolean(
         title = R.string.show_shape,
         description = R.string.show_shape_desc,
         default = true

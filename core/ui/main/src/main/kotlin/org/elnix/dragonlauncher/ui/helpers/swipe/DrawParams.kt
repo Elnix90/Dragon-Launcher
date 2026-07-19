@@ -67,7 +67,6 @@ public data class DrawParams(
  */
 @Composable
 public fun rememberDrawParams(
-//    preventBgErasing: Boolean,
     eraseColor: Color,
     allowShowPointCenter: Boolean,
     pointSettingsDisplay: Boolean,
@@ -87,7 +86,7 @@ public fun rememberDrawParams(
 
     val showPointPreviewCenterStartPosition by UiSettingsStore.showPointPreviewCenterStartPosition.asState()
 
-    val showShape by UiSettingsStore.showShape.asState()
+    val showShape by UiSettingsStore.showCurrentShape.asState()
     val showAllShapesInNest by UiSettingsStore.showAllShapesInNest.asState()
 
     val textMeasurer = rememberTextMeasurer()
@@ -97,7 +96,6 @@ public fun rememberDrawParams(
     return remember(
         extraColors,
         maxNestsDepth,
-//        preventBgErasing,
         showPointInCenter,
         allowShowPointCenter,
         showCurrentPoint,
@@ -117,7 +115,6 @@ public fun rememberDrawParams(
             extraColors = extraColors,
             eraseColor = eraseColor,
             maxNestsDepth = maxNestsDepth,
-//            preventBgErasing = preventBgErasing,
             allowShowPointInCenter = allowShowPointCenter && showPointInCenter,
             preventDrawingSubNests = false,
             showCurrentPoint = showCurrentPoint,

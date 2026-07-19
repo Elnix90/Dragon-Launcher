@@ -86,10 +86,12 @@ import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dialogs.IntersectionShapeManagementDialog
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
+import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
+import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
@@ -564,6 +566,8 @@ public fun NestEditScreen(
     }
 
     if (showMoreSheet) {
+
+
         DragonModalBottomSheet(
             onDismissRequest = { showMoreSheet = false },
         ) {
@@ -612,12 +616,90 @@ public fun NestEditScreen(
                             )
                         }
                     },
+                    trailingIcon = {
+                        DragonIconButton(
+                            icon = R.drawable.reset,
+                            enabled = tempCustomName.isNotEmpty(),
+                            contentDescription = R.string.reset
+                        ) {
+                            tempCustomName = ""
+
+                            pointsService.editNest(nestId) { nest ->
+                                nest.copy(name = null)
+                            }
+                        }
+                    },
                     colors = AppObjectsColors.outlinedTextFieldColors(removeBorder = true),
                     singleLine = true,
                     modifier = Modifier
                         .clip(CircleShape)
                         .fillMaxWidth()
                 )
+
+                val showAllPointsInCurrentShape by UiSettingsStore.showAllPointsInCurrentShape.asState()
+                SwitchRow(
+                    state = currentNest.showAllPointsInCurrentShape ?: showAllPointsInCurrentShape,
+                    title = stringResource(R.string.show_all_actions_on_current_shape),
+                    description = stringResource(R.string.show_all_actions_on_current_shape_desc),
+                    onReset = {
+                        pointsService.editNest(nestId) { old ->
+                            old.copy(showAllPointsInCurrentShape = null)
+                        }
+                    }
+                ) { value ->
+                    pointsService.editNest(nestId) { old ->
+                        old.copy(showAllPointsInCurrentShape = value)
+                    }
+                }
+
+                val showAllPointsInCurrentNest by UiSettingsStore.showAllPointsInCurrentNest.asState()
+                SwitchRow(
+                    state = currentNest.showAllPointsInCurrentNest ?: showAllPointsInCurrentNest,
+                    title = stringResource(R.string.show_all_actions_in_current_nest),
+                    description = stringResource(R.string.show_all_actions_in_current_nest_desc),
+                    onReset = {
+                        pointsService.editNest(nestId) { old ->
+                            old.copy(showAllPointsInCurrentNest = null)
+                        }
+                    }
+                ) { value ->
+                    pointsService.editNest(nestId) { old ->
+                        old.copy(showAllPointsInCurrentNest = value)
+                    }
+                }
+
+                val showCurrentShape by UiSettingsStore.showCurrentShape.asState()
+                SwitchRow(
+                    state = currentNest.showCurrentShape ?: showCurrentShape,
+                    title = stringResource(R.string.show_shape),
+                    description = stringResource(R.string.show_shape_desc),
+                    onReset = {
+                        pointsService.editNest(nestId) { old ->
+                            old.copy(showCurrentShape = null)
+                        }
+                    }
+                ) { value ->
+                    pointsService.editNest(nestId) { old ->
+                        old.copy(showCurrentShape = value)
+                    }
+                }
+
+                val showAllShapesInNest by UiSettingsStore.showAllShapesInNest.asState()
+
+                SwitchRow(
+                    state = currentNest.showAllShapes ?: showAllShapesInNest,
+                    title = stringResource(R.string.show_all_shapes),
+                    description = stringResource(R.string.show_all_shapes_desc),
+                    onReset = {
+                        pointsService.editNest(nestId) { old ->
+                            old.copy(showAllShapes = null)
+                        }
+                    }
+                ) { value ->
+                    pointsService.editNest(nestId) { old ->
+                        old.copy(showAllShapes = value)
+                    }
+                }
 
                 SliderWithLabel(
                     label = stringResource(R.string.cancel_zone),

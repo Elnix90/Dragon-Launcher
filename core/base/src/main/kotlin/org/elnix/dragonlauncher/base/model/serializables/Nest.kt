@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.base.model.serializables
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.geometry.Offset
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.DragonJson
@@ -10,6 +9,8 @@ import org.elnix.dragonlauncher.base.model.DragonJson
 /**
  * New CircleNest system, where every bloc of circles is contained inside one of those*
  * This way, we can navigate across those nests, to achieve more actions, using the jump actions
+ *
+ * **Note** null values means they use the global settings. you can override any nest options in the ***NestEditScreen*** one by one,  per-nest
  */
 @Immutable
 @Serializable
@@ -36,16 +37,28 @@ public data class Nest(
      */
     val name: String? = null,
 
-//    /**
-//     * Same settings as in the global Appearance tab, but applied to this specific nest.
-//     * Names are self-explanatory
-//     */
-//    val showAllActionsOnCurrentShape: Boolean? = null,
-//
-//    /**
-//     * If true, all points in the nest are visible when
-//     */
-//    val showAllPointsOnCurrentNest: Boolean = false,
+    /**
+     * Same settings as in the global Appearance tab, but applied to this specific nest.
+     * Names are self-explanatory
+     */
+    val showAllPointsInCurrentShape: Boolean? = null,
+
+    /**
+     * If true, all points in the nest are visible when
+     */
+    val showAllPointsInCurrentNest: Boolean? = null,
+
+
+    /**
+     * If true, the shape that hosts selected points will be shown
+     */
+    val showCurrentShape: Boolean? = null,
+
+
+    /**
+     * If true, all points in the nest are visible in the nest, regardless of points
+     */
+    val showAllShapes: Boolean? = null
 ) {
 //    override fun toString(): String = "Nest(id = $id, contains ${intersectionShapes.size} shapes)"
 //    override fun toString(): String = "Nest N°$id"
@@ -54,32 +67,25 @@ public data class Nest(
     public infix fun scaledBy(scale: Float): Nest = this
         //this.copy(intersectionShapes = this.intersectionShapes.mapTo(mutableSetOf()) { it scaledBy scale })
 
-    public fun name(): String = this.name ?: id.toString()
+    public fun nameOrId(): String = this.name ?: id.toString()
 
     @Suppress("ConstPropertyName")
     public companion object {
 
         public val defaultIntersectionShapes: Set<IntersectionShape> = setOf(
             IntersectionShape(
-                id = 0,
-                shape = IconShape.Circle,
-                scale = 1f,
-                offset = Offset.Zero
+                id = 0
+             ),
+
+            IntersectionShape(
+                id = 1,
+                scale = 1.5f,
             ),
-//
-//            IntersectionShape(
-//                id = 1,
-//                shape = IconShape.Square,
-//                size = 450f,
-//                offset = Offset.Zero
-//            ),
-//
-//            IntersectionShape(
-//                id = 1,
-//                shape = IconShape.Cookie12Sided,
-//                size = 600f,
-//                offset = Offset.Zero
-//            )
+
+            IntersectionShape(
+                id = 2,
+                scale = 2f,
+            )
         )
 
 

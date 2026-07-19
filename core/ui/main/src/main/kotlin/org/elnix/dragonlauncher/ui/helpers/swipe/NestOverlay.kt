@@ -33,7 +33,6 @@ public fun NestOverlay(
     center: Offset,
     modifier: Modifier = Modifier,
     depth: Int = 1,
-//    preventBgErasing: Boolean = false,
     eraseColor: Color,
     allowShowPointCenter: Boolean = false,
     pointSettingsDisplay: Boolean = false,
@@ -41,7 +40,6 @@ public fun NestOverlay(
     hideShapes: Boolean = false
 ) {
     val drawParams = rememberDrawParams(
-//        preventBgErasing = preventBgErasing,
         eraseColor = eraseColor,
         allowShowPointCenter = allowShowPointCenter,
         showCancelZone = showCancelZone,
@@ -84,14 +82,11 @@ public fun DrawScope.NestOverlay(
     if (!drawParams.hideShapes) {
         repeat(2) { pass ->
             nest.intersectionShapes.forEach { shape ->
-                // Trust me it works
-                // Only draw the shape if:
-                // - forced by settings display
-                // - allowed by settings
-                // - one of the selected points is on that shape
-                // - the shape is on the same nest (it caused issue where all the shapes  of id 0 were lightning up in every nest
-                val showShape =
-                    depth > 1 || isSettingDisplay || drawParams.showAllShapesInNest || (drawParams.showShape && shape.id in selectedShapes)
+
+                val showShape = depth > 1 ||
+                        isSettingDisplay ||
+                        nest.showCurrentShape ?: drawParams.showAllShapesInNest ||
+                        (nest.showCurrentShape ?: drawParams.showShape && shape.id in selectedShapes)
 
                 if (showShape) {
                     val path = NestIntersectionShapesPathCache[shape] ?: return@forEach
@@ -140,10 +135,10 @@ public fun DrawScope.NestOverlay(
             when {
                 depth > 1 -> true
                 isSettingDisplay -> true
-                drawParams.showAllPointsInCurrentNest -> true
+                nest.showAllPointsInCurrentNest ?: drawParams.showAllPointsInCurrentNest -> true
                 else -> {
                     (drawParams.showCurrentPoint && (id in selectedPointsIds)) ||
-                            (drawParams.showAllPointsInCurrentShape && (point.shapeId in selectedShapes))
+                            (nest.showAllPointsInCurrentShape ?: drawParams.showAllPointsInCurrentShape && (point.shapeId in selectedShapes))
                 }
             }
         }
