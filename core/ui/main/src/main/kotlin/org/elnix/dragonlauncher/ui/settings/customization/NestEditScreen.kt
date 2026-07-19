@@ -466,7 +466,7 @@ public fun NestEditScreen(
                             onGestureStart = {
                                 if (!isInDragAroundMode) {
                                     netOffsetChange = Offset.Zero
-                                    witnessShape = paths.keys.find { it.id == selectedShapeId }!!.snap()
+                                    witnessShape = paths.keys.find { it.id == selectedShapeId }?.snap()
                                 }
                             },
                             onGestureEnd = { totalPanChange: Offset, totalZoomChange: Float, totalRotationChange: Float ->
@@ -660,6 +660,8 @@ public fun NestEditScreen(
                 pointsService.editNest(nestId) { old ->
                     old.copy(intersectionShapes = newShapes)
                 }
+                // Reset the selected shape. if you only added new ones, it'll resolve to the same as before, but if you removed the current selected one, it'll deselect cause it won't find it
+                selectedShapeId = newShapes.find { it.id == selectedShapeId }?.id
             }
         ) {
             recomposeTrigger++
