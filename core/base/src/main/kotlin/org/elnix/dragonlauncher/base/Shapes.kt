@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.graphics.shapes.CornerRounding
 import androidx.graphics.shapes.RoundedPolygon
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.material.shapes.toShape
@@ -45,10 +44,11 @@ public fun IconShape?.resolveShape(default: IconShape = IconShape.PlatformDefaul
         when (shapeToResolve) {
             IconShape.Random -> IconShape.allShapesWithoutRandom.random().resolveShape()
             IconShape.PlatformDefault -> PlatformShape
+            IconShape.Square -> RoundedCornerShape(0)
+            IconShape.RoundedSquare -> RoundedCornerShape(25)
             IconShape.Pebble -> PebbleShape
             IconShape.Squircle -> SquircleShape
             IconShape.Teardrop -> TeardropShape
-            IconShape.Square -> RoundedCornerShape(0)
             IconShape.Circle -> CircleShape
             IconShape.Triangle -> TriangleShape
             IconShape.Pentagon -> PentagonShape
@@ -56,7 +56,7 @@ public fun IconShape?.resolveShape(default: IconShape = IconShape.PlatformDefaul
             IconShape.Heptagon -> HeptagonShape
             IconShape.Hexagon -> HexagonShape
             IconShape.Octagon -> OctagonShape
-            IconShape.Heart -> EasterEggShape
+            IconShape.Heart -> HeartShape
 
 
             /** Compute first the [RoundedPolygon] and then use the [toShape] from the library  I copied to convert it to a shape. */
@@ -91,14 +91,6 @@ public fun IconShape?.resolveShape(default: IconShape = IconShape.PlatformDefaul
                 IconShape.PuffyDiamond -> MaterialShapes.PuffyDiamond
                 IconShape.PixelCircle -> MaterialShapes.PixelCircle
                 IconShape.Bun -> MaterialShapes.Bun
-
-                IconShape.RoundedSquare -> RoundedPolygon(
-                    numVertices = 4,
-                    radius = 1f,
-                    centerX = 0f,
-                    centerY = 0f,
-                    rounding = CornerRounding(0.2f),
-                )
 
                 is IconShape.Custom -> RoundedPolygon(
                     numVertices = shapeToResolve.numVertices,
@@ -219,7 +211,7 @@ private val PebbleShape: Shape
         close()
     }
 
-private val EasterEggShape: Shape
+private val HeartShape: Shape
     get() = GenericShape { size, _ ->
         moveTo(
             0.5f * size.width,
@@ -279,7 +271,6 @@ private val EasterEggShape: Shape
         )
         close()
     }
-
 
 
 private val TriangleShape = Polygon(3)
