@@ -9,9 +9,6 @@ import org.junit.Test
  *
  * Covers:
  * - [isBlankJson] / [isNotBlankJson]: lightweight JSON emptiness checks
- * - [camelToSnakeCase]: CamelCase -> snake_case conversion
- * - [snakeToLowerCamelCase]: snake_case -> lowerCamelCase conversion
- * - [snakeToUpperCamelCase]: snake_case -> UpperCamelCase conversion
  */
 class StringKtxTest {
 
