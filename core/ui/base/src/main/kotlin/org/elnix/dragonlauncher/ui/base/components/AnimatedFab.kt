@@ -8,8 +8,10 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,6 +30,7 @@ import org.elnix.dragonlauncher.ui.base.withHaptic
 import org.elnix.dragonlauncher.ui.base.withHapticParam
 
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 public fun AnimatedFab(
     @DrawableRes icon: Int,
@@ -38,7 +41,13 @@ public fun AnimatedFab(
     onClick: () -> Unit
 ) {
     val isPressed by interactionSource.collectIsPressedAsState()
-    val fabAnimation = rememberFancyAnimations(isPressed)
+
+    val fabAnimation = rememberFancyAnimations(
+        isPressed = isPressed,
+        normalShape = MaterialShapes.Cookie9Sided,
+        pressedShape = MaterialShapes.Cookie7Sided
+    )
+
 
     Box(
         modifier = modifier
@@ -63,6 +72,7 @@ public fun AnimatedFab(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 public fun ToggleAnimatedFab(
     checked: Boolean,
@@ -79,7 +89,12 @@ public fun ToggleAnimatedFab(
     val isActivated = if (buttonPressed) {
         !checked
     } else checked
-    val fabAnimation = rememberFancyAnimations(buttonPressed)
+
+    val fabAnimation = rememberFancyAnimations(
+        isPressed = buttonPressed,
+        normalShape = MaterialShapes.Cookie9Sided,
+        pressedShape = MaterialShapes.Cookie7Sided
+    )
 
     Box(
         modifier = modifier

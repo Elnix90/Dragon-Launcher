@@ -6,7 +6,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.toPath
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,6 +17,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.graphics.shapes.Morph
+import androidx.graphics.shapes.RoundedPolygon
 
 public data class FancyAnimation(
     val rotation: Float,
@@ -28,14 +28,13 @@ public data class FancyAnimation(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun rememberFancyAnimations(isPressed: Boolean): FancyAnimation {
+public fun rememberFancyAnimations(
+    isPressed: Boolean,
+    normalShape: RoundedPolygon,
+    pressedShape: RoundedPolygon
+): FancyAnimation {
 
-    val morph = remember {
-        Morph(
-            MaterialShapes.Cookie9Sided,
-            MaterialShapes.Cookie7Sided
-        )
-    }
+    val morph = remember { Morph(start = normalShape, end = pressedShape) }
 
     val outerRotation by animateFloatAsState(
         targetValue = if (isPressed) 360f else 0f,
@@ -86,6 +85,7 @@ public class MorphPolygonShape(
 ) : Shape {
 
     private val matrix = Matrix()
+
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     override fun createOutline(
         size: Size,
