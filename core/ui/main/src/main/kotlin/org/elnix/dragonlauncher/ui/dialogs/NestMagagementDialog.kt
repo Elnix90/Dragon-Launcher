@@ -15,10 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,6 +45,7 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.components.NestNameEditor
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
@@ -130,7 +129,6 @@ private fun NestManagementItem(
     val ctx = LocalContext.current
     val pointsService = pointsViewModel.pointsService
 
-    var tempCustomName by remember { mutableStateOf(nest.name ?: "") }
     val bgColor = MaterialTheme.colorScheme.surfaceVariant
 
     Row(
@@ -188,54 +186,7 @@ private fun NestManagementItem(
                 )
             }
 
-            OutlinedTextField(
-                label = {
-                    Text(stringResource(R.string.custom_name))
-                },
-                value = tempCustomName,
-                onValueChange = {
-                    tempCustomName = it
-
-                    pointsService.editNest(nest.id) { nest ->
-                        nest.copy(name = it.takeIf { it.isNotEmpty() })
-                    }
-                },
-                placeholder = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.edit_rounded),
-                            contentDescription = stringResource(R.string.custom_name)
-                        )
-                        Text(
-                            text = stringResource(R.string.custom_name),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                },
-                trailingIcon = {
-                    DragonIconButton(
-                        icon = R.drawable.reset,
-                        enabled = tempCustomName.isNotEmpty(),
-                        contentDescription = R.string.reset
-                    ) {
-                        tempCustomName = ""
-
-                        pointsService.editNest(nest.id) { nest ->
-                            nest.copy(name = null)
-                        }
-                    }
-                },
-                colors = AppObjectsColors.outlinedTextFieldColors(removeBorder = true),
-                singleLine = true,
-                modifier = Modifier
-                    .clip(CircleShape)
-//                colors = AppObjectsColors.outlinedTextFieldColors(),
-//                singleLine = true,
-//                modifier = Modifier
-            )
+            NestNameEditor(nest, pointsService)
         }
 
 

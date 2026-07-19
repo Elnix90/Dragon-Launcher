@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,7 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,7 +37,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.TransformOrigin
@@ -73,7 +70,6 @@ import org.elnix.dragonlauncher.ktx.toPath
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants.dragonSettingGroupPaddingValues
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asMutableState
@@ -82,11 +78,11 @@ import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.IntersectionShape
 import org.elnix.dragonlauncher.ui.components.ManipulationSystemReset
+import org.elnix.dragonlauncher.ui.components.NestNameEditor
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dialogs.IntersectionShapeManagementDialog
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -149,7 +145,6 @@ public fun NestEditScreen(
     val isInDragAroundMode: Boolean = selectedShapeId == null
 
     var tempCancelZone by remember { mutableIntStateOf(currentNest.cancelZone) }
-    var tempCustomName by remember { mutableStateOf(currentNest.name ?: "") }
 
     val paths: SnapshotStateMap<IntersectionShape, Path> = remember { mutableStateMapOf() }
     fun addPath(shape: IntersectionShape) {
@@ -592,49 +587,7 @@ public fun NestEditScreen(
                 title = R.string.nest_edition,
                 contentPadding = dragonSettingGroupPaddingValues
             ) {
-                TextField(
-                    value = tempCustomName,
-                    onValueChange = {
-                        tempCustomName = it
-
-                        pointsService.editNest(nestId) { nest ->
-                            nest.copy(name = it)
-                        }
-                    },
-                    placeholder = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.edit_rounded),
-                                contentDescription = stringResource(R.string.custom_name)
-                            )
-                            Text(
-                                text = stringResource(R.string.custom_name),
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    },
-                    trailingIcon = {
-                        DragonIconButton(
-                            icon = R.drawable.reset,
-                            enabled = tempCustomName.isNotEmpty(),
-                            contentDescription = R.string.reset
-                        ) {
-                            tempCustomName = ""
-
-                            pointsService.editNest(nestId) { nest ->
-                                nest.copy(name = null)
-                            }
-                        }
-                    },
-                    colors = AppObjectsColors.outlinedTextFieldColors(removeBorder = true),
-                    singleLine = true,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .fillMaxWidth()
-                )
+                NestNameEditor(currentNest, pointsService, Modifier.fillMaxWidth())
 
                 val showAllPointsInCurrentShape by UiSettingsStore.showAllPointsInCurrentShape.asState()
                 SwitchRow(
