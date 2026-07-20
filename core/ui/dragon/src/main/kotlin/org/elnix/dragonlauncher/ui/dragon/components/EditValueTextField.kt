@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ui.dragon.components
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.interaction.FocusInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,16 +28,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.UiConstants
+import org.elnix.dragonlauncher.ui.base.animation.barsContentTransform
 
 @Composable
 public fun EditValueTextField(
     value: String,
+    modifier: Modifier,
     onValueChange: (String) -> Unit,
     enabled: Boolean = true,
     textColor: Color? = null,
+    isError: Boolean = false,
     backgroundColor: Color,
+    onReset: () -> Unit,
     onFocusChange: ((Boolean) -> Unit)? = null,
     onDone: () -> Unit
 ) {
@@ -101,22 +108,49 @@ public fun EditValueTextField(
             textAlign = TextAlign.Center,
             fontSize = 13.sp
         ),
+        isError = isError,
+        trailingIcon = {
+            AnimatedContent(
+                targetState = isEditing,
+                transitionSpec = { barsContentTransform },
+                label = "icon_button_transition"
+            ) { editing ->
+                when {
+                    editing -> {
+                        DragonIconButton(
+                            onClick = onDone,
+                            colors = IconButtonDefaults.iconButtonColors(containerColor = backgroundColor),
+                            icon = R.drawable.check,
+                            contentDescription = "Validate"
+                        )
+                    }
+
+                    else -> {
+                        DragonIconButton(
+                            onClick = onReset,
+                            enabled = enabled,
+                            icon = R.drawable.reset,
+                            contentDescription = "Reset"
+                        )
+                    }
+                }
+            }
+        },
         colors = AppObjectsColors.outlinedTextFieldColors(
             removeBorder = true,
             backgroundColor = backgroundColor,
             onBackgroundColor = textColor
-
         ),
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Number,
+            keyboardType = KeyboardType.DecimalSigned,
             imeAction = ImeAction.Done
         ),
         keyboardActions = KeyboardActions(
             onDone = { onDone() }
         ),
         shape = shape,
-        modifier = Modifier
-            .width(80.dp)
+        modifier = modifier
+            .width(120.dp)
             .height(50.dp)
     )
 }

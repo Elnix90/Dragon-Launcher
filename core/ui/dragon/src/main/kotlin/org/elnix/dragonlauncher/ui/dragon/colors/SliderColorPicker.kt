@@ -20,6 +20,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 @Composable
 public fun SliderColorPicker(
     actualColor: Color,
+    initialColor: Color,
     onColorSelected: (Color) -> Unit
 ) {
     var red by remember(actualColor) { mutableFloatStateOf(actualColor.red) }
@@ -40,7 +41,11 @@ public fun SliderColorPicker(
             value = red,
             color = Color.Red,
             backgroundColor = Color.Red.alphaMultiplier(0.5f),
-            valueRange = 0f..1f
+            valueRange = 0f..1f,
+            onReset = {
+                red = initialColor.red
+                onColorSelected(color.copy(red = initialColor.red))
+            }
         ) {
             red = it
             onColorSelected(color)
@@ -50,7 +55,11 @@ public fun SliderColorPicker(
             value = green,
             color = Color.Green,
             backgroundColor = Color.Green.alphaMultiplier(0.5f),
-            valueRange = 0f..1f
+            valueRange = 0f..1f,
+            onReset = {
+                green = initialColor.green
+                onColorSelected(color.copy(green = initialColor.green))
+            }
         ) {
             green = it
             onColorSelected(color)
@@ -60,7 +69,11 @@ public fun SliderColorPicker(
             value = blue,
             color = Color.Blue,
             backgroundColor = Color.Blue.alphaMultiplier(0.5f),
-            valueRange = 0f..1f
+            valueRange = 0f..1f,
+            onReset = {
+                blue = initialColor.blue
+                onColorSelected(color.copy(blue = initialColor.blue))
+            }
         ) {
             blue = it
             onColorSelected(color)

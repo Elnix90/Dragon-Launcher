@@ -243,9 +243,9 @@
     <string name="no_custom_icon">No custom icon</string>
     <string name="no_search_match">No search match</string>
     <string name="size">Size</string>
-    <string name="shape_scale">Scale: %1$f</string>
+    <string name="shape_scale">Scale: %1$.2f</string>
     <string name="rotation">Rotation</string>
-    <string name="rotation_arg">Rotation: %1$f</string>
+    <string name="rotation_arg">Rotation: %1$.2f°</string>
     <string name="scale_x">Scale X</string>
     <string name="scale_y">Scale Y</string>
     <string name="open_app">Open App</string>
@@ -1060,4 +1060,8 @@
     <string name="gamble_apps">Gamble apps</string>
     <string name="show_app_launch_preview_desc">Show the selected point in the main screen</string>
     <string name="stroke_width_explanation">-1 = No draw; &lt; 0 = Fill; 0 = 1 pixel; &gt; 0 = value</string>
+    <string name="offset">Offset</string>
+    <string name="custom_object">Custom Object</string>
+    <string name="show_grid">Show grid</string>
+    <string name="show_grid_when_snapping_is_on">Show the grid when snapping in enabled</string>
 </resources>

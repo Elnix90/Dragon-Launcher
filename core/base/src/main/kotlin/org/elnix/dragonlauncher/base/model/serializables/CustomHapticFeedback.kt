@@ -5,8 +5,8 @@ import androidx.compose.runtime.Immutable
 import kotlinx.coroutines.delay
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.elnix.dragonlauncher.base.util.HapticUtils.vibrate
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.vibrate
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 

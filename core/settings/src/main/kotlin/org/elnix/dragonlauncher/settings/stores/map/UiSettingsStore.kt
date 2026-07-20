@@ -206,6 +206,14 @@ public object UiSettingsStore : MapSettingsStore() {
         default = ""
     )
 
+
+    @SettingKey
+    public val showGridWhenSnappingIsOn: BooleanSettingObject = boolean(
+        title = R.string.show_grid,
+        description = R.string.show_grid_when_snapping_is_on,
+        default = true
+    )
+
     @SettingKey
     public val nestsCellSizeDp: DpSettingObject = dp(
         title = R.string.nests_cell_size,

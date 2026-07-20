@@ -1,11 +1,26 @@
 package org.elnix.dragonlauncher.ui.components
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
+import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape.Companion.IntersectionShapeDefaults
+import org.elnix.dragonlauncher.base.resolveShape
+import org.elnix.dragonlauncher.base.theme.LocalExtraColors
+import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowDrawOrder
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
 
@@ -21,7 +36,7 @@ public fun DrawScope.IntersectionShape(
 
     val size = shape.getSize(this.density)
     val color = shape.color ?: shapesColor
-    val strokeWith = shape.borderStroke ?: IntersectionShape.borderStrokeDefault
+    val strokeWith = shape.borderStroke ?: IntersectionShapeDefaults.borderStrokeDefault
     val rotation = shape.angle
     val position = center + shape.offset
     val glow = shape.glow
@@ -52,4 +67,25 @@ public fun DrawScope.IntersectionShape(
             eraseColor = eraseColor
         )
     }
+}
+
+@Composable
+public fun IntersectionShapePreview(
+    shape: IntersectionShape,
+    size: Dp,
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null
+) {
+    val resolvedShape = shape.shape.resolveShape()
+    Box(
+        modifier = modifier
+            .size(size)
+            .rotate(shape.angle)
+            .clip(MaterialTheme.shapes.medium)
+            .conditional(onClick) {
+                clickable(onClick = it)
+            }
+            .clip(resolvedShape)
+            .border(1.dp, shape.color ?: LocalExtraColors.current.shapes, resolvedShape)
+    )
 }

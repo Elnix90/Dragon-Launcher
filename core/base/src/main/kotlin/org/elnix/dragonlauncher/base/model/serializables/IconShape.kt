@@ -26,6 +26,9 @@ public sealed class IconShape {
     public object Square : IconShape()
 
     @Serializable
+    public object RightSquare : IconShape()
+
+    @Serializable
     public object Pentagon : IconShape()
 
     @Serializable
@@ -215,6 +218,7 @@ public sealed class IconShape {
                 Circle,
                 Pebble,
                 Square,
+                RightSquare,
                 Pentagon,
                 Hexagon,
                 Heptagon,

@@ -50,7 +50,7 @@ public fun Offset.angleDeg(): Float {
 public inline fun Offset.rotateBy(angle: Float): Offset {
     if (angle == 0f || angle == 360f) return this
 
-    val angleInRadians: Double = angle.toRadians()
+    val angleInRadians: Double = angle.radians
     val cos: Double = cos(angleInRadians)
     val sin: Double = sin(angleInRadians)
 

@@ -139,7 +139,7 @@ public object AppObjectsColors {
                     focusedBorderColor = if (!removeBorder) primary else Color.Transparent,
                     unfocusedBorderColor = if (!removeBorder) outline else Color.Transparent,
                     disabledBorderColor = if (!removeBorder) outline.alphaMultiplier(0.5f) else Color.Transparent,
-                    errorBorderColor = if (!removeBorder) error else Color.Transparent,
+                    errorBorderColor = error,
 
                     focusedLeadingIconColor = primary,
                     unfocusedLeadingIconColor = onSurfaceVariant,

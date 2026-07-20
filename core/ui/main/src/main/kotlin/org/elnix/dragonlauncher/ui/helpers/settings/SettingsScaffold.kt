@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsIgnoringVisibility
 import androidx.compose.foundation.lazy.LazyColumn
@@ -54,6 +55,7 @@ public fun SettingsScaffold(
     bottomContent: @Composable (ColumnScope.() -> Unit)? = null,
     specialSettingsTitle: @Composable (() -> Unit)? = null,
     scrollableContent: Boolean = true,
+    imePadding: Boolean = true,
     lazyContent: (LazyListScope.() -> Unit)? = null,
     content: @Composable (ColumnScope.() -> Unit)? = null
 ) {
@@ -72,7 +74,9 @@ public fun SettingsScaffold(
 
     Scaffold(
         containerColor = Color.Transparent,
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().conditional(imePadding) {
+            imePadding()
+        },
         contentWindowInsets = WindowInsets.statusBarsIgnoringVisibility.add(WindowInsets(left = horizontalPadding, right = horizontalPadding)),
         bottomBar = {
 

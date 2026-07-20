@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -46,8 +45,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.github.elnix90.logging.POINTS_TAG
-import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -191,10 +188,11 @@ public fun PointsSettingsScreen(
      */
     fun computePointMoved(
         point: Point,
-        normalizedOffset: Offset
+        normalizedOffset: Offset,
+        forceSnap: Boolean = false
     ): Int? {
         // Early return: if user don't want to snap to shapes, no need to compute them as it is a bit expensive
-        if (!snapPoints) return point.shapeId
+        if (!snapPoints && !forceSnap) return point.shapeId
 
         val shapes = currentNest.intersectionShapes
         if (shapes.isEmpty()) return null
@@ -210,12 +208,12 @@ public fun PointsSettingsScreen(
             }
             .minBy { (offset, _) -> offset distanceTo normalizedOffset }
 
+        if (forceSnap) return shapeId
+
         /**
          * The distance between the landing [Offset] and the finger's position
          */
         val minOffsetDistanceToNormalized: Float = minOffset distanceTo normalizedOffset
-
-        logD(POINTS_TAG) { "normalizedOffset: $normalizedOffset; Min Offset : $minOffset, dist: $minOffsetDistanceToNormalized , shapeId: $shapeId" }
 
         return if (minOffsetDistanceToNormalized < COLLIDING_SHAPE_THRESHOLD_PX) {
             shapeId
@@ -232,6 +230,12 @@ public fun PointsSettingsScreen(
     val offset = manipulationSystem.offset
     val angle = manipulationSystem.angle
     val zoom = manipulationSystem.zoom
+
+
+
+//    TODO("add points snapping grid like nests")
+//    TODO("Fix points and nests undoRedo")
+//    TODO("Reduce their glow")
 
     /**
      * Holds an Offset and provides helper functions and value to manage it in the [PointsSettingsScreen] scope.
@@ -385,21 +389,33 @@ public fun PointsSettingsScreen(
                     onNestEdit(nestId)
                 },
                 onResetPoints = { showResetPointsAndNestsDialog = true },
-                onGamble = {
-                    repeat(it) {
-                        pointsService.addPoint { id ->
+                onGamble = { number, snapToShapes ->
+                    repeat(number) {
+                        pointsService.addPoint(false) { id ->
                             val newOffset = Offset(
                                 x = (-1000..1000).random().toFloat(),
                                 y = (-1000..1000).random().toFloat()
                             )
                             val newAction = Action.LaunchApp(drawerViewModel.userApps.value.random())
-                            Point(
+
+                            val point = Point(
                                 id = id,
                                 offset = newOffset,
                                 nestId = nestId,
                                 action = newAction,
                                 shapeId = null
                             )
+
+                            if (snapToShapes) {
+                                val shapeId = computePointMoved(
+                                    point = point,
+                                    normalizedOffset = point.offset,
+                                    forceSnap = true
+                                )
+                                point.copy(shapeId = shapeId)
+                            } else {
+                                point
+                            }
                         }
                     }
                 },
@@ -595,8 +611,7 @@ public fun PointsSettingsScreen(
                     }
                 }
             }
-        },
-        modifier = Modifier.imePadding()
+        }
     ) {
         Box(
             modifier = Modifier

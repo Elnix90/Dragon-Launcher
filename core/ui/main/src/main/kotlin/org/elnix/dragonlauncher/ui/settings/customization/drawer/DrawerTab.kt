@@ -267,6 +267,12 @@ public fun DrawerTab(
                         value = leftWidth.value.toInt(),
                         modifier = Modifier.settingsGroupHorizontalPadding(),
                         valueRange = DrawerSettingsStore.leftDrawerWidth.allowedRange.toIntRange(),
+                        onReset = {
+                            leftWidth = leftDrawerWidth
+                            scope.launch {
+                                DrawerSettingsStore.leftDrawerWidth.reset(ctx)
+                            }
+                        },
                         onDragStateChange = { isDragging ->
                             if (!isDragging) {
                                 scope.launch {
@@ -283,6 +289,12 @@ public fun DrawerTab(
                         value = rightWidth.value.toInt(),
                         modifier = Modifier.settingsGroupHorizontalPadding(),
                         valueRange = DrawerSettingsStore.rightDrawerWidth.allowedRange.toIntRange(),
+                        onReset = {
+                            rightWidth = rightDrawerWidth
+                            scope.launch {
+                                DrawerSettingsStore.rightDrawerWidth.reset(ctx)
+                            }
+                        },
                         onDragStateChange = { isDragging ->
                             if (!isDragging) {
                                 scope.launch {

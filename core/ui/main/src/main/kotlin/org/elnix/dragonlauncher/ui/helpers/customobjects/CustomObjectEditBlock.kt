@@ -1,29 +1,27 @@
 package org.elnix.dragonlauncher.ui.helpers.customobjects
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObjectBlockProperties
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ui.base.UiConstants.dragonSettingGroupPaddingValues
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 @Composable
 public fun EditCustomObjectBlock(
-    title: Int? = null, // TODO
+    title: Int? = null,
     editObject: CustomObject,
     default: CustomObject,
     properties: CustomObjectBlockProperties = CustomObjectBlockProperties(),
@@ -32,17 +30,15 @@ public fun EditCustomObjectBlock(
 
     var showSelectedShapePickerDialog by remember { mutableStateOf(false) }
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(5.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+    DragonSettingsGroup(
+        title = title,
+        contentPadding = dragonSettingGroupPaddingValues
     ) {
-
         if (properties.allowSizeCustomization) {
             SliderWithLabel(
                 label = stringResource(R.string.size),
                 value = editObject.size,
                 valueRange = 0f..500f,
-                backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
                 decimals = 1,
                 onReset = { onEdit(editObject.copy(size = default.size)) },
                 onChange = { onEdit(editObject.copy(size = it)) }

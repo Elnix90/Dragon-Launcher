@@ -17,14 +17,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.resolveShape
-import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -38,8 +39,13 @@ public fun ShapePreview(
     onClick: (() -> Unit)? = null
 ) {
     val bgColor by animateColorAsState(
-        if (selected) MaterialTheme.colorScheme.primary
-        else MaterialTheme.colorScheme.surface
+        if (selected) MaterialTheme.colorScheme.secondary
+        else Color.Transparent
+    )
+
+    val borderColor by animateColorAsState(
+        if (selected) MaterialTheme.colorScheme.secondary
+        else MaterialTheme.colorScheme.primaryContainer
     )
 
     Box(
@@ -68,7 +74,7 @@ public fun ShapePreview(
                             .fillMaxSize()
                             .clip(MaterialTheme.shapes.large)
                             .background(bgColor.alphaMultiplier(0.5f))
-                            .border(1.dp, MaterialTheme.colorScheme.secondary, MaterialTheme.shapes.large)
+                            .border(1.dp, borderColor, MaterialTheme.shapes.large)
                     )
                 }
 
@@ -80,7 +86,7 @@ public fun ShapePreview(
                             .fillMaxSize()
                             .clip(shape)
                             .background(bgColor.alphaMultiplier(0.5f))
-                            .border(1.dp, MaterialTheme.colorScheme.secondary, shape)
+                            .border(1.dp, borderColor, shape)
                     )
                 }
             }

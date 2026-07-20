@@ -790,7 +790,7 @@
     <string name="show_tooltips">Afficher les infobulles</string>
     <string name="gradient">Dégradé</string>
     <string name="app_display_desc">Changez les paramètres d\'apparence globaux, dans le contexte du launcher, pas les couleurs</string>
-    <string name="shape_scale">Echelle %1$f</string>
-    <string name="rotation_arg">"Rotation:  %1$f"</string>
+    <string name="shape_scale">Echelle %1$.2f</string>
+    <string name="rotation_arg">"Rotation:  %1$.2f°"</string>
     <string name="pause_duration_description">Combien de temps vous devez respirer avant de pouvoir continuer</string>
 </resources>

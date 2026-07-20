@@ -1,13 +1,11 @@
 package org.elnix.dragonlauncher.ui.dragon.components
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
@@ -19,33 +17,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
+import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.animation.barsContentTransform
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import kotlin.math.roundToInt
-
-
-private fun commitEditText(
-    raw: String,
-    valueRange: ClosedFloatingPointRange<Float>,
-    onDragStateChange: ((Boolean) -> Unit)?,
-    onChange: (Float) -> Unit
-) {
-    try {
-        val newValue = if (raw.isEmpty()) valueRange.start
-        else raw.toFloat().coerceIn(valueRange)
-        onDragStateChange?.invoke(true)
-        onChange(newValue)
-        onDragStateChange?.invoke(false)
-    } catch (_: Exception) {
-        // Ignore malformed input - slider keeps its current value
-    }
-}
-
 
 /**
  * Internal slider implementation shared by all SliderWithLabel overloads.
@@ -85,26 +64,20 @@ private fun SliderWithLabelInternal(
     backgroundColor: Color,
     enabled: Boolean,
     allowTextEditValue: Boolean,
-    onReset: (() -> Unit)?,
     onDragStateChange: ((Boolean) -> Unit)?,
+    onReset: () -> Unit,
     onChange: (Float) -> Unit
 ) {
+    val ctx = LocalContext.current
+    val focusManager = LocalFocusManager.current
     val displayColor = color.semiTransparentIfDisabled(enabled)
 
-    val focusManager = LocalFocusManager.current
     var editingText by remember { mutableStateOf(valueText) }
+    var isError by remember { mutableStateOf(false) }
 
 
     // Edit the visual value whenever the real value changes to keep consistency
     LaunchedEffect(valueText) { editingText = valueText }
-
-
-    fun editValue() {
-        commitEditText(editingText, valueRange, onDragStateChange, onChange)
-        focusManager.clearFocus()
-    }
-
-    var isEditing by remember { mutableStateOf(false) }
 
 
     Column(
@@ -125,41 +98,31 @@ private fun SliderWithLabelInternal(
             )
 
             if (showValue) {
-
                 EditValueTextField(
                     value = editingText,
-                    onValueChange = { editingText = it },
+                    modifier = Modifier,
+                    onValueChange = {
+                        editingText = it
+                        isError = false
+                    },
                     enabled = allowTextEditValue,
                     backgroundColor = backgroundColor,
-                    onFocusChange = { isEditing = it },
-                    onDone = ::editValue
+                    onReset = onReset,
+                    onDone = {
+                        try {
+                            val newValue = if (editingText.isEmpty()) valueRange.start
+                            else editingText.toFloat().coerceIn(valueRange)
+                            onDragStateChange?.invoke(true)
+                            onChange(newValue)
+                            onDragStateChange?.invoke(false)
+                        } catch (_: Exception) {
+                            isError = true
+                            ctx.showToast("Failed to parse number")
+                            // Ignore malformed input - slider keeps its current value
+                        }
+                        focusManager.clearFocus()
+                    }
                 )
-            }
-
-            AnimatedContent(
-                targetState = isEditing,
-                transitionSpec = { barsContentTransform },
-                label = "icon_button_transition"
-            ) { editing ->
-                when {
-                    editing -> {
-                        DragonIconButton(
-                            onClick = { editValue() },
-                            colors = IconButtonDefaults.iconButtonColors(containerColor = backgroundColor),
-                            icon = R.drawable.check,
-                            contentDescription = "Validate"
-                        )
-                    }
-
-                    onReset != null -> {
-                        DragonIconButton(
-                            onClick = onReset,
-                            enabled = enabled,
-                            icon = R.drawable.reset,
-                            contentDescription = "Reset"
-                        )
-                    }
-                }
             }
         }
 
@@ -212,8 +175,8 @@ public fun SliderWithLabel(
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     showValue: Boolean = true,
     allowTextEditValue: Boolean = true,
-    onReset: (() -> Unit)? = null,
     onDragStateChange: ((Boolean) -> Unit)? = null,
+    onReset: () -> Unit,
     onChange: (Int) -> Unit
 ) {
     val floatRange = remember(valueRange) {
@@ -278,8 +241,8 @@ public fun SliderWithLabel(
     showValue: Boolean = true,
     decimals: Int = 2,
     allowTextEditValue: Boolean = true,
-    onReset: (() -> Unit)? = null,
     onDragStateChange: ((Boolean) -> Unit)? = null,
+    onReset: () -> Unit,
     onChange: (Float) -> Unit
 ) {
     val valueText = remember(value, decimals) {

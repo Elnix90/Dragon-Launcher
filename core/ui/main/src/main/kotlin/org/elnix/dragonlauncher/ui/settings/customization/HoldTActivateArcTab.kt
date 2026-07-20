@@ -36,7 +36,6 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
-import org.elnix.dragonlauncher.ui.base.UiConstants.dragonSettingGroupPaddingValues
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
@@ -124,7 +123,12 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
                     label = stringResource(R.string.animated_progress),
                     showValue = false,
                     value = progress.value,
-                    valueRange = 0f..1f
+                    valueRange = 0f..1f,
+                    onReset = {
+                        scope.launch {
+                            progress.snapTo(0f)
+                        }
+                    }
                 ) {
                     scope.launch {
                         progress.animateTo(it)
@@ -139,11 +143,11 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
                     .then(hold.pointerModifier)
                     .onSizeChanged { boxSize = it }
             ) {
-                val center = if (!manualMode){
+                val center = if (!manualMode) {
                     this.constraints.getCenter()
                 } else hold.centerProvider()
 
-                val progress = if(!manualMode) {
+                val progress = if (!manualMode) {
                     progress.value
                 } else hold.progressProvider()
 
@@ -178,19 +182,17 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
             }
         }
 
-        DragonSettingsGroup(
+
+        EditCustomObjectBlock(
             title = R.string.object_properties,
-            contentPadding = dragonSettingGroupPaddingValues
-        ) {
-            EditCustomObjectBlock(
-                editObject = mutableHoldObject,
-                default = defaultAngleCustomObject,
-                properties = CustomObjectBlockProperties(
-                    allowAlignCustomization = false,
-                    allowEraseBackgroundCustomization = false
-                )
-            ) { mutableHoldObject = it }
-        }
+            editObject = mutableHoldObject,
+            default = defaultAngleCustomObject,
+            properties = CustomObjectBlockProperties(
+                allowAlignCustomization = false,
+                allowEraseBackgroundCustomization = false
+            )
+        ) { mutableHoldObject = it }
+
 
         DragonSettingsGroup(
             title = R.string.configuration,

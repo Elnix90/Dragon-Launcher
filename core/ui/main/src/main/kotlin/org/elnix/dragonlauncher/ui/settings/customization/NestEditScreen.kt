@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
@@ -52,7 +51,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastCoerceAtMost
-import io.github.elnix90.logging.logWtf
 import io.github.elnix90.runtime.asMutableState
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
@@ -83,6 +81,7 @@ import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.IntersectionShape
+import org.elnix.dragonlauncher.ui.components.IntersectionShapePreview
 import org.elnix.dragonlauncher.ui.components.ManipulationSystemReset
 import org.elnix.dragonlauncher.ui.components.NestNameEditor
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
@@ -97,7 +96,6 @@ import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
-import org.elnix.dragonlauncher.ui.helpers.ShapePreview
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.detectTransformGestures
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -131,7 +129,7 @@ public fun NestEditScreen(
 
     var snapShapesOffset by UiSettingsStore.snapShapesOffset.asMutableState()
     var snapShapesCenter by UiSettingsStore.snapShapesCenter.asMutableState()
-    var snapShapesScale by UiSettingsStore.snapShapesScale.asMutableState()
+//    var snapShapesScale by UiSettingsStore.snapShapesScale.asMutableState()
     var snapShapeAngle by UiSettingsStore.snapShapeAngle.asMutableState()
 
     val snapOffsetThreshold = 30.dp.px
@@ -139,17 +137,37 @@ public fun NestEditScreen(
     val cellSizeDp by UiSettingsStore.nestsCellSizeDp.asState()
     val cellSizePx = cellSizeDp.px
 
-    fun IntersectionShape.snap(): IntersectionShape = this.copy(
-        offset =
-            when {
-                snapShapesCenter && snapShapesOffset -> this.offset.snapToGrid(cellSizePx).snapToRound(Offset.Zero, snapOffsetThreshold)
-                snapShapesCenter -> this.offset.snapToRound(Offset.Zero, snapOffsetThreshold)
-                snapShapesOffset -> this.offset.snapToGrid(cellSizePx)
-                else -> this.offset
-            },
-        scale = if (snapShapesScale) this.scale.snapToRound(1f, 0.5f) else this.scale,
-        angle = if (snapShapeAngle) this.angle.snapToRound(0f, 20f) else this.angle
-    )
+    fun IntersectionShape.snap(): IntersectionShape {
+
+        val newOffset = when {
+            snapShapesCenter && snapShapesOffset -> this.offset.snapToGrid(cellSizePx).snapToRound(Offset.Zero, snapOffsetThreshold)
+            snapShapesCenter -> this.offset.snapToRound(Offset.Zero, snapOffsetThreshold)
+            snapShapesOffset -> this.offset.snapToGrid(cellSizePx)
+            else -> this.offset
+        }
+//        val newScale = if (snapShapesScale) {
+//            val oldScale = this.scale
+//            val newScale = oldScale.snapToRound(1f, 0.5f)
+//
+//            // Calculate the change in scale
+//            val scaleChange = newScale / oldScale
+//
+//            // Adjust the offset to account for the scale change (since scaling is from the center)
+//            newOffset *= scaleChange
+//
+//            newScale
+//        } else {
+//            this.scale
+//        }
+
+        val newAngle = if (snapShapeAngle) this.angle.snapToRound(0f, 20f) else this.angle
+
+        return this.copy(
+            offset = newOffset,
+//            scale = newScale,
+            angle = newAngle
+        )
+    }
 
 
     var showMoreSheet by remember { mutableStateOf(false) }
@@ -296,7 +314,7 @@ public fun NestEditScreen(
                         when (it) {
                             ShapesEditTools.SnapOffset -> snapShapesOffset
                             ShapesEditTools.SnapCenter -> snapShapesCenter
-                            ShapesEditTools.SnapScale -> snapShapesScale
+//                            ShapesEditTools.SnapScale -> snapShapesScale
                             ShapesEditTools.SnapAngle -> snapShapeAngle
                         }
                     }
@@ -304,7 +322,7 @@ public fun NestEditScreen(
                     when (it) {
                         ShapesEditTools.SnapOffset -> snapShapesOffset = !snapShapesOffset
                         ShapesEditTools.SnapCenter -> snapShapesCenter = !snapShapesCenter
-                        ShapesEditTools.SnapScale -> snapShapesScale = !snapShapesScale
+//                        ShapesEditTools.SnapScale -> snapShapesScale = !snapShapesScale
                         ShapesEditTools.SnapAngle -> snapShapeAngle = !snapShapeAngle
                     }
                 }
@@ -357,10 +375,7 @@ public fun NestEditScreen(
                             }
                         } else {
                             DragonRow(onClick = { showDropDownMenu = true }) {
-                                ShapePreview(
-                                    iconShape = selectedShape.shape,
-                                    modifier = Modifier.size(30.dp)
-                                )
+                                IntersectionShapePreview(selectedShape, 30.dp)
                                 Spacer(5.dp)
                                 Text("ID: ${selectedShape.id}")
                                 Spacer(5.dp)
@@ -388,12 +403,7 @@ public fun NestEditScreen(
                                             modifier = Modifier.weight(1f)
                                         )
                                     },
-                                    leadingIcon = {
-                                        ShapePreview(
-                                            iconShape = shape.shape,
-                                            modifier = Modifier.size(30.dp),
-                                        )
-                                    },
+                                    leadingIcon = { IntersectionShapePreview(shape, 30.dp) },
                                     onClick = {
                                         selectedShapeId = shape.id
                                         showDropDownMenu = false
@@ -515,7 +525,6 @@ public fun NestEditScreen(
                                 if (!isInDragAroundMode) {
                                     witnessShape = null
 
-                                    logWtf { "pan: $totalPanChange (dist = ${totalPanChange.getDistanceSquared()}\nzoom: $totalZoomChange, rotation: $totalRotationChange\n " }
                                     if ((totalPanChange.getDistanceSquared() > 0f) || totalZoomChange != 0f || totalRotationChange != 0f) {
                                         saveCurrentNest()
                                     }
@@ -627,6 +636,7 @@ public fun NestEditScreen(
 
                 HorizontalDivider()
 
+                Setting(UiSettingsStore.showGridWhenSnappingIsOn)
                 Setting(UiSettingsStore.nestsCellSizeDp)
             }
 
@@ -735,9 +745,6 @@ public fun NestEditScreen(
     if (showShapesManagementDialog) {
         IntersectionShapeManagementDialog(
             shapes = paths.keys,
-            onSelectShape = { newShape ->
-                selectedShapeId = newShape
-            },
             onSave = { newShapes ->
                 pointsService.editNest(nestId) { old ->
                     old.copy(intersectionShapes = newShapes)

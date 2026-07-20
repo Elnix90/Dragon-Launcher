@@ -135,7 +135,7 @@ public fun SpecialSettingsTitle(
     onEditDefaultPoint: () -> Unit,
     onEditNest: () -> Unit,
     onResetPoints: () -> Unit,
-    onGamble: (Int) -> Unit,
+    onGamble: (number: Int, snapToShapes: Boolean) -> Unit,
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current

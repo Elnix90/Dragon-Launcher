@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape.Companion.IntersectionShapeDefaults.defaultSize
 import org.elnix.dragonlauncher.base.model.serializables.serializers.ColorSerializer
 import org.elnix.dragonlauncher.base.model.serializables.serializers.OffsetSerializer
 
@@ -18,39 +19,18 @@ import org.elnix.dragonlauncher.base.model.serializables.serializers.OffsetSeria
 @Serializable
 @SerialName("IntersectionShape")
 public data class IntersectionShape(
-
-    @SerialName("id")
     val id: Int,
-
-    @SerialName("shape")
-    val shape: IconShape = IconShape.Circle,
-
-    @SerialName("size")
-    val scale: Float = 1f,
-
-    @SerialName("angle")
-    val angle: Float = 0f,
-
-    @SerialName("offset")
+    val shape: IconShape = IntersectionShapeDefaults.defaultShape,
+    val scale: Float = IntersectionShapeDefaults.defaultScale,
+    val angle: Float = IntersectionShapeDefaults.defaultAngle,
     @Serializable(with = OffsetSerializer::class)
-    val offset: Offset = Offset.Zero,
-
-    @SerialName("haptic")
+    val offset: Offset = IntersectionShapeDefaults.defaultOffset,
     val haptic: CustomHapticFeedback? = null,
-
-    @SerialName("borderStroke")
     val borderStroke: Float? = null,
-
-    @SerialName("color")
     @Serializable(with = ColorSerializer::class)
     val color: Color? = null,
-
-    @SerialName("glow")
-    val glow: CustomGlow? = CustomGlow(
-        color = color,
-        radius = 5f
-    )
-): Comparable<IntersectionShape> {
+    val glow: CustomGlow? = IntersectionShapeDefaults.defaultGlow
+) : Comparable<IntersectionShape> {
     public infix fun scaledBy(scale: Float): IntersectionShape = this.copy(scale = this.scale * scale)
 
 //    /**
@@ -76,8 +56,25 @@ public data class IntersectionShape(
 
     @Suppress("ConstPropertyName")
     public companion object {
-        public const val borderStrokeDefault: Float = 2f
-        public const val defaultSize: Float = 300f
+
+        public object IntersectionShapeDefaults {
+            public const val borderStrokeDefault: Float = 2f
+            public const val defaultSize: Float = 300f
+
+            public val defaultGlow: CustomGlow =  CustomGlow(
+                color = null,
+                radius = 5f
+            )
+
+            public const val defaultScale: Float = 1f
+            public const val defaultAngle: Float = 0f
+
+            public val defaultOffset: Offset = Offset.Zero
+            public val defaultShape: IconShape = IconShape.Circle
+            public const val defaultEraseBackground: Boolean = true
+
+            public val defaultHapticFeedback: CustomHapticFeedback = CustomHapticFeedback.singleTap
+        }
 
         @Suppress("NOTHING_TO_INLINE")
         public inline fun IntersectionShape.highlightedIfSelected(selected: Boolean, color: Color): IntersectionShape =

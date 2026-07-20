@@ -167,6 +167,7 @@ public fun ColorPickerRow(
                 }
 
                 ColorPicker(
+                    initialColor = currentColor,
                     color = actualColor,
                     initialPage = initialPage,
                     onColorSelected = { actualColor = it }
@@ -186,6 +187,7 @@ public fun ColorPickerRow(
 
 @Composable
 private fun ColorPicker(
+    initialColor: Color,
     color: Color,
     initialPage: Int,
     onColorSelected: (Color) -> Unit
@@ -299,6 +301,7 @@ private fun ColorPicker(
 
                 ColorPickerMode.Slider -> SliderColorPicker(
                     actualColor = color,
+                    initialColor = initialColor,
                     onColorSelected = onColorSelected
                 )
 
@@ -316,7 +319,10 @@ private fun ColorPicker(
             value = color.alpha,
             color = MaterialTheme.colorScheme.primary,
             backgroundColor = MaterialTheme.colorScheme.surface,
-            valueRange = 0f..1f
+            valueRange = 0f..1f,
+            onReset = {
+                onColorSelected(color.copy(alpha = color.alpha))
+            }
         ) { alpha -> onColorSelected(color.copy(alpha = alpha)) }
     }
 }

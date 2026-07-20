@@ -18,7 +18,9 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.graphics.shapes.RoundedPolygon
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
+import org.elnix.dragonlauncher.ktx.radians
 import org.elnix.dragonlauncher.material.shapes.toShape
+import java.lang.Math.PI
 import kotlin.math.abs
 import kotlin.math.cbrt
 import kotlin.math.cos
@@ -44,7 +46,8 @@ public fun IconShape?.resolveShape(default: IconShape = IconShape.PlatformDefaul
         when (shapeToResolve) {
             IconShape.Random -> IconShape.allShapesWithoutRandom.random().resolveShape()
             IconShape.PlatformDefault -> PlatformShape
-            IconShape.Square -> RoundedCornerShape(0)
+            IconShape.Square -> SquareShape
+            IconShape.RightSquare -> RoundedCornerShape(0)
             IconShape.RoundedSquare -> RoundedCornerShape(25)
             IconShape.Pebble -> PebbleShape
             IconShape.Squircle -> SquircleShape
@@ -274,6 +277,7 @@ private val HeartShape: Shape
 
 
 private val TriangleShape = Polygon(3)
+private val SquareShape = Polygon(4)
 private val PentagonShape = Polygon(5)
 private val HexagonShape = Polygon(6)
 private val HeptagonShape = Polygon(7)
@@ -290,18 +294,20 @@ private class Polygon(val sides: Int, val rotation: Float = 0f) : Shape {
         return Outline.Generic(
             androidx.compose.ui.graphics.Path().apply {
                 val radius = if (size.width > size.height) size.width / 2f else size.height / 2f
-                val angle = 2.0 * Math.PI / sides
-                val cx = size.width / 2f
-                val cy = size.height / 2f
-                val r = rotation * (Math.PI / 180)
+                val angle = 2.0 * PI / sides
+                val centerX = size.width / 2f
+                val centerY = size.height / 2f
+                val r = rotation.radians
+
                 moveTo(
-                    cx + (radius * cos(0.0 + r).toFloat()),
-                    cy + (radius * sin(0.0 + r).toFloat())
+                    centerX + (radius * cos(0.0 + r).toFloat()),
+                    centerY + (radius * sin(0.0 + r).toFloat())
                 )
+
                 for (i in 1 until sides) {
                     lineTo(
-                        cx + (radius * cos(angle * i + r).toFloat()),
-                        cy + (radius * sin(angle * i + r).toFloat())
+                        centerX + (radius * cos(angle * i + r).toFloat()),
+                        centerY + (radius * sin(angle * i + r).toFloat())
                     )
                 }
                 close()
