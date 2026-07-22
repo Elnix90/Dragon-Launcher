@@ -2,8 +2,7 @@ name: Beta Release
 
 on:
   push:
-    branches:
-      - main
+
     paths:
       - '**.yml'
       - '**.kt'
