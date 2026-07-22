@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.base.model.serializables
+package org.elnix.dragonlauncher.base.model.models
 
 import java.util.Date
 

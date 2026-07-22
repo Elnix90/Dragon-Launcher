@@ -29,7 +29,7 @@
     <string name="version">版本</string>
     <string name="export_cancelled">导出已取消</string>
     <string name="import_cancelled">导入已取消</string>
-    <string name="backup_restore">备份与恢复</string>
+    <string name="backup">备份与恢复</string>
     <string name="backup_restore_text">备份或恢复应用的设置和操作,每次应用启动、暂停、退出或点击下方的“立即触发”按钮时，都会自动触发自动备份</string>
     <string name="export_settings">导出设置</string>
     <string name="import_settings">导入设置</string>
@@ -138,7 +138,7 @@
     <string name="transparency">透明度</string>
     <string name="save">保存</string>
     <string name="drawer_enter_key_action">抽屉回车键动作</string>
-    <string name="icon_pack">图标包</string>
+    <string name="icon_packs">图标包</string>
     <string name="icon_pack_help">选择图标包来自定义您的应用图标，请先从应用商店安装图标包。</string>
     <string name="use_original_app_icon">使用原厂应用图标</string>
     <string name="status_bar">状态栏</string>
@@ -270,7 +270,6 @@
     <string name="pick_a_nest">选取一个圆环</string>
     <string name="create_new_nest">创建新圆环</string>
     <string name="copy_id">复制 id</string>
-    <string name="edit_default_point_settings">编辑默认点设置</string>
     <string name="open_burger_menu">打开汉堡菜单</string>
     <string name="selected_text">已选中</string>
     <string name="unselected">未选中</string>
@@ -812,7 +811,6 @@
     <string name="live_nest_hold_delay">蓄力展开等待延迟 (毫秒)</string>
     <string name="live_nest_scale">该独立嵌套环的整体缩放比例</string>
     <string name="live_nest_pick_nest">指派选定的嵌套圆环</string>
-    <string name="live_nest_grace_distance">手势脱轨防断连宽容度物理距离 (像素)</string>
     <string name="live_nest_snaps_to_finger_position">子级嵌套环准星完美吸附至手指正下方</string>
     <string name="live_nest_snaps_to_finger_position_desc">开启时，展开的二级子圆环的圆心坐标会精确建立在手势读条蓄满时您手指所在的物理指尖正下方；关闭时，它则会老老实实吸附在它所依附的那个母体母触点的圆心上</string>
     <string name="live_nest_dim_main_nest">子环展开时将母体主环调暗淡化</string>
@@ -883,7 +881,6 @@
     <string name="package_search">应用底层 Package 命名全局检索</string>
     <string name="test_overlays">压力演练演习悬浮顶层浮窗组件</string>
     <string name="risky">前方高能高危！不建议盲目倒腾</string>
-    <string name="accessibility_and_system">无障碍桥接与系统底层深度交互</string>
     <string name="pin_code_warning_titls">极重要安全警告：存在潜在的全盘数据付诸东流风险</string>
     <string name="pin_code_warning_desc">请务必将设定的 PIN 密码烂熟于心！一旦不慎遗忘，没有任何找回机制，届时您将别无选择，只能被迫移步前往安卓系统应用信息详情菜单中，将该启动器的所有底层AppData和设置全盘抹除清空，方可重新进入桌面</string>
     <string name="do_something">执行某些动作</string>

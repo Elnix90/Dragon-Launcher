@@ -36,7 +36,8 @@ public fun BackupResultDialog(
                 else -> null
             },
             titleIcon = if (isError) R.drawable.warning else R.drawable.check,
-            titleColor = if (isError) MaterialTheme.colorScheme.error else Color.Green,
+            titleColor = if (isError) MaterialTheme.colorScheme.onErrorContainer else Color.Green,
+            titleBgColor = if (isError) MaterialTheme.colorScheme.errorContainer else Color(0xFF167E16),
             copy = isError,
             onValidate = { backupViewModel.result.value = null }
         )

@@ -30,6 +30,7 @@ import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
@@ -46,7 +47,7 @@ public fun WorkspaceDetailScreen(
     onBack: () -> Unit,
 ) {
     val workspaceManager = drawerViewModel.workspaceManager
-    val workspaceState by workspaceManager.workspacesState.collectAsState()
+    val workspaceState by workspaceManager.workspacesState.asState()
     val workspace = workspaceState.first { it.id == workspaceId }
 
     val workspaceDebugInfos by DebugSettingsStore.workspacesDebugInfo.asState()

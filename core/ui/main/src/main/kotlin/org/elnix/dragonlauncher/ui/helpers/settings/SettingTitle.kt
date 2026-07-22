@@ -31,6 +31,7 @@ import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dialogs.GamblingInputDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
+import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 
 @Composable
 private fun SettingsTitleInternal(
@@ -112,10 +113,7 @@ public fun SettingsTitle(
         onBack = onBack
     ) {
         if (resetIcon != null) {
-            DragonIconButton(
-                icon = R.drawable.reset,
-                contentDescription = stringResource(R.string.reset)
-            ) { resetIcon() }
+            ResetIcon(onReset = resetIcon)
         }
 
         DragonIconButton(
@@ -185,7 +183,7 @@ public fun SpecialSettingsTitle(
                     }
                 ),
                 MoreOptions(
-                    text = { stringResource(R.string.edit_default_point_settings) },
+                    text = { stringResource(R.string.edit_default_point) },
                     icon = R.drawable.edit_rounded,
                     onClick = {
                         dismiss()

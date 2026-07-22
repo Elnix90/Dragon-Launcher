@@ -2,9 +2,12 @@ package org.elnix.dragonlauncher.base.model.serializables
 
 import androidx.annotation.IntRange
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.serializables.serializers.ColorSerializer
+import org.elnix.dragonlauncher.base.model.serializables.serializers.DpSerializer
 
 
 @Serializable
@@ -15,29 +18,30 @@ public data class CustomObject(
      *
      * The value it **ALWAYS** interpreted as raw dp, then converted into pixels using [androidx.compose.ui.unit.Density]
      */
-    val stroke: Float,
-    @Serializable(with = ColorSerializer::class)
+    @Serializable(with = DpSerializer::class)
+    val stroke: Dp,
 
     /**
      * The color uses by the shape.
      * Defaults to `null` -> uses the given circle color or RGB driven color from angle
      */
+    @Serializable(with = ColorSerializer::class)
     val color: Color?,
-
     /**
      * Optional [CustomGlow] for the shape.
      * Depending on the context it may or may not be used in drawing
      */
     val glow: CustomGlow?,
 
+
     val shape: IconShape,
 
     /**
      * The size of the object, pretty self-explanatory
      * Depending on the context this could mean different things, but it is used as a size discriminant factor for the [CustomObject]
-     * The value it **ALWAYS** interpreted as raw dp, then converted into pixels using [androidx.compose.ui.unit.Density]
      */
-    val size: Float,
+    @Serializable(with = DpSerializer::class)
+    val size: Dp,
 
     /**
      * When the [CustomObject] is using the [shape] parameter, it often uses also the rotation, which is uses to correctly place the shape like the user wants
@@ -64,13 +68,13 @@ public data class CustomObject(
     public companion object {
 
         public val defaultLineCustomObject: CustomObject = CustomObject(
-            stroke = 2f,
+            stroke = 2.dp,
             color = null, // RGB Color according to the angle
             glow = CustomGlow(
-                radius = 10f
+                radius = 10.dp
             ),
             shape = IconShape.Circle,
-            size = 0f, // Unused for line (only stroke)
+            size = Dp.Unspecified, // Unused for line (only stroke)
             rotation = 0, // No rotation for line, (it's nullable, but I use nul here to indicate that the rotation isn't available)
 
             eraseBackground = false,
@@ -79,39 +83,39 @@ public data class CustomObject(
 
 
         public val defaultAngleCustomObject: CustomObject = CustomObject(
-            stroke = 2f,
+            stroke = 2.dp,
             color = null, // RGB Color according to the angle
             glow = CustomGlow(
-                radius = 20f
+                radius = 20.dp
             ),
             shape = IconShape.Circle,
-            size = 50f,
+            size = 50.dp,
             rotation = 0,
             eraseBackground = false,
             alignsWithDragAngle = false
         )
 
         public val defaultStartCustomObject: CustomObject = CustomObject(
-            stroke = 4f,
+            stroke = 4.dp,
             color = null, // RGB Color according to the angle
             glow = CustomGlow(
-                radius = 32f
+                radius = 32.dp
             ),
             shape = IconShape.Circle,
-            size = 30f,
+            size = 30.dp,
             rotation = 0,
             eraseBackground = true,
             alignsWithDragAngle = false
         )
 
         public val defaultEndCustomObject: CustomObject = CustomObject(
-            stroke = 0f,
+            stroke = (-.5f).dp,
             color = null, // RGB Color according to the angle
             glow = CustomGlow(
-                radius = 12f
+                radius = 12.dp
             ),
             shape = IconShape.Circle,
-            size = 8f,
+            size = 8.dp,
             rotation = 0,
             eraseBackground = false,
             alignsWithDragAngle = false
@@ -119,38 +123,30 @@ public data class CustomObject(
 
 
         public val defaultHoldCustomObject: CustomObject = CustomObject(
-            stroke = 4f,
+            stroke = 4.dp,
             color = null,
             glow = CustomGlow(
-                radius = 12f
+                radius = 12.dp
             ),
             shape = IconShape.Cookie12Sided,
-            size = 70f,
+            size = 100.dp,
             rotation = -1,
             eraseBackground = false,
             alignsWithDragAngle = false // Unused for hold
         )
 
+
+        public data class CustomObjectBlockProperties(
+            val allowStrokeCustomization: Boolean = true,
+            val allowColorCustomization: Boolean = true,
+            val allowShapeCustomization: Boolean = true,
+            val allowSizeCustomization: Boolean = true,
+            val allowEraseBackgroundCustomization: Boolean = true,
+            val allowAlignCustomization: Boolean = true,
+            val allowMirrorCustomization: Boolean = true,
+            val allowRotationCustomization: Boolean = true,
+
+            val allowGlowCustomization: Boolean = true
+        )
     }
 }
-
-@Serializable
-public data class CustomGlow(
-    val radius: Float,
-    @Serializable(with = ColorSerializer::class)
-    val color: Color? = null
-)
-
-
-public data class CustomObjectBlockProperties(
-    val allowStrokeCustomization: Boolean = true,
-    val allowColorCustomization: Boolean = true,
-    val allowShapeCustomization: Boolean = true,
-    val allowSizeCustomization: Boolean = true,
-    val allowEraseBackgroundCustomization: Boolean = true,
-    val allowAlignCustomization: Boolean = true,
-    val allowMirrorCustomization: Boolean = true,
-    val allowRotationCustomization: Boolean = true,
-
-    val allowGlowCustomization: Boolean = true
-)

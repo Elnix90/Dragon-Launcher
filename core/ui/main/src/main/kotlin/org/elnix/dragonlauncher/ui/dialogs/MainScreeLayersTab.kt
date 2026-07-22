@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardDefaults.elevatedCardElevation
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
@@ -33,17 +33,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.MainScreenLayerJson
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.copyWithEnabled
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.defaultMainScreenLayers
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.enabled
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.label
-import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayerJson
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.theme.AppObjectsColors
-import io.github.elnix90.runtime.asState
+import org.elnix.dragonlauncher.settings.stores.objects.MainScreenLayersSettingsStore
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -60,13 +59,6 @@ public fun MainScreeLayersTab(
     val order by rememberMainScreenLayerOrder()
     var objects by remember(order) { mutableStateOf(order) }
 
-    fun save() {
-        scope.launch {
-            val encoded = MainScreenLayerJson.encode(objects)
-            UiSettingsStore.mainScreenLayers.set(ctx, encoded)
-        }
-    }
-
     val lazyListState = rememberLazyListState()
     val reorderState = rememberReorderableLazyListState(
         lazyListState = lazyListState,
@@ -77,20 +69,26 @@ public fun MainScreeLayersTab(
         }
     )
 
+    fun save() {
+        scope.launch {
+            val encoded = MainScreenLayerJson.encode(objects)
+            MainScreenLayersSettingsStore.jsonSetting.set(ctx, encoded)
+        }
+    }
+
     SettingsScaffold(
         title = stringResource(R.string.main_screen_layers),
         onBack = onBack,
         helpText = stringResource(R.string.main_screen_layers_help),
         onReset = {
             scope.launch {
-                UiSettingsStore.mainScreenLayers.reset(ctx)
+                MainScreenLayersSettingsStore.jsonSetting.reset(ctx)
             }
         },
         listState = lazyListState,
         resetTitle = stringResource(R.string.main_screen_layers_reset_title),
         resetText = stringResource(R.string.main_screen_layers_reset),
         lazyContent = {
-
             items(objects, key = { it.toString() }) { item ->
 
                 ReorderableItem(
@@ -110,12 +108,9 @@ public fun MainScreeLayersTab(
                         modifier = Modifier
                             .fillMaxWidth()
                             .scale(scale)
-                            .longPressDraggableHandle(
-                                onDragStopped = ::save
-                            ),
+                            .longPressDraggableHandle(onDragStopped = ::save),
                         elevation = elevatedCardElevation(elevation),
-                        colors = AppObjectsColors.cardColors(),
-                        shape = RoundedCornerShape(12.dp)
+                        shape = CardDefaults.shape
                     ) {
 
                         Column(
@@ -158,7 +153,7 @@ public fun MainScreeLayersTab(
 
                             if (item is MainScreenLayer.CustomDim) {
                                 AnimatedVisibility(item.enabled) {
-                                    var tempShowAfter by remember { mutableIntStateOf(item.showAfter) }
+                                    var tempShowAfter by remember { mutableIntStateOf(item.showAfterMs) }
                                     var tempDimAmount by remember { mutableFloatStateOf(item.dimAmount) }
 
                                     DragonColumnGroup {
@@ -167,16 +162,17 @@ public fun MainScreeLayersTab(
                                             valueRange = 0..5000,
                                             label = stringResource(R.string.show_after),
                                             description = stringResource(R.string.show_after_help),
+                                            resetEnabled = tempShowAfter != MainScreenLayer.CustomDim.defaultShowAfterMs,
                                             onReset = {
                                                 objects = objects.map {
-                                                    if (it is MainScreenLayer.CustomDim) it.copy(showAfter = 1000) else it
+                                                    if (it is MainScreenLayer.CustomDim) it.copy(showAfterMs = MainScreenLayer.CustomDim.defaultShowAfterMs) else it
                                                 }
                                                 save()
                                             },
                                             onDragStateChange = { isDragging ->
                                                 if (!isDragging) {
                                                     objects = objects.map {
-                                                        if (it is MainScreenLayer.CustomDim) it.copy(showAfter = tempShowAfter) else it
+                                                        if (it is MainScreenLayer.CustomDim) it.copy(showAfterMs = tempShowAfter) else it
                                                     }
                                                     save()
                                                 }
@@ -190,9 +186,10 @@ public fun MainScreeLayersTab(
                                             valueRange = 0f..1f,
                                             label = stringResource(R.string.dim_amount),
                                             description = stringResource(R.string.dim_amount_help),
+                                            resetEnabled = tempDimAmount != MainScreenLayer.CustomDim.defaultDimAmount,
                                             onReset = {
                                                 objects = objects.map {
-                                                    if (it is MainScreenLayer.CustomDim) it.copy(dimAmount = 0.5f) else it
+                                                    if (it is MainScreenLayer.CustomDim) it.copy(dimAmount = MainScreenLayer.CustomDim.defaultDimAmount) else it
                                                 }
                                                 save()
                                             },
@@ -220,7 +217,7 @@ public fun MainScreeLayersTab(
 
 @Composable
 public fun rememberMainScreenLayerOrder(): MutableState<List<MainScreenLayer>> {
-    val orderString by UiSettingsStore.mainScreenLayers.asState()
+    val orderString by MainScreenLayersSettingsStore.jsonSetting.asState()
 
     return remember(orderString) {
         val decoded = MainScreenLayerJson

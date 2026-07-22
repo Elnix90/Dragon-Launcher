@@ -36,7 +36,7 @@
     <string name="version">Version %1$s</string>
     <string name="export_cancelled">Export Cancelled</string>
     <string name="import_cancelled">Import Cancelled</string>
-    <string name="backup_restore">Backup</string>
+    <string name="backup">Backup</string>
     <string name="backup_restore_text">Backup or restore the settings and the actions of the app, automatic backups are triggered automatically on each app launch / pause / quit or by pressing the \"Trigger\" button below</string>
     <string name="export_settings">Export Settings</string>
     <string name="import_settings">Import Settings</string>
@@ -176,6 +176,8 @@
     <string name="wallpaper_help">Set wallpaper for home/lock screen and use it or not in the launcher</string>
     <string name="select_image">Select Image</string>
     <string name="set_plain_wallpaper">Set plain wallpaper</string>
+    <string name="plain_wallpaper">Plain wallpaper</string>
+    <string name="custom_wallpaper">Custom wallpaper</string>
     <string name="plain_wallpaper_color">Plain Wallpaper Color</string>
     <string name="apply_wallpaper_to">Apply wallpaper to</string>
     <string name="main_screen">Main Screen</string>
@@ -188,7 +190,7 @@
     <string name="transparency">Transparency</string>
     <string name="save">Save</string>
     <string name="drawer_enter_key_action">Drawer enter key action</string>
-    <string name="icon_pack">Icon packs</string>
+    <string name="icon_packs">Icon packs</string>
     <string name="icon_pack_help">Select an icon pack to customize your app icons. Install icon packs from your store first.</string>
     <string name="use_original_app_icon">Use original app icons</string>
     <string name="status_bar">Status bar</string>
@@ -245,7 +247,7 @@
     <string name="size">Size</string>
     <string name="shape_scale">Scale: %1$.2f</string>
     <string name="rotation">Rotation</string>
-    <string name="rotation_arg">Rotation: %1$.2f°</string>
+    <string name="rotation_arg">Rotation: %1$d°</string>
     <string name="scale_x">Scale X</string>
     <string name="scale_y">Scale Y</string>
     <string name="open_app">Open App</string>
@@ -274,7 +276,6 @@
     <string name="pick_a_nest">Pick A Nest</string>
     <string name="create_new_nest">Create New Nest</string>
     <string name="copy_id">Copy Id</string>
-    <string name="edit_default_point_settings">Edit default points settings</string>
     <string name="open_burger_menu">Open Burger Menu</string>
     <string name="selected_text">Selected</string>
     <string name="unselected">Unselected</string>
@@ -298,6 +299,7 @@
     <string name="home_action">Home Action</string>
     <string name="drawer_home_action">Drawer Home action</string>
     <string name="wallpaper_dim_amount">Wallpaper dim amount</string>
+    <string name="wallpaper_dim">Wallpaper dim</string>
     <string name="fullscreen_description">Display or not the top bar and the navigation buttons / gesture button</string>
     <string name="rgb_loading_description">Show a RBG gradient on the loading circle upon entering settings, while holding down for 3 seconds</string>
     <string name="rgb_line_selector_description">Show the action selector (the line that follows your finger) in a RGB gradient depending no the angle</string>
@@ -424,11 +426,11 @@
     <string name="encouragement_window">Look out the window 🪟</string>
     <string name="encouragement_text_someone">Text someone you love 💬</string>
 
-    <!--  ─────────────  Appearance ?  ─────────────  -->
     <string name="edit_icons_shape">Edit Icons Shape</string>
     <string name="edit_icons_shape_desc">Customize the shape on the icons in the drawer and the rest of the app</string>
     <string name="random_shape">Random Shape</string>
     <string name="grid_size">Grid Size</string>
+    <string name="grid_size_desc">The number of app icons in the width on the drawer</string>
     <string name="max_icon_size">Max icon Size</string>
     <string name="icons_spacing_vertical">icons Spacing vertical</string>
     <string name="icons_spacing_horizontal">icons Spacing horizontal</string>
@@ -691,6 +693,7 @@
     <string name="dismiss">Dismiss</string>
     <string name="nest_radius">Nest Radius</string>
     <string name="edit_nest">Edit nest</string>
+    <string name="edit_default_nest">Edit Default Nest</string>
     <string name="edit_nest_arg">Edit nest %1$d</string>
     <string name="angle_line">Angle Line</string>
     <string name="angle_line_help">Customize the appearance of the line that appear when you drag on the main screen</string>
@@ -700,6 +703,7 @@
     <string name="show_end_object_preview_desc">Whether to display the (by default) small circle on the end start of the dragging position</string>
     <string name="stroke">Stroke</string>
     <string name="edit_shape">Edit shape</string>
+    <string name="edit_default_shape">Edit default shape</string>
     <string name="erase_background">Erase background</string>
     <string name="glow_radius">Glow Radius</string>
     <string name="glow_color">Glow color</string>
@@ -864,7 +868,7 @@
     <string name="live_nest_hold_delay">Hold delay (ms)</string>
     <string name="live_nest_scale">Nest scale</string>
     <string name="live_nest_pick_nest">Pick Nest</string>
-    <string name="live_nest_grace_distance">Grace distance (px)</string>
+    <string name="live_nest_grace_distance">Grace distance</string>
     <string name="live_nest_snaps_to_finger_position">Live nest snaps to finger position</string>
     <string name="live_nest_snaps_to_finger_position_desc">Whether if the live nest drawn should have its center exactly where it got activated after the timeout, or if it snaps to its host point position</string>
     <string name="live_nest_dim_main_nest">Dim main nest while open</string>
@@ -936,7 +940,6 @@
     <string name="package_search">Package Search</string>
     <string name="test_overlays">Test overlays</string>
     <string name="risky">Risky</string>
-    <string name="accessibility_and_system">Accessibility &amp; system</string>
     <string name="pin_code_warning_titls">Warning: Potential data loss</string>
     <string name="pin_code_warning_desc">To reset in case you forget it, you have no choice but to reset all app settings via android app info menu</string>
     <string name="do_something">Do something</string>
@@ -1060,8 +1063,25 @@
     <string name="gamble_apps">Gamble apps</string>
     <string name="show_app_launch_preview_desc">Show the selected point in the main screen</string>
     <string name="stroke_width_explanation">-1 = No draw; &lt; 0 = Fill; 0 = 1 pixel; &gt; 0 = value</string>
-    <string name="offset">Offset</string>
+    <string name="shape_offset">Offset</string>
     <string name="custom_object">Custom Object</string>
     <string name="show_grid">Show grid</string>
     <string name="show_grid_when_snapping_is_on">Show the grid when snapping in enabled</string>
+    <string name="edit_shapes">Edit Shapes</string>
+    <string name="edit_default_point">Edit Default Point</string>
+    <string name="spacer_mode">Spacer Mode</string>
+    <string name="reset_backup_tab">Are you sure to reset all backup settings?</string>
+    <string name="reset_angle_tab">Are you sure to reset the angle line?</string>
+    <string name="reset_app_display_tab">Are you sure to reset all the ui-related settings? Some hidden settings might be reset too.</string>
+    <string name="reset_behavior_tab">Are you sure to reset all the behavior settings?</string>
+    <string name="reset_colors_tab">Are you sure to reset all the colors?</string>
+    <string name="reset_hold_tab">Are you sure to reset the Hold settings?</string>
+    <string name="reset_icon_packs_tab">Are you sure to reset the icons?</string>
+    <string name="reset_status_bar">Are you sure to reset all the status bar settings?</string>
+    <string name="reset_widgets_tab">Are you sure to reset all widgets?</string>
+    <string name="reset_drawer">Are you sure to reset all drawer settings?</string>
+    <string name="reset_workspaces">Are you sure to reset all the workspaces?</string>
+    <string name="log_level">Log level</string>
+    <string name="accessibility">Accessibility</string>
+    <string name="system">System</string>
 </resources>

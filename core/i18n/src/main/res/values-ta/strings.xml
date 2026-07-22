@@ -36,7 +36,7 @@
     <string name="version">பதிப்பு</string>
     <string name="export_cancelled">ஏற்றுமதி ரத்து செய்யப்பட்டது</string>
     <string name="import_cancelled">இறக்குமதி ரத்து செய்யப்பட்டது</string>
-    <string name="backup_restore">காப்புப்பிரதி</string>
+    <string name="backup">காப்புப்பிரதி</string>
     <string name="backup_restore_text">ஆப்சின் அமைப்புகளையும் செயல்களையும் காப்புப் பிரதி எடுக்கவும் அல்லது மீட்டெடுக்கவும், ஒவ்வொரு ஆப்ச் துவக்கம் / இடைநிறுத்தம் / வெளியேறும் போது அல்லது கீழே உள்ள \"தூண்டுதல்\" பொத்தானை அழுத்துவதன் மூலம் தானியங்கி காப்புப்பிரதிகள் தானாகவே தூண்டப்படும்</string>
     <string name="export_settings">ஏற்றுமதி அமைப்புகள்</string>
     <string name="import_settings">இறக்குமதி அமைப்புகள்</string>
@@ -188,7 +188,7 @@
     <string name="transparency">வெளிப்படைத்தன்மை</string>
     <string name="save">சேமி</string>
     <string name="drawer_enter_key_action">டிராயர் முக்கிய செயலை உள்ளிடவும்</string>
-    <string name="icon_pack">படவுரு பேக்குகள்</string>
+    <string name="icon_packs">படவுரு பேக்குகள்</string>
     <string name="icon_pack_help">உங்கள் ஆப்ச் ஐகான்களைத் தனிப்பயனாக்க படவுரு பேக்கைத் தேர்ந்தெடுக்கவும். முதலில் உங்கள் ச்டோரிலிருந்து படவுரு பேக்குகளை நிறுவவும்.</string>
     <string name="use_original_app_icon">அசல் பயன்பாட்டு ஐகான்களைப் பயன்படுத்தவும்</string>
     <string name="status_bar">நிலைப் பட்டி</string>
@@ -277,7 +277,6 @@
     <string name="pick_a_nest">ஒரு கூட்டைத் தேர்ந்தெடுக்கவும்</string>
     <string name="create_new_nest">புதிய கூட்டை உருவாக்கவும்</string>
     <string name="copy_id">அடையாலத்தை நகல்</string>
-    <string name="edit_default_point_settings">இயல்புநிலை புள்ளி அமைப்புகளைத் திருத்தவும்</string>
     <string name="open_burger_menu">பர்கர் மெனுவைத் திறக்கவும்</string>
     <string name="selected_text">தேர்ந்தெடுக்கப்பட்டது</string>
     <string name="unselected">தேர்ந்தெடுக்கப்படவில்லை</string>
@@ -812,7 +811,6 @@
     <string name="live_nest_hold_delay">தாமதத்தை நிறுத்து (மிவி)</string>
     <string name="live_nest_scale">கூடு அளவு</string>
     <string name="live_nest_pick_nest">Nest ஐ தேர்வு செய்யவும்</string>
-    <string name="live_nest_grace_distance">கிரேச் தூரம் (px)</string>
     <string name="live_nest_snaps_to_finger_position">லைவ் நெச்ட் விரல் நிலைக்கு ஒடிக்கிறது</string>
     <string name="live_nest_snaps_to_finger_position_desc">நேரலைக் கூடு வரையப்பட்டிருந்தால், நேரம் முடிந்த பிறகு அது செயல்படுத்தப்பட்ட இடத்தில் அதன் நடுவண் சரியாக இருக்க வேண்டுமா அல்லது அது அதன் புரவலன் புள்ளி நிலைக்குச் சென்றால்</string>
     <string name="live_nest_dim_main_nest">முதன்மையான கூடு திறந்திருக்கும் போது மங்கலாக்கும்</string>
@@ -883,7 +881,6 @@
     <string name="package_search">தொகுப்பு தேடல்</string>
     <string name="test_overlays">சோதனை மேலடுக்குகள்</string>
     <string name="risky">அபாயகரமானது</string>
-    <string name="accessibility_and_system">அணுகல் மற்றும் அமைப்பு</string>
     <string name="pin_code_warning_titls">எச்சரிக்கை: சாத்தியமான தரவு இழப்பு</string>
     <string name="pin_code_warning_desc">நீங்கள் அதை மறந்துவிட்டால் மீட்டமைக்க, ஆண்ட்ராய்டு பயன்பாட்டுத் செய்தி பட்டியல் வழியாக எல்லா பயன்பாட்டு அமைப்புகளையும் மீட்டமைப்பதைத் தவிர வேறு வழியில்லை.</string>
     <string name="do_something">ஏதாவது வெற்றி</string>

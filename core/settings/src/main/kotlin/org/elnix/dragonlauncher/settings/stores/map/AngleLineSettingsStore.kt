@@ -60,26 +60,5 @@ public object AngleLineSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val lineJson: StringSettingObject = string("")
-
-    @SettingKey
-    public val angleLineJson: StringSettingObject = string(
-        default = "",
-        title = R.string.angle_object
-    )
-
-    @SettingKey
-    public val startLineJson: StringSettingObject = string(
-        default = "",
-        title = R.string.start_object
-    )
-
-    @SettingKey
-    public val endLineJson: StringSettingObject = string(
-        default = "",
-        title = R.string.end_object
-    )
-
-    @SettingKey
     public val angleLineObjectsOrder: StringSettingObject = string(AngleLineObjects.entries.joinToString(",") { it.name })
 }

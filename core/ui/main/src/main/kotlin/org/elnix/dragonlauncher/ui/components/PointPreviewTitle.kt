@@ -85,9 +85,6 @@ public fun PointPreviewTitle(
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                val colorAction =
-                    action.actionColor(extraColors, point.customActionColor?.let { Color(it) })
-
 
                 if (showIcon) {
                     FinalPointIcon(point, size = appIconOverlaySize)
@@ -97,7 +94,7 @@ public fun PointPreviewTitle(
                     Text(
                         text = label,
                         style = TextStyle(
-                            color = colorAction,
+                            color = action.actionColor(extraColors, point.customActionColor),
                             fontSize = appLabelOverlaySize.sp,
                             fontWeight = FontWeight.Bold,
                             shadow = Shadow(

@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import io.github.elnix90.logging.ICONS_TAG
 import io.github.elnix90.logging.logW
 import kotlinx.coroutines.CoroutineScope
@@ -99,7 +100,7 @@ public class IconService(
 
     private val defaultPoint: SettingFlow<Point> = pointService.defaultPoint
 
-    private val iconSize = DrawerSettingsStore.iconSize.flow(ctx)
+    private val iconSize = DrawerSettingsStore.maxIconSize.flow(ctx)
 
     private val iconProviders: MutableStateFlow<List<IconProvider>> = MutableStateFlow(listOf())
 
@@ -238,7 +239,7 @@ public class IconService(
     public fun getRandomAppIcon(): CacheKey? = DrawerIconCache.getRandom()
 
     public fun getCustomAppIcon(application: Application): Flow<CustomIcon?> {
-        return appOverrideManager.appOverrideState.map {
+        return appOverrideManager.appOverridesState.flow.map {
             it[application.key]?.customIcon
         }
     }
@@ -327,13 +328,7 @@ public class IconService(
         reload: Boolean = false
     ): Flow<LauncherIcon?> {
         return defaultPoint.flow.flatMapLatest { defaultPoint ->
-            val resolvedResolutionDp = point.size
-                ?: defaultPoint.size
-                ?: Point.defaultSize
-
-            // Convert dp to pixels and enforce a minimum touch-safe size.
-            val size = (resolvedResolutionDp * density.density).toInt()
-
+            val size = point.getSize(defaultPoint)
             resolveCustomPointIcon(point, size, reload)
         }
     }
@@ -414,7 +409,7 @@ public class IconService(
 
     private fun resolveCustomPointIcon(
         point: Point,
-        size: Int,
+        size: Dp,
         reload: Boolean,
     ): Flow<LauncherIcon?> {
         return combine(iconProviders, transformations, extraColors) { providers, transformations, extraColors ->
@@ -460,7 +455,7 @@ public class IconService(
             val provs = if (customIcon != null) getProviders(customIcon) + providers else providers
             val transforms = getTransformations(customIcon) ?: transformations
 
-            icon = provs.getFirstIcon(point.action, size)
+            icon = provs.getFirstIcon(point.action, (size.value * density.density).toInt())
 
             if (icon != null) {
                 icon = icon.transform(transforms)

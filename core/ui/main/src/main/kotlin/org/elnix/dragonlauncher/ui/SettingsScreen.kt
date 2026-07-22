@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -49,13 +50,16 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ktx.openUrl
 import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.components.BetaVersionType
 import org.elnix.dragonlauncher.ui.components.BetaVersionWarning
 import org.elnix.dragonlauncher.ui.components.LocalePickerSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.helpers.settings.ContributorItem
+import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.warning.WarningManager
@@ -66,7 +70,8 @@ import org.elnix.dragonlauncher.ui.warning.WarningReminder
 @Composable
 public fun SettingsScreen(
     onNavigate: (NavigationRoute) -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    pointsViewModel: PointsViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -86,6 +91,8 @@ public fun SettingsScreen(
     val showBetaVersionWarning = remember(hideBetaVersionWarning) {
         ctx.isBetaVersion() && !hideBetaVersionWarning
     }
+
+    val nestId by pointsViewModel.nestsNavigationService.currentNestId.collectAsState()
 
     SettingsScaffold(
         title = stringResource(R.string.settings),
@@ -109,48 +116,15 @@ public fun SettingsScreen(
         }
 
         DragonSettingsGroup(R.string.common_settings) {
-            SettingsItem(
-                title = stringResource(R.string.appearance),
-                icon = R.drawable.palette
-            ) { onNavigate(NavigationRoute.Appearance) }
-
-            SettingsItem(
-                title = stringResource(R.string.wallpaper),
-                icon = R.drawable.wallpaper
-            ) { onNavigate(NavigationRoute.Wallpaper) }
-
-            SettingsItem(
-                title = stringResource(R.string.widgets),
-                icon = R.drawable.widgets
-            ) { onNavigate(NavigationRoute.Widgets()) }
-
-            SettingsItem(
-                title = stringResource(R.string.behavior),
-                icon = R.drawable.question_mark
-            ) { onNavigate(NavigationRoute.Behavior) }
-
-            SettingsItem(
-                title = stringResource(R.string.backup_restore),
-                icon = R.drawable.reset
-            ) { onNavigate(NavigationRoute.Backup) }
-
-            SettingsItem(
-                title = stringResource(R.string.app_drawer),
-                icon = R.drawable.grid_on
-            ) { onNavigate(NavigationRoute.DrawerSettings) }
-
-            SettingsItem(
-                title = stringResource(R.string.wellbeing),
-                icon = R.drawable.self_improvement
-            ) { onNavigate(NavigationRoute.Wellbeing) }
-        }
-
-
-
-        DragonSettingsGroup(R.string.advanced) {
+            RouteItem(NavigationRoute.Appearance) { onNavigate(it) }
+            RouteItem(NavigationRoute.Wallpaper) { onNavigate(it) }
+            RouteItem(NavigationRoute.Widgets(nestId)) { onNavigate(it) }
+            RouteItem(NavigationRoute.Behavior) { onNavigate(it) }
+            RouteItem(NavigationRoute.Backup) { onNavigate(it) }
+            RouteItem(NavigationRoute.DrawerSettings) { onNavigate(it) }
+            RouteItem(NavigationRoute.Wellbeing) { onNavigate(it) }
 
             val forceAppLanguageSelector by DebugSettingsStore.forceAppLanguageSelector.asState()
-
             SettingsItem(
                 title = stringResource(R.string.language),
                 icon = R.drawable.web,
@@ -160,12 +134,13 @@ public fun SettingsScreen(
                     } else { showLanguageSheet = true }
                 }
             )
+        }
 
-            SettingsItem(
-                title = stringResource(R.string.extensions),
-                icon = R.drawable.extension,
+        DragonSettingsGroup(R.string.advanced) {
+            RouteItem(
+                route = NavigationRoute.Extensions,
                 onExternalClick = { ctx.openUrl(EXTENSIONS_GITHUB_REPO_LINK) }
-            ) { onNavigate(NavigationRoute.Extensions) }
+            ) { onNavigate(it) }
 
             SettingsItem(
                 title = stringResource(R.string.android_settings),
@@ -180,11 +155,7 @@ public fun SettingsScreen(
             }
 
             AnimatedVisibility(isDebugModeEnabled) {
-                SettingsItem(
-                    title = stringResource(R.string.debug),
-                    icon = R.drawable.bug_report,
-                    modifier = Modifier
-                ) { onNavigate(NavigationRoute.Debug) }
+                RouteItem(NavigationRoute.Debug) { onNavigate(it) }
             }
         }
 
@@ -268,7 +239,7 @@ public fun SettingsScreen(
                 stringResource(R.string.version_copied_to_clipboard)
 
             Text(
-                text = "Dragon Launcher $versionName ($versionCode)",
+                text = "${stringResource(R.string.app_name)} $versionName ($versionCode)",
                 style = infoStyle,
                 textAlign = TextAlign.Center,
                 color = infoColor,

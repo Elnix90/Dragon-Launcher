@@ -1,3 +1,5 @@
+@file:Suppress("ConstPropertyName")
+
 package org.elnix.dragonlauncher.base.model.serializables
 
 import android.content.Context
@@ -176,4 +178,12 @@ public data class HapticEntry(
     val durationMs: Int
 ) {
     val id: Long = System.nanoTime() + Random.nextLong()
+
+
+    public val resetEnabled: Boolean
+        get() = if (isVibration) durationMs != defaultVibrationDuration else durationMs != defaultHapticDuration
+    public companion object {
+        public const val defaultHapticDuration: Int = 100
+        public const val defaultVibrationDuration: Int = 50
+    }
 }

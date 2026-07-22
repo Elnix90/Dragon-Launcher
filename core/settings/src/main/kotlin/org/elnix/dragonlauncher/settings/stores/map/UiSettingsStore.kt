@@ -168,6 +168,7 @@ public object UiSettingsStore : MapSettingsStore() {
     @SettingKey
     public val wallpaperDimMainScreen: FloatSettingObject = float(
         title = R.string.wallpaper_dim_amount,
+        description = R.string.dim_amount_help,
         default = 0f,
         allowedRange = 0f..1f
     )
@@ -175,6 +176,7 @@ public object UiSettingsStore : MapSettingsStore() {
     @SettingKey
     public val wallpaperDimDrawerScreen: FloatSettingObject = float(
         title = R.string.wallpaper_dim_amount,
+        description = R.string.dim_amount_help,
         default = 0f,
         allowedRange = 0f..1f
     )
@@ -199,13 +201,6 @@ public object UiSettingsStore : MapSettingsStore() {
         default = 5,
         allowedRange = 1..10
     )
-
-    @SettingKey
-    public val mainScreenLayers: StringSettingObject = string(
-        title = R.string.main_screen_layers,
-        default = ""
-    )
-
 
     @SettingKey
     public val showGridWhenSnappingIsOn: BooleanSettingObject = boolean(

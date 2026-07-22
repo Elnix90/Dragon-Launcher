@@ -17,7 +17,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.theme.AppObjectsColors
 
 @Composable
 public fun WelcomePageTutorial() {
@@ -46,7 +45,7 @@ private fun TutorialEntry(
     painterResId: Int,
     titleResId: Int
 ) {
-    Card(colors = AppObjectsColors.cardColors()) {
+    Card {
         Column(
             modifier = Modifier.padding(5.dp),
             horizontalAlignment = Alignment.CenterHorizontally

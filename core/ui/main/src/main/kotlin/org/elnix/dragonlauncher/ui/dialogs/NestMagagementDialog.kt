@@ -158,7 +158,6 @@ private fun NestManagementItem(
                 ),
                 alpha = 0.4f,
                 center = center,
-                preventBgErasing = true,
                 eraseColor = bgColor
             )
         }
@@ -186,14 +185,18 @@ private fun NestManagementItem(
                 )
             }
 
-            NestNameEditor(nest, pointsService)
+            NestNameEditor(nest) {
+                pointsService.editNest(nest.id) { old ->
+                    old.copy(name = it)
+                }
+            }
         }
 
 
         val enabled = nest.id != 0
 
         DragonIconButton(
-            icon = R.drawable.close,
+            icon = R.drawable.delete_forever,
             contentDescription = stringResource(if (enabled) R.string.delete_nest else R.string.cannot_delete_nest_0),
             colors = AppObjectsColors.cancelIconButtonColors(),
             enabled = enabled

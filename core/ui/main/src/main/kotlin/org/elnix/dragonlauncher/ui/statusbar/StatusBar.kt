@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -72,8 +71,9 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.base.animation.slideInVerticalBouncy
+import org.elnix.dragonlauncher.ui.base.animation.slideOutVerticalBouncy
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.composition.LocalStatusBarElements
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
@@ -82,9 +82,11 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
+import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 import org.elnix.dragonlauncher.ui.helpers.CustomActionSelector
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
+import java.util.UUID
 
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -143,20 +145,18 @@ public fun StatusBar(
                     if (element !is StatusBar.Spacer) {
                         StatusBarItem(element, launchAction)
                     } else {
-                        val modifier = Modifier.conditional(
-                            condition = element.width == -1,
-                            block = { Modifier.weight(1f) },
-                            fallback = {
-                                // If this is the "Auto" spacer, and we have a cutout, we use cutout width
-                                // Otherwise use the defined width
-                                width(element.width.dp)
+                        when (element.mode) {
+                            StatusBar.Spacer.SpacerMode.Width -> {
+                                Spacer(Modifier.width(element.width))
                             }
-                        )
 
-                        if (element.width == -2) { // Special ID for Notch Spacer
-                            Spacer(with(density) { totalCutoutWidth.toDp() })
-                        } else {
-                            Spacer(modifier)
+                            StatusBar.Spacer.SpacerMode.Fill -> {
+                                Spacer()
+                            }
+
+                            StatusBar.Spacer.SpacerMode.Cutout -> {
+                                Spacer(with(density) { totalCutoutWidth.toDp() })
+                            }
                         }
                     }
                 }
@@ -200,7 +200,7 @@ public fun EditStatusBar() {
         elementsJson.forEach { item ->
             elements.add(
                 StatusBarElement(
-                    id = java.util.UUID.randomUUID().toString(),
+                    id = UUID.randomUUID().toString(),
                     item = item
                 )
             )
@@ -222,7 +222,7 @@ public fun EditStatusBar() {
     fun addElement(element: StatusBar) {
         elements.add(
             StatusBarElement(
-                id = java.util.UUID.randomUUID().toString(),
+                id = UUID.randomUUID().toString(),
                 item = element
             )
         )
@@ -247,7 +247,7 @@ public fun EditStatusBar() {
         elements.add(
             index + 1,
             StatusBarElement(
-                id = java.util.UUID.randomUUID().toString(),
+                id = UUID.randomUUID().toString(),
                 item = copiedItem
             )
         )
@@ -374,7 +374,11 @@ public fun EditStatusBar() {
             }
         }
 
-        AnimatedVisibility(selectedElementId != null) {
+        AnimatedVisibility(
+            visible = selectedElementId != null,
+            enter = slideInVerticalBouncy,
+            exit = slideOutVerticalBouncy
+        ) {
             elements.firstOrNull { it.id == selectedElementId }?.let { element ->
                 DragonColumnGroup(
                     Modifier.fillMaxWidth()
@@ -440,7 +444,8 @@ public fun EditStatusBar() {
                                     label = stringResource(R.string.connectivity_update_frequency),
                                     value = item.updateFrequency,
                                     valueRange = 1..60,
-                                    onReset = { updateElement(item.copy(updateFrequency = 5)) }
+                                    resetEnabled = item.updateFrequency != StatusBar.Connectivity.defaultUpdateFrequency,
+                                    onReset = { updateElement(item.copy(updateFrequency = StatusBar.Connectivity.defaultUpdateFrequency)) }
                                 ) {
                                     updateElement(item.copy(updateFrequency = it))
                                 }
@@ -495,6 +500,8 @@ public fun EditStatusBar() {
                                     currentAction = item.action,
                                     label = stringResource(R.string.clock_action),
                                     nullText = stringResource(R.string.opens_alarm_clock_app),
+                                    resetEnabled = item.action != null,
+                                    onReset = { updateElement(item.copy(action = null)) },
                                     onToggle = { updateElement(item.copy(action = null)) }
                                 ) { updateElement(item.copy(action = it)) }
                             }
@@ -548,7 +555,8 @@ public fun EditStatusBar() {
                                 label = stringResource(R.string.max_notification_icons),
                                 value = item.maxIcons,
                                 valueRange = 1..15,
-                                onReset = { updateElement(item.copy(maxIcons = 5)) }
+                                resetEnabled = item.maxIcons != StatusBar.Notifications.defaultMaxIcons,
+                                onReset = { updateElement(item.copy(maxIcons = StatusBar.Notifications.defaultMaxIcons)) }
                             ) {
                                 updateElement(item.copy(maxIcons = it))
                             }
@@ -558,19 +566,18 @@ public fun EditStatusBar() {
                             SliderWithLabel(
                                 label = stringResource(R.string.width),
                                 value = item.width,
-                                valueRange = -2..30,
-                                onReset = { updateElement(item.copy(width = -1)) }
+                                valueRange = 0.dp..30.dp,
+                                resetEnabled = item.width != StatusBar.Spacer.defaultWidth,
+                                onReset = { updateElement(item.copy(width = StatusBar.Spacer.defaultWidth)) }
                             ) {
                                 updateElement(item.copy(width = it))
                             }
-
-                            if (item.width == -2) {
-                                Text(
-                                    text = stringResource(R.string.notch_mode),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.padding(top = 4.dp)
-                                )
+                            ActionSelectorRow(
+                                label = stringResource(R.string.spacer_mode),
+                                options = StatusBar.Spacer.SpacerMode.entries,
+                                selected = item.mode
+                            ) {
+                                updateElement(item.copy(mode = it ?: StatusBar.Spacer.spacerSpacerMode))
                             }
                         }
 
@@ -625,17 +632,6 @@ public fun EditStatusBar() {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Button(
-                            onClick = { removeElement(element) },
-                            colors = AppObjectsColors.cancelButtonColors()
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.close),
-                                contentDescription = stringResource(R.string.remove)
-                            )
-                            Text(stringResource(R.string.remove))
-                        }
-
                         DragonIconButton(
                             onClick = {
                                 duplicateElement(element)
@@ -643,12 +639,18 @@ public fun EditStatusBar() {
                             icon = R.drawable.copy,
                             contentDescription = stringResource(R.string.copy)
                         )
+
+                        DragonIconButton(
+                            onClick = {
+                                removeElement(element)
+                            },
+                            icon = R.drawable.close,
+                            contentDescription = stringResource(R.string.copy)
+                        )
                     }
                 }
             }
         }
-
-
 
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -676,16 +678,17 @@ public fun EditStatusBar() {
         }
     }
 
-    DragonButton(
-        onClick = {
-            scope.launch {
-                TODO()
-                load()
-            }
-        }
-    ) {
-        Text(stringResource(R.string.set_status_bar_template))
-    }
+//    DragonButton(
+//        onClick = {
+//            scope.launch {
+////                TODO()
+//                ctx.showToast("Not implemented yet")
+////                load()
+//            }
+//        }
+//    ) {
+//        Text(stringResource(R.string.set_status_bar_template))
+//    }
 }
 
 

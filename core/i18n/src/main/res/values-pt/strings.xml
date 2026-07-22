@@ -167,7 +167,7 @@
     <string name="transparency">Transparência</string>
     <string name="save">Salvar</string>
     <string name="drawer_enter_key_action">Ação da tecla enter na gaveta</string>
-    <string name="icon_pack">Pacotes de ícones</string>
+    <string name="icon_packs">Pacotes de ícones</string>
     <string name="icon_pack_help">Selecione um pacote de ícones para personalizar os ícones do seu aplicativo. Instale pacotes de ícones da sua loja primeiro.</string>
     <string name="use_original_app_icon">Use ícones originais do app</string>
     <string name="status_bar">Barra de status</string>
@@ -250,7 +250,6 @@
     <string name="pick_a_nest">Escolha um ninho</string>
     <string name="create_new_nest">Criar novo ninho</string>
     <string name="copy_id">Copiar ID</string>
-    <string name="edit_default_point_settings">Editar configurações de pontos padrão</string>
     <string name="open_burger_menu">Menu de hambúrguer aberto</string>
     <string name="selected_text">Selecionado</string>
     <string name="unselected">Não selecionado</string>

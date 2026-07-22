@@ -19,6 +19,7 @@ import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.LazyRowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.IconPackListContent
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -40,9 +41,10 @@ public fun IconPackTab(
     val selectedPack = iconSettings.iconPack
 
     SettingsScaffold(
-        title = stringResource(R.string.icon_pack),
+        title = stringResource(R.string.icon_packs),
         onBack = onBack,
         helpText = stringResource(R.string.icon_pack_help),
+        resetText = stringResource(R.string.reset_icon_packs_tab),
         onReset = {
             scope.launch {
                 IconsSettingsStore.resetAll(ctx)
@@ -53,28 +55,31 @@ public fun IconPackTab(
                 items = apps,
                 modifier = Modifier.height(70.dp),
             ) { app ->
-                AppIcon(app, size = 56.dp)
+                AppIcon(app, maxSize = 56.dp)
             }
         }
     ) {
 
+        // because of the icons in top content
         Spacer(30.dp)
 
-        Setting(IconsSettingsStore.useIconTint)
+        DragonSettingsGroup(R.string.colors_and_icons) {
+            Setting(IconsSettingsStore.useIconTint)
 
-        val useIconTint by IconsSettingsStore.useIconTint.asState()
-        Setting(IconsSettingsStore.iconsTint, enabled = useIconTint) {
-            iconsViewModel.reinstallAllIconPacks()
+            val useIconTint by IconsSettingsStore.useIconTint.asState()
+            Setting(IconsSettingsStore.iconsTint, enabled = useIconTint) {
+                iconsViewModel.reinstallAllIconPacks()
+            }
+
+            Setting(IconsSettingsStore.themedIcons)
+
+            val themedIcons by IconsSettingsStore.themedIcons.asState()
+            Setting(IconsSettingsStore.forceThemed, enabled = themedIcons)
+
+            Setting(IconsSettingsStore.adaptify)
+
+            DrawerIconShapePicker()
         }
-
-        Setting(IconsSettingsStore.themedIcons)
-
-        val themedIcons by IconsSettingsStore.themedIcons.asState()
-        Setting(IconsSettingsStore.forceThemed, enabled = themedIcons)
-
-        Setting(IconsSettingsStore.adaptify)
-
-        DrawerIconShapePicker()
 
         IconPackListContent(
             packs = packs,

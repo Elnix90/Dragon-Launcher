@@ -25,7 +25,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -48,8 +47,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import io.github.elnix90.core.objects.ColorSettingObject
 import io.github.elnix90.runtime.asState
+import io.github.elnix90.runtime.asStateNull
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.enumsui.select.ColorSelectorModes
 import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes
 import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.Amoled
@@ -69,12 +68,13 @@ import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
-import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSectionState
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
+import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionState
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
@@ -86,7 +86,7 @@ public fun ColorSelectorTab(
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val defaultTheme by ColorModesSettingsStore.defaultTheme.asState()
+    val defaultTheme by ColorModesSettingsStore.defaultTheme.asStateNull()
     val colorTestMode by ColorModesSettingsStore.colorTestMode.asState()
 
     val primarySectionState = rememberExpandableSection(stringResource(R.string.primary_colors_section))
@@ -109,6 +109,7 @@ public fun ColorSelectorTab(
         title = stringResource(R.string.color_selector),
         onBack = onBack,
         helpText = stringResource(R.string.color_selector_text),
+        resetText = stringResource(R.string.reset_colors_tab),
         onReset = {
             scope.launch {
                 ColorSettingsStore.resetAll(ctx)
@@ -217,36 +218,35 @@ public fun ColorSelectorTab(
             }
         }
 
-        HorizontalDivider()
+        DragonSettingsGroup(R.string.special_options) {
+            Setting(ColorModesSettingsStore.useCustomColorChannels)
 
-        Setting(ColorModesSettingsStore.useCustomColorChannels)
+            AnimatedVisibility(defaultTheme == Dark || defaultTheme == Amoled) {
+                SwitchRow(
+                    state = defaultTheme == Amoled,
+                    title = stringResource(R.string.amoled_theme),
+                    description = stringResource(R.string.use_pure_black_background)
+                ) {
+                    scope.launch {
+                        ColorModesSettingsStore.defaultTheme.set(ctx, if (it) Amoled else Dark)
+                    }
+                }
+            }
 
-        AnimatedVisibility(defaultTheme == Dark || defaultTheme == Amoled) {
-            SwitchRow(
-                state = defaultTheme == Amoled,
-                title = stringResource(R.string.amoled_theme),
-                description = stringResource(R.string.use_pure_black_background)
-            ) {
-                scope.launch {
-                    ColorModesSettingsStore.defaultTheme.set(ctx, if (it) Amoled else Dark)
+            // Only show the dynamic colors switch when in SYSTEM view
+            AnimatedVisibility(defaultTheme == System) {
+                Setting(ColorModesSettingsStore.dynamicColors)
+            }
+
+            AnimatedVisibility(colorTestMode) {
+                DragonButton(
+                    onClick = { showExitTestValidation = true },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(stringResource(R.string.exit_test_mode))
                 }
             }
         }
-
-        // Only show the dynamic colors switch when in SYSTEM view
-        AnimatedVisibility(defaultTheme == System) {
-            Setting(ColorModesSettingsStore.dynamicColors)
-        }
-
-        AnimatedVisibility(colorTestMode) {
-            DragonButton(
-                onClick = { showExitTestValidation = true },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.exit_test_mode))
-            }
-        }
-
 
         AnimatedVisibility(defaultTheme == Custom) {
             Column(
@@ -496,7 +496,6 @@ public fun ColorSelectorTab(
                     currentColor = applyColor,
                     description = null,
                     title = stringResource(R.string.color_mode_all),
-                    backgroundColor = MaterialTheme.colorScheme.surface.alphaMultiplier(0.7f)
                 ) { applyColor = it ?: Color.Black }
             },
             containerColor = MaterialTheme.colorScheme.surface,

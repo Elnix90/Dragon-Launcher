@@ -30,7 +30,6 @@ public fun PointIcon(
     alpha: Float = 1f,
     selected: Boolean = false,
 
-    preventBgErasing: Boolean = false,
     pointSettingsDisplay: Boolean = false,
     customText: Pair<DrawScopeText?, DrawScopeText?>? = null,
     hideShapes: Boolean = false,

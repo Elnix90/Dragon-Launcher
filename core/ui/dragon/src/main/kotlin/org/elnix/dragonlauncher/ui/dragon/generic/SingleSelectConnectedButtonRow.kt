@@ -34,7 +34,7 @@ public fun <T : SelectButtonOption> SingleSelectConnectedButtonRow(
 
     ButtonGroup(
         overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
-        modifier = modifier.padding(horizontal = 8.dp),
+        modifier = modifier.padding(horizontal = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
     ) {
         entries.forEachIndexed { idx, entry ->

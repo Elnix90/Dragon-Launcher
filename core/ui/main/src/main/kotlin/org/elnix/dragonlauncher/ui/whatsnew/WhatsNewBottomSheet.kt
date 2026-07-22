@@ -14,17 +14,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.loader.loadChangelogs
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.rememberVersionCode
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ktx.openUrl
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 
@@ -33,6 +33,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 @Composable
 public fun WhatsNewBottomSheet() {
     val ctx = LocalContext.current
+    val uriHandler = LocalUriHandler.current
     val scope = rememberCoroutineScope()
 
     val lastSeenVersionCodeWhatsNew by PrivateSettingsStore.lastSeenVersionCodeWhatsNew.asState()
@@ -67,15 +68,22 @@ public fun WhatsNewBottomSheet() {
             Spacer(12.dp)
 
             updates.forEach { update ->
+                val updateRegex: Regex = "[\\d-.]+".toRegex()
+                val matchResult = updateRegex.find(update.versionName)
+
+                val link = if (matchResult != null) {
+                    "https://github.com/Elnix90/Dragon-Launcher/releases/tag/v${matchResult.value}"
+                } else {
+                    "https://github.com/Elnix90/Dragon-Launcher/releases/latest"
+                }
+
                 UpdateCard(
                     update,
-                    onLongCLick = {
-                        ctx.copyToClipboard(update.toString())
+                    onLongClick = {
+                        ctx.copyToClipboard(link)
                     },
-                    onCLick = {
-                        ctx.openUrl(
-                            "https://github.com/Elnix90/Dragon-Launcher/blob/main/fastlane/metadata/android/en-US/changelogs/${versionCode}.txt"
-                        )
+                    onClick = {
+                        uriHandler.openUri(link)
                     }
                 )
             }

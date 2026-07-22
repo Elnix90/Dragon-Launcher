@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.enumsui.ToggleButtonOption
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
@@ -62,7 +63,7 @@ public fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
         entries.forEachIndexed { idx, entry ->
 
             val checked = checked(entry)
-
+            NavigationRoute
             customItem(
                 buttonGroupContent = {
                     IconToggleButton(

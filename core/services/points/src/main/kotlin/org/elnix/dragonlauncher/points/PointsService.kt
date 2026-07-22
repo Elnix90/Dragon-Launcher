@@ -17,13 +17,14 @@ import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.models.HitResult
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
+import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape.Companion.DefaultShapeJson
 import org.elnix.dragonlauncher.base.model.serializables.Nest
-import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.NestJson
+import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.DefaultNestJson
+import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.NestsJson
 import org.elnix.dragonlauncher.base.model.serializables.Nests
 import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.PointJson
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.DefaultPointJson
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.PointsJson
-import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
 import org.elnix.dragonlauncher.base.model.serializables.Points
 import org.elnix.dragonlauncher.base.undoredo.UndoRedoManager
 import org.elnix.dragonlauncher.base.undoredo.UndoRedoStack
@@ -34,7 +35,9 @@ import org.elnix.dragonlauncher.ktx.getNextId
 import org.elnix.dragonlauncher.ktx.groupByTo
 import org.elnix.dragonlauncher.settings.stores.array.NestsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.array.PointsSettingsStore
+import org.elnix.dragonlauncher.settings.stores.objects.DefaultNestSettingsStore
 import org.elnix.dragonlauncher.settings.stores.objects.DefaultPointSettingsStore
+import org.elnix.dragonlauncher.settings.stores.objects.DefaultShapeSettingsStore
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.PI
 import kotlin.math.abs
@@ -42,9 +45,13 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 public interface PointsService {
-    public val defaultPoint: SettingFlow<Point>
     public val points: StateFlow<Points>
     public val nests: StateFlow<Nests>
+
+
+    public val defaultPoint: SettingFlow<Point>
+    public val defaultNest: SettingFlow<Nest>
+    public val defaultIntersectionShape: SettingFlow<IntersectionShape>
 
     public val recomposeTrigger: SettingFlow<Int>
 
@@ -81,6 +88,8 @@ public interface PointsService {
     )
 
     public fun editDefaultPoint(newDefaultPoint: Point)
+    public fun editDefaultNest(newDefaultNest: Nest)
+    public fun editDefaultShape(newDefaultShape: IntersectionShape)
 
 
     public fun findPointById(id: Int): Point?
@@ -117,7 +126,9 @@ public interface PointsService {
     public fun set(
         newPoints: Points? = null,
         newNests: Nests? = null,
-        newDefaultPoint: Point? = null
+        newDefaultPoint: Point? = null,
+        newDefaultNest: Nest? = null,
+        newDefaultShape: IntersectionShape? = null
     )
 
     /**
@@ -129,15 +140,16 @@ public interface PointsService {
     public fun reset(
         resetPoints: Boolean = false,
         resetNests: Boolean = false,
-        resetDefaultPoint: Boolean = false
+        resetDefaultPoint: Boolean = false,
+        resetDefaultNest: Boolean = false,
+        resetDefaultShape: Boolean = false
     )
-
 
     public fun resolveLiveNestHit(
         normalizedPos: Offset,
         nestId: Int,
         liveNestScale: Float,
-        graceDistancePx: Int?
+        graceDistance: Float?
     ): HitResult
 
     /**
@@ -196,7 +208,10 @@ internal class PointsServiceImpl(
     private val density = ctx.resources.displayMetrics.density
 
 
-    override val defaultPoint: SettingFlow<Point> = SettingFlow(dummySwipePoint())
+    override val defaultPoint: SettingFlow<Point> = SettingFlow(Point.defaultSwipePointsValues)
+    override val defaultNest: SettingFlow<Nest> = SettingFlow(Nest.defaultNestValues)
+    override val defaultIntersectionShape: SettingFlow<IntersectionShape> = SettingFlow(IntersectionShape.defaultIntersectionShapeValues)
+
     private val _points = MutableStateFlow(ConcurrentHashMap<Int, Point>())
     override val points: StateFlow<Map<Int, Point>> = _points.asStateFlow()
 
@@ -405,19 +420,33 @@ internal class PointsServiceImpl(
     }
 
     override fun editDefaultPoint(newDefaultPoint: Point) {
-        applyChange { set(newDefaultPoint = newDefaultPoint) }
+        applyChange { defaultPoint.value = newDefaultPoint }
     }
 
+    override fun editDefaultNest(newDefaultNest: Nest) {
+        applyChange { defaultNest.value = newDefaultNest }
+    }
+
+    override fun editDefaultShape(newDefaultShape: IntersectionShape) {
+        applyChange { defaultIntersectionShape.value = newDefaultShape }
+    }
 
     private suspend fun load() {
         val decodedPoints = PointsJson.decode<Set<Point>>(PointsSettingsStore.jsonSetting.get(ctx), emptySet())
         _points.value = ConcurrentHashMap(decodedPoints.associateBy { it.id })
 
-        val decodedNests = NestJson.decode<Set<Nest>>(NestsSettingsStore.jsonSetting.get(ctx), emptySet())
+        val decodedNests = NestsJson.decode<Set<Nest>>(NestsSettingsStore.jsonSetting.get(ctx), emptySet())
         _nests.value = ConcurrentHashMap(decodedNests.associateBy { it.id })
 
-        val decodedDefaultPoint = PointJson.decode(DefaultPointSettingsStore.jsonSetting.get(ctx), Point.defaultSwipePointsValues)
+        val decodedDefaultPoint = DefaultPointJson.decode(DefaultPointSettingsStore.jsonSetting.get(ctx), Point.defaultSwipePointsValues)
         defaultPoint.value = decodedDefaultPoint
+
+        val decodedDefaultNest = DefaultNestJson.decode(DefaultNestSettingsStore.jsonSetting.get(ctx), Nest.defaultNestValues)
+        defaultNest.value = decodedDefaultNest
+
+        val decodedDefaultShape =
+            DefaultShapeJson.decode(DefaultShapeSettingsStore.jsonSetting.get(ctx), IntersectionShape.defaultIntersectionShapeValues)
+        defaultIntersectionShape.value = decodedDefaultShape
     }
 
     override fun persist() {
@@ -425,20 +454,28 @@ internal class PointsServiceImpl(
             val encodedPoints = PointsJson.encode<Set<Point>>(_points.value.values.toSet())
             PointsSettingsStore.jsonSetting.set(ctx, encodedPoints)
 
-            val encodedNests = NestJson.encode<Set<Nest>>(_nests.value.values.toSet())
+            val encodedNests = NestsJson.encode<Set<Nest>>(_nests.value.values.toSet())
             NestsSettingsStore.jsonSetting.set(ctx, encodedNests)
 
-            val encodedDefaultPoint = PointJson.encode(defaultPoint.value)
+            val encodedDefaultPoint = DefaultPointJson.encode(defaultPoint.value)
             DefaultPointSettingsStore.jsonSetting.set(ctx, encodedDefaultPoint)
+
+            val encodedDefaultNest = DefaultNestJson.encode(defaultNest.value)
+            DefaultNestSettingsStore.jsonSetting.set(ctx, encodedDefaultNest)
+
+            val encodedDefaultShape = DefaultShapeJson.encode(defaultIntersectionShape.value)
+            DefaultShapeSettingsStore.jsonSetting.set(ctx, encodedDefaultShape)
         }
     }
 
     override fun set(
         newPoints: Points?,
         newNests: Nests?,
-        newDefaultPoint: Point?
+        newDefaultPoint: Point?,
+        newDefaultNest: Nest?,
+        newDefaultShape: IntersectionShape?
     ) {
-        require(newPoints != null || newNests != null || newDefaultPoint != null) { "One of all 3 args must not bu null" }
+        require(newPoints != null || newNests != null || newDefaultPoint != null || newDefaultNest != null || newDefaultShape != null) { "One of all 3 args must not bu null" }
 
         if (newPoints != null) {
             _points.value = ConcurrentHashMap(newPoints)
@@ -452,6 +489,14 @@ internal class PointsServiceImpl(
             defaultPoint.value = newDefaultPoint
         }
 
+        if (newDefaultNest != null) {
+            defaultNest.value = newDefaultNest
+        }
+
+        if (newDefaultShape != null) {
+            defaultIntersectionShape.value = newDefaultShape
+        }
+
         persist()
         resetGrids()
         recomposeTrigger.value++
@@ -461,10 +506,11 @@ internal class PointsServiceImpl(
     override fun reset(
         resetPoints: Boolean,
         resetNests: Boolean,
-        resetDefaultPoint: Boolean
+        resetDefaultPoint: Boolean,
+        resetDefaultNest: Boolean,
+        resetDefaultShape: Boolean
     ) {
-        require(resetPoints || resetNests || resetDefaultPoint) { "Must at least reset something" }
-
+        require(resetPoints || resetNests || resetDefaultPoint || resetDefaultNest || resetDefaultShape) { "Must at least reset something" }
 
         applyChange {
             if (resetPoints) {
@@ -480,6 +526,12 @@ internal class PointsServiceImpl(
             }
             if (resetDefaultPoint) {
                 defaultPoint.value = Point.defaultSwipePointsValues
+            }
+            if (resetDefaultNest) {
+                defaultNest.value = Nest.defaultNestValues
+            }
+            if (resetDefaultShape) {
+                defaultIntersectionShape.value = IntersectionShape.defaultIntersectionShapeValues
             }
         }
     }
@@ -599,7 +651,7 @@ internal class PointsServiceImpl(
         normalizedPos: Offset,
         nestId: Int,
         liveNestScale: Float,
-        graceDistancePx: Int?
+        graceDistance: Float?
     ): HitResult {
 
         val dist = normalizedPos.getDistance()
@@ -608,7 +660,7 @@ internal class PointsServiceImpl(
         // If there's no point in that nest, the HitResult returns an out-of-bounds hit
         val outerRadius = computeOuterRadius(nestId)
 
-        graceDistancePx?.let { graceDist ->
+        graceDistance?.let { graceDist ->
             if (outerRadius == null || outerRadius > 0f && dist > outerRadius + graceDist) {
                 return HitResult(
                     selectedPoint = null,
@@ -619,7 +671,7 @@ internal class PointsServiceImpl(
             }
         }
 
-        val isInCancelZone = dist <= findNestById(nestId).cancelZone * density
+        val isInCancelZone = dist <= findNestById(nestId).getCancelZone(defaultNest.value) * density
 
         // When inside the cancel zone there is no point to select.
         val selectedPoint = if (isInCancelZone) {
@@ -642,19 +694,21 @@ internal class PointsServiceImpl(
         val shapeId = point.shapeId ?: run { return point.offset }
 
         val nest = findNestById(point.nestId)
-        val shape = nest.intersectionShapes.find { it.id == shapeId } ?: return point.offset
+        val shape = nest.getInterSectionShapes(defaultNest.value).find { it.id == shapeId } ?: return point.offset
 
         return computePointOffsetRealTime(point, shape)
     }
 
     @Suppress("NOTHING_TO_INLINE")
     override inline fun computePointOffsetRealTime(point: Point, shape: IntersectionShape): Offset {
-        val angleRad = (point.offset - shape.offset).angleRad()
+        val shapeOffset = shape.getOffset(defaultIntersectionShape.value)
 
-        val halfSize = shape.getSize(density).width / 2
-        val rotationRad = Math.toRadians(shape.angle.toDouble()).toFloat()
+        val angleRad = (point.offset - shapeOffset).angleRad()
 
-        return shape.offset + computeShapeBoundary(shape.shape, halfSize, angleRad, rotationRad)
+        val halfSize = shape.getSize(density, defaultIntersectionShape.value).width / 2
+        val rotationRad = Math.toRadians((shape.getRotation(defaultIntersectionShape.value)).toDouble()).toFloat()
+
+        return shapeOffset + computeShapeBoundary(shape.getShape(defaultIntersectionShape.value), halfSize, angleRad, rotationRad)
     }
 
     override fun getPointsForNest(

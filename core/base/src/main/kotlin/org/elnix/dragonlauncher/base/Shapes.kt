@@ -35,15 +35,14 @@ import kotlin.math.sin
  */
 private object ShapesCache : DragonCache<IconShape, Shape>(100)
 
+
 /**
  * Resolve an [IconShape] element to a [Shape] using caching to avoid over computation
  */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-public fun IconShape?.resolveShape(default: IconShape = IconShape.PlatformDefault): Shape {
-    val shapeToResolve = this ?: default
-
-    return ShapesCache.getOrCompute(shapeToResolve) {
-        when (shapeToResolve) {
+public fun IconShape.resolveShape(): Shape =
+    ShapesCache.getOrCompute(this) {
+        when (this) {
             IconShape.Random -> IconShape.allShapesWithoutRandom.random().resolveShape()
             IconShape.PlatformDefault -> PlatformShape
             IconShape.Square -> SquareShape
@@ -63,7 +62,7 @@ public fun IconShape?.resolveShape(default: IconShape = IconShape.PlatformDefaul
 
 
             /** Compute first the [RoundedPolygon] and then use the [toShape] from the library  I copied to convert it to a shape. */
-            else -> when (shapeToResolve) {
+            else -> when (this) {
                 IconShape.Slanted -> MaterialShapes.Slanted
                 IconShape.Arch -> MaterialShapes.Arch
                 IconShape.Fan -> MaterialShapes.Fan
@@ -96,18 +95,25 @@ public fun IconShape?.resolveShape(default: IconShape = IconShape.PlatformDefaul
                 IconShape.Bun -> MaterialShapes.Bun
 
                 is IconShape.Custom -> RoundedPolygon(
-                    numVertices = shapeToResolve.numVertices,
-                    radius = shapeToResolve.radius,
-                    centerX = shapeToResolve.centerX,
-                    centerY = shapeToResolve.centerY,
-                    rounding = shapeToResolve.rounding,
-                    perVertexRounding = shapeToResolve.perVertexRounding
+                    numVertices = this.numVertices,
+                    radius = this.radius,
+                    centerX = this.centerX,
+                    centerY = this.centerY,
+                    rounding = this.rounding,
+                    perVertexRounding = this.perVertexRounding
                 )
             }.toShape()
         }
     }
-}
 
+
+/**
+ * Resolve an nullable [IconShape] element to a [Shape] and defaults to [default]
+ */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+public fun IconShape?.resolveShape(default: IconShape = IconShape.PlatformDefault): Shape {
+    return resolveShape(this ?: default)
+}
 
 private val PlatformShape: Shape
     get() {

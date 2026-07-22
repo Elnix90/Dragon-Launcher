@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ktx.showToast
@@ -41,13 +43,12 @@ import kotlin.math.roundToInt
  * @param valueRange Allowed slider range
  * @param steps Number of discrete steps (0 for continuous)
  * @param color Primary color for slider and text
- * @param showValue Whether to display the formatted value next to the label
  * @param valueText Pre-formatted value string to display
  * @param backgroundColor Color of the background of the slider
  * @param enabled Whether if the slider is interactable, slightly faded when disabled
+ * @param resetEnabled Whether if the reset button is interactable
  * @param onReset Optional reset button callback
- * @param onDragStateChange Optional callback invoked with true on drag start
- *                          and false on drag end
+ * @param onDragStateChange Optional callback invoked with true on drag start and false on drag end
  * @param onChange Callback invoked when slider value changes
  */
 @Composable
@@ -59,10 +60,10 @@ private fun SliderWithLabelInternal(
     valueRange: ClosedFloatingPointRange<Float>,
     steps: Int,
     color: Color,
-    showValue: Boolean,
     valueText: String,
     backgroundColor: Color,
     enabled: Boolean,
+    resetEnabled: Boolean,
     allowTextEditValue: Boolean,
     onDragStateChange: ((Boolean) -> Unit)?,
     onReset: () -> Unit,
@@ -81,7 +82,9 @@ private fun SliderWithLabelInternal(
 
 
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(5.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -97,7 +100,6 @@ private fun SliderWithLabelInternal(
                 modifier = Modifier.weight(1f)
             )
 
-            if (showValue) {
                 EditValueTextField(
                     value = editingText,
                     modifier = Modifier,
@@ -106,6 +108,7 @@ private fun SliderWithLabelInternal(
                         isError = false
                     },
                     enabled = allowTextEditValue,
+                    resetEnabled = resetEnabled,
                     backgroundColor = backgroundColor,
                     onReset = onReset,
                     onDone = {
@@ -123,7 +126,6 @@ private fun SliderWithLabelInternal(
                         focusManager.clearFocus()
                     }
                 )
-            }
         }
 
         Slider(
@@ -157,8 +159,8 @@ private fun SliderWithLabelInternal(
  * @param valueRange Allowed integer range (inclusive)
  * @param color Primary color for slider and text
  * @param backgroundColor Color of the background of the slider
- * @param enabled Whether if the slider is interactable, slightly faded when disabled
- * @param showValue Whether to display the current value next to the label
+ * @param enabled Whether if the slider is interactable
+ * @param resetEnabled Whether if the reset button is interactable
  * @param onReset Optional reset button callback
  * @param onDragStateChange Optional callback for drag start/end
  * @param onChange Callback invoked when the value changes
@@ -171,9 +173,9 @@ public fun SliderWithLabel(
     value: Int,
     valueRange: IntRange,
     enabled: Boolean = true,
+    resetEnabled: Boolean,
     color: Color = MaterialTheme.colorScheme.primary,
-    backgroundColor: Color = MaterialTheme.colorScheme.surface,
-    showValue: Boolean = true,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     allowTextEditValue: Boolean = true,
     onDragStateChange: ((Boolean) -> Unit)? = null,
     onReset: () -> Unit,
@@ -196,10 +198,10 @@ public fun SliderWithLabel(
         valueRange = floatRange,
         steps = steps,
         color = color,
-        showValue = showValue,
         valueText = value.toString(),
         backgroundColor = backgroundColor,
         enabled = enabled,
+        resetEnabled = resetEnabled,
         allowTextEditValue = allowTextEditValue,
         onReset = onReset,
         onDragStateChange = onDragStateChange
@@ -221,8 +223,8 @@ public fun SliderWithLabel(
  * @param valueRange Allowed float range
  * @param color Primary color for slider and text
  * @param backgroundColor Color of the background of the slider
- * @param enabled Whether if the slider is interactable, slightly faded when disabled
- * @param showValue Whether to display the formatted value next to the label
+ * @param enabled Whether if the slider is interactable
+ * @param resetEnabled Whether if the reset button is interactable
  * @param decimals Number of decimal places shown in the value text
  * @param onReset Optional reset button callback
  * @param onDragStateChange Optional callback for drag start/end
@@ -236,9 +238,9 @@ public fun SliderWithLabel(
     value: Float,
     valueRange: ClosedFloatingPointRange<Float>,
     color: Color = MaterialTheme.colorScheme.primary,
-    backgroundColor: Color = MaterialTheme.colorScheme.surface,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     enabled: Boolean = true,
-    showValue: Boolean = true,
+    resetEnabled: Boolean,
     decimals: Int = 2,
     allowTextEditValue: Boolean = true,
     onDragStateChange: ((Boolean) -> Unit)? = null,
@@ -257,13 +259,72 @@ public fun SliderWithLabel(
         valueRange = valueRange,
         steps = 0,
         color = color,
-        showValue = showValue,
         valueText = valueText,
         backgroundColor = backgroundColor,
         enabled = enabled,
+        resetEnabled = resetEnabled,
         allowTextEditValue = allowTextEditValue,
         onReset = onReset,
         onDragStateChange = onDragStateChange,
         onChange = onChange
     )
+}
+
+/**
+ * SliderWithLabel overload for Dp values.
+ *
+ * @param modifier Modifier applied to the slider container
+ * @param label Optional label displayed above the slider
+ * @param value Current Dp value
+ * @param valueRange Allowed Dp range
+ * @param color Primary color for slider and text
+ * @param backgroundColor Color of the background of the slider
+ * @param enabled Whether if the slider is interactable
+ * @param resetEnabled Whether if the reset button is interactable
+ * @param decimals Number of decimal places shown in the value text
+ * @param onReset Optional reset button callback
+ * @param onDragStateChange Optional callback for drag start/end
+ * @param onChange Callback invoked when the value changes
+ */
+@Composable
+public fun SliderWithLabel(
+    modifier: Modifier = Modifier,
+    label: String,
+    description: String? = null,
+    value: Dp,
+    valueRange: ClosedRange<Dp>,
+    color: Color = MaterialTheme.colorScheme.primary,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    enabled: Boolean = true,
+    resetEnabled: Boolean,
+    decimals: Int = 2,
+    allowTextEditValue: Boolean = true,
+    onDragStateChange: ((Boolean) -> Unit)? = null,
+    onReset: () -> Unit,
+    onChange: (Dp) -> Unit
+) {
+    val valueText = remember(value, decimals) {
+        "%.${decimals}f".format(value.value)
+    }
+
+    val floatValueRange = valueRange.start.value..valueRange.endInclusive.value
+
+    SliderWithLabelInternal(
+        modifier = modifier,
+        label = label,
+        description = description,
+        value = value.value,
+        valueRange = floatValueRange,
+        steps = 0,
+        color = color,
+        valueText = valueText,
+        backgroundColor = backgroundColor,
+        enabled = enabled,
+        allowTextEditValue = allowTextEditValue,
+        onReset = onReset,
+        resetEnabled = resetEnabled,
+        onDragStateChange = onDragStateChange
+    ) {
+        onChange(it.dp)
+    }
 }

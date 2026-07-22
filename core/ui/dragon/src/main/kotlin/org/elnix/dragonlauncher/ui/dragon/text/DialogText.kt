@@ -1,22 +1,41 @@
 package org.elnix.dragonlauncher.ui.dragon.text
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 
 @Composable
-public fun DialogTitle(text : String, modifier: Modifier = Modifier) {
-    AutoResizeableText(
-        modifier = modifier,
-        text = text,
-        style = MaterialTheme.typography.headlineSmall,
-        color = MaterialTheme.colorScheme.onSurface
-    )
+public fun DialogTitle(
+    text: String,
+    modifier: Modifier = Modifier,
+    onReset: (() -> Unit)? = null
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        AutoResizeableText(
+            modifier = modifier,
+            text = text,
+            style = MaterialTheme.typography.headlineSmallEmphasized,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+
+        if (onReset != null) {
+            ResetIcon(onReset = onReset)
+        }
+    }
 }
 
 @Composable
-public fun DialogSubTitle(text : String, modifier: Modifier = Modifier) {
+public fun DialogSubTitle(text: String, modifier: Modifier = Modifier) {
     Text(
         modifier = modifier,
         text = text,

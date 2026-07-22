@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
@@ -38,12 +39,12 @@ import org.elnix.dragonlauncher.ui.helpers.customobjects.mirrorVertically
 
 private fun DrawScope.holdTolerance(
     center: Offset,
-    tolerance: Float
+    tolerance: Dp
 ) {
     drawCircle(
         color = Color.Cyan,
         center = center,
-        radius = tolerance,
+        radius = tolerance.toPx(),
         style = Stroke(width = 2.dp.toPx(), cap = StrokeCap.Round)
     )
 }
@@ -112,7 +113,7 @@ public fun HoldToActivateArc(
         modifier = Modifier
             .fillMaxSize()
             .drawWithCache {
-                val diameterPx = customObject.size.dp.toPx() * 2
+                val diameterPx = customObject.size.toPx() * 2
                 val path = resolvedShape.toPath(Size(diameterPx, diameterPx), this)
 
                 matrix.reset()
@@ -143,7 +144,7 @@ public fun HoldToActivateArc(
                         drawPathGlow(
                             path = destinationPath,
                             color = color,
-                            lineStrokeWidth = customObject.stroke,
+                            lineStrokeWidth = customObject.stroke.toPx(),
                             glow = customObject.glow,
                             erase = false,
                             eraseColor = null

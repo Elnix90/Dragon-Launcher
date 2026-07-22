@@ -34,13 +34,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
 import androidx.core.graphics.withSave
+import io.github.elnix90.logging.IMAGE_TAG
+import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomIconProperties
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.i18n.R
-import io.github.elnix90.logging.IMAGE_TAG
-import io.github.elnix90.logging.logE
 import java.io.ByteArrayOutputStream
 import kotlin.math.ceil
 
@@ -395,7 +395,7 @@ public object ImageUtils {
         val paint = Paint(
             Paint.ANTI_ALIAS_FLAG
         ).apply {
-            alpha = ((properties.opacity ?: 1f)
+            alpha = (properties.opacity
                 .coerceIn(0f, 1f) * 255).toInt()
 
             properties.tint?.let {
@@ -408,14 +408,14 @@ public object ImageUtils {
 
         canvas.withSave {
             // Step 7: transform (scale + rotation)
-            val scaleX = properties.scaleX ?: 1f
-            val scaleY = properties.scaleY ?: 1f
-            val rotation = properties.rotationDeg ?: 0f
+            val scaleX = properties.scaleX
+            val scaleY = properties.scaleY
+            val rotation = properties.rotationDeg
 
             val half = sizePx / 2f
 
             translate(half, half)
-            rotate(rotation)
+            rotate(rotation.toFloat())
             scale(scaleX, scaleY)
             translate(-half, -half)
 

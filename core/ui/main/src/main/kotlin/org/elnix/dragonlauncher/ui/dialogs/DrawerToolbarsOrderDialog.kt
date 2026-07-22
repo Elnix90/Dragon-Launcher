@@ -32,12 +32,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
-import org.elnix.dragonlauncher.theme.AppObjectsColors
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.text.TextDividerOld
 import sh.calvin.reorderable.ReorderableItem
@@ -108,7 +107,6 @@ public fun DrawerToolbarsOrderDialog(onDismiss: () -> Unit) {
                                 .scale(scale)
                                 .longPressDraggableHandle(),
                             elevation = elevatedCardElevation(elevation),
-                            colors = AppObjectsColors.cardColors(),
                             shape = RoundedCornerShape(12.dp)
                         ) {
                             Row(

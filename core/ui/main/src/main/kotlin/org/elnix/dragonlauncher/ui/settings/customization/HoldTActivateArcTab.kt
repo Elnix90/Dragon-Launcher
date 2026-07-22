@@ -7,11 +7,9 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,15 +27,16 @@ import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.CustomObjectBlockProperties
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
-import org.elnix.dragonlauncher.base.model.serializables.CustomObjectBlockProperties
 import org.elnix.dragonlauncher.enumsui.toggle.HoldActions
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
+import org.elnix.dragonlauncher.settings.stores.objects.HoldToActivateObject
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.dialogs.HoldSettingsOrderSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -81,15 +80,20 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
         title = stringResource(R.string.hold_settings),
         onBack = {
             scope.launch {
-                val newAngleJson = CustomObjectJson.encode(mutableHoldObject)
-                HoldToActivateArcSettingsStore.holdToActivateArcCustomObject.set(ctx, newAngleJson)
+                if (mutableHoldObject != CustomObject.defaultHoldCustomObject) {
+                    HoldToActivateObject.jsonSetting.set(ctx, CustomObjectJson.encode(mutableHoldObject))
+                }
                 onBack()
             }
         },
         helpText = stringResource(R.string.hold_settings_help),
+        resetText = stringResource(R.string.reset_hold_tab),
         onReset = {
             scope.launch {
                 HoldToActivateArcSettingsStore.resetAll(ctx)
+
+//                mutableHoldObject = CustomObject.defaultHoldCustomObject
+                HoldToActivateObject.resetAll(ctx)
             }
         },
         topContent = {
@@ -119,11 +123,12 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
                 }
 
                 Spacer(5.dp)
+
                 SliderWithLabel(
                     label = stringResource(R.string.animated_progress),
-                    showValue = false,
                     value = progress.value,
                     valueRange = 0f..1f,
+                    resetEnabled = progress.value != 0f,
                     onReset = {
                         scope.launch {
                             progress.snapTo(0f)
@@ -194,27 +199,16 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
         ) { mutableHoldObject = it }
 
 
-        DragonSettingsGroup(
-            title = R.string.configuration,
-            contentPadding = PaddingValues(top = 12.dp)
-        ) {
-            Setting(
-                setting = HoldToActivateArcSettingsStore.longCLickSettingsDuration,
-                modifier = Modifier.settingsGroupHorizontalPadding()
-            )
-            Setting(
-                setting = HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings,
-                modifier = Modifier.settingsGroupHorizontalPadding()
-            )
+        DragonSettingsGroup(R.string.configuration) {
+            Setting(HoldToActivateArcSettingsStore.longCLickSettingsDuration)
+            Setting(HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
             ) {
                 Setting(
                     setting = HoldToActivateArcSettingsStore.rotationsPerSecond,
-                    modifier = Modifier
-                        .padding(start = 16.dp)
-                        .weight(1f)
+                    modifier = Modifier.weight(1f)
                 )
                 DragonIconButton(
                     icon = R.drawable.flash_auto,
@@ -235,13 +229,8 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
                 title = stringResource(R.string.edit_hold_to_activate_elements),
                 description = stringResource(R.string.edit_hold_to_activate_elements_desc),
                 icon = R.drawable.edit_rounded
-            ) {
-                showHoldSettingsOrderDialog = true
-            }
-            Setting(
-                setting = HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance,
-                modifier = Modifier.settingsGroupHorizontalPadding()
-            )
+            ) { showHoldSettingsOrderDialog = true }
+            Setting(HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance)
             Setting(HoldToActivateArcSettingsStore.showToleranceOnMainScreen)
             Setting(HoldToActivateArcSettingsStore.holdRgbLoading)
             Setting(ColorSettingsStore.holdToActivateColor)

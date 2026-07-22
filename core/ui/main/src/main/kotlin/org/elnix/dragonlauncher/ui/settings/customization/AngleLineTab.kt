@@ -28,11 +28,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.CustomObjectBlockProperties
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultEndCustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultLineCustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultStartCustomObject
-import org.elnix.dragonlauncher.base.model.serializables.CustomObjectBlockProperties
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
@@ -40,15 +40,18 @@ import org.elnix.dragonlauncher.ktx.angle360FromOffset
 import org.elnix.dragonlauncher.ktx.distanceSquaredTo
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
-import org.elnix.dragonlauncher.ui.base.UiConstants.dragonSettingGroupPaddingValues
+import org.elnix.dragonlauncher.settings.stores.objects.AngleObjectSettingStore
+import org.elnix.dragonlauncher.settings.stores.objects.EndObjectSettingStore
+import org.elnix.dragonlauncher.settings.stores.objects.LineObjectSettingStore
+import org.elnix.dragonlauncher.settings.stores.objects.StartObjectSettingStore
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dialogs.AngleLineObjectsOrderDialog
 import org.elnix.dragonlauncher.ui.dialogs.rememberLineObjectsOrder
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
-import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSectionMode
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
+import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionMode
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine
@@ -72,33 +75,30 @@ public fun AngleLineTab(onBack: () -> Unit) {
     val showAngleLineObjectPreview by AngleLineSettingsStore.showAngleLineObjectPreview.asState()
     val showStartObjectPreview by AngleLineSettingsStore.showStartObjectPreview.asState()
     val showEndObjectPreview by AngleLineSettingsStore.showEndObjectPreview.asState()
-
+    val rgbLine by AngleLineSettingsStore.rgbLine.asState()
 
     val lineObjectExpandableSectionState = rememberExpandableSection(stringResource(R.string.line_object), mode = ExpandableSectionMode.Expandable)
     val angleObjectExpandableSectionState = rememberExpandableSection(stringResource(R.string.angle_object), mode = ExpandableSectionMode.Expandable)
     val startObjectExpandableSectionState = rememberExpandableSection(stringResource(R.string.start_object), mode = ExpandableSectionMode.Expandable)
     val endObjectExpandableSectionState = rememberExpandableSection(stringResource(R.string.end_object), mode = ExpandableSectionMode.Expandable)
 
-    val order by rememberLineObjectsOrder()
-    var showOrderDialog by remember { mutableStateOf(false) }
-
     val lineObjects = rememberAngleLineObjects()
 
-    // Instant mutators to avoid I/O overhead
     var mutableLineObject by remember(lineObjects.line) { mutableStateOf(lineObjects.line) }
     var mutableAngleLineObject by remember(lineObjects.angleLine) { mutableStateOf(lineObjects.angleLine) }
     var mutableStartObject by remember(lineObjects.startLine) { mutableStateOf(lineObjects.startLine) }
     var mutableEndObject by remember(lineObjects.endLine) { mutableStateOf(lineObjects.endLine) }
-
-
-    val rgbLine by AngleLineSettingsStore.rgbLine.asState()
-
 
     val start = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
     val end = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
     val angleDeg = angle360FromOffset(start.value, end.value)
 
     var moveStartOrEnd by remember { mutableStateOf(false) }
+
+    val order by rememberLineObjectsOrder()
+    var orderMutable by remember { mutableStateOf(order) }
+
+    var showOrderDialog by remember { mutableStateOf(false) }
 
     val sweepState = rememberSweepAngle()
 
@@ -108,8 +108,6 @@ public fun AngleLineTab(onBack: () -> Unit) {
 
     val sweepAngle = sweepState.sweepAngle()
     val sweep = sweepAngle.toInt()
-
-
 
     val pickedRememberShapeAngle = remember(mutableAngleLineObject.shape) { mutableAngleLineObject.shape.resolveShape() }
     val pickedRememberRotationAngle = mutableAngleLineObject.resolveRotation(true, sweep)
@@ -130,7 +128,7 @@ public fun AngleLineTab(onBack: () -> Unit) {
             end = end.value,
             sweepAngle = sweepAngle,
             lineColor = lineColor,
-            order = order,
+            order = orderMutable,
             eraseColor = backgroundColor,
             showLineObjectPreview = showLineObjectPreview,
             showAngleLineObjectPreview = showAngleLineObjectPreview,
@@ -154,17 +152,34 @@ public fun AngleLineTab(onBack: () -> Unit) {
         title = stringResource(R.string.angle_line),
         onBack = {
             scope.launch {
-                AngleLineSettingsStore.lineJson.set(ctx, CustomObjectJson.encode(mutableLineObject))
-                AngleLineSettingsStore.angleLineJson.set(ctx, CustomObjectJson.encode(mutableAngleLineObject))
-                AngleLineSettingsStore.startLineJson.set(ctx, CustomObjectJson.encode(mutableStartObject))
-                AngleLineSettingsStore.endLineJson.set(ctx, CustomObjectJson.encode(mutableEndObject))
+                if (mutableEndObject != defaultLineCustomObject) {
+                    LineObjectSettingStore.jsonSetting.set(ctx, CustomObjectJson.encode(mutableLineObject))
+                }
+
+                if (mutableAngleLineObject != defaultAngleCustomObject) {
+                    AngleObjectSettingStore.jsonSetting.set(ctx, CustomObjectJson.encode(mutableAngleLineObject))
+                }
+
+                if (mutableStartObject != defaultStartCustomObject) {
+                    StartObjectSettingStore.jsonSetting.set(ctx, CustomObjectJson.encode(mutableStartObject))
+                }
+
+                if (mutableEndObject != defaultEndCustomObject) {
+                    EndObjectSettingStore.jsonSetting.set(ctx, CustomObjectJson.encode(mutableEndObject))
+                }
                 onBack()
             }
         },
         helpText = stringResource(R.string.angle_line_help),
+        resetText = stringResource(R.string.reset_angle_tab),
         onReset = {
             scope.launch {
                 AngleLineSettingsStore.resetAll(ctx)
+
+                LineObjectSettingStore.resetAll(ctx)
+                AngleObjectSettingStore.resetAll(ctx)
+                StartObjectSettingStore.resetAll(ctx)
+                EndObjectSettingStore.resetAll(ctx)
             }
         },
         moreOptions = { dismiss ->
@@ -241,7 +256,7 @@ public fun AngleLineTab(onBack: () -> Unit) {
         }
     ) {
         ExpandableSection(lineObjectExpandableSectionState) {
-            Setting(AngleLineSettingsStore.showLineObjectPreview)
+            DragonSettingsGroup { Setting(AngleLineSettingsStore.showLineObjectPreview) }
 
             AnimatedVisibility(showLineObjectPreview) {
                 EditCustomObjectBlock(
@@ -256,9 +271,8 @@ public fun AngleLineTab(onBack: () -> Unit) {
                 ) { mutableLineObject = it }
             }
         }
-
         ExpandableSection(angleObjectExpandableSectionState) {
-            Setting(AngleLineSettingsStore.showAngleLineObjectPreview)
+            DragonSettingsGroup { Setting(AngleLineSettingsStore.showAngleLineObjectPreview) }
 
             AnimatedVisibility(showAngleLineObjectPreview) {
                 EditCustomObjectBlock(
@@ -269,7 +283,7 @@ public fun AngleLineTab(onBack: () -> Unit) {
         }
 
         ExpandableSection(startObjectExpandableSectionState) {
-            Setting(AngleLineSettingsStore.showStartObjectPreview)
+            DragonSettingsGroup { Setting(AngleLineSettingsStore.showStartObjectPreview) }
 
             AnimatedVisibility(showStartObjectPreview) {
                 EditCustomObjectBlock(
@@ -280,7 +294,7 @@ public fun AngleLineTab(onBack: () -> Unit) {
         }
 
         ExpandableSection(endObjectExpandableSectionState) {
-            Setting(AngleLineSettingsStore.showEndObjectPreview)
+            DragonSettingsGroup { Setting(AngleLineSettingsStore.showEndObjectPreview) }
 
             AnimatedVisibility(showEndObjectPreview) {
                 EditCustomObjectBlock(
@@ -290,10 +304,7 @@ public fun AngleLineTab(onBack: () -> Unit) {
             }
         }
 
-        DragonSettingsGroup(
-            title = R.string.other,
-            contentPadding = dragonSettingGroupPaddingValues
-        ) {
+        DragonSettingsGroup(R.string.other) {
             Setting(AngleLineSettingsStore.rgbLine)
             Setting(AngleLineSettingsStore.startAndAngleShareSameRandomAngle)
             Setting(ColorSettingsStore.angleLineColor)
@@ -301,6 +312,11 @@ public fun AngleLineTab(onBack: () -> Unit) {
     }
 
     if (showOrderDialog) {
-        AngleLineObjectsOrderDialog { showOrderDialog = false }
+        AngleLineObjectsOrderDialog(
+            order = order,
+            onChange = {
+                orderMutable = it
+            }
+        ) { showOrderDialog = false }
     }
 }

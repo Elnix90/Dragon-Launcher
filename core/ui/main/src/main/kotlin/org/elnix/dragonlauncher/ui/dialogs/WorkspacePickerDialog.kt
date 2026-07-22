@@ -10,7 +10,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +20,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 
 @Composable
@@ -29,7 +29,7 @@ public fun WorkspacePickerDialog(
     onDismiss: () -> Unit,
     onActionPicked: (Action.OpenAppDrawer) -> Unit
 ) {
-    val workspaces by drawerViewModel.workspaceManager.workspacesState.collectAsState()
+    val workspaces by drawerViewModel.workspaceManager.workspacesState.asState()
 
     AlertDialog(
         onDismissRequest = onDismiss,

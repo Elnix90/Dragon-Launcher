@@ -17,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Companion.settingsRoutes
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeResId
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.components.LazyColumnWithScrollIndicator
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
@@ -59,7 +58,7 @@ public fun SettingsPagePicker(
                     )
 
                     Text(
-                        text = stringResource(routeResId(route)),
+                        text = stringResource(route.resId),
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }

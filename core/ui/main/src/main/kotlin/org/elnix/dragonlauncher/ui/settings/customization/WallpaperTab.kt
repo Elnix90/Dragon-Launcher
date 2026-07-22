@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.WallpaperTarget
-import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.common.WallpaperHelper
 import org.elnix.dragonlauncher.enumsui.select.WallpaperEditMode
 import org.elnix.dragonlauncher.i18n.R
@@ -32,10 +31,10 @@ import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
-import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelector
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
+import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.wallpaper.WallpaperDim
 import org.elnix.dragonlauncher.ui.statusbar.StatusBar
@@ -81,82 +80,65 @@ public fun WallpaperTab(onBack: () -> Unit) {
         title = stringResource(R.string.wallpaper),
         onBack = onBack,
         helpText = stringResource(R.string.wallpaper_help),
-        onReset = null
+        onReset = null,
+        resetText = null
     ) {
-        DragonButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                val intent = Intent(Intent.ACTION_SET_WALLPAPER)
-                ctx.startActivity(
-                    Intent.createChooser(
-                        intent,
-                        ctx.getString(R.string.select_image)
+        DragonSettingsGroup(R.string.custom_wallpaper){
+            DragonButton(
+                modifier = Modifier.padding(10.dp).fillMaxWidth(),
+                onClick = {
+                    val intent = Intent(Intent.ACTION_SET_WALLPAPER)
+                    ctx.startActivity(
+                        Intent.createChooser(
+                            intent,
+                            ctx.getString(R.string.select_image)
+                        )
                     )
+                }
+            ) {
+                Text(
+                    text = stringResource(R.string.set_wallpaper),
+                    textAlign = TextAlign.Center
                 )
             }
-        ) {
-            Text(
-                text = stringResource(R.string.set_wallpaper),
-                textAlign = TextAlign.Center
-            )
         }
 
-        DragonButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                originalBitmap =
-                    wallpaperHelper.createPlainWallpaperBitmap(ctx, plainColor)
-                showTargetDialog = true
+        DragonSettingsGroup(R.string.plain_wallpaper){
+            DragonButton(
+                modifier = Modifier.padding(10.dp).fillMaxWidth(),
+                onClick = {
+                    originalBitmap =
+                        wallpaperHelper.createPlainWallpaperBitmap(ctx, plainColor)
+                    showTargetDialog = true
+                }
+            ) {
+                Text(
+                    stringResource(R.string.set_plain_wallpaper),
+                    textAlign = TextAlign.Center
+                )
             }
-        ) {
-            Text(
-                stringResource(R.string.set_plain_wallpaper),
-                textAlign = TextAlign.Center
-            )
+
+            ColorPickerRow(
+                title = stringResource(R.string.plain_wallpaper_color),
+                description = null,
+                currentColor = plainColor
+            ) {
+                plainColor = it ?: Color.Black
+            }
         }
 
-        ColorPickerRow(
-            title = stringResource(R.string.plain_wallpaper_color),
-            description = null,
-            currentColor = plainColor
-        ) {
-            plainColor = it ?: Color.Black
-        }
-
-
-        DragonColumnGroup {
+        DragonSettingsGroup(R.string.wallpaper_dim) {
             SingleSelectConnectedButtonRow(
                 entries = WallpaperEditMode.entries,
+                modifier = Modifier.padding(vertical = 10.dp),
                 checked = { selectedView == it },
             ) { selectedView = it }
 
-
-            SliderWithLabel(
-                modifier = Modifier.padding(10.dp),
-                label = stringResource(UiSettingsStore.wallpaperDimMainScreen.title!!),
-                value = if (selectedView == WallpaperEditMode.Main) wallpaperDimMainScreen else wallpaperDimDrawerScreen,
-                valueRange = 0f..1f,
-                color = MaterialTheme.colorScheme.primary,
-                backgroundColor = MaterialTheme.colorScheme.surface.alphaMultiplier(0.5f),
-                onReset = {
-                    scope.launch {
-                        if (selectedView == WallpaperEditMode.Main) {
-                            UiSettingsStore.wallpaperDimMainScreen.reset(ctx)
-                        } else {
-                            UiSettingsStore.wallpaperDimDrawerScreen.reset(ctx)
-
-                        }
-                    }
-                },
-            ) {
-                scope.launch {
-                    if (selectedView == WallpaperEditMode.Main) {
-                        UiSettingsStore.wallpaperDimMainScreen.set(ctx, it)
-                    } else {
-                        UiSettingsStore.wallpaperDimDrawerScreen.set(ctx, it)
-                    }
-                }
-            }
+            Setting(
+                if (selectedView != WallpaperEditMode.Main) {
+                    UiSettingsStore.wallpaperDimMainScreen
+                } else UiSettingsStore.wallpaperDimDrawerScreen
+            )
         }
     }
     StatusBar(null)

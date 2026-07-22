@@ -2,12 +2,11 @@ package org.elnix.dragonlauncher.ui.dragon.components
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.interaction.FocusInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.IconButtonDefaults
@@ -17,7 +16,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,18 +25,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.animation.barsContentTransform
 
+@Suppress("DEPRECATION")
 @Composable
 public fun EditValueTextField(
     value: String,
-    modifier: Modifier,
     onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    resetEnabled: Boolean,
     textColor: Color? = null,
     isError: Boolean = false,
     backgroundColor: Color,
@@ -46,7 +44,6 @@ public fun EditValueTextField(
     onFocusChange: ((Boolean) -> Unit)? = null,
     onDone: () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
     val interactionSource = remember { MutableInteractionSource() }
 
     var isEditing by remember { mutableStateOf(false) }
@@ -72,30 +69,9 @@ public fun EditValueTextField(
         }
     }
 
-
-    val shapeRound = remember {
-        Animatable(
-            initialValue = UiConstants.DRAGON_SHAPE_CORNER_PERCENT.toFloat(),
-        )
-    }
-
-    // Animate to dragon shape on focus change
     LaunchedEffect(isEditing) {
         onFocusChange?.invoke(isEditing)
-        scope.launch {
-
-            shapeRound.animateTo(
-                if (isEditing) {
-                    UiConstants.PRESSED_DRAGON_SHAPE_CORNER_PERCENT.toFloat()
-                } else {
-                    UiConstants.DRAGON_SHAPE_CORNER_PERCENT.toFloat()
-                }
-            )
-        }
     }
-
-
-    val shape = RoundedCornerShape(shapeRound.value.dp)
 
     TextField(
         enabled = enabled,
@@ -126,11 +102,9 @@ public fun EditValueTextField(
                     }
 
                     else -> {
-                        DragonIconButton(
-                            onClick = onReset,
-                            enabled = enabled,
-                            icon = R.drawable.reset,
-                            contentDescription = "Reset"
+                        ResetIcon(
+                            onReset = onReset,
+                            enabled = enabled && resetEnabled,
                         )
                     }
                 }
@@ -148,7 +122,7 @@ public fun EditValueTextField(
         keyboardActions = KeyboardActions(
             onDone = { onDone() }
         ),
-        shape = shape,
+        shape = CircleShape,
         modifier = modifier
             .width(120.dp)
             .height(50.dp)

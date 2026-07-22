@@ -3,10 +3,12 @@
 package org.elnix.dragonlauncher.ui.helpers
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -43,7 +45,7 @@ import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
-import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
+import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 
 @Composable
 private fun ActionSelectorImpl(
@@ -53,6 +55,8 @@ private fun ActionSelectorImpl(
     enabled: Boolean = true,
     switchEnabled: Boolean = true,
     onToggle: () -> Unit,
+    resetEnabled: Boolean,
+    onReset: () -> Unit,
     onSelected: (Action) -> Unit,
     drawerViewModel: DrawerViewModel = activityViewModel()
 ) {
@@ -65,9 +69,12 @@ private fun ActionSelectorImpl(
     val toggled = currentAction != null && currentAction != Action.None
     val actionColor = currentAction.actionColor(extraColors).semiTransparentIfDisabled(enabled)
 
-    DragonRow(
-        onClick = { showDialog = true },
-        enabled = enabled
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(enabled = enabled) { showDialog = true }
+            .padding(10.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(5.dp),
@@ -94,7 +101,7 @@ private fun ActionSelectorImpl(
                                 app?.let {
                                     AppIcon(
                                         app = it,
-                                        size = 30.dp
+                                        maxSize = 30.dp
                                     )
                                 }
                             }
@@ -153,6 +160,11 @@ private fun ActionSelectorImpl(
             },
             colors = AppObjectsColors.switchColors()
         )
+
+        ResetIcon(
+            onReset = onReset,
+            enabled = enabled && resetEnabled
+        )
     }
 
     if (showDialog) {
@@ -170,10 +182,12 @@ private fun ActionSelectorImpl(
 public fun CustomActionSelector(
     label: String,
     currentAction: Action?,
+    resetEnabled: Boolean,
     nullText: String? = null,
     enabled: Boolean = true,
     switchEnabled: Boolean = true,
     onToggle: () -> Unit,
+    onReset: () -> Unit,
     onSelected: (Action) -> Unit
 ) {
     ActionSelectorImpl(
@@ -181,8 +195,10 @@ public fun CustomActionSelector(
         currentAction = currentAction,
         nullText = nullText,
         enabled = enabled,
+        resetEnabled = resetEnabled,
         switchEnabled = switchEnabled,
         onToggle = onToggle,
+        onReset = onReset,
         onSelected = onSelected
     )
 }
@@ -203,6 +219,12 @@ public fun SettingActionSelector(setting: ActionSettingObject) {
         onToggle = {
             scope.launch {
                 setting.set(ctx, Action.None)
+            }
+        },
+        resetEnabled = currentAction != setting.default,
+        onReset = {
+            scope.launch {
+                setting.reset(ctx)
             }
         },
         onSelected = {

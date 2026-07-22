@@ -85,7 +85,6 @@ import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -331,7 +330,8 @@ public fun FontTab(onBack: () -> Unit) {
         title = stringResource(R.string.font_selector),
         onBack = onBack,
         helpText = stringResource(R.string.font_manage_help),
-        onReset = null
+        onReset = null,
+        resetText = null
     ) {
         Column(
             modifier = Modifier

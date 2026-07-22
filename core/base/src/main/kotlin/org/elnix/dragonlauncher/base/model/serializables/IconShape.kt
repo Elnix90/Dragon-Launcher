@@ -13,9 +13,11 @@ import kotlin.reflect.KClass
 public sealed class IconShape {
 
     @Serializable
+    @SerialName("PlatformDefault")
     public object PlatformDefault : IconShape()
 
     @Serializable
+    @SerialName("Circle")
     public object Circle : IconShape()
 
     @Serializable
@@ -23,132 +25,175 @@ public sealed class IconShape {
     public object Pebble : IconShape()
 
     @Serializable
+    @SerialName("Square")
     public object Square : IconShape()
 
     @Serializable
+    @SerialName("RightSquare")
     public object RightSquare : IconShape()
 
     @Serializable
+    @SerialName("Pentagon")
     public object Pentagon : IconShape()
 
     @Serializable
+    @SerialName("Hexagon")
     public object Hexagon : IconShape()
 
     @Serializable
+    @SerialName("Heptagon")
     public object Heptagon : IconShape()
 
     @Serializable
+    @SerialName("Octagon")
     public object Octagon : IconShape()
 
     @Serializable
+    @SerialName("Decagon")
     public object Decagon : IconShape()
 
     @Serializable
+    @SerialName("RoundedSquare")
     public object RoundedSquare : IconShape()
 
 
     @Serializable
+    @SerialName("Squircle")
     public object Squircle : IconShape()
 
     @Serializable
+    @SerialName("Teardrop")
     public object Teardrop : IconShape()
 
     @Serializable
+    @SerialName("Heart")
     public object Heart : IconShape()
 
     @Serializable
+    @SerialName("Slanted")
     public object Slanted : IconShape()
 
     @Serializable
+    @SerialName("Arch")
     public object Arch : IconShape()
 
     @Serializable
+    @SerialName("Fan")
     public object Fan : IconShape()
 
     @Serializable
+    @SerialName("Arrow")
     public object Arrow : IconShape()
 
     @Serializable
+    @SerialName("SemiCircle")
     public object SemiCircle : IconShape()
 
     @Serializable
+    @SerialName("Oval")
     public object Oval : IconShape()
 
     @Serializable
+    @SerialName("Pill")
     public object Pill : IconShape()
 
     @Serializable
+    @SerialName("RoundedTriangle")
     public object RoundedTriangle : IconShape()
     @Serializable
+    @SerialName("Triangle")
     public object Triangle : IconShape()
 
     @Serializable
+    @SerialName("Diamond")
     public object Diamond : IconShape()
 
     @Serializable
+    @SerialName("ClamShell")
     public object ClamShell : IconShape()
 
     @Serializable
+    @SerialName("Gem")
     public object Gem : IconShape()
 
     @Serializable
+    @SerialName("VerySunny")
     public object VerySunny : IconShape()
 
     @Serializable
+    @SerialName("Sunny")
     public object Sunny : IconShape()
 
     @Serializable
+    @SerialName("Cookie4Sided")
     public object Cookie4Sided : IconShape()
 
     @Serializable
+    @SerialName("Cookie6Sided")
     public object Cookie6Sided : IconShape()
 
     @Serializable
+    @SerialName("Cookie7Sided")
     public object Cookie7Sided : IconShape()
 
     @Serializable
+    @SerialName("Cookie9Sided")
     public object Cookie9Sided : IconShape()
 
     @Serializable
+    @SerialName("Cookie12Sided")
     public object Cookie12Sided : IconShape()
 
     @Serializable
+    @SerialName("Ghostish")
     public object Ghostish : IconShape()
 
     @Serializable
+    @SerialName("Clover4Leaf")
     public object Clover4Leaf : IconShape()
 
     @Serializable
+    @SerialName("Clover8Leaf")
     public object Clover8Leaf : IconShape()
 
     @Serializable
+    @SerialName("Burst")
     public object Burst : IconShape()
 
     @Serializable
+    @SerialName("SoftBurst")
     public object SoftBurst : IconShape()
 
     @Serializable
+    @SerialName("Boom")
     public object Boom : IconShape()
 
     @Serializable
+    @SerialName("SoftBoom")
     public object SoftBoom : IconShape()
 
     @Serializable
+    @SerialName("Flower")
     public object Flower : IconShape()
 
     @Serializable
+    @SerialName("Puffy")
     public object Puffy : IconShape()
 
     @Serializable
+    @SerialName("PuffyDiamond")
     public object PuffyDiamond : IconShape()
 
     @Serializable
+    @SerialName("PixelCircle")
     public object PixelCircle : IconShape()
 
     @Serializable
+    @SerialName("Bun")
     public object Bun : IconShape()
 
     @Serializable
+    @SerialName("Random")
     public object Random : IconShape()
 
     @Serializable

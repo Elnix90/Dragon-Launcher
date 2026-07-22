@@ -16,7 +16,7 @@ import kotlin.random.Random
  *
  * @return this color if defined, or `null` if it is `null` or `Color.Unspecified`
  */
-public fun Color?.definedOrNull(): Color? =
+public fun Color?.specifiedOrNull(): Color? =
     this.takeIf { it != Color.Unspecified }
 
 
@@ -52,6 +52,34 @@ public fun Color.semiTransparentIfDisabled(enabled: Boolean): Color =
 /** Utility: convert Color -> #AARRGGBB */
 public inline val Color.toHexWithAlpha: String
     get() = "#%08X".format(this.toArgb())
+
+/**
+ * Converts a hex color string to a [Color].
+ *
+ * Accepts hex strings in the following formats:
+ * - With alpha: #AARRGGBB (8 digits)
+ * - Without alpha: #RRGGBB (6 digits, assumes full opacity)
+ * - Case insensitive
+ *
+ * @return A [Color] parsed from the hex string
+ * @throws IllegalArgumentException If the string is not a valid hex color format
+ */
+public fun String.toColor(): Color {
+    val hex = this.trim().removePrefix("#")
+
+    val argb = when (hex.length) {
+        8 -> hex.toLong(16)
+        6 -> {
+            val rgb = hex.toLong(16)
+            (0xFF000000 or rgb)
+        }
+        else -> throw IllegalArgumentException(
+            "Invalid hex color format. Expected #RRGGBB or #AARRGGBB, got: #$hex"
+        )
+    }
+
+    return Color(argb)
+}
 
 
 public fun randomColor(

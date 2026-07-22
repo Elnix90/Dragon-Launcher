@@ -82,7 +82,6 @@ import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsMoveUpDown
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsSnapping
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsUpDown
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ktx.rotateBy
 import org.elnix.dragonlauncher.ktx.toDp
 import org.elnix.dragonlauncher.models.WidgetsViewModel
@@ -90,6 +89,7 @@ import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
@@ -127,7 +127,6 @@ public fun WidgetsTab(
     initialNestId: Int = 0
 ) {
     val cellSizeDp by UiSettingsStore.widgetsCellSizeDp.asState()
-    val cellSizePx = cellSizeDp.px
     val widgets by widgetsViewModel.widgets.asState()
     val scope = rememberCoroutineScope()
 
@@ -171,6 +170,7 @@ public fun WidgetsTab(
         title = stringResource(R.string.widgets),
         onBack = handleBack,
         helpText = stringResource(R.string.widgets_tab_help),
+        resetText = stringResource(R.string.reset_widgets_tab),
         onReset = { widgetsViewModel.resetAllWidgets() },
         applyPadding = false,
         scrollableContent = false,
@@ -218,27 +218,31 @@ public fun WidgetsTab(
                 UndoRedoBlock(widgetsViewModel.undoRedo)
             }
 
-
             RowWithScrollIndicator(rowsScrollStates[1]) {
+
+                AnimatedFab(
+                    onClick = { showAddDialog = true },
+                    icon = R.drawable.add,
+                    minSize = 70.dp,
+                    containerColor = MaterialTheme.colorScheme.secondary
+                )
+
                 MultiSelectConnectedButtonRow(
                     entries = WidgetsToolsAddNestRemove.entries,
                     checked = {
                         when (it) {
-                            WidgetsToolsAddNestRemove.Add, WidgetsToolsAddNestRemove.Nests -> true
+                            WidgetsToolsAddNestRemove.Nests -> true
                             WidgetsToolsAddNestRemove.Remove -> aWidgetIsSelected
                         }
                     },
                     enabled = {
                         when (it) {
-                            WidgetsToolsAddNestRemove.Add, WidgetsToolsAddNestRemove.Nests -> true
+                            WidgetsToolsAddNestRemove.Nests -> true
                             WidgetsToolsAddNestRemove.Remove -> aWidgetIsSelected
                         }
                     }
                 ) { entry ->
                     when (entry) {
-                        WidgetsToolsAddNestRemove.Add -> {
-                            showAddDialog = true
-                        }
 
                         WidgetsToolsAddNestRemove.Nests -> {
                             showNestPickerDialog = true
@@ -284,7 +288,8 @@ public fun WidgetsTab(
                     MultiSelectConnectedButtonColumn(
                         entries = WidgetsToolsUpDown.entries,
                         showLabel = false,
-                        checked = { true }
+                        checked = { widgets.isNotEmpty() },
+                        enabled = { widgets.isNotEmpty() }
                     ) { entry ->
                         when (entry) {
                             WidgetsToolsUpDown.Up -> {
@@ -384,7 +389,7 @@ public fun WidgetsTab(
                         .conditional(snapMove) {
                             drawWithCache {
                                 onDrawBehind {
-                                    backgroundGrid(cellSizePx, onBackgroundColor)
+                                    backgroundGrid(cellSizeDp, onBackgroundColor)
                                 }
                             }
                         }

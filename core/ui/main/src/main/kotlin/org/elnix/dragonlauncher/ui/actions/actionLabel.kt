@@ -9,7 +9,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Profile
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeResId
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getFilePathFromUri
 import org.elnix.dragonlauncher.models.DrawerViewModel
@@ -61,7 +60,7 @@ public fun actionLabel(
         is Action.OpenUrl -> action.url
 
 
-        is Action.OpenDragonLauncherSettings -> "${stringResource(R.string.dragon_launcher_settings)} (${stringResource(routeResId(action.route))})"
+        is Action.OpenDragonLauncherSettings -> "${stringResource(R.string.dragon_launcher_settings)} (${stringResource(action.route.resId)})"
 
 
         is Action.OpenFile ->

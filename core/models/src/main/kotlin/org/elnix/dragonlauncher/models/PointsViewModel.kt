@@ -83,12 +83,17 @@ public class PointsViewModel @Inject constructor(
 
                         val nests = pointsService.nests.value
 
-                        val uniqueShapes = nests.values.flatMap { it.intersectionShapes }
+                        val uniqueShapes = nests.values.flatMap { it.getInterSectionShapes(pointsService.defaultNest.value) }
                         NestIntersectionShapesPathCache.updateMaxCacheSize(uniqueShapes.size)
 
                         for (shape in uniqueShapes) {
                             NestIntersectionShapesPathCache.compute(shape) {
-                                shape.shape.resolveShape().toPath(shape.getSize(density.density), density)
+                                shape.getShape(pointsService.defaultIntersectionShape.value)
+                                    .resolveShape()
+                                    .toPath(
+                                        shape.getSize(density.density, pointsService.defaultIntersectionShape.value),
+                                        density
+                                    )
                             }
                         }
 
@@ -207,7 +212,7 @@ public class PointsViewModel @Inject constructor(
         val innerPaddingPx = with(density) { point.getInnerPadding(defaultPoint).toPx() }
         val borderRadii = (sizePx / 2 + innerPaddingPx).coerceAtLeast(0f)
 
-        val imageBitmap = renderPointIcon(icon, defaultPoint, colorScheme, isDark)
+        val imageBitmap = renderPointIcon(icon, point, defaultPoint, colorScheme, isDark)
 
         StablePointValues(
             sizePx = sizePx.coerceAtLeast(1f),
@@ -234,12 +239,13 @@ public class PointsViewModel @Inject constructor(
      */
     private suspend fun renderPointIcon(
         icon: LauncherIcon?,
+        point: Point,
         defaultPoint: Point,
         colorScheme: ColorScheme,
         isDark: Boolean
     ): ImageBitmap? {
         val renderSettings = LauncherIconRenderSettings(
-            size = (defaultPoint.size ?: Point.defaultSize).coerceAtLeast(8) * 2,
+            size = (point.getSize(defaultPoint).value * density.density).toInt() * 2,
             fgThemeColor = colorScheme.onPrimaryContainer.toArgb(),
             bgThemeColor = colorScheme.primaryContainer.toArgb(),
             fgTone = if (isDark) 90 else 10,

@@ -24,14 +24,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalDrawerSettings
 import org.elnix.dragonlauncher.ui.dialogs.AppLongPressPopup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
 
@@ -54,15 +53,11 @@ public fun AppItemHorizontal(
     longPressPopup: Boolean,
     onClick: ((Application) -> Unit)?
 ) {
-    require(!((onLongClick != null) and (longPressPopup))) {
+    require(!((onLongClick != null) && (longPressPopup))) {
         "Long press action, or popup, or neither, but not both!"
     }
 
-    val appIconSize by DrawerSettingsStore.iconSize.asState()
-    val showAppIconsInDrawer by DrawerSettingsStore.showAppIconsInDrawer.asState()
-    val showAppLabelsInDrawer by DrawerSettingsStore.showAppLabelInDrawer.asState()
-    val horizontalAlignment by DrawerSettingsStore.horizontalAlignment.asState()
-    val iconsSpacingHorizontal by DrawerSettingsStore.iconsSpacingHorizontal.asState()
+    val drawerSettings = LocalDrawerSettings.current
 
     var showLongPressPopup by remember { mutableStateOf(false) }
 
@@ -74,7 +69,7 @@ public fun AppItemHorizontal(
         }
     ) {
 
-        val alignment = when(horizontalAlignment) {
+        val alignment = when (drawerSettings.horizontalAlignment) {
             HorizontalAlignment.Start -> Arrangement.Start
             HorizontalAlignment.Center -> Arrangement.Center
             HorizontalAlignment.End -> Arrangement.End
@@ -99,12 +94,12 @@ public fun AppItemHorizontal(
                 .padding(horizontal = 6.dp)
         ) {
 
-            if (showAppIconsInDrawer) {
-                AppIcon(app, appIconSize)
+            if (drawerSettings.showAppIconsInDrawer) {
+                AppIcon(app, drawerSettings.maxIconSize)
             }
 
-            if (showAppLabelsInDrawer) {
-                Spacer(iconsSpacingHorizontal)
+            if (drawerSettings.showAppLabelsInDrawer) {
+                Spacer(drawerSettings.iconsSpacingHorizontal)
                 Text(
                     text = app.label,
                     color = MaterialTheme.colorScheme.onBackground
@@ -128,14 +123,11 @@ public fun AppItemGrid(
     longPressPopup: Boolean,
     onClick: ((Application) -> Unit)?
 ) {
-    require(!((onLongClick != null) and (longPressPopup))) {
+    require(!((onLongClick != null) && (longPressPopup))) {
         "Long press action, or popup, or neither, but not both!"
     }
 
-    val appIconSize by DrawerSettingsStore.iconSize.asState()
-    val showAppIconsInDrawer by DrawerSettingsStore.showAppIconsInDrawer.asState()
-    val iconsSpacingVertical by DrawerSettingsStore.iconsSpacingVertical.asState()
-
+    val drawerSettings = LocalDrawerSettings.current
 
     var showLongPressPopup by remember { mutableStateOf(false) }
 
@@ -166,13 +158,13 @@ public fun AppItemGrid(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical)
+            verticalArrangement = Arrangement.spacedBy(drawerSettings.iconsSpacingVertical)
         ) {
-            if (showAppIconsInDrawer) {
-                AppIcon(app, appIconSize)
+            if (drawerSettings.showAppIconsInDrawer) {
+                AppIcon(app, drawerSettings.maxIconSize)
             }
 
-            if (showAppIconsInDrawer) {
+            if (drawerSettings.showAppIconsInDrawer) {
                 Text(
                     text = app.label,
                     color = MaterialTheme.colorScheme.onBackground,

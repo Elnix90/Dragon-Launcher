@@ -166,7 +166,7 @@
     <string name="transparency">투명성</string>
     <string name="save">저장</string>
     <string name="drawer_enter_key_action">서랍 입력 키 액션</string>
-    <string name="icon_pack">아이콘 팩</string>
+    <string name="icon_packs">아이콘 팩</string>
     <string name="icon_pack_help">아이콘 팩을 선택하여 앱 아이콘을 커스터마이즈하세요. 먼저 스토어에서 아이콘 팩을 설치하세요.</string>
     <string name="use_original_app_icon">원본 앱 아이콘을 사용하세요</string>
     <string name="status_bar">상태 바</string>
@@ -249,7 +249,6 @@
     <string name="pick_a_nest">둥지를 골라라</string>
     <string name="create_new_nest">새 둥지 만들기</string>
     <string name="copy_id">ID 복사</string>
-    <string name="edit_default_point_settings">기본 포인트 설정 편집</string>
     <string name="open_burger_menu">버거 메뉴 열기</string>
     <string name="selected_text">선택된</string>
     <string name="unselected">선택 해제됨</string>

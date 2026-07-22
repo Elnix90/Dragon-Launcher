@@ -12,6 +12,7 @@ import io.github.elnix90.core.objects.BooleanSettingObject
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ui.composition.LocalSettingsPlacementChecker
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
@@ -24,6 +25,9 @@ public fun Setting(
     confirmText: Int = R.string.are_you_sure,
     onCheck: ((Boolean) -> Unit)? = null
 ) {
+    // Craches if this setting isn't placed inside a DragonSettingsGroup
+    LocalSettingsPlacementChecker.current
+
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 

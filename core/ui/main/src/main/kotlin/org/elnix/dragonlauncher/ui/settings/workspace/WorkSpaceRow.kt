@@ -13,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -30,6 +31,7 @@ import sh.calvin.reorderable.ReorderableCollectionItemScope
 @Composable
 public fun ReorderableCollectionItemScope.WorkspaceRow(
     workspace: Workspace,
+    modifier: Modifier,
     isDragging: Boolean = false,
     onClick: () -> Unit,
     onCheck: (Boolean) -> Unit,
@@ -38,20 +40,19 @@ public fun ReorderableCollectionItemScope.WorkspaceRow(
 ) {
     val enabled = workspace.enabled
 
-    val elevation = animateDpAsState(
-        targetValue = if (isDragging) 8.dp else 0.dp
+    val scale by animateFloatAsState(
+        if (isDragging) 1.03f else 1f
     )
 
-    val scale = animateFloatAsState(
-        targetValue = if (isDragging) 1.05f else 1f
+    val elevation by animateDpAsState(
+        if (isDragging) 16.dp else 0.dp
     )
 
     Card(
-        colors = AppObjectsColors.cardColors(),
         shape = MaterialTheme.shapes.large,
-        elevation = CardDefaults.cardElevation(elevation.value),
-        modifier = Modifier
-            .scale(scale.value)
+        elevation = CardDefaults.cardElevation(elevation),
+        modifier = modifier
+            .scale(scale)
             .shapedClickable(onClick = onClick)
     ) {
         Row(

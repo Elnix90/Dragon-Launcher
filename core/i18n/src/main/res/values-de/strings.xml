@@ -166,7 +166,7 @@
     <string name="transparency">Transparenz</string>
     <string name="save">Speichern</string>
     <string name="drawer_enter_key_action">Drawer Enter Key Aktion</string>
-    <string name="icon_pack">Icon-Pakete</string>
+    <string name="icon_packs">Icon-Pakete</string>
     <string name="icon_pack_help">Wähle ein Icon-Paket, um deine App-Icons anzupassen. Installiere zuerst Icon-Packs aus deinem Store.</string>
     <string name="use_original_app_icon">Verwenden Sie die Original-App-Icons</string>
     <string name="status_bar">Statusleiste</string>
@@ -251,7 +251,6 @@
     <string name="pick_a_nest">Wähle ein Nest</string>
     <string name="create_new_nest">Neues Nest erstellen</string>
     <string name="copy_id">ID kopieren</string>
-    <string name="edit_default_point_settings">Bearbeiten Sie die Standardpunkteinstellungen</string>
     <string name="open_burger_menu">Öffnen Sie das Burger-Menü</string>
     <string name="selected_text">Ausgewählt</string>
     <string name="unselected">Nicht ausgewählt</string>

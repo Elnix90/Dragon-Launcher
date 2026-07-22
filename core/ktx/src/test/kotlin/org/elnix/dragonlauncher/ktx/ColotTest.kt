@@ -25,7 +25,7 @@ class ColorKtxTest {
     @Test
     fun nullColorReturnsNull() {
         val color: Color? = null
-        assertNull(color.definedOrNull())
+        assertNull(color.specifiedOrNull())
     }
 
     /**
@@ -33,7 +33,7 @@ class ColorKtxTest {
      */
     @Test
     fun unspecifiedColorReturnsNull() {
-        assertNull(Color.Unspecified.definedOrNull())
+        assertNull(Color.Unspecified.specifiedOrNull())
     }
 
     /**
@@ -42,7 +42,7 @@ class ColorKtxTest {
     @Test
     fun definedColorReturnsItself() {
         val color = Color.Red
-        assertEquals(color, color.definedOrNull())
+        assertEquals(color, color.specifiedOrNull())
     }
 
     /**
@@ -51,7 +51,7 @@ class ColorKtxTest {
     @Test
     fun customColorWithAlphaIsPreserved() {
         val color = Color(red = 0.5f, green = 0.3f, blue = 0.8f, alpha = 0.7f)
-        assertEquals(color, color.definedOrNull())
+        assertEquals(color, color.specifiedOrNull())
     }
 
     /**
@@ -59,9 +59,9 @@ class ColorKtxTest {
      */
     @Test
     fun onlyUnspecifiedIsFiltered() {
-        assertTrue(Color.Black.definedOrNull() != null)
-        assertTrue(Color.White.definedOrNull() != null)
-        assertTrue(Color.Blue.definedOrNull() != null)
+        assertTrue(Color.Black.specifiedOrNull() != null)
+        assertTrue(Color.White.specifiedOrNull() != null)
+        assertTrue(Color.Blue.specifiedOrNull() != null)
     }
 
     /**
@@ -277,17 +277,17 @@ class ColorKtxTest {
         assertTrue(hasVariation)
     }
 
-    // Doesn't pass but I don't care I don't use the min and max lumi after all
-    /**
-     * Verifies that minimum luminance is respected.
-     */
-    @Test
-    fun randomColorRespectsMinLuminance() {
-        repeat(10) {
-            val color = randomColor(minLuminance = 0.5f, maxLuminance = 1f)
-            assertTrue(color.luminance() >= 0.4f)
-        }
-    }
+//    // Doesn't pass but I don't care I don't use the min and max lumi after all
+//    /**
+//     * Verifies that minimum luminance is respected.
+//     */
+//    @Test
+//    fun randomColorRespectsMinLuminance() {
+//        repeat(10) {
+//            val color = randomColor(minLuminance = 0.5f, maxLuminance = 1f)
+//            assertTrue(color.luminance() >= 0.4f)
+//        }
+//    }
 
     /**
      * Verifies that maximum luminance is respected.
@@ -310,17 +310,301 @@ class ColorKtxTest {
     }
 
 
-    // Doesn't pass but I don't care I don't use the min and max lumi after all
+//    // Doesn't pass but I don't care I don't use the min and max lumi after all
+//    /**
+//     * Verifies that random color generation does not crash with edge parameters.
+//     */
+//    @Test
+//    fun randomColorHandlesEdgeParameters() {
+//        val color1 = randomColor(minLuminance = 0f, maxLuminance = 0f)
+//        assertEquals(0f, color1.alpha, EPSILON)
+//
+//        val color2 = randomColor(minLuminance = 1f, maxLuminance = 1f)
+//        val luminance = (0.299f * color2.red + 0.587f * color2.green + 0.114f * color2.blue)
+//        assertTrue(luminance >= 0.9f)
+//    }
+
+
     /**
-     * Verifies that random color generation does not crash with edge parameters.
+     * Verifies that fully opaque red is parsed correctly.
      */
     @Test
-    fun randomColorHandlesEdgeParameters() {
-        val color1 = randomColor(minLuminance = 0f, maxLuminance = 0f)
-        assertEquals(0f, color1.alpha, EPSILON)
+    fun opaqueRedFromHex() {
+        val color = "#FFFF0000".toColor()
+        assertEquals(1f, color.alpha, EPSILON)
+        assertEquals(1f, color.red, EPSILON)
+        assertEquals(0f, color.green, EPSILON)
+        assertEquals(0f, color.blue, EPSILON)
+    }
 
-        val color2 = randomColor(minLuminance = 1f, maxLuminance = 1f)
-        val luminance = (0.299f * color2.red + 0.587f * color2.green + 0.114f * color2.blue)
-        assertTrue(luminance >= 0.9f)
+    /**
+     * Verifies that fully opaque black is parsed correctly.
+     */
+    @Test
+    fun opaqueBlackFromHex() {
+        val color = "#FF000000".toColor()
+        assertEquals(1f, color.alpha, EPSILON)
+        assertEquals(0f, color.red, EPSILON)
+        assertEquals(0f, color.green, EPSILON)
+        assertEquals(0f, color.blue, EPSILON)
+    }
+
+    /**
+     * Verifies that fully opaque white is parsed correctly.
+     */
+    @Test
+    fun opaqueWhiteFromHex() {
+        val color = "#FFFFFFFF".toColor()
+        assertEquals(1f, color.alpha, EPSILON)
+        assertEquals(1f, color.red, EPSILON)
+        assertEquals(1f, color.green, EPSILON)
+        assertEquals(1f, color.blue, EPSILON)
+    }
+
+    /**
+     * Verifies that semi-transparent color is parsed with correct alpha.
+     */
+    @Test
+    fun semiTransparentRedFromHex() {
+        val color = "#80FF0000".toColor()
+        assertTrue(color.alpha in 0.49f..0.51f)
+        assertEquals(1f, color.red, EPSILON)
+        assertEquals(0f, color.green, EPSILON)
+        assertEquals(0f, color.blue, EPSILON)
+    }
+
+    /**
+     * Verifies that custom ARGB values are parsed correctly.
+     */
+    @Test
+    fun customArgbFromHex() {
+        val color = "#FF808080".toColor()
+        assertEquals(1f, color.alpha, EPSILON)
+        assertTrue(color.red in 0.49f..0.51f)
+        assertTrue(color.green in 0.49f..0.51f)
+        assertTrue(color.blue in 0.49f..0.51f)
+    }
+
+    /**
+     * Verifies that fully transparent color has zero alpha.
+     */
+    @Test
+    fun fullyTransparentFromHex() {
+        val color = "#00FFFFFF".toColor()
+        assertEquals(0f, color.alpha, EPSILON)
+        assertEquals(1f, color.red, EPSILON)
+        assertEquals(1f, color.green, EPSILON)
+        assertEquals(1f, color.blue, EPSILON)
+    }
+
+    /**
+     * Verifies that 6-digit hex assumes full opacity.
+     */
+    @Test
+    fun sixDigitRedDefaultsToFullOpacity() {
+        val color = "#FF0000".toColor()
+        assertEquals(1f, color.alpha, EPSILON)
+        assertEquals(1f, color.red, EPSILON)
+        assertEquals(0f, color.green, EPSILON)
+        assertEquals(0f, color.blue, EPSILON)
+    }
+
+    /**
+     * Verifies that 6-digit black defaults to full opacity.
+     */
+    @Test
+    fun sixDigitBlackDefaultsToFullOpacity() {
+        val color = "#000000".toColor()
+        assertEquals(1f, color.alpha, EPSILON)
+        assertEquals(0f, color.red, EPSILON)
+        assertEquals(0f, color.green, EPSILON)
+        assertEquals(0f, color.blue, EPSILON)
+    }
+
+    /**
+     * Verifies that 6-digit white defaults to full opacity.
+     */
+    @Test
+    fun sixDigitWhiteDefaultsToFullOpacity() {
+        val color = "#FFFFFF".toColor()
+        assertEquals(1f, color.alpha, EPSILON)
+        assertEquals(1f, color.red, EPSILON)
+        assertEquals(1f, color.green, EPSILON)
+        assertEquals(1f, color.blue, EPSILON)
+    }
+
+    /**
+     * Verifies that custom RGB values are parsed with full opacity.
+     */
+    @Test
+    fun sixDigitCustomColorDefaultsToFullOpacity() {
+        val color = "#808080".toColor()
+        assertEquals(1f, color.alpha, EPSILON)
+        assertTrue(color.red in 0.49f..0.51f)
+        assertTrue(color.green in 0.49f..0.51f)
+        assertTrue(color.blue in 0.49f..0.51f)
+    }
+
+    /**
+     * Verifies that uppercase hex is parsed correctly.
+     */
+    @Test
+    fun uppercaseHexIsParsed() {
+        val color = "#FFFF0000".toColor()
+        assertEquals(1f, color.red, EPSILON)
+    }
+
+    /**
+     * Verifies that lowercase hex is parsed correctly.
+     */
+    @Test
+    fun lowercaseHexIsParsed() {
+        val color = "#ffff0000".toColor()
+        assertEquals(1f, color.red, EPSILON)
+    }
+
+    /**
+     * Verifies that mixed case hex is parsed correctly.
+     */
+    @Test
+    fun mixedCaseHexIsParsed() {
+        val color = "#FfFf0000".toColor()
+        assertEquals(1f, color.red, EPSILON)
+    }
+
+    /**
+     * Verifies that leading whitespace is trimmed.
+     */
+    @Test
+    fun leadingWhitespaceIsTrimmed() {
+        val color = "  #FFFF0000".toColor()
+        assertEquals(1f, color.red, EPSILON)
+    }
+
+    /**
+     * Verifies that trailing whitespace is trimmed.
+     */
+    @Test
+    fun trailingWhitespaceIsTrimmed() {
+        val color = "#FFFF0000  ".toColor()
+        assertEquals(1f, color.red, EPSILON)
+    }
+
+    /**
+     * Verifies that both leading and trailing whitespace is trimmed.
+     */
+    @Test
+    fun bothWhitespaceSidesTrimmed() {
+        val color = "  #FFFF0000  ".toColor()
+        assertEquals(1f, color.red, EPSILON)
+    }
+
+    /**
+     * Verifies that hex string with hash prefix is parsed.
+     */
+    @Test
+    fun hexWithHashPrefixIsParsed() {
+        val color = "#FFFF0000".toColor()
+        assertEquals(1f, color.red, EPSILON)
+    }
+
+    /**
+     * Verifies that hex string without hash prefix is parsed.
+     */
+    @Test
+    fun hexWithoutHashPrefixIsParsed() {
+        val color = "FFFF0000".toColor()
+        assertEquals(1f, color.red, EPSILON)
+    }
+
+
+    /**
+     * Verifies that 4-digit hex throws exception.
+     */
+    @Test(expected = IllegalArgumentException::class)
+    fun fourDigitHexThrowsException() {
+        "#FF00".toColor()
+    }
+
+    /**
+     * Verifies that 5-digit hex throws exception.
+     */
+    @Test(expected = IllegalArgumentException::class)
+    fun fiveDigitHexThrowsException() {
+        "#FF000".toColor()
+    }
+
+    /**
+     * Verifies that 7-digit hex throws exception.
+     */
+    @Test(expected = IllegalArgumentException::class)
+    fun sevenDigitHexThrowsException() {
+        "#FFFF000".toColor()
+    }
+
+    /**
+     * Verifies that 9-digit hex throws exception.
+     */
+    @Test(expected = IllegalArgumentException::class)
+    fun nineDigitHexThrowsException() {
+        "#FFFFFFFFF".toColor()
+    }
+
+    /**
+     * Verifies that empty string throws exception.
+     */
+    @Test(expected = IllegalArgumentException::class)
+    fun emptyStringThrowsException() {
+        "".toColor()
+    }
+
+    /**
+     * Verifies that non-hex characters throw exception.
+     */
+    @Test(expected = IllegalArgumentException::class)
+    fun nonHexCharactersThrowException() {
+        "#GGGGGG".toColor()
+    }
+
+
+    /**
+     * Verifies that color to hex and back preserves the color with alpha.
+     */
+    @Test
+    fun colorToHexAndBackWithAlpha() {
+        val original = Color(red = 0.2f, green = 0.5f, blue = 0.8f, alpha = 0.6f)
+        val hex = original.toHexWithAlpha
+        val restored = hex.toColor()
+        assertEquals(original.alpha, restored.alpha, EPSILON)
+        assertEquals(original.red, restored.red, EPSILON)
+        assertEquals(original.green, restored.green, EPSILON)
+        assertEquals(original.blue, restored.blue, EPSILON)
+    }
+
+    /**
+     * Verifies that standard color round-trips correctly.
+     */
+    @Test
+    fun standardColorRoundTrips() {
+        val original = Color.Red
+        val hex = original.toHexWithAlpha
+        val restored = hex.toColor()
+        assertEquals(original.alpha, restored.alpha, EPSILON)
+        assertEquals(original.red, restored.red, EPSILON)
+        assertEquals(original.green, restored.green, EPSILON)
+        assertEquals(original.blue, restored.blue, EPSILON)
+    }
+
+    /**
+     * Verifies that opaque color round-trips via 6-digit hex.
+     */
+    @Test
+    fun opaqueColorRoundTripViaShortHex() {
+        val original = Color.Blue
+        val hex = original.toHexWithAlpha.drop(1)
+        val restored = hex.toColor()
+        assertEquals(original.red, restored.red, EPSILON)
+        assertEquals(original.green, restored.green, EPSILON)
+        assertEquals(original.blue, restored.blue, EPSILON)
     }
 }

@@ -18,25 +18,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.points.PointsService
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
+import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 
 @Composable
 public fun NestNameEditor(
     nest: Nest,
-    pointsService: PointsService,
     modifier: Modifier = Modifier,
+    onEditName: (String?) -> Unit
 ) {
     var tempCustomName by remember { mutableStateOf(nest.name ?: "") }
     TextField(
         value = tempCustomName,
         onValueChange = {
             tempCustomName = it
-
-            pointsService.editNest(nest.id) { nest ->
-                nest.copy(name = it.takeIf { it.isNotEmpty() })
-            }
+            onEditName(it)
         },
         placeholder = {
             Row(
@@ -51,16 +47,9 @@ public fun NestNameEditor(
             }
         },
         trailingIcon = {
-            DragonIconButton(
-                icon = R.drawable.reset,
-                enabled = tempCustomName.isNotEmpty(),
-                contentDescription = R.string.reset
-            ) {
+            ResetIcon(tempCustomName.isNotEmpty()) {
                 tempCustomName = ""
-
-                pointsService.editNest(nest.id) { nest ->
-                    nest.copy(name = null)
-                }
+                onEditName(null)
             }
         },
         colors = AppObjectsColors.outlinedTextFieldColors(removeBorder = true),

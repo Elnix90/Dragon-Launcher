@@ -89,6 +89,14 @@ public inline fun Offset.undoTransformations(
 
 
 
+
+/**
+ * Snaps the value to the nearest integer if it crosses the threshold.
+ * @param threshold The distance from an integer to trigger snapping
+ */
+public fun Int.snapToRound(snapTo: Int, threshold: Int): Int {
+    return if (abs(this - snapTo) <= threshold) snapTo else this
+}
 /**
  * Snaps the value to the nearest integer if it crosses the threshold.
  * @param threshold The distance from an integer to trigger snapping

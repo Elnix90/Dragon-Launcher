@@ -15,6 +15,7 @@ import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.models.HitResult
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
@@ -126,7 +127,7 @@ public fun rememberLiveNestControllerStack(
                 normalizedPos = current - rootStartPos,
                 nestId = rootNestId,
                 liveNestScale = 1f,
-                graceDistancePx = null
+                graceDistance = null
             ).also {
                 sweepAngleStateStack[0].onAngleChanged(it.angle360)
             }
@@ -151,11 +152,7 @@ public fun rememberLiveNestControllerStack(
             !level.liveNestActive || level.liveNestCenter == null || current == null || level.nestedNestId == null -> null
 
             else -> {
-                val graceDistancePx =
-                    level.hostPoint
-                        ?.liveNestGraceDistancePx
-                        ?: defaultPoint.liveNestGraceDistancePx
-                        ?: Point.defaultLiveNestGraceDistancePx
+                val graceDistance = level.hostPoint?.getLiveNestGraceDistance(defaultPoint)?.px
 
                 val normalizedPos = current - level.liveNestCenter!!
 
@@ -163,7 +160,7 @@ public fun rememberLiveNestControllerStack(
                     normalizedPos = normalizedPos,
                     nestId = level.nestedNestId!!,
                     liveNestScale = level.liveNestScale,
-                    graceDistancePx = graceDistancePx
+                    graceDistance = graceDistance
                 ).also {
                     sweepAngleStateStack[idx].onAngleChanged(it.angle360)
                 }

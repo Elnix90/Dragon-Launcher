@@ -17,7 +17,7 @@ public object IconsSettingsStore : MapSettingsStore() {
 
     @SettingKey
     public val selectedIconPack: StringSettingObject = string(
-        title = R.string.icon_pack,
+        title = R.string.icon_packs,
         default = ""
     )
 

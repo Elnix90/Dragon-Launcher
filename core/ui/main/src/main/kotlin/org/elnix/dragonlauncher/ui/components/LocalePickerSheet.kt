@@ -19,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,6 +32,7 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
+import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import java.util.Locale
 
 private data class AppLocale(val locale: Locale, val name: String)
@@ -44,7 +44,7 @@ private data class AppLocale(val locale: Locale, val name: String)
 public fun LocalePickerSheet(onDismissRequest: () -> Unit) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetState = rememberBottomSheetState(skipPartiallyExpanded = true)
 
     val currentLocales = remember {
         if (Build.VERSION.SDK_INT >= 33) {
@@ -103,7 +103,7 @@ public fun LocalePickerSheet(onDismissRequest: () -> Unit) {
                         selected = currentLocales.isEmpty,
                         colors =  listItemColors(),
                         shapes = segmentedListItemShapes(0, 1),
-                        content = { Text(text = stringResource(R.string.system_default)) },
+                        content = { Text(stringResource(R.string.system_default)) },
                         trailingContent = {
                             if (currentLocales.isEmpty)
                                 Icon(
@@ -136,7 +136,14 @@ public fun LocalePickerSheet(onDismissRequest: () -> Unit) {
                                 .invokeOnCompletion { onDismissRequest() }
                         },
                         selected = selected,
-                        content = { Text(text = item.name) },
+                        content = { Text(item.name) },
+                        trailingContent = {
+                            if (selected)
+                                Icon(
+                                    painter = painterResource(R.drawable.check_circle),
+                                    contentDescription = null,
+                                )
+                        },
                         shapes = segmentedListItemShapes(index, supportedLocalesSize),
                         colors = listItemColors(),
                     )

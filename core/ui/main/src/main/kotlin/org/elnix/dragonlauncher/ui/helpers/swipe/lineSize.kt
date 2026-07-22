@@ -24,7 +24,7 @@ public fun DrawScope.centerOfNest(center: Offset) {
         lineStrokeWidth = 1f,
         erase = false,
         eraseColor = null,
-        glow = CustomGlow(5f)
+        glow = CustomGlow(5.dp)
     )
 
     drawNeonGlowLine(
@@ -34,6 +34,6 @@ public fun DrawScope.centerOfNest(center: Offset) {
         lineStrokeWidth = 1f,
         erase = false,
         eraseColor = null,
-        glow = CustomGlow(5f)
+        glow = CustomGlow(5.dp)
     )
 }

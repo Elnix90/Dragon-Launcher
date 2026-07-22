@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
@@ -68,10 +69,13 @@ import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.animation.Icon
+import org.elnix.dragonlauncher.ui.base.animation.rememberAnimatedIcon
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
@@ -190,6 +194,7 @@ public fun LogsTab(
         onBack = onBack,
         helpText = "Logs, need more info?",
         onReset = null,
+        resetText = null,
         moreOptions = { dismiss ->
             listOf(
                 MoreOptions(
@@ -204,10 +209,7 @@ public fun LogsTab(
         }
     ) {
         ExpandableSection(rememberExpandableSection("Device info")) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = AppObjectsColors.cardColors()
-            ) {
+            Card(Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -241,7 +243,7 @@ public fun LogsTab(
             }
         }
 
-        Setting(DebugSettingsStore.enableLogging)
+        DragonSettingsGroup { Setting(DebugSettingsStore.enableLogging) }
 
         AnimatedVisibility(enableLogging) {
             Column(
@@ -249,33 +251,42 @@ public fun LogsTab(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                Setting(
-                    setting = DebugSettingsStore.snackBarLogLevel,
-                    customDesc = { it.logLevelName }
-                )
+                DragonSettingsGroup(R.string.log_level) {
+                    Setting(
+                        setting = DebugSettingsStore.snackBarLogLevel,
+                        customDesc = { it.logLevelName }
+                    )
 
-                Setting(
-                    setting = DebugSettingsStore.filesLogLevel,
-                    customDesc = { it.logLevelName }
-                )
+                    Setting(
+                        setting = DebugSettingsStore.filesLogLevel,
+                        customDesc = { it.logLevelName }
+                    )
 
-                TextField(
-                    value = tempFilterTag,
-                    onValueChange = { tempFilterTag = it },
-                    label = { Text(stringResource(R.string.filter_tag)) },
-                    colors = AppObjectsColors.outlinedTextFieldColors(),
-                    modifier = Modifier.fillMaxWidth(1f),
-                    trailingIcon = {
-                        DragonIconButton(
-                            icon = R.drawable.check,
-                            contentDescription = R.string.save
-                        ) {
-                            scope.launch {
-                                DebugSettingsStore.filterTag.set(ctx, tempFilterTag)
+                    val animatedIcon = rememberAnimatedIcon()
+                    TextField(
+                        value = tempFilterTag,
+                        onValueChange = { tempFilterTag = it },
+                        placeholder = { Text(stringResource(R.string.filter_tag)) },
+                        colors = AppObjectsColors.outlinedTextFieldColors(
+                            removeBorder = true
+                        ),
+                        shape = CircleShape,
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .fillMaxWidth(1f),
+                        trailingIcon = {
+                            animatedIcon.Icon(
+                                defaultIcon = R.drawable.save,
+                                enabled = tempFilterTag != filterTag
+                            ) {
+                                scope.launch {
+                                    DebugSettingsStore.filterTag.set(ctx, tempFilterTag)
+                                    animatedIcon.setSuccess()
+                                }
                             }
                         }
-                    }
-                )
+                    )
+                }
 
                 DragonButton(
                     onClick = {
@@ -294,7 +305,6 @@ public fun LogsTab(
                     Text("Clear All Logs")
                 }
 
-
                 HorizontalDivider()
 
                 LazyColumn(
@@ -309,8 +319,7 @@ public fun LogsTab(
                                 .fillMaxWidth()
                                 .clickable {
                                     onNavigate(NavigationRoute.LogsViewer(file.name))
-                                },
-                            colors = AppObjectsColors.cardColors()
+                                }
                         ) {
                             Row(
                                 modifier = Modifier

@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.base.model.serializables
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -16,6 +17,7 @@ import kotlinx.serialization.Serializable
  *                      Null falls back to the point's own haptic setting.
  */
 @Serializable
+@SerialName("CycleActionStage")
 public data class CycleActionStage(
     val triggerTimeMs: Int,
     val action: Action,

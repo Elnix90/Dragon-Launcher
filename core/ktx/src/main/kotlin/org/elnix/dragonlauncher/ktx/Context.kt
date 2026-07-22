@@ -68,6 +68,7 @@ public fun Context.showToast(
 }
 
 
+@Deprecated("Use Uri Handler instead")
 public fun Context.openUrl(url: String) {
     if (url.isEmpty()) return
     val intent = Intent(Intent.ACTION_VIEW)

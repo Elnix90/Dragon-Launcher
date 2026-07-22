@@ -96,11 +96,11 @@ public fun PermissionsTab(onBack: () -> Unit) {
             title = stringResource(R.string.permissions),
             onBack = onBack,
             helpText = stringResource(R.string.permission_tab_help),
-            onReset = null
+            onReset = null,
+            resetText = null
         ) {
 
             BetaVersionWarning(BetaVersionType.Feature)
-
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,

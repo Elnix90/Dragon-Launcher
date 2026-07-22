@@ -34,7 +34,7 @@
     <string name="version">Version</string>
     <string name="export_cancelled">Exportation annulée</string>
     <string name="import_cancelled">Importation annulée</string>
-    <string name="backup_restore">Sauvegarde</string>
+    <string name="backup">Sauvegarde</string>
     <string name="backup_restore_text">Sauvegarde ou restauration des paramètres et des actions de l’application, les sauvegardes automatiques sont déclenchées automatiquement à chaque lancement/pause/fermeture de l’application ou en appuyant sur le bouton « Déclencher » ci-dessous</string>
     <string name="export_settings">Exporter les paramètres</string>
     <string name="import_settings">Importer les paramètres</string>
@@ -167,7 +167,7 @@
     <string name="transparency">Transparence</string>
     <string name="save">Sauvegarder</string>
     <string name="drawer_enter_key_action">Action de saisie dans le tiroir</string>
-    <string name="icon_pack">Packs d’icônes</string>
+    <string name="icon_packs">Packs d’icônes</string>
     <string name="icon_pack_help">Sélectionnez un pack d’icônes pour personnaliser les icônes de votre application. Installez d’abord les packs d’icônes depuis votre boutique.</string>
     <string name="use_original_app_icon">Utilisez les icônes d’application originales</string>
     <string name="status_bar">Barre de statut</string>
@@ -252,7 +252,6 @@
     <string name="pick_a_nest">Choisissez un nid</string>
     <string name="create_new_nest">Créer un nouveau nid</string>
     <string name="copy_id">Copier l\'identifiant</string>
-    <string name="edit_default_point_settings">Modifier les paramètres de points par défaut</string>
     <string name="open_burger_menu">Ouvrir le menu des hamburgers</string>
     <string name="selected_text">Choisi</string>
     <string name="unselected">Désélectionné</string>
@@ -791,6 +790,6 @@
     <string name="gradient">Dégradé</string>
     <string name="app_display_desc">Changez les paramètres d\'apparence globaux, dans le contexte du launcher, pas les couleurs</string>
     <string name="shape_scale">Echelle %1$.2f</string>
-    <string name="rotation_arg">"Rotation:  %1$.2f°"</string>
+    <string name="rotation_arg">"Rotation:  %1$d°"</string>
     <string name="pause_duration_description">Combien de temps vous devez respirer avant de pouvoir continuer</string>
 </resources>

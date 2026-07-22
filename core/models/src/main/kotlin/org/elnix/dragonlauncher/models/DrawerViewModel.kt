@@ -95,7 +95,7 @@ public class DrawerViewModel @Inject constructor(
 
 
     public fun selectWorkspace(workspaceId: String): Unit = workspaceManager.selectWorkspace(workspaceId)
-    public val selectedWorkspaceId: StateFlow<String> = workspaceManager.selectedWorkspaceId.stateIn(
+    public val selectedWorkspaceId: StateFlow<String> = workspaceManager.selectedWorkspaceId.flow.stateIn(
         viewModelScope,
         SharingStarted.Lazily,
         "user"

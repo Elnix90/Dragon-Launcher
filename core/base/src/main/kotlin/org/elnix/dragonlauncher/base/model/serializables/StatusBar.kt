@@ -1,8 +1,13 @@
+@file:Suppress("ConstPropertyName")
+
 package org.elnix.dragonlauncher.base.model.serializables
 
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.DragonJson
+import org.elnix.dragonlauncher.base.model.serializables.serializers.DpSerializer
 
 @Serializable
 @SerialName("StatusBar")
@@ -39,29 +44,60 @@ public sealed class StatusBar {
     @Serializable
     @SerialName("Notifications")
     public data class Notifications(
-        val maxIcons: Int = 8,
-        val iconSize: Int = 18
-    ) : StatusBar()
+        val maxIcons: Int = defaultMaxIcons,
+        @Serializable(with = DpSerializer::class)
+        val iconSize: Dp = defaultIconSize
+    ) : StatusBar() {
+        public companion object {
+            public const val defaultMaxIcons: Int = 8
+            public val defaultIconSize: Dp = 18.dp
+        }
+    }
 
     @Serializable
     @SerialName("Connectivity")
     public data class Connectivity(
-        val showAirplaneMode: Boolean = true,
-        val showWifi: Boolean = true,
-        val showBluetooth: Boolean = true,
-        val showVpn: Boolean = true,
-        val showMobileData: Boolean = true,
-        val showHotspot: Boolean = true,
-        val showUsb: Boolean = true,
-        val updateFrequency: Int = 5,
-        val iconSize: Int = 18
-    ) : StatusBar()
+        val showAirplaneMode: Boolean = defaultAirplaneMode,
+        val showWifi: Boolean = defaultShowWifi,
+        val showBluetooth: Boolean = defaultShowBluetooth,
+        val showVpn: Boolean = defaultShowVpn,
+        val showMobileData: Boolean = defaultShowMobileData,
+        val showHotspot: Boolean = defaultShowHotspot,
+        val showUsb: Boolean = defaultShowUsb,
+        val updateFrequency: Int = defaultUpdateFrequency,
+        @Serializable(with = DpSerializer::class)
+        val iconSize: Dp = defaultIconSize
+    ) : StatusBar() {
+        public companion object {
+            public const val defaultAirplaneMode: Boolean = true
+            public const val defaultShowWifi: Boolean = true
+            public const val defaultShowBluetooth: Boolean = true
+            public const val defaultShowVpn: Boolean = true
+            public const val defaultShowMobileData: Boolean = true
+            public const val defaultShowHotspot: Boolean = true
+            public const val defaultShowUsb: Boolean = true
+            public const val defaultUpdateFrequency: Int = 5
+            public val defaultIconSize: Dp = 18.dp
+
+        }
+    }
 
     @Serializable
     @SerialName("Spacer")
     public data class Spacer(
-        val width: Int = -1
-    ) : StatusBar()
+        @Serializable(with = DpSerializer::class)
+        val width: Dp = defaultWidth,
+        val mode: SpacerMode = spacerSpacerMode
+    ) : StatusBar() {
+        public enum class SpacerMode {
+            Width, Fill, Cutout
+        }
+
+        public companion object {
+            public val defaultWidth: Dp = Dp.Unspecified
+            public val spacerSpacerMode: SpacerMode = SpacerMode.Cutout
+        }
+    }
 
     @Serializable
     @SerialName("Battery")

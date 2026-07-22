@@ -9,6 +9,7 @@ import androidx.compose.animation.core.AnimationVector2D
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -44,7 +45,6 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
@@ -74,25 +74,23 @@ import org.elnix.dragonlauncher.ktx.toPath
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.ui.base.UiConstants.dragonSettingGroupPaddingValues
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asMutableState
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.IntersectionShape
 import org.elnix.dragonlauncher.ui.components.IntersectionShapePreview
 import org.elnix.dragonlauncher.ui.components.ManipulationSystemReset
-import org.elnix.dragonlauncher.ui.components.NestNameEditor
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
-import org.elnix.dragonlauncher.ui.dialogs.IntersectionShapeManagementDialog
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
+import org.elnix.dragonlauncher.ui.dialogs.editors.IntersectionShapeEditor
+import org.elnix.dragonlauncher.ui.dialogs.editors.NestEditor
 import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
-import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
@@ -109,21 +107,21 @@ import org.elnix.dragonlauncher.ui.helpers.swipe.centerOfNest
 @Composable
 public fun NestEditScreen(
     pointsViewModel: PointsViewModel = activityViewModel(),
-    initialNestId: Int,
     onBack: () -> Unit
 ) {
-    val ctx = LocalContext.current
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()
+
     val pointsService = pointsViewModel.pointsService
+
     val points by pointsService.points.collectAsState()
-
     val nestNavigation = pointsViewModel.nestsNavigationService
-    LaunchedEffect(Unit) {
-        nestNavigation.goToNest(initialNestId)
-    }
 
-    val nestId by pointsViewModel.nestsNavigationService.currentNestId.collectAsState()
+    val defaultShape by pointsService.defaultIntersectionShape.asState()
+    val defaultNest by pointsService.defaultNest.asState()
+
+
+    val nestId by nestNavigation.currentNestId.collectAsState()
     val currentNest = pointsService.findNestById(nestId)
 
 
@@ -136,23 +134,23 @@ public fun NestEditScreen(
 
     val cellSizeDp by UiSettingsStore.nestsCellSizeDp.asState()
     val cellSizePx = cellSizeDp.px
+    val showGridWhenSnappingIsOn by UiSettingsStore.showGridWhenSnappingIsOn.asState()
 
     fun IntersectionShape.snap(): IntersectionShape {
+        val offset = this.getOffset(defaultShape)
 
         val newOffset = when {
-            snapShapesCenter && snapShapesOffset -> this.offset.snapToGrid(cellSizePx).snapToRound(Offset.Zero, snapOffsetThreshold)
-            snapShapesCenter -> this.offset.snapToRound(Offset.Zero, snapOffsetThreshold)
-            snapShapesOffset -> this.offset.snapToGrid(cellSizePx)
-            else -> this.offset
+            snapShapesCenter && snapShapesOffset -> offset.snapToGrid(cellSizePx).snapToRound(Offset.Zero, snapOffsetThreshold)
+            snapShapesCenter -> offset.snapToRound(Offset.Zero, snapOffsetThreshold)
+            snapShapesOffset -> offset.snapToGrid(cellSizePx)
+            else -> offset
         }
 //        val newScale = if (snapShapesScale) {
 //            val oldScale = this.scale
 //            val newScale = oldScale.snapToRound(1f, 0.5f)
 //
-//            // Calculate the change in scale
 //            val scaleChange = newScale / oldScale
 //
-//            // Adjust the offset to account for the scale change (since scaling is from the center)
 //            newOffset *= scaleChange
 //
 //            newScale
@@ -160,39 +158,43 @@ public fun NestEditScreen(
 //            this.scale
 //        }
 
-        val newAngle = if (snapShapeAngle) this.angle.snapToRound(0f, 20f) else this.angle
+        val newAngle = if (snapShapeAngle) this.getRotation(defaultShape).snapToRound(0, 20) else this.rotation
 
         return this.copy(
             offset = newOffset,
 //            scale = newScale,
-            angle = newAngle
+            rotation = newAngle
         )
     }
 
 
+    var showEditCurrentNestSheet by remember { mutableStateOf(false) }
     var showMoreSheet by remember { mutableStateOf(false) }
+    var showEditDefaultNestSheet by remember { mutableStateOf(false) }
+    var showEditDefaultShapeDialog by remember { mutableStateOf(false) }
 
     val rowsScrollStates = List(3) { rememberScrollState() }
 
-    var showShapesManagementDialog by remember { mutableStateOf(false) }
     var showNestManagementDialog by remember { mutableStateOf(false) }
     var center by remember { mutableStateOf(Offset.Zero) }
 
     var selectedShapeId: Int? by remember { mutableStateOf(null) }
     val isInDragAroundMode: Boolean = selectedShapeId == null
 
-    var tempCancelZone by remember { mutableIntStateOf(currentNest.cancelZone) }
+    var tempCancelZone by remember { mutableIntStateOf(currentNest.getCancelZone(defaultNest)) }
 
     val paths: SnapshotStateMap<IntersectionShape, Path> = remember { mutableStateMapOf() }
     fun addPath(shape: IntersectionShape) {
-        paths[shape] = shape.shape.resolveShape().toPath(shape.getSize(density.density), density)
+        paths[shape] = shape.getShape(defaultShape).resolveShape().toPath(shape.getSize(density.density, defaultShape), density)
     }
 
-    LaunchedEffect(currentNest.intersectionShapes) {
+    LaunchedEffect(defaultNest.intersectionShapes, currentNest.intersectionShapes) {
         paths.clear()
-        currentNest.intersectionShapes.forEach { shape ->
+        currentNest.getInterSectionShapes(defaultNest).forEach { shape ->
             addPath(shape)
         }
+        // Reset the selected shape. if you only added new ones, it'll resolve to the same as before, but if you removed the current selected one, it'll deselect cause it won't find it
+        selectedShapeId = paths.keys.find { it.id == selectedShapeId }?.id
     }
 
 
@@ -220,9 +222,6 @@ public fun NestEditScreen(
     }
     BackHandler(onBack = handleBack)
 
-
-//    TODO("Make snapping tools global (not only with the center of the nest")
-
     var recomposeTrigger by pointsService.recomposeTrigger.asMutableState()
 
     val manipulationSystem = remember { ManipulationSystem(center) }
@@ -242,7 +241,7 @@ public fun NestEditScreen(
     /**
      * I am soooooooooooooo proud of this thing actually
      */
-    val cellNumber = remember(cellSizePx,zoom.value, offset.value) {
+    val cellNumber = remember(cellSizePx, zoom.value, offset.value) {
         val dist = offset.value.getDistance()
         val screenMaxDimension = with(density) {
             maxOf(config.screenHeightDp, config.screenWidthDp).dp.toPx()
@@ -263,9 +262,25 @@ public fun NestEditScreen(
         moreOptions = { dismiss ->
             listOf(
                 MoreOptions(
-                    text = { stringResource(R.string.show_more_sheet) },
+                    text = { stringResource(R.string.edit_default_nest) },
                     onClick = {
-                        showMoreSheet = !showMoreSheet
+                        showEditDefaultNestSheet = true
+                        dismiss()
+                    },
+                    icon = R.drawable.edit_rounded,
+                ),
+                MoreOptions(
+                    text = { stringResource(R.string.edit_default_shape) },
+                    onClick = {
+                        showEditDefaultShapeDialog = true
+                        dismiss()
+                    },
+                    icon = R.drawable.edit_rounded,
+                ),
+                MoreOptions(
+                    text = { stringResource(R.string.more) },
+                    onClick = {
+                        showMoreSheet = true
                         dismiss()
                     },
                     icon = R.drawable.add_circle,
@@ -348,7 +363,7 @@ public fun NestEditScreen(
             ) {
 
                 AnimatedFab(
-                    onClick = { showShapesManagementDialog = true },
+                    onClick = { showEditCurrentNestSheet = true },
                     icon = R.drawable.edit_rounded,
                     minSize = 70.dp,
                     containerColor = MaterialTheme.colorScheme.secondary
@@ -365,8 +380,14 @@ public fun NestEditScreen(
                         }
 
                         if (selectedShape == null) {
-                            DragonRow(onClick = { showDropDownMenu = true }) {
-                                Text(stringResource(R.string.move_around_mode))
+                            DragonRow(
+                                onClick = { showDropDownMenu = true },
+                                enabled = paths.isNotEmpty()
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.drag_pan),
+                                    contentDescription = stringResource(R.string.move_around_mode)
+                                )
                                 Spacer(5.dp)
                                 Icon(
                                     painter = painterResource(R.drawable.drag_indicator),
@@ -375,9 +396,7 @@ public fun NestEditScreen(
                             }
                         } else {
                             DragonRow(onClick = { showDropDownMenu = true }) {
-                                IntersectionShapePreview(selectedShape, 30.dp)
-                                Spacer(5.dp)
-                                Text("ID: ${selectedShape.id}")
+                                IntersectionShapePreview(selectedShape, defaultShape, 30.dp)
                                 Spacer(5.dp)
                                 Icon(
                                     painter = painterResource(R.drawable.drag_indicator),
@@ -397,13 +416,16 @@ public fun NestEditScreen(
                             val filteredShapes = paths.keys.filter { it.id != selectedShapeId }
                             filteredShapes.forEachIndexed { idx, shape ->
                                 DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            text = shape.id.toString(),
-                                            modifier = Modifier.weight(1f)
+                                    text = {},
+                                    leadingIcon = {
+                                        IntersectionShapePreview(shape, defaultShape, 25.dp)
+                                    },
+                                    trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.drag_indicator),
+                                            contentDescription = stringResource(R.string.drag_handle)
                                         )
                                     },
-                                    leadingIcon = { IntersectionShapePreview(shape, 30.dp) },
                                     onClick = {
                                         selectedShapeId = shape.id
                                         showDropDownMenu = false
@@ -418,11 +440,17 @@ public fun NestEditScreen(
 
                             if (selectedShapeId != null) {
                                 DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.move_around_mode)) },
+                                    text = {},
                                     leadingIcon = {
                                         Icon(
                                             painter = painterResource(R.drawable.close),
                                             contentDescription = null
+                                        )
+                                    },
+                                    trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.drag_indicator),
+                                            contentDescription = stringResource(R.string.drag_handle)
                                         )
                                     },
                                     onClick = {
@@ -468,22 +496,23 @@ public fun NestEditScreen(
                         }
                 ) {
                     Canvas(Modifier.fillMaxSize()) {
-                        if (snapShapesOffset) {
+                        if (snapShapesOffset && showGridWhenSnappingIsOn) {
                             backgroundCenteredSquareGrid(
-                                cellSizePx = cellSizePx,
+                                cellSizePx = cellSizeDp,
                                 color = onBackgroundColor,
                                 center = center,
                                 cells = cellNumber
                             )
                         }
-                        
+
                         paths.forEach { (shape, path) ->
                             val selected = shape.id == selectedShapeId
                             this.IntersectionShape(
                                 path = path,
                                 shape = shape.snap().highlightedIfSelected(selected, primaryColor),
+                                defaultShape = defaultShape,
                                 center = center,
-                                shapesColor = extraColors.shapes,
+                                extraColors = extraColors,
                                 erase = false,
                                 eraseColor = null
                             )
@@ -555,9 +584,9 @@ public fun NestEditScreen(
                                 val shapeId = selectedShapeId ?: return@detectTransformGestures
                                 val shape = paths.keys.firstOrNull { it.id == shapeId } ?: return@detectTransformGestures
 
-                                val oldScale = shape.scale
+                                val oldScale = shape.getScale(defaultShape)
                                 val newScale = oldScale * gestureZoom
-                                val newAngle = (shape.angle + gestureRotate) % 360
+                                val newAngle = (shape.getRotation(defaultShape) + gestureRotate) % 360
 
                                 val canvasCentroid = manipulationSystem.normalize(manipulationSystem.transform(centroid))
 
@@ -584,18 +613,18 @@ public fun NestEditScreen(
                                 //       - R(Δθ) * (C - center - O) * (newScale / oldScale)
                                 val newOffset =
                                     canvasPan + canvasCentroid -
-                                            (canvasCentroid - shape.offset).rotateBy(gestureRotate) *
+                                            (canvasCentroid - shape.getOffset(defaultShape)).rotateBy(gestureRotate) *
                                             (newScale / oldScale)
 
                                 val newShape = shape.copy(
                                     offset = newOffset,
                                     scale = newScale,
-                                    angle = newAngle
+                                    rotation = newAngle.toInt()
                                 )
 
                                 val newSnappedShape = newShape.snap()
 
-                                netOffsetChange = newSnappedShape.offset - witnessShape!!.offset
+                                netOffsetChange = newSnappedShape.getOffset(defaultShape) - witnessShape!!.getOffset(defaultShape)
 
                                 paths -= shape
                                 addPath(newShape)
@@ -613,122 +642,78 @@ public fun NestEditScreen(
             )
         }
     }
-
     if (showMoreSheet) {
-
-
         DragonModalBottomSheet(
             onDismissRequest = { showMoreSheet = false },
         ) {
-            DragonSettingsGroup(
-                title = R.string.nest_info,
-                contentPadding = dragonSettingGroupPaddingValues
-
-            ) {
-                Text(
-                    text = stringResource(R.string.shapes_number, currentNest.intersectionShapes.size),
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Text(
-                    text = stringResource(R.string.current_nest, nestId),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                HorizontalDivider()
+            DragonSettingsGroup(R.string.nest_info) {
+                Column(
+                    modifier = Modifier.padding(10.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.shapes_number, currentNest.getInterSectionShapes(defaultNest, false).size),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text(
+                        text = stringResource(R.string.current_nest, nestId),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                HorizontalDivider(Modifier.padding(horizontal = 10.dp))
 
                 Setting(UiSettingsStore.showGridWhenSnappingIsOn)
                 Setting(UiSettingsStore.nestsCellSizeDp)
             }
-
-            DragonSettingsGroup(
-                title = R.string.nest_edition,
-                contentPadding = dragonSettingGroupPaddingValues
-            ) {
-                NestNameEditor(currentNest, pointsService, Modifier.fillMaxWidth())
-
-                val showAllPointsInCurrentShape by UiSettingsStore.showAllPointsInCurrentShape.asState()
-                SwitchRow(
-                    state = currentNest.showAllPointsInCurrentShape ?: showAllPointsInCurrentShape,
-                    title = stringResource(R.string.show_all_actions_on_current_shape),
-                    description = stringResource(R.string.show_all_actions_on_current_shape_desc),
-                    onReset = {
-                        pointsService.editNest(nestId) { old ->
-                            old.copy(showAllPointsInCurrentShape = null)
-                        }
-                    }
-                ) { value ->
-                    pointsService.editNest(nestId) { old ->
-                        old.copy(showAllPointsInCurrentShape = value)
-                    }
-                }
-
-                val showAllPointsInCurrentNest by UiSettingsStore.showAllPointsInCurrentNest.asState()
-                SwitchRow(
-                    state = currentNest.showAllPointsInCurrentNest ?: showAllPointsInCurrentNest,
-                    title = stringResource(R.string.show_all_actions_in_current_nest),
-                    description = stringResource(R.string.show_all_actions_in_current_nest_desc),
-                    onReset = {
-                        pointsService.editNest(nestId) { old ->
-                            old.copy(showAllPointsInCurrentNest = null)
-                        }
-                    }
-                ) { value ->
-                    pointsService.editNest(nestId) { old ->
-                        old.copy(showAllPointsInCurrentNest = value)
-                    }
-                }
-
-                val showCurrentShape by UiSettingsStore.showCurrentShape.asState()
-                SwitchRow(
-                    state = currentNest.showCurrentShape ?: showCurrentShape,
-                    title = stringResource(R.string.show_shape),
-                    description = stringResource(R.string.show_shape_desc),
-                    onReset = {
-                        pointsService.editNest(nestId) { old ->
-                            old.copy(showCurrentShape = null)
-                        }
-                    }
-                ) { value ->
-                    pointsService.editNest(nestId) { old ->
-                        old.copy(showCurrentShape = value)
-                    }
-                }
-
-                val showAllShapesInNest by UiSettingsStore.showAllShapesInNest.asState()
-
-                SwitchRow(
-                    state = currentNest.showAllShapes ?: showAllShapesInNest,
-                    title = stringResource(R.string.show_all_shapes),
-                    description = stringResource(R.string.show_all_shapes_desc),
-                    onReset = {
-                        pointsService.editNest(nestId) { old ->
-                            old.copy(showAllShapes = null)
-                        }
-                    }
-                ) { value ->
-                    pointsService.editNest(nestId) { old ->
-                        old.copy(showAllShapes = value)
-                    }
-                }
-
-                SliderWithLabel(
-                    label = stringResource(R.string.cancel_zone),
-                    description = stringResource(R.string.cancel_zone_desc),
-                    value = tempCancelZone,
-                    valueRange = 0..300,
-                    onReset = { tempCancelZone = Nest.defaultCancelZone },
-                    onDragStateChange = { isDragging ->
-                        if (!isDragging) {
-                            pointsService.editNest(nestId) { old ->
-                                old.copy(cancelZone = tempCancelZone)
-                            }
-                        }
-                    }
-                ) { newValue -> tempCancelZone = newValue }
-            }
         }
     }
 
+    if (showEditCurrentNestSheet) {
+        DragonModalBottomSheet(
+            onDismissRequest = { showEditCurrentNestSheet = false },
+        ) {
+            NestEditor(
+                currentNest = currentNest,
+                defaultNest = defaultNest,
+                defaultShape = defaultShape,
+                isDefaultEditing = false,
+                tempCancelZone = tempCancelZone,
+                onEdit = { newNest ->
+                    pointsService.editNest(nestId) { newNest }
+                },
+                onReset = { pointsService.resetNest(nestId) }
+            ) { tempCancelZone = it }
+        }
+    }
+
+    if (showEditDefaultNestSheet) {
+        DragonModalBottomSheet(
+            onDismissRequest = { showEditDefaultNestSheet = false },
+        ) {
+            NestEditor(
+                currentNest = defaultNest,
+                defaultNest = defaultNest,
+                defaultShape = defaultShape,
+                isDefaultEditing = true,
+                tempCancelZone = tempCancelZone,
+                onEdit = { newNest -> pointsService.editDefaultNest(newNest) },
+                onReset = { pointsService.editDefaultNest(Nest()) }
+            ) { tempCancelZone = it }
+        }
+    }
+
+    if (showEditDefaultShapeDialog) {
+        IntersectionShapeEditor(
+            shape = defaultShape,
+            isDefaultEditing = true,
+            defaultShape = defaultShape,
+            onChangeShape = { new ->
+                pointsService.editDefaultShape(new)
+            },
+            onReset = {
+                pointsService.editDefaultShape(IntersectionShape(-1))
+            }
+        ) { showEditDefaultShapeDialog = false }
+    }
 
     if (showNestManagementDialog) {
         NestManagementDialog(
@@ -740,22 +725,6 @@ public fun NestEditScreen(
                 showNestManagementDialog = false
             }
         )
-    }
-
-    if (showShapesManagementDialog) {
-        IntersectionShapeManagementDialog(
-            shapes = paths.keys,
-            onSave = { newShapes ->
-                pointsService.editNest(nestId) { old ->
-                    old.copy(intersectionShapes = newShapes)
-                }
-                // Reset the selected shape. if you only added new ones, it'll resolve to the same as before, but if you removed the current selected one, it'll deselect cause it won't find it
-                selectedShapeId = newShapes.find { it.id == selectedShapeId }?.id
-            }
-        ) {
-            recomposeTrigger++
-            showShapesManagementDialog = false
-        }
     }
 
     DebugZone(DebugSettingsStore.nestDebugInfo) {

@@ -7,33 +7,36 @@ import android.os.Build
 import android.provider.Settings
 import android.system.Os.kill
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
-import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.common.utils.LifecycleUtils
 import org.elnix.dragonlauncher.common.utils.detectSystemLauncher
@@ -47,15 +50,18 @@ import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.timer.OverlayReminderService
-import org.elnix.dragonlauncher.ui.base.UiConstants.dragonSettingGroupPaddingValues
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.animation.Icon
+import org.elnix.dragonlauncher.ui.base.animation.rememberAnimatedIcon
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dialogs.AppUsagePermissionDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
-import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
+import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
+import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
@@ -67,21 +73,12 @@ public fun DebugTab(
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val systemLauncherPackageName by DebugSettingsStore.systemLauncherPackageName.asState()
-
-    var pendingSystemLauncher by remember { mutableStateOf<String?>(null) }
 //    var showEditAppOverrides by remember { mutableStateOf(false) }
 
     val storeResetSectionState = rememberExpandableSection(stringResource(R.string.store_reset))
 
-    var packageQuery by remember { mutableStateOf("") }
     var packageResult by remember { mutableStateOf<String?>(null) }
     var showPermissionDialog by remember { mutableStateOf(false) }
-
-
-    LaunchedEffect(Unit) {
-        pendingSystemLauncher = ctx.detectSystemLauncher()
-    }
 
     SettingsScaffold(
         title = stringResource(R.string.debug),
@@ -90,45 +87,37 @@ public fun DebugTab(
         onReset = null,
         resetText = null
     ) {
-        Setting(DebugSettingsStore.debugEnabled)
+        DragonSettingsGroup { Setting(DebugSettingsStore.debugEnabled) }
 
         DragonSettingsGroup(R.string.more) {
-            SettingsItem(
-                title = stringResource(R.string.logs),
-                icon = R.drawable.source_notes
-            ) {
-                onNavigate(NavigationRoute.Logs)
-            }
-
-            SettingsItem(
-                title = "Settings debug json",
-                icon = R.drawable.settings
-            ) {
-                onNavigate(NavigationRoute.SettingsJson)
-            }
+            RouteItem(NavigationRoute.Logs) { onNavigate(it) }
+            RouteItem(NavigationRoute.SettingsJson) { onNavigate(it) }
         }
 
-        DragonSettingsGroup(
-            title = R.string.ui_flow_and_debug,
-            contentPadding = dragonSettingGroupPaddingValues
-        ) {
+        DragonSettingsGroup(R.string.ui_flow_and_debug) {
             DragonButton(
                 onClick = { scope.launch { PrivateSettingsStore.lastSeenVersionCodeWhatsNew.reset(ctx) } },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth()
             ) {
                 Text(text = "Show What's New sheet")
             }
 
             DragonButton(
                 onClick = { scope.launch { PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.reset(ctx) } },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth()
             ) {
                 Text(text = "Show Google lockdown warning")
             }
 
             DragonButton(
                 onClick = { scope.launch { PrivateSettingsStore.hasSeenWelcome.reset(ctx) } },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth()
             ) {
                 Text(text = "Show Welcome Screen")
             }
@@ -152,129 +141,186 @@ public fun DebugTab(
         }
 
         DragonSettingsGroup(R.string.package_search) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                OutlinedTextField(
-                    value = packageQuery,
-                    onValueChange = { packageQuery = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Search package") },
-                    placeholder = { Text("e.g. org.elnix.dragonlauncher.fonts") },
-                    singleLine = true,
-                    colors = AppObjectsColors.outlinedTextFieldColors()
-                )
-                DragonButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        packageResult = try {
-                            val info = ctx.packageManager.getPackageInfo(packageQuery.trim(), 0)
-                            buildString {
-                                appendLine("Package: ${info.packageName}")
+            val focusManager = LocalFocusManager.current
+            val animatedIcon = rememberAnimatedIcon()
+            var packageQuery by remember { mutableStateOf("") }
 
-                                val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                    info.longVersionCode
-                                } else {
-                                    @Suppress("DEPRECATION")
-                                    info.versionCode
-                                }
-                                appendLine("Version: ${info.versionName} (${versionCode})")
+            fun searchPackage() {
+                packageResult = try {
+                    val info = ctx.packageManager.getPackageInfo(packageQuery.trim(), 0)
+                    animatedIcon.setSuccess()
+                    buildString {
+                        appendLine("Package: ${info.packageName}")
 
-                                appendLine("Enabled: ${info.applicationInfo?.enabled ?: "unknown"}")
-                                appendLine("Data Dir: ${info.applicationInfo?.dataDir ?: "unknown"}")
-                            }
-                        } catch (e: Exception) {
-                            "Not found or error: $e"
+                        val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            info.longVersionCode
+                        } else {
+                            @Suppress("DEPRECATION")
+                            info.versionCode
                         }
-                    }
-                ) {
-                    Icon(painter = painterResource(R.drawable.search), contentDescription = null)
-                    Text("Search")
-                }
+                        appendLine("Version: ${info.versionName} (${versionCode})")
 
-                packageResult?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                        appendLine("Enabled: ${info.applicationInfo?.enabled ?: "unknown"}")
+                        appendLine("Data Dir: ${info.applicationInfo?.dataDir ?: "unknown"}")
+                    }
+                } catch (e: Exception) {
+                    animatedIcon.setError()
+                    "Not found or error: $e"
                 }
+            }
+
+            TextField(
+                value = packageQuery,
+                onValueChange = { packageQuery = it },
+                placeholder = { Text("Search package") },
+                colors = AppObjectsColors.outlinedTextFieldColors(
+                    removeBorder = true
+                ),
+                shape = CircleShape,
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(1f),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        searchPackage()
+                        focusManager.clearFocus()
+                    }
+                ),
+                trailingIcon = {
+                    animatedIcon.Icon(
+                        defaultIcon = R.drawable.search,
+                        enabled = packageQuery.isNotEmpty()
+                    ) {
+                        focusManager.clearFocus()
+                        searchPackage()
+                    }
+                }
+            )
+
+            packageResult?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(16.dp)
+                )
             }
         }
 
-        DragonSettingsGroup(
-            title = R.string.accessibility_and_system,
-            contentPadding = dragonSettingGroupPaddingValues
-        ) {
+        DragonSettingsGroup(R.string.accessibility) {
             Setting(DebugSettingsStore.useAccessibilityInsteadOfContextToExpandActionPanel)
             Setting(DebugSettingsStore.autoRaiseDragonOnSystemLauncher)
 
             DragonButton(
                 onClick = { SystemControl.openServiceSettings((ctx)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth()
             ) {
                 Text("Open Accessibility Services")
             }
+        }
 
-            Column(modifier = Modifier.padding(top = 8.dp)) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(5.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    DragonButton(
-                        onClick = {
-                            pendingSystemLauncher = ctx.detectSystemLauncher()
-                        },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("Detect Launcher")
-                    }
-                    DragonButton(
-                        onClick = {
-                            scope.launch {
-                                DebugSettingsStore.systemLauncherPackageName.set(
-                                    ctx,
-                                    pendingSystemLauncher ?: ""
-                                )
-                            }
-                        },
-                        enabled = pendingSystemLauncher != null
-                    ) {
-                        Text("Set Default")
-                    }
-                }
+        DragonSettingsGroup(R.string.system) {
+            val focusManager = LocalFocusManager.current
+            val animatedIcon = rememberAnimatedIcon()
 
-                pendingSystemLauncher?.let {
-                    Text(
-                        text = "Detected: $it",
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
+            var customSystemPackage by remember { mutableStateOf("") }
+            fun setSystemPackage() {
+                scope.launch {
+                    DebugSettingsStore.systemLauncherPackageName.set(ctx, customSystemPackage)
                 }
+                animatedIcon.setSuccess()
             }
 
-            OutlinedTextField(
-                label = { Text("System launcher package") },
-                value = systemLauncherPackageName,
-                onValueChange = { newValue ->
-                    scope.launch {
-                        DebugSettingsStore.systemLauncherPackageName.set(ctx, newValue)
+            val systemLauncherPackageNameSetting by DebugSettingsStore.systemLauncherPackageName.asState()
+            val systemLauncherPackageName = remember { ctx.detectSystemLauncher() }
+
+            Column(modifier = Modifier.padding(10.dp)) {
+
+                val setButtonEnabled = systemLauncherPackageName != systemLauncherPackageNameSetting
+                DragonButton(
+                    onClick = {
+                        scope.launch {
+                            DebugSettingsStore.systemLauncherPackageName.set(ctx, systemLauncherPackageName)
+                        }
+                    },
+                    enabled = setButtonEnabled,
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth()
+                ) {
+                    AnimatedContent(setButtonEnabled) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (it) {
+                                Icon(
+                                    painter = painterResource(R.drawable.save),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onPrimary
+                                )
+                                Spacer(5.dp)
+                                Text("Set Detected Launcher")
+                            } else {
+                                Icon(
+                                    painter = painterResource(R.drawable.check),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(5.dp)
+                                Text("Detected In use!")
+                            }
+                        }
                     }
-                },
-                singleLine = true,
+                }
+
+
+                TextWithDescription(
+                    text = "Detected system launcher:",
+                    description = systemLauncherPackageName ?: "unknown",
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+
+            TextField(
+                value = customSystemPackage,
+                onValueChange = { customSystemPackage = it },
+                placeholder = { Text("System launcher package") },
+                colors = AppObjectsColors.outlinedTextFieldColors(
+                    removeBorder = true
+                ),
+                shape = CircleShape,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                colors = AppObjectsColors.outlinedTextFieldColors()
+                    .padding(10.dp)
+                    .fillMaxWidth(1f),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        setSystemPackage()
+                        focusManager.clearFocus()
+                    }
+                ),
+                trailingIcon = {
+                    animatedIcon.Icon(
+                        defaultIcon = R.drawable.search,
+                        enabled = customSystemPackage.isNotEmpty()
+                    ) {
+                        setSystemPackage()
+                        focusManager.clearFocus()
+                    }
+                }
             )
         }
 
-        DragonSettingsGroup(
-            title = R.string.test_overlays,
-            contentPadding = dragonSettingGroupPaddingValues
-        ) {
-
+        DragonSettingsGroup(R.string.test_overlays) {
             DragonButton(
                 onClick = {
                     if (!Settings.canDrawOverlays(ctx)) {
@@ -292,7 +338,9 @@ public fun DebugTab(
                         mode = "reminder"
                     )
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth()
             ) {
                 Text(text = "Test: Reminder overlay")
             }
@@ -314,43 +362,45 @@ public fun DebugTab(
                         mode = "time_warning"
                     )
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth()
             ) {
                 Text(text = "Test: Limit overlay")
             }
         }
 
-        DragonSettingsGroup(
-            title = R.string.risky,
-            contentPadding = dragonSettingGroupPaddingValues
-        ) {
-
+        DragonSettingsGroup(R.string.risky) {
             DragonButton(
                 onClick = {
                     @Suppress("DIVISION_BY_ZERO")
                     5 / 0
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth()
             ) { Text(text = "What is 5 / 0? \uD83E\uDD2F") }
 
             DragonButton(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .padding(horizontal = 10.dp)
+                    .fillMaxWidth(),
                 onClick = { LifecycleUtils.closeApp(ctx as ComponentActivity) }
             ) { Text("Close app (gently)") }
 
             DragonButton(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(),
                 onClick = { kill(9, 9) }
             ) { Text("☠\uFE0F Kill Process") }
-
         }
 
-        DragonSettingsGroup(
-            title = R.string.dangerous_actions,
-            contentPadding = dragonSettingGroupPaddingValues
-        ) {
+        DragonSettingsGroup(R.string.dangerous_actions) {
             DragonButton(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(),
                 onClick = {
                     ctx.startActivity(
                         Intent(Intent.ACTION_DELETE).apply {
@@ -359,22 +409,6 @@ public fun DebugTab(
                     )
                 }
             ) { Text("☠\uFE0F Uninstall Launcher") }
-
-//            DragonButton(
-//                onClick = {
-//                    showEditAppOverrides = true
-//                },
-//                modifier = Modifier.fillMaxWidth()
-//            ) { Text(text = "Edit ALL app overrides \uD83D\uDE08") }
-
-            DragonButton(
-                onClick = {
-                    PointStableCache.evictAll()
-                    NestIntersectionShapesPathCache.evictAll()
-                    initializationViewModel.initialize()
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) { Text(text = "Re-initialize points") }
 
             Setting(DebugSettingsStore.disableExtensionSignatureCheck)
 
@@ -387,10 +421,7 @@ public fun DebugTab(
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
                     ) {
-                        Text(
-                            text = "Reset ${store.name}",
-                            color = MaterialTheme.colorScheme.error
-                        )
+                        Text("Reset ${store.name}")
                     }
                 }
             }

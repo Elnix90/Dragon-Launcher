@@ -14,12 +14,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.contentColorFor
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionMode
+import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionState
 
 /**
  * Used in modal sheets to give padding to the content to avoid it being directly on the edges
@@ -43,7 +46,7 @@ public val modalWindowInsets: @Composable (() -> WindowInsets)
 public fun DragonModalBottomSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
-    sheetState: SheetState = rememberModalBottomSheetState(),
+    sheetState: SheetState = rememberBottomSheetState(),
     properties: ModalBottomSheetProperties = ModalBottomSheetProperties(),
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -65,6 +68,24 @@ public fun DragonModalBottomSheet(
         content = content
     )
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+public fun rememberBottomSheetState(skipPartiallyExpanded: Boolean = false): SheetState =
+    rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        enabledValues = buildSet {
+            add(SheetValue.Hidden)
+            if (!skipPartiallyExpanded) add(SheetValue.PartiallyExpanded)
+            add(SheetValue.Expanded)
+        }
+    )
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+public fun rememberBottomSheetState(state: ExpandableSectionState): SheetState =
+    rememberBottomSheetState(state.mode is ExpandableSectionMode.ModalSheet && state.mode.skipPartiallyExpanded)
+
 
 @Composable
 private fun DragHandle() {

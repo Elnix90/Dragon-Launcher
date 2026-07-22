@@ -39,6 +39,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
+import org.elnix.dragonlauncher.ui.dialogs.editors.AppIconEditor
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -174,7 +175,7 @@ public fun AppLongPressPopup(
                 onClick = { appLaunchViewModel.requestAppLaunch(app) },
                 shape = MenuDefaults.leadingItemShape,
                 text = { Text(app.label) },
-                leadingIcon = { AppIcon(app, size = 35.dp) }
+                leadingIcon = { AppIcon(app, maxSize = 35.dp) }
             )
 
             entries.fastForEachIndexed { index, option ->

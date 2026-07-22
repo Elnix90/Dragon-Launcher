@@ -18,6 +18,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -38,6 +39,7 @@ public fun rememberHoldToOpenSettings(
 ): HoldGestureState {
     val scope = rememberCoroutineScope()
     val tolerance by HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance.asState()
+    val tolerancePx = tolerance.px
 
     var anchor: Offset? by remember { mutableStateOf(null) }
     val progress: Animatable<Float, AnimationVector1D> = remember {
@@ -92,7 +94,7 @@ public fun rememberHoldToOpenSettings(
                             (change.position - it).getDistance()
                         } ?: 999f
 
-                        if (dist > tolerance) {
+                        if (dist > tolerancePx) {
                             holdJob.cancel()
                             reset()
                             break

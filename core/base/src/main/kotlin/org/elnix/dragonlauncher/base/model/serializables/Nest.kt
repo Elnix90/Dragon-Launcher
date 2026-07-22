@@ -1,9 +1,12 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package org.elnix.dragonlauncher.base.model.serializables
 
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.DragonJson
+import org.elnix.dragonlauncher.ktx.takeIfNot
 
 
 /**
@@ -26,12 +29,12 @@ public data class Nest(
      * How far the user has to swipe to start actions triggering.
      * In the opposite; how far does the zone that triggers nothing extends
      */
-    val cancelZone: Int = defaultCancelZone,
+    val cancelZone: Int? = null,
 
     /**
      * A set of one or more [IntersectionShape], each one of them belongs to the nest and
      */
-    val intersectionShapes: Set<IntersectionShape> = defaultIntersectionShapes,
+    val intersectionShapes: Set<IntersectionShape>? = null,
     /**
      * A custom name for the nest you can set for easier identification
      */
@@ -64,10 +67,41 @@ public data class Nest(
 //    override fun toString(): String = "Nest N°$id"
 
     // TODO
-    public infix fun scaledBy(scale: Float): Nest = this
-        //this.copy(intersectionShapes = this.intersectionShapes.mapTo(mutableSetOf()) { it scaledBy scale })
+//    public infix fun scaledBy(scale: Float): Nest = this
+    //this.copy(intersectionShapes = this.intersectionShapes.mapTo(mutableSetOf()) { it scaledBy scale })
 
-    public fun nameOrId(): String = this.name ?: id.toString()
+    /**
+     * I cannot name this one `getName` as it's a primal functions created by the data class
+     */
+    public inline fun nameOrId(): String =
+        this.name ?: id.toString()
+
+    public inline fun getInterSectionShapes(defaultNest: Nest, defaultEditing: Boolean = false): Set<IntersectionShape> =
+        this.intersectionShapes ?: defaultNest.intersectionShapes.takeIfNot(defaultEditing) ?: defaultIntersectionShapes
+
+    public inline fun getCancelZone(defaultNest: Nest, defaultEditing: Boolean = false): Int =
+        this.cancelZone ?: defaultNest.cancelZone.takeIfNot(defaultEditing) ?: defaultCancelZone
+
+    public inline fun getShowAllPointsInCurrentNest(
+        defaultNest: Nest,
+        showAllPointsInCurrentNestSettings: Boolean,
+        defaultEditing: Boolean = false
+    ): Boolean =
+        this.showAllPointsInCurrentNest ?: defaultNest.showAllPointsInCurrentNest.takeIfNot(defaultEditing) ?: showAllPointsInCurrentNestSettings
+
+    public inline fun getShowAllPointsInCurrentShape(
+        defaultNest: Nest,
+        showAllPointsInCurrentShapeSetting: Boolean,
+        defaultEditing: Boolean = false
+    ): Boolean =
+        this.showAllPointsInCurrentShape ?: defaultNest.showAllPointsInCurrentShape.takeIfNot(defaultEditing) ?: showAllPointsInCurrentShapeSetting
+
+    public inline fun getShowCurrentShape(defaultNest: Nest, showCurrentShapeInNestSetting: Boolean, defaultEditing: Boolean = false): Boolean =
+        this.showCurrentShape ?: defaultNest.showCurrentShape.takeIfNot(defaultEditing) ?: showCurrentShapeInNestSetting
+
+    public inline fun getShowAllShapes(defaultNest: Nest, showAllShapesSetting: Boolean, defaultEditing: Boolean = false): Boolean =
+        this.showAllShapes ?: defaultNest.showAllShapes.takeIfNot(defaultEditing) ?: showAllShapesSetting
+
 
     @Suppress("ConstPropertyName")
     public companion object {
@@ -75,7 +109,7 @@ public data class Nest(
         public val defaultIntersectionShapes: Set<IntersectionShape> = setOf(
             IntersectionShape(
                 id = 0
-             ),
+            ),
 
             IntersectionShape(
                 id = 1,
@@ -88,10 +122,17 @@ public data class Nest(
             )
         )
 
-
         public const val defaultCancelZone: Int = 50
 
-        public object NestJson: DragonJson<Set<Nest>>()
+
+        public val defaultNestValues: Nest = Nest(
+            id = -1,
+            cancelZone = defaultCancelZone,
+            intersectionShapes = defaultIntersectionShapes
+        )
+
+        public object NestsJson : DragonJson<Set<Nest>>()
+        public object DefaultNestJson : DragonJson<Nest>()
     }
 }
 

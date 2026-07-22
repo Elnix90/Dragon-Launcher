@@ -13,6 +13,7 @@ import io.github.elnix90.core.objects.EnumSettingObject
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
+import org.elnix.dragonlauncher.ui.composition.LocalSettingsPlacementChecker
 import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 
 @Composable
@@ -20,6 +21,9 @@ public fun DrawerActionSelector(
     settingObject: EnumSettingObject<DrawerActions>,
     allowNone: Boolean = false
 ) {
+    // Craches if this setting isn't placed inside a DragonSettingsGroup
+    LocalSettingsPlacementChecker.current
+
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 

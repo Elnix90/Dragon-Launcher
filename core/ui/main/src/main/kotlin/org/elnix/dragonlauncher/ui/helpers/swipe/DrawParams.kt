@@ -32,8 +32,6 @@ public data class DrawParams(
 
     val maxNestsDepth: Int,
 
-//    /** Settings Screen only */
-//    val preventBgErasing: Boolean,
     /** Settings Screen only */
     val eraseColor: Color,
     /** Settings Screen only */

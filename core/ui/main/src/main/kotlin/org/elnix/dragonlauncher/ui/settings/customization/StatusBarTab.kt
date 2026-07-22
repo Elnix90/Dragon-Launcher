@@ -3,7 +3,6 @@ package org.elnix.dragonlauncher.ui.settings.customization
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -12,11 +11,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
-import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayerJson
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.MainScreenLayerJson
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
+import org.elnix.dragonlauncher.settings.stores.objects.MainScreenLayersSettingsStore
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
@@ -40,6 +39,7 @@ public fun StatusBarTab(
         title = stringResource(R.string.status_bar),
         onBack = onBack,
         helpText = stringResource(R.string.status_bar_tab_text),
+        resetText = stringResource(R.string.reset_status_bar),
         onReset = {
             scope.launch {
                 StatusBarSettingsStore.resetAll(ctx)
@@ -47,37 +47,36 @@ public fun StatusBarTab(
             }
         }
     ) {
-        SwitchRow(
-            title = stringResource(R.string.show_status_bar),
-            description = stringResource(R.string.show_status_bar_desc),
-            state = showStatusBar
-        ) {
-            scope.launch {
-                UiSettingsStore.mainScreenLayers.set(
-                    ctx,
-                    MainScreenLayerJson.encode(
-                        mainScreenLayers.map {
-                            if (it is MainScreenLayer.StatusBar) it.copy(enabled = !it.enabled)
-                            else it
-                        }
+        DragonSettingsGroup(R.string.show_status_bar) {
+            SwitchRow(
+                title = stringResource(R.string.show_status_bar),
+                description = stringResource(R.string.show_status_bar_desc),
+                state = showStatusBar
+            ) {
+                scope.launch {
+                    MainScreenLayersSettingsStore.jsonSetting.set(
+                        ctx,
+                        MainScreenLayerJson.encode(
+                            mainScreenLayers.map {
+                                if (it is MainScreenLayer.StatusBar) it.copy(enabled = !it.enabled)
+                                else it
+                            }
+                        )
                     )
-                )
+                }
             }
         }
 
         AnimatedVisibility(showStatusBar) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                Setting(StatusBarSettingsStore.barBackgroundColor)
-                Setting(StatusBarSettingsStore.barTextColor)
-
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 EditStatusBar()
 
-                DragonSettingsGroup(
-                    title = R.string.padding,
-                    contentPadding = PaddingValues(12.dp)
-                ) {
+                DragonSettingsGroup(R.string.color) {
+                    Setting(StatusBarSettingsStore.barBackgroundColor)
+                    Setting(StatusBarSettingsStore.barTextColor)
+                }
+
+                DragonSettingsGroup(R.string.padding) {
                     Setting(StatusBarSettingsStore.leftPadding)
                     Setting(StatusBarSettingsStore.rightPadding)
                     Setting(StatusBarSettingsStore.topPadding)

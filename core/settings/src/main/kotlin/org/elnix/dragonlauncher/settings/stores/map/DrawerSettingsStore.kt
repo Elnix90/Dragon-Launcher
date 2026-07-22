@@ -51,7 +51,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val showAppLabelInDrawer: BooleanSettingObject = boolean(
+    public val showAppLabelsInDrawer: BooleanSettingObject = boolean(
         title = R.string.show_app_labels_in_drawer,
         description = R.string.show_app_labels_in_drawer_desc,
         default = true
@@ -73,7 +73,8 @@ public object DrawerSettingsStore : MapSettingsStore() {
     @SettingKey
     public val gridSize: IntSettingObject = int(
         title = R.string.grid_size,
-        default = 6,
+        description = R.string.grid_size_desc,
+        default = 5,
         allowedRange = 1..15
     )
 
@@ -168,7 +169,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val iconSize: DpSettingObject = dp(
+    public val maxIconSize: DpSettingObject = dp(
         description = R.string.max_icon_size_desc,
         title = R.string.max_icon_size,
         default = 96.dp,

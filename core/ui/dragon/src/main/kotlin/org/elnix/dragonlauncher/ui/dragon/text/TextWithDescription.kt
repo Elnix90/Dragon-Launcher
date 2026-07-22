@@ -7,26 +7,30 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.ui.base.modifiers.semiTransparentIfDisabled
 
 
 @Composable
 public fun TextWithDescription(
     text: String,
     description: String?,
-    modifier: Modifier = Modifier
-): Unit = Column(
-    modifier = modifier,
-    verticalArrangement = Arrangement.spacedBy(5.dp)
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.labelMedium
-    )
-    if (description != null) {
+    Column(
+        modifier = modifier.semiTransparentIfDisabled(enabled),
+        verticalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
         Text(
-            text = description,
-            style = MaterialTheme.typography.labelSmall
+            text = text,
+            style = MaterialTheme.typography.labelMedium
         )
+        if (description != null) {
+            Text(
+                text = description,
+                style = MaterialTheme.typography.labelSmall
+            )
+        }
     }
 }
 
@@ -38,25 +42,27 @@ public fun TextWithDescription(
     description1: String?,
     description2: String?,
     modifier: Modifier = Modifier
-): Unit = Column(
-    modifier = modifier,
-    verticalArrangement = Arrangement.spacedBy(5.dp)
 ) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.labelMedium
-    )
-    if (description1 != null) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
         Text(
-            text = description1,
-            style = MaterialTheme.typography.labelSmall
+            text = text,
+            style = MaterialTheme.typography.labelMedium
         )
-    }
+        if (description1 != null) {
+            Text(
+                text = description1,
+                style = MaterialTheme.typography.labelSmall
+            )
+        }
 
-    if (description2 != null) {
-        Text(
-            text = description2,
-            style = MaterialTheme.typography.labelSmall
-        )
+        if (description2 != null) {
+            Text(
+                text = description2,
+                style = MaterialTheme.typography.labelSmall
+            )
+        }
     }
 }

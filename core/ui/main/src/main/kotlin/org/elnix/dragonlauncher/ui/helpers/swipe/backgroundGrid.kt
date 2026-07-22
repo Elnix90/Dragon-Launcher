@@ -6,13 +6,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.unit.Dp
 import org.elnix.dragonlauncher.ktx.alphaMultiplier
 
 public fun DrawScope.backgroundGrid(
-    cellSizePx: Float,
+    cellSizePx: Dp,
     color: Color,
     size: Size = this.size,
 ) {
+    val cellSizePx = cellSizePx.toPx()
     val color = color.alphaMultiplier(0.25f)
 
     // Vertical lines
@@ -51,10 +53,11 @@ public fun DrawScope.backgroundGrid(
  */
 public fun DrawScope.backgroundCenteredSquareGrid(
     center: Offset,
-    cellSizePx: Float,
+    cellSizePx: Dp,
     cells: Int,
     color: Color,
 ) {
+    val cellSizePx = cellSizePx.toPx()
     val cells = if (cells % 2 == 0) cells + 1 else cells
     val color = color.alphaMultiplier(0.25f)
 

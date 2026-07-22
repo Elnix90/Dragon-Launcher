@@ -5,7 +5,6 @@ package org.elnix.dragonlauncher.ui.settings.customization
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,19 +17,17 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
-import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.dialogs.LockMethodDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
-import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSectionMode
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
+import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionMode
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.SettingActionSelector
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
@@ -71,6 +68,7 @@ public fun BehaviorTab(onBack: () -> Unit) {
         title = stringResource(R.string.behavior),
         onBack = onBack,
         helpText = stringResource(R.string.behavior_help),
+        resetText = stringResource(R.string.reset_behavior_tab),
         onReset = {
             scope.launch {
                 BehaviorSettingsStore.resetAll(ctx)
@@ -89,13 +87,7 @@ public fun BehaviorTab(onBack: () -> Unit) {
             Setting(BehaviorSettingsStore.disableHapticFeedbackGlobally)
             Setting(BehaviorSettingsStore.promptForShortcutsWhenAddingApp)
             Setting(BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint)
-
-            Setting(
-                setting = BehaviorSettingsStore.offScreenTimeout,
-                modifier = Modifier
-                    .settingsGroupHorizontalPadding()
-                    .padding(bottom = 12.dp)
-            )
+            Setting(BehaviorSettingsStore.offScreenTimeout)
         }
 
         ExpandableSection(paddingState) {
@@ -144,7 +136,7 @@ public fun BehaviorTab(onBack: () -> Unit) {
     if (showAppPreviewOverlay) {
         Canvas(Modifier.fillMaxSize()) {
             drawRect(
-                color = Color(0x55FF0000),
+                color = Color(0x40FF0000),
                 topLeft = Offset(
                     leftPadding.toFloat(),
                     topPadding.toFloat()
@@ -155,58 +147,9 @@ public fun BehaviorTab(onBack: () -> Unit) {
                 )
             )
         }
-
-//        DeadZoneCanva(
-//            PaddingValues(leftPadding, topPadding, rightPadding, bottomPadding)
-//        )
     }
 
     if (showLockMethodPicker) {
         LockMethodDialog { showLockMethodPicker = false }
     }
 }
-
-//
-//private val boxColor = Color(0x55FF0000)
-//private val cornersColor = boxColor.alphaMultiplier(1.5f)
-//
-//@Composable
-//private fun DeadZoneCanva(
-//    paddingValues: PaddingValues
-//) {
-//    Canvas(
-//        Modifier
-//            .fillMaxSize()
-//            .padding(paddingValues)
-//    ) {
-//        drawRect(boxColor)
-//        for (corner in ResizeCorner.entries) {
-//            cornerAnchor(
-//                center = when (corner) {
-//                    TopLeft -> size
-//                    TopRight -> TODO()
-//                    BottomLeft -> TODO()
-//                    BottomRight -> TODO()
-//                },
-//                corner = corner
-//            )
-//        }
-//    }
-//}
-//
-//
-//
-//private fun DrawScope.cornerAnchor(center: Offset, corner: ResizeCorner) {
-//    rotate(when(corner) {
-//        TopLeft -> 0f
-//        TopRight -> 90f
-//        BottomLeft -> 180f
-//        BottomRight -> -90f
-//    }) {
-//        drawRect(
-//            color = cornersColor,
-//            topLeft = center,
-//            size = Size(50f,50f)
-//        )
-//    }
-//}

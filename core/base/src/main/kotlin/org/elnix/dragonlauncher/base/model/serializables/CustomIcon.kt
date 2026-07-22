@@ -1,5 +1,9 @@
+@file:Suppress("ConstPropertyName")
+
 package org.elnix.dragonlauncher.base.model.serializables
 
+import androidx.annotation.FloatRange
+import androidx.annotation.IntRange
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -9,6 +13,7 @@ import org.elnix.dragonlauncher.base.model.serializables.AdaptifiedLegacyIcon.Co
 
 @Immutable
 @Serializable
+@SerialName("CustomIcon")
 public sealed class CustomIcon {
     public companion object {
         public fun CustomIcon.getProperties(): CustomIconProperties = when(this) {
@@ -123,18 +128,27 @@ public data class CustomIconProperties(
     val tint: Int? = null,
 
     /** Icon opacity multiplier (0.0 – 1.0). */
-    val opacity: Float? = null,
+    @FloatRange(0.0, 1.0)
+    val opacity: Float = defaultOpacity,
 
     /** Per-corner radius override for icon clipping. */
     val shape: IconShape? = null,
 
-
     /** Rotation applied to the icon in degrees. */
-    val rotationDeg: Float? = null,
+    @IntRange(-180, 180)
+    val rotationDeg: Int = defaultRotationDeg,
 
     /** Horizontal scale multiplier. */
-    val scaleX: Float? = null,
+    val scaleX: Float = defaultScaleX,
 
     /** Vertical scale multiplier. */
-    val scaleY: Float? = null,
-)
+    val scaleY: Float = defaultScaleY,
+) {
+    public companion object {
+        public const val defaultOpacity: Float = 1f
+        public const val defaultRotationDeg: Int = 0
+        public const val defaultScaleX: Float = 1f
+        public const val defaultScaleY: Float = 1f
+    }
+}
+

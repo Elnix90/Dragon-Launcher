@@ -20,11 +20,16 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isSpecified
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
+import org.elnix.dragonlauncher.base.model.serializables.isUnSpecified
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowDrawOrder.AfterErase
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowDrawOrder.First
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowDrawOrder.Last
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 
 public enum class GlowDrawOrder {
@@ -125,6 +130,8 @@ private inline fun DrawScope.glowLine(
     start: Offset,
     end: Offset
 ) {
+    if (glow.isUnSpecified) return
+
     toPxOrNull(glow?.radius)?.let { radius ->
         drawIntoCanvas { canvas ->
             val frameworkPaint = customGlowPaint(glow.color ?: color, radius)
@@ -177,6 +184,8 @@ private inline fun DrawScope.glow(
     path: Path,
     color: Color
 ) {
+    if (glow.isUnSpecified) return
+
     val nativePath = path.asAndroidPath()
 
     toPxOrNull(glow?.radius)?.let { radius ->
@@ -188,14 +197,13 @@ private inline fun DrawScope.glow(
 }
 
 private inline fun DrawScope.path(lineStrokeWidth: Float, path: Path, color: Color) {
-    val width = lineStrokeWidth * this.density
-
     val style = when {
         lineStrokeWidth == -1f -> return
         lineStrokeWidth < 0f -> Fill
         lineStrokeWidth == 0.0f -> Stroke(Stroke.HairlineWidth, cap = StrokeCap.Round)
-        else -> Stroke(width, cap = StrokeCap.Round)
+        else -> Stroke(lineStrokeWidth, cap = StrokeCap.Round)
     }
+
     drawPath(
         path = path,
         color = color,
@@ -234,4 +242,18 @@ private inline fun customGlowPaint(
         )
         isAntiAlias = true
     }
+}
+
+/**
+ * Converts the given [value] to pixels only if it is higher than 0 or returns `null`
+ * @param value the [Float] you want to convert to pixels
+ * @return the [value] in pixels of `null`
+ */
+@OptIn(ExperimentalContracts::class)
+public fun DrawScope.toPxOrNull(value: Dp?): Float? {
+    contract {
+        returnsNotNull() implies (value != null)
+    }
+
+    return value?.takeIf { it.isSpecified }?.toPx()
 }

@@ -1,16 +1,23 @@
-@file:Suppress("ConstPropertyName")
+@file:Suppress("ConstPropertyName", "NOTHING_TO_INLINE")
 
 package org.elnix.dragonlauncher.base.model.serializables
 
+import androidx.annotation.FloatRange
+import androidx.annotation.IntRange
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import org.elnix.dragonlauncher.base.model.DragonJson
+import org.elnix.dragonlauncher.base.model.serializables.serializers.ColorSerializer
+import org.elnix.dragonlauncher.base.model.serializables.serializers.DpSerializer
 import org.elnix.dragonlauncher.base.model.serializables.serializers.OffsetSerializer
+import org.elnix.dragonlauncher.base.theme.ExtraColors
+import org.elnix.dragonlauncher.ktx.takeIfNot
 import org.jetbrains.annotations.ApiStatus
 import kotlin.random.Random
 
@@ -24,66 +31,53 @@ import kotlin.random.Random
  *
  * ## Core Behavior
  *
- * A point occupies a fixed [offset] from its nest's center. When the user's finger reaches that
- * location during a gesture, the point becomes active and its [action] is queued for execution.
- * The [id] uniquely identifies the point for persistence and diffing across backups and migrations.
+ * A point occupies a fixed [offset] from its nest's center. When the user's finger drags, the closest point based on its [offset] is activated.
+ *
+ * The [id] uniquely identifies the point
+ *
+ * ## Nesting & Ownership
+ *
+ * [nestId] indicates which [Nest] owns this point. This value is required (cannot be null)
+ * and is critical for gesture routing and visual grouping.
  *
  * ## Collision & Shape Snapping
  *
  * By default, a point stays at its [offset]. When [shapeId] is set, the point's visual
- * and touch position snap to the intersection between its [offset] ray and the target shape's
+ * and touch position snap to the intersection between its [offset] ray and the target shape[IntersectionShape]'s
  * boundary. If no intersection exists, the point reverts to [offset]. This enables points to
  * align cleanly to polygon outlines without manual coordinate tweaking.
- * See [Nest] for shape definitions.
+ * See [Nest] and [IntersectionShape] for shape definitions.
  *
  * ## Visual Customization
  *
- * Points support extensive styling:
- * - **Colors**: [backgroundColor], [borderColor], [borderColorSelected], [backgroundColorSelected]
- *   (all in ARGB format).
- * - **Stroke**: [borderStroke] (normal) and [borderStrokeSelected] (active), in dp.
- * - **Size & padding**: [size] (dp), [innerPadding] (dp between border and icon).
- * - **Shape**: [borderShape] and [borderShapeSelected] (e.g., [IconShape.Circle]).
- * - **Opacity**: Global [opacity] multiplier (0.0–1.0) applied to the entire point.
- * - **Icon**: [customIcon] fully overrides the action's default icon. [customActionColor]
- *   overrides the action's color when set.
- * - **Label**: [customName] provides an optional display name for accessibility and debug UIs.
+ * Points support extensive styling, each parameter declared specified below, act as an override for the default points.
+ * The styling system works like this:
+ *
+ * `Point.property ?: defaultPoint.property ?: constantProperty`
+ *
+ * This means, that you can override each points individually or tweak them all by changing the default point
  *
  * ## Advanced Gestures
  *
  * ### Live Nest (Hold-to-Preview)
  * When [liveNestTargetNestId] is set, holding the finger on this point for [liveNestPreviewDelayMs]
- * (default 500 ms) opens an overlay of the target nest, scaled to [liveNestScale] (default 0.65).
+ * opens an overlay of the target nest, scaled to [liveNestScale].
  * - [liveNestSnapsToFingerPosition]: If true, the nest centers on the finger; if false, it snaps
  *   to the point's own position.
- * - [liveNestGraceDistancePx]: Extra tolerance radius (px) before dismissal. Use -1 for infinite drag.
- * - [liveNestMainNestOpacityPercent]: Opacity (0–100) of the parent nest while Live Nest is open.
- *   Null disables dimming.
+ * - [liveNestGraceDistance]: Extra tolerance radius before dismissal. Use [Dp.Unspecified] for infinite drag.
+ * - [liveNestSubNestOpacityPercent]: Opacity (0–100) of the parent nest while Live Nest is open.
  *
  * ### Cycle Actions (Multi-Stage Hold)
  * [cycleActions] defines a sequence of stages that activate based on hold duration:
  * - **Stage 0** (implicit): The point's main [action], fires immediately on tap/release.
  * - **Stage 1–N**: Each [CycleActionStage] specifies an additional hold delay. Once triggered,
  *   that stage's action becomes active.
- * - [cycleActionStageDefaultDelay]: Default inter-stage delay (ms) when individual stages don't specify.
  * - [cycleActionsLoopDelayMs]: After the final stage, wait this long before looping back to Stage 0.
- *   Null or -1 disables looping.
  *
  * ### Hold & Run (Auto-Fire)
- * [holdAndRunDelayMs] sets a hold duration (ms) after which [holdAndRunAction] fires automatically,
- * without requiring a release. Null disables the feature. If [holdAndRunAction] is null, the main
+ * [holdAndRunDelayMs] sets a hold duration after which [holdAndRunAction] fires automatically,
+ * without requiring a release. If [holdAndRunAction] is null, the main
  * [action] is used instead.
- *
- * ## Haptic Feedback
- *
- * [haptic] provides a custom vibration pattern. It's stored as a map of Boolean (true =
- * vibrate, false = pause) to Int (duration in ms)
- * If not provided, it uses the default haptic of its [Nest]
- *
- * ## Nesting & Ownership
- *
- * [nestId] indicates which [Nest] owns this point. This value is required (cannot be null)
- * and is critical for gesture routing and visual grouping.
  *
  * @see Nest
  * @see Action
@@ -131,57 +125,35 @@ public data class Point(
     /** Fully customizable icon definition overriding default visuals. */
     val customIcon: CustomIcon? = null,
 
-
     /**
      * Custom Glow that can be applied to the border
      */
     val glow: CustomGlow? = null,
-
     /**
      * Custom Glow that can be applied to the border when point is selected
      */
     val glowSelected: CustomGlow? = null,
 
     /** Border thickness (dp) when the swipe point is not selected. */
-    val borderStroke: Float? = null,
-
+    @Serializable(with = DpSerializer::class)
+    val borderStroke: Dp? = null,
     /** Border thickness (dp) when the swipe point is selected or active. */
-    val borderStrokeSelected: Float? = null,
+    @Serializable(with = DpSerializer::class)
+    val borderStrokeSelected: Dp? = null,
 
     /** Border color in ARGB format when not selected. */
-    val borderColor: Int? = null,
+    @Serializable(with = ColorSerializer::class)
+    val borderColor: Color? = null,
+    /** Border color in ARGB format when selected. */
+    @Serializable(with = ColorSerializer::class)
+    val borderColorSelected: Color? = null,
 
     /** Background fill color (ARGB) in normal state. */
-    val backgroundColor: Int? = null,
-
-    /** Border color in ARGB format when selected. */
-    val borderColorSelected: Int? = null,
-
+    @Serializable(with = ColorSerializer::class)
+    val backgroundColor: Color? = null,
     /** Background fill color (ARGB) in selected state. */
-    val backgroundColorSelected: Int? = null,
-
-    /** Global opacity multiplier (0.0 – 1.0) applied to the whole swipe point. */
-    val opacity: Float? = null,
-
-    /**
-     * Fully customizable haptic feedback generator.
-     * Stores the setting in a map of [Boolean] to [Int].
-     * when the boolean is true, it indicates a vibration, and when off a pause.
-     * the [Int] value is the duration of the vibration
-     */
-    val haptic: CustomHapticFeedback? = null,
-
-    /** Optional user-defined display name (labels, accessibility, debug UI). */
-    val customName: String? = null,
-
-    /** Inner padding (dp) between border and content. */
-    val innerPadding: Int? = null,
-
-    /** Optional override for action color, default (null) will use the action color */
-    val customActionColor: Int? = null,
-
-    /** Optional size override */
-    val size: Int? = null,
+    @Serializable(with = ColorSerializer::class)
+    val backgroundColorSelected: Color? = null,
 
     /**
      * Shape of the border icon, default is a circle
@@ -193,6 +165,31 @@ public data class Point(
      */
     val borderShapeSelected: IconShape? = null,
 
+    /** Global opacity multiplier (0.0 – 1.0) applied to the whole swipe point. */
+    @FloatRange(0.0, 1.0)
+    val opacity: Float? = null,
+
+    /**
+     * Custom haptic feedback triggered when the point is selected on Main screen
+     * @see CustomHapticFeedback
+     */
+    val haptic: CustomHapticFeedback? = null,
+
+    /** Optional user-defined display name */
+    val customName: String? = null,
+
+    /** Inner padding (dp) between border and content. */
+    @Serializable(with = DpSerializer::class)
+    val innerPadding: Dp? = null,
+
+    /** Optional override for action color, default (null) will use the action color */
+    @Serializable(with = ColorSerializer::class)
+    val customActionColor: Color? = null,
+
+    /** Optional size override, uses the default point size or **default** point size when not provided */
+    @Serializable(with = DpSerializer::class)
+    val size: Dp? = null,
+
     /**
      * Id of the [Nest] to render as a scaled overlay when this point is held.
      * Null means Live Nest is disabled for this point.
@@ -201,13 +198,11 @@ public data class Point(
 
     /**
      * How long (ms) the user must hold on this point before Live Nest activates.
-     * Null falls back to a sensible default (500 ms) defined in the overlay controller.
      */
     val liveNestPreviewDelayMs: Int? = null,
 
     /**
      * Scale factor applied to the Live Nest radii, range 0.3–1.0.
-     * Null defaults to 0.65.
      */
     val liveNestScale: Float? = null,
 
@@ -218,13 +213,15 @@ public data class Point(
      *  `null` / `0` means no grace (strict bounds).
      *  `-1` means no bounds (infinite drag)
      */
-    val liveNestGraceDistancePx: Int? = null,
+    @Serializable(with = DpSerializer::class)
+    val liveNestGraceDistance: Dp? = null,
 
     /**
-     * When non-null and Live Nest is open, the main nest layer is drawn at this opacity (0–100).
-     * Null means the option is off (main nest stays fully opaque). Default when enabled is 50.
+     * When a non-null and Live Nest is open, layers under it are drawn at this opacity (0–100).
+     * The opacity is either **added**, or **multiplied** depending on user choice.
      */
-    val liveNestMainNestOpacityPercent: Int? = null,
+    @IntRange(from = 0, to = 100)
+    val liveNestSubNestOpacityPercent: Int? = null,
 
     /**
      * Whether if the live nest drawn should have its center exactly where it got activated after the timeout, or if it snaps to its host point position
@@ -236,20 +233,16 @@ public data class Point(
      * Null means Cycle Actions is disabled for this point.
      *
      * Stage 0 is always the point's own [action] (base, no threshold).
-     * Each entry is Stage[1..N]: [CycleActionStage.triggerTimeMs] is the **additional** hold time
+     * Each entry is Stage`1..N`: [CycleActionStage.triggerTimeMs] is the **additional** hold time
      * after the previous stage (or after finger-down for Stage 1) before that stage becomes current.
      */
     val cycleActions: List<CycleActionStage>? = null,
 
     /**
-     * The default delay that is used to wait between stages
-     */
-    val cycleActionStageDefaultDelay: Int? = null,
-
-    /**
      * Milliseconds to wait in the "Loop Over" phase before the cycle restarts.
      * When null, the actions doesn't loop; -1 = No loop
      */
+    @IntRange(from = 0)
     val cycleActionsLoopDelayMs: Int? = null,
 
     /**
@@ -259,6 +252,7 @@ public data class Point(
      * When set, the gesture is consumed as soon as the delay elapses; releasing the finger
      * afterwards does not trigger any additional launch.
      */
+    @IntRange(from = 0)
     val holdAndRunDelayMs: Int? = null,
 
     /**
@@ -284,7 +278,7 @@ public data class Point(
         return this.pos ?: this.offset
     }
 
-//    public fun getPos(compute: () -> Offset): Offset {
+//    public fun getPos(compute: () -> Offset, defaultEditing: Boolean = false): Offset {
 //        if (this.collidingShapeId == null) return this.offset
 //        return this.pos ?: run {
 //            val pos = compute()
@@ -295,9 +289,71 @@ public data class Point(
 
     val key: CacheKey by lazy { CacheKey(this) }
 
-    public fun getSize(defaultPoint: Point): Dp = (size ?: defaultPoint.size ?: defaultSize).coerceAtLeast(1).dp
-    public fun getInnerPadding(defaultPoint: Point): Dp = (innerPadding ?: defaultPoint.innerPadding ?: defaultInnerPadding).coerceAtLeast(1).dp
 
+    public inline fun getBorderStroke(selected: Boolean, defaultPoint: Point, defaultEditing: Boolean = false): Dp =
+        if (selected) {
+            this.borderStrokeSelected ?: defaultPoint.borderStrokeSelected.takeIfNot(defaultEditing) ?: defaultBorderStrokeSelected
+        } else {
+            this.borderStroke ?: defaultPoint.borderStroke.takeIfNot(defaultEditing) ?: defaultBorderStroke
+        }
+
+    public inline fun getBorderColor(selected: Boolean, defaultPoint: Point, extraColors: ExtraColors, defaultEditing: Boolean = false): Color =
+        if (selected) {
+            this.borderColorSelected ?: defaultPoint.borderColorSelected.takeIfNot(defaultEditing)
+        } else {
+            this.borderColor ?: defaultPoint.borderColor.takeIfNot(defaultEditing)
+        } ?: extraColors.shapes
+
+    public inline fun getBackgroundColor(selected: Boolean, defaultPoint: Point, extraColors: ExtraColors, defaultEditing: Boolean = false): Color =
+        if (selected) {
+            this.backgroundColorSelected ?: defaultPoint.backgroundColorSelected.takeIfNot(defaultEditing)
+        } else {
+            this.backgroundColor ?: defaultPoint.backgroundColor.takeIfNot(defaultEditing)
+        } ?: extraColors.shapes
+
+    public inline fun getBorderShape(selected: Boolean, defaultPoint: Point, defaultEditing: Boolean = false): IconShape =
+        if (selected) {
+            this.borderShapeSelected ?: defaultPoint.borderShapeSelected.takeIfNot(defaultEditing) ?: defaultBorderShapeSelected
+        } else {
+            this.borderShape ?: defaultPoint.borderShape.takeIfNot(defaultEditing) ?: defaultBorderShape
+        }
+
+    public inline fun getGlow(selected: Boolean, defaultPoint: Point, defaultEditing: Boolean = false): CustomGlow =
+        if (selected) {
+            this.glowSelected ?: defaultPoint.glowSelected.takeIfNot(defaultEditing) ?: defaultGlowSelected
+        } else {
+            this.glow ?: defaultPoint.glow.takeIfNot(defaultEditing) ?: defaultGlow
+        }
+
+    public inline fun getOpacity(defaultPoint: Point, defaultEditing: Boolean = false): Float =
+        this.opacity ?: defaultPoint.opacity.takeIfNot(defaultEditing) ?: defaultOpacity
+
+    public inline fun getInnerPadding(defaultPoint: Point, defaultEditing: Boolean = false): Dp =
+        (this.innerPadding ?: defaultPoint.innerPadding.takeIfNot(defaultEditing) ?: defaultInnerPadding).coerceAtLeast(1.dp)
+
+    public inline fun getSize(defaultPoint: Point, defaultEditing: Boolean = false): Dp =
+        (this.size ?: defaultPoint.size.takeIfNot(defaultEditing) ?: defaultSize).coerceAtLeast(1.dp)
+
+    public inline fun getLiveNestPreviewDelayMs(defaultPoint: Point, defaultEditing: Boolean = false): Int =
+        this.liveNestPreviewDelayMs ?: defaultPoint.liveNestPreviewDelayMs.takeIfNot(defaultEditing) ?: defaultLiveNestPreviewDelayMs
+
+    public inline fun getLiveNestScale(defaultPoint: Point, defaultEditing: Boolean = false): Float =
+        this.liveNestScale ?: defaultPoint.liveNestScale.takeIfNot(defaultEditing) ?: defaultLiveNestScale
+
+    public inline fun getLiveNestGraceDistance(defaultPoint: Point, defaultEditing: Boolean = false): Dp =
+        this.liveNestGraceDistance ?: defaultPoint.liveNestGraceDistance.takeIfNot(defaultEditing) ?: defaultLiveNestGraceDistance
+
+    public inline fun getLiveNestSnapsToFingerPosition(defaultPoint: Point, defaultEditing: Boolean = false): Boolean =
+        this.liveNestSnapsToFingerPosition ?: defaultPoint.liveNestSnapsToFingerPosition.takeIfNot(defaultEditing) ?: defaultLiveNestSnapsToFingerPosition
+
+    public inline fun getHoldAndRunDelayMs(defaultPoint: Point, defaultEditing: Boolean = false): Int =
+        this.holdAndRunDelayMs ?: defaultPoint.holdAndRunDelayMs.takeIfNot(defaultEditing) ?: defaultHoldAndRunDelayMs
+
+    public inline fun getCycleActionsStageLoopDelayMs(defaultPoint: Point, defaultEditing: Boolean = false): Int =
+        this.cycleActionsLoopDelayMs ?: defaultPoint.cycleActionsLoopDelayMs.takeIfNot(defaultEditing) ?: defaultCycleActionsLoopDelayMs
+
+    public inline fun getLiveNestMainNestOpacityPercent(defaultPoint: Point, defaultEditing: Boolean = false): Int =
+        this.liveNestSubNestOpacityPercent ?: defaultPoint.liveNestSubNestOpacityPercent.takeIfNot(defaultEditing) ?: defaultLiveNestMainNestOpacityPercent
 
 
     override fun compareTo(other: Point): Int = this.id.compareTo(other.id)
@@ -355,20 +411,19 @@ public data class Point(
             )
 
 
-        public const val defaultBorderStroke: Float = 4f
-        public const val defaultBorderStrokeSelected: Float = 8f
+        public val defaultBorderStroke: Dp = 4.dp
+        public val defaultBorderStrokeSelected: Dp = 8.dp
         public const val defaultOpacity: Float = 1f
-        public const val defaultInnerPadding: Int = 5
-        public const val defaultSize: Int = 22
+        public val defaultInnerPadding: Dp = 5.dp
+        public val defaultSize: Dp = 22.dp
         public val defaultBorderShape: IconShape = IconShape.Circle
         public val defaultBorderShapeSelected: IconShape = IconShape.Circle
         public const val defaultLiveNestPreviewDelayMs: Int = 500
         public const val defaultLiveNestScale: Float = 0.65f
-        public const val defaultLiveNestGraceDistancePx: Int = 50
+        public val defaultLiveNestGraceDistance: Dp = 50.dp
         public const val defaultLiveNestSnapsToFingerPosition: Boolean = true
         public const val defaultHoldAndRunDelayMs: Int = 500
         public const val defaultCycleActionsLoopDelayMs: Int = 500
-        public const val defaultCycleActionStageDefaultDelay: Int = 500
         public const val defaultLiveNestMainNestOpacityPercent: Int = 50
         public val defaultGlow: CustomGlow = CustomGlow(radius = defaultSize * 1.05f)
         public val defaultGlowSelected: CustomGlow = CustomGlow(radius = defaultSize * 1.1f)
@@ -383,18 +438,17 @@ public data class Point(
             borderShapeSelected = defaultBorderShapeSelected,
             liveNestPreviewDelayMs = defaultLiveNestPreviewDelayMs,
             liveNestScale = defaultLiveNestScale,
-            liveNestGraceDistancePx = defaultLiveNestGraceDistancePx,
+            liveNestGraceDistance = defaultLiveNestGraceDistance,
             liveNestSnapsToFingerPosition = defaultLiveNestSnapsToFingerPosition,
             holdAndRunDelayMs = defaultHoldAndRunDelayMs,
             cycleActionsLoopDelayMs = defaultCycleActionsLoopDelayMs,
-            cycleActionStageDefaultDelay = defaultCycleActionStageDefaultDelay,
-            liveNestMainNestOpacityPercent = defaultLiveNestMainNestOpacityPercent,
+            liveNestSubNestOpacityPercent = defaultLiveNestMainNestOpacityPercent,
             glow = defaultGlow,
             glowSelected = defaultGlowSelected
         )
 
-        public object PointsJson: DragonJson<Set<Point>>()
-        public object PointJson: DragonJson<Point>()
+        public object PointsJson : DragonJson<Set<Point>>()
+        public object DefaultPointJson : DragonJson<Point>()
     }
 }
 

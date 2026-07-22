@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.base.compositionslocals
+package org.elnix.dragonlauncher.ui.base.compositionlocals
 
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf

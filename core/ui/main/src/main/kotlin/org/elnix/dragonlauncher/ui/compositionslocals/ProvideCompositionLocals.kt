@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui
+package org.elnix.dragonlauncher.ui.compositionslocals
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -20,8 +20,7 @@ import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
-import org.elnix.dragonlauncher.ui.base.compositionslocals.ProvideCurrentTime
+import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalEndLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
@@ -59,7 +58,6 @@ public fun ProvideGlobalCompositionLocals(
     }
 
 
-
     val lineObjects = rememberAngleLineObjects()
     val holdCustomObject by rememberHoldCustomObject()
     val layersOrder by rememberMainScreenLayerOrder()
@@ -92,7 +90,9 @@ public fun ProvideGlobalCompositionLocals(
         LocalNestDebugOverlay provides nestDebugOverlay
     ) {
         ProvideCurrentTime {
-            content()
+            ProvideDrawerSettings {
+                content()
+            }
         }
     }
 }

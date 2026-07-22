@@ -138,7 +138,8 @@ public fun ThemesTab(
         title = stringResource(R.string.theme_selector),
         onBack = onBack,
         helpText = stringResource(R.string.theme_selector_help),
-        onReset = null
+        onReset = null,
+        resetText = null
     ) {
         BetaVersionWarning(BetaVersionType.Feature)
 

@@ -51,6 +51,7 @@ import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
@@ -85,7 +86,7 @@ public fun AppPickerDialog(
     }
 
 
-    val workspaceState by drawerViewModel.workspaceManager.workspacesState.collectAsState()
+    val workspaceState by drawerViewModel.workspaceManager.workspacesState.asState()
 
     val selectedWorkspaceId by drawerViewModel.selectedWorkspaceId.collectAsState()
     val initialIndex = workspaceState.indexOfFirst { it.id == selectedWorkspaceId }

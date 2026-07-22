@@ -7,7 +7,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -43,7 +42,6 @@ import org.elnix.dragonlauncher.ktx.getFilePathFromUri
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
-import org.elnix.dragonlauncher.settings.AllStores
 import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.toSettingsStoreList
@@ -80,7 +78,7 @@ public fun BackupTab(
 
     val selectedStores = remember(backupStores) {
         mutableStateMapOf<SettingsStore<*, *>, Boolean>().apply {
-            AllStores.forEach { put(it, backupStores.isEmpty() || it in backupStores.toSettingsStoreList()) }
+            backupableStores.forEach { put(it, backupStores.isEmpty() || it in backupStores.toSettingsStoreList()) }
         }
     }
 
@@ -118,9 +116,10 @@ public fun BackupTab(
     )
 
     SettingsScaffold(
-        title = ctx.getString(R.string.backup_restore),
+        title = ctx.getString(R.string.backup),
         onBack = onBack,
         helpText = ctx.getString(R.string.backup_restore_text),
+        resetText = stringResource(R.string.reset_backup_tab),
         onReset = {
             scope.launch {
                 BackupSettingsStore.resetAll(ctx)
@@ -212,10 +211,7 @@ public fun BackupTab(
         }
 
         AnimatedVisibility(autoBackupEnabled) {
-            DragonSettingsGroup(
-                title = R.string.auto_backup_stores,
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 12.dp)
-            ) {
+            DragonSettingsGroup(R.string.auto_backup_stores,) {
                 SelectedActionRow(selectedStores, backupableStores.size) { save() }
 
                 selectedStores.entries.forEach { (settingsStore, isSelected) ->
@@ -227,7 +223,7 @@ public fun BackupTab(
                                 selectedStores[settingsStore] = !isSelected
                                 save()
                             }
-                            .padding(5.dp),
+                            .padding(10.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {

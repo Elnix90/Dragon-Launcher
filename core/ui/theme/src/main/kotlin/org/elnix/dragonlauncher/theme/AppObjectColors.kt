@@ -56,7 +56,9 @@ public object AppObjectsColors {
             with(MaterialTheme.colorScheme) {
                 ButtonDefaults.buttonColors(
                     containerColor = primary,
-                    contentColor = onPrimary
+                    contentColor = onPrimary,
+                    disabledContainerColor = primary.alphaMultiplier(0.5f),
+                    disabledContentColor = onPrimary.alphaMultiplier(0.5f)
                 )
             }
         } else ButtonDefaults.buttonColors()
@@ -66,7 +68,7 @@ public object AppObjectsColors {
     public fun cancelButtonColors(): ButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
-                ButtonDefaults.outlinedButtonColors(
+                ButtonDefaults.buttonColors(
                     containerColor = errorContainer,
                     contentColor = onErrorContainer,
                     disabledContainerColor = errorContainer.alphaMultiplier(0.5f),
@@ -237,20 +239,6 @@ public object AppObjectsColors {
                 )
             }
         } else IconButtonDefaults.iconButtonColors()
-    }
-
-    @Composable
-    public fun cardColors(): CardColors {
-        return if (LocalUseCustomColorChannels.current) {
-            with(MaterialTheme.colorScheme) {
-                CardDefaults.cardColors(
-                    containerColor = surfaceContainerHigh,
-                    contentColor = onSecondaryContainer,
-                    disabledContainerColor = surfaceVariant,
-                    disabledContentColor = onSurfaceVariant,
-                )
-            }
-        } else CardDefaults.cardColors()
     }
 
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)

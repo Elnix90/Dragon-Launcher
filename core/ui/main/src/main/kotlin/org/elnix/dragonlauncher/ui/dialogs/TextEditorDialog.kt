@@ -23,7 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
+import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 
 
@@ -63,14 +63,7 @@ public fun TextEditorDialog(
                 value = editText,
                 onValueChange = { editText = it },
                 singleLine = true,
-                trailingIcon = {
-                    DragonIconButton(
-                        icon = R.drawable.reset,
-                        contentDescription = R.string.reset
-                    ) {
-                        editText = initialText
-                    }
-                },
+                trailingIcon = { ResetIcon { editText = initialText } },
                 placeholder = {
                     Text(placeHolder())
                 },

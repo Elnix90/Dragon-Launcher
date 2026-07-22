@@ -6,14 +6,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("ExtensionModel")
 public data class ExtensionModel(
-    @SerialName("id") val id: String,
-    @SerialName("name") val name: String,
-    @SerialName("package") val packageName: String?,
-    @SerialName("version") val version: String?,
-    @SerialName("descriptions") val description: Map<String, String>,
-    @SerialName("author") val author: String?,
-    @SerialName("license") val license: String?,
-    @SerialName("url") val url: String?,
-    @SerialName("download_url") val downloadUrl: String,
-    @SerialName("additional_permissions") val permissions: List<String> = emptyList()
+    val id: String,
+    val name: String,
+    val packageName: String?,
+    val version: String?,
+    val description: Map<String, String>,
+    val author: String?,
+    val license: String?,
+    val url: String?,
+    val downloadUrl: String,
+    val permissions: List<String> = emptyList()
 )

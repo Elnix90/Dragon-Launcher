@@ -78,6 +78,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asMutableState
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
+import org.elnix.dragonlauncher.ui.compositionslocals.ProvideGlobalCompositionLocals
 import org.elnix.dragonlauncher.ui.dialogs.AdbCommandInputDialog
 import org.elnix.dragonlauncher.ui.dialogs.BackupResultDialog
 import org.elnix.dragonlauncher.ui.dialogs.FilePickerDialog
@@ -422,7 +423,7 @@ public fun MainAppUi(
                             },
                             onNestEdit = {
                                 pointsService.persist()
-                                backStack.navigate(NavigationRoute.NestEdit(it))
+                                backStack.navigate(NavigationRoute.NestEdit)
                             },
                             onBack = {
                                 pointsService.persist()
@@ -480,20 +481,17 @@ public fun MainAppUi(
                     entry<NavigationRoute.HoldToActivateArc>(metadata = horizontalMetadata) { HoldToActivateArcTab(onBack = backStack::navigateBack) }
                     entry<NavigationRoute.MainScreenLayers>(metadata = horizontalMetadata) { MainScreeLayersTab(onBack = backStack::navigateBack) }
 
+                    entry<NavigationRoute.NestEdit>(metadata = horizontalMetadata) {
+                        NestEditScreen {
+                            backStack.navigateBack()
+                            pointsService.persist()
+                        }
+                    }
+
                     entry<NavigationRoute.LogsViewer>(metadata = horizontalMetadata) { key ->
                         LogsViewerScreen(
                             filename = key.filename,
                             onBack = backStack::navigateBack
-                        )
-                    }
-
-                    entry<NavigationRoute.NestEdit>(metadata = horizontalMetadata) { key ->
-                        NestEditScreen(
-                            initialNestId = key.nestId,
-                            onBack = {
-                                backStack.navigateBack()
-                                pointsService.persist()
-                            }
                         )
                     }
 

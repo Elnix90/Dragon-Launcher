@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.GradientBigButton
 import org.elnix.dragonlauncher.ui.remembers.rememberAutoBackupLauncher
@@ -33,11 +34,13 @@ public fun WelcomePageBackup() {
         title = stringResource(R.string.enable_backup),
         icon = R.drawable.cloud_upload
     ) {
-        Setting(BackupSettingsStore.autoBackupEnabled) {
-            // If the user disabled the backup, also remove the uri
-            if (!it) {
-                scope.launch {
-                    BackupSettingsStore.autoBackupUri.reset(ctx)
+        DragonSettingsGroup {
+            Setting(BackupSettingsStore.autoBackupEnabled) {
+                // If the user disabled the backup, also remove the uri
+                if (!it) {
+                    scope.launch {
+                        BackupSettingsStore.autoBackupUri.reset(ctx)
+                    }
                 }
             }
         }

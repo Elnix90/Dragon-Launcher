@@ -166,7 +166,7 @@
     <string name="transparency">Transparencia</string>
     <string name="save">Salvar</string>
     <string name="drawer_enter_key_action">Acción de entrada en el cajón</string>
-    <string name="icon_pack">Paquetes de iconos</string>
+    <string name="icon_packs">Paquetes de iconos</string>
     <string name="icon_pack_help">Selecciona un paquete de iconos para personalizar los iconos de tu app. Instala primero los packs de iconos desde tu tienda.</string>
     <string name="use_original_app_icon">Usa iconos originales de la app</string>
     <string name="status_bar">Barra de estado</string>
@@ -255,7 +255,6 @@
     <string name="pick_a_nest">Elige un nido</string>
     <string name="create_new_nest">Crear nuevo nido</string>
     <string name="copy_id">Copiar identificación</string>
-    <string name="edit_default_point_settings">Editar la configuración de puntos predeterminada</string>
     <string name="open_burger_menu">Abrir menú de hamburguesas</string>
     <string name="selected_text">Seleccionado</string>
     <string name="unselected">No seleccionado</string>
@@ -652,7 +651,7 @@
     <string name="not_supported_in_this_android_version">No soportado en esta versión de Android</string>
     <string name="please_enable_accessibility_services_to_use_that_feature">Por favor, habilita el servicio de accesibilidad para usar esa función</string>
     <string name="appearance">Apariencia</string>
-    <string name="backup_restore">Respaldo</string>
+    <string name="backup">Respaldo</string>
     <string name="font_manage_help">Configurar fuentes. Puedes importar tus propias fuentes usando archivos TTF/OTF o conseguirlos desde Google Fonts.</string>
     <string name="font_catalog">Catálogo</string>
     <string name="font_import">Importar</string>
@@ -852,7 +851,6 @@
     <string name="live_nest_hold_delay">Mantener retardo (ms)</string>
     <string name="live_nest_scale">Escala de nido</string>
     <string name="live_nest_pick_nest">Tomar nido</string>
-    <string name="live_nest_grace_distance">Distancia de gracia (px)</string>
     <string name="live_nest_snaps_to_finger_position">El nido vivo se ajusta a la posición del dedo</string>
     <string name="cycle_actions_stage_default_delay">Retardo de etapa predeterminado (ms)</string>
     <string name="live_nests_depth_desc">¿Cuántos nidos vivos se pueden dibujar a la vez?</string>
@@ -867,7 +865,6 @@
     <string name="object_properties">Propiedades de Objeto</string>
     <string name="security">Seguridad</string>
     <string name="risky">Arriesgado</string>
-    <string name="accessibility_and_system">Accesibilidad y sistema</string>
     <string name="pin_code_warning_titls">Aviso: Pérdida de datos potencial</string>
     <string name="do_something">Haga algo</string>
     <string name="warning_title">Aviso Importante</string>

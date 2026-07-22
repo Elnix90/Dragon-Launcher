@@ -8,11 +8,9 @@ import io.github.elnix90.logging.logE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.DragonJson
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.AppOverride
@@ -33,9 +31,7 @@ public class AppOverridesManager(
 
     private val scope = CoroutineScope(Job() + Dispatchers.IO)
 
-    private val _appOverridesState = MutableStateFlow(defaultAppOverrides)
-    public val appOverrideState: StateFlow<AppOverrideState> = _appOverridesState.asStateFlow()
-
+    public val appOverridesState: SettingFlow<AppOverrideState> = SettingFlow(defaultAppOverrides)
 
     init {
         scope.launch { loadAppOverrides() }
@@ -47,23 +43,24 @@ public class AppOverridesManager(
             if (jsonString.isBlank()) return@withContext
 
             val loadedState = AppOverridesJson.decode(jsonString, defaultAppOverrides)
-            _appOverridesState.value = loadedState
+            appOverridesState.value = loadedState
 
         } catch (e: Exception) {
             logE(WORKSPACES_TAG, e) { "Error while loading the overrides state" }
-            _appOverridesState.value = defaultAppOverrides
+            appOverridesState.value = defaultAppOverrides
         }
     }
 
     private fun persistAppOverrides() = scope.launch(Dispatchers.IO) {
-        val json = AppOverridesJson.encode(_appOverridesState.value)
+        if (appOverridesState.value == defaultAppOverrides) return@launch
+        val json = AppOverridesJson.encode(appOverridesState.value)
         AppOverridesSettingsStore.jsonSetting.set(ctx, json)
     }
 
 
     private inline fun update(newAppOverridesState: (AppOverrideState) -> AppOverrideState?) {
-        newAppOverridesState(_appOverridesState.value)?.let {
-            _appOverridesState.value = it
+        newAppOverridesState(appOverridesState.value)?.let {
+            appOverridesState.value = it
             persistAppOverrides()
         }
     }
@@ -84,7 +81,7 @@ public class AppOverridesManager(
     }
 
     public fun getAliasesForApp(app: Application): List<String> {
-        return _appOverridesState.value[app.key]?.aliases ?: emptyList()
+        return appOverridesState.value[app.key]?.aliases ?: emptyList()
     }
 
     public fun addAliasToApp(alias: String, cacheKey: CacheKey) {
@@ -153,7 +150,7 @@ public class AppOverridesManager(
 
 
     public fun resetOverrides() {
-        _appOverridesState.value = defaultAppOverrides
+        appOverridesState.value = defaultAppOverrides
 
         scope.launch {
             AppOverridesSettingsStore.resetAll(ctx)

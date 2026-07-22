@@ -42,6 +42,7 @@ public fun SliderColorPicker(
             color = Color.Red,
             backgroundColor = Color.Red.alphaMultiplier(0.5f),
             valueRange = 0f..1f,
+            resetEnabled = red != initialColor.red,
             onReset = {
                 red = initialColor.red
                 onColorSelected(color.copy(red = initialColor.red))
@@ -56,6 +57,7 @@ public fun SliderColorPicker(
             color = Color.Green,
             backgroundColor = Color.Green.alphaMultiplier(0.5f),
             valueRange = 0f..1f,
+            resetEnabled = green != initialColor.green,
             onReset = {
                 green = initialColor.green
                 onColorSelected(color.copy(green = initialColor.green))
@@ -70,6 +72,7 @@ public fun SliderColorPicker(
             color = Color.Blue,
             backgroundColor = Color.Blue.alphaMultiplier(0.5f),
             valueRange = 0f..1f,
+            resetEnabled = blue != initialColor.blue,
             onReset = {
                 blue = initialColor.blue
                 onColorSelected(color.copy(blue = initialColor.blue))

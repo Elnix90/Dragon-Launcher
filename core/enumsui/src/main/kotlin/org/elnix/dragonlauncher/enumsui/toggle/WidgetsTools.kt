@@ -8,7 +8,6 @@ public enum class WidgetsToolsAddNestRemove(
     override val iconEnabled: Int,
     override val iconDisabled: Int? = null
 ) : ToggleButtonOption {
-    Add(R.string.add_widget, R.drawable.add),
     Nests(R.string.pick_a_nest, R.drawable.nest_icon),
     Remove(R.string.delete_widget, R.drawable.remove_circle)
 }

@@ -5,6 +5,7 @@ package org.elnix.dragonlauncher.ui.dragon.colors
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,13 +21,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,7 +47,6 @@ import org.elnix.dragonlauncher.enumsui.select.ColorPickerMode
 import org.elnix.dragonlauncher.enumsui.toggle.ColorActions
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.randomColor
-import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.ktx.toHexWithAlpha
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
@@ -57,9 +54,9 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
-import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
+import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
@@ -72,7 +69,6 @@ public fun ColorPickerRow(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     currentColor: Color,
-    backgroundColor: Color = MaterialTheme.colorScheme.surface,
     onColorPicked: (Color?) -> Unit
 ) {
     var showPicker by remember { mutableStateOf(false) }
@@ -81,21 +77,20 @@ public fun ColorPickerRow(
     val savedMode by ColorModesSettingsStore.colorPickerMode.asState()
     val initialPage = remember(savedMode) { ColorPickerMode.entries.indexOf(savedMode) }
 
-    DragonRow(
-        modifier = modifier,
-        enabled = enabled,
-        onClick = { showPicker = true }
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(enabled) { showPicker = true }
+            .padding(10.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
 
-        CompositionLocalProvider(
-            LocalContentColor provides MaterialTheme.colorScheme.onSurface.semiTransparentIfDisabled(enabled)
-        ) {
-            TextWithDescription(
-                text = title,
-                description = description,
-                modifier = Modifier.weight(1f)
-            )
-        }
+        TextWithDescription(
+            text = title,
+            description = description,
+            modifier = Modifier.weight(1f),
+            enabled = enabled
+        )
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -104,7 +99,6 @@ public fun ColorPickerRow(
 
             ColorPickerButtonOne(
                 currentColor = currentColor,
-                backgroundColor = backgroundColor,
                 enabled = enabled,
                 onReset = { onColorPicked(null) },
                 onColorPicked = onColorPicked
@@ -112,7 +106,6 @@ public fun ColorPickerRow(
 
             ColorPickerButtonTwo(
                 currentColor = currentColor,
-                backgroundColor = backgroundColor,
                 enabled = enabled,
                 onReset = { onColorPicked(null) },
                 onColorPicked = onColorPicked
@@ -135,7 +128,7 @@ public fun ColorPickerRow(
 
     if (showPicker) {
         DragonModalBottomSheet(
-            sheetState = rememberModalBottomSheetState(true),
+            sheetState = rememberBottomSheetState(true),
             onDismissRequest = { showPicker = false }
         ) {
             Column(
@@ -317,9 +310,8 @@ private fun ColorPicker(
         SliderWithLabel(
             label = stringResource(R.string.transparency),
             value = color.alpha,
-            color = MaterialTheme.colorScheme.primary,
-            backgroundColor = MaterialTheme.colorScheme.surface,
             valueRange = 0f..1f,
+            resetEnabled = color.alpha != initialColor.alpha,
             onReset = {
                 onColorSelected(color.copy(alpha = color.alpha))
             }

@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.PathMeasure
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isUnspecified
 import org.elnix.dragonlauncher.base.model.models.AngleLineObjects
 import org.elnix.dragonlauncher.base.model.models.AngleLineObjects.Angle
 import org.elnix.dragonlauncher.base.model.models.AngleLineObjects.End
@@ -120,7 +120,7 @@ private fun DrawScope.lineObject(
         start = start,
         end = end,
         color = lineCustomObject.color ?: lineColor,
-        lineStrokeWidth = lineCustomObject.stroke,
+        lineStrokeWidth = lineCustomObject.stroke.toPx(),
         glow = lineCustomObject.glow ?: defaultLineCustomObject.glow,
         erase = lineCustomObject.eraseBackground,
         eraseColor = eraseColor
@@ -153,9 +153,9 @@ private fun DrawScope.angleObject(
     angleLineCustomObject: CustomObject,
     eraseColor: Color?
 ) {
-    if (angleLineCustomObject.stroke <= 0f) return
+    if (angleLineCustomObject.stroke.isUnspecified) return
 
-    val radius = angleLineCustomObject.size.dp.toPx() / 2
+    val radius = angleLineCustomObject.size.toPx() / 2
     val diameterPx = radius * 2
 
     val path = toPath(
@@ -191,7 +191,7 @@ private fun DrawScope.angleObject(
         drawPathGlow(
             path = destinationPath,
             color = angleLineCustomObject.color ?: lineColor,
-            lineStrokeWidth = angleLineCustomObject.stroke,
+            lineStrokeWidth = angleLineCustomObject.stroke.toPx(),
             glow = angleLineCustomObject.glow,
             erase = angleLineCustomObject.eraseBackground,
             eraseColor = eraseColor

@@ -6,7 +6,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.ktx.toPath
 
@@ -19,7 +18,7 @@ public fun DrawScope.customObject(
     eraseColor: Color?
 ) {
 
-    val sizePx = customObject.size.dp.toPx()
+    val sizePx = customObject.size.toPx()
     val size = Size(sizePx, sizePx)
     val path = toPath(shape, size)
 
@@ -42,7 +41,7 @@ public fun DrawScope.customObject(
         drawPathGlow(
             path = path,
             color = customObject.color ?: angleColor,
-            lineStrokeWidth = customObject.stroke,
+            lineStrokeWidth = customObject.stroke.toPx(),
             glow = customObject.glow,
             erase = customObject.eraseBackground,
             eraseColor = eraseColor

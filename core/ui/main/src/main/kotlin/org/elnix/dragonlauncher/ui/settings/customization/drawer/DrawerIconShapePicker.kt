@@ -27,6 +27,7 @@ public fun DrawerIconShapePicker() {
 
     ShapeRow(
         selected = iconShape,
+        resetEnabled = iconShape != DrawerSettingsStore.iconShape.default,
         onReset = { scope.launch { DrawerSettingsStore.iconShape.reset(ctx) } }
     ) { showShapePickerDialog = true }
 
@@ -41,5 +42,4 @@ public fun DrawerIconShapePicker() {
             }
         }
     }
-
 }

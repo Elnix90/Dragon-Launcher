@@ -40,7 +40,7 @@ import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.compositionslocals.LocalDisableHapticFeedbackGlobally
+import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.components.PointPreviewTitle
 import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalEndLineObject
@@ -74,6 +74,8 @@ public fun MainScreenOverlay(
     val pointsService = pointsViewModel.pointsService
 
     val defaultPoint by pointsService.defaultPoint.asState()
+    val defaultNest by pointsService.defaultNest.asState()
+
     val disableHapticFeedbackGlobally = LocalDisableHapticFeedbackGlobally.current
 
     val lineObject = LocalLineObject.current
@@ -212,7 +214,7 @@ public fun MainScreenOverlay(
                 val hitNest = pointsService.findNestById(hitNestId)
 
                 val targetShape =
-                    hitNest.intersectionShapes.find { deepestController.nestedHit?.selectedPoint?.shapeId == it.id }
+                    hitNest.getInterSectionShapes(defaultNest).find { deepestController.nestedHit?.selectedPoint?.shapeId == it.id }
 
                 val hapticToPerform = (point.haptic ?: targetShape?.haptic ?: defaultHapticFeedback())
                 hapticToPerform.perform(ctx)
@@ -278,7 +280,7 @@ public fun MainScreenOverlay(
             add(alpha)
 
             val percent =
-                (controller.hostPoint?.liveNestMainNestOpacityPercent ?: defaultPoint.liveNestMainNestOpacityPercent)
+                (controller.hostPoint?.liveNestSubNestOpacityPercent ?: defaultPoint.liveNestSubNestOpacityPercent)
                     .takeIf { it != -1 } ?: Point.defaultLiveNestMainNestOpacityPercent
 
             if (multiplyOrSubtractOpacityInLiveNests) {
@@ -292,7 +294,6 @@ public fun MainScreenOverlay(
     val debugInfo by DebugSettingsStore.mainScreenDebugInfos.asState()
 
     val drawParams = rememberDrawParams(
-//        preventBgErasing = false,
         eraseColor = Color.Transparent,
         allowShowPointCenter = false,
         pointSettingsDisplay = false,

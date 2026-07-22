@@ -10,10 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -28,6 +25,7 @@ import org.elnix.dragonlauncher.enumsui.toggle.WorkspaceAction
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dialogs.CreateOrEditWorkspaceDialog
@@ -46,45 +44,40 @@ public fun WorkspaceListScreen(
     val scope = rememberCoroutineScope()
 
     val workspaceManager = drawerViewModel.workspaceManager
-    val workspaces by workspaceManager.workspacesState.collectAsState()
+    val workspaces by workspaceManager.workspacesState.asState()
 
     var showCreateDialog by remember { mutableStateOf(false) }
+    var showDeleteConfirm by remember { mutableStateOf<Workspace?>(null) }
+
     var renameTarget by remember { mutableStateOf<Workspace?>(null) }
     var nameBuffer by remember { mutableStateOf("") }
 
-    var showDeleteConfirm by remember { mutableStateOf<Workspace?>(null) }
-
-    // Local mutable list synced with ViewModel state
-    val uiList = remember { mutableStateListOf<Workspace>() }
-    LaunchedEffect(workspaces) {
-        if (workspaces != uiList) {
-            uiList.clear()
-            uiList.addAll(workspaces)
-        }
-    }
+    var objects by remember(workspaces) { mutableStateOf(workspaces) }
 
     val lazyListState = rememberLazyListState()
     val reorderState = rememberReorderableLazyListState(
         lazyListState = lazyListState,
         onMove = { from, to ->
-            if (from.index in uiList.indices && to.index in uiList.indices) {
-                val tmp = uiList.toMutableList()
-                val item = tmp.removeAt(from.index)
-                tmp.add(to.index, item)
-                uiList.clear()
-                uiList.addAll(tmp)
+            objects = objects.toMutableList().apply {
+                add(to.index, removeAt(from.index))
             }
         }
     )
+
+    fun save() {
+        scope.launch { workspaceManager.setWorkspaceOrder(objects) }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         SettingsScaffold(
             title = stringResource(R.string.workspaces),
             onBack = onBack,
             helpText = stringResource(R.string.workspace_help),
+            resetText = stringResource(R.string.reset_workspaces),
             onReset = {
                 scope.launch { workspaceManager.resetWorkspaces() }
             },
+            listState = lazyListState,
             bottomContent = {
                 Row(
                     modifier = Modifier
@@ -102,11 +95,14 @@ public fun WorkspaceListScreen(
                 }
             },
             lazyContent = {
-                items(uiList, key = { it.id }) { ws ->
+                items(objects, key = { it.id }) { ws ->
                     ReorderableItem(state = reorderState, key = ws.id) { isDragging ->
                         WorkspaceRow(
                             workspace = ws,
                             isDragging = isDragging,
+                            modifier = Modifier.longPressDraggableHandle(
+                                onDragStopped = ::save
+                            ),
                             onClick = {
                                 if (ws.type != WorkspaceType.Private) {
                                     onOpenWorkspace(ws.id)
@@ -127,9 +123,7 @@ public fun WorkspaceListScreen(
                                     }
                                 }
                             },
-                            onDragEnd = {
-                                scope.launch { workspaceManager.setWorkspaceOrder(uiList) }
-                            }
+                            onDragEnd = ::save
                         )
                     }
                 }

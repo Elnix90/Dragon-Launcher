@@ -33,7 +33,6 @@ import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Copy
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Paste
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Random
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Reset
-import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ktx.randomColor
 import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ktx.toHexWithAlpha
@@ -41,12 +40,11 @@ import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 
 
 @Composable
-private fun ColorPickerButton(
+private fun ColorPickerButtonInternal(
     button: ColorPickerButtonAction,
     enabled: Boolean,
     currentColor: Color,
     onReset: () -> Unit,
-    backgroundColor: Color,
     onModeChanged: (ColorPickerButtonAction) -> Unit,
     onColorPicked: (Color) -> Unit
 ) {
@@ -63,10 +61,10 @@ private fun ColorPickerButton(
         Icon(
             painter = painterResource(button.iconEnabled),
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface,
+            tint = MaterialTheme.colorScheme.onSurface.semiTransparentIfDisabled(enabled),
             modifier = Modifier
                 .clip(CircleShape)
-                .background(backgroundColor.alphaMultiplier(0.8f).semiTransparentIfDisabled(enabled))
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh.semiTransparentIfDisabled(enabled))
                 .combinedClickable(
                     enabled = enabled,
                     onLongClick = { showSelector = true }
@@ -108,7 +106,6 @@ private fun ColorPickerButton(
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
                             .clip(CircleShape)
-                            .background(backgroundColor.alphaMultiplier(0.8f))
                             .clickable {
                                 onModeChanged(it)
                                 showSelector = false
@@ -125,7 +122,6 @@ private fun ColorPickerButton(
 @Composable
 public fun ColorPickerButtonOne(
     currentColor: Color,
-    backgroundColor: Color,
     enabled: Boolean,
     onReset: () -> Unit,
     onColorPicked: (Color) -> Unit
@@ -135,11 +131,10 @@ public fun ColorPickerButtonOne(
 
     val button by ColorModesSettingsStore.colorPickerButtonOne.asState()
 
-    ColorPickerButton(
+    ColorPickerButtonInternal(
         button = button,
         enabled = enabled,
         currentColor = currentColor,
-        backgroundColor = backgroundColor,
         onReset = onReset,
         onModeChanged = {
             scope.launch {
@@ -154,7 +149,6 @@ public fun ColorPickerButtonOne(
 @Composable
 public fun ColorPickerButtonTwo(
     currentColor: Color,
-    backgroundColor: Color,
     enabled: Boolean,
     onReset: () -> Unit,
     onColorPicked: (Color) -> Unit
@@ -164,11 +158,10 @@ public fun ColorPickerButtonTwo(
 
     val button by ColorModesSettingsStore.colorPickerButtonTwo.asState()
 
-    ColorPickerButton(
+    ColorPickerButtonInternal(
         button = button,
         enabled = enabled,
         currentColor = currentColor,
-        backgroundColor = backgroundColor,
         onReset = onReset,
         onModeChanged = {
             scope.launch {

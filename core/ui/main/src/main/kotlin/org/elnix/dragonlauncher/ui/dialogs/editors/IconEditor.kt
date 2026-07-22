@@ -1,6 +1,6 @@
 @file:Suppress("AssignedValueIsNeverRead", "DEPRECATION")
 
-package org.elnix.dragonlauncher.ui.dialogs
+package org.elnix.dragonlauncher.ui.dialogs.editors
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -14,9 +14,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,24 +36,25 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomIcon.Companion.se
 import org.elnix.dragonlauncher.base.model.serializables.CustomIconProperties
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ktx.definedOrNull
+import org.elnix.dragonlauncher.ktx.specifiedOrNull
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
-import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
-import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.components.PointPreviewCanvas
 import org.elnix.dragonlauncher.ui.components.iconeditor.IconPicker
+import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
+import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
+import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 
@@ -102,7 +101,7 @@ public fun AppIconEditor(
 ) {
 
     val appOverrideManager = drawerViewModel.appOverrideManager
-    val appOverrides by appOverrideManager.appOverrideState.collectAsState()
+    val appOverrides by appOverrideManager.appOverridesState.asState()
     val initialCustomIcon = appOverrides[app.key]?.customIcon
 
     var editCustomIcon by remember(initialCustomIcon) { mutableStateOf(initialCustomIcon) }
@@ -140,11 +139,11 @@ private fun IconEditorImpl(
     onPicked: () -> Unit
 ) {
 
-    val properties = remember { customIcon?.getProperties() ?: CustomIconProperties()}
+    val properties = remember { customIcon?.getProperties() ?: CustomIconProperties() }
 
     DragonModalBottomSheet(
         onDismissRequest = onDismiss,
-        sheetState = rememberModalBottomSheetState(true),
+        sheetState = rememberBottomSheetState(true),
         content = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -159,11 +158,7 @@ private fun IconEditorImpl(
 
                 preview()
 
-                DragonIconButton(
-                    colors = AppObjectsColors.iconButtonColors(),
-                    icon = R.drawable.reset,
-                    contentDescription = stringResource(R.string.reset)
-                ){
+                ResetIcon {
                     onUpdate(null)
                     onReset?.invoke()
                 }
@@ -205,65 +200,58 @@ private fun IconEditorImpl(
 }
 
 
-
 @Composable
 private fun CustomIconPropertiesEditor(
     properties: CustomIconProperties,
     onUpdate: (CustomIconProperties) -> Unit,
 ) {
-    val defultIconShape by DrawerSettingsStore.iconShape.asState()
+    val defaultIconShape by DrawerSettingsStore.iconShape.asState()
     var showShapePickerDialog by remember { mutableStateOf(false) }
 
     DragonSettingsGroup(R.string.appearance) {
         SliderWithLabel(
-            modifier = Modifier.settingsGroupHorizontalPadding(),
             label = stringResource(R.string.opacity),
-            value = properties.opacity ?: 1f,
+            value = properties.opacity,
             valueRange = 0f..1f,
-            color = MaterialTheme.colorScheme.primary,
+            resetEnabled = properties.opacity != CustomIconProperties.defaultOpacity,
             onReset = {
-                onUpdate(properties.copy(opacity = null))
+                onUpdate(properties.copy(opacity = CustomIconProperties.defaultOpacity))
             }
         ) {
             onUpdate(properties.copy(opacity = it))
         }
 
         SliderWithLabel(
-            modifier = Modifier.settingsGroupHorizontalPadding(),
             label = stringResource(R.string.rotation),
-            value = properties.rotationDeg ?: 0f,
-            valueRange = -180f..180f,
-            color = MaterialTheme.colorScheme.primary,
+            value = properties.rotationDeg,
+            valueRange = -180..180,
+            resetEnabled = properties.rotationDeg != CustomIconProperties.defaultRotationDeg,
             onReset = {
-                onUpdate(properties.copy(rotationDeg = null))
+                onUpdate(properties.copy(rotationDeg = CustomIconProperties.defaultRotationDeg))
             }
         ) {
             onUpdate(properties.copy(rotationDeg = it))
         }
 
-        // Scale X
         SliderWithLabel(
-            modifier = Modifier.settingsGroupHorizontalPadding(),
             label = stringResource(R.string.scale_x),
-            value = properties.scaleX ?: 1f,
+            value = properties.scaleX,
             valueRange = 0.2f..3f,
-            color = MaterialTheme.colorScheme.primary,
+            resetEnabled = properties.scaleX != CustomIconProperties.defaultScaleX,
             onReset = {
-                onUpdate(properties.copy(scaleX = null))
+                onUpdate(properties.copy(scaleX = CustomIconProperties.defaultScaleX))
             }
         ) {
             onUpdate(properties.copy(scaleX = it))
         }
 
-        // Scale Y
         SliderWithLabel(
-            modifier = Modifier.settingsGroupHorizontalPadding(),
             label = stringResource(R.string.scale_y),
-            value = properties.scaleY ?: 1f,
+            value = properties.scaleY,
             valueRange = 0.2f..3f,
-            color = MaterialTheme.colorScheme.primary,
+            resetEnabled = properties.scaleY != CustomIconProperties.defaultScaleY,
             onReset = {
-                onUpdate(properties.copy(scaleY = null))
+                onUpdate(properties.copy(scaleY = CustomIconProperties.defaultOpacity))
             }
         ) {
             onUpdate(properties.copy(scaleY = it))
@@ -277,9 +265,8 @@ private fun CustomIconPropertiesEditor(
             title = stringResource(R.string.tint),
             description = null,
             currentColor = properties.tint?.let { Color(it) } ?: Color.Unspecified,
-            modifier = Modifier.settingsGroupHorizontalPadding(),
         ) {
-            val tintColor = it.definedOrNull()?.toArgb()
+            val tintColor = it.specifiedOrNull()?.toArgb()
             onUpdate(
                 properties.copy(
                     tint = tintColor
@@ -288,8 +275,8 @@ private fun CustomIconPropertiesEditor(
         }
 
         ShapeRow(
-            selected = properties.shape ?: defultIconShape,
-            modifier = Modifier.settingsGroupHorizontalPadding(),
+            selected = properties.shape ?: defaultIconShape,
+            resetEnabled = properties.shape != null,
             onReset = {
                 onUpdate(
                     properties.copy(
@@ -302,7 +289,7 @@ private fun CustomIconPropertiesEditor(
 
     if (showShapePickerDialog) {
         ShapePickerDialog(
-            selected = properties.shape ?: defultIconShape,
+            selected = properties.shape ?: defaultIconShape,
             onDismiss = { showShapePickerDialog = false }
         ) {
             onUpdate(
@@ -313,6 +300,7 @@ private fun CustomIconPropertiesEditor(
         }
     }
 }
+
 @Composable
 private fun SelectableCard(
     modifier: Modifier = Modifier,

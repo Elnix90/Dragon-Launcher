@@ -36,7 +36,7 @@
     <string name="version">الإصدار</string>
     <string name="export_cancelled">تم إلغاء التصدير</string>
     <string name="import_cancelled">تم إلغاء الاستيراد</string>
-    <string name="backup_restore">النسخ الاحتياطي</string>
+    <string name="backup">النسخ الاحتياطي</string>
     <string name="backup_restore_text">نسخ احتياطي أو استعادة الإعدادات وإجراءات التطبيق، يتم تشغيل النسخ الاحتياطي التلقائي عند كل تشغيل / إيقاف مؤقت / خروج من التطبيق أو بالضغط على زر \"تشغيل\" أدناه</string>
     <string name="export_settings">تصدير الإعدادات</string>
     <string name="import_settings">استيراد الإعدادات</string>
@@ -138,7 +138,6 @@
     <string name="live_nest_hold_delay">تأخير الانتظار (ملي ثانية)</string>
     <string name="live_nest_scale">مقياس العش</string>
     <string name="live_nest_pick_nest">اختر عشاً</string>
-    <string name="live_nest_grace_distance">مسافة السماحية (بكسل)</string>
     <string name="live_nest_snaps_to_finger_position">العش المباشر ينجذب لموضع الإصبع</string>
     <string name="live_nest_snaps_to_finger_position_desc">ما إذا كان يجب أن يكون مركز العش المباشر المرسوم في المكان الذي تم تفعيله فيه بالضبط بعد انتهاء المهلة، أم ينجذب لموضع النقطة المضيفة</string>
     <string name="live_nest_dim_main_nest">تعتيم العش الرئيسي أثناء الفتح</string>
@@ -209,7 +208,6 @@
     <string name="package_search">البحث عن الحزم</string>
     <string name="test_overlays">اختبار التراكبات</string>
     <string name="risky">مخاطرة</string>
-    <string name="accessibility_and_system">إمكانية الوصول والنظام</string>
     <string name="pin_code_warning_titls">تحذير: فقدان محتمل للبيانات</string>
     <string name="pin_code_warning_desc">لإعادة الضبط في حال نسيانه، ليس أمامك خيار سوى إعادة ضبط جميع إعدادات التطبيق عبر قائمة معلومات التطبيق في أندرويد</string>
     <string name="do_something">افعل شيئاً</string>
@@ -296,7 +294,7 @@
     <string name="transparency">الشفافية</string>
     <string name="save">حفظ</string>
     <string name="drawer_enter_key_action">إجراء مفتاح الإدخال في الدرج</string>
-    <string name="icon_pack">حزم الأيقونات</string>
+    <string name="icon_packs">حزم الأيقونات</string>
     <string name="icon_pack_help">حدد حزمة أيقونات لتخصيص أيقونات تطبيقاتك. قم بتثبيت حزم الأيقونات من المتجر أولاً.</string>
     <string name="use_original_app_icon">استخدام أيقونات التطبيقات الأصلية</string>
     <string name="status_bar">شريط الحالة</string>
@@ -385,7 +383,6 @@
     <string name="pick_a_nest">انتقِ عشًا</string>
     <string name="create_new_nest">إنشاء عش جديد</string>
     <string name="copy_id">نسخ المعرف</string>
-    <string name="edit_default_point_settings">تحرير إعدادات النقاط الافتراضية</string>
     <string name="open_burger_menu">فتح قائمة الهمبرغر</string>
     <string name="selected_text">محدد</string>
     <string name="unselected">غير محدد</string>

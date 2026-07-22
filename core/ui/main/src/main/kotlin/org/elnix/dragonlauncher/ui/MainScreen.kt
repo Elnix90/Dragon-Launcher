@@ -43,7 +43,6 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
 import org.elnix.dragonlauncher.base.model.serializables.Widget
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Settings.routeResId
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.isInsideActiveZone
 import org.elnix.dragonlauncher.ktx.toDp
@@ -280,7 +279,7 @@ public fun MainScreen(
 
                         LaunchedEffect(start) {
                             if (start != null) {
-                                delay(layer.showAfter.milliseconds)
+                                delay(layer.showAfterMs.milliseconds)
                                 showCustomDim = true
                             } else {
                                 showCustomDim = false
@@ -318,7 +317,7 @@ public fun MainScreen(
                                         onNavigate(it)
                                     },
                                     icon = R.drawable.settings,
-                                    text = { stringResource(routeResId(it)) }
+                                    text = { stringResource(it.resId) }
                                 )
                             }
 

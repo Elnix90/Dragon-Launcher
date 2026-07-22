@@ -78,15 +78,18 @@ public fun DrawScope.NestOverlay(
 
     val isSettingDisplay = drawParams.pointSettingsDisplay
 
+    val defaultNest = drawParams.pointsService.defaultNest.value
+    val interSectionShapes = nest.getInterSectionShapes(defaultNest)
+    val defaultShape = drawParams.pointsService.defaultIntersectionShape.value
+
     val selectedShapes = drawParams.pointsService.getSelectedShapeIds(nest.id)
     if (!drawParams.hideShapes) {
         repeat(2) { pass ->
-            nest.intersectionShapes.forEach { shape ->
-
+            interSectionShapes.forEach { shape ->
                 val showShape = depth > 1 ||
                         isSettingDisplay ||
-                        nest.showCurrentShape ?: drawParams.showAllShapesInNest ||
-                        (nest.showCurrentShape ?: drawParams.showShape && shape.id in selectedShapes)
+                        nest.getShowAllShapes(defaultNest,drawParams.showAllShapesInNest) ||
+                        (nest.getShowCurrentShape(defaultNest, drawParams.showShape) && shape.id in selectedShapes)
 
                 if (showShape) {
                     val path = NestIntersectionShapesPathCache[shape] ?: return@forEach
@@ -94,8 +97,9 @@ public fun DrawScope.NestOverlay(
                     this.IntersectionShape(
                         path = path,
                         shape = shape,
+                        defaultShape = defaultShape,
                         center = center,
-                        shapesColor = drawParams.extraColors.shapes,
+                        extraColors = drawParams.extraColors,
                         erase = pass == 0 && depth > 1,
                         eraseColor = drawParams.eraseColor
                     )
@@ -116,7 +120,7 @@ public fun DrawScope.NestOverlay(
                     Color.Magenta
                 )
             ),
-            radius = nest.cancelZone.dp.toPx(),
+            radius = nest.getCancelZone(defaultNest).dp.toPx(),
             center = center,
             style = Stroke(Stroke.HairlineWidth)
         )
@@ -135,10 +139,10 @@ public fun DrawScope.NestOverlay(
             when {
                 depth > 1 -> true
                 isSettingDisplay -> true
-                nest.showAllPointsInCurrentNest ?: drawParams.showAllPointsInCurrentNest -> true
+                nest.getShowAllPointsInCurrentNest(defaultNest, drawParams.showAllPointsInCurrentNest) -> true
                 else -> {
                     (drawParams.showCurrentPoint && (id in selectedPointsIds)) ||
-                            (nest.showAllPointsInCurrentShape ?: drawParams.showAllPointsInCurrentShape && (point.shapeId in selectedShapes))
+                            (nest.getShowAllPointsInCurrentNest(defaultNest,drawParams.showAllPointsInCurrentShape) && (point.shapeId in selectedShapes))
                 }
             }
         }
@@ -151,8 +155,8 @@ public fun DrawScope.NestOverlay(
             val endOffset: Offset = if (drawPoint.shapeId == null) {
                 center
             } else {
-                nest.intersectionShapes.firstOrNull { it.id == drawPoint.shapeId }?.let { shape ->
-                    center + shape.offset
+                interSectionShapes.firstOrNull { it.id == drawPoint.shapeId }?.let { shape ->
+                    center + shape.getOffset(defaultShape)
                 } ?: center
             }
 

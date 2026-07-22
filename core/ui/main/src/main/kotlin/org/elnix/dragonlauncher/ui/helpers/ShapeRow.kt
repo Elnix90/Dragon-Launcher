@@ -17,9 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
+import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 
@@ -28,16 +26,15 @@ public fun ShapeRow(
     selected: IconShape,
     modifier: Modifier = Modifier,
     title: String = stringResource(R.string.edit_icons_shape),
+    resetEnabled: Boolean,
     onReset: () -> Unit,
     onClick: () -> Unit
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(MaterialTheme.shapes.large)
-            .shapedClickable(onClick = onClick)
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+            .clickable(onClick = onClick)
+            .padding(10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -60,12 +57,7 @@ public fun ShapeRow(
             )
         }
 
-        DragonIconButton(
-            icon = R.drawable.reset,
-            colors = AppObjectsColors.iconButtonColors(),
-            contentDescription = stringResource(R.string.reset),
-            onClick = onReset
-        )
+        ResetIcon(resetEnabled, onReset)
     }
 }
 
@@ -97,10 +89,6 @@ public fun SmallShapeRow(
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        DragonIconButton(
-            icon = R.drawable.reset,
-            contentDescription = stringResource(R.string.reset),
-            onClick = onReset
-        )
+        ResetIcon(onReset = onReset)
     }
 }

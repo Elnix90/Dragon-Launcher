@@ -2,10 +2,8 @@ package org.elnix.dragonlauncher.ui.helpers.settings
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,9 +19,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.openUrl
-import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
 public fun ContributorItem(
@@ -38,12 +36,11 @@ public fun ContributorItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(MaterialTheme.shapes.large)
-            .background(MaterialTheme.colorScheme.surface)
             .combinedClickable(
-                onLongClick = { ctx.copyToClipboard(githubUrl) }
-            ) { ctx.openUrl(githubUrl) }
-            .padding(14.dp),
+                onLongClick = { ctx.copyToClipboard(githubUrl) },
+                onClick = { ctx.openUrl(githubUrl) }
+            )
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(14.dp)
     ) {
@@ -52,34 +49,21 @@ public fun ContributorItem(
             contentDescription = "$name profile picture",
             modifier = Modifier
                 .size(48.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant),
+                .clip(CircleShape),
             contentScale = ContentScale.Fit
         )
 
-        Column(
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = name,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            if (!description.isNullOrBlank()) {
-                Text(
-                    text = description,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
-            }
-        }
-
+        TextWithDescription(
+            text = name,
+            description = description,
+            modifier = Modifier
+                .weight(1f)
+        )
 
         Icon(
             painter = painterResource(R.drawable.open_in_new),
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary.copy(0.8f)
+            tint = MaterialTheme.colorScheme.primary
         )
     }
 }

@@ -42,15 +42,15 @@ import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
 import org.elnix.dragonlauncher.ui.dialogs.DrawerToolbarsOrderDialog
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
+import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
-import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSectionMode
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
+import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionMode
 import org.elnix.dragonlauncher.ui.dragon.settings.DrawerActionSelector
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
-import org.elnix.dragonlauncher.ui.dragon.settings.toIntRange
+import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
@@ -99,6 +99,7 @@ public fun DrawerTab(
         title = stringResource(R.string.app_drawer),
         onBack = onBack,
         helpText = stringResource(R.string.drawer_tab_text),
+        resetText = stringResource(R.string.reset_drawer),
         onReset = {
             scope.launch {
                 DrawerSettingsStore.resetAll(ctx)
@@ -107,16 +108,8 @@ public fun DrawerTab(
     ) {
 
         DragonSettingsGroup(R.string.workspaces) {
-            SettingsItem(
-                title = stringResource(R.string.workspaces),
-                icon = R.drawable.workspaces
-            ) { onNavigate(NavigationRoute.Workspace) }
-
-            SettingsItem(
-                title = stringResource(R.string.icon_pack),
-                icon = R.drawable.palette
-            ) { onNavigate(NavigationRoute.IconPack) }
-
+            RouteItem(NavigationRoute.Workspace) { onNavigate(it) }
+            RouteItem(NavigationRoute.IconPack) { onNavigate(it) }
         }
 
         DragonSettingsGroup(R.string.behavior) {
@@ -137,7 +130,6 @@ public fun DrawerTab(
             AnimatedVisibility(showRecentlyUsed) {
                 Setting(
                     setting = DrawerSettingsStore.recentlyUsedAppsCount,
-                    backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
                     modifier = Modifier
                         .settingsGroupHorizontalPadding()
                         .padding(bottom = 12.dp)
@@ -152,7 +144,7 @@ public fun DrawerTab(
             ) { showToolbarsOrderDialog = true }
 
             Setting(DrawerSettingsStore.showAppIconsInDrawer)
-            Setting(DrawerSettingsStore.showAppLabelInDrawer)
+            Setting(DrawerSettingsStore.showAppLabelsInDrawer)
 
             ExpandableSection(drawerCategorySettingsState) {
                 Setting(DrawerSettingsStore.useCategory)
@@ -161,7 +153,7 @@ public fun DrawerTab(
             }
 
             ExpandableSection(drawerNormalSettingsState) {
-                Setting(DrawerSettingsStore.iconSize)
+                Setting(DrawerSettingsStore.maxIconSize)
                 Setting(DrawerSettingsStore.iconsSpacingHorizontal)
                 Setting(DrawerSettingsStore.iconsSpacingVertical)
             }
@@ -192,10 +184,7 @@ public fun DrawerTab(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(stringResource(R.string.drawer_actions_width))
-                DragonIconButton(
-                    icon = R.drawable.reset,
-                    contentDescription = stringResource(R.string.reset)
-                ) {
+                ResetIcon {
                     scope.launch {
                         DrawerSettingsStore.leftDrawerWidth.reset(ctx)
                         DrawerSettingsStore.rightDrawerWidth.reset(ctx)
@@ -264,9 +253,10 @@ public fun DrawerTab(
 
                     SliderWithLabel(
                         label = stringResource(DrawerSettingsStore.leftDrawerWidth.title!!),
-                        value = leftWidth.value.toInt(),
+                        value = leftWidth,
                         modifier = Modifier.settingsGroupHorizontalPadding(),
-                        valueRange = DrawerSettingsStore.leftDrawerWidth.allowedRange.toIntRange(),
+                        valueRange = DrawerSettingsStore.leftDrawerWidth.allowedRange,
+                        resetEnabled = leftWidth != DrawerSettingsStore.leftDrawerWidth.default,
                         onReset = {
                             leftWidth = leftDrawerWidth
                             scope.launch {
@@ -281,14 +271,15 @@ public fun DrawerTab(
                             }
                         }
                     ) {
-                        leftWidth = it.dp
+                        leftWidth = it
                     }
 
                     SliderWithLabel(
                         label = stringResource(R.string.right_drawer_width),
-                        value = rightWidth.value.toInt(),
+                        value = rightWidth,
                         modifier = Modifier.settingsGroupHorizontalPadding(),
-                        valueRange = DrawerSettingsStore.rightDrawerWidth.allowedRange.toIntRange(),
+                        valueRange = DrawerSettingsStore.rightDrawerWidth.allowedRange,
+                        resetEnabled = rightWidth != DrawerSettingsStore.rightDrawerWidth.default,
                         onReset = {
                             rightWidth = rightDrawerWidth
                             scope.launch {
@@ -303,7 +294,7 @@ public fun DrawerTab(
                             }
                         }
                     ) {
-                        rightWidth = it.dp
+                        rightWidth = it
                     }
                 }
             }

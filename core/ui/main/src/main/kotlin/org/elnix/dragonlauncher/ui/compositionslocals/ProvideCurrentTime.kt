@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.ui.base.compositionslocals
+package org.elnix.dragonlauncher.ui.compositionslocals
 
 import android.os.Handler
 import android.os.Looper

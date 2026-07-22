@@ -3,7 +3,7 @@
 package org.elnix.dragonlauncher.ui
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -43,7 +43,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isSpecified
 import androidx.compose.ui.unit.sp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
@@ -96,8 +98,8 @@ import org.elnix.dragonlauncher.ui.components.IntersectionShape
 import org.elnix.dragonlauncher.ui.components.SelectedPointsTopBar
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
-import org.elnix.dragonlauncher.ui.dialogs.EditPointSheet
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
+import org.elnix.dragonlauncher.ui.dialogs.editors.EditPointSheet
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
@@ -118,7 +120,7 @@ public fun PointsSettingsScreen(
     drawerViewModel: DrawerViewModel = activityViewModel(),
     initializationViewModel: InitializationViewModel = activityViewModel(),
     onAdvSettings: () -> Unit,
-    onNestEdit: (nest: Int) -> Unit,
+    onNestEdit: () -> Unit,
     onBack: () -> Unit
 ) {
     val ctx = LocalContext.current
@@ -126,6 +128,8 @@ public fun PointsSettingsScreen(
 
     val pointsService = pointsViewModel.pointsService
     val defaultPoint by pointsService.defaultPoint.asState()
+    val defaultNest by pointsService.defaultNest.asState()
+    val defaultIntersectionShape by pointsService.defaultIntersectionShape.asState()
 
     val points by pointsService.points.collectAsState()
 
@@ -151,8 +155,8 @@ public fun PointsSettingsScreen(
     var closestHoveredTempOffset by remember { mutableStateOf<Offset?>(null) }
     var ableToLaunchHoverAction by remember { mutableStateOf(false) }
 
-    val hoveredPointRadialGradientProgress by animateFloatAsState(
-        targetValue = if (ableToLaunchHoverAction) Constants.Settings.HOVER_GRADIENT_RADIUS else 1f
+    val hoveredPointRadialGradientProgress by animateDpAsState(
+        targetValue = if (ableToLaunchHoverAction) Constants.Settings.HOVER_GRADIENT_RADIUS else Dp.Unspecified
     )
 
 
@@ -173,6 +177,7 @@ public fun PointsSettingsScreen(
     val nestsNavigationService = pointsViewModel.nestsNavigationService
     val nestId by nestsNavigationService.currentNestId.collectAsState()
     val currentNest = pointsService.findNestById(nestId)
+    val shapes = remember(nestId, currentNest, defaultNest) { currentNest.getInterSectionShapes(defaultNest) }
 
     /**
      * Computes the new offset for the selected point.
@@ -194,7 +199,6 @@ public fun PointsSettingsScreen(
         // Early return: if user don't want to snap to shapes, no need to compute them as it is a bit expensive
         if (!snapPoints && !forceSnap) return point.shapeId
 
-        val shapes = currentNest.intersectionShapes
         if (shapes.isEmpty()) return null
 
         val (minOffset, shapeId) = shapes
@@ -386,7 +390,7 @@ public fun PointsSettingsScreen(
                 onEditDefaultPoint = { showEditDefaultPoint = true },
                 onEditNest = {
                     pointsService.deselectAll()
-                    onNestEdit(nestId)
+                    onNestEdit()
                 },
                 onResetPoints = { showResetPointsAndNestsDialog = true },
                 onGamble = { number, snapToShapes ->
@@ -562,7 +566,7 @@ public fun PointsSettingsScreen(
                     containerColor = MaterialTheme.colorScheme.secondary
                 ) {
                     if (it) {
-                        R.drawable.pan_zoom
+                        R.drawable.drag_pan
                     } else {
                         R.drawable.pan_tool
                     }
@@ -657,23 +661,23 @@ public fun PointsSettingsScreen(
                         center = center,
                         nest = currentNest,
                         eraseColor = MaterialTheme.colorScheme.background,
-//                        preventBgErasing = true,
                         pointSettingsDisplay = true,
                         hideShapes = false
                     )
 
                     Canvas(Modifier.fillMaxSize()) {
                         val shape = temporarySelectedShape?.let { selectedShapeId ->
-                            currentNest.intersectionShapes.firstOrNull { it.id == selectedShapeId }
+                            shapes.firstOrNull { it.id == selectedShapeId }
                         } ?: return@Canvas
 
                         val path = NestIntersectionShapesPathCache[shape] ?: return@Canvas
 
                         this.IntersectionShape(
                             path = path,
-                            shape = shape.copy(borderStroke = -1f, glow = CustomGlow(color = primaryColor, radius = 30f)),
+                            shape = shape.copy(borderStroke = Dp.Unspecified, glow = CustomGlow(color = primaryColor, radius = 30.dp)),
+                            defaultShape = defaultIntersectionShape,
                             center = center,
-                            shapesColor = extraColors.shapes,
+                            extraColors = extraColors,
                             erase = false,
                             eraseColor = null
                         )
@@ -690,8 +694,8 @@ public fun PointsSettingsScreen(
                                 val endOffset: Offset = if (point.shapeId == null) {
                                     center
                                 } else {
-                                    currentNest.intersectionShapes.firstOrNull { it.id == point.shapeId }?.let {
-                                        center + it.offset
+                                    shapes.firstOrNull { it.id == point.shapeId }?.let {
+                                        center + it.getOffset(defaultIntersectionShape)
                                     } ?: center
                                 }
 
@@ -735,7 +739,7 @@ public fun PointsSettingsScreen(
                     }
 
                     // Glow that indicates the merge
-                    if (closestHoveredTempOffset != null && ableToLaunchHoverAction) {
+                    if (closestHoveredTempOffset != null && ableToLaunchHoverAction && hoveredPointRadialGradientProgress.isSpecified) {
                         GlowOverlay(
                             center = closestHoveredTempOffset!!,
                             glow = CustomGlow(
@@ -1017,6 +1021,7 @@ public fun PointsSettingsScreen(
         editPoint?.let {
             EditPointSheet(
                 point = editPoint,
+                defaultPoint = defaultPoint,
                 onDismiss = {
                     showEditDialog = null
                     iconsViewModel.reloadIcon(editPoint)
@@ -1108,6 +1113,7 @@ public fun PointsSettingsScreen(
     if (showEditDefaultPoint) {
         EditPointSheet(
             point = defaultPoint,
+            defaultPoint = defaultPoint,
             isDefaultEditing = true,
             onDismiss = {
                 showEditDefaultPoint = false
@@ -1144,7 +1150,7 @@ public fun PointsSettingsScreen(
     DebugZone(DebugSettingsStore.settingsDebugInfo) {
         Text("current nests id: $nestId")
         Text("Points number: ${points.size}")
-        Text("current Nest shapes number: ${currentNest.intersectionShapes.size}")
+        Text("current Nest shapes number: ${shapes.size}")
         val firstPoint = selectedPointsIds.firstOrNull()?.let {
             pointsService.findPointById(it)
         }

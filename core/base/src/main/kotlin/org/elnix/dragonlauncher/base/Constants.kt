@@ -1,5 +1,8 @@
 package org.elnix.dragonlauncher.base
 
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+
 public object Constants {
     public object PackageNameLists {
         public val systemLaunchers: List<String> = listOf(
@@ -152,7 +155,7 @@ public object Constants {
         public const val TOUCH_THRESHOLD_PX: Float = 100f
         public const val COLLIDING_SHAPE_THRESHOLD_PX: Float = 50f
         public const val HOVER_POINT_DURATION: Long = 500L
-        public const val HOVER_GRADIENT_RADIUS: Float = 75f
+        public val HOVER_GRADIENT_RADIUS: Dp = 75.dp
         public const val SNAP_STEP_DEG: Double = 15.0
 
     }

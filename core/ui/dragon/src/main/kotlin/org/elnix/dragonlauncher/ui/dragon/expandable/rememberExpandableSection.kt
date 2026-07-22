@@ -5,24 +5,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionMode
+import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionState
 
-
-public sealed class ExpandableSectionMode {
-    public data class ModalSheet(
-        val skipPartiallyExpanded: Boolean = false
-    ) : ExpandableSectionMode()
-
-    public data object Expandable : ExpandableSectionMode()
-}
-
-
-public data class ExpandableSectionState(
-    val isExpanded: () -> Boolean,
-    val enabled: () -> Boolean,
-    val title: String,
-    val mode: ExpandableSectionMode,
-    val toggle: () -> Unit,
-)
 
 @Composable
 public fun rememberExpandableSection(

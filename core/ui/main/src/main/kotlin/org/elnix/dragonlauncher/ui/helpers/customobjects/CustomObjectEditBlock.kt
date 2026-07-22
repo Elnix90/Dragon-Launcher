@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui.helpers.customobjects
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,10 +7,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
-import org.elnix.dragonlauncher.base.model.serializables.CustomObjectBlockProperties
+import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.CustomObjectBlockProperties
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ui.base.UiConstants.dragonSettingGroupPaddingValues
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -30,16 +29,14 @@ public fun EditCustomObjectBlock(
 
     var showSelectedShapePickerDialog by remember { mutableStateOf(false) }
 
-    DragonSettingsGroup(
-        title = title,
-        contentPadding = dragonSettingGroupPaddingValues
-    ) {
+    DragonSettingsGroup(title) {
         if (properties.allowSizeCustomization) {
             SliderWithLabel(
                 label = stringResource(R.string.size),
                 value = editObject.size,
-                valueRange = 0f..500f,
+                valueRange = 0.dp..500.dp,
                 decimals = 1,
+                resetEnabled = editObject.size != default.size,
                 onReset = { onEdit(editObject.copy(size = default.size)) },
                 onChange = { onEdit(editObject.copy(size = it)) }
             )
@@ -50,9 +47,9 @@ public fun EditCustomObjectBlock(
                 label = stringResource(R.string.stroke),
                 description = stringResource(R.string.stroke_width_explanation),
                 value = editObject.stroke,
-                valueRange = -1f..200f,
-                backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
+                valueRange = (-1).dp..200.dp,
                 decimals = 1,
+                resetEnabled = editObject.stroke != default.stroke,
                 onReset = { onEdit(editObject.copy(stroke = default.stroke)) },
                 onChange = { onEdit(editObject.copy(stroke = it)) }
             )
@@ -63,8 +60,8 @@ public fun EditCustomObjectBlock(
                 label = stringResource(R.string.rotation),
                 description = stringResource(R.string.minus_one_means_random),
                 value = editObject.rotation,
-                valueRange = -1..360, // -1 means random rotation
-                backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
+                valueRange = -1..360,
+                resetEnabled = editObject.rotation != default.rotation,
                 onReset = { onEdit(editObject.copy(rotation = default.rotation)) },
                 onChange = { onEdit(editObject.copy(rotation = it)) }
             )
@@ -76,7 +73,6 @@ public fun EditCustomObjectBlock(
                 description = null,
                 enabled = true,
                 currentColor = editObject.color ?: Color.Unspecified,
-                backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
                 onColorPicked = { onEdit(editObject.copy(color = it)) }
             )
         }
@@ -89,6 +85,7 @@ public fun EditCustomObjectBlock(
             ShapeRow(
                 selected = editObject.shape,
                 title = stringResource(R.string.edit_shape),
+                resetEnabled = editObject.shape != default.shape,
                 onReset = { onEdit(editObject.copy(shape = default.shape)) }
             ) { showSelectedShapePickerDialog = true }
         }

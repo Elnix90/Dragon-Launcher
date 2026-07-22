@@ -31,17 +31,15 @@ public fun PointPreviewCanvas(
 
     val height =
         when (editPoint.action) {
-            is Action.OpenCircleNest -> 100
-            else -> (editPoint.size ?: defaultPoint.size ?: Point.defaultSize) +
-                    (editPoint.innerPadding ?: defaultPoint.innerPadding ?: Point.defaultInnerPadding) * 2
-
+            is Action.OpenCircleNest -> 100.dp
+            else -> editPoint.getSize(defaultPoint) + editPoint.getInnerPadding(defaultPoint) * 2
         }
 
     val pointSize = editPoint.getSize(defaultPoint).px
 
     BoxWithConstraints(
         modifier = modifier
-            .height(height.dp)
+            .height(height)
     ) {
         val width = this.maxWidth
         val height = this.maxHeight

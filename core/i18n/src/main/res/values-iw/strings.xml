@@ -36,5 +36,5 @@
     <string name="version">גירסא</string>
     <string name="export_cancelled">ייצוא בוטל</string>
     <string name="import_cancelled">ייבוא בוטל</string>
-    <string name="backup_restore">גיבוי</string>
+    <string name="backup">גיבוי</string>
 </resources>

@@ -9,13 +9,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.contentColorFor
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -31,6 +31,9 @@ import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
+import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
+import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionMode
+import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionState
 import org.elnix.dragonlauncher.ui.dragon.text.AutoResizeableText
 
 
@@ -76,7 +79,8 @@ public fun ExpandableSection(
                     backgroundColor = Color.Transparent,
                     enabled = enabled
                 )
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -110,7 +114,7 @@ public fun ExpandableSection(
     if (state.mode is ExpandableSectionMode.ModalSheet && expanded) {
         DragonModalBottomSheet(
             onDismissRequest = { state.toggle() },
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = state.mode.skipPartiallyExpanded)
+            sheetState = rememberBottomSheetState(skipPartiallyExpanded = state.mode.skipPartiallyExpanded)
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(5.dp),

@@ -167,7 +167,7 @@
     <string name="transparency">透明性</string>
     <string name="save">セーブ</string>
     <string name="drawer_enter_key_action">引き出しの入力キーアクション</string>
-    <string name="icon_pack">アイコンパック</string>
+    <string name="icon_packs">アイコンパック</string>
     <string name="icon_pack_help">アプリのアイコンをカスタマイズするためにアイコンパックを選択してください。まずはストアからアイコンパックをインストールしてください。</string>
     <string name="use_original_app_icon">オリジナルのアプリのアイコンを使いましょう</string>
     <string name="status_bar">ステータスバー</string>
@@ -250,7 +250,6 @@
     <string name="pick_a_nest">巣を選ぶ</string>
     <string name="create_new_nest">新しい巣を作成する</string>
     <string name="copy_id">IDをコピーする</string>
-    <string name="edit_default_point_settings">デフォルトのポイント設定を編集する</string>
     <string name="open_burger_menu">バーガーメニューを開く</string>
     <string name="selected_text">選択済み</string>
     <string name="unselected">未選択</string>

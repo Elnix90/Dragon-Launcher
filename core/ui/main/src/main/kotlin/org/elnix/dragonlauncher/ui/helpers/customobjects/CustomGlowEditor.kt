@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -40,7 +39,6 @@ public fun ColumnScope.CustomGlowEditor(
                 description = null,
                 enabled = true,
                 currentColor = editGlow.glow?.color ?: default.glow?.color ?: Color.Unspecified,
-                backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
                 onColorPicked = { newColor ->
                     onEdit(
                         editGlow.copy(
@@ -55,9 +53,9 @@ public fun ColumnScope.CustomGlowEditor(
             SliderWithLabel(
                 label = stringResource(R.string.glow_radius),
                 value = editGlow.glow?.radius ?: default.glow?.radius!!,
-                valueRange = 0f..200f,
-                backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
+                valueRange = 0.dp..200.dp,
                 decimals = 1,
+                resetEnabled = editGlow.glow?.radius != null,
                 onReset = {
                     onEdit(editGlow.copy(glow = editGlow.glow?.copy(radius = default.glow!!.radius) ?: CustomGlow(default.glow!!.radius)))
                 }

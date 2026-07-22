@@ -3,13 +3,17 @@ package org.elnix.dragonlauncher.ui.dragon.dialogs
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,12 +32,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.material.shapes.toShape
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
+import org.elnix.dragonlauncher.ui.dragon.text.DialogDescription
+import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 public fun UserValidation(
     title: String? = null,
@@ -42,7 +50,8 @@ public fun UserValidation(
     cancelText: String = stringResource(R.string.cancel),
     doNotRemindMeAgain: (() -> Unit)? = null,
     titleIcon: Int = R.drawable.warning,
-    titleColor: Color = MaterialTheme.colorScheme.error,
+    titleColor: Color = MaterialTheme.colorScheme.onErrorContainer,
+    titleBgColor: Color = MaterialTheme.colorScheme.errorContainer,
     copy: Boolean = false,
     properties: DialogProperties = DialogProperties(),
     onDismiss: (() -> Unit)? = null,
@@ -62,6 +71,23 @@ public fun UserValidation(
             )
         },
         properties = properties,
+        icon = {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(
+                        color = titleBgColor,
+                        shape = MaterialShapes.Pill.toShape()
+                    )
+            ) {
+                Icon(
+                    painter = painterResource(titleIcon),
+                    contentDescription = null,
+                    tint = titleColor
+                )
+            }
+        },
         title = {
             if (title != null) {
                 Row(
@@ -70,26 +96,19 @@ public fun UserValidation(
                     modifier = Modifier
                         .padding(bottom = 4.dp)
                         .clip(MaterialTheme.shapes.large)
-                        .background(MaterialTheme.colorScheme.surface.copy(0.5f))
+                        .background(MaterialTheme.colorScheme.surface)
                         .padding(8.dp)
 
                 ) {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            color = titleColor
-                        )
-                    )
+                    DialogTitle(title)
                 }
             }
         },
         text = {
             if (message != null) {
                 Column {
-                    Text(
+                    DialogDescription(
                         text = message,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(top = 8.dp)
                     )
                     if (doNotRemindMeAgain != null || copy) {
@@ -133,13 +152,6 @@ public fun UserValidation(
                     }
                 }
             }
-        },
-        icon = {
-            Icon(
-                painter = painterResource(titleIcon),
-                contentDescription = "Warning",
-                tint = titleColor
-            )
         },
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 6.dp,

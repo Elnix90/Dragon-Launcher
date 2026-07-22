@@ -12,7 +12,7 @@ public fun Flow<ImmutableList<Application>>.withCustomLabels(
     appOverridesManager: AppOverridesManager
 ): Flow<ImmutableList<Application>> = channelFlow {
     this@withCustomLabels.collectLatest { items ->
-        appOverridesManager.appOverrideState.collectLatest { state ->
+        appOverridesManager.appOverridesState.flow.collectLatest { state ->
             send(items.map { item ->
                 val customLabel = state[item.key]?.customName
                 if (customLabel != null) {

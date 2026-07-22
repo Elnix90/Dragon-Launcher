@@ -49,7 +49,7 @@ public fun SettingsScaffold(
     horizontalPadding: Dp = 16.dp,
     applyPadding: Boolean = true,
     resetTitle: String = stringResource(R.string.reset_default_settings),
-    resetText: String? = stringResource(R.string.reset_settings_in_this_tab),
+    resetText: String?,
     listState: LazyListState? = null,
     topContent: @Composable (ColumnScope.() -> Unit)? = null,
     bottomContent: @Composable (ColumnScope.() -> Unit)? = null,
@@ -74,9 +74,11 @@ public fun SettingsScaffold(
 
     Scaffold(
         containerColor = Color.Transparent,
-        modifier = modifier.fillMaxSize().conditional(imePadding) {
-            imePadding()
-        },
+        modifier = modifier
+            .fillMaxSize()
+            .conditional(imePadding) {
+                imePadding()
+            },
         contentWindowInsets = WindowInsets.statusBarsIgnoringVisibility.add(WindowInsets(left = horizontalPadding, right = horizontalPadding)),
         bottomBar = {
 
@@ -144,7 +146,8 @@ public fun SettingsScaffold(
             message = helpText,
             validateText = stringResource(R.string.close),
             titleIcon = R.drawable.help,
-            titleColor = MaterialTheme.colorScheme.onSurface,
+            titleColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            titleBgColor = MaterialTheme.colorScheme.surfaceVariant,
         ) {
             showHelpDialog = false
         }

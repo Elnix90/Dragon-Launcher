@@ -68,17 +68,20 @@ private val defaultInitializationPoints: Points = mapOf(
     0 to Point(
         offset = Offset(0f, -200f),
         action = Action.OpenAppDrawer(),
-        id = 0
+        id = 0,
+        shapeId = 0
     ),
     1 to Point(
         offset = Offset(-150f, 100f),
         action = Action.NotificationShade,
-        id = 1
+        id = 1,
+        shapeId = 0
     ),
     2 to Point(
         offset = Offset(150f, 100f),
         action = Action.ControlPanel,
-        id = 2
+        id = 2,
+        shapeId = 0
     )
 )
 

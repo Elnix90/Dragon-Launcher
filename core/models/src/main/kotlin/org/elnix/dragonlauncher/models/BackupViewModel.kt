@@ -20,6 +20,7 @@ import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.ktx.hasUriReadWritePermission
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
+import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.toSettingsStoreList
 import javax.inject.Inject
@@ -66,12 +67,11 @@ public class BackupViewModel @Inject constructor(
             application.showToast("Auto-backup URI expired. Please reselect file.")
             return
         }
-        val selectedStores = BackupSettingsStore.backupStores.get(application)
-        if (selectedStores.isEmpty()) {
-            logW(BACKUP_TAG) { "No stores set to backup, skipping it" }
-            application.showToast("No stores set to backup, skipping it")
-            return
-        }
+        val selectedStores = BackupSettingsStore.backupStores
+            .get(application)
+            .takeIf { it.isNotEmpty() }
+            ?: backupableStores.mapTo(mutableSetOf()) { it.name }
+
         try {
             exportSettings(application, uri, selectedStores.toSettingsStoreList())
             logI(BACKUP_TAG) { "Auto-backup completed!" }

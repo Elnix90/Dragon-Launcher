@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.ui.helpers.swipe
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.clipPath
@@ -13,8 +12,6 @@ import androidx.compose.ui.unit.IntSize
 import org.elnix.dragonlauncher.base.cache.DrawPathCache
 import org.elnix.dragonlauncher.base.cache.DrawScopeText
 import org.elnix.dragonlauncher.base.cache.PointStableCache
-import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
-import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ktx.toPath
@@ -62,52 +59,18 @@ public fun DrawScope.PointBg(
     val iconSize = cached.iconSize
     val sizePx = cached.sizePx
 
-    val borderStroke: Float =
-        if (selected) {
-            point.borderStrokeSelected ?: defaultPoint.borderStrokeSelected ?: 8f
-        } else {
-            point.borderStroke ?: defaultPoint.borderStroke ?: 4f
-        }
 
-    val borderColor: Color =
-        if (selected) {
-            (point.borderColorSelected ?: defaultPoint.borderColorSelected)?.let { Color(it) }
-        } else {
-            point.borderColor?.let { Color(it) } ?: defaultPoint.borderColor?.let { Color(it) }
-        } ?: extraColors.shapes
+    val borderColor = point.getBorderColor(selected, defaultPoint, extraColors)
+    val backgroundColor =  point.getBackgroundColor(selected, defaultPoint, extraColors)
+    val glow = point.getGlow(selected, defaultPoint)
 
-    val backgroundColor: Color =
-        if (selected) {
-            (point.backgroundColorSelected ?: defaultPoint.backgroundColorSelected)?.let { Color(it) }
-        } else {
-            point.backgroundColor?.let { Color(it) } ?: defaultPoint.backgroundColor?.let { Color(it) }
-        } ?: Color.Transparent
-
-    val borderIconShape: IconShape = if (selected) {
-        point.borderShapeSelected ?: defaultPoint.borderShapeSelected
-    } else {
-        point.borderShape ?: defaultPoint.borderShape
-    } ?: IconShape.Circle
-
-
-    val glowRadius: Float = if (selected) {
-        point.glow?.radius ?: defaultPoint.glow?.radius ?: Point.defaultGlow.radius
-    } else {
-        point.glowSelected?.radius ?: defaultPoint.glowSelected?.radius ?: Point.defaultGlowSelected.radius
-    }
-
-    val glowColor: Color = if (selected) {
-        point.glow?.color ?: defaultPoint.glow?.color ?: Point.defaultGlowSelected.color
-    } else {
-        point.glowSelected?.color ?: defaultPoint.glowSelected?.color ?: Point.defaultGlowSelected.color
-    } ?: borderColor
-
+    val borderIconShape = point.getBorderShape(selected, defaultPoint)
     val borderShape = borderIconShape.resolveShape()
+    val borderStroke = point.getBorderStroke(selected, defaultPoint)
 
     val path = DrawPathCache.getOrCompute(Pair(borderIconShape, iconSize)) {
         toPath(borderShape, iconSize)
     }
-
 
     withTransform(
         {
@@ -121,11 +84,8 @@ public fun DrawScope.PointBg(
         drawPathGlow(
             path = path,
             color = borderColor,
-            lineStrokeWidth = borderStroke,
-            glow = CustomGlow(
-                radius = glowRadius,
-                color = glowColor,
-            ),
+            lineStrokeWidth = borderStroke.toPx(),
+            glow = glow,
             erase = true,
             eraseColor = drawParams.eraseColor
         )

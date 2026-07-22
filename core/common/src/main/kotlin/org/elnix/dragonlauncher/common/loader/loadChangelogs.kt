@@ -5,7 +5,7 @@ import io.github.elnix90.logging.TAG
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.elnix.dragonlauncher.base.model.serializables.Update
+import org.elnix.dragonlauncher.base.model.models.Update
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

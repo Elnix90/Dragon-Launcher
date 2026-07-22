@@ -1,12 +1,15 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
+import androidx.compose.ui.unit.dp
 import io.github.elnix90.annotations.SettingKey
 import io.github.elnix90.annotations.SettingsStore
 import io.github.elnix90.core.objects.BooleanSettingObject
+import io.github.elnix90.core.objects.DpSettingObject
 import io.github.elnix90.core.objects.FloatSettingObject
 import io.github.elnix90.core.objects.IntSettingObject
 import io.github.elnix90.core.objects.StringSettingObject
 import io.github.elnix90.core.objects.boolean
+import io.github.elnix90.core.objects.dp
 import io.github.elnix90.core.objects.float
 import io.github.elnix90.core.objects.int
 import io.github.elnix90.core.objects.string
@@ -28,16 +31,16 @@ public object HoldToActivateArcSettingsStore : MapSettingsStore() {
     public val longCLickSettingsDuration: IntSettingObject = int(
         title = R.string.long_click_settings_duration,
         description = R.string.long_click_settings_duration_desc,
-        default = 1000,
+        default = 2000,
         allowedRange = 0..5000
     )
 
     @SettingKey
-    public val holdToActivateSettingsTolerance: FloatSettingObject = float(
+    public val holdToActivateSettingsTolerance: DpSettingObject = dp(
         title = R.string.hold_to_activate_tolerance,
         description = R.string.hold_to_activate_tolerance_desc,
-        default = 24f,
-        allowedRange = 1f..200f
+        default = 10.dp,
+        allowedRange = 5.dp..200.dp
     )
 
     @SettingKey
@@ -45,11 +48,6 @@ public object HoldToActivateArcSettingsStore : MapSettingsStore() {
         title = R.string.show_tolerance_on_main_screen,
         description = R.string.show_tolerance_on_main_screen_desc,
         default = false,
-    )
-
-    @SettingKey
-    public val holdToActivateArcCustomObject: StringSettingObject = string(
-        default = "",
     )
 
     @SettingKey

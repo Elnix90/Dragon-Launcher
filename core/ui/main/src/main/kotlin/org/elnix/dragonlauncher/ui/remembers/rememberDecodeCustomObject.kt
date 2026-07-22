@@ -18,8 +18,11 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultLineCustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultStartCustomObject
 import org.elnix.dragonlauncher.ktx.isNotBlankJson
-import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
+import org.elnix.dragonlauncher.settings.stores.objects.AngleObjectSettingStore
+import org.elnix.dragonlauncher.settings.stores.objects.EndObjectSettingStore
+import org.elnix.dragonlauncher.settings.stores.objects.HoldToActivateObject
+import org.elnix.dragonlauncher.settings.stores.objects.LineObjectSettingStore
+import org.elnix.dragonlauncher.settings.stores.objects.StartObjectSettingStore
 
 @Composable
 private inline fun <reified T> rememberDecodedObject(
@@ -55,10 +58,10 @@ public object CustomObjectJson : DragonJson<CustomObject>() {
 
     @Composable
     public fun rememberAngleLineObjects(): AngleLineObjects {
-        val lineJson by AngleLineSettingsStore.lineJson.asState()
-        val angleLineJson by AngleLineSettingsStore.angleLineJson.asState()
-        val startLineJson by AngleLineSettingsStore.startLineJson.asState()
-        val endLineJson by AngleLineSettingsStore.endLineJson.asState()
+        val lineJson by LineObjectSettingStore.jsonSetting.asState()
+        val angleLineJson by AngleObjectSettingStore.jsonSetting.asState()
+        val startLineJson by StartObjectSettingStore.jsonSetting.asState()
+        val endLineJson by EndObjectSettingStore.jsonSetting.asState()
 
         val lineObject by rememberDecodedObject(
             jsonString = lineJson,
@@ -95,7 +98,7 @@ public object CustomObjectJson : DragonJson<CustomObject>() {
 
     @Composable
     public fun rememberHoldCustomObject(): State<CustomObject> {
-        val holdCustomObjectJson by HoldToActivateArcSettingsStore.holdToActivateArcCustomObject.asState()
+        val holdCustomObjectJson by HoldToActivateObject.jsonSetting.asState()
         return rememberDecodedObject(
             jsonString = holdCustomObjectJson,
             default = defaultHoldCustomObject,

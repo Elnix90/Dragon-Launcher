@@ -47,10 +47,12 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.base.model.serializables.HapticEntry
-import org.elnix.dragonlauncher.ktx.alphaMultiplier
+import org.elnix.dragonlauncher.base.model.serializables.HapticEntry.Companion.defaultHapticDuration
+import org.elnix.dragonlauncher.base.model.serializables.HapticEntry.Companion.defaultVibrationDuration
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.pasteClipboard
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -229,7 +231,7 @@ public fun HapticFeedbackEditor(
                         entries.add(
                             HapticEntry(
                                 isVibration = true,
-                                durationMs = 50
+                                durationMs = defaultHapticDuration
                             )
                         )
                     }
@@ -247,7 +249,7 @@ public fun HapticFeedbackEditor(
                         entries.add(
                             HapticEntry(
                                 isVibration = false,
-                                durationMs = 100
+                                durationMs = defaultVibrationDuration
                             )
                         )
                     }
@@ -297,7 +299,6 @@ public fun HapticFeedbackEditor(
                                         .scale(scale)
                                         .longPressDraggableHandle(),
                                     elevation = elevatedCardElevation(elevation),
-                                    colors = AppObjectsColors.cardColors(),
                                     shape = RoundedCornerShape(12.dp)
                                 ) {
                                     Column(
@@ -369,7 +370,7 @@ public fun HapticFeedbackEditor(
                                             label = stringResource(R.string.duration_ms),
                                             value = entry.durationMs,
                                             valueRange = 0..1000,
-                                            backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
+                                            resetEnabled = entry.resetEnabled,
                                             onReset = {
                                                 entries[index] = entry.copy(
                                                     durationMs = if (entry.isVibration) 50 else 100
@@ -448,7 +449,7 @@ public fun HapticFeedBackEditorButtonWithPlayTest(
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.padding(10.dp).fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(5.dp)
     ) {

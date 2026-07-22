@@ -164,7 +164,7 @@
     <string name="transparency">पारदर्शिता</string>
     <string name="save">सहेजें</string>
     <string name="drawer_enter_key_action">दराज कुंजी कार्रवाई दर्ज करें</string>
-    <string name="icon_pack">आइकन पैक</string>
+    <string name="icon_packs">आइकन पैक</string>
     <string name="icon_pack_help">अपने ऐप आइकन को कस्टमाइज़ करने के लिए एक आइकन पैक चुनें। पहले अपने स्टोर से आइकन पैक इंस्टॉल करें।</string>
     <string name="use_original_app_icon">मूल ऐप आइकन का उपयोग करें</string>
     <string name="status_bar">स्थिति पट्टी</string>
@@ -249,7 +249,6 @@
     <string name="pick_a_nest">एक घोंसला चुनें</string>
     <string name="create_new_nest">नया घोंसला बनाएं</string>
     <string name="copy_id">आईडी कॉपी करें</string>
-    <string name="edit_default_point_settings">डिफ़ॉल्ट बिंदु सेटिंग संपादित करें</string>
     <string name="open_burger_menu">बर्गर मेनू खोलें</string>
     <string name="selected_text">चयनित</string>
     <string name="unselected">इसे नहीं चुना जाता</string>
