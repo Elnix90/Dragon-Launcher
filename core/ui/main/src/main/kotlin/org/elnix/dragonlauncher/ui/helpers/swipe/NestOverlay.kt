@@ -84,7 +84,7 @@ public fun DrawScope.NestOverlay(
 
     val selectedShapes = drawParams.pointsService.getSelectedShapeIds(nest.id)
     if (!drawParams.hideShapes) {
-        repeat(2) { pass ->
+        repeat(if (depth == 1) 1 else 2) { pass ->
             interSectionShapes.forEach { shape ->
                 val showShape = depth > 1 ||
                         isSettingDisplay ||
