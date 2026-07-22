@@ -52,7 +52,9 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 private val AccentTeal = Color(0xFF00CEC9)
 private val AccentPurple = Color(0xFF6C5CE7)
@@ -64,14 +66,11 @@ private val BgBottom = Color(0xFF1A1A2E)
 
 
 @Composable
-public fun TimeLimitExceededScreen(
-    appName: String,
-    onDismiss: () -> Unit
-) {
+public fun TimeLimitExceededScreen(appName: String) {
     var showContent by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        delay(300)
+        delay(300.milliseconds)
         showContent = true
     }
 
@@ -152,7 +151,7 @@ public fun TimeLimitExceededScreen(
                 Spacer(40.dp)
 
                 Button(
-                    onClick = onDismiss,
+                    onClick = LocalNavigator.current::onBack,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(60.dp),

@@ -41,10 +41,9 @@ import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceUnavailableContent
 
 @Composable
 public fun WorkspaceDetailScreen(
+    workspaceId: String,
     drawerViewModel: DrawerViewModel = activityViewModel(),
     profilesViewModel: ProfilesViewModel = activityViewModel(),
-    workspaceId: String,
-    onBack: () -> Unit,
 ) {
     val workspaceManager = drawerViewModel.workspaceManager
     val workspaceState by workspaceManager.workspacesState.asState()
@@ -71,7 +70,6 @@ public fun WorkspaceDetailScreen(
     Box(Modifier.fillMaxSize()) {
         SettingsScaffold(
             title = "${stringResource(R.string.workspace)}: ${workspace.name}",
-            onBack = onBack,
             scrollableContent = false,
             helpText = stringResource(R.string.workspace_detail_help),
             onReset = { workspaceManager.resetWorkspace(workspaceId) },

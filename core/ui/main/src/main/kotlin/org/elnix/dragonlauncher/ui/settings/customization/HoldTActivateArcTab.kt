@@ -38,6 +38,7 @@ import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsSto
 import org.elnix.dragonlauncher.settings.stores.objects.HoldToActivateObject
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.HoldSettingsOrderSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -54,8 +55,9 @@ import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
-public fun HoldToActivateArcTab(onBack: () -> Unit) {
+public fun HoldToActivateArcTab() {
     val ctx = LocalContext.current
+    val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
     val holdCustomObject = LocalHoldCustomObject.current
 
@@ -83,7 +85,7 @@ public fun HoldToActivateArcTab(onBack: () -> Unit) {
                 if (mutableHoldObject != CustomObject.defaultHoldCustomObject) {
                     HoldToActivateObject.jsonSetting.set(ctx, CustomObjectJson.encode(mutableHoldObject))
                 }
-                onBack()
+                navigator.onBack()
             }
         },
         helpText = stringResource(R.string.hold_settings_help),

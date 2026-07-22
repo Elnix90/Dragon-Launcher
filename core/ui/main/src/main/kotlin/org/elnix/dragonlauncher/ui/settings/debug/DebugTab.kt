@@ -65,15 +65,9 @@ import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
-public fun DebugTab(
-    onNavigate: (NavigationRoute) -> Unit,
-    onBack: () -> Unit,
-    initializationViewModel: InitializationViewModel = activityViewModel()
-) {
+public fun DebugTab(initializationViewModel: InitializationViewModel = activityViewModel()) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
-
-//    var showEditAppOverrides by remember { mutableStateOf(false) }
 
     val storeResetSectionState = rememberExpandableSection(stringResource(R.string.store_reset))
 
@@ -82,7 +76,6 @@ public fun DebugTab(
 
     SettingsScaffold(
         title = stringResource(R.string.debug),
-        onBack = onBack,
         helpText = "Advanced developer tools and system overrides.",
         onReset = null,
         resetText = null
@@ -90,8 +83,8 @@ public fun DebugTab(
         DragonSettingsGroup { Setting(DebugSettingsStore.debugEnabled) }
 
         DragonSettingsGroup(R.string.more) {
-            RouteItem(NavigationRoute.Logs) { onNavigate(it) }
-            RouteItem(NavigationRoute.SettingsJson) { onNavigate(it) }
+            RouteItem(NavigationRoute.Logs)
+            RouteItem(NavigationRoute.SettingsJson)
         }
 
         DragonSettingsGroup(R.string.ui_flow_and_debug) {

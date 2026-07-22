@@ -102,7 +102,6 @@ public data class Nest(
     public inline fun getShowAllShapes(defaultNest: Nest, showAllShapesSetting: Boolean, defaultEditing: Boolean = false): Boolean =
         this.showAllShapes ?: defaultNest.showAllShapes.takeIfNot(defaultEditing) ?: showAllShapesSetting
 
-
     @Suppress("ConstPropertyName")
     public companion object {
 
@@ -130,6 +129,18 @@ public data class Nest(
             cancelZone = defaultCancelZone,
             intersectionShapes = defaultIntersectionShapes
         )
+
+        public inline val Nest.isDefault: Boolean
+            get() = this.cancelZone == null &&
+                    this.intersectionShapes == null &&
+                    this.name == null &&
+                    this.showAllPointsInCurrentShape == null &&
+                    this.showAllPointsInCurrentNest == null &&
+                    this.showCurrentShape == null &&
+                    this.showAllShapes == null
+
+        public inline val Nest.isNotDefault: Boolean
+            get() = !isDefault
 
         public object NestsJson : DragonJson<Set<Nest>>()
         public object DefaultNestJson : DragonJson<Nest>()

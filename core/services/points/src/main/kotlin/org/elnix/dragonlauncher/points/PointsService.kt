@@ -72,6 +72,7 @@ public interface PointsService {
     )
 
     public fun addNest(nestId: Int? = null): Int
+    public fun duplicateNest(nestId: Int): Int
     public fun removeNest(id: Int)
     public fun editNest(
         id: Int,
@@ -391,6 +392,16 @@ internal class PointsServiceImpl(
         val newId = if (nestId != null && nestId !in existingIds) nestId else existingIds.getNextId()
 
         applyChange { _nests.value[newId] = Nest(id = newId) }
+
+        return newId
+    }
+
+    override fun duplicateNest(nestId: Int): Int {
+        val nest = findNestById(nestId)
+        val existingIds = _nests.value.keys
+        val newId = if (nestId !in existingIds) nestId else existingIds.getNextId()
+
+        applyChange { _nests.value[newId] = nest.copy(id = newId) }
 
         return newId
     }

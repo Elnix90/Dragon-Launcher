@@ -36,7 +36,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-public fun BehaviorTab(onBack: () -> Unit) {
+public fun BehaviorTab() {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -66,7 +66,6 @@ public fun BehaviorTab(onBack: () -> Unit) {
 
     SettingsScaffold(
         title = stringResource(R.string.behavior),
-        onBack = onBack,
         helpText = stringResource(R.string.behavior_help),
         resetText = stringResource(R.string.reset_behavior_tab),
         onReset = {

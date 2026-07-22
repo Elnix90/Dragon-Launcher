@@ -58,6 +58,7 @@ import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.rememberHoldMenuEntries
 import org.elnix.dragonlauncher.ui.helpers.ChargingAnimation
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
@@ -71,12 +72,12 @@ import kotlin.time.Duration.Companion.milliseconds
 @SuppressLint("LocalContextResourcesRead")
 @Composable
 public fun MainScreen(
-    onNavigate: (NavigationRoute) -> Unit,
     onLaunchAction: (Point) -> Unit,
     widgetsViewModel: WidgetsViewModel = activityViewModel(),
-            pointsViewModel: PointsViewModel = activityViewModel()
+    pointsViewModel: PointsViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
+    val navigator = LocalNavigator.current
     val holdCustomObject = LocalHoldCustomObject.current
     val mainScreenLayers = LocalMainScreenLayers.current
 
@@ -157,12 +158,12 @@ public fun MainScreen(
 
                 holdMenuEntries.size == 1 -> {
                     val routeToGo = holdMenuEntries.first()
-                    onNavigate(routeToGo)
+                    navigator.navigate(routeToGo)
                 }
 
                 else -> {
                     // If list is empty, directly navigate to settings root. Never block the user out of settings
-                    onNavigate(NavigationRoute.PointsSettings(nestId))
+                    navigator.navigate(NavigationRoute.PointsSettings(nestId))
                 }
             }
 
@@ -314,7 +315,7 @@ public fun MainScreen(
                                 MoreOptions(
                                     onClick = {
                                         showDropDownMenuSettings = false
-                                        onNavigate(it)
+                                        navigator.navigate(it)
                                     },
                                     icon = R.drawable.settings,
                                     text = { stringResource(it.resId) }

@@ -76,10 +76,7 @@ import org.json.JSONObject
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-public fun ThemesTab(
-    onBack: () -> Unit,
-    backupViewModel: BackupViewModel = activityViewModel()
-) {
+public fun ThemesTab(backupViewModel: BackupViewModel = activityViewModel()) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -133,10 +130,8 @@ public fun ThemesTab(
     val settingsExportLauncher = rememberSettingsExportLauncher(themeSettingsStores)
 
 
-
     SettingsScaffold(
         title = stringResource(R.string.theme_selector),
-        onBack = onBack,
         helpText = stringResource(R.string.theme_selector_help),
         onReset = null,
         resetText = null

@@ -21,9 +21,8 @@ import java.io.File
 
 @Composable
 public fun LogsViewerScreen(
-    dragonLogViewModel: DragonLogViewModel = activityViewModel(),
     filename: String,
-    onBack: () -> Unit
+    dragonLogViewModel: DragonLogViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
 
@@ -39,7 +38,6 @@ public fun LogsViewerScreen(
 
     SettingsScaffold(
         title = filename,
-        onBack = onBack,
         helpText = helpText,
         onReset = null,
         resetText = null,

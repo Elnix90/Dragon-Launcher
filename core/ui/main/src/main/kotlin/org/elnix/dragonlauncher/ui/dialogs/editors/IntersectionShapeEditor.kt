@@ -3,8 +3,10 @@ package org.elnix.dragonlauncher.ui.dialogs.editors
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -21,20 +24,23 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.CustomObjectBlockProperties
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
+import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape.Companion.isNotDefault
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedBackEditorButtonWithPlayTest
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedbackEditor
+import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.EditValueTextField
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
-import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
+import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun IntersectionShapeEditor(
     shape: IntersectionShape,
@@ -51,68 +57,64 @@ public fun IntersectionShapeEditor(
     val iconShape = shape.getShape(defaultShape, isDefaultEditing)
     val rotation = shape.getRotation(defaultShape, isDefaultEditing)
     val stroke = shape.getBorderStroke(defaultShape, isDefaultEditing)
+    val pointsKeepTheirRelativePosition = shape.getPointsKeepTheirRelativePosition(defaultShape, isDefaultEditing)
 
     var showHapticFeedbackEditor by remember { mutableStateOf(false) }
 
-    CustomAlertDialog(
-        onDismissRequest = onDismiss,
-        modifier = Modifier.padding(24.dp),
-        imePadding = true,
-        scroll = false,
-        alignment = Alignment.Center,
-        confirmButton = {
-            ValidateCancelButtons(validateText = stringResource(R.string.ok), onConfirm = onDismiss)
-        },
-        dismissButton = null,
-        icon = null,
-        title = {
-            DialogTitle(
-                text = stringResource(if (!isDefaultEditing) R.string.edit_shape else R.string.edit_default_shape),
-                onReset = onReset
-            )
-        }
-    ) {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            DragonSettingsGroup(null) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(5.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = stringResource(R.string.shape_offset),
-                        style = MaterialTheme.typography.labelMedium
-                    )
+    DragonModalBottomSheet(onDismiss) {
+        DialogTitle(
+            text = stringResource(if (!isDefaultEditing) R.string.edit_shape else R.string.edit_default_shape),
+            resetEnabled = shape.isNotDefault,
+            onReset = onReset
+        )
 
-                    Row(
-                        modifier = Modifier.weight(1f),
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        ShapeOffsetTextField(
-                            title = "x",
-                            value = offset.x,
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            onChangeShape(
-                                shape.copy(
-                                    offset = offset.copy(x = it)
-                                )
-                            )
-                        }
+        Column(
+            modifier = Modifier
+                .heightIn(max = 600.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
+            DragonSettingsGroup(R.string.position) {
+                val offsetRange = -2000f..2000f
 
-                        ShapeOffsetTextField(
-                            title = "y",
-                            value = offset.y,
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            onChangeShape(
-                                shape.copy(
-                                    offset = offset.copy(y = it)
-                                )
+
+                SliderWithLabel(
+                    label = "X",
+                    value = offset.x,
+                    valueRange = offsetRange,
+                    resetEnabled = shape.offset?.x?.let { x -> x != (defaultShape.offset?.x ?: IntersectionShape.defaultOffset.x) } ?: false,
+                    onReset = {
+                        onChangeShape(
+                            shape.copy(
+                                offset = shape.offset?.copy(x = (defaultShape.offset?.x ?: IntersectionShape.defaultOffset.x))
                             )
-                        }
+                        )
                     }
+                ) {
+                    onChangeShape(
+                        shape.copy(
+                            offset = shape.offset?.copy(x = it) ?: Offset(x = it, y = (defaultShape.offset?.y ?: IntersectionShape.defaultOffset.y))
+                        )
+                    )
+                }
+
+                SliderWithLabel(
+                    label = "Y",
+                    value = offset.y,
+                    valueRange = offsetRange,
+                    resetEnabled = shape.offset?.y?.let { y -> y != (defaultShape.offset?.y ?: IntersectionShape.defaultOffset.y) } ?: false,
+                    onReset = {
+                        onChangeShape(
+                            shape.copy(
+                                offset = shape.offset?.copy(y = (defaultShape.offset?.y ?: IntersectionShape.defaultOffset.y))
+                            )
+                        )
+                    }
+                ) {
+                    onChangeShape(
+                        shape.copy(
+                            offset = shape.offset?.copy(y = it) ?: Offset(x = (defaultShape.offset?.x ?: IntersectionShape.defaultOffset.x), y = it)
+                        )
+                    )
                 }
 
                 SliderWithLabel(
@@ -175,7 +177,8 @@ public fun IntersectionShapeEditor(
                     allowMirrorCustomization = false,
                     allowAlignCustomization = false,
                     allowEraseBackgroundCustomization = false,
-                    allowRotationCustomization = false
+                    allowRotationCustomization = false,
+                    allowedShapes = IconShape.allowedNestShapes
                 ),
                 default = defaultCustomObject
             ) { newObject ->
@@ -192,17 +195,30 @@ public fun IntersectionShapeEditor(
             HapticFeedBackEditorButtonWithPlayTest(shape.haptic ?: IntersectionShape.defaultHapticFeedback) {
                 showHapticFeedbackEditor = true
             }
+
+            DragonSettingsGroup(R.string.advanced) {
+                SwitchRow(
+                    state = pointsKeepTheirRelativePosition,
+                    title = stringResource(R.string.points_keep_their_relative_position),
+                    description = stringResource(R.string.points_keep_their_relative_position_desc),
+                    resetEnabled = shape.pointsKeepTheirRelativePosition != null,
+                    onReset = {
+                        onChangeShape(shape.copy(pointsKeepTheirRelativePosition = null))
+                    }
+                ) {
+                    onChangeShape(shape.copy(pointsKeepTheirRelativePosition = it))
+                }
+            }
         }
     }
 
     if (showHapticFeedbackEditor) {
         HapticFeedbackEditor(
             initial = shape.haptic,
-            onDismiss = {
-                showHapticFeedbackEditor = false
-            }
+            onReset = { onChangeShape(shape.copy(haptic = null)) }
         ) {
             onChangeShape(shape.copy(haptic = it))
+            showHapticFeedbackEditor = false
         }
     }
 }

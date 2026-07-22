@@ -140,6 +140,7 @@ public data class CustomObject(
             val allowStrokeCustomization: Boolean = true,
             val allowColorCustomization: Boolean = true,
             val allowShapeCustomization: Boolean = true,
+            val allowedShapes: Set<IconShape> = IconShape.allShapes,
             val allowSizeCustomization: Boolean = true,
             val allowEraseBackgroundCustomization: Boolean = true,
             val allowAlignCustomization: Boolean = true,

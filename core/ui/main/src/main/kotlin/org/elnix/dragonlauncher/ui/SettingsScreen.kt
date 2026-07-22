@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -48,7 +49,6 @@ import org.elnix.dragonlauncher.common.utils.rememberVersionCode
 import org.elnix.dragonlauncher.common.utils.rememberVersionName
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.alphaMultiplier
-import org.elnix.dragonlauncher.ktx.openUrl
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
@@ -57,6 +57,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.components.BetaVersionType
 import org.elnix.dragonlauncher.ui.components.BetaVersionWarning
 import org.elnix.dragonlauncher.ui.components.LocalePickerSheet
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.helpers.settings.ContributorItem
 import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
@@ -68,12 +69,10 @@ import org.elnix.dragonlauncher.ui.warning.WarningReminder
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-public fun SettingsScreen(
-    onNavigate: (NavigationRoute) -> Unit,
-    onBack: () -> Unit,
-    pointsViewModel: PointsViewModel = activityViewModel()
-) {
+public fun SettingsScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
     val ctx = LocalContext.current
+    val uriHandler = LocalUriHandler.current
+    val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
 
     val versionCode by rememberVersionCode()
@@ -96,7 +95,7 @@ public fun SettingsScreen(
 
     SettingsScaffold(
         title = stringResource(R.string.settings),
-        onBack = onBack,
+        onBack = navigator::onBack,
         helpText = stringResource(R.string.settings),
         resetTitle = stringResource(R.string.reset_all_settings),
         resetText = stringResource(R.string.every_setting_will_return_to_its_default_state_this_cannot_be_undone_the_app_will_kill_itself),
@@ -116,13 +115,13 @@ public fun SettingsScreen(
         }
 
         DragonSettingsGroup(R.string.common_settings) {
-            RouteItem(NavigationRoute.Appearance) { onNavigate(it) }
-            RouteItem(NavigationRoute.Wallpaper) { onNavigate(it) }
-            RouteItem(NavigationRoute.Widgets(nestId)) { onNavigate(it) }
-            RouteItem(NavigationRoute.Behavior) { onNavigate(it) }
-            RouteItem(NavigationRoute.Backup) { onNavigate(it) }
-            RouteItem(NavigationRoute.DrawerSettings) { onNavigate(it) }
-            RouteItem(NavigationRoute.Wellbeing) { onNavigate(it) }
+            RouteItem(NavigationRoute.Appearance)
+            RouteItem(NavigationRoute.Wallpaper)
+            RouteItem(NavigationRoute.Widgets(nestId))
+            RouteItem(NavigationRoute.Behavior)
+            RouteItem(NavigationRoute.Backup)
+            RouteItem(NavigationRoute.DrawerSettings)
+            RouteItem(NavigationRoute.Wellbeing)
 
             val forceAppLanguageSelector by DebugSettingsStore.forceAppLanguageSelector.asState()
             SettingsItem(
@@ -139,8 +138,8 @@ public fun SettingsScreen(
         DragonSettingsGroup(R.string.advanced) {
             RouteItem(
                 route = NavigationRoute.Extensions,
-                onExternalClick = { ctx.openUrl(EXTENSIONS_GITHUB_REPO_LINK) }
-            ) { onNavigate(it) }
+                onExternalClick = { uriHandler.openUri(EXTENSIONS_GITHUB_REPO_LINK) }
+            )
 
             SettingsItem(
                 title = stringResource(R.string.android_settings),
@@ -155,7 +154,7 @@ public fun SettingsScreen(
             }
 
             AnimatedVisibility(isDebugModeEnabled) {
-                RouteItem(NavigationRoute.Debug) { onNavigate(it) }
+                RouteItem(NavigationRoute.Debug)
             }
         }
 
@@ -164,15 +163,15 @@ public fun SettingsScreen(
                 title = stringResource(R.string.changelogs),
                 icon = R.drawable.source_notes,
                 trailingIcon = R.drawable.open_in_new,
-                onExternalClick = { ctx.openUrl("$GITHUB_REPO_LINK/blob/main/fastlane/metadata/android/en-US/changelogs/${versionCode}.txt") }
-            ) { onNavigate(NavigationRoute.Changelogs) }
+                onExternalClick = { uriHandler.openUri("$GITHUB_REPO_LINK/blob/main/fastlane/metadata/android/en-US/changelogs/${versionCode}.txt") }
+            ) { navigator.navigate(NavigationRoute.Changelogs) }
 
             SettingsItem(
                 title = stringResource(R.string.source_code),
                 icon = R.drawable.code,
                 trailingIcon = R.drawable.open_in_new,
                 onLongClick = { ctx.copyToClipboard(GITHUB_REPO_LINK) }
-            ) { ctx.openUrl(GITHUB_REPO_LINK) }
+            ) { uriHandler.openUri(GITHUB_REPO_LINK) }
 
             SettingsItem(
                 title = stringResource(R.string.check_for_update),
@@ -180,7 +179,7 @@ public fun SettingsScreen(
                 icon = R.drawable.reset,
                 trailingIcon = R.drawable.open_in_new,
                 onLongClick = { ctx.copyToClipboard(GITHUB_REPO_RELEASES_LINK) }
-            ) { ctx.openUrl(GITHUB_REPO_RELEASES_LINK) }
+            ) { uriHandler.openUri(GITHUB_REPO_RELEASES_LINK) }
 
             SettingsItem(
                 title = stringResource(R.string.report_a_bug),
@@ -188,7 +187,7 @@ public fun SettingsScreen(
                 icon = R.drawable.report,
                 trailingIcon = R.drawable.open_in_new,
                 onLongClick = { ctx.copyToClipboard(GITHUB_REPO_ISSUES_LINK) }
-            ) { ctx.openUrl(GITHUB_REPO_ISSUES_LINK) }
+            ) { uriHandler.openUri(GITHUB_REPO_ISSUES_LINK) }
         }
 
 

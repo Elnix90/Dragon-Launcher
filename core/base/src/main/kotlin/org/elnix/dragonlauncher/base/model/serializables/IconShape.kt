@@ -1,12 +1,9 @@
 package org.elnix.dragonlauncher.base.model.serializables
 
 import androidx.compose.material3.MaterialShapes
-import androidx.graphics.shapes.CornerRounding
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.DragonJson
-import org.elnix.dragonlauncher.base.model.serializables.serializers.CornerRoundingSerializer
-import kotlin.reflect.KClass
 
 @Serializable
 @SerialName("IconShape")
@@ -196,19 +193,19 @@ public sealed class IconShape {
     @SerialName("Random")
     public object Random : IconShape()
 
-    @Serializable
-    @SerialName("Custom")
-    public data class Custom(
-        val numVertices: Int,
-        val radius: Float = 1f,
-        val centerX: Float = 0f,
-        val centerY: Float = 0f,
-        @Serializable(with = CornerRoundingSerializer::class)
-        val rounding: CornerRounding = CornerRounding.Unrounded,
-
-        @Serializable(with = CornerRoundingSerializer::class)
-        val perVertexRounding: List<CornerRounding>? = null
-    ) : IconShape()
+//    @Serializable
+//    @SerialName("Custom")
+//    public data class Custom(
+//        val numVertices: Int,
+//        val radius: Float = 1f,
+//        val centerX: Float = 0f,
+//        val centerY: Float = 0f,
+//        @Serializable(with = CornerRoundingSerializer::class)
+//        val rounding: CornerRounding = CornerRounding.Unrounded,
+//
+//        @Serializable(with = CornerRoundingSerializer::class)
+//        val perVertexRounding: List<CornerRounding>? = null
+//    ) : IconShape()
 
     override fun toString(): String = this.javaClass.simpleName
 
@@ -240,21 +237,23 @@ public sealed class IconShape {
          * This limitation is due to the heavy math required to compute the shape boundary.
          * The Ideal shape is the circle as we can very easily compute the intersection using simple math, but as soon as this becomes a more complicated shape, the result starts to be approximated.
          */
-        public val allowedNestShapes: Set<KClass< out IconShape>> = setOf(
-            Circle::class,
-            Triangle::class,
-            Square::class,
-            Pentagon::class,
-            Hexagon::class,
-            Cookie6Sided::class,
-            Heptagon::class,
-            Cookie7Sided::class,
-            Hexagon::class,
-            Octagon::class,
-            Cookie9Sided::class,
-            Decagon::class,
-            Cookie12Sided::class
-        )
+        public val allowedNestShapes: Set<IconShape> by lazy {
+            setOf(
+                Circle,
+                Triangle,
+                Square,
+                Pentagon,
+                Hexagon,
+                Cookie6Sided,
+                Heptagon,
+                Cookie7Sided,
+                Hexagon,
+                Octagon,
+                Cookie9Sided,
+                Decagon,
+                Cookie12Sided
+            )
+        }
 
 
         public val allShapes: Set<IconShape> by lazy {

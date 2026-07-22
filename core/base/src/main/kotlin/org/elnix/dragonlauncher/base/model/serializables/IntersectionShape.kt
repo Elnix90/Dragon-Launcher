@@ -49,7 +49,14 @@ public data class IntersectionShape(
     @Serializable(with = ColorSerializer::class)
     val color: Color? = null,
 
-    val glow: CustomGlow? = null
+    val glow: CustomGlow? = null,
+
+    /**
+     * Whether if when moved, the points offsets are adapted to match their original angle relative to this shape,
+     * or if they aren't taken into account and that the shape moves regardless of the points in it.
+     * When its `false` the points might rotate around their hidden underlying offset aas the shape moves
+     */
+    val pointsKeepTheirRelativePosition: Boolean? = null
 ) : Comparable<IntersectionShape> {
     // TODO
 //    public infix fun scaledBy(scale: Float): IntersectionShape = this.copy(scale = this.scale * scale)
@@ -84,8 +91,19 @@ public data class IntersectionShape(
     public inline fun getHapticFeedback(defaultIntersectionShape: IntersectionShape, defaultEditing: Boolean = false): CustomHapticFeedback =
         this.haptic ?: defaultIntersectionShape.haptic.takeIfNot(defaultEditing) ?: defaultHapticFeedback
 
+    public inline fun getPointsKeepTheirRelativePosition(defaultIntersectionShape: IntersectionShape, defaultEditing: Boolean = false): Boolean =
+        this.pointsKeepTheirRelativePosition
+            ?: defaultIntersectionShape.pointsKeepTheirRelativePosition.takeIfNot(defaultEditing)
+            ?: defaultPointsKeepTheirRelativePosition
 
     override fun compareTo(other: IntersectionShape): Int = id
+
+//    override fun equals(other: Any?): Boolean {
+//        if (other !is IntersectionShape) return false
+//        return super.equals(other.copy(id = this.id))
+//    }
+
+
 
     @Suppress("ConstPropertyName")
     public companion object {
@@ -106,6 +124,7 @@ public data class IntersectionShape(
         public val defaultOffset: Offset = Offset.Zero
         public val defaultShape: IconShape = IconShape.Circle
         public const val defaultEraseBackground: Boolean = true
+        public const val defaultPointsKeepTheirRelativePosition: Boolean = true
 
         public val defaultHapticFeedback: CustomHapticFeedback = CustomHapticFeedback.singleTap
 
@@ -125,6 +144,18 @@ public data class IntersectionShape(
         public inline fun IntersectionShape.highlightedIfSelected(selected: Boolean, color: Color): IntersectionShape =
             if (selected) this.copy(glow = CustomGlow(color = color, radius = 30.dp)) else this
 
+
+        public inline val IntersectionShape.isDefault: Boolean
+            get() = this.shape == null &&
+                    this.scale == null &&
+                    this.rotation == null &&
+                    this.offset == null &&
+                    this.haptic == null &&
+                    this.glow == null &&
+                    this.color == null &&
+                    this.pointsKeepTheirRelativePosition == null
+        public inline val IntersectionShape.isNotDefault: Boolean
+            get() = !isDefault
 
         public object DefaultShapeJson : DragonJson<IntersectionShape>()
     }

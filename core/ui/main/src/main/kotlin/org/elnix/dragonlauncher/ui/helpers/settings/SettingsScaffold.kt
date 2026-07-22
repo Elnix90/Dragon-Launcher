@@ -35,16 +35,17 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 public fun SettingsScaffold(
     title: String,
-    onBack: () -> Unit,
     helpText: String,
     onReset: (() -> Unit)?,
     modifier: Modifier = Modifier,
+    onBack: (() -> Unit)? = null,
     moreOptions: ((() -> Unit) -> List<MoreOptions>)? = null,
     horizontalPadding: Dp = 16.dp,
     applyPadding: Boolean = true,
@@ -68,9 +69,11 @@ public fun SettingsScaffold(
     ) { "Must provide exactly one of content or lazyContent, not both or neither" }
 
 
-    BackHandler {
-        onBack()
+    val navigator = LocalNavigator.current
+    val handleBack = onBack ?: {
+        navigator.onBack()
     }
+    BackHandler(onBack = handleBack)
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -101,7 +104,7 @@ public fun SettingsScaffold(
                         resetIcon = if (onReset != null) {
                             { showResetDialog = true }
                         } else null,
-                    ) { onBack() }
+                    ) { handleBack() }
                 }
             }
         }

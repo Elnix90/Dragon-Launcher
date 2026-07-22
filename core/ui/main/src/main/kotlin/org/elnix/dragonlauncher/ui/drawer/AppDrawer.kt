@@ -99,6 +99,7 @@ import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.helpers.wallpaper.WallpaperDim
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppDrawerSearch
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
@@ -114,11 +115,10 @@ public fun AppDrawerScreen(
     drawerViewModel: DrawerViewModel = activityViewModel(),
     profilesViewModel: ProfilesViewModel = activityViewModel(),
     onRegisterHomeHandler: ((() -> Unit)?) -> Unit,
-    onNavigate: (NavigationRoute) -> Unit,
-    onLaunchAction: (Action) -> Unit,
-    onClose: () -> Unit
+    onLaunchAction: (Action) -> Unit
 ) {
     val ctx = LocalContext.current
+    val navigator = LocalNavigator.current
 
     val autoLaunchSingleMatch by DrawerSettingsStore.autoOpenSingleMatch.asState()
     val disableAutoLaunchOnSpaceFirstChar by DrawerSettingsStore.disableAutoLaunchOnSpaceFirstChar.asState()
@@ -204,7 +204,7 @@ public fun AppDrawerScreen(
 
     fun launchDrawerAction(action: DrawerActions) {
         when (action) {
-            Close -> onClose()
+            Close -> navigator.onBack()
             ToggleKb -> toggleKeyboard()
             CloseKb -> closeKeyboard()
             OpenKb -> openKeyboard()
@@ -584,10 +584,11 @@ public fun AppDrawerScreen(
                                         modifier = Modifier.shapedClickable { showMoreMenu = true }
                                     )
 
+                                    val navigator = LocalNavigator.current
                                     BurgerListAction(
                                         actions = listOf(
                                             MoreOptions(
-                                                onClick = { onNavigate(NavigationRoute.DrawerSettings) },
+                                                onClick = { navigator.navigate(NavigationRoute.DrawerSettings) },
                                                 icon = R.drawable.ic_action_drawer,
                                                 text = { stringResource(R.string.drawer_settings) }
                                             )

@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -13,13 +14,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
+import org.elnix.dragonlauncher.ui.base.animation.Icon
+import org.elnix.dragonlauncher.ui.base.animation.rememberAnimatedIcon
 
 @Composable
 public fun NestNameEditor(
@@ -27,6 +30,9 @@ public fun NestNameEditor(
     modifier: Modifier = Modifier,
     onEditName: (String?) -> Unit
 ) {
+    val animatedIcon = rememberAnimatedIcon()
+    val focusManager = LocalFocusManager.current
+
     var tempCustomName by remember { mutableStateOf(nest.name ?: "") }
     TextField(
         value = tempCustomName,
@@ -47,11 +53,19 @@ public fun NestNameEditor(
             }
         },
         trailingIcon = {
-            ResetIcon(tempCustomName.isNotEmpty()) {
+            animatedIcon.Icon(defaultIcon = R.drawable.reset) {
                 tempCustomName = ""
                 onEditName(null)
+                animatedIcon.setSuccess()
+                focusManager.clearFocus()
             }
         },
+        keyboardActions = KeyboardActions(
+            onDone = {
+                animatedIcon.setSuccess()
+                focusManager.clearFocus()
+            }
+        ),
         colors = AppObjectsColors.outlinedTextFieldColors(removeBorder = true),
         singleLine = true,
         shape = CircleShape,

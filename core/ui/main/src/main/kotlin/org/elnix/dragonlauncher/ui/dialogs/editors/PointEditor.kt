@@ -12,9 +12,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -23,8 +26,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,9 +37,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
@@ -53,6 +58,8 @@ import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.animation.Icon
+import org.elnix.dragonlauncher.ui.base.animation.rememberAnimatedIcon
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.PointPreviewCanvas
 import org.elnix.dragonlauncher.ui.defaultHapticFeedback
@@ -68,7 +75,6 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
@@ -81,12 +87,12 @@ import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun EditPointSheet(
+public fun PointEditor(
     point: Point,
     defaultPoint: Point,
-    isDefaultEditing: Boolean = false,
+    isDefaultEditing: Boolean,
     iconsViewModel: IconsViewModel = activityViewModel(),
-    pointsViewModel: PointsViewModel = activityViewModel(), // Only use to get live nest stuff
+    pointsViewModel: PointsViewModel = activityViewModel(), // Only used to get live nest stuff
     onDismiss: () -> Unit,
     onConfirm: (Point) -> Unit
 ) {
@@ -132,23 +138,13 @@ public fun EditPointSheet(
             verticalArrangement = Arrangement.spacedBy(5.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(40.dp)
-                    .padding(12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                DialogTitle(stringResource(if (!isDefaultEditing) R.string.edit_point else R.string.edit_default_point))
-                ResetIcon {
-                    editPoint = Point(
-                        offset = editPoint.offset,
-                        nestId = editPoint.nestId,
-                        action = editPoint.action,
-                        id = editPoint.id
-                    )
-                }
+            DialogTitle(stringResource(if (!isDefaultEditing) R.string.edit_point else R.string.edit_default_point)) {
+                editPoint = Point(
+                    offset = editPoint.offset,
+                    nestId = editPoint.nestId,
+                    action = editPoint.action,
+                    id = editPoint.id
+                )
             }
 
             DragonColumnGroup {
@@ -173,6 +169,7 @@ public fun EditPointSheet(
 
                 PointPreviewCanvas(
                     editPoint = editPoint,
+                    backgroundColor = MaterialTheme.colorScheme.surface,
                     modifier = Modifier.fillMaxWidth(1f)
                 )
             }
@@ -184,11 +181,11 @@ public fun EditPointSheet(
             verticalArrangement = Arrangement.spacedBy(5.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .weight(1f)
+                .heightIn(max = 800.dp)
                 .verticalScroll(rememberScrollState())
         ) {
 
-            DragonColumnGroup {
+            DragonSettingsGroup(R.string.special_options) {
                 SingleSelectConnectedButtonRow(
                     entries = PointFeaturePanel.entries,
                     checked = {
@@ -205,6 +202,7 @@ public fun EditPointSheet(
                 }
 
                 AnimatedContent(expandedFeaturePanel) { expandedFeature ->
+                    @Suppress("UnusedExpression")
                     when (expandedFeature) {
                         PointFeaturePanel.LiveNest -> {
 
@@ -226,7 +224,8 @@ public fun EditPointSheet(
                                     if (isDefaultEditing) {
                                         TextWithDescription(
                                             text = stringResource(R.string.default_point_live_nest_defaults),
-                                            description = stringResource(R.string.default_point_live_nest_defaults_summary)
+                                            description = stringResource(R.string.default_point_live_nest_defaults_summary),
+                                            modifier = Modifier.padding(10.dp)
                                         )
                                     } else {
                                         Row(
@@ -630,14 +629,14 @@ public fun EditPointSheet(
                             }
                         }
 
-                        null -> {}
+                        null -> null
                     }
                 }
             }
 
 
             if (!isDefaultEditing) {
-                DragonColumnGroup {
+                DragonSettingsGroup(R.string.name_and_action) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -646,7 +645,9 @@ public fun EditPointSheet(
                     ) {
                         DragonButton(
                             onClick = { showEditActionDialog = true },
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .fillMaxWidth()
                         ) {
                             Text(
                                 text = label,
@@ -661,33 +662,44 @@ public fun EditPointSheet(
                                 tint = actionColor
                             )
                         }
-
-                        DragonButton(
-                            onClick = { showEditIconDialog = true },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(stringResource(R.string.edit_icon))
-                            Spacer(5.dp)
-                            Icon(
-                                painter = painterResource(R.drawable.edit_rounded),
-                                contentDescription = stringResource(R.string.edit_action)
-                            )
-                        }
                     }
 
-                    OutlinedTextField(
+
+                    val focusManager = LocalFocusManager.current
+                    val animatedIcon = rememberAnimatedIcon()
+
+                    TextField(
                         value = editPoint.customName ?: "",
                         onValueChange = {
-                            editPoint = editPoint.copy(customName = it)
+                            editPoint = editPoint.copy(customName = it.takeIf { it.isNotEmpty() })
                         },
-                        label = { Text(stringResource(R.string.custom_name)) },
-                        trailingIcon = {
-                            AnimatedVisibility(editPoint.customName != null) {
-                                ResetIcon { editPoint = editPoint.copy(customName = null) }
+                        placeholder = { Text(stringResource(R.string.custom_name)) },
+                        colors = AppObjectsColors.outlinedTextFieldColors(
+                            removeBorder = true
+                        ),
+                        shape = CircleShape,
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .fillMaxWidth(1f),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                                animatedIcon.setSuccess()
                             }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = AppObjectsColors.outlinedTextFieldColors()
+                        ),
+                        trailingIcon = {
+                            animatedIcon.Icon(
+                                defaultIcon = R.drawable.reset,
+                                enabled = editPoint.customName?.isNotEmpty() == true
+                            ) {
+                                focusManager.clearFocus()
+                                animatedIcon.setSuccess()
+                            }
+                        }
                     )
 
                     ColorPickerRow(
@@ -700,7 +712,7 @@ public fun EditPointSheet(
                 }
             }
 
-            DragonColumnGroup {
+            DragonSettingsGroup(R.string.size) {
                 SliderWithLabel(
                     label = stringResource(R.string.inner_padding),
                     value = editPoint.getInnerPadding(defaultPoint, isDefaultEditing),
@@ -719,7 +731,25 @@ public fun EditPointSheet(
             }
 
 
-            DragonColumnGroup {
+            DragonSettingsGroup(R.string.appearance) {
+
+                if (!isDefaultEditing) {
+                    DragonButton(
+                        onClick = { showEditIconDialog = true },
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Text(stringResource(R.string.edit_icon))
+                        Spacer(5.dp)
+                        Icon(
+                            painter = painterResource(R.drawable.edit_rounded),
+                            contentDescription = stringResource(R.string.edit_icon)
+                        )
+                    }
+                }
+
+
                 // Selected / Unselected Options Toggler
                 var selectedView by remember { mutableStateOf(SelectedUnselectedViewMode.Selected) }
 
@@ -729,7 +759,7 @@ public fun EditPointSheet(
                 ) { selectedView = it }
 
 
-                AnimatedContent(selectedView) { view ->
+                AnimatedContent(targetState = selectedView) { view ->
                     Column {
                         val selected = when (view) {
 
@@ -737,58 +767,94 @@ public fun EditPointSheet(
                             SelectedUnselectedViewMode.Selected -> true
                         }
 
-                        SliderWithLabel(
-                            label = stringResource(if (selected) R.string.border_stroke else R.string.border_stroke_selected),
-                            value = editPoint.getBorderStroke(selected, defaultPoint, isDefaultEditing),
-                            valueRange = 0.dp..50.dp,
-                            resetEnabled = editPoint.borderStroke != null,
-                            onReset = {
-                                editPoint = editPoint.copy(borderStroke = null)
+                        if (selected) {
+                            SliderWithLabel(
+                                label = stringResource(R.string.border_stroke_selected),
+                                value = editPoint.getBorderStroke(true, defaultPoint, isDefaultEditing),
+                                valueRange = 0.dp..50.dp,
+                                resetEnabled = editPoint.borderStrokeSelected != null,
+                                onReset = {
+                                    editPoint = editPoint.copy(borderStrokeSelected = null)
+                                }
+                            ) {
+                                editPoint = editPoint.copy(borderStrokeSelected = it)
                             }
-                        ) {
-                            editPoint = editPoint.copy(borderStroke = it)
-                        }
 
-                        ColorPickerRow(
-                            title = stringResource(if (selected) R.string.border_color else R.string.border_color_selected),
-                            description = null,
-                            currentColor = editPoint.getBorderColor(selected, defaultPoint, extraColors, isDefaultEditing)
-                        ) { selectedColor ->
-                            editPoint = editPoint.copy(borderColor = selectedColor)
-                        }
-
-                        ColorPickerRow(
-                            title = stringResource(if (selected) R.string.background_color else R.string.background_selected),
-                            description = null,
-                            currentColor = editPoint.getBackgroundColor(selected, defaultPoint, extraColors, isDefaultEditing)
-                        ) { selectedColor ->
-                            editPoint = editPoint.copy(
-                                backgroundColor = selectedColor.specifiedOrNull()
-                            )
-                        }
-
-                        ShapeRow(
-                            selected = editPoint.getBorderShape(selected, defaultPoint, isDefaultEditing),
-                            title = stringResource(R.string.edit_border_shape),
-                            resetEnabled = editPoint.borderShape != null,
-                            onReset = {
-                                editPoint = editPoint.copy(borderShape = null)
+                            ColorPickerRow(
+                                title = stringResource(R.string.border_color_selected),
+                                description = null,
+                                currentColor = editPoint.getBorderColor(true, defaultPoint, extraColors, isDefaultEditing)
+                            ) { selectedColor ->
+                                editPoint = editPoint.copy(borderColorSelected = selectedColor)
                             }
-                        ) { showShapePickerDialog = true }
+
+                            ColorPickerRow(
+                                title = stringResource(R.string.background_selected),
+                                description = null,
+                                currentColor = editPoint.getBackgroundColor(true, defaultPoint, extraColors, isDefaultEditing)
+                            ) { selectedColor ->
+                                editPoint = editPoint.copy(
+                                    backgroundColorSelected = selectedColor.specifiedOrNull()
+                                )
+                            }
+
+                            ShapeRow(
+                                selected = editPoint.getBorderShape(true, defaultPoint, isDefaultEditing),
+                                title = stringResource(R.string.edit_border_shape),
+                                resetEnabled = editPoint.borderShapeSelected != null,
+                                onReset = {
+                                    editPoint = editPoint.copy(borderShapeSelected = null)
+                                }
+                            ) { showShapePickerDialog = true }
+                        } else {
+                            SliderWithLabel(
+                                label = stringResource(R.string.border_stroke),
+                                value = editPoint.getBorderStroke(false, defaultPoint, isDefaultEditing),
+                                valueRange = 0.dp..50.dp,
+                                resetEnabled = editPoint.borderStroke != null,
+                                onReset = {
+                                    editPoint = editPoint.copy(borderStroke = null)
+                                }
+                            ) {
+                                editPoint = editPoint.copy(borderStroke = it)
+                            }
+
+                            ColorPickerRow(
+                                title = stringResource(R.string.border_color),
+                                description = null,
+                                currentColor = editPoint.getBorderColor(false, defaultPoint, extraColors, isDefaultEditing)
+                            ) { selectedColor ->
+                                editPoint = editPoint.copy(borderColor = selectedColor)
+                            }
+
+                            ColorPickerRow(
+                                title = stringResource(R.string.background_color),
+                                description = null,
+                                currentColor = editPoint.getBackgroundColor(false, defaultPoint, extraColors, isDefaultEditing)
+                            ) { selectedColor ->
+                                editPoint = editPoint.copy(
+                                    backgroundColor = selectedColor.specifiedOrNull()
+                                )
+                            }
+
+                            ShapeRow(
+                                selected = editPoint.getBorderShape(false, defaultPoint, isDefaultEditing),
+                                title = stringResource(R.string.edit_border_shape),
+                                resetEnabled = editPoint.borderShape != null,
+                                onReset = {
+                                    editPoint = editPoint.copy(borderShape = null)
+                                }
+                            ) { showShapePickerDialog = true }
+                        }
                     }
                 }
             }
 
-            // Can not edit the haptic feedback in default mode, has to go to nest settings to edit it circle by circle
-            DragonSettingsGroup(R.string.haptic_feedback) {
-                if (!isDefaultEditing) {
-                    HapticFeedBackEditorButtonWithPlayTest(
-                        customHapticFeedback = editPoint.haptic ?: defaultHapticFeedback(),
-                        onClick = { showHapticFeedbackEditor = true },
-                    )
-                } else {
-                    Text(stringResource(R.string.you_can_edit_haptic_feedback_on_nest_settings))
-                }
+            if (!isDefaultEditing) {
+                HapticFeedBackEditorButtonWithPlayTest(
+                    customHapticFeedback = editPoint.haptic ?: defaultHapticFeedback(),
+                    onClick = { showHapticFeedbackEditor = true },
+                )
             }
         }
 
@@ -855,14 +921,13 @@ public fun EditPointSheet(
     if (showHapticFeedbackEditor) {
         HapticFeedbackEditor(
             initial = editPoint.haptic,
-            onDismiss = { showHapticFeedbackEditor = false }
+            onReset = { editPoint = editPoint.copy(haptic = null) }
         ) { newHaptic ->
             editPoint = editPoint.copy(haptic = newHaptic)
             showHapticFeedbackEditor = false
         }
     }
 
-    /*    Cycle Actions  action editor    */
     if (editingCycleStageActionIndex != null) {
         val idx = editingCycleStageActionIndex!!
         AddPointDialog(
@@ -883,8 +948,15 @@ public fun EditPointSheet(
         val currentStages = editPoint.cycleActions ?: emptyList()
         HapticFeedbackEditor(
             initial = currentStages.getOrNull(idx)?.hapticFeedback,
-            onDismiss = { editingCycleStageHapticIndex = null }
+            onReset = {
+                if (idx < currentStages.size) {
+                    val updated = currentStages.toMutableList().also { it[idx] = it[idx].copy(hapticFeedback = null) }
+                    editPoint = editPoint.copy(cycleActions = updated)
+                }
+                editPoint = editPoint.copy(haptic = null)
+            }
         ) { newHaptic ->
+
             if (idx < currentStages.size) {
                 val updated = currentStages.toMutableList().also { it[idx] = it[idx].copy(hapticFeedback = newHaptic) }
                 editPoint = editPoint.copy(cycleActions = updated)
@@ -895,7 +967,6 @@ public fun EditPointSheet(
 
     if (showLiveNestNestPicker) {
         NestManagementDialog(
-            onDismissRequest = { showLiveNestNestPicker = false },
             title = stringResource(R.string.pick_a_nest),
             onSelect = { selectedNest ->
                 editPoint = editPoint.copy(
@@ -907,6 +978,6 @@ public fun EditPointSheet(
                 )
                 showLiveNestNestPicker = false
             }
-        )
+        ) { showLiveNestNestPicker = false }
     }
 }

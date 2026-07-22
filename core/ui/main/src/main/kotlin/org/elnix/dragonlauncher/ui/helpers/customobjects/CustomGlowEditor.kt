@@ -22,8 +22,12 @@ public fun ColumnScope.CustomGlowEditor(
     default: CustomObject
 ) {
     SwitchRow(
-        state = editGlow.glow != null,
-        title = stringResource(R.string.enable_glow)
+        state = (editGlow.glow ?: default.glow) != null,
+        title = stringResource(R.string.enable_glow),
+        resetEnabled = editGlow.glow != null,
+        onReset = {
+            onEdit(editGlow.copy(glow = default.glow))
+        }
     ) { enabled ->
         if (enabled) {
             onEdit(editGlow.copy(glow = default.glow))

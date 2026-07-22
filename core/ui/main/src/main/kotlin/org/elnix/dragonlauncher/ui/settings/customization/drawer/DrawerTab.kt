@@ -41,6 +41,7 @@ import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroupHorizontalPadding
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.DrawerToolbarsOrderDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
@@ -56,11 +57,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 
 @Composable
-public fun DrawerTab(
-    onBack: () -> Unit,
-    onNavigate: (NavigationRoute) -> Unit,
-    drawerViewModel: DrawerViewModel = activityViewModel()
-) {
+public fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -97,7 +94,6 @@ public fun DrawerTab(
 
     SettingsScaffold(
         title = stringResource(R.string.app_drawer),
-        onBack = onBack,
         helpText = stringResource(R.string.drawer_tab_text),
         resetText = stringResource(R.string.reset_drawer),
         onReset = {
@@ -108,8 +104,8 @@ public fun DrawerTab(
     ) {
 
         DragonSettingsGroup(R.string.workspaces) {
-            RouteItem(NavigationRoute.Workspace) { onNavigate(it) }
-            RouteItem(NavigationRoute.IconPack) { onNavigate(it) }
+            RouteItem(NavigationRoute.Workspace)
+            RouteItem(NavigationRoute.IconPack)
         }
 
         DragonSettingsGroup(R.string.behavior) {

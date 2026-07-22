@@ -2,6 +2,7 @@ package org.elnix.dragonlauncher.ui.dragon.text
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -14,6 +15,8 @@ import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 public fun DialogTitle(
     text: String,
     modifier: Modifier = Modifier,
+    trailingIcon: (@Composable RowScope.() -> Unit)? = null,
+    resetEnabled: Boolean = false,
     onReset: (() -> Unit)? = null
 ) {
     Row(
@@ -29,7 +32,11 @@ public fun DialogTitle(
         )
 
         if (onReset != null) {
-            ResetIcon(onReset = onReset)
+            ResetIcon(enabled = resetEnabled, onReset = onReset)
+        }
+
+        if (trailingIcon != null) {
+            trailingIcon()
         }
     }
 }

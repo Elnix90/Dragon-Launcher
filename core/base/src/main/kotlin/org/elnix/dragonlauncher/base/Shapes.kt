@@ -94,14 +94,14 @@ public fun IconShape.resolveShape(): Shape =
                 IconShape.PixelCircle -> MaterialShapes.PixelCircle
                 IconShape.Bun -> MaterialShapes.Bun
 
-                is IconShape.Custom -> RoundedPolygon(
-                    numVertices = this.numVertices,
-                    radius = this.radius,
-                    centerX = this.centerX,
-                    centerY = this.centerY,
-                    rounding = this.rounding,
-                    perVertexRounding = this.perVertexRounding
-                )
+//                is IconShape.Custom -> RoundedPolygon(
+//                    numVertices = this.numVertices,
+//                    radius = this.radius,
+//                    centerX = this.centerX,
+//                    centerY = this.centerY,
+//                    rounding = this.rounding,
+//                    perVertexRounding = this.perVertexRounding
+//                )
             }.toShape()
         }
     }

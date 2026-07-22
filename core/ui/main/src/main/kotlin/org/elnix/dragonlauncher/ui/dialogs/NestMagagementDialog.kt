@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.ui.dialogs
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -15,8 +16,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.DropdownMenuGroup
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,28 +42,33 @@ import androidx.compose.ui.unit.sp
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.models.PointsViewModel
-import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.NestNameEditor
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
-import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
+import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
+import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
+import org.elnix.dragonlauncher.ui.dragon.components.MoreIcon
+import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun NestManagementDialog(
     pointsViewModel: PointsViewModel = activityViewModel(),
-    onDismissRequest: () -> Unit,
     title: String? = null,
-    onSelect: ((Nest) -> Unit)? = null
+    onSelect: ((Nest) -> Unit)? = null,
+    onDismissRequest: () -> Unit
 ) {
     val pointsService = pointsViewModel.pointsService
+    val navigator = LocalNavigator.current
     val recomposeTrigger by pointsService.recomposeTrigger.asState()
     val nests by pointsService.nests.collectAsState()
 
@@ -73,63 +83,66 @@ public fun NestManagementDialog(
 
     val nestsList = remember(recomposeTrigger, nests.size) { nests.toList() }
 
-    CustomAlertDialog(
-        modifier = Modifier.padding(15.dp),
-        onDismissRequest = onDismissRequest,
-        alignment = Alignment.Center,
-        scroll = false,
-        title = {
-            Text(
-                text = title ?: stringResource(R.string.manage_nests),
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        },
-        text = {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(5.dp),
-                modifier = Modifier.heightIn(max = 700.dp),
-                state = listState
-            ) {
-                item {
-                    DragonButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = {
-                            hasClickedNewNest = pointsService.addNest()
-                        }
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.add_circle),
-                            contentDescription = stringResource(R.string.create_new_nest),
-                        )
-                        Spacer(15.dp)
-                        Text(stringResource(R.string.create_new_nest))
+    DragonModalBottomSheet(onDismissRequest) {
+        DialogTitle(
+            text = title ?: stringResource(R.string.manage_nests)
+        )
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(5.dp),
+            modifier = Modifier.heightIn(max = 700.dp),
+            state = listState
+        ) {
+            item {
+                DragonButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        hasClickedNewNest = pointsService.addNest()
                     }
-                }
-
-                items(nestsList) { (_, nest) ->
-                    NestManagementItem(
-                        nest = nest,
-                        modifier = Modifier.animateItem(),
-                        onSelect = { onSelect?.invoke(nest) }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.add_circle),
+                        contentDescription = stringResource(R.string.create_new_nest),
                     )
+                    Spacer(15.dp)
+                    Text(stringResource(R.string.create_new_nest))
                 }
             }
+
+            items(nestsList) { (_, nest) ->
+                NestManagementItem(
+                    nest = nest,
+                    modifier = Modifier.animateItem(),
+                    onEditName = { newName ->
+                        pointsService.editNest(nest.id) { old ->
+                            old.copy(name = newName)
+                        }
+                    },
+                    onDelete = { pointsService.removeNest(nest.id) },
+                    onDuplicate = { pointsService.duplicateNest(nest.id) },
+                    onEdit = { navigator.navigate(NavigationRoute.NestEdit) },
+                    onSelect = { onSelect?.invoke(nest) }
+                )
+            }
         }
-    )
+    }
 }
 
 
 @Composable
 private fun NestManagementItem(
-    pointsViewModel: PointsViewModel = activityViewModel(),
     nest: Nest,
     modifier: Modifier,
+    onEditName: (newName: String?) -> Unit,
+    onDelete: () -> Unit,
+    onDuplicate: () -> Unit,
+    onEdit: () -> Unit,
     onSelect: (() -> Unit)? = null
 ) {
     val ctx = LocalContext.current
-    val pointsService = pointsViewModel.pointsService
 
-    val bgColor = MaterialTheme.colorScheme.surfaceVariant
+    val bgColor = MaterialTheme.colorScheme.surface
+
+    var showPopup by remember { mutableStateOf(false) }
 
     Row(
         modifier = modifier
@@ -185,23 +198,70 @@ private fun NestManagementItem(
                 )
             }
 
-            NestNameEditor(nest) {
-                pointsService.editNest(nest.id) { old ->
-                    old.copy(name = it)
-                }
-            }
+            NestNameEditor(nest, onEditName = onEditName)
         }
 
+        Box {
+            MoreIcon { showPopup = true }
 
-        val enabled = nest.id != 0
+            DragonDropDownMenu(
+                expanded = showPopup,
+                onDismissRequest = { showPopup = false }
+            ) {
 
-        DragonIconButton(
-            icon = R.drawable.delete_forever,
-            contentDescription = stringResource(if (enabled) R.string.delete_nest else R.string.cannot_delete_nest_0),
-            colors = AppObjectsColors.cancelIconButtonColors(),
-            enabled = enabled
-        ) {
-            pointsService.removeNest(nest.id)
+                DropdownMenuGroup(MenuDefaults.groupShapes()) {
+                    DropdownMenuItem(
+                        text = {
+                            Text(stringResource(R.string.edit_nest))
+                        },
+                        onClick = {
+                            showPopup = false
+                            onEdit()
+                        },
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(R.drawable.edit_rounded),
+                                contentDescription = stringResource(R.string.edit_nest)
+                            )
+                        }
+                    )
+
+                    DropdownMenuItem(
+                        text = {
+                            Text(stringResource(R.string.duplicate))
+                        },
+                        onClick = {
+                            showPopup = false
+                            onDuplicate()
+                        },
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(R.drawable.copy),
+                                contentDescription = stringResource(R.string.duplicate)
+                            )
+                        }
+                    )
+
+                    if (nest.id != 0) {
+                        DropdownMenuItem(
+                            text = {
+                                Text(stringResource(R.string.delete_nest))
+                            },
+                            onClick = {
+                                showPopup = false
+                                onDelete()
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.delete_forever),
+                                    contentDescription = stringResource(R.string.delete_nest),
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        )
+                    }
+                }
+            }
         }
     }
 }

@@ -2,7 +2,6 @@
 
 package org.elnix.dragonlauncher.ui.settings.customization
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.VectorConverter
@@ -96,6 +95,7 @@ import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
@@ -119,13 +119,13 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun WidgetsTab(
-    onBack: () -> Unit,
     widgetsViewModel: WidgetsViewModel = activityViewModel(),
     onLaunchSystemWidgetPicker: (nestId: Int) -> Unit,
     onResetWidgetSize: (id: Int, widgetId: Int) -> Unit,
     onRemoveWidget: (Widget) -> Unit,
     initialNestId: Int = 0
 ) {
+    val navigator = LocalNavigator.current
     val cellSizeDp by UiSettingsStore.widgetsCellSizeDp.asState()
     val widgets by widgetsViewModel.widgets.asState()
     val scope = rememberCoroutineScope()
@@ -151,14 +151,6 @@ public fun WidgetsTab(
         if (selected == widget) selected = null
     }
 
-    val handleBack = {
-        if (selected != null) {
-            selected = null
-        } else {
-            onBack()
-        }
-    }
-    BackHandler(onBack = handleBack)
 
     val rowsScrollStates = List(2) { rememberScrollState() }
 
@@ -168,7 +160,13 @@ public fun WidgetsTab(
 
     SettingsScaffold(
         title = stringResource(R.string.widgets),
-        onBack = handleBack,
+        onBack = {
+            if (selected != null) {
+                selected = null
+            } else {
+                navigator.onBack()
+            }
+        },
         helpText = stringResource(R.string.widgets_tab_help),
         resetText = stringResource(R.string.reset_widgets_tab),
         onReset = { widgetsViewModel.resetAllWidgets() },
@@ -517,16 +515,16 @@ public fun WidgetsTab(
 
     if (showNestPickerDialog) {
         NestManagementDialog(
-            onDismissRequest = { showNestPickerDialog = false },
-            title = stringResource(R.string.pick_a_nest)
-        ) {
-            logD(WIDGET_TAG) { it.toString() }
-            nestId = it.id
-            selected = null
-            logD(WIDGET_TAG) { nestId.toString() }
+            title = stringResource(R.string.pick_a_nest),
+            onSelect = {
+                logD(WIDGET_TAG) { it.toString() }
+                nestId = it.id
+                selected = null
+                logD(WIDGET_TAG) { nestId.toString() }
 
-            showNestPickerDialog = false
-        }
+                showNestPickerDialog = false
+            }
+        ) { showNestPickerDialog = false }
     }
 }
 

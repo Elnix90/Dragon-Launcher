@@ -1084,4 +1084,11 @@
     <string name="log_level">Log level</string>
     <string name="accessibility">Accessibility</string>
     <string name="system">System</string>
+    <string name="position">Position</string>
+    <string name="name_and_action">Name and action</string>
+    <string name="copy_to_clipboard">Copy to clipboard</string>
+    <string name="import_from_clipboard">Import from clipboard</string>
+    <string name="points_keep_their_relative_position">Points keep their relative position</string>
+    <string name="points_keep_their_relative_position_desc">Whether if when moved, the points offsets are adapted to match their original angle relative to this shape,\nor if they aren\'t taken into account and that the shape moves regardless of the points in it.\nWhen false the points might rotate around their hidden underlying offset aas the shape moves</string>
+    <string name="duplicate">Duplicate</string>
 </resources>

@@ -15,20 +15,19 @@ import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.IconShape.Companion.allShapes
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.helpers.ShapePreview
-import kotlin.reflect.KClass
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun ShapePickerDialog(
     selected: IconShape,
-    allowedShapes: Set<KClass<out IconShape>>? = null,
+    allowedShapes: Set<IconShape>? = null,
     onDismiss: () -> Unit,
     onPicked: (IconShape) -> Unit
 ) {
 
     val filteredShapes = remember(allowedShapes) {
         if (allowedShapes != null) {
-            allShapes.filter { it::class in allowedShapes }
+            allShapes.filter { it in allowedShapes }
         } else allShapes.toList()
     }
 

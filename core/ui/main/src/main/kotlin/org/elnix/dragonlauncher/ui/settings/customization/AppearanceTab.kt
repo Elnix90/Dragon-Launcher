@@ -10,33 +10,29 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 
 @Composable
-public fun AppearanceTab(
-    onNavigate: (NavigationRoute) -> Unit,
-    onBack: () -> Unit
-) {
+public fun AppearanceTab() {
     SettingsScaffold(
         title = stringResource(NavigationRoute.Appearance.resId),
-        onBack = onBack,
         helpText = stringResource(R.string.appearance_tab_text),
         resetText = null,
         onReset = null
     ) {
         DragonSettingsGroup(R.string.colors_and_icons) {
-            RouteItem(NavigationRoute.Colors) { onNavigate(it) }
-            RouteItem(NavigationRoute.IconPack) { onNavigate(it) }
-            RouteItem(NavigationRoute.AppDisplay) { onNavigate(it) }
+            RouteItem(NavigationRoute.Colors)
+            RouteItem(NavigationRoute.IconPack)
+            RouteItem(NavigationRoute.AppDisplay)
         }
 
         DragonSettingsGroup(R.string.swipe_related) {
-            RouteItem(NavigationRoute.AngleLineEdit) { onNavigate(it) }
-            RouteItem(NavigationRoute.HoldToActivateArc) { onNavigate(it) }
-            RouteItem(NavigationRoute.MainScreenLayers) { onNavigate(it) }
+            RouteItem(NavigationRoute.AngleLineEdit)
+            RouteItem(NavigationRoute.HoldToActivateArc)
+            RouteItem(NavigationRoute.MainScreenLayers)
         }
 
         DragonSettingsGroup(R.string.other) {
-            RouteItem(NavigationRoute.StatusBar) { onNavigate(it) }
-            RouteItem(NavigationRoute.Theme, enabled = false) { onNavigate(it) }
-            RouteItem(NavigationRoute.Fonts) { onNavigate(it) }
+            RouteItem(NavigationRoute.StatusBar)
+            RouteItem(NavigationRoute.Theme, enabled = false)
+            RouteItem(NavigationRoute.Fonts)
         }
     }
 }

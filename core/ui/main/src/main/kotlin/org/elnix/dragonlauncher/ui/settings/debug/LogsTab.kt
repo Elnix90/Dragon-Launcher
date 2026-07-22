@@ -48,11 +48,11 @@ import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logLevelName
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.elnix.dragonlauncher.base.model.json
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.createShareableFile
@@ -73,6 +73,7 @@ import org.elnix.dragonlauncher.ui.base.animation.Icon
 import org.elnix.dragonlauncher.ui.base.animation.rememberAnimatedIcon
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -85,12 +86,9 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import java.io.File
 
 @Composable
-public fun LogsTab(
-    onNavigate: (NavigationRoute) -> Unit,
-    onBack: () -> Unit,
-    dragonLogViewModel: DragonLogViewModel = activityViewModel()
-) {
+public fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
     val ctx = LocalContext.current
+    val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
 
 
@@ -119,7 +117,7 @@ public fun LogsTab(
     var finalExtensionText = "No extensions installed"
     try {
         val registryContent = ctx.assets.open("extensions-registry.json").bufferedReader().readText()
-        val root = Json.parseToJsonElement(registryContent)
+        val root = json.parseToJsonElement(registryContent)
         val lines = ArrayList<String>()
 
         if (root is JsonArray) {
@@ -191,7 +189,6 @@ public fun LogsTab(
 
     SettingsScaffold(
         title = "Logs",
-        onBack = onBack,
         helpText = "Logs, need more info?",
         onReset = null,
         resetText = null,
@@ -318,7 +315,7 @@ public fun LogsTab(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    onNavigate(NavigationRoute.LogsViewer(file.name))
+                                    navigator.navigate(NavigationRoute.LogsViewer(file.name))
                                 }
                         ) {
                             Row(

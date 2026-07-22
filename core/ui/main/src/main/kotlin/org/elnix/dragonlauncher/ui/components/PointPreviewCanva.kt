@@ -2,11 +2,11 @@ package org.elnix.dragonlauncher.ui.components
 
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.cache.DrawScopeText
@@ -24,6 +24,7 @@ import org.elnix.dragonlauncher.ui.remembers.rememberCustomText
 public fun PointPreviewCanvas(
     editPoint: Point,
     modifier: Modifier = Modifier,
+    backgroundColor: Color,
     pointsViewModel: PointsViewModel = activityViewModel()
 ) {
     val pointsService = pointsViewModel.pointsService
@@ -39,7 +40,7 @@ public fun PointPreviewCanvas(
 
     BoxWithConstraints(
         modifier = modifier
-            .height(height)
+            .height(height + 40.dp)
     ) {
         val width = this.maxWidth
         val height = this.maxHeight
@@ -51,8 +52,8 @@ public fun PointPreviewCanvas(
         val selected = rememberCustomText(stringResource(R.string.selected_text),  pointSize)
         val unselected = rememberCustomText(stringResource(R.string.unselected),  pointSize)
 
-        val customTextsSelected: Pair<DrawScopeText?, DrawScopeText?> = selected to null
-        val customTextsUnselected: Pair<DrawScopeText?, DrawScopeText?> = unselected to null
+        val customTextsSelected: Pair<DrawScopeText, DrawScopeText?> = selected to null
+        val customTextsUnselected: Pair<DrawScopeText, DrawScopeText?> = unselected to null
 
         // Left action
         PointIcon(
@@ -60,7 +61,7 @@ public fun PointPreviewCanvas(
             point = editPoint,
             depth = Int.MAX_VALUE,
             center = Offset(leftX, centerY),
-            eraseColor = MaterialTheme.colorScheme.background,
+            eraseColor = backgroundColor,
             pointSettingsDisplay = false,
             customText = customTextsUnselected
         )
@@ -71,7 +72,7 @@ public fun PointPreviewCanvas(
             point = editPoint,
             depth = Int.MAX_VALUE,
             center = Offset(rightX, centerY),
-            eraseColor = MaterialTheme.colorScheme.background,
+            eraseColor = backgroundColor,
             pointSettingsDisplay = false,
             customText = customTextsSelected
         )

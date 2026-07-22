@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.enumsui.toggle.WorkspaceAction
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
@@ -28,6 +29,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.CreateOrEditWorkspaceDialog
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -36,11 +38,8 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 
 
 @Composable
-public fun WorkspaceListScreen(
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-    onOpenWorkspace: (String) -> Unit,
-    onBack: () -> Unit
-) {
+public fun WorkspaceListScreen(drawerViewModel: DrawerViewModel = activityViewModel()) {
+    val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
 
     val workspaceManager = drawerViewModel.workspaceManager
@@ -71,7 +70,6 @@ public fun WorkspaceListScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         SettingsScaffold(
             title = stringResource(R.string.workspaces),
-            onBack = onBack,
             helpText = stringResource(R.string.workspace_help),
             resetText = stringResource(R.string.reset_workspaces),
             onReset = {
@@ -105,7 +103,7 @@ public fun WorkspaceListScreen(
                             ),
                             onClick = {
                                 if (ws.type != WorkspaceType.Private) {
-                                    onOpenWorkspace(ws.id)
+                                    navigator.navigate(NavigationRoute.WorkspaceDetail(ws.id))
                                 }
                             },
                             onCheck = { scope.launch { workspaceManager.setWorkspaceEnabled(ws.id, it) } },

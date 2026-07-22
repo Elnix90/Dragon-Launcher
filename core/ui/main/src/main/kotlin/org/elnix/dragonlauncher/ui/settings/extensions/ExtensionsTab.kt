@@ -25,8 +25,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import org.elnix.dragonlauncher.base.model.serializables.ExtensionModel
-import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.common.loader.loadExtensionRegistry
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.ui.components.BetaVersionType
 import org.elnix.dragonlauncher.ui.components.BetaVersionWarning
@@ -37,9 +37,7 @@ import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
-public fun ExtensionsTab(
-    onBack: () -> Unit
-) {
+public fun ExtensionsTab() {
     val ctx = LocalContext.current
     var extensions by remember { mutableStateOf<List<ExtensionModel>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
@@ -52,7 +50,6 @@ public fun ExtensionsTab(
 
     SettingsScaffold(
         title = stringResource(R.string.extensions),
-        onBack = onBack,
         helpText = stringResource(R.string.extensions_description),
         onReset = null,
         resetText = null

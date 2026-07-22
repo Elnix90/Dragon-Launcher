@@ -46,6 +46,7 @@ import org.elnix.dragonlauncher.settings.stores.objects.LineObjectSettingStore
 import org.elnix.dragonlauncher.settings.stores.objects.StartObjectSettingStore
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.AngleLineObjectsOrderDialog
 import org.elnix.dragonlauncher.ui.dialogs.rememberLineObjectsOrder
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -62,8 +63,9 @@ import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberAngleLineO
 import org.elnix.dragonlauncher.ui.remembers.rememberSweepAngle
 
 @Composable
-public fun AngleLineTab(onBack: () -> Unit) {
+public fun AngleLineTab() {
     val ctx = LocalContext.current
+    val navigator = LocalNavigator.current
     val density = LocalDensity.current
     val extraColors = LocalExtraColors.current
     val scope = rememberCoroutineScope()
@@ -167,7 +169,7 @@ public fun AngleLineTab(onBack: () -> Unit) {
                 if (mutableEndObject != defaultEndCustomObject) {
                     EndObjectSettingStore.jsonSetting.set(ctx, CustomObjectJson.encode(mutableEndObject))
                 }
-                onBack()
+                navigator.onBack()
             }
         },
         helpText = stringResource(R.string.angle_line_help),

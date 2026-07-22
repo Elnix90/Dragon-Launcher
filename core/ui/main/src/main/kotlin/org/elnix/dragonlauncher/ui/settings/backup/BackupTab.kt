@@ -47,6 +47,7 @@ import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.toSettingsStoreList
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.ExportSettingsDialog
 import org.elnix.dragonlauncher.ui.dialogs.ImportSettingsDialog
 import org.elnix.dragonlauncher.ui.dialogs.SelectedActionRow
@@ -64,10 +65,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-public fun BackupTab(
-    onBack: () -> Unit,
-    backupViewModel: BackupViewModel = activityViewModel()
-) {
+public fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -117,7 +115,7 @@ public fun BackupTab(
 
     SettingsScaffold(
         title = ctx.getString(R.string.backup),
-        onBack = onBack,
+        onBack = LocalNavigator.current::onBack,
         helpText = ctx.getString(R.string.backup_restore_text),
         resetText = stringResource(R.string.reset_backup_tab),
         onReset = {

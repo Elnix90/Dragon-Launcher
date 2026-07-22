@@ -19,11 +19,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.settings.AllStores
 import io.github.elnix90.core.SettingsBackupManager
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.settings.AllStores
 import org.elnix.dragonlauncher.ui.dialogs.ExportSettingsDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -32,9 +32,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.json.JSONObject
 
 @Composable
-public fun SettingsDebugTab(
-    onBack: () -> Unit
-) {
+public fun SettingsDebugTab() {
     val scope = rememberCoroutineScope()
     val ctx = LocalContext.current
 
@@ -64,7 +62,6 @@ public fun SettingsDebugTab(
 
     SettingsScaffold(
         title = "Settings debug json",
-        onBack = onBack,
         helpText = "settings json",
         onReset = null,
         resetText = null,

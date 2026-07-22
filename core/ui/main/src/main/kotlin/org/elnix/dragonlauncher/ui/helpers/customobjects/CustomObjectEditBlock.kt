@@ -94,6 +94,10 @@ public fun EditCustomObjectBlock(
                 state = editObject.mirror,
                 title = stringResource(R.string.mirror),
                 description = stringResource(R.string.mirror_desc),
+                resetEnabled = editObject.mirror != default.mirror,
+                onReset = {
+                    onEdit(editObject.copy(mirror = default.mirror))
+                }
             ) {
                 onEdit(editObject.copy(mirror = it))
             }
@@ -102,7 +106,11 @@ public fun EditCustomObjectBlock(
             SwitchRow(
                 state = editObject.alignsWithDragAngle,
                 title = stringResource(R.string.align_with_angle),
-                description = stringResource(R.string.align_with_angle_desc)
+                description = stringResource(R.string.align_with_angle_desc),
+                resetEnabled = editObject.alignsWithDragAngle != default.alignsWithDragAngle,
+                onReset = {
+                    onEdit(editObject.copy(alignsWithDragAngle = default.alignsWithDragAngle))
+                }
             ) {
                 onEdit(editObject.copy(alignsWithDragAngle = it))
             }
@@ -110,7 +118,11 @@ public fun EditCustomObjectBlock(
         if (properties.allowEraseBackgroundCustomization) {
             SwitchRow(
                 state = editObject.eraseBackground,
-                title = stringResource(R.string.erase_background)
+                title = stringResource(R.string.erase_background),
+                resetEnabled = editObject.eraseBackground != default.eraseBackground,
+                onReset = {
+                    onEdit(editObject.copy(eraseBackground = default.eraseBackground))
+                }
             ) {
                 onEdit(editObject.copy(eraseBackground = it))
             }
@@ -120,7 +132,8 @@ public fun EditCustomObjectBlock(
     if (properties.allowShapeCustomization && showSelectedShapePickerDialog) {
         ShapePickerDialog(
             selected = editObject.shape,
-            onDismiss = { showSelectedShapePickerDialog = false }
+            onDismiss = { showSelectedShapePickerDialog = false },
+            allowedShapes = properties.allowedShapes
         ) {
             onEdit(editObject.copy(shape = it))
             showSelectedShapePickerDialog = false

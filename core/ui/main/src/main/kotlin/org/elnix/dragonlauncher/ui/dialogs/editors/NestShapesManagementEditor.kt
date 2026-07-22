@@ -2,12 +2,11 @@ package org.elnix.dragonlauncher.ui.dialogs.editors
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,7 +18,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.painterResource
@@ -38,12 +36,11 @@ import org.elnix.dragonlauncher.ui.components.IntersectionShapePreview
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
+import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
-import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
-import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun NestShapesManagementEditor(
     shapes: Set<IntersectionShape>,
@@ -51,12 +48,12 @@ public fun NestShapesManagementEditor(
     defaultNest: Nest,
     defaultShape: IntersectionShape,
     modifier: Modifier = Modifier,
-    onSave: (newShapes: Set<IntersectionShape>) -> Unit,
+    onUpdateShapes: (newShapes: Set<IntersectionShape>) -> Unit,
     onReset: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: (newShapes: Set<IntersectionShape>) -> Unit
 ) {
 
-    val shapesInternal: SnapshotStateMap<Int, IntersectionShape> = remember(shapes) { mutableStateMapOf() }
+    val shapesInternal: SnapshotStateMap<Int, IntersectionShape> = remember { mutableStateMapOf() }
     LaunchedEffect(defaultShape, shapes) {
         if (isDefaultEditing) {
             (defaultNest.intersectionShapes ?: Nest.defaultIntersectionShapes).forEach {
@@ -69,90 +66,75 @@ public fun NestShapesManagementEditor(
         }
     }
 
+    fun triggerUpdate() {
+        onUpdateShapes(shapesInternal.values.toSet())
+    }
     fun updateShape(id: Int, newShape: (IntersectionShape) -> IntersectionShape) {
         val oldShape = shapesInternal[id] ?: return
         shapesInternal[id] = newShape(oldShape)
+        triggerUpdate()
     }
 
     var showDetails by remember { mutableStateOf<Int?>(null) }
 
-
-    CustomAlertDialog(
-        onDismissRequest = onDismiss,
-        modifier = modifier
-            .padding(30.dp)
-            .heightIn(max = 600.dp),
-        imePadding = false,
-        scroll = false,
-        alignment = Alignment.Center,
-        confirmButton = {
-            ValidateCancelButtons(stringResource(R.string.ok)) {
-                onSave(shapesInternal.values.toSet())
-                onDismiss()
-            }
-        },
-        dismissButton = null,
-        icon = null,
-        title = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                DialogTitle(stringResource(R.string.shapes_management))
-                ResetIcon(onReset = onReset)
-            }
+    DragonModalBottomSheet(
+        onDismissRequest = {
+            onDismiss(shapesInternal.values.toSet())
         }
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            DragonButton(
-                onClick = {
-                    val newId = shapesInternal.keys.getNextId()
+        DialogTitle(stringResource(R.string.shapes_management), onReset = onReset)
 
-                    shapesInternal[newId] = IntersectionShape(
-                        id = newId,
-                        shape = IconShape.Circle,
-                        scale = 1.5f,
-                        offset = Offset.Zero
-                    )
-                },
-                modifier = modifier.selfAlignHorizontally()
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.add),
-                    contentDescription = null
+        Spacer(5.dp)
+
+        DragonButton(
+            onClick = {
+                val newId = shapesInternal.keys.getNextId()
+
+                shapesInternal[newId] = IntersectionShape(
+                    id = newId,
+                    shape = IconShape.Circle,
+                    scale = 1.5f,
+                    offset = Offset.Zero
                 )
-                Spacer(5.dp)
-                Text(stringResource(R.string.add_shape))
-            }
+//                triggerUpdate()
+            },
+            modifier = modifier.selfAlignHorizontally()
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.add),
+                contentDescription = null
+            )
+            Spacer(5.dp)
+            Text(stringResource(R.string.add_shape))
+        }
 
+        Spacer(10.dp)
 
-
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                items(shapesInternal.values.toList()) { shape ->
-                    ShapeItem(
-                        shape = shape,
-                        isDefaultEditing = isDefaultEditing,
-                        defaultShape = defaultShape,
-                        onChangeShape = { newShape ->
-                            updateShape(shape.id) { old ->
-                                old.copy(shape = newShape)
-                            }
-                        },
-                        onClone = {
-                            val id = shapesInternal.keys.getNextId()
-                            shapesInternal[id] = shape.copy(id = id)
-                        },
-                        onDelete = {
-                            shapesInternal.remove(shape.id)
-                        },
-                        oClick = { showDetails = shape.id }
-                    )
-                }
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(5.dp),
+            modifier = Modifier.heightIn(600.dp)
+        ) {
+            items(shapesInternal.values.toList()) { shape ->
+                ShapeItem(
+                    shape = shape,
+                    isDefaultEditing = isDefaultEditing,
+                    defaultShape = defaultShape,
+                    onChangeShape = { newShape ->
+                        updateShape(shape.id) { old ->
+                            old.copy(shape = newShape)
+                        }
+                    },
+                    onClone = {
+                        val id = shapesInternal.keys.getNextId()
+                        shapesInternal[id] = shape.copy(id = id)
+//                        triggerUpdate()
+                    },
+                    onDelete = {
+                        shapesInternal.remove(shape.id)
+//                        triggerUpdate()
+                    },
+                    oClick = { showDetails = shape.id }
+                )
             }
         }
     }

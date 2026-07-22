@@ -80,6 +80,7 @@ public fun PointIconEditor(
         preview = {
             PointPreviewCanvas(
                 editPoint = previewPoint,
+                backgroundColor = MaterialTheme.colorScheme.surface,
                 modifier = Modifier.weight(1f)
             )
         },

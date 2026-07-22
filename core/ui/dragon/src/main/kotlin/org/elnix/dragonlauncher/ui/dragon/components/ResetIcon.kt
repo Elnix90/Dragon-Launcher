@@ -12,3 +12,13 @@ public fun ResetIcon(enabled: Boolean = true, onReset: () -> Unit) {
         onClick = onReset
     )
 }
+
+@Composable
+public fun MoreIcon(enabled: Boolean = true, onReset: () -> Unit) {
+    DragonIconButton(
+        icon = R.drawable.more_vert,
+        contentDescription = R.string.more,
+        enabled = enabled,
+        onClick = onReset
+    )
+}

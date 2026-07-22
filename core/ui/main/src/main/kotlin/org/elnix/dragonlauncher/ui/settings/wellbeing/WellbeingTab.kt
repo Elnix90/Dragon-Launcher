@@ -58,7 +58,6 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
 public fun WellbeingTab(
-    onBack: () -> Unit,
     drawerViewModel: DrawerViewModel = activityViewModel(),
     appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
 ) {
@@ -88,7 +87,6 @@ public fun WellbeingTab(
 
     SettingsScaffold(
         title = stringResource(R.string.wellbeing),
-        onBack = onBack,
         helpText = stringResource(R.string.wellbeing_help),
         resetTitle = stringResource(R.string.reset_default_settings),
         resetText = stringResource(R.string.reset_settings_in_this_tab),

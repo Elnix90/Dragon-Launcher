@@ -65,6 +65,7 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -80,10 +81,9 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun ColorSelectorTab(
-    onBack: (() -> Unit)
-) {
+public fun ColorSelectorTab() {
     val ctx = LocalContext.current
+    val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
 
     val defaultTheme by ColorModesSettingsStore.defaultTheme.asStateNull()
@@ -107,7 +107,6 @@ public fun ColorSelectorTab(
 
     SettingsScaffold(
         title = stringResource(R.string.color_selector),
-        onBack = onBack,
         helpText = stringResource(R.string.color_selector_text),
         resetText = stringResource(R.string.reset_colors_tab),
         onReset = {
@@ -296,7 +295,7 @@ public fun ColorSelectorTab(
                                         scope.launch {
                                             ColorSettingsStore.backupColors(ctx)
                                             ColorModesSettingsStore.colorTestMode.set(ctx, true)
-                                            onBack()
+                                            navigator.onBack()
                                         }
                                     },
                                     icon = R.drawable.colorize,

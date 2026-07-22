@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,14 +29,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.registerReceiver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
-import androidx.navigation3.runtime.NavBackStack
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
@@ -59,7 +59,6 @@ import org.elnix.dragonlauncher.base.navigaton.isInTransparentScreen
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.findFragmentActivity
-import org.elnix.dragonlauncher.ktx.openUrl
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel
@@ -78,6 +77,8 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asMutableState
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
+import org.elnix.dragonlauncher.ui.compositionslocals.Navigator
 import org.elnix.dragonlauncher.ui.compositionslocals.ProvideGlobalCompositionLocals
 import org.elnix.dragonlauncher.ui.dialogs.AdbCommandInputDialog
 import org.elnix.dragonlauncher.ui.dialogs.BackupResultDialog
@@ -140,6 +141,7 @@ public fun MainAppUi(
     onRemoveWidget: (Widget) -> Unit
 ) {
     val ctx = LocalContext.current
+    val uriHandler = LocalUriHandler.current
     val pointsService = pointsViewModel.pointsService
 
     var showWidgetPicker by remember { mutableStateOf<Int?>(null) }
@@ -172,29 +174,47 @@ public fun MainAppUi(
         lockScreenViewModel.onEnterNewRoute(currentRoute)
     }
 
-    @SuppressLint("LocalContextGetResourceValueCall")
-    fun NavBackStack<NavKey>.navigate(screen: NavigationRoute) {
+//    @SuppressLint("LocalContextGetResourceValueCall")
+//    fun NavBackStack<NavKey>.navigate(screen: NavigationRoute) {
+//
+//
+//    }
+//
+//    fun popBackMainScreen() {
+//        backStack.clear()
+//        backStack.add(NavigationRoute.Main)
+//    }
 
-        fun go() {
-            remove(screen)
-            add(screen)
+
+    val navigator: Navigator = object : Navigator {
+        override fun navigate(screen: NavigationRoute) {
+            fun go() {
+                backStack.remove(screen)
+                backStack.add(screen)
+            }
+
+            if (!isLocked) {
+                go()
+                return
+            }
+
+            if (screen in NavigationRoute.settingsRoutes && lockMethod != LockMethod.None) {
+                lockScreenViewModel.requestUnlock(screen)
+            } else {
+                go()
+            }
         }
 
-        if (!isLocked) {
-            go()
-            return
+        override fun onBack() {
+            // Popping the only screen will crash so this avoids it
+            if (backStack.size == 1) return
+            backStack.removeLastOrNull()
         }
 
-        if (screen in NavigationRoute.settingsRoutes && lockMethod != LockMethod.None) {
-            lockScreenViewModel.requestUnlock(screen)
-        } else {
-            go()
+        override fun popBackMainScreen() {
+            backStack.clear()
+            backStack.add(NavigationRoute.Main)
         }
-    }
-
-    fun popBackMainScreen() {
-        backStack.clear()
-        backStack.add(NavigationRoute.Main)
     }
 
 
@@ -210,7 +230,7 @@ public fun MainAppUi(
                     val userHasExceededTimeout = appLifecycleViewModel.isTimeoutExceeded(offScreenUserTimeout)
 
                     if (!isInIgnoredRoutes && userHasExceededTimeout) {
-                        popBackMainScreen()
+                        navigator.popBackMainScreen()
                     }
                 }
 
@@ -233,7 +253,7 @@ public fun MainAppUi(
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == SHOW_LAUNCHER) {
                 val appName = intent.getStringExtra(EXTRA_APP_NAME)
-                backStack.navigate(NavigationRoute.TimerExceeded(appName ?: "Unknown App"))
+                navigator.navigate(NavigationRoute.TimerExceeded(appName ?: "Unknown App"))
             }
         }
     }
@@ -284,12 +304,12 @@ public fun MainAppUi(
                 action = action,
                 useAccessibilityInsteadOfContextToExpandActionPanel = useAccessibilityInsteadOfContextToExpandActionPanel,
                 onReselectFile = { showFilePicker = point },
-                onAppSettings = backStack::navigate,
+                onAppSettings = navigator::navigate,
                 onAppDrawer = { workspaceId ->
                     if (workspaceId != null) {
                         drawerViewModel.selectWorkspace(workspaceId)
                     }
-                    backStack.navigate(NavigationRoute.Drawer)
+                    navigator.navigate(NavigationRoute.Drawer)
                 }
             ) { command ->
                 if (command.command.trim().isEmpty()) {
@@ -328,7 +348,7 @@ public fun MainAppUi(
 
                 // Return to home screen in case of any home action in the settings
                 else -> {
-                    popBackMainScreen()
+                    navigator.popBackMainScreen()
                 }
             }
         }
@@ -345,250 +365,166 @@ public fun MainAppUi(
     val hasSeenWelcome by PrivateSettingsStore.hasSeenWelcome.asStateNull()
     LaunchedEffect(hasSeenWelcome) {
         if (hasSeenWelcome == false) {
-            backStack.navigate(NavigationRoute.Welcome)
+            navigator.navigate(NavigationRoute.Welcome)
         }
     }
 
     ProvideGlobalCompositionLocals {
-        Scaffold(
-            floatingActionButton = {
-                if (colorTestMode) {
-                    AnimatedFab(
-                        onClick = { backStack.navigate(NavigationRoute.Colors) },
-                        icon = R.drawable.edit_rounded
+        CompositionLocalProvider(
+            LocalNavigator provides navigator
+        ) {
+            Scaffold(
+                floatingActionButton = {
+                    if (colorTestMode) {
+                        AnimatedFab(
+                            onClick = { navigator.navigate(NavigationRoute.Colors) },
+                            icon = R.drawable.edit_rounded
+                        )
+                    }
+                },
+                topBar = { FpsCounterGraph() },
+                snackbarHost = { LauncherSnackbarHost() },
+                contentWindowInsets = WindowInsets(),
+                containerColor = containerColor
+            ) { paddingValues ->
+
+                NavDisplay(
+                    backStack = backStack,
+                    modifier = Modifier.padding(paddingValues),
+                    onBack = { navigator.onBack() },
+                    entryDecorators = listOf(
+                        rememberSaveableStateHolderNavEntryDecorator(),
+                        rememberViewModelStoreNavEntryDecorator()
+                    ),
+                    predictivePopTransitionSpec = {
+                        ContentTransform(
+                            fadeIn(),
+                            slideOutHorizontally { it },
+                        )
+                    },
+                    popTransitionSpec = {
+                        ContentTransform(
+                            fadeIn(),
+                            slideOutHorizontally { it },
+                        )
+                    },
+                    entryProvider = entryProvider {
+
+                        entry<NavigationRoute.Main>(metadata = verticalMetadata) { MainScreen(::launchAction) }
+                        entry<NavigationRoute.Drawer>(metadata = drawerMetadata) {
+                            AppDrawerScreen(
+                                onRegisterHomeHandler = { handler ->
+                                    drawerHomeHandler = handler
+                                },
+                                onLaunchAction = {
+                                    launchAction(it)
+                                    navigator.onBack()
+                                }
+                            )
+                        }
+
+                        entry<NavigationRoute.Welcome>(metadata = horizontalMetadata) { WelcomeScreen() }
+                        entry<NavigationRoute.PointsSettings>(metadata = horizontalMetadata) { PointsSettingsScreen() }
+                        entry<NavigationRoute.Settings>(metadata = horizontalMetadata) { SettingsScreen() }
+                        entry<NavigationRoute.Appearance>(metadata = horizontalMetadata) { AppearanceTab() }
+                        entry<NavigationRoute.Behavior>(metadata = horizontalMetadata) { BehaviorTab() }
+                        entry<NavigationRoute.DrawerSettings>(metadata = horizontalMetadata) { DrawerTab() }
+                        entry<NavigationRoute.Backup>(metadata = horizontalMetadata) { BackupTab() }
+                        entry<NavigationRoute.Changelogs>(metadata = horizontalMetadata) { ChangelogsScreen() }
+                        entry<NavigationRoute.Extensions>(metadata = horizontalMetadata) { ExtensionsTab() }
+                        entry<NavigationRoute.Wellbeing>(metadata = horizontalMetadata) { WellbeingTab() }
+                        entry<NavigationRoute.Debug>(metadata = horizontalMetadata) { DebugTab() }
+                        entry<NavigationRoute.Logs>(metadata = horizontalMetadata) { LogsTab() }
+                        entry<NavigationRoute.SettingsJson>(metadata = horizontalMetadata) { SettingsDebugTab() }
+
+                        // All the appearance sub-settings
+                        entry<NavigationRoute.AppDisplay>(metadata = horizontalMetadata) { AppDisplayTab() }
+                        entry<NavigationRoute.Colors>(metadata = horizontalMetadata) { ColorSelectorTab() }
+                        entry<NavigationRoute.Theme>(metadata = horizontalMetadata) { ThemesTab() }
+                        entry<NavigationRoute.Wallpaper>(metadata = horizontalMetadata) { WallpaperTab() }
+                        entry<NavigationRoute.IconPack>(metadata = horizontalMetadata) { IconPackTab(onBack = navigator::onBack) }
+                        entry<NavigationRoute.StatusBar>(metadata = horizontalMetadata) { StatusBarTab() }
+                        entry<NavigationRoute.Fonts>(metadata = horizontalMetadata) { FontTab() }
+                        entry<NavigationRoute.AngleLineEdit>(metadata = horizontalMetadata) { AngleLineTab() }
+                        entry<NavigationRoute.HoldToActivateArc>(metadata = horizontalMetadata) { HoldToActivateArcTab() }
+                        entry<NavigationRoute.MainScreenLayers>(metadata = horizontalMetadata) { MainScreeLayersTab() }
+
+                        entry<NavigationRoute.NestEdit>(metadata = horizontalMetadata) { NestEditScreen() }
+
+                        entry<NavigationRoute.LogsViewer>(metadata = horizontalMetadata) { key -> LogsViewerScreen(key.filename) }
+
+                        entry<NavigationRoute.Widgets>(metadata = horizontalMetadata) { key ->
+                            WidgetsTab(
+                                onLaunchSystemWidgetPicker = ::launchWidgetsPicker,
+                                onResetWidgetSize = onResetWidgetSize,
+                                onRemoveWidget = onRemoveWidget,
+                                initialNestId = key.nestId
+                            )
+                        }
+
+                        entry<NavigationRoute.Workspace>(metadata = horizontalMetadata) { WorkspaceListScreen() }
+                        entry<NavigationRoute.WorkspaceDetail>(metadata = horizontalMetadata) { key -> WorkspaceDetailScreen(key.workspaceId) }
+
+                        entry<NavigationRoute.TimerExceeded> { key -> TimeLimitExceededScreen(key.appName) }
+                    }
+                )
+
+
+
+                if (showFilePicker != null) {
+                    val currentPoint = showFilePicker!!
+
+                    FilePickerDialog(
+                        onDismiss = { showFilePicker = null },
+                        onFileSelected = { newAction ->
+                            val updatedPoint = currentPoint.copy(action = newAction)
+                            pointsService.editPoint(currentPoint.id) { updatedPoint }
+                            showFilePicker = null
+                            launchAction(updatedPoint)
+                        }
                     )
                 }
-            },
-            topBar = { FpsCounterGraph() },
-            snackbarHost = { LauncherSnackbarHost() },
-            contentWindowInsets = WindowInsets(),
-            containerColor = containerColor,
-        ) { paddingValues ->
 
-            NavDisplay(
-                backStack = backStack,
-                modifier = Modifier.padding(paddingValues),
-                onBack = { backStack.navigateBack() },
-                entryDecorators = listOf(
-                    rememberSaveableStateHolderNavEntryDecorator(),
-                    rememberViewModelStoreNavEntryDecorator()
-                ),
-                predictivePopTransitionSpec = {
-                    ContentTransform(
-                        fadeIn(),
-                        slideOutHorizontally { it },
-                    )
-                },
-                popTransitionSpec = {
-                    ContentTransform(
-                        fadeIn(),
-                        slideOutHorizontally { it },
-                    )
-                },
-                entryProvider = entryProvider {
 
-                    entry<NavigationRoute.Main>(metadata = verticalMetadata) {
-                        MainScreen(backStack::navigate, ::launchAction)
-                    }
+                if (showWidgetPicker != null) {
+                    val nestToBind = showWidgetPicker!!
+                    WidgetPickerDialog(
+                        onBindCustomWidget = { id, info ->
+                            onBindCustomWidget(id, info, nestToBind)
+                        }
+                    ) { showWidgetPicker = null }
+                }
 
-                    entry<NavigationRoute.Drawer>(metadata = drawerMetadata) {
-                        AppDrawerScreen(
-                            onRegisterHomeHandler = { handler ->
-                                drawerHomeHandler = handler
-                            },
-                            onLaunchAction = {
-                                launchAction(it)
-                                backStack.navigateBack()
-                            },
-                            onNavigate = backStack::navigate,
-                            onClose = backStack::navigateBack
-                        )
-                    }
 
-                    entry<NavigationRoute.Welcome>(metadata = horizontalMetadata) {
-                        WelcomeScreen(
-                            onEnterSettings = {
-                                popBackMainScreen()
-                                backStack.navigate(NavigationRoute.PointsSettings(0))
-                            },
-                            onEnterApp = ::popBackMainScreen
-                        )
-                    }
-
-                    entry<NavigationRoute.PointsSettings>(metadata = horizontalMetadata) {
-                        PointsSettingsScreen(
-                            onAdvSettings = {
-                                pointsService.persist()
-                                backStack.navigate(NavigationRoute.Settings)
-                            },
-                            onNestEdit = {
-                                pointsService.persist()
-                                backStack.navigate(NavigationRoute.NestEdit)
-                            },
-                            onBack = {
-                                pointsService.persist()
-                                backStack.navigateBack()
-                            }
-                        )
-                    }
-
-                    entry<NavigationRoute.Settings>(metadata = horizontalMetadata) {
-                        SettingsScreen(
-                            backStack::navigate,
-                            backStack::navigateBack
-                        )
-                    }
-                    entry<NavigationRoute.Appearance>(metadata = horizontalMetadata) {
-                        AppearanceTab(
-                            backStack::navigate,
-                            backStack::navigateBack
-                        )
-                    }
-                    entry<NavigationRoute.Behavior>(metadata = horizontalMetadata) { BehaviorTab(backStack::navigateBack) }
-                    entry<NavigationRoute.DrawerSettings>(metadata = horizontalMetadata) {
-                        DrawerTab(
-                            onBack = backStack::navigateBack,
-                            onNavigate = backStack::navigate
-                        )
-                    }
-                    entry<NavigationRoute.Backup>(metadata = horizontalMetadata) { BackupTab(onBack = backStack::navigateBack) }
-                    entry<NavigationRoute.Changelogs>(metadata = horizontalMetadata) { ChangelogsScreen(onBack = backStack::navigateBack) }
-                    entry<NavigationRoute.Extensions>(metadata = horizontalMetadata) { ExtensionsTab(onBack = backStack::navigateBack) }
-                    entry<NavigationRoute.Wellbeing>(metadata = horizontalMetadata) { WellbeingTab(onBack = backStack::navigateBack) }
-                    entry<NavigationRoute.Debug>(metadata = horizontalMetadata) {
-                        DebugTab(
-                            onNavigate = backStack::navigate,
-                            onBack = backStack::navigateBack
-                        )
-                    }
-                    entry<NavigationRoute.Logs>(metadata = horizontalMetadata) {
-                        LogsTab(
-                            onNavigate = backStack::navigate,
-                            onBack = backStack::navigateBack
-                        )
-                    }
-                    entry<NavigationRoute.SettingsJson>(metadata = horizontalMetadata) { SettingsDebugTab(onBack = backStack::navigateBack) }
-
-                    // All the appearance sub-settings
-                    entry<NavigationRoute.AppDisplay>(metadata = horizontalMetadata) { AppDisplayTab(onBack = backStack::navigateBack) }
-                    entry<NavigationRoute.Colors>(metadata = horizontalMetadata) { ColorSelectorTab(onBack = backStack::navigateBack) }
-                    entry<NavigationRoute.Theme>(metadata = horizontalMetadata) { ThemesTab(onBack = backStack::navigateBack) }
-                    entry<NavigationRoute.Wallpaper>(metadata = horizontalMetadata) { WallpaperTab(onBack = backStack::navigateBack) }
-                    entry<NavigationRoute.IconPack>(metadata = horizontalMetadata) { IconPackTab(onBack = backStack::navigateBack) }
-                    entry<NavigationRoute.StatusBar>(metadata = horizontalMetadata) { StatusBarTab(onBack = backStack::navigateBack) }
-                    entry<NavigationRoute.Fonts>(metadata = horizontalMetadata) { FontTab(onBack = backStack::navigateBack) }
-                    entry<NavigationRoute.AngleLineEdit>(metadata = horizontalMetadata) { AngleLineTab(onBack = backStack::navigateBack) }
-                    entry<NavigationRoute.HoldToActivateArc>(metadata = horizontalMetadata) { HoldToActivateArcTab(onBack = backStack::navigateBack) }
-                    entry<NavigationRoute.MainScreenLayers>(metadata = horizontalMetadata) { MainScreeLayersTab(onBack = backStack::navigateBack) }
-
-                    entry<NavigationRoute.NestEdit>(metadata = horizontalMetadata) {
-                        NestEditScreen {
-                            backStack.navigateBack()
-                            pointsService.persist()
+                if (showShizukuCommandPromter != null) {
+                    AdbCommandInputDialog(
+                        onDismiss = { showShizukuCommandPromter = null },
+                        showLeaveEmptyNotice = false
+                    ) {
+                        if (it.command.trim().isNotEmpty()) {
+                            runShisukuCommandNotEmpty(it)
                         }
                     }
-
-                    entry<NavigationRoute.LogsViewer>(metadata = horizontalMetadata) { key ->
-                        LogsViewerScreen(
-                            filename = key.filename,
-                            onBack = backStack::navigateBack
-                        )
-                    }
-
-                    entry<NavigationRoute.Widgets>(metadata = horizontalMetadata) { key ->
-                        WidgetsTab(
-                            onBack = backStack::navigateBack,
-                            onLaunchSystemWidgetPicker = ::launchWidgetsPicker,
-                            onResetWidgetSize = onResetWidgetSize,
-                            onRemoveWidget = onRemoveWidget,
-                            initialNestId = key.nestId
-                        )
-                    }
-
-                    entry<NavigationRoute.Workspace>(metadata = horizontalMetadata) {
-                        WorkspaceListScreen(
-                            onOpenWorkspace = { id ->
-                                backStack.navigate(NavigationRoute.WorkspaceDetail(id))
-                            },
-                            onBack = backStack::navigateBack
-                        )
-                    }
-
-                    entry<NavigationRoute.WorkspaceDetail>(metadata = horizontalMetadata) { key ->
-
-                        WorkspaceDetailScreen(
-                            workspaceId = key.workspaceId,
-                            onBack = backStack::navigateBack
-                        )
-                    }
-
-                    entry<NavigationRoute.TimerExceeded> { key ->
-                        TimeLimitExceededScreen(
-                            appName = key.appName,
-                            onDismiss = backStack::navigateBack
-                        )
-                    }
                 }
-            )
 
-
-
-            if (showFilePicker != null) {
-                val currentPoint = showFilePicker!!
-
-                FilePickerDialog(
-                    onDismiss = { showFilePicker = null },
-                    onFileSelected = { newAction ->
-                        val updatedPoint = currentPoint.copy(action = newAction)
-                        pointsService.editPoint(currentPoint.id) { updatedPoint }
-                        showFilePicker = null
-                        launchAction(updatedPoint)
-                    }
-                )
-            }
-
-
-            if (showWidgetPicker != null) {
-                val nestToBind = showWidgetPicker!!
-                WidgetPickerDialog(
-                    onBindCustomWidget = { id, info ->
-                        onBindCustomWidget(id, info, nestToBind)
-                    }
-                ) { showWidgetPicker = null }
-            }
-
-
-            if (showShizukuCommandPromter != null) {
-                AdbCommandInputDialog(
-                    onDismiss = { showShizukuCommandPromter = null },
-                    showLeaveEmptyNotice = false
-                ) {
-                    if (it.command.trim().isNotEmpty()) {
-                        runShisukuCommandNotEmpty(it)
-                    }
+                if (showShizukuUnavailableDialog) {
+                    ShizukuUnavailableDialog(
+                        onDismiss = {
+                            shizukuViewModel.dismissUnavailableDialog()
+                        },
+                        onConfirm = {
+                            if (isShizukuInstalled) launchAction(Action.LaunchApp(SHIZUKU_PACKAGE_NAME, Profile.dummy()))
+                            else uriHandler.openUri(URL_SHIZUKU_SITE)
+                        }
+                    )
                 }
-            }
 
-            if (showShizukuUnavailableDialog) {
-                ShizukuUnavailableDialog(
-                    onDismiss = {
-                        shizukuViewModel.dismissUnavailableDialog()
-                    },
-                    onConfirm = {
-                        if (isShizukuInstalled) launchAction(Action.LaunchApp(SHIZUKU_PACKAGE_NAME, Profile.dummy()))
-                        else ctx.openUrl(
-                            url = URL_SHIZUKU_SITE
-                        )
-                    }
-                )
-            }
+                var pendingAppToLaunch by appLaunchViewModel.pendingAppLaunch.asMutableState()
 
-            var pendingAppToLaunch by appLaunchViewModel.pendingAppLaunch.asMutableState()
-
-            if (pendingAppToLaunch != null) {
-                val pendingApp = pendingAppToLaunch!!
-                DigitalPauseScreen(
-                    application = pendingApp,
+                if (pendingAppToLaunch != null) {
+                    val pendingApp = pendingAppToLaunch!!
+                    DigitalPauseScreen(
+                        application = pendingApp,
 //                                    onProceedWithTimer = { timeLimitMinutes ->
 //                                        val data = Intent().apply {
 //                                            putExtra(RESULT_EXTRA_TIME_LIMIT, timeLimitMinutes)
@@ -600,62 +536,52 @@ public fun MainAppUi(
 //                                        finish()
 //                                    },
 
-                    onCancel = { pendingAppToLaunch = null }
-                )
-            }
+                        onCancel = { pendingAppToLaunch = null }
+                    )
+                }
 
-            BottomBanners(currentRoute)
-            ShizukuOutputDialog()
-            WhatsNewBottomSheet()
-            BackupResultDialog()
-            GoogleLockingWarningDialog()
+                BottomBanners(currentRoute)
+                ShizukuOutputDialog()
+                WhatsNewBottomSheet()
+                BackupResultDialog()
+                GoogleLockingWarningDialog()
 
 
-            if (screenToUnlock != null && lockMethod == LockMethod.Pin) {
-                PinUnlock(
-                    onDismiss = {
-                        lockScreenViewModel.cancelUnlock()
-                    },
-                    onValidate = {
-                        lockScreenViewModel.unlock()
+                if (screenToUnlock != null && lockMethod == LockMethod.Pin) {
+                    PinUnlock(
+                        onDismiss = {
+                            lockScreenViewModel.cancelUnlock()
+                        },
+                        onValidate = {
+                            lockScreenViewModel.unlock()
+                            navigator.navigate(screenToUnlock!!)
+                        }
+                    )
+                }
 
-                        backStack.remove(screenToUnlock!!)
-                        backStack.add(screenToUnlock!!)
-                    }
-                )
-            }
-
-            if (screenToUnlock != null && lockMethod == LockMethod.Device) {
-                LaunchedEffect(screenToUnlock) {
-                    val activity = ctx.findFragmentActivity()
-                    if (activity != null && lockScreenViewModel.isDeviceUnlockAvailable()) {
-                        lockScreenViewModel.showDeviceUnlockPrompt(
-                            activity = activity,
-                            onSuccess = {
-                                lockScreenViewModel.unlock()
-
-                                backStack.remove(screenToUnlock!!)
-                                backStack.add(screenToUnlock!!)
-                            },
-                            onError = { msg ->
-                                ctx.showToast(ctx.getString(R.string.authentication_error, msg))
-                                lockScreenViewModel.cancelUnlock()
-                            },
-                            onFailed = {
-                                ctx.showToast(ctx.getString(R.string.authentication_failed))
-                                lockScreenViewModel.cancelUnlock()
-                            }
-                        )
+                if (screenToUnlock != null && lockMethod == LockMethod.Device) {
+                    LaunchedEffect(screenToUnlock) {
+                        val activity = ctx.findFragmentActivity()
+                        if (activity != null && lockScreenViewModel.isDeviceUnlockAvailable()) {
+                            lockScreenViewModel.showDeviceUnlockPrompt(
+                                activity = activity,
+                                onSuccess = {
+                                    lockScreenViewModel.unlock()
+                                    navigator.navigate(screenToUnlock!!)
+                                },
+                                onError = { msg ->
+                                    ctx.showToast(ctx.getString(R.string.authentication_error, msg))
+                                    lockScreenViewModel.cancelUnlock()
+                                },
+                                onFailed = {
+                                    ctx.showToast(ctx.getString(R.string.authentication_failed))
+                                    lockScreenViewModel.cancelUnlock()
+                                }
+                            )
+                        }
                     }
                 }
             }
         }
     }
-}
-
-
-private fun NavBackStack<NavKey>.navigateBack() {
-    // Popping the only screen will crash so this avoids it
-    if (size == 1) return
-    removeLastOrNull()
 }

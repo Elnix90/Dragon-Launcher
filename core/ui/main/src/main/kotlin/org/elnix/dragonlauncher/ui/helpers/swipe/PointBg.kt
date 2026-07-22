@@ -36,21 +36,21 @@ public fun DrawScope.PointBg(
 
     // THIS IS EXPENSIVE TO DRAW THAT'S WHY THEY ARE ONLY DRAWN IN DEBUG
     val customTexts = customText ?: cached.customTexts
-    val offsetScopeText = customTexts?.first
-    if (offsetScopeText != null) {
+    val firstText = customTexts?.first
+    if (firstText != null) {
         drawText(
-            textLayoutResult = offsetScopeText.offsetTextLayoutResult,
+            textLayoutResult = firstText.offsetTextLayoutResult,
             color = extraColors.shapes,
-            topLeft = center - offsetScopeText.topLeft
+            topLeft = center - firstText.topLeft
         )
     }
 
-    val idScopeText = customTexts?.second
-    if (idScopeText != null) {
+    val secondText = customTexts?.second
+    if (secondText != null) {
         drawText(
-            textLayoutResult = idScopeText.offsetTextLayoutResult,
+            textLayoutResult = secondText.offsetTextLayoutResult,
             color = extraColors.shapes,
-            topLeft = center - idScopeText.topLeft
+            topLeft = center - secondText.topLeft
         )
     }
 

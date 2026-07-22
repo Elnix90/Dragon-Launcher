@@ -26,9 +26,7 @@ import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 import org.elnix.dragonlauncher.ui.statusbar.showStatusBar
 
 @Composable
-public fun StatusBarTab(
-    onBack: () -> Unit
-) {
+public fun StatusBarTab() {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -37,7 +35,6 @@ public fun StatusBarTab(
 
     SettingsScaffold(
         title = stringResource(R.string.status_bar),
-        onBack = onBack,
         helpText = stringResource(R.string.status_bar_tab_text),
         resetText = stringResource(R.string.reset_status_bar),
         onReset = {

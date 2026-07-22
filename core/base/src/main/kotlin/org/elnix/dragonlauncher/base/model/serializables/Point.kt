@@ -344,7 +344,8 @@ public data class Point(
         this.liveNestGraceDistance ?: defaultPoint.liveNestGraceDistance.takeIfNot(defaultEditing) ?: defaultLiveNestGraceDistance
 
     public inline fun getLiveNestSnapsToFingerPosition(defaultPoint: Point, defaultEditing: Boolean = false): Boolean =
-        this.liveNestSnapsToFingerPosition ?: defaultPoint.liveNestSnapsToFingerPosition.takeIfNot(defaultEditing) ?: defaultLiveNestSnapsToFingerPosition
+        this.liveNestSnapsToFingerPosition ?: defaultPoint.liveNestSnapsToFingerPosition.takeIfNot(defaultEditing)
+        ?: defaultLiveNestSnapsToFingerPosition
 
     public inline fun getHoldAndRunDelayMs(defaultPoint: Point, defaultEditing: Boolean = false): Int =
         this.holdAndRunDelayMs ?: defaultPoint.holdAndRunDelayMs.takeIfNot(defaultEditing) ?: defaultHoldAndRunDelayMs
@@ -353,7 +354,8 @@ public data class Point(
         this.cycleActionsLoopDelayMs ?: defaultPoint.cycleActionsLoopDelayMs.takeIfNot(defaultEditing) ?: defaultCycleActionsLoopDelayMs
 
     public inline fun getLiveNestMainNestOpacityPercent(defaultPoint: Point, defaultEditing: Boolean = false): Int =
-        this.liveNestSubNestOpacityPercent ?: defaultPoint.liveNestSubNestOpacityPercent.takeIfNot(defaultEditing) ?: defaultLiveNestMainNestOpacityPercent
+        this.liveNestSubNestOpacityPercent ?: defaultPoint.liveNestSubNestOpacityPercent.takeIfNot(defaultEditing)
+        ?: defaultLiveNestMainNestOpacityPercent
 
 
     override fun compareTo(other: Point): Int = this.id.compareTo(other.id)
@@ -446,6 +448,39 @@ public data class Point(
             glow = defaultGlow,
             glowSelected = defaultGlowSelected
         )
+
+        public inline val Point.isDefault: Boolean
+            get() = this.shapeId == null &&
+                    this.customIcon == null &&
+                    this.glow == null &&
+                    this.glowSelected == null &&
+                    this.borderStroke == null &&
+                    this.borderStrokeSelected == null &&
+                    this.borderColor == null &&
+                    this.borderColorSelected == null &&
+                    this.backgroundColor == null &&
+                    this.backgroundColorSelected == null &&
+                    this.borderShape == null &&
+                    this.borderShapeSelected == null &&
+                    this.opacity == null &&
+                    this.haptic == null &&
+                    this.customName == null &&
+                    this.innerPadding == null &&
+                    this.customActionColor == null &&
+                    this.size == null &&
+                    this.liveNestTargetNestId == null &&
+                    this.liveNestPreviewDelayMs == null &&
+                    this.liveNestScale == null &&
+                    this.liveNestGraceDistance == null &&
+                    this.liveNestSubNestOpacityPercent == null &&
+                    this.liveNestSnapsToFingerPosition == null &&
+                    this.cycleActions == null &&
+                    this.cycleActionsLoopDelayMs == null &&
+                    this.holdAndRunDelayMs == null &&
+                    this.holdAndRunAction == null
+
+        public inline val Point.isNotDefault: Boolean
+            get() = !isDefault
 
         public object PointsJson : DragonJson<Set<Point>>()
         public object DefaultPointJson : DragonJson<Point>()

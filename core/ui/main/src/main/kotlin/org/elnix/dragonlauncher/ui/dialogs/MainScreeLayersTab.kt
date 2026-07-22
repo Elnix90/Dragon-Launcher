@@ -50,9 +50,7 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
-public fun MainScreeLayersTab(
-    onBack: () -> Unit
-) {
+public fun MainScreeLayersTab() {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -78,7 +76,6 @@ public fun MainScreeLayersTab(
 
     SettingsScaffold(
         title = stringResource(R.string.main_screen_layers),
-        onBack = onBack,
         helpText = stringResource(R.string.main_screen_layers_help),
         onReset = {
             scope.launch {

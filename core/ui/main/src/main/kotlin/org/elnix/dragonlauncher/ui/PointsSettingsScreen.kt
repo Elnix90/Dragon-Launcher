@@ -58,6 +58,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.navigaton.ManipulationSystem
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools
 import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools.Center
@@ -97,9 +98,10 @@ import org.elnix.dragonlauncher.ui.base.modifiers.selfAlignHorizontally
 import org.elnix.dragonlauncher.ui.components.IntersectionShape
 import org.elnix.dragonlauncher.ui.components.SelectedPointsTopBar
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
-import org.elnix.dragonlauncher.ui.dialogs.editors.EditPointSheet
+import org.elnix.dragonlauncher.ui.dialogs.editors.PointEditor
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
@@ -118,12 +120,11 @@ public fun PointsSettingsScreen(
     iconsViewModel: IconsViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel(),
     drawerViewModel: DrawerViewModel = activityViewModel(),
-    initializationViewModel: InitializationViewModel = activityViewModel(),
-    onAdvSettings: () -> Unit,
-    onNestEdit: () -> Unit,
-    onBack: () -> Unit
+    initializationViewModel: InitializationViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
+    val navigator = LocalNavigator.current
+    val extraColors = LocalExtraColors.current
     val scope = rememberCoroutineScope()
 
     val pointsService = pointsViewModel.pointsService
@@ -363,14 +364,15 @@ public fun PointsSettingsScreen(
         }
     }
 
-    val extraColors = LocalExtraColors.current
-
     val handleBack = {
         if (isInManualPlacementMode) manualPlacementQueue = emptyList()
         else if (selectedPointsIds.isNotEmpty()) pointsService.deselectAll()
         else if (nestId != 0) nestsNavigationService.goBack()
         else if (isEditing) isEditing = false
-        else onBack()
+        else {
+            pointsService.persist()
+            navigator.onBack()
+        }
     }
     BackHandler(onBack = handleBack)
 
@@ -385,12 +387,16 @@ public fun PointsSettingsScreen(
         specialSettingsTitle = {
             SpecialSettingsTitle(
                 nestId = nestId,
-                onSettings = onAdvSettings,
+                onSettings = {
+                    pointsService.persist()
+                    navigator.navigate(NavigationRoute.Settings)
+                },
                 onSelectAll = { pointsService.selectAll(nestId) },
                 onEditDefaultPoint = { showEditDefaultPoint = true },
                 onEditNest = {
                     pointsService.deselectAll()
-                    onNestEdit()
+                    pointsService.persist()
+                    navigator.navigate(NavigationRoute.NestEdit)
                 },
                 onResetPoints = { showResetPointsAndNestsDialog = true },
                 onGamble = { number, snapToShapes ->
@@ -1019,9 +1025,10 @@ public fun PointsSettingsScreen(
         val editPoint = pointsService.findPointById(editPointId)
 
         editPoint?.let {
-            EditPointSheet(
+            PointEditor(
                 point = editPoint,
                 defaultPoint = defaultPoint,
+                isDefaultEditing = false,
                 onDismiss = {
                     showEditDialog = null
                     iconsViewModel.reloadIcon(editPoint)
@@ -1040,13 +1047,12 @@ public fun PointsSettingsScreen(
 
     if (showNestManagementDialog) {
         NestManagementDialog(
-            onDismissRequest = { showNestManagementDialog = false },
             onSelect = {
                 nestsNavigationService.goToNest(it.id)
                 pointsService.deselectAll()
                 showNestManagementDialog = false
             }
-        )
+        ) { showNestManagementDialog = false }
     }
 
     SelectedPointsTopBar(
@@ -1111,8 +1117,8 @@ public fun PointsSettingsScreen(
     }
 
     if (showEditDefaultPoint) {
-        EditPointSheet(
-            point = defaultPoint,
+        PointEditor(
+            point = defaultPoint.copy(id = 0),
             defaultPoint = defaultPoint,
             isDefaultEditing = true,
             onDismiss = {

@@ -17,6 +17,7 @@ import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
@@ -79,15 +80,15 @@ public fun SettingsItem(
 public fun RouteItem(
     route: NavigationRoute,
     enabled: Boolean = true,
-    onExternalClick: (() -> Unit)? = null,
-    onClick: (NavigationRoute) -> Unit
+    onExternalClick: (() -> Unit)? = null
 ) {
+    val navigator = LocalNavigator.current
     SettingsItem(
         title = stringResource(route.resId),
         enabled = enabled,
         onExternalClick = onExternalClick,
         icon = route.icon
     ) {
-        onClick(route)
+        navigator.navigate(route)
     }
 }
