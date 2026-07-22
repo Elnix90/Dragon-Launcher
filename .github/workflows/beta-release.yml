@@ -1,12 +1,6 @@
 name: Beta Release
 
 on:
-  push:
-
-    paths:
-      - '**.yml'
-      - '**.kt'
-      - '**.kts'
   workflow_dispatch:
     inputs:
       disable_gradle_cache:
