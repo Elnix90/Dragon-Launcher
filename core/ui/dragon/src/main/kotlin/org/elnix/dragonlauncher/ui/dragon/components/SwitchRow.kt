@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
@@ -25,18 +26,18 @@ public fun SwitchRow(
 ) {
     val checked = state ?: defaultValue
 
+    val interactionSource = rememberInteractionSource()
     Row(
         modifier = Modifier
             .clickable(
                 enabled = enabled,
                 onClick = { onCheck(!checked) },
+                interactionSource = interactionSource
             )
             .padding(10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-
-
         TextWithDescription(
             text = title,
             description = description,
@@ -47,7 +48,8 @@ public fun SwitchRow(
         Switch(
             checked = checked,
             enabled = enabled,
-            onCheckedChange = { onCheck(it) },
+            interactionSource = interactionSource,
+            onCheckedChange = null,
             colors = AppObjectsColors.switchColors()
         )
 
