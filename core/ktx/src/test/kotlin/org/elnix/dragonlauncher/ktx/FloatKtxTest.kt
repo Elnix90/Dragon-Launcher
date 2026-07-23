@@ -19,8 +19,6 @@ class FloatKtxTest {
         const val EPSILON = 1e-5f
     }
 
-    //  toRadians 
-
     @Test
     fun `0 degrees converts to 0 radians`() {
         assertEquals(0f, 0f.radians.toFloat(), EPSILON)
@@ -53,5 +51,64 @@ class FloatKtxTest {
     fun `270 degrees converts to 3 PI over 2`() {
         val expected = (3.0 * PI / 2.0).toFloat()
         assertEquals(expected, 270f.radians.toFloat(), EPSILON)
+    }
+
+
+    @Test
+    fun `test rounding to 0 decimals`() {
+        assertEquals(3f, 3.14159f.round(0))
+        assertEquals(5f, 4.5f.round(0))
+        assertEquals(-2f, (-2.499f).round(0))
+    }
+
+    @Test
+    fun `test rounding to 1 decimal`() {
+        assertEquals(3.1f, 3.14159f.round(1))
+        assertEquals(4.5f, 4.54f.round(1))
+        assertEquals(2.3f, 2.25f.round(1))
+    }
+
+    @Test
+    fun `test rounding to 2 decimals`() {
+        assertEquals(3.14f, 3.14159f.round(2))
+        assertEquals(4.55f, 4.549f.round(2))
+        assertEquals(2.25f, 2.25f.round(2))
+    }
+
+    @Test
+    fun `test rounding to 3 decimals`() {
+        assertEquals(3.142f, 3.14159f.round(3))
+        assertEquals(4.549f, 4.5485f.round(3))
+        assertEquals(2.250f, 2.25f.round(3))
+    }
+
+    @Test
+    fun `test rounding negative numbers`() {
+        assertEquals(-3.14f, (-3.14159f).round(2))
+        assertEquals(-4.55f, (-4.549f).round(2))
+        assertEquals(-2.0f, (-2.001f).round(0))
+    }
+
+    @Test
+    fun `test rounding with large decimals`() {
+        assertEquals(3.1415927f, 3.1415927f.round(8))
+        assertEquals(0.12345678f, 0.12345678f.round(8))
+    }
+
+    @Test
+    fun `test rounding with zero`() {
+        assertEquals(0f, 0f.round(2))
+        assertEquals(0f, 0.001f.round(0))
+    }
+
+    @Test
+    fun `test rounding with very small numbers`() {
+        assertEquals(0.001f, 0.001499f.round(3))
+        assertEquals(0.002f, 0.0015f.round(3))
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `test rounding with invalid decimals (negative)`() {
+        3.14f.round(-1)
     }
 }
