@@ -639,7 +639,7 @@ public fun PointsSettingsScreen(
             /**
              * Main Canva, draws the circles, and sub nests by recursivity.
              *
-             * Uses [graphicsLayer] to apply transformation of [offset], [zoom] and [angle] and provide an easy way to navigate in the canva
+             * Uses [graphicsLayer] to apply transformation of [offset], [zoom] and [angle] and provide an easy way to navigate in the canvas
              *
              * - If the user drags a point, I draw it in the offset of where the finger is.
              * - If the user has hovered a point for more than 500ms, a radial circle overlay spawns and indicates
@@ -666,7 +666,8 @@ public fun PointsSettingsScreen(
                         nest = currentNest,
                         eraseColor = MaterialTheme.colorScheme.background,
                         pointSettingsDisplay = true,
-                        hideShapes = false
+                        hideShapes = false,
+                        skipSelected = true
                     )
 
                     Canvas(Modifier.fillMaxSize()) {
@@ -738,7 +739,7 @@ public fun PointsSettingsScreen(
                             center = tr.transformedOffset,
                             nest = nestedNest,
                             eraseColor = MaterialTheme.colorScheme.background,
-                            pointSettingsDisplay = true,
+                            pointSettingsDisplay = true
                         )
                     }
 

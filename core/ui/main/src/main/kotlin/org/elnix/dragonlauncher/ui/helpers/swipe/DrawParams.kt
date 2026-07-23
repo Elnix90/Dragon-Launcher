@@ -40,6 +40,7 @@ public data class DrawParams(
     val pointSettingsDisplay: Boolean,
     /** Settings Screen only */
     val hideShapes: Boolean,
+    val skipSelected: Boolean,
 
     val showCurrentPoint: Boolean,
     val showAllPointsInCurrentShape: Boolean,
@@ -70,6 +71,7 @@ public fun rememberDrawParams(
     pointSettingsDisplay: Boolean,
     showCancelZone: Boolean,
     hideShapes: Boolean,
+    skipSelected: Boolean,
     pointsViewModel: PointsViewModel = activityViewModel()
 ): DrawParams {
     val ctx = LocalContext.current
@@ -111,19 +113,20 @@ public fun rememberDrawParams(
             ctx = ctx,
             pointsService = pointsViewModel.pointsService,
             extraColors = extraColors,
-            eraseColor = eraseColor,
             maxNestsDepth = maxNestsDepth,
-            allowShowPointInCenter = allowShowPointCenter && showPointInCenter,
+            eraseColor = eraseColor,
             preventDrawingSubNests = false,
+            pointSettingsDisplay = pointSettingsDisplay,
+            hideShapes = hideShapes,
+            skipSelected = skipSelected,
             showCurrentPoint = showCurrentPoint,
             showAllPointsInCurrentShape = showAllPointsInCurrentShape,
             showAllPointsInCurrentNest = showAllPointsInCurrentNest,
-            pointSettingsDisplay = pointSettingsDisplay,
+            allowShowPointInCenter = allowShowPointCenter && showPointInCenter,
             nestDebugOverlay = nestDebugOverlay,
             showCancelZone = showCancelZone,
             showShape = showShape,
             showAllShapesInNest = showAllShapesInNest,
-            hideShapes = hideShapes,
             textMeasurer = textMeasurer
         )
     }

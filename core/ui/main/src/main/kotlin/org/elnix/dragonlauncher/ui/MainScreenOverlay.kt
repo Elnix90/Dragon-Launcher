@@ -298,7 +298,8 @@ public fun MainScreenOverlay(
         allowShowPointCenter = false,
         pointSettingsDisplay = false,
         showCancelZone = LocalNestDebugOverlay.current,
-        hideShapes = false
+        hideShapes = false,
+        skipSelected = false
     )
 
     val iconsTrigger by PointStableCache.cacheTrigger.asState()

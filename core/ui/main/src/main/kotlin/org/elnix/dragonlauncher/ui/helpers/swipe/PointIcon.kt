@@ -33,14 +33,15 @@ public fun PointIcon(
     pointSettingsDisplay: Boolean = false,
     customText: Pair<DrawScopeText?, DrawScopeText?>? = null,
     hideShapes: Boolean = false,
-    forceShowShapes: Boolean = false
+    forceShowShapes: Boolean = false,
 ) {
     val drawParams = rememberDrawParams(
         eraseColor = eraseColor,
         pointSettingsDisplay = pointSettingsDisplay,
         showCancelZone = false,
         allowShowPointCenter = false,
-        hideShapes = hideShapes
+        hideShapes = hideShapes,
+        skipSelected = false
     )
 
     Canvas(

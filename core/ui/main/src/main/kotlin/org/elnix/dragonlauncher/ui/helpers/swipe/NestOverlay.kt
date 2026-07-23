@@ -37,14 +37,16 @@ public fun NestOverlay(
     allowShowPointCenter: Boolean = false,
     pointSettingsDisplay: Boolean = false,
     showCancelZone: Boolean = false,
-    hideShapes: Boolean = false
+    hideShapes: Boolean = false,
+    skipSelected: Boolean = false
 ) {
     val drawParams = rememberDrawParams(
         eraseColor = eraseColor,
         allowShowPointCenter = allowShowPointCenter,
         showCancelZone = showCancelZone,
         pointSettingsDisplay = pointSettingsDisplay,
-        hideShapes = hideShapes
+        hideShapes = hideShapes,
+        skipSelected = skipSelected
     )
     val iconTrigger by PointStableCache.cacheTrigger.asState()
 
@@ -134,7 +136,7 @@ public fun DrawScope.NestOverlay(
 
     val filteredPoints = drawParams
         .pointsService
-        .getPointsForNest(nest.id, isSettingDisplay)
+        .getPointsForNest(nestId = nest.id, skipSelected = depth > 1 && drawParams.skipSelected)
         .filter { (id, point) ->
             when {
                 depth > 1 -> true
