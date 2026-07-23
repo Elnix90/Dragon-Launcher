@@ -87,7 +87,7 @@ public sealed class StatusBar {
     public data class Spacer(
         @Serializable(with = DpSerializer::class)
         val width: Dp = defaultWidth,
-        val mode: SpacerMode = spacerSpacerMode
+        val mode: SpacerMode = defaultSpacerMode
     ) : StatusBar() {
         public enum class SpacerMode {
             Width, Fill, Cutout
@@ -95,7 +95,7 @@ public sealed class StatusBar {
 
         public companion object {
             public val defaultWidth: Dp = Dp.Unspecified
-            public val spacerSpacerMode: SpacerMode = SpacerMode.Cutout
+            public val defaultSpacerMode: SpacerMode = SpacerMode.Cutout
         }
     }
 

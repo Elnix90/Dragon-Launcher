@@ -18,6 +18,7 @@ import org.elnix.dragonlauncher.base.model.serializables.serializers.DpSerialize
 import org.elnix.dragonlauncher.base.model.serializables.serializers.OffsetSerializer
 import org.elnix.dragonlauncher.base.theme.ExtraColors
 import org.elnix.dragonlauncher.ktx.rect
+import org.elnix.dragonlauncher.ktx.round
 import org.elnix.dragonlauncher.ktx.takeIfNot
 
 
@@ -57,8 +58,8 @@ public data class IntersectionShape(
      * When its `false` the points might rotate around their hidden underlying offset aas the shape moves
      */
     val pointsKeepTheirRelativePosition: Boolean? = null
-) : Comparable<IntersectionShape> {
-    // TODO
+) {
+// TODO
 //    public infix fun scaledBy(scale: Float): IntersectionShape = this.copy(scale = this.scale * scale)
 
     /**
@@ -70,8 +71,15 @@ public data class IntersectionShape(
     public inline fun getOffset(defaultIntersectionShape: IntersectionShape, defaultEditing: Boolean = false): Offset =
         this.offset ?: defaultIntersectionShape.offset.takeIfNot(defaultEditing) ?: defaultOffset
 
+    public inline fun getOffsetX(defaultIntersectionShape: IntersectionShape, defaultEditing: Boolean = false): Float =
+        (this.offset?.x ?: defaultIntersectionShape.offset?.x.takeIfNot(defaultEditing) ?: defaultOffset.x).round(2)
+
+    public inline fun getOffsetY(defaultIntersectionShape: IntersectionShape, defaultEditing: Boolean = false): Float =
+        (this.offset?.y ?: defaultIntersectionShape.offset?.y.takeIfNot(defaultEditing) ?: defaultOffset.y).round(2)
+
+
     public inline fun getScale(defaultIntersectionShape: IntersectionShape, defaultEditing: Boolean = false): Float =
-        this.scale ?: defaultIntersectionShape.scale.takeIfNot(defaultEditing) ?: defaultScale
+        (this.scale ?: defaultIntersectionShape.scale.takeIfNot(defaultEditing) ?: defaultScale).round(2)
 
     public inline fun getRotation(defaultIntersectionShape: IntersectionShape, defaultEditing: Boolean = false): Int =
         this.rotation ?: defaultIntersectionShape.rotation.takeIfNot(defaultEditing) ?: defaultRotation
@@ -95,15 +103,6 @@ public data class IntersectionShape(
         this.pointsKeepTheirRelativePosition
             ?: defaultIntersectionShape.pointsKeepTheirRelativePosition.takeIfNot(defaultEditing)
             ?: defaultPointsKeepTheirRelativePosition
-
-    override fun compareTo(other: IntersectionShape): Int = id
-
-//    override fun equals(other: Any?): Boolean {
-//        if (other !is IntersectionShape) return false
-//        return super.equals(other.copy(id = this.id))
-//    }
-
-
 
     @Suppress("ConstPropertyName")
     public companion object {
@@ -139,6 +138,8 @@ public data class IntersectionShape(
             glow = defaultGlow
         )
 
+
+        public val emptyIntersectionShape: IntersectionShape = IntersectionShape(-1)
 
         @Suppress("NOTHING_TO_INLINE")
         public inline fun IntersectionShape.highlightedIfSelected(selected: Boolean, color: Color): IntersectionShape =

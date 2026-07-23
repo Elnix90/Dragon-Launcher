@@ -62,7 +62,11 @@ public fun CreateOrEditWorkspaceDialog(
                 options = WorkspaceType.entries,
                 selected = selectedType,
                 switchEnabled = false,
-                label = stringResource(R.string.workspace_type)
+                label = stringResource(R.string.workspace_type),
+                resetEnabled = selectedType != WorkspaceType.Custom,
+                onReset = {
+                    selectedType = WorkspaceType.Custom
+                }
             ) {
                 selectedType = it!!
             }

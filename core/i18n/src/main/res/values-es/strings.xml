@@ -873,9 +873,7 @@
     <string name="warning_description">A partir de septiembre de 2026, una actualización silenciosa bloqueará todas las aplicaciones de Android cuyo desarrollador no se haya registrado en Google, firmado su contrato, pagado y entregado una identificación oficial.</string>
     <string name="warning_worldwide">Todas las aplicaciones y todos los dispositivos, en todo el mundo, sin posibilidad de desactivarlos.</string>
     <string name="live_nest_snaps_to_finger_position_desc">Si el nido vivo dibujado debe tener su centro exactamente donde se activó después del tiempo de espera, o si debe ajustarse a la posición de su punto anfitrión</string>
-    <string name="live_nest_dim_main_nest">Atenúa el nido principal mientras está abierto</string>
     <string name="live_nest_dim_main_nest_desc">Reduce la opacidad del nido principal cuando Live Nest está activo para que la superposición destaque.</string>
-    <string name="live_nest_main_nest_opacity">Opacidad del nido principal (%)</string>
     <string name="cycle_actions">Acciones del ciclo</string>
     <string name="hold_and_run">Mantener y Ejecutar</string>
     <string name="cycle_actions_loop">Bucle</string>

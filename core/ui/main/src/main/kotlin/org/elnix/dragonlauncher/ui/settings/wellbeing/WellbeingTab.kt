@@ -144,6 +144,12 @@ public fun WellbeingTab(
                     options = ReminderMode.entries,
                     selected = reminderMode,
                     label = stringResource(R.string.mode),
+                    resetEnabled = reminderMode != ReminderMode.Overlay,
+                    onReset = {
+                        scope.launch {
+                            WellbeingSettingsStore.reminderMode.reset(ctx)
+                        }
+                    }
                 ) {
                     scope.launch {
                         WellbeingSettingsStore.reminderMode.set(ctx, it)

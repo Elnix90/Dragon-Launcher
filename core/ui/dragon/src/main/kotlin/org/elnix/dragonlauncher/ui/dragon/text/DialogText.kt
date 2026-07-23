@@ -16,7 +16,7 @@ public fun DialogTitle(
     text: String,
     modifier: Modifier = Modifier,
     trailingIcon: (@Composable RowScope.() -> Unit)? = null,
-    resetEnabled: Boolean = false,
+    resetEnabled: Boolean = true,
     onReset: (() -> Unit)? = null
 ) {
     Row(

@@ -84,9 +84,7 @@ public fun NestManagementDialog(
     val nestsList = remember(recomposeTrigger, nests.size) { nests.toList() }
 
     DragonModalBottomSheet(onDismissRequest) {
-        DialogTitle(
-            text = title ?: stringResource(R.string.manage_nests)
-        )
+        DialogTitle(title ?: stringResource(R.string.manage_nests))
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(5.dp),
             modifier = Modifier.heightIn(max = 700.dp),
@@ -108,7 +106,7 @@ public fun NestManagementDialog(
                 }
             }
 
-            items(nestsList) { (_, nest) ->
+            items(nestsList) { (id, nest) ->
                 NestManagementItem(
                     nest = nest,
                     modifier = Modifier.animateItem(),
@@ -119,7 +117,10 @@ public fun NestManagementDialog(
                     },
                     onDelete = { pointsService.removeNest(nest.id) },
                     onDuplicate = { pointsService.duplicateNest(nest.id) },
-                    onEdit = { navigator.navigate(NavigationRoute.NestEdit) },
+                    onEdit = {
+                        pointsViewModel.nestsNavigationService.goToNest(id)
+                        navigator.navigate(NavigationRoute.NestEdit)
+                    },
                     onSelect = { onSelect?.invoke(nest) }
                 )
             }
@@ -215,8 +216,8 @@ private fun NestManagementItem(
                             Text(stringResource(R.string.edit_nest))
                         },
                         onClick = {
-                            showPopup = false
                             onEdit()
+                            showPopup = false
                         },
                         leadingIcon = {
                             Icon(
@@ -231,8 +232,8 @@ private fun NestManagementItem(
                             Text(stringResource(R.string.duplicate))
                         },
                         onClick = {
-                            showPopup = false
                             onDuplicate()
+                            showPopup = false
                         },
                         leadingIcon = {
                             Icon(
@@ -248,8 +249,8 @@ private fun NestManagementItem(
                                 Text(stringResource(R.string.delete_nest))
                             },
                             onClick = {
-                                showPopup = false
                                 onDelete()
+                                showPopup = false
                             },
                             leadingIcon = {
                                 Icon(

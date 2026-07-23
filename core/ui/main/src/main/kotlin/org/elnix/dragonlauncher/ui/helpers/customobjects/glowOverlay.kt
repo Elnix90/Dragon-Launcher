@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isSpecified
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
-import org.elnix.dragonlauncher.base.model.serializables.isUnSpecified
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowDrawOrder.AfterErase
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowDrawOrder.First
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowDrawOrder.Last
@@ -130,8 +129,6 @@ private inline fun DrawScope.glowLine(
     start: Offset,
     end: Offset
 ) {
-    if (glow.isUnSpecified) return
-
     toPxOrNull(glow?.radius)?.let { radius ->
         drawIntoCanvas { canvas ->
             val frameworkPaint = customGlowPaint(glow.color ?: color, radius)
@@ -184,8 +181,6 @@ private inline fun DrawScope.glow(
     path: Path,
     color: Color
 ) {
-    if (glow.isUnSpecified) return
-
     val nativePath = path.asAndroidPath()
 
     toPxOrNull(glow?.radius)?.let { radius ->
@@ -255,5 +250,5 @@ public fun DrawScope.toPxOrNull(value: Dp?): Float? {
         returnsNotNull() implies (value != null)
     }
 
-    return value?.takeIf { it.isSpecified }?.toPx()
+    return value?.takeIf { it.isSpecified && it.value > 0f }?.toPx()
 }

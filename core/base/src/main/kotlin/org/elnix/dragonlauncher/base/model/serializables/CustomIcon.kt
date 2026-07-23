@@ -5,10 +5,12 @@ package org.elnix.dragonlauncher.base.model.serializables
 import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.Color
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.serializables.AdaptifiedLegacyIcon.Companion.ThemeColor
 import org.elnix.dragonlauncher.base.model.serializables.AdaptifiedLegacyIcon.Companion.UnspecifiedColor
+import org.elnix.dragonlauncher.base.model.serializables.serializers.ColorSerializer
 
 
 @Immutable
@@ -125,7 +127,8 @@ public data class DefaultPlaceholderIcon(
 @Serializable
 public data class CustomIconProperties(
     /** Tint color (ARGB) applied after rendering. */
-    val tint: Int? = null,
+    @Serializable(with = ColorSerializer::class)
+    val tint: Color? = null,
 
     /** Icon opacity multiplier (0.0 – 1.0). */
     @FloatRange(0.0, 1.0)

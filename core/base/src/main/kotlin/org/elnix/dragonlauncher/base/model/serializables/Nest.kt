@@ -112,12 +112,12 @@ public data class Nest(
 
             IntersectionShape(
                 id = 1,
-                scale = 1.5f,
+                scale = 1.5f
             ),
 
             IntersectionShape(
                 id = 2,
-                scale = 2f,
+                scale = 2f
             )
         )
 

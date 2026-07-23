@@ -53,7 +53,10 @@ public fun NestNameEditor(
             }
         },
         trailingIcon = {
-            animatedIcon.Icon(defaultIcon = R.drawable.reset) {
+            animatedIcon.Icon(
+                defaultIcon = R.drawable.reset,
+                enabled = nest.name != null
+            ) {
                 tempCustomName = ""
                 onEditName(null)
                 animatedIcon.setSuccess()

@@ -3,7 +3,6 @@
 package org.elnix.dragonlauncher.ui.dragon.generic
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -33,8 +32,10 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
+import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
+import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 
@@ -47,12 +48,14 @@ public fun <T> ActionSelectorRow(
     label: String,
     optionLabel: @Composable (T) -> String = { it.toString() },
     toggled: Boolean? = null,
+    resetEnabled: Boolean,
+    onReset: () -> Unit,
     onSelected: (T?) -> Unit
 ) {
     var showSheet by remember { mutableStateOf(false) }
 
-    val switchInteractionSource = remember { MutableInteractionSource() }
-    val globalInteractionSource = remember { MutableInteractionSource() }
+    val switchInteractionSource = rememberInteractionSource()
+    val globalInteractionSource = rememberInteractionSource()
 
 
     DragonRow(
@@ -100,6 +103,7 @@ public fun <T> ActionSelectorRow(
                 )
             }
         }
+        ResetIcon(enabled, onReset)
     }
 
     // Options dialog

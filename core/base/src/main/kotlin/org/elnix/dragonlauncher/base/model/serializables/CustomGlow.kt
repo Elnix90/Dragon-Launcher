@@ -12,18 +12,18 @@ import org.elnix.dragonlauncher.base.model.serializables.serializers.DpSerialize
 @SerialName("CustomGlow")
 public data class CustomGlow(
     @Serializable(with = DpSerializer::class)
-    val radius: Dp,
+    val radius: Dp? = null,
     @Serializable(with = ColorSerializer::class)
     val color: Color? = null
 ) {
     public companion object {
         @Stable
-        public val Unspecified: CustomGlow = CustomGlow(Dp.Unspecified, Color.Unspecified)
+        public val Unspecified: CustomGlow = CustomGlow(null, null)
     }
 }
 
 public val CustomGlow?.isUnSpecified: Boolean
-    get() = this == CustomGlow.Unspecified
+    get() =  this == null || this == CustomGlow.Unspecified
 
 public val CustomGlow?.isSpecified: Boolean
     get() = !this.isUnSpecified

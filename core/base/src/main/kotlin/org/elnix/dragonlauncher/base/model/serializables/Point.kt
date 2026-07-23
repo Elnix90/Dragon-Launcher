@@ -19,7 +19,6 @@ import org.elnix.dragonlauncher.base.model.serializables.serializers.OffsetSeria
 import org.elnix.dragonlauncher.base.theme.ExtraColors
 import org.elnix.dragonlauncher.ktx.takeIfNot
 import org.jetbrains.annotations.ApiStatus
-import kotlin.random.Random
 
 
 /**
@@ -246,6 +245,11 @@ public data class Point(
     val cycleActionsLoopDelayMs: Int? = null,
 
     /**
+     * Whether if the cycle action loops when reached the end of the stages
+     */
+    val cycleActionsLoop: Boolean? = null,
+
+    /**
      * Milliseconds of continuous hold after which [action] fires automatically, without release.
      * Null means Hold & Run is disabled for this point.
      *
@@ -353,14 +357,21 @@ public data class Point(
     public inline fun getCycleActionsStageLoopDelayMs(defaultPoint: Point, defaultEditing: Boolean = false): Int =
         this.cycleActionsLoopDelayMs ?: defaultPoint.cycleActionsLoopDelayMs.takeIfNot(defaultEditing) ?: defaultCycleActionsLoopDelayMs
 
+    public inline fun getCycleActionsStageLoop(defaultPoint: Point, defaultEditing: Boolean = false): Boolean =
+        this.cycleActionsLoop ?: defaultPoint.cycleActionsLoop.takeIfNot(defaultEditing) ?: defaultCycleActionsLoop
+
     public inline fun getLiveNestMainNestOpacityPercent(defaultPoint: Point, defaultEditing: Boolean = false): Int =
         this.liveNestSubNestOpacityPercent ?: defaultPoint.liveNestSubNestOpacityPercent.takeIfNot(defaultEditing)
         ?: defaultLiveNestMainNestOpacityPercent
 
 
+    public inline fun getHaptic(defaultPoint: Point, defaultEditing: Boolean = false): CustomHapticFeedback? =
+        this.haptic ?: defaultPoint.haptic.takeIfNot(defaultEditing) ?: defaultHapticFeedback
+
+
     override fun compareTo(other: Point): Int = this.id.compareTo(other.id)
 
-    override fun toString(): String = "Point(id = ${this.id}, offset = ${this.offset})"
+    override fun toString(): String = "Point(id = ${this.id}, offset = ${this.offset}, shapeId = ${this.shapeId})"
 
 //    override fun toString(): String =
 //        "Point(\n" +
@@ -407,9 +418,9 @@ public data class Point(
         ): Point =
             Point(
                 offset = Offset.Zero,
+                nestId = 0,
                 action = action ?: Action.OpenDragonLauncherSettings(),
-                id = id ?: Random.nextInt(),
-                nestId = 0
+                id = id ?: -1
             )
 
 
@@ -425,7 +436,9 @@ public data class Point(
         public val defaultLiveNestGraceDistance: Dp = 50.dp
         public const val defaultLiveNestSnapsToFingerPosition: Boolean = true
         public const val defaultHoldAndRunDelayMs: Int = 500
+        public val defaultHapticFeedback: CustomHapticFeedback? = null
         public const val defaultCycleActionsLoopDelayMs: Int = 500
+        public const val defaultCycleActionsLoop: Boolean = true
         public const val defaultLiveNestMainNestOpacityPercent: Int = 50
         public val defaultGlow: CustomGlow = CustomGlow(radius = defaultSize * 1.05f)
         public val defaultGlowSelected: CustomGlow = CustomGlow(radius = defaultSize * 1.1f)
@@ -444,10 +457,13 @@ public data class Point(
             liveNestSnapsToFingerPosition = defaultLiveNestSnapsToFingerPosition,
             holdAndRunDelayMs = defaultHoldAndRunDelayMs,
             cycleActionsLoopDelayMs = defaultCycleActionsLoopDelayMs,
+            cycleActionsLoop = defaultCycleActionsLoop,
             liveNestSubNestOpacityPercent = defaultLiveNestMainNestOpacityPercent,
             glow = defaultGlow,
             glowSelected = defaultGlowSelected
         )
+
+        public val emptyPoint: Point = dummySwipePoint()
 
         public inline val Point.isDefault: Boolean
             get() = this.shapeId == null &&

@@ -26,6 +26,8 @@ import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
+import java.text.NumberFormat
+import java.util.Locale.getDefault
 import kotlin.math.roundToInt
 
 /**
@@ -100,32 +102,38 @@ private fun SliderWithLabelInternal(
                 modifier = Modifier.weight(1f)
             )
 
-                EditValueTextField(
-                    value = editingText,
-                    modifier = Modifier,
-                    onValueChange = {
-                        editingText = it
-                        isError = false
-                    },
-                    enabled = allowTextEditValue,
-                    resetEnabled = resetEnabled,
-                    backgroundColor = backgroundColor,
-                    onReset = onReset,
-                    onDone = {
-                        try {
-                            val newValue = if (editingText.isEmpty()) valueRange.start
-                            else editingText.toFloat().coerceIn(valueRange)
-                            onDragStateChange?.invoke(true)
-                            onChange(newValue)
-                            onDragStateChange?.invoke(false)
-                        } catch (_: Exception) {
-                            isError = true
-                            ctx.showToast("Failed to parse number")
-                            // Ignore malformed input - slider keeps its current value
-                        }
-                        focusManager.clearFocus()
+            val formatter = remember {
+                NumberFormat.getInstance(getDefault())
+            }
+
+            EditValueTextField(
+                value = editingText,
+                modifier = Modifier,
+                onValueChange = {
+                    editingText = it
+                    isError = false
+                },
+                enabled = allowTextEditValue,
+                resetEnabled = resetEnabled,
+                backgroundColor = backgroundColor,
+                onReset = onReset,
+                onDone = {
+                    try {
+                        val parsedNumber = formatter.parse(editingText.trim())?.toFloat() ?: throw NumberFormatException("Empty input")
+
+                        val newValue = parsedNumber.coerceIn(valueRange)
+
+                        onDragStateChange?.invoke(true)
+                        onChange(newValue)
+                        onDragStateChange?.invoke(false)
+                    } catch (_: Exception) {
+                        isError = true
+                        ctx.showToast("Failed to parse number")
+                        // Ignore malformed input - slider keeps its current value
                     }
-                )
+                    focusManager.clearFocus()
+                }
+            )
         }
 
         Slider(

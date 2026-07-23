@@ -400,7 +400,7 @@ public object ImageUtils {
 
             properties.tint?.let {
                 colorFilter = PorterDuffColorFilter(
-                    it,
+                    it.toArgb(),
                     PorterDuff.Mode.SRC_IN
                 )
             }

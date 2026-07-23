@@ -23,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -36,7 +35,6 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomIcon.Companion.se
 import org.elnix.dragonlauncher.base.model.serializables.CustomIconProperties
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ktx.specifiedOrNull
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
@@ -265,14 +263,9 @@ private fun CustomIconPropertiesEditor(
         ColorPickerRow(
             title = stringResource(R.string.tint),
             description = null,
-            currentColor = properties.tint?.let { Color(it) } ?: Color.Unspecified,
+            currentColor = properties.tint ?: Color.Unspecified
         ) {
-            val tintColor = it.specifiedOrNull()?.toArgb()
-            onUpdate(
-                properties.copy(
-                    tint = tintColor
-                )
-            )
+            onUpdate(properties.copy(tint = it))
         }
 
         ShapeRow(

@@ -575,9 +575,13 @@ public fun EditStatusBar() {
                             ActionSelectorRow(
                                 label = stringResource(R.string.spacer_mode),
                                 options = StatusBar.Spacer.SpacerMode.entries,
-                                selected = item.mode
+                                selected = item.mode,
+                                resetEnabled = item.mode != StatusBar.Spacer.defaultSpacerMode,
+                                onReset = {
+                                    updateElement(item.copy(mode = StatusBar.Spacer.defaultSpacerMode))
+                                }
                             ) {
-                                updateElement(item.copy(mode = it ?: StatusBar.Spacer.spacerSpacerMode))
+                                updateElement(item.copy(mode = it ?: StatusBar.Spacer.defaultSpacerMode))
                             }
                         }
 

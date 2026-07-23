@@ -44,7 +44,13 @@ public fun DrawerActionSelector(
         selected = tempState,
         label = stringResource(settingObject.title!!),
         optionLabel = { stringResource(it.resId) },
-        toggled = stateNotDisabled
+        toggled = stateNotDisabled,
+        resetEnabled = state != settingObject.default,
+        onReset = {
+            scope.launch {
+                settingObject.reset(ctx)
+            }
+        }
     ) {
         tempState = it ?: DrawerActions.Disabled
         scope.launch {

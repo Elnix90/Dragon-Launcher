@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 /**
@@ -31,6 +32,23 @@ public class UndoRedoManager(
         started = SharingStarted.Eagerly,
         initialValue = false
     )
+
+    public val undoSize: StateFlow<Int> = stacks.first().undoStack.flow.map {
+        it.size
+    }.stateIn(
+        scope = scope,
+        started = SharingStarted.Eagerly,
+        initialValue = 0
+    )
+
+    public val redoSize: StateFlow<Int> = stacks.first().redoStack.flow.map {
+        it.size
+    }.stateIn(
+        scope = scope,
+        started = SharingStarted.Eagerly,
+        initialValue = 0
+    )
+
 
     /** Snapshot all stacks, then run the mutation. Clears all redo histories. */
     public inline fun applyChange(mutator: () -> Unit) {

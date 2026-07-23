@@ -69,7 +69,6 @@ public value class CustomHapticFeedback(
         }
     }
 
-
     public companion object {
         public fun build(builder: CustomHapticBuilder.() -> Unit): CustomHapticFeedback {
             val sequence = CustomHapticBuilder().apply(builder).build()

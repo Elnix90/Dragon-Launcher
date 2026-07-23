@@ -471,7 +471,7 @@ public class IconService(
                 SystemIconProvider(
                     appRepository = appRepository,
                     themedIcons = false,
-                    tint = customIcon.getProperties().tint
+                    tint = customIcon.getProperties().tint?.toArgb()
                 )
             )
         }

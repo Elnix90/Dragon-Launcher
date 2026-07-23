@@ -2,8 +2,6 @@ package org.elnix.dragonlauncher.theme
 
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardColors
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -120,7 +118,7 @@ public object AppObjectsColors {
     public fun outlinedTextFieldColors(
         backgroundColor: Color? = null,
         onBackgroundColor: Color? = null,
-        removeBorder: Boolean = false
+        removeBorder: Boolean = true
     ): TextFieldColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {

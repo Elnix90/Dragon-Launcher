@@ -156,12 +156,12 @@ public fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()
 //            this.scale
 //        }
 
-        val newAngle = if (snapShapeAngle) this.getRotation(defaultShape).snapToRound(0, 20) else this.rotation
+        val newRotation = if (snapShapeAngle) this.getRotation(defaultShape).snapToRound(0, 20) else this.rotation
 
         return this.copy(
-            offset = newOffset,
+            offset = newOffset.takeIf { it != (defaultShape.offset ?: IntersectionShape.defaultOffset) },
 //            scale = newScale,
-            rotation = newAngle
+            rotation = newRotation.takeIf { it != (defaultShape.rotation ?: IntersectionShape.defaultRotation) }
         )
     }
 
@@ -186,7 +186,7 @@ public fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()
         paths[shape] = shape.getShape(defaultShape).resolveShape().toPath(shape.getSize(density.density, defaultShape), density)
     }
 
-    LaunchedEffect(defaultNest.intersectionShapes, currentNest.intersectionShapes) {
+    LaunchedEffect(defaultShape.offset, defaultShape, defaultNest.intersectionShapes, currentNest.intersectionShapes) {
         paths.clear()
         currentNest.getInterSectionShapes(defaultNest).forEach { shape ->
             addPath(shape)
@@ -206,7 +206,9 @@ public fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()
             netOffsetChange = netOffsetChange
         ) { old ->
             old.copy(
-                intersectionShapes = paths.keys.mapTo(mutableSetOf()) { it.snap() }
+                intersectionShapes = paths.keys
+                    .mapTo(mutableSetOf()) { it.snap() }
+                    .takeIf { it != (defaultNest.intersectionShapes ?: Nest.defaultIntersectionShapes) }
             )
         }
     }
@@ -677,14 +679,15 @@ public fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()
             },
             onReset = { pointsService.resetNest(nestId) },
             onUpdateCancelZone = {
-                tempCancelZone = it
+                tempCancelZone = it ?: defaultNest.cancelZone ?: Nest.defaultCancelZone
             },
-            onUpdateShapes = { shapes ->
+            onUpdateShapes = { net, shapes ->
                 // Create a new set to avoid mutating the sme memory reference
                 val oldShapes: Set<IntersectionShape> = paths.keys.toSet()
 
                 paths.clear()
 
+                TODO()
                 shapes.forEach { shape ->
                     addPath(shape)
                     points
@@ -692,7 +695,7 @@ public fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()
                         .forEach { (_, point) ->
 
                             val oldOffset = oldShapes.find { shape.id == it.id }?.getOffset(defaultShape) ?: return@forEach
-                            val netOffsetChange: Offset = oldOffset - shape.getOffset(defaultShape)
+                            val netOffsetChange: Offset = shape.getOffset(defaultShape) - oldOffset
 
                             val pointChanged = point.copy(offset = point.offset + netOffsetChange)
                             point.pos = pointsService.computePointOffsetRealTime(pointChanged, shape.snap())
@@ -711,7 +714,9 @@ public fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()
             tempCancelZone = tempCancelZone,
             onEdit = { newNest -> pointsService.editDefaultNest(newNest) },
             onReset = { pointsService.editDefaultNest(Nest()) },
-            onUpdateShapes = { /* no-op */ },
+            onUpdateShapes = { netChange, newShapes ->
+
+            },
             onUpdateCancelZone = { /* no-op */ }
         ) { showEditDefaultNestSheet = false }
     }
@@ -744,5 +749,6 @@ public fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()
     DebugZone(DebugSettingsStore.nestDebugInfo) {
         Text("Paths size: ${paths.size}")
         Text("RecomposeTrigger: $recomposeTrigger")
+        Text(currentNest.intersectionShapes?.toString() ?: "null")
     }
 }

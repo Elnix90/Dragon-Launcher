@@ -8,8 +8,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.CustomObjectBlockProperties
+import org.elnix.dragonlauncher.base.model.serializables.isSpecified
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
@@ -78,7 +80,42 @@ public fun EditCustomObjectBlock(
         }
 
         if (properties.allowGlowCustomization) {
-            CustomGlowEditor(editObject, onEdit, default)
+            ColorPickerRow(
+                title = stringResource(R.string.glow_color),
+                description = null,
+                enabled = true,
+                currentColor = editObject.glow?.color ?: default.glow?.color ?: Color.Unspecified,
+                onColorPicked = { newColor ->
+                    onEdit(
+                        editObject.copy(
+                            glow = (editObject.glow
+                                ?.copy(color = newColor)
+                                ?: CustomGlow(color = newColor))
+                                .takeIf { it.isSpecified }
+                        )
+                    )
+                }
+            )
+
+            SliderWithLabel(
+                label = stringResource(R.string.glow_radius),
+                value = editObject.glow?.radius ?: default.glow?.radius!!,
+                valueRange = 0.dp..200.dp,
+                decimals = 1,
+                resetEnabled = editObject.glow?.radius != null,
+                onReset = {
+                    onEdit(editObject.copy(glow = editObject.glow?.copy(radius = null).takeIf { it.isSpecified }))
+                }
+            ) { newGlowRadius ->
+                onEdit(
+                    editObject.copy(
+                        glow = (editObject.glow
+                            ?.copy(radius = newGlowRadius)
+                            ?: CustomGlow(radius = newGlowRadius))
+                            .takeIf { it.isSpecified }
+                    )
+                )
+            }
         }
 
         if (properties.allowShapeCustomization) {

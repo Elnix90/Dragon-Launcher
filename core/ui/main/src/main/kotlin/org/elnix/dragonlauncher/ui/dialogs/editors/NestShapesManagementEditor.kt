@@ -11,7 +11,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +24,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
-import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.cleanString
 import org.elnix.dragonlauncher.ktx.getNextId
@@ -44,31 +42,26 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 @Composable
 public fun NestShapesManagementEditor(
     shapes: Set<IntersectionShape>,
+    defaultShapes: Set<IntersectionShape>,
     isDefaultEditing: Boolean,
-    defaultNest: Nest,
     defaultShape: IntersectionShape,
     modifier: Modifier = Modifier,
-    onUpdateShapes: (newShapes: Set<IntersectionShape>) -> Unit,
+    onUpdateShapes: (netOffsetChange: Offset, newShapes: Set<IntersectionShape>) -> Unit,
     onReset: () -> Unit,
     onDismiss: (newShapes: Set<IntersectionShape>) -> Unit
 ) {
-
-    val shapesInternal: SnapshotStateMap<Int, IntersectionShape> = remember { mutableStateMapOf() }
-    LaunchedEffect(defaultShape, shapes) {
-        if (isDefaultEditing) {
-            (defaultNest.intersectionShapes ?: Nest.defaultIntersectionShapes).forEach {
-                shapesInternal[it.id] = it
-            }
-        } else {
+    val shapesInternal: SnapshotStateMap<Int, IntersectionShape> = remember {
+        mutableStateMapOf<Int, IntersectionShape>().apply {
             shapes.forEach {
-                shapesInternal[it.id] = it
+                this[it.id] = it
             }
         }
     }
 
     fun triggerUpdate() {
-        onUpdateShapes(shapesInternal.values.toSet())
+        onUpdateShapes(Offset.Zero, shapesInternal.values.toSet())
     }
+
     fun updateShape(id: Int, newShape: (IntersectionShape) -> IntersectionShape) {
         val oldShape = shapesInternal[id] ?: return
         shapesInternal[id] = newShape(oldShape)
@@ -82,21 +75,25 @@ public fun NestShapesManagementEditor(
             onDismiss(shapesInternal.values.toSet())
         }
     ) {
-        DialogTitle(stringResource(R.string.shapes_management), onReset = onReset)
+        DialogTitle(
+            text = stringResource(R.string.shapes_management),
+            resetEnabled = shapesInternal.values.toSet() != defaultShapes,
+            onReset = {
+                shapesInternal.clear()
+                defaultShapes.forEach {
+                    shapesInternal[it.id] = it
+                }
+                triggerUpdate()
+            }
+        )
 
         Spacer(5.dp)
 
         DragonButton(
             onClick = {
                 val newId = shapesInternal.keys.getNextId()
-
-                shapesInternal[newId] = IntersectionShape(
-                    id = newId,
-                    shape = IconShape.Circle,
-                    scale = 1.5f,
-                    offset = Offset.Zero
-                )
-//                triggerUpdate()
+                shapesInternal[newId] = IntersectionShape(newId)
+                triggerUpdate()
             },
             modifier = modifier.selfAlignHorizontally()
         ) {
@@ -127,11 +124,11 @@ public fun NestShapesManagementEditor(
                     onClone = {
                         val id = shapesInternal.keys.getNextId()
                         shapesInternal[id] = shape.copy(id = id)
-//                        triggerUpdate()
+                        triggerUpdate()
                     },
                     onDelete = {
                         shapesInternal.remove(shape.id)
-//                        triggerUpdate()
+                        triggerUpdate()
                     },
                     oClick = { showDetails = shape.id }
                 )

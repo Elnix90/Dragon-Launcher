@@ -14,13 +14,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
@@ -47,10 +50,7 @@ public fun GamblingInputDialog(
                     },
                     singleLine = true,
                     label = { Text(stringResource(R.string.how_many_question)) },
-                    colors = AppObjectsColors.outlinedTextFieldColors(
-                        removeBorder = true,
-                        backgroundColor = MaterialTheme.colorScheme.surfaceVariant
-                    ),
+                    colors = AppObjectsColors.outlinedTextFieldColors(),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Done
@@ -59,10 +59,12 @@ public fun GamblingInputDialog(
                     modifier = Modifier.fillMaxWidth()
                 )
 
+                Spacer(5.dp)
 
                 SwitchRow(
                     state = snapToShapes,
-                    title = stringResource(R.string.snap_points)
+                    title = stringResource(R.string.snap_points),
+                    modifier = Modifier.clip(MaterialTheme.shapes.large)
                 ) { snapToShapes = it }
             }
         },

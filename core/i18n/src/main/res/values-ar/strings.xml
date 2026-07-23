@@ -140,9 +140,7 @@
     <string name="live_nest_pick_nest">اختر عشاً</string>
     <string name="live_nest_snaps_to_finger_position">العش المباشر ينجذب لموضع الإصبع</string>
     <string name="live_nest_snaps_to_finger_position_desc">ما إذا كان يجب أن يكون مركز العش المباشر المرسوم في المكان الذي تم تفعيله فيه بالضبط بعد انتهاء المهلة، أم ينجذب لموضع النقطة المضيفة</string>
-    <string name="live_nest_dim_main_nest">تعتيم العش الرئيسي أثناء الفتح</string>
     <string name="live_nest_dim_main_nest_desc">يقلل شفافية العش الرئيسي عندما يكون العش المباشر نشطاً لكي يبرز التراكب.</string>
-    <string name="live_nest_main_nest_opacity">شفافية العش الرئيسي (%)</string>
     <string name="cycle_actions">تبديل الإجراءات</string>
     <string name="hold_and_run">الضغط والتشغيل</string>
     <string name="hold_and_run_delay">الانتظار قبل التشغيل (ملي ثانية)</string>

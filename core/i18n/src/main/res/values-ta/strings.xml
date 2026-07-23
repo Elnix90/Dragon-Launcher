@@ -813,9 +813,7 @@
     <string name="live_nest_pick_nest">Nest ஐ தேர்வு செய்யவும்</string>
     <string name="live_nest_snaps_to_finger_position">லைவ் நெச்ட் விரல் நிலைக்கு ஒடிக்கிறது</string>
     <string name="live_nest_snaps_to_finger_position_desc">நேரலைக் கூடு வரையப்பட்டிருந்தால், நேரம் முடிந்த பிறகு அது செயல்படுத்தப்பட்ட இடத்தில் அதன் நடுவண் சரியாக இருக்க வேண்டுமா அல்லது அது அதன் புரவலன் புள்ளி நிலைக்குச் சென்றால்</string>
-    <string name="live_nest_dim_main_nest">முதன்மையான கூடு திறந்திருக்கும் போது மங்கலாக்கும்</string>
     <string name="live_nest_dim_main_nest_desc">லைவ் நெச்ட் செயலில் இருக்கும்போது முக்கிய கூடு ஒளிபுகாநிலையைக் குறைக்கிறது, அதனால் மேலடுக்கு தனித்து நிற்கும்.</string>
-    <string name="live_nest_main_nest_opacity">முக்கிய கூடு ஒளிபுகாநிலை (%)</string>
     <string name="cycle_actions">சுழற்சி நடவடிக்கைகள்</string>
     <string name="hold_and_run">பிடித்து இயக்கவும்</string>
     <string name="hold_and_run_delay">ஓடுவதற்கு முன் பிடி (மிவி)</string>

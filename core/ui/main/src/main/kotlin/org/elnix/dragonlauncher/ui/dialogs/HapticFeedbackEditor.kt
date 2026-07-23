@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -74,8 +75,8 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun HapticFeedbackEditor(
-    initial: CustomHapticFeedback? = null,
-    onReset: () -> Unit,
+    initial: CustomHapticFeedback?,
+    default: CustomHapticFeedback?,
     onDismiss: (CustomHapticFeedback?) -> Unit,
 ) {
     val ctx = LocalContext.current
@@ -83,7 +84,7 @@ public fun HapticFeedbackEditor(
     val lazyListState = rememberLazyListState()
 
     val entries = remember(initial) {
-        mutableStateListOf<HapticEntry>().apply { addAll(initial?.haptics ?: emptyList()) }
+        mutableStateListOf<HapticEntry>().apply { addAll(initial?.haptics ?: default?.haptics ?: emptyList()) }
     }
 
     val reorderState = rememberReorderableLazyListState(
@@ -95,7 +96,7 @@ public fun HapticFeedbackEditor(
 
     fun currentEditingSnapshot(): CustomHapticFeedback? {
         val snapshot = if (entries.isEmpty()) null
-        else CustomHapticFeedback(entries)
+        else CustomHapticFeedback(entries.toList())
         return snapshot
     }
 
@@ -121,20 +122,23 @@ public fun HapticFeedbackEditor(
     }
 
     fun copyToClipboard() {
-        val encoded = json.encodeToString(currentEditingSnapshot())
-
+        val current = currentEditingSnapshot() ?: return
+        val encoded = json.encodeToString(current)
         ctx.copyToClipboard(encoded)
     }
 
     fun importFromClipboard() {
-        val clipboardContent = ctx.pasteClipboard() ?: ""
-
+        val clipboardContent = ctx.pasteClipboard()
         try {
+            clipboardContent ?: throw IllegalStateException("<empty>")
             val decoded = json.decodeFromString<CustomHapticFeedback>(clipboardContent)
 
             selectPreset(decoded)
             ctx.showToast("✅ Successfully imported!")
 
+        } catch (e: IllegalStateException) {
+            logE(HAPTIC_TAG, e) { "Clipboard if empty" }
+            ctx.showToast("❌  Clipboard if empty")
         } catch (e: Exception) {
             logE(HAPTIC_TAG, e) { "Failed to decode '$clipboardContent' from clipboard" }
             ctx.showToast("❌ Failed to decode '$clipboardContent' from clipboard: $e")
@@ -186,7 +190,11 @@ public fun HapticFeedbackEditor(
                     }
                 }
             },
-            onReset = onReset
+            resetEnabled = entries.toList() != default?.haptics?.toList(),
+            onReset = {
+                entries.clear()
+                default?.haptics?.let { entries.addAll(it) }
+            }
         )
 
         Spacer(5.dp)
@@ -198,7 +206,6 @@ public fun HapticFeedbackEditor(
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(MaterialTheme.shapes.medium)
                     .horizontalScroll(rememberScrollState())
                     .background(MaterialTheme.colorScheme.surfaceVariant)
             ) {
@@ -278,10 +285,10 @@ public fun HapticFeedbackEditor(
                     )
                 }
             } else {
-
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
-                    state = lazyListState
+                    state = lazyListState,
+                    modifier = Modifier.heightIn(max = 600.dp)
                 ) {
                     items(entries, key = { it.id }) { entry ->
                         val index = entries.indexOf(entry)
@@ -300,6 +307,7 @@ public fun HapticFeedbackEditor(
 
                             ElevatedCard(
                                 modifier = Modifier
+                                    .padding(10.dp)
                                     .fillMaxWidth()
                                     .scale(scale)
                                     .longPressDraggableHandle(),

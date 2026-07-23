@@ -17,6 +17,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 public fun SwitchRow(
     state: Boolean?,
     title: String,
+    modifier: Modifier = Modifier,
     description: String? = null,
     enabled: Boolean = true,
     resetEnabled: Boolean = true,
@@ -28,7 +29,7 @@ public fun SwitchRow(
 
     val interactionSource = rememberInteractionSource()
     Row(
-        modifier = Modifier
+        modifier = modifier
             .clickable(
                 enabled = enabled,
                 onClick = { onCheck(!checked) },

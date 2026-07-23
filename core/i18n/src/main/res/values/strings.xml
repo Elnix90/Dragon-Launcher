@@ -871,9 +871,8 @@
     <string name="live_nest_grace_distance">Grace distance</string>
     <string name="live_nest_snaps_to_finger_position">Live nest snaps to finger position</string>
     <string name="live_nest_snaps_to_finger_position_desc">Whether if the live nest drawn should have its center exactly where it got activated after the timeout, or if it snaps to its host point position</string>
-    <string name="live_nest_dim_main_nest">Dim main nest while open</string>
     <string name="live_nest_dim_main_nest_desc">Lowers main nest opacity when Live Nest is active so the overlay stands out.</string>
-    <string name="live_nest_main_nest_opacity">Main nest opacity (%)</string>
+    <string name="live_nest_sub_nest_opacity">Sub nests opacity (%)</string>
     <string name="cycle_actions">Cycle Actions</string>
     <string name="hold_and_run">Hold &amp; Run</string>
     <string name="hold_and_run_delay">Hold before run (ms)</string>

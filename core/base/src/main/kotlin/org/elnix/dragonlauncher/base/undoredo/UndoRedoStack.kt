@@ -14,8 +14,9 @@ public class UndoRedoStack<T>(
     private val restore: (T) -> Unit
 ) {
 
-    private val undoStack: SettingFlow<List<T>> = SettingFlow(emptyList())
-    private val redoStack: SettingFlow<List<T>> = SettingFlow(emptyList())
+    internal val undoStack: SettingFlow<List<T>> = SettingFlow(emptyList())
+    internal val redoStack: SettingFlow<List<T>> = SettingFlow(emptyList())
+
 
 
     /** Public flow to let compose react to changes */

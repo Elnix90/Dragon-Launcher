@@ -813,9 +813,7 @@
     <string name="live_nest_pick_nest">指派选定的嵌套圆环</string>
     <string name="live_nest_snaps_to_finger_position">子级嵌套环准星完美吸附至手指正下方</string>
     <string name="live_nest_snaps_to_finger_position_desc">开启时，展开的二级子圆环的圆心坐标会精确建立在手势读条蓄满时您手指所在的物理指尖正下方；关闭时，它则会老老实实吸附在它所依附的那个母体母触点的圆心上</string>
-    <string name="live_nest_dim_main_nest">子环展开时将母体主环调暗淡化</string>
     <string name="live_nest_dim_main_nest_desc">当二级的 Live Nest 被激活铺开在屏幕上时，强行拉低最底层母环的不透明度，以此形成强烈的视差前后景深，让前台的控制触点一目了然。</string>
-    <string name="live_nest_main_nest_opacity">底层主圆环保留的不透明度比例 (%)</string>
     <string name="cycle_actions">多段位阶循环切换动作 (Cycle Actions)</string>
     <string name="hold_and_run">按住并执行快捷手势 (Hold &amp; Run)</string>
     <string name="hold_and_run_delay">触发执行前需按住驻留的时间 (毫秒)</string>

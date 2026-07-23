@@ -227,7 +227,7 @@ internal class PointsServiceImpl(
     override val undoRedo: UndoRedoManager = UndoRedoManager(
         stacks = arrayOf(
             UndoRedoStack(
-                snapshot = { _points.value },
+                snapshot = { _points.value.toMap() },
                 restore = { points ->
                     set(newPoints = points)
 
@@ -235,13 +235,21 @@ internal class PointsServiceImpl(
                 }
             ),
             UndoRedoStack(
-                snapshot = { _nests.value },
+                snapshot = { _nests.value.toMap() },
                 restore = { nests -> set(newNests = nests) }
             ),
             UndoRedoStack(
-                snapshot = { defaultPoint.value },
+                snapshot = { defaultPoint.value.copy() },
                 restore = { set(newDefaultPoint = it) }
-            )
+            ),
+            UndoRedoStack(
+                snapshot = { defaultNest.value.copy() },
+                restore = { set(newDefaultNest = it) }
+            ),
+            UndoRedoStack(
+                snapshot = { defaultIntersectionShape.value.copy() },
+                restore = { set(newDefaultShape = it) }
+            ),
         ),
         scope = scope
     )
@@ -508,7 +516,6 @@ internal class PointsServiceImpl(
             defaultIntersectionShape.value = newDefaultShape
         }
 
-        persist()
         resetGrids()
         recomposeTrigger.value++
     }

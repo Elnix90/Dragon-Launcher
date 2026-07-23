@@ -186,8 +186,6 @@ public fun PointsSettingsScreen(
      * When [snapPoints] is `false`, it simply skips the computation and returns the normalized offset.
      * Otherwise, the function checks for each potential shapes the closest and determines the most probable shape to collide with
      *
-     * TODO: when the point has already a shape, stick to it no matter what, except if the end point is really far away.
-     *
      * @param point which point to move
      * @param normalizedOffset the offset in which the gesture ends (normalized)
      * @return the optional [shapeId][Int] the point will take if dropped here
@@ -740,7 +738,7 @@ public fun PointsSettingsScreen(
                             center = tr.transformedOffset,
                             nest = nestedNest,
                             eraseColor = MaterialTheme.colorScheme.background,
-                            pointSettingsDisplay = true
+                            pointSettingsDisplay = true,
                         )
                     }
 
@@ -1028,11 +1026,7 @@ public fun PointsSettingsScreen(
             PointEditor(
                 point = editPoint,
                 defaultPoint = defaultPoint,
-                isDefaultEditing = false,
-                onDismiss = {
-                    showEditDialog = null
-                    iconsViewModel.reloadIcon(editPoint)
-                },
+                isDefaultEditing = false
             ) { newPoint ->
                 iconsViewModel.reloadIcon(newPoint)
 
@@ -1120,10 +1114,7 @@ public fun PointsSettingsScreen(
         PointEditor(
             point = defaultPoint.copy(id = 0),
             defaultPoint = defaultPoint,
-            isDefaultEditing = true,
-            onDismiss = {
-                showEditDefaultPoint = false
-            }
+            isDefaultEditing = true
         ) {
             pointsService.editDefaultPoint(newDefaultPoint = it)
             iconsViewModel.reloadAllPointsIcons()

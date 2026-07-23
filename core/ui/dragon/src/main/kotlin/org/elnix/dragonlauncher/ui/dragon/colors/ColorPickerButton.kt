@@ -131,9 +131,14 @@ public fun ColorPickerButtonOne(
 
     val button by ColorModesSettingsStore.colorPickerButtonOne.asState()
 
+    val buttonEnabled = when (button) {
+        Reset -> currentColor != Color.Unspecified
+        Random, Copy,Paste -> true
+    }
+
     ColorPickerButtonInternal(
         button = button,
-        enabled = enabled,
+        enabled = enabled && buttonEnabled,
         currentColor = currentColor,
         onReset = onReset,
         onModeChanged = {
@@ -158,9 +163,14 @@ public fun ColorPickerButtonTwo(
 
     val button by ColorModesSettingsStore.colorPickerButtonTwo.asState()
 
+    val buttonEnabled = when (button) {
+        Reset -> currentColor != Color.Unspecified
+        Random, Copy,Paste -> true
+    }
+
     ColorPickerButtonInternal(
         button = button,
-        enabled = enabled,
+        enabled = enabled && buttonEnabled,
         currentColor = currentColor,
         onReset = onReset,
         onModeChanged = {

@@ -8,6 +8,7 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import org.elnix.dragonlauncher.ktx.round
 
 @OptIn(ExperimentalSerializationApi::class)
 internal object OffsetSerializer : KSerializer<Offset> {
@@ -15,7 +16,7 @@ internal object OffsetSerializer : KSerializer<Offset> {
         PrimitiveSerialDescriptor("Offset", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: Offset) {
-        encoder.encodeString("${value.x},${value.y}")
+        encoder.encodeString("${value.x.round(2)},${value.y.round(2)}")
     }
 
     override fun deserialize(decoder: Decoder): Offset {
