@@ -134,11 +134,9 @@ public fun IntersectionShapeEditor(
                         else -> offset
                     }
 
-                    onChangeShape(
-                        shape.copy(
-                            offset = newSnappedOffset.takeIf { it.x.round(2) != defaultOffset.x }
-                        )
-                    )
+                    val finalNew = newSnappedOffset.takeIf { it.x.round(2) != defaultOffset.x }
+                    if (finalNew == shape.offset) return@SliderWithLabel
+                    onChangeShape(shape.copy(offset = finalNew))
                 }
 
                 SliderWithLabel(
@@ -163,11 +161,10 @@ public fun IntersectionShapeEditor(
                         else -> offset
                     }
 
-                    onChangeShape(
-                        shape.copy(
-                            offset = newSnappedOffset.takeIf { it.y.round(2) != defaultOffset.y }
-                        )
-                    )
+
+                    val finalNew = newSnappedOffset.takeIf { it.y.round(2) != defaultOffset.y }
+                    if (finalNew == shape.offset) return@SliderWithLabel
+                    onChangeShape(shape.copy(offset = finalNew))
                 }
 
                 SliderWithLabel(
@@ -196,11 +193,9 @@ public fun IntersectionShapeEditor(
                     }
                 ) { newValue ->
                     val newRotation = if (snapShapeAngle) newValue.snapToRound(0, 20) else newValue
-                    onChangeShape(
-                        shape.copy(
-                            rotation = newRotation.takeIf { it != emptyIntersectionShape.getRotation(defaultShape, isDefaultEditing) }
-                        )
-                    )
+                    val finalNew = newRotation.takeIf { it != emptyIntersectionShape.getRotation(defaultShape, isDefaultEditing) }
+                    if (finalNew == shape.rotation) return@SliderWithLabel
+                    onChangeShape(shape.copy(rotation = finalNew))
                 }
             }
 
