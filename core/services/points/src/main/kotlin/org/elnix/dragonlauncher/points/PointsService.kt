@@ -494,7 +494,7 @@ internal class PointsServiceImpl(
         newDefaultNest: Nest?,
         newDefaultShape: IntersectionShape?
     ) {
-        require(newPoints != null || newNests != null || newDefaultPoint != null || newDefaultNest != null || newDefaultShape != null) { "One of all 3 args must not bu null" }
+        require(newPoints != null || newNests != null || newDefaultPoint != null || newDefaultNest != null || newDefaultShape != null) { "One of all args must not be null" }
 
         if (newPoints != null) {
             _points.value = ConcurrentHashMap(newPoints)
