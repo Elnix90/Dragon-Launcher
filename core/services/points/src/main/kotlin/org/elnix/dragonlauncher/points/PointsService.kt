@@ -385,15 +385,17 @@ internal class PointsServiceImpl(
         nestId: Int,
         shapeId: Int?
     ) {
-        applyChange {
-            if (shapeId != null) {
-                _points.value
-                    .filter { (_, point) -> point.nestId == nestId && point.shapeId == shapeId }
-                    .forEach { (id, point) ->
+        if (netOffsetChange == Offset.Zero) return
+        if (shapeId == null) return
 
-                        val pointChanged = point.copy(offset = point.offset + netOffsetChange)
-                        _points.value[id] = pointChanged
-                    }
+        val pointsToChange = _points.value
+            .filter { (_, point) -> point.nestId == nestId && point.shapeId == shapeId }
+        if (pointsToChange.isEmpty()) return
+
+        applyChange {
+            pointsToChange.forEach { (id, point) ->
+                val pointChanged = point.copy(offset = point.offset + netOffsetChange)
+                _points.value[id] = pointChanged
             }
         }
     }
