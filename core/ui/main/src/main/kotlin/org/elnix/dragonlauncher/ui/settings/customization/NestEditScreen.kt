@@ -200,11 +200,7 @@ public fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()
     var netOffsetChange by remember { mutableStateOf(Offset.Zero) }
 
     fun saveCurrentNest() {
-        pointsService.updateNest(
-            nestId = nestId,
-            shapeId = selectedShapeId,
-            netOffsetChange = netOffsetChange
-        ) { old ->
+        pointsService.updateNest(nestId) { old ->
             old.copy(
                 intersectionShapes = paths.keys
                     .mapTo(mutableSetOf()) { it.snap() }
@@ -556,6 +552,11 @@ public fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()
 
                                     if ((totalPanChange.getDistanceSquared() > 0f) || totalZoomChange != 0f || totalRotationChange != 0f) {
                                         saveCurrentNest()
+                                        pointsService.movePointsInShapeBy(
+                                            netOffsetChange = netOffsetChange,
+                                            nestId = nestId,
+                                            shapeId = selectedShapeId
+                                        )
                                     }
                                 }
                             }
@@ -632,9 +633,10 @@ public fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()
                                 points
                                     .filter { (_, point) -> point.nestId == nestId && point.shapeId == shapeId }
                                     .forEach { (_, point) ->
-
-                                        val pointChanged = point.copy(offset = point.offset + netOffsetChange)
-                                        point.pos = pointsService.computePointOffsetRealTime(pointChanged, newSnappedShape)
+                                        point.pos = pointsService.computePointOffsetRealTime(
+                                            point = point.copy(offset = point.offset + netOffsetChange),
+                                            shape = newSnappedShape
+                                        )
                                     }
                             }
                         }
@@ -642,6 +644,7 @@ public fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()
             )
         }
     }
+
     if (showMoreSheet) {
         DragonModalBottomSheet(
             onDismissRequest = { showMoreSheet = false },
@@ -674,35 +677,34 @@ public fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()
             defaultShape = defaultShape,
             isDefaultEditing = false,
             tempCancelZone = tempCancelZone,
-            onEdit = { newNest ->
-                pointsService.editNest(nestId) { newNest }
-            },
-            onReset = { pointsService.resetNest(nestId) },
             onUpdateCancelZone = {
                 tempCancelZone = it ?: defaultNest.cancelZone ?: Nest.defaultCancelZone
             },
-            onUpdateShapes = { net, shapes ->
-                // Create a new set to avoid mutating the sme memory reference
-                val oldShapes: Set<IntersectionShape> = paths.keys.toSet()
-
+            onUpdateShapes = { changedShapes ->
                 paths.clear()
-
-                TODO()
-                shapes.forEach { shape ->
+                changedShapes.forEach { (shape, offset) ->
                     addPath(shape)
                     points
                         .filter { (_, point) -> point.nestId == nestId && point.shapeId == shape.id }
                         .forEach { (_, point) ->
-
-                            val oldOffset = oldShapes.find { shape.id == it.id }?.getOffset(defaultShape) ?: return@forEach
-                            val netOffsetChange: Offset = shape.getOffset(defaultShape) - oldOffset
-
-                            val pointChanged = point.copy(offset = point.offset + netOffsetChange)
+                            val pointChanged = point.copy(offset = point.offset + offset)
                             point.pos = pointsService.computePointOffsetRealTime(pointChanged, shape.snap())
                         }
                 }
             }
-        ) { showEditCurrentNestSheet = false }
+        ) { newNest, changedShapes ->
+            pointsService.editNest(nestId) { newNest }
+
+            changedShapes.forEach { (shape, offset) ->
+                pointsService.movePointsInShapeBy(
+                    netOffsetChange = offset,
+                    nestId = nestId,
+                    shapeId = shape.id
+                )
+            }
+
+            showEditCurrentNestSheet = false
+        }
     }
 
     if (showEditDefaultNestSheet) {
@@ -712,13 +714,12 @@ public fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()
             defaultShape = defaultShape,
             isDefaultEditing = true,
             tempCancelZone = tempCancelZone,
-            onEdit = { newNest -> pointsService.editDefaultNest(newNest) },
-            onReset = { pointsService.editDefaultNest(Nest()) },
-            onUpdateShapes = { netChange, newShapes ->
-
-            },
+            onUpdateShapes = { /* no-op */ },
             onUpdateCancelZone = { /* no-op */ }
-        ) { showEditDefaultNestSheet = false }
+        ) { newNest, _ ->
+            pointsService.editDefaultNest(newNest)
+            showEditDefaultNestSheet = false
+        }
     }
 
     if (showEditDefaultShapeDialog) {

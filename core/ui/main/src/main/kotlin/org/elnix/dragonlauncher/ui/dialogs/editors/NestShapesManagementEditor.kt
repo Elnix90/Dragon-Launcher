@@ -12,7 +12,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,29 +37,28 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
+
+/**
+ * Nest shapes management editor.
+ * Only used by the [NestEditor], serves as a proxy to avoid writing a 500 lines file.
+ *
+ * @param shapesInternal list if shapes, passed from the [NestEditor] directly
+ * @param triggerUpdate called when the ui needs a reactive update as comose isn't listening to every change in the [shapesInternal] list
+ *
+ * @see NestEditor for the other args
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun NestShapesManagementEditor(
-    shapes: Set<IntersectionShape>,
+    shapesInternal: SnapshotStateMap<Int, IntersectionShape>,
+    triggerUpdate: () -> Unit,
     defaultShapes: Set<IntersectionShape>,
     isDefaultEditing: Boolean,
     defaultShape: IntersectionShape,
     modifier: Modifier = Modifier,
-    onUpdateShapes: (netOffsetChange: Offset, newShapes: Set<IntersectionShape>) -> Unit,
-    onReset: () -> Unit,
+    onUpdateShapes: (changedShapes: Map<IntersectionShape, Offset>) -> Unit,
     onDismiss: (newShapes: Set<IntersectionShape>) -> Unit
 ) {
-    val shapesInternal: SnapshotStateMap<Int, IntersectionShape> = remember {
-        mutableStateMapOf<Int, IntersectionShape>().apply {
-            shapes.forEach {
-                this[it.id] = it
-            }
-        }
-    }
-
-    fun triggerUpdate() {
-        onUpdateShapes(Offset.Zero, shapesInternal.values.toSet())
-    }
 
     fun updateShape(id: Int, newShape: (IntersectionShape) -> IntersectionShape) {
         val oldShape = shapesInternal[id] ?: return
