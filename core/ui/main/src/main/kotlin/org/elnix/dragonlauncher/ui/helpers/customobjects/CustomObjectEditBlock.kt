@@ -74,7 +74,7 @@ public fun EditCustomObjectBlock(
                 title = stringResource(R.string.color),
                 description = null,
                 enabled = true,
-                currentColor = editObject.color ?: Color.Unspecified,
+                currentColor = editObject.color ?: default.color ?: Color.Unspecified,
                 onColorPicked = { onEdit(editObject.copy(color = it)) }
             )
         }
@@ -99,7 +99,7 @@ public fun EditCustomObjectBlock(
 
             SliderWithLabel(
                 label = stringResource(R.string.glow_radius),
-                value = editObject.glow?.radius ?: default.glow?.radius!!,
+                value = editObject.glow?.radius ?: default.glow?.radius!!, // I have no idea how this hasn't crashed yet for me lol
                 valueRange = 0.dp..200.dp,
                 decimals = 1,
                 resetEnabled = editObject.glow?.radius != null,
