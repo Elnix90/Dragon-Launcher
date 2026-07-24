@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -148,8 +149,8 @@ private fun PackItem(
         TextWithDescription(
             text = text,
             description = description,
+            modifier = Modifier.weight(1f)
         )
-        Spacer()
 
         val scale by animateFloatAsState(
             targetValue = if (selected) 1f else 0f,
@@ -157,13 +158,19 @@ private fun PackItem(
             label = "Check Scale Animation"
         )
 
-        if (scale > 0f) {
-            Icon(
-                painter = painterResource(R.drawable.check),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.scale(scale)
-            )
+        Box(
+            modifier = Modifier
+                .size(40.dp),
+            contentAlignment = Alignment.Center
+        ){
+            if (scale > 0f) {
+                Icon(
+                    painter = painterResource(R.drawable.check),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.scale(scale)
+                )
+            }
         }
     }
 }
