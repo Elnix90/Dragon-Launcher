@@ -130,6 +130,8 @@ public data class Nest(
             intersectionShapes = defaultIntersectionShapes
         )
 
+        public val emptyNest: Nest = Nest()
+
         public inline val Nest.isDefault: Boolean
             get() = this.cancelZone == null &&
                     this.intersectionShapes == null &&
