@@ -23,7 +23,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.github.elnix90.logging.logWtf
 import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.CustomObjectBlockProperties
@@ -286,7 +285,6 @@ public fun IntersectionShapeEditor(
             initial = shape.haptic,
             default = defaultHaptic
         ) { newCustomHaptic ->
-            logWtf { " \ncurrent = $newCustomHaptic,\ndefault = $defaultHaptic\nsame: ${newCustomHaptic == defaultHaptic}" }
             onChangeShape(
                 shape.copy(
                     haptic = newCustomHaptic.takeIf { it != defaultHaptic }
