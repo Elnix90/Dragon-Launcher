@@ -63,7 +63,6 @@
     <string name="exit_test_mode">टेस्ट मोड से बाहर निकलें</string>
     <string name="exit_test_mode_message">क्या आप अपनी रंग परिवर्तन सहेजना चाहते हैं या उन्हें त्यागना चाहते हैं?</string>
     <string name="back_to_colors_settings">रंग सेटिंग्स पर वापस जाएं</string>
-    <string name="light_theme">लाइट थीम</string>
     <string name="dark_theme">डार्क थीम</string>
     <string name="amoled_theme">AMOLED थीम</string>
     <string name="system_theme">सिस्टम थीम</string>

@@ -64,7 +64,6 @@
     <string name="exit_test_mode">Quitter le mode test</string>
     <string name="exit_test_mode_message">Voulez-vous enregistrer vos modifications de couleur ou les annuler ?</string>
     <string name="back_to_colors_settings">Retour aux paramètres de couleurs</string>
-    <string name="light_theme">Thème clair</string>
     <string name="dark_theme">Thème sombre</string>
     <string name="amoled_theme">Thème AMOLED</string>
     <string name="system_theme">Thème du système</string>

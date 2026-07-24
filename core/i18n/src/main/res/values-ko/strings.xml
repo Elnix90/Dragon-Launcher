@@ -67,7 +67,6 @@
     <string name="exit_test_mode">테스트 모드 종료</string>
     <string name="exit_test_mode_message">색상 변경 사항을 저장하시겠습니까, 아니면 폐기하시겠습니까?</string>
     <string name="back_to_colors_settings">색상 설정으로 돌아가기</string>
-    <string name="light_theme">라이트 테마</string>
     <string name="dark_theme">다크 테마</string>
     <string name="amoled_theme">AMOLED 테마</string>
     <string name="system_theme">시스템 테마</string>

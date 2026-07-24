@@ -67,7 +67,6 @@
     <string name="exit_test_mode">சோதனை பயன்முறையிலிருந்து வெளியேறு</string>
     <string name="exit_test_mode_message">உங்கள் வண்ண மாற்றங்களைச் சேமிக்க விரும்புகிறீர்களா அல்லது அவற்றை நிராகரிக்க விரும்புகிறீர்களா?</string>
     <string name="back_to_colors_settings">நிறங்கள் அமைப்புகளுக்குத் திரும்பு</string>
-    <string name="light_theme">ஒளி கருப்பொருள்</string>
     <string name="dark_theme">இருண்ட கருப்பொருள்</string>
     <string name="amoled_theme">AMOLED கருப்பொருள்</string>
     <string name="system_theme">கணினி கருப்பொருள்</string>

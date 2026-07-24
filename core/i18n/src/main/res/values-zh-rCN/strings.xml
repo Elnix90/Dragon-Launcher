@@ -60,7 +60,6 @@
     <string name="exit_test_mode">退出测试模式</string>
     <string name="exit_test_mode_message">您要保存颜色更改还是放弃它们？</string>
     <string name="back_to_colors_settings">返回颜色设置</string>
-    <string name="light_theme">浅色主题</string>
     <string name="dark_theme">深色主题</string>
     <string name="amoled_theme">AMOLED 纯黑主题</string>
     <string name="system_theme">系统默认主题</string>

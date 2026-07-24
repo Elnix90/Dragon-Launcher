@@ -63,7 +63,6 @@
     <string name="exit_test_mode">Testmodus beenden</string>
     <string name="exit_test_mode_message">Möchten Sie Ihre Farbänderungen speichern oder verwerfen?</string>
     <string name="back_to_colors_settings">Zurück zu Farbeinstellungen</string>
-    <string name="light_theme">Lichtthema</string>
     <string name="dark_theme">Dunkles Thema</string>
     <string name="amoled_theme">AMOLED-Thema</string>
     <string name="system_theme">Systemthema</string>

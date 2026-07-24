@@ -67,7 +67,6 @@
     <string name="exit_test_mode">الخروج من وضع الاختبار</string>
     <string name="exit_test_mode_message">هل تريد حفظ تغييرات الألوان أم تجاهلها؟</string>
     <string name="back_to_colors_settings">العودة إلى إعدادات الألوان</string>
-    <string name="light_theme">المظهر الفاتح</string>
     <string name="dark_theme">المظهر الداكن</string>
     <string name="amoled_theme">مظهر AMOLED</string>
     <string name="system_theme">مظهر النظام</string>
