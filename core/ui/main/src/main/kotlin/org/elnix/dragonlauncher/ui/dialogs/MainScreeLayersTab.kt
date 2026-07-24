@@ -33,14 +33,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.runtime.asState
+import io.github.elnix90.runtime.asStateNull
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.ChargingAnimation
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.MainScreenLayerJson
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.copyWithEnabled
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.defaultMainScreenLayers
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.enabled
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.label
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.CustomDim
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.DragOverlay
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.HoldToActivate
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Widgets
+import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.objects.MainScreenLayersSettingsStore
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
@@ -148,7 +154,7 @@ public fun MainScreeLayersTab() {
                                 )
                             }
 
-                            if (item is MainScreenLayer.CustomDim) {
+                            if (item is CustomDim) {
                                 AnimatedVisibility(item.enabled) {
                                     var tempShowAfter by remember { mutableIntStateOf(item.showAfterMs) }
                                     var tempDimAmount by remember { mutableFloatStateOf(item.dimAmount) }
@@ -159,17 +165,17 @@ public fun MainScreeLayersTab() {
                                             valueRange = 0..5000,
                                             label = stringResource(R.string.show_after),
                                             description = stringResource(R.string.show_after_help),
-                                            resetEnabled = tempShowAfter != MainScreenLayer.CustomDim.defaultShowAfterMs,
+                                            resetEnabled = tempShowAfter != CustomDim.defaultShowAfterMs,
                                             onReset = {
                                                 objects = objects.map {
-                                                    if (it is MainScreenLayer.CustomDim) it.copy(showAfterMs = MainScreenLayer.CustomDim.defaultShowAfterMs) else it
+                                                    if (it is CustomDim) it.copy(showAfterMs = CustomDim.defaultShowAfterMs) else it
                                                 }
                                                 save()
                                             },
                                             onDragStateChange = { isDragging ->
                                                 if (!isDragging) {
                                                     objects = objects.map {
-                                                        if (it is MainScreenLayer.CustomDim) it.copy(showAfterMs = tempShowAfter) else it
+                                                        if (it is CustomDim) it.copy(showAfterMs = tempShowAfter) else it
                                                     }
                                                     save()
                                                 }
@@ -183,17 +189,17 @@ public fun MainScreeLayersTab() {
                                             valueRange = 0f..1f,
                                             label = stringResource(R.string.dim_amount),
                                             description = stringResource(R.string.dim_amount_help),
-                                            resetEnabled = tempDimAmount != MainScreenLayer.CustomDim.defaultDimAmount,
+                                            resetEnabled = tempDimAmount != CustomDim.defaultDimAmount,
                                             onReset = {
                                                 objects = objects.map {
-                                                    if (it is MainScreenLayer.CustomDim) it.copy(dimAmount = MainScreenLayer.CustomDim.defaultDimAmount) else it
+                                                    if (it is CustomDim) it.copy(dimAmount = CustomDim.defaultDimAmount) else it
                                                 }
                                                 save()
                                             },
                                             onDragStateChange = { isDragging ->
                                                 if (!isDragging) {
                                                     objects = objects.map {
-                                                        if (it is MainScreenLayer.CustomDim) it.copy(dimAmount = tempDimAmount) else it
+                                                        if (it is CustomDim) it.copy(dimAmount = tempDimAmount) else it
                                                     }
                                                     save()
                                                 }
@@ -214,12 +220,22 @@ public fun MainScreeLayersTab() {
 
 @Composable
 public fun rememberMainScreenLayerOrder(): MutableState<List<MainScreenLayer>> {
-    val orderString by MainScreenLayersSettingsStore.jsonSetting.asState()
+    val orderString by MainScreenLayersSettingsStore.jsonSetting.asStateNull()
 
     return remember(orderString) {
         val decoded = MainScreenLayerJson
             .decode<List<MainScreenLayer>>(orderString)
-            ?.takeIf { it.size == 6 } // Ensure they have been saved
+            ?.takeIf { layers ->
+                val expectedTypes = setOf(
+                    ChargingAnimation::class,
+                    StatusBar::class,
+                    Widgets::class,
+                    CustomDim::class,
+                    DragOverlay::class,
+                    HoldToActivate::class
+                )
+                layers.map { it::class }.toSet() == expectedTypes
+            }
             ?: defaultMainScreenLayers
 
         mutableStateOf(decoded)
