@@ -33,6 +33,7 @@ import org.elnix.dragonlauncher.ktx.angleRad
 import org.elnix.dragonlauncher.ktx.distanceTo
 import org.elnix.dragonlauncher.ktx.getNextId
 import org.elnix.dragonlauncher.ktx.groupByTo
+import org.elnix.dragonlauncher.ktx.radians
 import org.elnix.dragonlauncher.settings.stores.array.NestsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.array.PointsSettingsStore
 import org.elnix.dragonlauncher.settings.stores.objects.DefaultNestSettingsStore
@@ -81,10 +82,15 @@ public interface PointsService {
 
     public fun resetNest(id: Int)
 
+
+    public fun movePointsInShapeBy(
+        netOffsetChange: Offset,
+        nestId: Int,
+        shapeId: Int?
+    )
+
     public fun updateNest(
         nestId: Int,
-        shapeId: Int?,
-        netOffsetChange: Offset,
         editedNest: (Nest) -> Nest
     )
 
@@ -374,11 +380,10 @@ internal class PointsServiceImpl(
         }
     }
 
-    override inline fun updateNest(
-        nestId: Int,
-        shapeId: Int?,
+    override fun movePointsInShapeBy(
         netOffsetChange: Offset,
-        editedNest: (Nest) -> Nest
+        nestId: Int,
+        shapeId: Int?
     ) {
         applyChange {
             if (shapeId != null) {
@@ -390,7 +395,14 @@ internal class PointsServiceImpl(
                         _points.value[id] = pointChanged
                     }
             }
+        }
+    }
 
+    override inline fun updateNest(
+        nestId: Int,
+        editedNest: (Nest) -> Nest
+    ) {
+        applyChange {
             _nests.value[nestId] = editedNest(findNestById(nestId))
         }
     }
