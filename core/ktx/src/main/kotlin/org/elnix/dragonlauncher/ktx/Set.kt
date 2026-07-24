@@ -6,7 +6,6 @@ package org.elnix.dragonlauncher.ktx
  * Iterates through all ids and returns the first that isn't in the list
  */
 public fun Set<Int>.getNextId(): Int {
-    // Starts at index 0, and iterate trough each id to fill the missing ones (shouldn't happen)
     var newId = 0
     while (newId in this) {
         newId++
