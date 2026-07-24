@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,8 +28,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
@@ -59,7 +56,7 @@ public fun <T> ActionSelectorRow(
     Row(
         modifier = Modifier
             .clickable(
-                interactionSource = if (toggled != null) globalInteractionSource else switchInteractionSource
+                interactionSource = if (toggled == true) globalInteractionSource else switchInteractionSource
             ) { showSheet = true }
             .padding(10.dp)
             .fillMaxWidth(),
@@ -68,41 +65,27 @@ public fun <T> ActionSelectorRow(
         TextWithDescription(
             text = label,
             description = optionLabel(selected),
+            modifier = Modifier.weight(1f)
         )
-        Spacer()
 
-        // Right side toggle + divider wrapped in a clickable container
         if (toggled != null) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+            VerticalDivider(
                 modifier = Modifier
-                    .conditional(enabled && toggled) {
-                        clickable(
-                            interactionSource = switchInteractionSource
-                        ) {
-                            // Disables, selects nothing
-                            onSelected(null)
-                        }
-                    }
-                    .fillMaxHeight()
-                    .padding(top = 10.dp, bottom = 10.dp, end = 10.dp)
-            ) {
-                VerticalDivider(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .padding(horizontal = 8.dp),
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.7f),
-                    thickness = 1.dp
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Switch(
-                    checked = toggled,
-                    interactionSource = switchInteractionSource,
-                    enabled = switchEnabled,
-                    onCheckedChange = null,
-                    colors = AppObjectsColors.switchColors(),
-                )
-            }
+                    .height(50.dp)
+                    .padding(horizontal = 8.dp),
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.7f),
+                thickness = 1.dp
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Switch(
+                checked = toggled,
+                interactionSource = switchInteractionSource,
+                enabled = switchEnabled,
+                onCheckedChange = {
+                    onSelected(null)
+                },
+                colors = AppObjectsColors.switchColors(),
+            )
         }
         ResetIcon(resetEnabled, onReset)
     }
