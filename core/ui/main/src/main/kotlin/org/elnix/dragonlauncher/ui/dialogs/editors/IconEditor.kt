@@ -41,7 +41,6 @@ import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.components.PointPreviewCanvas
 import org.elnix.dragonlauncher.ui.components.iconeditor.IconPicker
@@ -255,8 +254,6 @@ private fun CustomIconPropertiesEditor(
         ) {
             onUpdate(properties.copy(scaleY = it))
         }
-
-        Spacer(8.dp)
     }
 
     DragonSettingsGroup(R.string.advanced) {
