@@ -84,13 +84,15 @@ public fun DrawScope.NestOverlay(
     val interSectionShapes = nest.getInterSectionShapes(defaultNest)
     val defaultShape = drawParams.pointsService.defaultIntersectionShape.value
 
+    val selectedPointsIds = drawParams.pointsService.selectedPointsIds.value
     val selectedShapes = drawParams.pointsService.getSelectedShapeIds(nest.id)
+
     if (!drawParams.hideShapes) {
         repeat(if (depth == 1) 1 else 2) { pass ->
             interSectionShapes.forEach { shape ->
                 val showShape = depth > 1 ||
                         isSettingDisplay ||
-                        nest.getShowAllShapes(defaultNest,drawParams.showAllShapesInNest) ||
+                        (nest.getShowAllShapes(defaultNest, drawParams.showAllShapesInNest) && selectedPointsIds.isNotEmpty()) ||
                         (nest.getShowCurrentShape(defaultNest, drawParams.showShape) && shape.id in selectedShapes)
 
                 if (showShape) {
@@ -132,11 +134,9 @@ public fun DrawScope.NestOverlay(
         centerOfNest(center)
     }
 
-    val selectedPointsIds = drawParams.pointsService.selectedPointsIds.value
-
     val filteredPoints = drawParams
         .pointsService
-        .getPointsForNest(nestId = nest.id, skipSelected = depth > 1 && drawParams.skipSelected)
+        .getPointsForNest(nestId = nest.id, skipSelected = drawParams.skipSelected && depth == 1)
         .filter { (id, point) ->
             when {
                 depth > 1 -> true
@@ -144,7 +144,10 @@ public fun DrawScope.NestOverlay(
                 nest.getShowAllPointsInCurrentNest(defaultNest, drawParams.showAllPointsInCurrentNest) -> true
                 else -> {
                     (drawParams.showCurrentPoint && (id in selectedPointsIds)) ||
-                            (nest.getShowAllPointsInCurrentNest(defaultNest,drawParams.showAllPointsInCurrentShape) && (point.shapeId in selectedShapes))
+                            (nest.getShowAllPointsInCurrentNest(
+                                defaultNest,
+                                drawParams.showAllPointsInCurrentShape
+                            ) && (point.shapeId in selectedShapes))
                 }
             }
         }
