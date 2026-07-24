@@ -885,6 +885,5 @@
     <string name="warning_title">极其严正的数字主权警告</string>
     <string name="warning_subtitle">你的手机，即将在物理和法律意义上停止真正隶属于你。</string>
     <string name="warning_days_until_lockdown">距离最后的数字霸权封锁强制锁闭还剩</string>
-    <string name="warning_description">自 2026 年 9 月起，一项来自垄断上游的隐蔽静默安全底层升级将逐步开始大面积实施：任何未能向 Google 官方完成巨额注册上贡、未签署霸王合同条款、未如实上缴足额过路费、且未向 Google 跨国巨头直接移交本人真实政府法定身份护照 ID 留底归档的独立独立开发者所倾心编写的每一款安卓应用，都将直接被设备系统强行判处死刑并禁止运行。</string>
     <string name="warning_worldwide">此番霸权封锁将覆盖全球范围内的每一款民间独立应用程序和每一部现代化智能终端硬件，绝无任何法外豁免或主动退出（Opt-out）的选项路径。</string>
 </resources>

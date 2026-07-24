@@ -212,7 +212,6 @@
     <string name="warning_title">تحذير هام</string>
     <string name="warning_subtitle">هاتفك على وشك أن يتوقف عن كونه ملكك.</string>
     <string name="warning_days_until_lockdown">الأيام المتبقية حتى الإغلاق</string>
-    <string name="warning_description">بدءاً من سبتمبر 2026، سيقوم تحديث صامت بحظر كل تطبيق أندرويد لم يقم مطوره بالتسجيل لدى جوجل، وتوقيع عقدهم، والدفع، وتسليم هوية حكومية.</string>
     <string name="warning_worldwide">كل تطبيق وكل جهاز، في جميع أنحاء العالم، دون إمكانية الانسحاب.</string>
     <string name="font_cat_display">DISPLAY</string>
     <string name="font_cat_handwriting">HANDWRITING</string>

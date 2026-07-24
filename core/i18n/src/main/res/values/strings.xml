@@ -945,7 +945,7 @@
     <string name="warning_title">Important Warning</string>
     <string name="warning_subtitle">Your phone is about to stop being yours.</string>
     <string name="warning_days_until_lockdown">DAYS UNTIL LOCKDOWN</string>
-    <string name="warning_description">Starting September 2026, a silent update will block every Android app whose developer hasn\'t registered with Google, signed their contract, paid up, and handed over government ID.</string>
+    <string name="warning_description">Starting January 2027, a silent update will block every Android app whose developer hasn\'t registered with Google, signed their contract, paid up, and handed over government ID.</string>
     <string name="warning_worldwide">Every app and every device, worldwide, with no opt-out.</string>
     <string name="profile_work_profile_state_locked">Work apps are paused</string>
     <string name="profile_work_profile_action_unlock">Unpause</string>
