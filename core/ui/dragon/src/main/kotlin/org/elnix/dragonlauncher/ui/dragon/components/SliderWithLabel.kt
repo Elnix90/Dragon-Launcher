@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,13 +74,8 @@ private fun SliderWithLabelInternal(
     val focusManager = LocalFocusManager.current
     val displayColor = color.semiTransparentIfDisabled(enabled)
 
-    var editingText by remember { mutableStateOf(valueText) }
+    var editingText by remember(valueText) { mutableStateOf(valueText) }
     var isError by remember { mutableStateOf(false) }
-
-
-    // Edit the visual value whenever the real value changes to keep consistency
-    LaunchedEffect(valueText) { editingText = valueText }
-
 
     Column(
         modifier = modifier
@@ -116,7 +110,13 @@ private fun SliderWithLabelInternal(
                 enabled = allowTextEditValue,
                 resetEnabled = resetEnabled,
                 backgroundColor = backgroundColor,
-                onReset = onReset,
+                onReset = {
+                    // Depending on what handles the onReset callback, value might not reset correctly, so I force it to be reset here
+                    editingText = valueText
+                    isError = false
+                    onReset()
+                },
+                isError = isError,
                 onDone = {
                     try {
                         val parsedNumber = formatter.parse(editingText.trim())?.toFloat() ?: throw NumberFormatException("Empty input")
