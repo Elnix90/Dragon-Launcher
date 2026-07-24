@@ -4,7 +4,6 @@ package org.elnix.dragonlauncher.ui.dragon.generic
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -30,11 +29,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
-import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
@@ -57,18 +56,20 @@ public fun <T> ActionSelectorRow(
     val switchInteractionSource = rememberInteractionSource()
     val globalInteractionSource = rememberInteractionSource()
 
-
-    DragonRow(
-        onClick = { showSheet = true},
-        interactionSource = if (toggled != null) globalInteractionSource else switchInteractionSource,
+    Row(
         modifier = Modifier
-            .height(IntrinsicSize.Min)
-            .fillMaxWidth()
+            .clickable(
+                interactionSource = if (toggled != null) globalInteractionSource else switchInteractionSource
+            ) { showSheet = true }
+            .padding(10.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         TextWithDescription(
             text = label,
             description = optionLabel(selected),
         )
+        Spacer()
 
         // Right side toggle + divider wrapped in a clickable container
         if (toggled != null) {
@@ -103,7 +104,7 @@ public fun <T> ActionSelectorRow(
                 )
             }
         }
-        ResetIcon(enabled, onReset)
+        ResetIcon(resetEnabled, onReset)
     }
 
     // Options dialog
@@ -142,7 +143,9 @@ public fun <T> ActionSelector(
                 style = MaterialTheme.typography.titleMedium,
                 color = textColor,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.CenterHorizontally)
             )
         }
         options.forEach { option ->
