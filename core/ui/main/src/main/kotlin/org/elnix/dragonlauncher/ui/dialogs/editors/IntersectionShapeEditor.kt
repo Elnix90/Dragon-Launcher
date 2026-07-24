@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,7 +48,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 public fun IntersectionShapeEditor(
     shape: IntersectionShape,
@@ -108,63 +109,63 @@ public fun IntersectionShapeEditor(
                 .verticalScroll(rememberScrollState())
         ) {
             DragonSettingsGroup(R.string.position) {
-                val offsetRange = -2000f..2000f
-
-
-                val defaultOffset = emptyIntersectionShape.getOffset(defaultShape, isDefaultEditing)
-                SliderWithLabel(
-                    label = "X",
-                    value = x,
-                    valueRange = offsetRange,
-                    resetEnabled = shape.offset?.x?.let { x -> x != defaultOffset.x } ?: false,
-                    onReset = {
-                        onChangeShape(
-                            shape.copy(
-                                offset = shape.offset?.copy(x = defaultOffset.x)
+                if (!isDefaultEditing) { // Too annoying to handle movement when moving the default shape so you can't
+                    val offsetRange = -2000f..2000f
+                    val defaultOffset = emptyIntersectionShape.getOffset(defaultShape, false)
+                    SliderWithLabel(
+                        label = "X",
+                        value = x,
+                        valueRange = offsetRange,
+                        resetEnabled = shape.offset?.x?.let { x -> x != defaultOffset.x } ?: false,
+                        onReset = {
+                            onChangeShape(
+                                shape.copy(
+                                    offset = shape.offset?.copy(x = defaultOffset.x)
+                                )
                             )
-                        )
+                        }
+                    ) { newValue ->
+
+                        val offset = shape.offset?.copy(x = newValue) ?: Offset(x = newValue, y = defaultOffset.y)
+                        val newSnappedOffset = when {
+                            snapShapesCenter && snapShapesOffset -> offset.snapToGrid(cellSizePx).snapToRound(Offset.Zero, snapOffsetThreshold)
+                            snapShapesCenter -> offset.snapToRound(Offset.Zero, snapOffsetThreshold)
+                            snapShapesOffset -> offset.snapToGrid(cellSizePx)
+                            else -> offset
+                        }
+
+                        val finalNew = newSnappedOffset.takeIf { it.x.round(2) != defaultOffset.x }
+                        if (finalNew == shape.offset) return@SliderWithLabel
+                        onChangeShape(shape.copy(offset = finalNew))
                     }
-                ) { newValue ->
 
-                    val offset = shape.offset?.copy(x = newValue) ?: Offset(x = newValue, y = defaultOffset.y)
-                    val newSnappedOffset = when {
-                        snapShapesCenter && snapShapesOffset -> offset.snapToGrid(cellSizePx).snapToRound(Offset.Zero, snapOffsetThreshold)
-                        snapShapesCenter -> offset.snapToRound(Offset.Zero, snapOffsetThreshold)
-                        snapShapesOffset -> offset.snapToGrid(cellSizePx)
-                        else -> offset
-                    }
-
-                    val finalNew = newSnappedOffset.takeIf { it.x.round(2) != defaultOffset.x }
-                    if (finalNew == shape.offset) return@SliderWithLabel
-                    onChangeShape(shape.copy(offset = finalNew))
-                }
-
-                SliderWithLabel(
-                    label = "Y",
-                    value = y,
-                    valueRange = offsetRange,
-                    resetEnabled = shape.offset?.y?.let { y -> y != defaultOffset.y } ?: false,
-                    onReset = {
-                        onChangeShape(
-                            shape.copy(
-                                offset = shape.offset?.copy(y = defaultOffset.y)
+                    SliderWithLabel(
+                        label = "Y",
+                        value = y,
+                        valueRange = offsetRange,
+                        resetEnabled = shape.offset?.y?.let { y -> y != defaultOffset.y } ?: false,
+                        onReset = {
+                            onChangeShape(
+                                shape.copy(
+                                    offset = shape.offset?.copy(y = defaultOffset.y)
+                                )
                             )
-                        )
+                        }
+                    ) { newValue ->
+
+                        val offset = shape.offset?.copy(y = newValue) ?: Offset(x = defaultOffset.x, y = newValue)
+                        val newSnappedOffset = when {
+                            snapShapesCenter && snapShapesOffset -> offset.snapToGrid(cellSizePx).snapToRound(Offset.Zero, snapOffsetThreshold)
+                            snapShapesCenter -> offset.snapToRound(Offset.Zero, snapOffsetThreshold)
+                            snapShapesOffset -> offset.snapToGrid(cellSizePx)
+                            else -> offset
+                        }
+
+
+                        val finalNew = newSnappedOffset.takeIf { it.y.round(2) != defaultOffset.y }
+                        if (finalNew == shape.offset) return@SliderWithLabel
+                        onChangeShape(shape.copy(offset = finalNew))
                     }
-                ) { newValue ->
-
-                    val offset = shape.offset?.copy(y = newValue) ?: Offset(x = defaultOffset.x, y = newValue)
-                    val newSnappedOffset = when {
-                        snapShapesCenter && snapShapesOffset -> offset.snapToGrid(cellSizePx).snapToRound(Offset.Zero, snapOffsetThreshold)
-                        snapShapesCenter -> offset.snapToRound(Offset.Zero, snapOffsetThreshold)
-                        snapShapesOffset -> offset.snapToGrid(cellSizePx)
-                        else -> offset
-                    }
-
-
-                    val finalNew = newSnappedOffset.takeIf { it.y.round(2) != defaultOffset.y }
-                    if (finalNew == shape.offset) return@SliderWithLabel
-                    onChangeShape(shape.copy(offset = finalNew))
                 }
 
                 SliderWithLabel(
