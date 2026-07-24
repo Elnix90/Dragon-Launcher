@@ -17,7 +17,22 @@ public val Float.Companion.PI: Float
 
 
 public inline val Float.radians: Double
-    get() = this * (PI / 180)
+    get() = Math.toRadians(this.toDouble())
+
+public inline val Float.degrees: Double
+    get() = Math.toDegrees(this.toDouble())
+
+public inline val Int.radians: Double
+    get() = Math.toRadians(this.toDouble())
+
+public inline val Int.degrees: Double
+    get() = Math.toDegrees(this.toDouble())
+
+public inline val Double.radians: Double
+    get() = Math.toRadians(this)
+
+public inline val Double.degrees: Double
+    get() = Math.toDegrees(this)
 
 public fun Float.round(decimals: Int): Float {
     if (decimals < 0) throw IllegalArgumentException("decimals must be >= 0")

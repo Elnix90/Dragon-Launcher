@@ -5,54 +5,77 @@ import org.junit.Test
 import kotlin.math.PI
 
 /**
- * Unit tests for Float extension functions and properties in [org.elnix.dragonlauncher.ktx].
- *
- * Covers:
- * - [Float.getToRadians]: degrees -> radians conversion
- * - [PI]: π constant as a Float
- * - [TWO_PI]: 2π constant as a Float
+ * Unit tests for Float extension functions and properties in [org.elnix.dragonlauncher.ktx]
  */
 class FloatKtxTest {
 
     private companion object {
         /** Tolerance for floating-point comparisons. */
-        const val EPSILON = 1e-5f
+        const val EPSILON: Double = 1e-5
     }
 
     @Test
     fun `0 degrees converts to 0 radians`() {
-        assertEquals(0f, 0f.radians.toFloat(), EPSILON)
+        assertEquals(0.0, 0f.radians, EPSILON)
     }
 
     @Test
     fun `90 degrees converts to PI over 2`() {
-        val expected = (PI / 2.0).toFloat()
-        assertEquals(expected, 90f.radians.toFloat(), EPSILON)
+        assertEquals((PI / 2.0), 90f.radians, EPSILON)
     }
 
     @Test
     fun `180 degrees converts to PI`() {
-        assertEquals(PI.toFloat(), 180f.radians.toFloat(), EPSILON)
+        assertEquals(PI, 180f.radians, EPSILON)
     }
 
     @Test
     fun `360 degrees converts to 2 PI`() {
-        val expected = (2.0 * PI).toFloat()
-        assertEquals(expected, 360f.radians.toFloat(), EPSILON)
+        assertEquals((2.0 * PI), 360f.radians, EPSILON)
     }
 
     @Test
     fun `45 degrees converts to PI over 4`() {
-        val expected = (PI / 4.0).toFloat()
-        assertEquals(expected, 45f.radians.toFloat(), EPSILON)
+        assertEquals((PI / 4.0), 45f.radians, EPSILON)
     }
 
     @Test
     fun `270 degrees converts to 3 PI over 2`() {
-        val expected = (3.0 * PI / 2.0).toFloat()
-        assertEquals(expected, 270f.radians.toFloat(), EPSILON)
+        assertEquals((3.0 * PI / 2.0), 270f.radians, EPSILON)
     }
 
+
+    @Test
+    fun `0 radians converts to 0 degrees`() {
+        assertEquals(0.0, 0f.degrees, EPSILON)
+    }
+
+    @Test
+    fun `PI over 2 radians converts to 90 degrees`() {
+        assertEquals(90.0, (PI / 2.0).degrees, EPSILON)
+    }
+
+    @Test
+    fun `PI radians converts to 180 degrees`() {
+        assertEquals(180.0, PI.toFloat().degrees, EPSILON)
+    }
+
+    @Test
+    fun `2 PI radians converts to 360 degrees`() {
+        assertEquals(360.0, (2.0 * PI).degrees, EPSILON)
+    }
+
+    @Test
+    fun `PI over 4 radians converts to 45 degrees`() {
+        val input = (PI / 4.0).toFloat()
+        assertEquals(45.0, input.degrees, EPSILON)
+    }
+
+    @Test
+    fun `3 PI over 2 radians converts to 270 degrees`() {
+        val input = (3.0 * PI / 2.0).toFloat()
+        assertEquals(270.0, input.degrees, EPSILON)
+    }
 
     @Test
     fun `test rounding to 0 decimals`() {
