@@ -407,7 +407,6 @@
     <string name="rgb_line_selector_description">إظهار محدد الإجراء (الخط الذي يتبع إصبعك) بتدرج RGB اعتماداً على الزاوية</string>
     <string name="show_launching_app_label_description">ما إذا كان اسم التطبيق / الإجراء مرئياً عند تحديد إجراء في الجزء العلوي من الشاشة</string>
     <string name="show_launching_app_icon_description">ما إذا كان سيتم عرض أيقونة التطبيق / الإجراء عند تحديد إجراء في الجزء العلوي من الشاشة</string>
-    <string name="show_app_line_preview_description">ما إذا كان سيتم عرض الأثر الذي يمتد من موضع بدء السحب إلى الإصبع (متعلق بخط اللون الأحمر والأخضر والأزرق \"أرجبي\")</string>
     <string name="show_app_angle_preview_description">عرض مؤشر الزاوية على الخط</string>
     <string name="show_app_icon_start_drag_position_description">عرض التطبيق المحدد حالياً في مركز المكان الذي بدأت منه السحب</string>
     <string name="line_preview_snap_to_action_description">معاينة الخط ليست حرة الحركة، بل تنجذب إلى الإجراء المحدد عند وجوده</string>

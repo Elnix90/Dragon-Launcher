@@ -91,6 +91,7 @@
     <string name="left_drawer_action">Left Drawer action</string>
     <string name="right_drawer_action">Right Drawer Action</string>
     <string name="drawer_actions_width">Drawer Actions Width</string>
+    <string name="width_actions_settings">Width Action settings</string>
     <string name="drawer_actions">Drawer Actions</string>
     <string name="close_app_drawer">Close Drawer</string>
     <string name="font_selector">Font Selector</string>
@@ -304,7 +305,7 @@
     <string name="rgb_line_selector_description">Show the action selector (the line that follows your finger) in a RGB gradient depending no the angle</string>
     <string name="show_launching_app_label_description">Whether the app / action label is visible when an action is selected in the top of the screen</string>
     <string name="show_launching_app_icon_description">Whether to display the app / action icon when an action is selected on top of the screen</string>
-    <string name="show_app_line_preview_description">Whether to display the trail that goes from the start dragging position to the finger(related to rgb line)</string>
+    <string name="show_app_line_preview_desc">Whether to display the trail that goes from the start dragging position to the finger</string>
     <string name="show_app_angle_preview_description">Display the angle indicator on the line</string>
     <string name="show_app_icon_start_drag_position_description">Display the current selected app in the center of where you starred to drag</string>
     <string name="line_preview_snap_to_action_description">The line preview isn\'t free to move, it snaps to the selected action when there\'s one</string>
@@ -1090,4 +1091,8 @@
     <string name="points_keep_their_relative_position_desc">Whether if when moved, the points offsets are adapted to match their original angle relative to this shape,\nor if they aren\'t taken into account and that the shape moves regardless of the points in it.\nWhen false the points might rotate around their hidden underlying offset aas the shape moves</string>
     <string name="duplicate">Duplicate</string>
     <string name="flashbang_theme">Flashbang theme</string>
+    <string name="line">Line</string>
+    <string name="angle">Angle</string>
+    <string name="start">Start</string>
+    <string name="end">End</string>
 </resources>

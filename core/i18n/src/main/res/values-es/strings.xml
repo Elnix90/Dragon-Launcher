@@ -282,7 +282,6 @@
     <string name="rgb_line_selector_description">Muestra el selector de acción (la línea que sigue a tu dedo) en un degradado RGB dependiendo del ángulo</string>
     <string name="show_launching_app_label_description">Si la etiqueta de aplicación/acción es visible cuando se selecciona una acción en la parte superior de la pantalla</string>
     <string name="show_launching_app_icon_description">Si se muestra el ícono de aplicación/acción cuando se selecciona una acción en la parte superior de la pantalla</string>
-    <string name="show_app_line_preview_description">Si se muestra el rastro que va desde la posición inicial de arrastre hasta el dedo (relacionado con la línea rgb)</string>
     <string name="show_app_angle_preview_description">Mostrar el indicador del ángulo en la línea</string>
     <string name="show_app_icon_start_drag_position_description">Muestra la aplicación seleccionada actualmente en el centro de donde destacaste para arrastrar</string>
     <string name="line_preview_snap_to_action_description">La vista previa de línea no se puede mover libremente, se ajusta a la acción seleccionada cuando hay una</string>

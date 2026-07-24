@@ -34,7 +34,7 @@ public object AngleLineSettingsStore : MapSettingsStore() {
     @SettingKey
     public val showLineObjectPreview: BooleanSettingObject = boolean(
         title = R.string.show_app_line_preview,
-        description = R.string.show_app_line_preview_description,
+        description = R.string.show_app_line_preview_desc,
         default = true
     )
 

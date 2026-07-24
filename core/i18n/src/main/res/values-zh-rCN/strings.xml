@@ -297,7 +297,6 @@
     <string name="rgb_line_selector_description">根据手指拖动的角度，以 RGB 渐变色显示动作选择线（随手指移动的线条）</string>
     <string name="show_launching_app_label_description">当在屏幕顶部选中某个动作时，是否显示对应的应用/动作标签</string>
     <string name="show_launching_app_icon_description">当在屏幕顶部选中某个动作时，是否显示对应的应用/动作图标</string>
-    <string name="show_app_line_preview_description">是否显示从拖动起点到手指当前位置的轨迹线（与 rgb 选择线相关）</string>
     <string name="show_app_angle_preview_description">在轨迹线上显示角度指示器</string>
     <string name="show_app_icon_start_drag_position_description">在您开始拖动的位置中心显示当前选中的应用</string>
     <string name="line_preview_snap_to_action_description">轨迹线条预览将不再自由移动，当有可对应的动作时它会直接吸附过去</string>

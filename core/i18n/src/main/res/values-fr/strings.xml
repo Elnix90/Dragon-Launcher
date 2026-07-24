@@ -279,7 +279,6 @@
     <string name="rgb_line_selector_description">Afficher le sélecteur d\'action (la ligne qui suit votre doigt) dans un dégradé RVB en fonction de l\'angle</string>
     <string name="show_launching_app_label_description">Si l\'étiquette de l\'application/de l\'action est visible lorsqu\'une action est sélectionnée en haut de l\'écran</string>
     <string name="show_launching_app_icon_description">S\'il faut afficher l\'icône d\'application/action lorsqu\'une action est sélectionnée en haut de l\'écran</string>
-    <string name="show_app_line_preview_description">S\'il faut afficher la trace qui va de la position de début de glissement jusqu\'au doigt (lié à la ligne RVB)</string>
     <string name="show_app_angle_preview_description">Afficher l\'indicateur d\'angle sur la ligne</string>
     <string name="show_app_icon_start_drag_position_description">Affichez l\'application actuellement sélectionnée au centre de l\'endroit où vous avez commencé à faire glisser</string>
     <string name="line_preview_snap_to_action_description">L\'aperçu de la ligne n\'est pas libre de se déplacer, il s\'aligne sur l\'action sélectionnée lorsqu\'il y en a une.</string>

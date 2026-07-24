@@ -276,7 +276,6 @@
     <string name="rgb_line_selector_description">कोण के आधार पर आरजीबी ग्रेडिएंट में क्रिया चयनकर्ता (वह रेखा जो आपकी उंगली का अनुसरण करती है) दिखाएं</string>
     <string name="show_launching_app_label_description">क्या स्क्रीन के शीर्ष पर कोई क्रिया चयनित होने पर ऐप/एक्शन लेबल दिखाई देता है</string>
     <string name="show_launching_app_icon_description">स्क्रीन के शीर्ष पर कोई क्रिया चयनित होने पर ऐप/एक्शन आइकन प्रदर्शित करना है या नहीं</string>
-    <string name="show_app_line_preview_description">क्या उस पथ को प्रदर्शित करना है जो प्रारंभिक खींचने की स्थिति से उंगली तक जाता है (आरजीबी लाइन से संबंधित)</string>
     <string name="show_app_angle_preview_description">लाइन पर कोण सूचक प्रदर्शित करें</string>
     <string name="show_app_icon_start_drag_position_description">वर्तमान चयनित ऐप को उस स्थान के केंद्र में प्रदर्शित करें जहां आपने खींचने के लिए तारांकित किया था</string>
     <string name="line_preview_snap_to_action_description">लाइन पूर्वावलोकन को स्थानांतरित करने के लिए स्वतंत्र नहीं है, यह चयनित क्रिया होने पर तुरंत उस पर आ जाता है</string>
