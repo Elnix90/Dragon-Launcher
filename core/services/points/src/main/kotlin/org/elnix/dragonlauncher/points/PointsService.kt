@@ -724,7 +724,7 @@ internal class PointsServiceImpl(
         val angleRad = (point.offset - shapeOffset).angleRad()
 
         val halfSize = shape.getSize(density, defaultIntersectionShape.value).width / 2
-        val rotationRad = Math.toRadians((shape.getRotation(defaultIntersectionShape.value)).toDouble()).toFloat()
+        val rotationRad = (shape.getRotation(defaultIntersectionShape.value)).radians.toFloat()
 
         return shapeOffset + computeShapeBoundary(shape.getShape(defaultIntersectionShape.value), halfSize, angleRad, rotationRad)
     }
