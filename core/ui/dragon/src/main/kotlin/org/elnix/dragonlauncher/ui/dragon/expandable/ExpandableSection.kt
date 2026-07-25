@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -29,12 +29,11 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
-import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionMode
 import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionState
-import org.elnix.dragonlauncher.ui.dragon.text.AutoResizeableText
+import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,36 +57,28 @@ public fun ExpandableSection(
     val contentColor = contentColorFor(backgroundColor)
 
     Column(
-        modifier = Modifier.settingsGroup(
-            clickModifier = Modifier.conditional(!expanded && enabled) {
-                clickable {
-                    state.toggle()
-                }
-            },
-            backgroundColor = backgroundColor,
-            enabled = enabled
-        )
+        modifier = Modifier.conditional(!expanded && enabled) {
+            clickable {
+                state.toggle()
+            }
+        }
     ) {
         Row(
             modifier = Modifier
-                .settingsGroup(
-                    clickModifier = Modifier.conditional(expanded) {
-                        clickable {
-                            state.toggle()
-                        }
-                    },
-                    backgroundColor = Color.Transparent,
-                    enabled = enabled
-                )
+                .conditional(expanded) {
+                    clickable {
+                        state.toggle()
+                    }
+                }
                 .fillMaxWidth()
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            AutoResizeableText(
-                state.title,
-                modifier = Modifier.weight(1f),
-                color = contentColor
+            TextWithDescription(
+                text = state.title,
+                description = state.description,
+                modifier = Modifier.weight(1f)
             )
 
             Icon(
@@ -95,6 +86,7 @@ public fun ExpandableSection(
                 contentDescription = stringResource(R.string.expanded_chevron_indicator),
                 tint = contentColor,
                 modifier = Modifier
+                    .size(30.dp)
                     .rotate(rotationDegrees.value)
             )
         }

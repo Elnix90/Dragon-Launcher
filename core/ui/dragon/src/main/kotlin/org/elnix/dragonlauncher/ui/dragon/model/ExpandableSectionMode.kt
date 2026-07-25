@@ -13,6 +13,7 @@ public data class ExpandableSectionState(
     val isExpanded: () -> Boolean,
     val enabled: () -> Boolean,
     val title: String,
+    val description: String?,
     val mode: ExpandableSectionMode,
     val toggle: () -> Unit,
 )

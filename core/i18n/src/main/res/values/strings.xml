@@ -596,6 +596,7 @@
     <string name="settings_json">Settings JSON</string>
     <string name="pick_a_settings_screen">Pick a settings screen</string>
     <string name="app_preview_settings">App preview overlay</string>
+    <string name="app_preview_settings_desc">Manage how the preview looks like</string>
     <string name="not_implemented">Not implemented</string>
     <string name="show_status_bar_desc">Display the status bar, if disabled nothing\'s showed</string>
     <string name="disable_haptic_globally">Disable Haptic feedback globally</string>
