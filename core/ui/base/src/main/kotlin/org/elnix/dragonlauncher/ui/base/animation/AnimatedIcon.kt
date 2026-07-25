@@ -23,11 +23,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ui.base.animation.AnimatedIconStatus.Default
 import org.elnix.dragonlauncher.ui.base.animation.AnimatedIconStatus.Error
 import org.elnix.dragonlauncher.ui.base.animation.AnimatedIconStatus.Success
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.base.modifiers.semiTransparentIfDisabled
 import kotlin.time.Duration.Companion.milliseconds
 
 
@@ -167,9 +167,8 @@ public fun AnimatedIcon.Icon(
                 Default -> defaultColor
                 Success -> successColor
                 Error -> errorColor
-            },
+            }.semiTransparentIfDisabled(enabled),
             modifier = Modifier
-                .semiTransparentIfDisabled(enabled)
                 .clip(RoundedCornerShape(5.dp))
                 .clickable(enabled = enabled, onClick = onClick)
                 .padding(5.dp)
