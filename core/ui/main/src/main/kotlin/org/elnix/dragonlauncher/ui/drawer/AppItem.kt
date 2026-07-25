@@ -164,7 +164,7 @@ public fun AppItemGrid(
                 AppIcon(app, drawerSettings.maxIconSize)
             }
 
-            if (drawerSettings.showAppIconsInDrawer) {
+            if (drawerSettings.showAppLabelsInDrawer) {
                 Text(
                     text = app.label,
                     color = MaterialTheme.colorScheme.onBackground,

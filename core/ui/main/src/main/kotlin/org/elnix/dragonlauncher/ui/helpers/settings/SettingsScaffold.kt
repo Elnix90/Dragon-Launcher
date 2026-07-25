@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ui.helpers.settings
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -51,7 +52,8 @@ public fun SettingsScaffold(
     applyPadding: Boolean = true,
     resetTitle: String = stringResource(R.string.reset_default_settings),
     resetText: String?,
-    listState: LazyListState? = null,
+    lasyListState: LazyListState? = null,
+    scrollState: ScrollState? = null,
     topContent: @Composable (ColumnScope.() -> Unit)? = null,
     bottomContent: @Composable (ColumnScope.() -> Unit)? = null,
     specialSettingsTitle: @Composable (() -> Unit)? = null,
@@ -126,7 +128,7 @@ public fun SettingsScaffold(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxSize(),
-                    state = listState ?: rememberLazyListState()
+                    state = lasyListState ?: rememberLazyListState()
                 ) { lazyContent() }
 
             } else {
@@ -136,7 +138,7 @@ public fun SettingsScaffold(
                     modifier = Modifier
                         .fillMaxSize()
                         .conditional(scrollableContent) {
-                            verticalScroll(rememberScrollState())
+                            verticalScroll(scrollState ?: rememberScrollState())
                         }
                 ) { content!!() }
             }
