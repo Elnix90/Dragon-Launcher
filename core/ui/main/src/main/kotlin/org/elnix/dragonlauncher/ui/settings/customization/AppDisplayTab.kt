@@ -3,6 +3,7 @@
 package org.elnix.dragonlauncher.ui.settings.customization
 
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -41,7 +42,10 @@ public fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel())
     val scope = rememberCoroutineScope()
     val mainScreenLayers = LocalMainScreenLayers.current
 
-    val topOverlaySettingsState = rememberExpandableSection(stringResource(R.string.app_preview_settings))
+    val topOverlaySettingsState = rememberExpandableSection(
+        title = stringResource(R.string.app_preview_settings),
+        description = stringResource(R.string.app_preview_settings_desc)
+    )
 
     SettingsScaffold(
         title = stringResource(R.string.app_display),
@@ -78,19 +82,27 @@ public fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel())
             }
         }
 
-        ExpandableSection(topOverlaySettingsState) {
-            Setting(UiSettingsStore.showLaunchingAppLabel)
-            Setting(UiSettingsStore.showPreviewPoint)
-            Setting(UiSettingsStore.appLabelIconOverlayTopPadding)
-            Setting(UiSettingsStore.appLabelOverlaySize)
-            Setting(UiSettingsStore.appIconOverlaySize)
-        }
 
         DragonSettingsGroup(R.string.dragging_display) {
             Setting(UiSettingsStore.showAppLaunchingPreview)
 
+            val showAppLaunchingPreview by UiSettingsStore.showAppLaunchingPreview.asState()
+            AnimatedVisibility(showAppLaunchingPreview) {
+                ExpandableSection(topOverlaySettingsState) {
+                    Setting(UiSettingsStore.showLaunchingAppLabel)
+                    Setting(UiSettingsStore.showPreviewPoint)
+                    Setting(UiSettingsStore.appLabelIconOverlayTopPadding)
+                    Setting(UiSettingsStore.appLabelOverlaySize)
+                    Setting(UiSettingsStore.appIconOverlaySize)
+                }
+            }
+
             var showAllActionsOnCurrentNest by UiSettingsStore.showAllPointsInCurrentNest.asMutableState()
-            Setting(UiSettingsStore.showAllPointsInCurrentShape) { enabled -> if (!enabled) { showAllActionsOnCurrentNest = false } }
+            Setting(UiSettingsStore.showAllPointsInCurrentShape) { enabled ->
+                if (!enabled) {
+                    showAllActionsOnCurrentNest = false
+                }
+            }
 
             val showAllActionsOnCurrentCircle by UiSettingsStore.showAllPointsInCurrentShape.asState()
             Setting(UiSettingsStore.showAllPointsInCurrentNest, enabled = showAllActionsOnCurrentCircle)
