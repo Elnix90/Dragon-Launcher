@@ -134,4 +134,89 @@ class FloatKtxTest {
     fun `test rounding with invalid decimals (negative)`() {
         3.14f.round(-1)
     }
+
+    @Test
+    fun `converts 0_0 to 0`() {
+        assertEquals(0, 0f.to255)
+    }
+
+    @Test
+    fun `converts 1_0 to 256`() {
+        assertEquals(255, 1f.to255)
+    }
+
+    @Test
+    fun `converts 0_5 to 128`() {
+        assertEquals(128, 0.5f.to255)
+    }
+
+    @Test
+    fun `converts 0_25 to 64`() {
+        assertEquals(64, 0.25f.to255)
+    }
+
+    @Test
+    fun `converts 0_75 to 192`() {
+        assertEquals(191, 0.75f.to255)
+    }
+
+    @Test
+    fun `handles fractional values 0_1`() {
+        assertEquals(26, 0.1f.to255)
+    }
+
+    @Test
+    fun `handles fractional values 0_3`() {
+        assertEquals(77, 0.3f.to255)
+    }
+
+    @Test
+    fun `handles fractional values 0_7`() {
+        assertEquals(179, 0.7f.to255)
+    }
+
+    @Test
+    fun `handles fractional values 0_9`() {
+        assertEquals(230, 0.9f.to255)
+    }
+
+    @Test
+    fun `handles precision loss gracefully`() {
+        assertEquals(254, 0.99609375f.to255)
+    }
+
+    @Test
+    fun `truncates decimal parts`() {
+        assertEquals(26, 0.1f.to255)
+        assertEquals(77, 0.3f.to255)
+    }
+
+    @Test
+    fun `handles values greater than 1_0`() {
+        assertEquals(255, 2f.to255)
+        assertEquals(255, 3f.to255)
+    }
+
+    @Test
+    fun `handles negative values`() {
+        assertEquals(0, (-1f).to255)
+        assertEquals(0, (-0.5f).to255)
+    }
+
+    @Test
+    fun `handles very small values`() {
+        assertEquals(0, 0.001f.to255)
+    }
+
+    @Test
+    fun `handles very large values`() {
+        assertEquals(255, 100f.to255)
+    }
+
+    @Test
+    fun `behavior matches Float times and toInt chain`() {
+        val testValue = 0.42f
+        val expected = (testValue * 256).toInt()
+        assertEquals(expected, testValue.to255)
+    }
 }

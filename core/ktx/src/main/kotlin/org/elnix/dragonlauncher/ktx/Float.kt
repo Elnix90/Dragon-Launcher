@@ -2,6 +2,7 @@
 
 package org.elnix.dragonlauncher.ktx
 
+import androidx.compose.ui.util.fastRoundToInt
 import kotlin.math.PI
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -39,3 +40,7 @@ public fun Float.round(decimals: Int): Float {
     val factor = 10f.pow(decimals)
     return (this * factor).roundToInt() / factor
 }
+
+
+public val Float.to255: Int
+    get() = (this.coerceIn(0f, 1f) * 255).fastRoundToInt()
