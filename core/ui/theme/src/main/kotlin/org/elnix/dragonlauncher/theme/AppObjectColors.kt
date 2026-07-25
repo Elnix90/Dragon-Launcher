@@ -79,20 +79,22 @@ public object AppObjectsColors {
 
     @Composable
     public fun sliderColors(
-        activeTrackColor: Color? = null,
-        backgroundColor: Color? = null
+        activeTrackColor: Color,
     ): SliderColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 SliderDefaults.colors(
-                    thumbColor = activeTrackColor ?: primary,
-                    activeTrackColor = activeTrackColor ?: secondary,
-                    activeTickColor = activeTrackColor ?: primary,
-                    inactiveTrackColor = backgroundColor ?: surface,
-                    inactiveTickColor = activeTrackColor ?: primary,
-                    disabledThumbColor = primary,
-                    disabledActiveTrackColor = backgroundColor ?: onSurface,
-                    disabledActiveTickColor = primary,
+                    thumbColor = activeTrackColor,
+                    activeTrackColor = activeTrackColor,
+                    inactiveTrackColor = surfaceVariant,
+                    activeTickColor = Color.Transparent,
+                    inactiveTickColor = activeTrackColor,
+
+                    disabledThumbColor = activeTrackColor.alphaMultiplier(0.8f),
+                    disabledActiveTrackColor = activeTrackColor.alphaMultiplier(0.5f),
+                    disabledInactiveTrackColor = surfaceVariant.alphaMultiplier(0.8f),
+                    disabledActiveTickColor = Color.Transparent,
+                    disabledInactiveTickColor = activeTrackColor.alphaMultiplier(0.8f),
                 )
             }
         } else SliderDefaults.colors()
@@ -125,12 +127,12 @@ public object AppObjectsColors {
                 OutlinedTextFieldDefaults.colors(
                     focusedTextColor = onBackgroundColor ?: onBackground,
                     unfocusedTextColor = onBackgroundColor ?: onBackground,
-                    disabledTextColor = onBackgroundColor ?: onBackground.alphaMultiplier(0.5f),
+                    disabledTextColor = (onBackgroundColor ?: onBackground).alphaMultiplier(0.5f),
                     errorTextColor = error,
 
                     focusedContainerColor = backgroundColor ?: background,
                     unfocusedContainerColor = backgroundColor ?: background,
-                    disabledContainerColor = backgroundColor ?: background,
+                    disabledContainerColor = (backgroundColor ?: background).alphaMultiplier(0.5f),
                     errorContainerColor = backgroundColor ?: background,
 
                     cursorColor = primary,
