@@ -17,15 +17,14 @@ import androidx.compose.ui.unit.dp
 @Composable
 public fun SettingsWithTitle(
     title: Int?,
-    trailingIcon: (@Composable RowScope.() -> Unit)?,
+    trailingIcon: (@Composable RowScope.() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
-
     Column {
         if (title != null) {
             Row(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(start = 16.dp, end = 16.dp, top = 5.dp, bottom = 2.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -41,6 +40,6 @@ public fun SettingsWithTitle(
                 }
             }
         }
+        content()
     }
-    content()
 }
