@@ -35,8 +35,8 @@ public fun SwitchRow(
                 onClick = { onCheck(!checked) },
                 interactionSource = interactionSource
             )
-            .padding(10.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+            .padding(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         TextWithDescription(

@@ -16,7 +16,7 @@ import org.junit.Test
  * Compose UI tests for [SwitchRow].
  *
  * [SwitchRow] combines a title text, optional description, and a Material3
- * [Switch] toggle inside a [DragonRow]. It supports:
+ * [androidx.compose.material3.Switch] toggle inside a [androidx.compose.foundation.layout.Row]. It supports:
  * - State management via nullable Boolean (null = use defaultValue)
  * - Enabled/disabled state
  * - Optional onToggle callback (separate from onCheck when divider is shown)
