@@ -1,6 +1,12 @@
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
+}
+
+kotlin {
+    explicitApi = ExplicitApiMode.Disabled
 }
 
 android {
