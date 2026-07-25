@@ -48,9 +48,9 @@ dependencies {
     implementation(libs.settings.core)
     implementation(libs.settings.runtime)
 
-    implementation(project(":core:ui:base"))
-    implementation(project(":core:ui:theme"))
-    implementation(project(":core:ui:composition"))
+    implementation(project(":ui:base"))
+    implementation(project(":ui:theme"))
+    implementation(project(":ui:composition"))
 
     implementation(project(":core:base"))
     implementation(project(":core:common"))

@@ -157,10 +157,10 @@ dependencies {
 
     ksp(libs.hilt.compiler)
 
-    implementation(project(":core:ui:base"))
-    implementation(project(":core:ui:main"))
-    implementation(project(":core:ui:theme"))
-    implementation(project(":core:ui:composition"))
+    implementation(project(":ui:base"))
+    implementation(project(":ui:main"))
+    implementation(project(":ui:theme"))
+    implementation(project(":ui:composition"))
 
     implementation(project(":core:common"))
     implementation(project(":core:models"))
@@ -173,6 +173,7 @@ dependencies {
 
 // Copy files in the fastlane/metadata dir to the assets folder, where they are compiled and added to the app
 tasks.register<Copy>("copyChangelogsToAssets") {
+    description = "Copy the fastlane changelogs folder directly to the assets folder to have them in-app"
     from("../fastlane/metadata/android/en-US/changelogs")
     into(file("src/main/assets/changelogs"))
     include("*.txt")
@@ -212,13 +213,13 @@ if (!gradle.startParameter.taskRequests.any { it.args.contains("buildHealth") })
     tasks.named("preBuild") {
         dependsOn("copyChangelogsToAssets")
 
-        // Only download extensions registry on release builds
-        val isReleaseVariant = gradle.startParameter.taskRequests.any {
-            it.args.any { arg -> arg.contains("Release", ignoreCase = true) }
-        }
-        if (isReleaseVariant) {
+//        // Only download extensions registry on release builds
+//        val isReleaseVariant = gradle.startParameter.taskRequests.any {
+//            it.args.any { arg -> arg.contains("Release", ignoreCase = true) }
+//        }
+//        if (isReleaseVariant) {
             dependsOn("downloadExtensionsRegistry")
-        }
+//        }
     }
 } else {
     println("Gradle in using build health, not running preBuild")

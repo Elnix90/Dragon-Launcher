@@ -32,8 +32,8 @@ dependencies {
     api(libs.androidx.compose.runtime)
     api(libs.androidx.ui.graphics)
 
-    implementation(project(":core:ui:base"))
-    implementation(project(":core:ui:composition"))
+    implementation(project(":ui:base"))
+    implementation(project(":ui:composition"))
 
     api(project(":core:base"))
     api(project(":core:enumsui"))

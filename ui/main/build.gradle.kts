@@ -68,10 +68,10 @@ dependencies {
     api(libs.androidx.compose.foundation)
     api(libs.androidx.compose.runtime)
 
-    implementation(project(":core:ui:dragon"))
-    implementation(project(":core:ui:theme"))
-    implementation(project(":core:ui:composition"))
-    api(project(":core:ui:base"))
+    implementation(project(":ui:dragon"))
+    implementation(project(":ui:theme"))
+    implementation(project(":ui:composition"))
+    api(project(":ui:base"))
 
     api(project(":core:base"))
     api(project(":core:ktx"))
