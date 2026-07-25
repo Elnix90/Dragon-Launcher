@@ -309,7 +309,7 @@ public fun ColorSelectorTab() {
                 }
 
                 AnimatedContent(selectedCustomView) {
-                    Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                    DragonSettingsGroup {
                         when (it) {
                             ColorSelectorModes.Normal -> {
                                 ColorsGroup(
