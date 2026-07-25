@@ -1,6 +1,8 @@
 package org.elnix.dragonlauncher.common.loader
 
 import android.content.Context
+import io.github.elnix90.logging.EXTENSION_MANAGER_TAG
+import io.github.elnix90.logging.logE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -18,7 +20,7 @@ public suspend fun loadExtensionRegistry(ctx: Context): List<ExtensionModel>? = 
             json.decodeFromStream<List<ExtensionModel>>(inputStream)
         }
     } catch (e: Exception) {
-        e.printStackTrace()
+        logE(EXTENSION_MANAGER_TAG, e) { "Failed to load extensions" }
         null
     }
 }

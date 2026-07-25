@@ -31,7 +31,7 @@ import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.ui.components.BetaVersionType
 import org.elnix.dragonlauncher.ui.components.BetaVersionWarning
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -96,19 +96,15 @@ private fun ManualInstallSection() {
         }
     )
 
-    DragonColumnGroup {
-
-        Text(
-            text = stringResource(R.string.extension_manual_install_title),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
-        )
+    DragonSettingsGroup(R.string.extension_manual_install_title) {
         Text(
             text = stringResource(R.string.extension_manual_install_desc),
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(10.dp)
         )
         DragonButton(
-            onClick = { launcher.launch(arrayOf("application/vnd.android.package-archive")) }
+            onClick = { launcher.launch(arrayOf("application/vnd.android.package-archive")) },
+            modifier = Modifier.padding(10.dp)
         ) {
             Text(stringResource(R.string.select_apk))
         }
