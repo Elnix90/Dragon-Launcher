@@ -16,7 +16,15 @@ public enum class DrawerActions(
     OpenKb(R.string.open_kb, R.drawable.keyboard),
     SearchWeb(R.string.drawer_action_search_web, R.drawable.web),
     OpenFirstApp(R.string.drawer_action_open_first_app, R.drawable.open_in_new),
+
+    /**
+     * When you want some extra padding on the left or right but no click action.
+     */
     None(R.string.none, R.drawable.circle),
+
+    /**
+     * No action at all. For the width actions, the paddings aren't even showed
+     */
     Disabled(R.string.disabled, R.drawable.disabled_by_default);
 
     public companion object {
