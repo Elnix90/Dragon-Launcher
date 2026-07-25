@@ -89,11 +89,13 @@ public fun BehaviorTab() {
             Setting(BehaviorSettingsStore.offScreenTimeout)
         }
 
-        ExpandableSection(paddingState) {
-            Setting(BehaviorSettingsStore.rightPadding)
-            Setting(BehaviorSettingsStore.leftPadding)
-            Setting(BehaviorSettingsStore.topPadding)
-            Setting(BehaviorSettingsStore.bottomPadding)
+        DragonSettingsGroup(R.string.padding) {
+            ExpandableSection(paddingState) {
+                Setting(BehaviorSettingsStore.rightPadding)
+                Setting(BehaviorSettingsStore.leftPadding)
+                Setting(BehaviorSettingsStore.topPadding)
+                Setting(BehaviorSettingsStore.bottomPadding)
+            }
         }
 
         DragonSettingsGroup(R.string.security) {
