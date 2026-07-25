@@ -66,7 +66,7 @@ public fun SettingsDebugTab() {
         onReset = null,
         resetText = null,
         scrollableContent = false,
-        listState = rememberLazyListState(),
+        lasyListState = rememberLazyListState(),
         topContent = {
             Row(
                 modifier = Modifier.fillMaxWidth(),

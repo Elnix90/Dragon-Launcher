@@ -75,7 +75,7 @@ public fun WorkspaceListScreen(drawerViewModel: DrawerViewModel = activityViewMo
             onReset = {
                 scope.launch { workspaceManager.resetWorkspaces() }
             },
-            listState = lazyListState,
+            lasyListState = lazyListState,
             bottomContent = {
                 Row(
                     modifier = Modifier
