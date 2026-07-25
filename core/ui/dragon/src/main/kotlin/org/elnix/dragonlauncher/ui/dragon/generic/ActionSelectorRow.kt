@@ -81,9 +81,9 @@ public fun <T> ActionSelectorRow(
                 checked = toggled,
                 interactionSource = switchInteractionSource,
                 enabled = switchEnabled,
-                onCheckedChange = {
-                    onSelected(null)
-                },
+                onCheckedChange = if (toggled) {
+                    { onSelected(null) }
+                } else null,
                 colors = AppObjectsColors.switchColors(),
             )
         }
