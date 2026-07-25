@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.ui.dragon.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
@@ -14,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.ui.composition.LocalSettingsPlacementChecker
 import org.elnix.dragonlauncher.ui.dragon.text.SettingsWithTitle
 
@@ -31,7 +29,6 @@ public fun DragonSettingsGroup(
     ) {
         SettingsWithTitle(title, trailingIcon) {
             Column(
-                verticalArrangement = Arrangement.spacedBy(2.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
