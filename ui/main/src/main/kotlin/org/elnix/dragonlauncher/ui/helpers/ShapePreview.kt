@@ -30,7 +30,7 @@ import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun ShapePreview(
+fun ShapePreview(
     iconShape: IconShape,
     modifier: Modifier = Modifier,
     size: Dp = 30.dp,

@@ -23,7 +23,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 
 @Composable
-public fun AdbCommandInputDialog(
+fun AdbCommandInputDialog(
     onDismiss: () -> Unit,
     showLeaveEmptyNotice: Boolean,
     onActionSelected: (Action.RunAdbCommand) -> Unit

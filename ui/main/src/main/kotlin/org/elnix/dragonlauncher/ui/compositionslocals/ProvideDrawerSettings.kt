@@ -13,7 +13,7 @@ import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 
 
-public data class DrawerSettings(
+data class DrawerSettings(
     val maxIconSize: Dp,
     val showAppIconsInDrawer: Boolean,
     val showAppLabelsInDrawer: Boolean,
@@ -24,10 +24,10 @@ public data class DrawerSettings(
     val darkTheme: Boolean
 )
 
-public val LocalDrawerSettings: ProvidableCompositionLocal<DrawerSettings> = compositionLocalOf { error("No DrawerSettings provided") }
+val LocalDrawerSettings: ProvidableCompositionLocal<DrawerSettings> = compositionLocalOf { error("No DrawerSettings provided") }
 
 @Composable
-public fun ProvideDrawerSettings(content: @Composable () -> Unit) {
+fun ProvideDrawerSettings(content: @Composable () -> Unit) {
 
     val maxIconSize by DrawerSettingsStore.maxIconSize.asState()
     val showAppIconsInDrawer by DrawerSettingsStore.showAppIconsInDrawer.asState()

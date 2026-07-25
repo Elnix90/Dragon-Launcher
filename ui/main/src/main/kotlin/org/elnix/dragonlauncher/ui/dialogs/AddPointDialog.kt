@@ -63,7 +63,7 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 import org.elnix.dragonlauncher.ui.dragon.text.AutoResizeableText
 
 @Composable
-public fun AddPointDialog(
+fun AddPointDialog(
     actions: List<Action> = defaultChoosableActions,
     drawerViewModel: DrawerViewModel = activityViewModel(),
     onDismiss: () -> Unit,

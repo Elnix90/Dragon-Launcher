@@ -24,7 +24,7 @@ import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun CreateOrEditWorkspaceDialog(
+fun CreateOrEditWorkspaceDialog(
     visible: Boolean,
     title: String,
     name: String,

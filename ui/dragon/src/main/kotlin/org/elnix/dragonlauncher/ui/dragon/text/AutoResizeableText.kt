@@ -71,7 +71,7 @@ import androidx.compose.ui.unit.sp
  * @param style style configuration for the text such as color, font, line height etc.
  */
 @Composable
-public fun AutoResizeableText(
+fun AutoResizeableText(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,

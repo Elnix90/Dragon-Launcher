@@ -20,7 +20,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.json.JSONObject
 
 @Composable
-public fun ImportSettingsDialog(
+fun ImportSettingsDialog(
     backupJson: JSONObject,
     onDismiss: () -> Unit,
     onConfirm: (selectedStores: Set<SettingsStore<*, *>>) -> Unit

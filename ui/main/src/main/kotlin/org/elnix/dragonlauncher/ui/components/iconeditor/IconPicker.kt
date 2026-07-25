@@ -60,7 +60,7 @@ import org.elnix.dragonlauncher.ui.components.ShapedLauncherIcon
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun IconPicker(
+fun IconPicker(
     application: Application,
     iconsViewModel: IconsViewModel = activityViewModel(),
     contentPadding: PaddingValues = PaddingValues(0.dp),
@@ -286,7 +286,7 @@ public fun IconPicker(
 }
 
 @Composable
-public fun IconPreview(
+fun IconPreview(
     item: CustomIconWithPreview?,
     iconSize: Dp,
     onClick: () -> Unit,
@@ -304,7 +304,7 @@ public fun IconPreview(
 }
 
 @Composable
-public fun Separator(label: String) {
+fun Separator(label: String) {
     Text(
         label,
         textAlign = TextAlign.Center,

@@ -25,7 +25,7 @@ import org.elnix.dragonlauncher.ktx.openUrl
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
-public fun ContributorItem(
+fun ContributorItem(
     name: String,
     @DrawableRes imageRes: Int,
     description: String? = null,

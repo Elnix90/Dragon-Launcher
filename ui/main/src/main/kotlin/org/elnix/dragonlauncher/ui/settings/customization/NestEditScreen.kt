@@ -105,7 +105,7 @@ import org.elnix.dragonlauncher.ui.helpers.swipe.centerOfNest
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-public fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
+fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
     val navigator = LocalNavigator.current
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()

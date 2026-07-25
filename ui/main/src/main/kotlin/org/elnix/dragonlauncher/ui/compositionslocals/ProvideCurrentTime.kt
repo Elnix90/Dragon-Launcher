@@ -25,7 +25,7 @@ import java.time.ZoneId
  * The time is updated every second.
  */
 @Composable
-public fun ProvideCurrentTime(content: @Composable () -> Unit) {
+fun ProvideCurrentTime(content: @Composable () -> Unit) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -63,4 +63,4 @@ public fun ProvideCurrentTime(content: @Composable () -> Unit) {
     )
 }
 
-public val LocalTime: ProvidableCompositionLocal<Long> = compositionLocalOf { System.currentTimeMillis() }
+val LocalTime: ProvidableCompositionLocal<Long> = compositionLocalOf { System.currentTimeMillis() }

@@ -44,7 +44,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-public fun DrawerToolbarsOrderDialog(onDismiss: () -> Unit) {
+fun DrawerToolbarsOrderDialog(onDismiss: () -> Unit) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 

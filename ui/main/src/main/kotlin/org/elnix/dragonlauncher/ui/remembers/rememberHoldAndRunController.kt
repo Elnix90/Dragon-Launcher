@@ -18,7 +18,7 @@ import kotlin.time.Duration.Companion.milliseconds
  *   Remains true until [clear] is called (on pointer-up or point exit).
  * @property clear Resets all state; call it from the overlay release guard.
  */
-public data class HoldAndRunState(
+data class HoldAndRunState(
     val firedThisGesture: Boolean,
     val clear: () -> Unit
 )
@@ -42,7 +42,7 @@ public data class HoldAndRunState(
  * @param onFire        Lambda invoked on the UI thread when the hold delay elapses
  */
 @Composable
-public fun rememberHoldAndRunController(
+fun rememberHoldAndRunController(
     currentPoint: Point?,
     isDragging: Boolean,
     onFire: (point: Point) -> Unit

@@ -42,7 +42,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun AngleLineObjectsOrderDialog(
+fun AngleLineObjectsOrderDialog(
     order: List<AngleLineObjects>,
     onChange: (newOrder: List<AngleLineObjects>) -> Unit,
     onDismiss: () -> Unit
@@ -128,7 +128,7 @@ public fun AngleLineObjectsOrderDialog(
 
 
 @Composable
-public fun rememberLineObjectsOrder(): MutableState<List<AngleLineObjects>> {
+fun rememberLineObjectsOrder(): MutableState<List<AngleLineObjects>> {
     val orderString by AngleLineSettingsStore.angleLineObjectsOrder.asState()
 
     return remember(orderString) {

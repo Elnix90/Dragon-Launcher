@@ -10,10 +10,10 @@ import org.elnix.dragonlauncher.base.SettingFlow
 
 
 @Composable
-public fun <T> SettingFlow<T>.asState(): State<T> = this.flow.collectAsStateWithLifecycle()
+fun <T> SettingFlow<T>.asState(): State<T> = this.flow.collectAsStateWithLifecycle()
 
 @Composable
-public fun <T> SettingFlow<T>.asMutableState(): MutableState<T> {
+fun <T> SettingFlow<T>.asMutableState(): MutableState<T> {
     val state by this.flow.collectAsStateWithLifecycle()
 
     return remember(state) {

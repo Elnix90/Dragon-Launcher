@@ -8,7 +8,7 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawNeonGlowLine
 
 private val lineSize = 20.dp
-public fun DrawScope.centerOfNest(center: Offset) {
+fun DrawScope.centerOfNest(center: Offset) {
     val linePx = lineSize.toPx()
 
     val horizontalStart = Offset(center.x - linePx, center.y)

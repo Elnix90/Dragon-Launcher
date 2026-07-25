@@ -25,7 +25,7 @@ import org.elnix.dragonlauncher.ui.base.animation.Icon
 import org.elnix.dragonlauncher.ui.base.animation.rememberAnimatedIcon
 
 @Composable
-public fun NestNameEditor(
+fun NestNameEditor(
     nest: Nest,
     modifier: Modifier = Modifier,
     onEditName: (String?) -> Unit

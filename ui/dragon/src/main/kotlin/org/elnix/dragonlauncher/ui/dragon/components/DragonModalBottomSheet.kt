@@ -27,7 +27,7 @@ import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionState
 /**
  * Used in modal sheets to give padding to the content to avoid it being directly on the edges
  */
-public val modalWindowInsets: @Composable (() -> WindowInsets)
+val modalWindowInsets: @Composable (() -> WindowInsets)
     get() = {
         WindowInsets.safeDrawing.add(
             WindowInsets(
@@ -43,7 +43,7 @@ public val modalWindowInsets: @Composable (() -> WindowInsets)
 
 @Composable
 @ExperimentalMaterial3Api
-public fun DragonModalBottomSheet(
+fun DragonModalBottomSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberBottomSheetState(),
@@ -71,7 +71,7 @@ public fun DragonModalBottomSheet(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun rememberBottomSheetState(skipPartiallyExpanded: Boolean = false): SheetState =
+fun rememberBottomSheetState(skipPartiallyExpanded: Boolean = false): SheetState =
     rememberBottomSheetState(
         initialValue = SheetValue.Hidden,
         enabledValues = buildSet {
@@ -83,7 +83,7 @@ public fun rememberBottomSheetState(skipPartiallyExpanded: Boolean = false): She
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun rememberBottomSheetState(state: ExpandableSectionState): SheetState =
+fun rememberBottomSheetState(state: ExpandableSectionState): SheetState =
     rememberBottomSheetState(state.mode is ExpandableSectionMode.ModalSheet && state.mode.skipPartiallyExpanded)
 
 

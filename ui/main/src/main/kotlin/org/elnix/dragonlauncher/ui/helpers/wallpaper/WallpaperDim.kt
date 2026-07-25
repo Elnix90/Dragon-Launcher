@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
 
 @Composable
-public fun WallpaperDim(dimAmount: Float) {
+fun WallpaperDim(dimAmount: Float) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -23,7 +23,7 @@ public fun WallpaperDim(dimAmount: Float) {
 
 
 @Composable
-public fun CustomDim(
+fun CustomDim(
     customDim: MainScreenLayer.CustomDim
 ) {
     val bgColor = MaterialTheme.colorScheme.background

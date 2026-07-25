@@ -7,7 +7,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 
 @Composable
-public inline fun <reified VM : ViewModel> activityViewModel(): VM {
+inline fun <reified VM : ViewModel> activityViewModel(): VM {
     val activity = LocalActivity.current as ComponentActivity
     return hiltViewModel(activity)
 }

@@ -49,7 +49,7 @@ import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun IntersectionShapeEditor(
+fun IntersectionShapeEditor(
     shape: IntersectionShape,
     isDefaultEditing: Boolean,
     defaultShape: IntersectionShape,

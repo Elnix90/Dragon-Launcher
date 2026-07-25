@@ -36,7 +36,7 @@ import android.graphics.Color as AndroidColor
 
 
 @Composable
-public fun GradientColorPicker(
+fun GradientColorPicker(
     initialColor: Color,
     onColorSelected: (Color) -> Unit
 ) {

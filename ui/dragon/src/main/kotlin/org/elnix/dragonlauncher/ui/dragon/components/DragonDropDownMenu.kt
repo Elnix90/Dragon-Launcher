@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-public fun DragonDropDownMenu(
+fun DragonDropDownMenu(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,

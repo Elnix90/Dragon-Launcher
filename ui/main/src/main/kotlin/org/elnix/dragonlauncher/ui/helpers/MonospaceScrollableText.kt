@@ -26,7 +26,7 @@ import my.nanihadesuka.compose.ScrollbarSettings
 import org.elnix.dragonlauncher.ktx.alphaMultiplier
 
 @Composable
-public fun MonospaceScrollableText(
+fun MonospaceScrollableText(
     lines: List<String>,
     modifier: Modifier = Modifier,
     useDragonLogsColoration: Boolean = false

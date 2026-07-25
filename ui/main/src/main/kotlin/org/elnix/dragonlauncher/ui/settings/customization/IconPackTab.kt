@@ -26,7 +26,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerIconShapePicker
 
 @Composable
-public fun IconPackTab(
+fun IconPackTab(
     onBack: () -> Unit,
     drawerViewModel: DrawerViewModel = activityViewModel(),
     iconsViewModel: IconsViewModel = activityViewModel()

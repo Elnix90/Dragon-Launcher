@@ -71,7 +71,7 @@ import kotlin.math.roundToInt
 import android.graphics.Shader as PlatformShader
 
 @Composable
-public fun ShapedLauncherIcon(
+fun ShapedLauncherIcon(
     modifier: Modifier = Modifier,
     maxSize: Dp,
     icon: () -> LauncherIcon? = { null },
@@ -327,8 +327,8 @@ private fun ClockLayer(
     }
 }
 
-public class BitmapShaderBrush(
-    public val bitmap: Bitmap,
+class BitmapShaderBrush(
+    val bitmap: Bitmap,
 ) : ShaderBrush() {
     override fun createShader(size: Size): Shader {
         return BitmapShader(bitmap, PlatformShader.TileMode.CLAMP, PlatformShader.TileMode.CLAMP)

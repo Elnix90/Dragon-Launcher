@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 
 @Composable
-public fun DialogTitle(
+fun DialogTitle(
     text: String,
     modifier: Modifier = Modifier,
     trailingIcon: (@Composable RowScope.() -> Unit)? = null,
@@ -42,7 +42,7 @@ public fun DialogTitle(
 }
 
 @Composable
-public fun DialogSubTitle(text: String, modifier: Modifier = Modifier) {
+fun DialogSubTitle(text: String, modifier: Modifier = Modifier) {
     Text(
         modifier = modifier,
         text = text,
@@ -52,7 +52,7 @@ public fun DialogSubTitle(text: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-public fun DialogDescription(text: String, modifier: Modifier = Modifier) {
+fun DialogDescription(text: String, modifier: Modifier = Modifier) {
     Text(
         modifier = modifier,
         text = text,

@@ -55,7 +55,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
-public fun HoldToActivateArcTab() {
+fun HoldToActivateArcTab() {
     val ctx = LocalContext.current
     val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()

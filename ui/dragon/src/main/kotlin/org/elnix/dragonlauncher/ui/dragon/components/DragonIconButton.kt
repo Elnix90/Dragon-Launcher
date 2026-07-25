@@ -14,7 +14,7 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun DragonIconButtonImpl(
+fun DragonIconButtonImpl(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -32,7 +32,7 @@ public fun DragonIconButtonImpl(
 }
 
 @Composable
-public fun DragonIconButton(
+fun DragonIconButton(
     icon: Int,
     contentDescription: Int,
     modifier: Modifier = Modifier,
@@ -57,7 +57,7 @@ public fun DragonIconButton(
 }
 
 @Composable
-public fun DragonIconButton(
+fun DragonIconButton(
     icon: Int,
     contentDescription: String,
     modifier: Modifier = Modifier,

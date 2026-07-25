@@ -118,7 +118,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun WidgetsTab(
+fun WidgetsTab(
     widgetsViewModel: WidgetsViewModel = activityViewModel(),
     onLaunchSystemWidgetPicker: (nestId: Int) -> Unit,
     onResetWidgetSize: (id: Int, widgetId: Int) -> Unit,

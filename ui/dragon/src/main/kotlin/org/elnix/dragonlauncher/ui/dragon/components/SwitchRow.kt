@@ -14,7 +14,7 @@ import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
-public fun SwitchRow(
+fun SwitchRow(
     state: Boolean?,
     title: String,
     modifier: Modifier = Modifier,

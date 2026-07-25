@@ -21,7 +21,7 @@ import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 import org.elnix.dragonlauncher.ui.remembers.rememberCustomText
 
 @Composable
-public fun PointPreviewCanvas(
+fun PointPreviewCanvas(
     editPoint: Point,
     modifier: Modifier = Modifier,
     backgroundColor: Color,

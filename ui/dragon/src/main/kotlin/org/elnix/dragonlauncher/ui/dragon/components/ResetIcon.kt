@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import org.elnix.dragonlauncher.i18n.R
 
 @Composable
-public fun ResetIcon(enabled: Boolean = true, onReset: () -> Unit) {
+fun ResetIcon(enabled: Boolean = true, onReset: () -> Unit) {
     DragonIconButton(
         icon = R.drawable.reset,
         contentDescription = R.string.reset,
@@ -14,7 +14,7 @@ public fun ResetIcon(enabled: Boolean = true, onReset: () -> Unit) {
 }
 
 @Composable
-public fun MoreIcon(enabled: Boolean = true, onReset: () -> Unit) {
+fun MoreIcon(enabled: Boolean = true, onReset: () -> Unit) {
     DragonIconButton(
         icon = R.drawable.more_vert,
         contentDescription = R.string.more,

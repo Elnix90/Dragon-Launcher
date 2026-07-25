@@ -63,7 +63,7 @@ private const val pageNumber = 6
 @SuppressLint("LocalContextGetResourceValueCall", "FrequentlyChangingValue")
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun WelcomeScreen(
+fun WelcomeScreen(
     backupViewModel: BackupViewModel = activityViewModel(),
     initializationViewModel: InitializationViewModel = activityViewModel()
 ) {

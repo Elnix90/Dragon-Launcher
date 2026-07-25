@@ -35,7 +35,7 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 
 
 @Composable
-public fun <T : ADBCommands> AdbCommandPickerDialog(
+fun <T : ADBCommands> AdbCommandPickerDialog(
     label: String?,
     options: List<T>,
     selected: () -> T,

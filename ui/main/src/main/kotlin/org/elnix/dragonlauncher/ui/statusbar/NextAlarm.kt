@@ -27,7 +27,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Composable
-public fun StatusBarNextAlarm(
+fun StatusBarNextAlarm(
     element: StatusBar.NextAlarm,
     // used only for preview in settings, so I don't use the element property
     forceShowIcon: Boolean = false
@@ -73,7 +73,7 @@ public fun StatusBarNextAlarm(
     }
 }
 
-public data class NextAlarmInfo(
+data class NextAlarmInfo(
     val formattedTime: String,
     val label: String
 )

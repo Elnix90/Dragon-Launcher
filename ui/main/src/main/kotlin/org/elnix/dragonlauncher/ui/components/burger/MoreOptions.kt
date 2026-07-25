@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.ui.components.burger
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-public data class MoreOptions(
+data class MoreOptions(
     val text: @Composable () -> String,
     val onClick: () -> Unit,
     val icon: Int,

@@ -11,7 +11,7 @@ import androidx.compose.ui.res.stringResource
 import org.elnix.dragonlauncher.i18n.R
 
 @Composable
-public fun AppUsagePermissionDialog(onDismiss: () -> Unit) {
+fun AppUsagePermissionDialog(onDismiss: () -> Unit) {
     val ctx = LocalContext.current
     
     AlertDialog(

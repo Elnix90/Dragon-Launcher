@@ -30,7 +30,7 @@ import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isWifiEnabled
 import org.elnix.dragonlauncher.i18n.R
 
 @Composable
-public fun StatusBarConnectivity(
+fun StatusBarConnectivity(
     element: StatusBar.Connectivity,
     modifier: Modifier = Modifier,
     previewMode: Boolean = false
@@ -137,7 +137,7 @@ public fun StatusBarConnectivity(
     }
 }
 
-public data class ConnectivityState(
+data class ConnectivityState(
     val isAirplaneMode: Boolean = false,
     val isWifiEnabled: Boolean = false,
     val isVpnEnabled: Boolean = false,

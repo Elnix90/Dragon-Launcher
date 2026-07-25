@@ -30,7 +30,7 @@ import org.elnix.dragonlauncher.ui.dragon.generic.connectedMiddleButtonShapes
 import org.elnix.dragonlauncher.ui.dragon.generic.connectedTrailingButtonShapes
 
 @Composable
-public fun UndoRedoBlock(undoRedo: UndoRedoManager) {
+fun UndoRedoBlock(undoRedo: UndoRedoManager) {
 
     val undoButtonEnabled by undoRedo.canUndo.collectAsState()
     val redoButtonEnabled by undoRedo.canRedo.collectAsState()

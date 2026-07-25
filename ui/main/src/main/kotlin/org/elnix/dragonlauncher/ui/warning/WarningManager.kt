@@ -9,17 +9,17 @@ import kotlin.time.Clock
 
 // Cloned from https://github.com/shub39/Grit/blob/89c2bb9a8c3b9bc66262ced9e378a8103a6d7a61/app/src/main/java/com/shub39/grit/warning/WarningManager.kt
 
-public object WarningManager {
-    public fun showWarning(): Boolean = (getDaysLeft() >= 0)
+object WarningManager {
+    fun showWarning(): Boolean = (getDaysLeft() >= 0)
 
 
-    public val showWarningDialog: SettingFlow<Boolean> = SettingFlow(showWarning())
+    val showWarningDialog: SettingFlow<Boolean> = SettingFlow(showWarning())
 
-    public fun updateWarningDialog(newValue: Boolean) {
+    fun updateWarningDialog(newValue: Boolean) {
         showWarningDialog.update { newValue }
     }
 
-    public fun getDaysLeft(): Int {
+    fun getDaysLeft(): Int {
         return Clock.System.now()
             .toLocalDateTime(TimeZone.currentSystemDefault())
             .date

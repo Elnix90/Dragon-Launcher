@@ -20,7 +20,7 @@ import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.ktx.showToast
 
 @Composable
-public fun StatusBarBattery(
+fun StatusBarBattery(
     element: StatusBar.Battery
 ) {
     val ctx = LocalContext.current

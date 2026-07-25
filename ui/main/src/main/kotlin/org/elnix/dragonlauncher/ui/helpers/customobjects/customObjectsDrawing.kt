@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.ktx.toPath
 
-public fun DrawScope.customObject(
+fun DrawScope.customObject(
     customObject: CustomObject,
     rotation: Int,
     shape: Shape,

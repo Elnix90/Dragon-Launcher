@@ -5,10 +5,10 @@ import androidx.compose.runtime.compositionLocalOf
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 
 
-public interface Navigator {
-    public fun navigate(screen: NavigationRoute)
-    public fun onBack()
-    public fun popBackMainScreen()
+interface Navigator {
+    fun navigate(screen: NavigationRoute)
+    fun onBack()
+    fun popBackMainScreen()
 }
 
-public val LocalNavigator: ProvidableCompositionLocal<Navigator> = compositionLocalOf { error("No LocalNavigator provided") }
+val LocalNavigator: ProvidableCompositionLocal<Navigator> = compositionLocalOf { error("No LocalNavigator provided") }

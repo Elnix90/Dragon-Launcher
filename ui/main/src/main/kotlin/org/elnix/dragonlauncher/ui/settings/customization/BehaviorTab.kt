@@ -36,7 +36,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-public fun BehaviorTab() {
+fun BehaviorTab() {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 

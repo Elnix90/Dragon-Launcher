@@ -64,7 +64,7 @@ import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceUnavailableContent
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun AppPickerDialog(
+fun AppPickerDialog(
     profilesViewModel: ProfilesViewModel = activityViewModel(),
     drawerViewModel: DrawerViewModel = activityViewModel(),
     multiSelectEnabled: Boolean = false,

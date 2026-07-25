@@ -10,7 +10,7 @@ import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 
 
 @Composable
-public fun Modifier.settingsGroup(
+fun Modifier.settingsGroup(
     clickModifier: Modifier? = null,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     enabled: Boolean = true

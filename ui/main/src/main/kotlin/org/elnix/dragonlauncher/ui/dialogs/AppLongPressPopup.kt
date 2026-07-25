@@ -43,7 +43,7 @@ import org.elnix.dragonlauncher.ui.dialogs.editors.AppIconEditor
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun AppLongPressPopup(
+fun AppLongPressPopup(
     app: Application,
     appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
     drawerViewModel: DrawerViewModel = activityViewModel(),

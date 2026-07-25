@@ -17,7 +17,7 @@ import org.elnix.dragonlauncher.ui.composition.LocalSettingsPlacementChecker
 import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 
 @Composable
-public fun DrawerActionSelector(
+fun DrawerActionSelector(
     settingObject: EnumSettingObject<DrawerActions>,
     allowNone: Boolean = false
 ) {

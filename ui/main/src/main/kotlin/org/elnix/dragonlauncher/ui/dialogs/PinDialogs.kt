@@ -83,7 +83,7 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
  * Dialog for entering a PIN to unlock settings.
  */
 @Composable
-public fun PinUnlock(
+fun PinUnlock(
     onDismiss: () -> Unit,
     onValidate: () -> Unit,
     lockScreenViewModel: LockScreenViewModel = activityViewModel()
@@ -141,7 +141,7 @@ public fun PinUnlock(
  * Dialog for setting up a new PIN (enter + confirm).
  */
 @Composable
-public fun PinSetup(
+fun PinSetup(
     onDismiss: () -> Unit,
     onPinSet: (String) -> Unit
 ) {
@@ -603,7 +603,7 @@ private fun Modifier.keyPadModifier(
 
 
 @Composable
-public fun PlayWarningSounds(
+fun PlayWarningSounds(
     failedTries: Int,
     superWarningMode: Boolean,
     superWarningModeSound: Int,

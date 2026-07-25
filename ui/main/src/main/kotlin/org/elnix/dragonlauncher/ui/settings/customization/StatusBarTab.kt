@@ -26,7 +26,7 @@ import org.elnix.dragonlauncher.ui.statusbar.StatusBar
 import org.elnix.dragonlauncher.ui.statusbar.showStatusBar
 
 @Composable
-public fun StatusBarTab() {
+fun StatusBarTab() {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 

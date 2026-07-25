@@ -15,7 +15,7 @@ import androidx.compose.ui.zIndex
 
 
 @Composable
-public fun OverlayHost(
+fun OverlayHost(
     modifier: Modifier = Modifier,
     contentAlignment: Alignment = Alignment.TopStart,
     content: @Composable BoxScope.() -> Unit,
@@ -42,10 +42,10 @@ public fun OverlayHost(
     }
 }
 
-public val LocalOverlayManager: ProvidableCompositionLocal<OverlayManager> = compositionLocalOf {
+val LocalOverlayManager: ProvidableCompositionLocal<OverlayManager> = compositionLocalOf {
     OverlayManager()
 }
 
-public val LocalZIndex: ProvidableCompositionLocal<Float> = compositionLocalOf {
+val LocalZIndex: ProvidableCompositionLocal<Float> = compositionLocalOf {
     0f
 }

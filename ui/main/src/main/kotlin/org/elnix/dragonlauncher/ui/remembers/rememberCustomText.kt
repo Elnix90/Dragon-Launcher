@@ -12,7 +12,7 @@ import org.elnix.dragonlauncher.base.cache.DrawScopeText
 import org.elnix.dragonlauncher.ui.composition.LocalTextMeasurer
 
 @Composable
-public fun rememberCustomText(
+fun rememberCustomText(
     text: String,
     verticalPadding: Float
 ): DrawScopeText {
@@ -29,7 +29,7 @@ public fun rememberCustomText(
     }
 }
 
-public fun getTopLeftAndTextMeasure(
+fun getTopLeftAndTextMeasure(
     text: String,
     verticalPadding: Float,
     textStyle: TextStyle,

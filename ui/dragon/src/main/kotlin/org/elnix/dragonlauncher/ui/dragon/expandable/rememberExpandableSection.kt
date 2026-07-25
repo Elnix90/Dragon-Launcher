@@ -10,7 +10,7 @@ import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionState
 
 
 @Composable
-public fun rememberExpandableSection(
+fun rememberExpandableSection(
     title: String,
     description: String? = null,
     mode: ExpandableSectionMode = ExpandableSectionMode.ModalSheet(),

@@ -43,7 +43,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun UserValidation(
+fun UserValidation(
     title: String? = null,
     message: String?,
     validateText: String = stringResource(R.string.ok),

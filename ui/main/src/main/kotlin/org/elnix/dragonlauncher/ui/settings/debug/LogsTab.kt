@@ -86,7 +86,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import java.io.File
 
 @Composable
-public fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
+fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
     val ctx = LocalContext.current
     val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()

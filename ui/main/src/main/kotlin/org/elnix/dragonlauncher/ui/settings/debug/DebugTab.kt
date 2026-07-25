@@ -65,7 +65,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
-public fun DebugTab(initializationViewModel: InitializationViewModel = activityViewModel()) {
+fun DebugTab(initializationViewModel: InitializationViewModel = activityViewModel()) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 

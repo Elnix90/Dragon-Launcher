@@ -16,7 +16,7 @@ import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 
 @Composable
-public fun DebugZone(visible: Boolean, content: @Composable () -> Unit) {
+fun DebugZone(visible: Boolean, content: @Composable () -> Unit) {
     if (!visible) return
 
     Column(
@@ -33,7 +33,7 @@ public fun DebugZone(visible: Boolean, content: @Composable () -> Unit) {
 }
 
 @Composable
-public fun DebugZone(setting: BooleanSettingObject, content: @Composable () -> Unit) {
+fun DebugZone(setting: BooleanSettingObject, content: @Composable () -> Unit) {
     val isVisible by setting.asState()
     DebugZone(isVisible, content)
 }

@@ -21,7 +21,7 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
  * you are already inside a Canvas.
  */
 @Composable
-public fun PointIcon(
+fun PointIcon(
     point: Point,
     center: Offset,
     eraseColor: Color,
@@ -62,7 +62,7 @@ public fun PointIcon(
 }
 
 @Suppress("FunctionName")
-public fun DrawScope.PointIcon(
+fun DrawScope.PointIcon(
     point: Point,
     depth: Int,
     center: Offset,

@@ -22,7 +22,7 @@ import org.elnix.dragonlauncher.ui.base.components.LazyColumnWithScrollIndicator
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 
 @Composable
-public fun SettingsPagePicker(
+fun SettingsPagePicker(
     onDismissRequest: () -> Unit,
     onSelect: (NavigationRoute) -> Unit
 ) {

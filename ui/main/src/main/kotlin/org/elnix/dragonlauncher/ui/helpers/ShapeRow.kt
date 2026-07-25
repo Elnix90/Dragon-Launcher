@@ -22,7 +22,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 
 @Composable
-public fun ShapeRow(
+fun ShapeRow(
     selected: IconShape,
     modifier: Modifier = Modifier,
     title: String = stringResource(R.string.edit_icons_shape),
@@ -63,7 +63,7 @@ public fun ShapeRow(
 
 
 @Composable
-public fun SmallShapeRow(
+fun SmallShapeRow(
     selected: IconShape,
     onReset: () -> Unit,
     onClick: () -> Unit

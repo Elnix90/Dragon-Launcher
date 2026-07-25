@@ -74,7 +74,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun HapticFeedbackEditor(
+fun HapticFeedbackEditor(
     initial: CustomHapticFeedback?,
     default: CustomHapticFeedback?,
     onDismiss: (CustomHapticFeedback?) -> Unit,
@@ -453,7 +453,7 @@ private fun AddStepButton(
 
 
 @Composable
-public fun HapticFeedBackEditorButtonWithPlayTest(
+fun HapticFeedBackEditorButtonWithPlayTest(
     customHapticFeedback: CustomHapticFeedback,
     titleExt: String = "",
     onClick: () -> Unit

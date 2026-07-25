@@ -76,7 +76,7 @@ import org.json.JSONObject
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-public fun ThemesTab(backupViewModel: BackupViewModel = activityViewModel()) {
+fun ThemesTab(backupViewModel: BackupViewModel = activityViewModel()) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 

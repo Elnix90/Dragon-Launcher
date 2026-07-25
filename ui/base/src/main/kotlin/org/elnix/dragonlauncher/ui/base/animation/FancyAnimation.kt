@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.graphics.shapes.Morph
 import androidx.graphics.shapes.RoundedPolygon
 
-public data class FancyAnimation(
+data class FancyAnimation(
     val rotation: Float,
     val outerRotation: Float,
     val scale: Float,
@@ -28,7 +28,7 @@ public data class FancyAnimation(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun rememberFancyAnimations(
+fun rememberFancyAnimations(
     isPressed: Boolean,
     normalShape: RoundedPolygon,
     pressedShape: RoundedPolygon
@@ -79,7 +79,7 @@ public fun rememberFancyAnimations(
     )
 }
 
-public class MorphPolygonShape(
+class MorphPolygonShape(
     private val morph: Morph,
     private val percentage: Float
 ) : Shape {

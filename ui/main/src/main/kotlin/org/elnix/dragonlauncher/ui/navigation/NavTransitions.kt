@@ -17,7 +17,7 @@ import androidx.navigation3.runtime.metadata
 import androidx.navigation3.ui.NavDisplay
 import org.elnix.dragonlauncher.ui.base.animation.navigationBouncySpec
 
-public fun slideFadeInFromRight(): EnterTransition {
+fun slideFadeInFromRight(): EnterTransition {
     return slideInHorizontally(
         initialOffsetX = { (it * 0.15f).toInt() },
         animationSpec = tween(250, easing = FastOutSlowInEasing)
@@ -27,7 +27,7 @@ public fun slideFadeInFromRight(): EnterTransition {
     )
 }
 
-public fun slideFadeOutToRight(): ExitTransition {
+fun slideFadeOutToRight(): ExitTransition {
     return slideOutHorizontally(
         targetOffsetX = { (it * 0.10f).toInt() },
         animationSpec = tween(250, easing = FastOutSlowInEasing)
@@ -36,7 +36,7 @@ public fun slideFadeOutToRight(): ExitTransition {
     )
 }
 
-public fun slideFadeInFromLeft(): EnterTransition {
+fun slideFadeInFromLeft(): EnterTransition {
     return slideInHorizontally(
         initialOffsetX = { -(it * 0.15f).toInt() },
         animationSpec = tween(350, easing = FastOutSlowInEasing)
@@ -46,7 +46,7 @@ public fun slideFadeInFromLeft(): EnterTransition {
     )
 }
 
-public fun slideFadeOutToLeft(): ExitTransition {
+fun slideFadeOutToLeft(): ExitTransition {
     return slideOutHorizontally(
         targetOffsetX = { -(it * 0.10f).toInt() },
         animationSpec = tween(250, easing = FastOutSlowInEasing)
@@ -55,7 +55,7 @@ public fun slideFadeOutToLeft(): ExitTransition {
     )
 }
 
-public fun raiseUpAnimation(): EnterTransition =
+fun raiseUpAnimation(): EnterTransition =
     fadeIn(
         animationSpec = tween(50),
         initialAlpha = 0.5f
@@ -64,7 +64,7 @@ public fun raiseUpAnimation(): EnterTransition =
         animationSpec = tween(100, easing = FastOutSlowInEasing)
     )
 
-public fun collapseDownAnimation(): ExitTransition =
+fun collapseDownAnimation(): ExitTransition =
     fadeOut(
         animationSpec = tween(50),
         targetAlpha = 0f
@@ -74,14 +74,14 @@ public fun collapseDownAnimation(): ExitTransition =
     )
 
 
-public val verticalMetadata: Map<String, Any> = NavDisplay.transitionSpec {
+val verticalMetadata: Map<String, Any> = NavDisplay.transitionSpec {
     slideInVertically(navigationBouncySpec) { it } + fadeIn() togetherWith fadeOut()
 }
 
-public val horizontalMetadata: Map<String, Any> = NavDisplay.transitionSpec {
+val horizontalMetadata: Map<String, Any> = NavDisplay.transitionSpec {
     slideInHorizontally(navigationBouncySpec) { it } + fadeIn() togetherWith fadeOut()
 }
-public val drawerMetadata: Map<String, Any> =
+val drawerMetadata: Map<String, Any> =
     metadata {
         put(NavDisplay.TransitionKey) {
             // Slide new content up, keeping the old content in place underneath

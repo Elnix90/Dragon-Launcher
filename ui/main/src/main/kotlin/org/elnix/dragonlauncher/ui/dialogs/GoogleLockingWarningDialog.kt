@@ -13,7 +13,7 @@ import org.elnix.dragonlauncher.ui.warning.WarningDialog
 import org.elnix.dragonlauncher.ui.warning.WarningManager
 
 @Composable
-public fun GoogleLockingWarningDialog() {
+fun GoogleLockingWarningDialog() {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
     val currentVersionCode by rememberVersionCode()

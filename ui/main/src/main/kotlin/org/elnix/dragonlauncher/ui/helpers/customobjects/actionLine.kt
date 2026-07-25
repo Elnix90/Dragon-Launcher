@@ -21,7 +21,7 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.
 import org.elnix.dragonlauncher.ktx.toPath
 import kotlin.math.abs
 
-public fun DrawScope.actionLine(
+fun DrawScope.actionLine(
     start: Offset,
     end: Offset,
     sweepAngle: Float,

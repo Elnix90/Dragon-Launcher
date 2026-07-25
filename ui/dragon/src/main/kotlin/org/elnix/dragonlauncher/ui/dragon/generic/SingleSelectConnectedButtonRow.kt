@@ -23,7 +23,7 @@ import org.elnix.dragonlauncher.ui.base.withHapticParam
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun <T : SelectButtonOption> SingleSelectConnectedButtonRow(
+fun <T : SelectButtonOption> SingleSelectConnectedButtonRow(
     entries: List<T>,
     modifier: Modifier = Modifier,
     checked: (T) -> Boolean,

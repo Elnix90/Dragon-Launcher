@@ -24,7 +24,7 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.helpers.GradientBigButton
 
 @Composable
-public fun WelcomePageFinish(
+fun WelcomePageFinish(
     onEnterSettings: () -> Unit,
     onEnterApp: () -> Unit
 ) {

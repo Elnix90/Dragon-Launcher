@@ -129,7 +129,7 @@ import rikka.shizuku.Shizuku
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-public fun MainAppUi(
+fun MainAppUi(
     appLifecycleViewModel: AppLifecycleViewModel = activityViewModel(),
     drawerViewModel: DrawerViewModel = activityViewModel(),
     lockScreenViewModel: LockScreenViewModel = activityViewModel(),

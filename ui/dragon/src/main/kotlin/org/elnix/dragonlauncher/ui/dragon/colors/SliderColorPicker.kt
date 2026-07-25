@@ -19,7 +19,7 @@ import org.elnix.dragonlauncher.ktx.to255
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 
 @Composable
-public fun SliderColorPicker(
+fun SliderColorPicker(
     actualColor: Color,
     initialColor: Color,
     onColorSelected: (Color) -> Unit

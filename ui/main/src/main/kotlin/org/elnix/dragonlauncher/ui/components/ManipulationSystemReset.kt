@@ -10,7 +10,7 @@ import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 
 @Composable
-public fun ManipulationSystemReset(manipulationSystem: ManipulationSystem) {
+fun ManipulationSystemReset(manipulationSystem: ManipulationSystem) {
     val scope = rememberCoroutineScope()
     
     val canResetOffset = manipulationSystem.offset.value != Offset.Zero

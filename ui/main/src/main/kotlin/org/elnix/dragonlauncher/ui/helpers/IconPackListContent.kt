@@ -44,7 +44,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-public fun IconPackListContent(
+fun IconPackListContent(
     drawerViewModel: DrawerViewModel = activityViewModel(),
     iconViewModel: IconsViewModel = activityViewModel(),
     packs: List<IconPack>,

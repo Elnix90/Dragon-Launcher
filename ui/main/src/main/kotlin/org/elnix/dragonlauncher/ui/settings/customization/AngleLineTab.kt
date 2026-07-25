@@ -69,7 +69,7 @@ import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberAngleLineO
 import org.elnix.dragonlauncher.ui.remembers.rememberSweepAngle
 
 @Composable
-public fun AngleLineTab() {
+fun AngleLineTab() {
     val ctx = LocalContext.current
     val navigator = LocalNavigator.current
     val density = LocalDensity.current

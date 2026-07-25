@@ -30,7 +30,7 @@ import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 @Composable
-public fun WorkspaceLockedContent(
+fun WorkspaceLockedContent(
     workspaceProfile: Profile,
     profilesViewModel: ProfilesViewModel = activityViewModel()
 ) {

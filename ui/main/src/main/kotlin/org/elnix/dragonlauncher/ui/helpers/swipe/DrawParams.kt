@@ -24,7 +24,7 @@ import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
  * Composed once per key change inside [rememberDrawParams] so that no computation
  * is duplicated inside the DrawScope drawing functions.
  */
-public data class DrawParams(
+data class DrawParams(
     val ctx: Context,
 
     val pointsService: PointsService,
@@ -65,7 +65,7 @@ public data class DrawParams(
  * drive cache synchronization.
  */
 @Composable
-public fun rememberDrawParams(
+fun rememberDrawParams(
     eraseColor: Color,
     allowShowPointCenter: Boolean,
     pointSettingsDisplay: Boolean,

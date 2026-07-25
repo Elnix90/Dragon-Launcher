@@ -99,7 +99,7 @@ private fun SettingsTitleInternal(
 }
 
 @Composable
-public fun SettingsTitle(
+fun SettingsTitle(
     title: String,
     moreOptions: ((() -> Unit) -> List<MoreOptions>)? = null,
     resetIcon: (() -> Unit)?,
@@ -126,7 +126,7 @@ public fun SettingsTitle(
 
 
 @Composable
-public fun SpecialSettingsTitle(
+fun SpecialSettingsTitle(
     nestId: Int,
     onSettings: () -> Unit,
     onSelectAll: () -> Unit,

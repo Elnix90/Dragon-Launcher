@@ -26,7 +26,7 @@ import org.elnix.dragonlauncher.i18n.R
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
-public fun StatusBarBandwidth(element: StatusBar.Bandwidth) {
+fun StatusBarBandwidth(element: StatusBar.Bandwidth) {
     var rxSpeed by remember { mutableLongStateOf(0L) }
     var txSpeed by remember { mutableLongStateOf(0L) }
 

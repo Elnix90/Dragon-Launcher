@@ -27,7 +27,7 @@ import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowDrawOrder
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
 
 @Suppress("FunctionName")
-public fun DrawScope.IntersectionShape(
+fun DrawScope.IntersectionShape(
     path: Path,
     shape: IntersectionShape,
     defaultShape: IntersectionShape,
@@ -73,7 +73,7 @@ public fun DrawScope.IntersectionShape(
 }
 
 @Composable
-public fun IntersectionShapePreview(
+fun IntersectionShapePreview(
     shape: IntersectionShape,
     defaultShape: IntersectionShape,
     size: Dp,

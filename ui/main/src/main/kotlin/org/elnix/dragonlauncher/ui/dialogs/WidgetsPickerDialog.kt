@@ -59,7 +59,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.widgets.LauncherWidgetHolder
 
 @Composable
-public fun WidgetPickerDialog(
+fun WidgetPickerDialog(
     drawerViewModel: DrawerViewModel = activityViewModel(),
     onBindCustomWidget: (Int, ComponentName) -> Unit,
     onDismiss: () -> Unit
@@ -271,7 +271,7 @@ private fun WidgetPreviewImage(
 }
 
 @SuppressLint("UseCompatLoadingForDrawables")
-public fun loadWidgetPreview(
+fun loadWidgetPreview(
     provider: AppWidgetProviderInfo,
     ctx: Context
 ): Bitmap? {

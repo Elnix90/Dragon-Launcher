@@ -21,7 +21,7 @@ import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
-public fun SettingsItem(
+fun SettingsItem(
     title: String,
     modifier: Modifier = Modifier,
     description: String? = null,
@@ -77,7 +77,7 @@ public fun SettingsItem(
 }
 
 @Composable
-public fun RouteItem(
+fun RouteItem(
     route: NavigationRoute,
     enabled: Boolean = true,
     onExternalClick: (() -> Unit)? = null

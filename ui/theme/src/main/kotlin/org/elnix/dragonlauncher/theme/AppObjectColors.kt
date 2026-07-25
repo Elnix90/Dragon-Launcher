@@ -24,10 +24,10 @@ import androidx.compose.ui.graphics.Color
 import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ui.composition.LocalUseCustomColorChannels
 
-public object AppObjectsColors {
+object AppObjectsColors {
 
     @Composable
-    public fun switchColors(): SwitchColors {
+    fun switchColors(): SwitchColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 SwitchDefaults.colors(
@@ -49,7 +49,7 @@ public object AppObjectsColors {
     }
 
     @Composable
-    public fun buttonColors(): ButtonColors {
+    fun buttonColors(): ButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 ButtonDefaults.buttonColors(
@@ -63,7 +63,7 @@ public object AppObjectsColors {
     }
 
     @Composable
-    public fun cancelButtonColors(): ButtonColors {
+    fun cancelButtonColors(): ButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 ButtonDefaults.buttonColors(
@@ -78,7 +78,7 @@ public object AppObjectsColors {
 
 
     @Composable
-    public fun sliderColors(
+    fun sliderColors(
         activeTrackColor: Color,
     ): SliderColors {
         return if (LocalUseCustomColorChannels.current) {
@@ -101,7 +101,7 @@ public object AppObjectsColors {
     }
 
     @Composable
-    public fun checkboxColors(): CheckboxColors {
+    fun checkboxColors(): CheckboxColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 CheckboxDefaults.colors(
@@ -117,7 +117,7 @@ public object AppObjectsColors {
     }
 
     @Composable
-    public fun outlinedTextFieldColors(
+    fun outlinedTextFieldColors(
         backgroundColor: Color? = null,
         onBackgroundColor: Color? = null,
         removeBorder: Boolean = true
@@ -183,7 +183,7 @@ public object AppObjectsColors {
     }
 
     @Composable
-    public fun radioButtonColors(): RadioButtonColors {
+    fun radioButtonColors(): RadioButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 RadioButtonDefaults.colors(
@@ -197,7 +197,7 @@ public object AppObjectsColors {
     }
 
     @Composable
-    public fun iconToggleButtonColors(): IconToggleButtonColors {
+    fun iconToggleButtonColors(): IconToggleButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 IconButtonDefaults.iconToggleButtonColors(
@@ -213,7 +213,7 @@ public object AppObjectsColors {
     }
 
     @Composable
-    public fun iconButtonColors(): IconButtonColors {
+    fun iconButtonColors(): IconButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 IconButtonDefaults.iconButtonColors(
@@ -228,7 +228,7 @@ public object AppObjectsColors {
 
 
     @Composable
-    public fun cancelIconButtonColors(): IconButtonColors {
+    fun cancelIconButtonColors(): IconButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 IconButtonDefaults.iconButtonColors(
@@ -243,7 +243,7 @@ public object AppObjectsColors {
 
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Composable
-    public fun toggleButtonColors(): ToggleButtonColors {
+    fun toggleButtonColors(): ToggleButtonColors {
         return if (LocalUseCustomColorChannels.current) {
             with(MaterialTheme.colorScheme) {
                 ToggleButtonDefaults.toggleButtonColors(

@@ -49,7 +49,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun NestShapesManagementEditor(
+fun NestShapesManagementEditor(
     shapesInternal: SnapshotStateMap<Int, IntersectionShape>,
     triggerUpdate: () -> Unit,
     defaultShapes: Set<IntersectionShape>,

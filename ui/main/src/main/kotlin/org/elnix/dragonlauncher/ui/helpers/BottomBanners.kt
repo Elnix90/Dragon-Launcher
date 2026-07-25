@@ -27,7 +27,7 @@ import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 
 @Composable
-public fun BottomBanners(currentRoute: NavKey) {
+fun BottomBanners(currentRoute: NavKey) {
     if (currentRoute == NavigationRoute.Welcome) return
 
 

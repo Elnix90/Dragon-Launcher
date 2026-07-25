@@ -18,7 +18,7 @@ import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
 
 @Composable
-public fun ApplicationInfoDialog(
+fun ApplicationInfoDialog(
     app: Application,
     onDismiss: () -> Unit
 ) {

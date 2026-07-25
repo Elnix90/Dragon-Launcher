@@ -16,7 +16,7 @@ import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 
 
 @Composable
-public fun systemColorScheme(): ColorScheme {
+fun systemColorScheme(): ColorScheme {
     val context = LocalContext.current
     val darkTheme = isSystemInDarkTheme()
     val dynamicColors by ColorModesSettingsStore.dynamicColors.asState()

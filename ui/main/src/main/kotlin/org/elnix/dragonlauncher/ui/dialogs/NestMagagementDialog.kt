@@ -61,7 +61,7 @@ import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun NestManagementDialog(
+fun NestManagementDialog(
     pointsViewModel: PointsViewModel = activityViewModel(),
     title: String? = null,
     onSelect: ((Nest) -> Unit)? = null,

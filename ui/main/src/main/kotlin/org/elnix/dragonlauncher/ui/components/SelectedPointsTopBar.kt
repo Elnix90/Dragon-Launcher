@@ -45,7 +45,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
 
 @Composable
-public fun SelectedPointsTopBar(
+fun SelectedPointsTopBar(
     modifier: Modifier,
     points: Points,
     selectedPointsIds: List<Int>,

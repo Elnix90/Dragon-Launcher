@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-public fun LabelText(text: String, modifier: Modifier = Modifier) {
+fun LabelText(text: String, modifier: Modifier = Modifier) {
     Text(
         modifier = modifier,
         text = text,

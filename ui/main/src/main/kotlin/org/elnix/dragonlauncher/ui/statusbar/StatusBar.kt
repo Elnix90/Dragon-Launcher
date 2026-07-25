@@ -91,7 +91,7 @@ import java.util.UUID
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-public fun StatusBar(
+fun StatusBar(
     launchAction: ((Action) -> Unit)?,
 ) {
     val view = LocalView.current
@@ -172,7 +172,7 @@ private data class StatusBarElement(
 )
 
 @Composable
-public fun EditStatusBar() {
+fun EditStatusBar() {
     val ctx = LocalContext.current
     val haptic = LocalHapticFeedback.current
 
@@ -697,7 +697,7 @@ public fun EditStatusBar() {
 
 
 @Composable
-public fun StatusBarItem(
+fun StatusBarItem(
     element: StatusBar,
     launchAction: ((Action) -> Unit)? = null,
     previewMode: Boolean = false
@@ -730,7 +730,7 @@ public fun StatusBarItem(
 
 
 @Composable
-public fun showStatusBar(): State<Boolean> {
+fun showStatusBar(): State<Boolean> {
     val mainScreensLayers = LocalMainScreenLayers.current
 
     return remember(mainScreensLayers) {
@@ -746,7 +746,7 @@ public fun showStatusBar(): State<Boolean> {
 
 
 @Composable
-public fun showChargingAnimation(): State<Boolean> {
+fun showChargingAnimation(): State<Boolean> {
     val mainScreensLayers = LocalMainScreenLayers.current
 
     return remember(mainScreensLayers) {

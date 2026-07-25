@@ -34,7 +34,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-public fun LockMethodDialog(
+fun LockMethodDialog(
     lockScreenViewModel: LockScreenViewModel = activityViewModel(),
     onDismiss: () -> Unit
 ) {

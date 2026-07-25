@@ -69,7 +69,7 @@ import org.elnix.dragonlauncher.ui.warning.WarningReminder
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-public fun SettingsScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
+fun SettingsScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
     val ctx = LocalContext.current
     val uriHandler = LocalUriHandler.current
     val navigator = LocalNavigator.current

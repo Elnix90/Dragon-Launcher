@@ -29,7 +29,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
 @Composable
-public fun GamblingInputDialog(
+fun GamblingInputDialog(
     onSelect: (number: Int, snapToShapes: Boolean) -> Unit,
     onDismiss: () -> Unit
 ) {

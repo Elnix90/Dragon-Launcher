@@ -29,7 +29,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 
 @Composable
-public fun ReorderableCollectionItemScope.WorkspaceRow(
+fun ReorderableCollectionItemScope.WorkspaceRow(
     workspace: Workspace,
     modifier: Modifier,
     isDragging: Boolean = false,

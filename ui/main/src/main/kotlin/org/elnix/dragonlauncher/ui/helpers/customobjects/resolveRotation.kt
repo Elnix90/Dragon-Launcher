@@ -8,7 +8,7 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 
 @Composable
-public fun CustomObject.resolveRotation(
+fun CustomObject.resolveRotation(
     isStartOrAngle: Boolean,
     sweep: Int,
     key: Any? = null

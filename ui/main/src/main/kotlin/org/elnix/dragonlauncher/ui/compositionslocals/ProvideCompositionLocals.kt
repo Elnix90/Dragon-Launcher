@@ -36,7 +36,7 @@ import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberAngleLineO
 import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberHoldCustomObject
 
 @Composable
-public fun ProvideGlobalCompositionLocals(
+fun ProvideGlobalCompositionLocals(
     iconsViewModel: IconsViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel(),
     content: @Composable () -> Unit

@@ -47,7 +47,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
  */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
+fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
     entries: List<T>,
     enabled: (T) -> Boolean = { true },
     checked: (T) -> Boolean = { true },
@@ -101,7 +101,7 @@ public fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun connectedLeadingButtonShapes(
+fun connectedLeadingButtonShapes(
     shape: Shape = connectedLeadingButtonShape,
     pressedShape: Shape = connectedLeadingButtonPressShape,
     checkedShape: Shape = connectedButtonCheckedShape,
@@ -111,7 +111,7 @@ public fun connectedLeadingButtonShapes(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun connectedMiddleButtonShapes(
+fun connectedMiddleButtonShapes(
     shape: Shape = ShapeDefaults.Small,
     pressedShape: Shape = connectedMiddleButtonPressShape,
     checkedShape: Shape = connectedButtonCheckedShape,
@@ -120,7 +120,7 @@ public fun connectedMiddleButtonShapes(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun connectedTrailingButtonShapes(
+fun connectedTrailingButtonShapes(
     shape: Shape = connectedTrailingButtonShape,
     pressedShape: Shape = connectedTrailingButtonPressShape,
     checkedShape: Shape = connectedButtonCheckedShape,

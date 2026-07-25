@@ -18,7 +18,7 @@ import kotlin.math.abs
 /**
  * Same as [androidx.compose.foundation.gestures.detectTransformGestures] but I added a [onGestureEnd] lambda that fires on gesture end
  */
-public suspend fun PointerInputScope.detectTransformGestures(
+suspend fun PointerInputScope.detectTransformGestures(
     panZoomLock: Boolean = false,
     onGestureStart: ((down: Offset) -> Unit)? = null,
     onGestureEnd: ((totalPanChange: Offset, totalZoomChange: Float, totalRotationChange: Float) -> Unit)? = null,

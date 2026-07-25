@@ -20,7 +20,7 @@ import org.elnix.dragonlauncher.ui.composition.LocalSettingsPlacementChecker
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 
 @Composable
-public fun Setting(
+fun Setting(
     setting: DpSettingObject,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,

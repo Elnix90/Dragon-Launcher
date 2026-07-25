@@ -61,7 +61,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun NestEditor(
+fun NestEditor(
     currentNest: Nest,
     defaultNest: Nest,
     defaultShape: IntersectionShape,

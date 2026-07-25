@@ -28,7 +28,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 
 
 @Composable
-public fun TextEditorDialog(
+fun TextEditorDialog(
     title: @Composable () -> String,
     placeHolder: @Composable () -> String,
     initialText: String,

@@ -32,7 +32,7 @@ import kotlin.time.Duration.Companion.milliseconds
 // https://github.com/MM2-0/Kvaesitso/blob/07e3e9669f8990e76d9d4062492dc741793e49a5/app/ui/src/main/java/de/mm20/launcher2/ui/component/NavBarEffects.kt
 
 @Composable
-public fun ChargingAnimation(
+fun ChargingAnimation(
     modifier: Modifier = Modifier
 ) {
     val ctx = LocalContext.current
@@ -134,39 +134,39 @@ public fun ChargingAnimation(
     }
 }
 
-public typealias Bubble = FloatArray
+typealias Bubble = FloatArray
 
-public inline var Bubble.posX: Float
+inline var Bubble.posX: Float
     get() = this[0]
     set(value) {
         this[0] = value
     }
 
-public inline var Bubble.posY: Float
+inline var Bubble.posY: Float
     get() = this[1]
     set(value) {
         this[1] = value
     }
 
-public inline var Bubble.deltaX: Float
+inline var Bubble.deltaX: Float
     get() = this[2]
     set(value) {
         this[2] = value
     }
 
-public inline var Bubble.deltaY: Float
+inline var Bubble.deltaY: Float
     get() = this[3]
     set(value) {
         this[3] = value
     }
 
-public inline var Bubble.radius: Float
+inline var Bubble.radius: Float
     get() = this[4]
     set(value) {
         this[4] = value
     }
 
-public inline var Bubble.lifetime: Float
+inline var Bubble.lifetime: Float
     get() = this[5]
     set(value) {
         this[5] = value

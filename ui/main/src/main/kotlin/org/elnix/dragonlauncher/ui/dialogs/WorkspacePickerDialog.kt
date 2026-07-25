@@ -24,7 +24,7 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 
 @Composable
-public fun WorkspacePickerDialog(
+fun WorkspacePickerDialog(
     drawerViewModel: DrawerViewModel = activityViewModel(),
     onDismiss: () -> Unit,
     onActionPicked: (Action.OpenAppDrawer) -> Unit

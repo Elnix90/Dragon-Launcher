@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-public fun DragonTooltipInternal(
+fun DragonTooltipInternal(
     text: String,
     enabled: Boolean,
     modifier: Modifier,
@@ -57,7 +57,7 @@ public fun DragonTooltipInternal(
 }
 
 @Composable
-public fun DragonTooltip(
+fun DragonTooltip(
     resId: Int,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -75,7 +75,7 @@ public fun DragonTooltip(
 
 
 @Composable
-public fun DragonTooltip(
+fun DragonTooltip(
     description: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,

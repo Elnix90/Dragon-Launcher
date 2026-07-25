@@ -66,7 +66,7 @@ private val BgBottom = Color(0xFF1A1A2E)
 
 
 @Composable
-public fun TimeLimitExceededScreen(appName: String) {
+fun TimeLimitExceededScreen(appName: String) {
     var showContent by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {

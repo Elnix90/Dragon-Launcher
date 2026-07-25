@@ -42,7 +42,7 @@ import org.elnix.dragonlauncher.ui.dragon.internals.connectedTopButtonShapes
  */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun <T : ToggleButtonOption> MultiSelectConnectedButtonColumn(
+fun <T : ToggleButtonOption> MultiSelectConnectedButtonColumn(
     entries: List<T>,
     showLabel: Boolean = true,
     hapticFeedback: Boolean = true,

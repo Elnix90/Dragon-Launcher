@@ -21,7 +21,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 @Composable
-public fun EditCustomObjectBlock(
+fun EditCustomObjectBlock(
     title: Int? = null,
     editObject: CustomObject,
     default: CustomObject,

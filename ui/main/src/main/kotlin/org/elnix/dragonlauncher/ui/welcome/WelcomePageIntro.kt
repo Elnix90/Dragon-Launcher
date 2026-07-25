@@ -31,7 +31,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 
 @Composable
-public fun WelcomePageIntro(
+fun WelcomePageIntro(
     isVisible: () -> Boolean,
     onImport: () -> Unit
 ) {

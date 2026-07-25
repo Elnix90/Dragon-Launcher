@@ -19,7 +19,7 @@ import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
 
 
 @Suppress("FunctionName")
-public fun DrawScope.PointBg(
+fun DrawScope.PointBg(
     point: Point,
     selected: Boolean,
     center: Offset,

@@ -13,7 +13,7 @@ import androidx.compose.ui.platform.LocalView
  * Detects whether the keyboard is visible on screen in Compose.
  */
 @Composable
-public fun isKeyboardVisible(): State<Boolean> {
+fun isKeyboardVisible(): State<Boolean> {
     val rootView = LocalView.current
     val keyboardVisible = remember { mutableStateOf(false) }
 

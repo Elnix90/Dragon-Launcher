@@ -51,7 +51,7 @@ private fun DrawScope.holdTolerance(
 
 
 @Composable
-public fun HoldToActivateArc(
+fun HoldToActivateArc(
     center: Offset?,
     progress: Float,
     customObject: CustomObject,

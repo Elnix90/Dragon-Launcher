@@ -11,7 +11,7 @@ import org.elnix.dragonlauncher.ui.base.modifiers.semiTransparentIfDisabled
 
 
 @Composable
-public fun TextWithDescription(
+fun TextWithDescription(
     text: String,
     description: String?,
     modifier: Modifier = Modifier,
@@ -37,7 +37,7 @@ public fun TextWithDescription(
 
 
 @Composable
-public fun TextWithDescription(
+fun TextWithDescription(
     text: String,
     description1: String?,
     description2: String?,

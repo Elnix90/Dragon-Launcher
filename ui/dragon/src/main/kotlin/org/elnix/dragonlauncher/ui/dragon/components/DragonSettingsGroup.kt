@@ -17,7 +17,7 @@ import org.elnix.dragonlauncher.ui.composition.LocalSettingsPlacementChecker
 import org.elnix.dragonlauncher.ui.dragon.text.SettingsWithTitle
 
 @Composable
-public fun DragonSettingsGroup(
+fun DragonSettingsGroup(
     title: Int? = null,
     trailingIcon: (@Composable RowScope.() -> Unit)? = null,
     backgroundColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,

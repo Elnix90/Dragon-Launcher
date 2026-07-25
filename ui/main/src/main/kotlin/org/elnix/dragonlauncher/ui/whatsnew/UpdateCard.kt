@@ -19,7 +19,7 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import java.text.SimpleDateFormat
 
 @Composable
-public fun UpdateCard(
+fun UpdateCard(
     update: Update,
     onLongClick: (() -> Unit)? = null,
     onClick: () -> Unit

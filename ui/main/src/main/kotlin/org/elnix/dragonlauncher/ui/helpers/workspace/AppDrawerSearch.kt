@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.i18n.R
 
 @Composable
-public fun AppDrawerSearch(
+fun AppDrawerSearch(
     searchQuery: String,
     onSearchChanged: (String) -> Unit,
     modifier: Modifier = Modifier,

@@ -28,7 +28,7 @@ import org.elnix.dragonlauncher.ui.components.IntersectionShape
  * [DrawScope.NestOverlay] version when you are already inside a Canvas.
  */
 @Composable
-public fun NestOverlay(
+fun NestOverlay(
     nest: Nest,
     center: Offset,
     modifier: Modifier = Modifier,
@@ -69,7 +69,7 @@ public fun NestOverlay(
 }
 
 @Suppress("FunctionName")
-public fun DrawScope.NestOverlay(
+fun DrawScope.NestOverlay(
     nest: Nest,
     depth: Int,
     center: Offset,

@@ -57,7 +57,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
-public fun WellbeingTab(
+fun WellbeingTab(
     drawerViewModel: DrawerViewModel = activityViewModel(),
     appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
 ) {

@@ -46,7 +46,7 @@ private fun ShortcutInfo.matchesAppShortcutSearch(appName: String, q: String): B
 }
 
 @Composable
-public fun AppShortcutPickerDialog(
+fun AppShortcutPickerDialog(
     app: Application,
     shortcuts: List<ShortcutInfo>,
     onDismiss: () -> Unit,

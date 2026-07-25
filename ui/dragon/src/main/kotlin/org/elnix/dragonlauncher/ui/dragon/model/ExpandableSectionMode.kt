@@ -1,15 +1,15 @@
 package org.elnix.dragonlauncher.ui.dragon.model
 
-public sealed class ExpandableSectionMode {
-    public data class ModalSheet(
+sealed class ExpandableSectionMode {
+    data class ModalSheet(
         val skipPartiallyExpanded: Boolean = false
     ) : ExpandableSectionMode()
 
-    public data object Expandable : ExpandableSectionMode()
+    data object Expandable : ExpandableSectionMode()
 }
 
 
-public data class ExpandableSectionState(
+data class ExpandableSectionState(
     val isExpanded: () -> Boolean,
     val enabled: () -> Boolean,
     val title: String,

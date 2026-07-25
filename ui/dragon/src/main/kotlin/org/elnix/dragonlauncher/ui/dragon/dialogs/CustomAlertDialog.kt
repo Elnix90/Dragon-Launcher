@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-public fun CustomAlertDialog(
+fun CustomAlertDialog(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     imePadding: Boolean = true,

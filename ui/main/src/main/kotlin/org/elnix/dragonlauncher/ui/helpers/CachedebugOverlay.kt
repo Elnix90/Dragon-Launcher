@@ -11,7 +11,7 @@
 //import org.elnix.dragonlauncher.ui.base.activityViewModel
 //
 //@Composable
-//public fun CacheDebugOverlay(pointsViewModel: PointsViewModel = activityViewModel()) {
+//fun CacheDebugOverlay(pointsViewModel: PointsViewModel = activityViewModel()) {
 //    val pointsService = pointsViewModel.pointsService
 //    val points by pointsService.points.collectAsState()
 //    val nests by pointsService.nests.collectAsState()

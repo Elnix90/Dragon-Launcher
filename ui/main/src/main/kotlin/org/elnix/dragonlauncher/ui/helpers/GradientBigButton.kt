@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-public fun GradientBigButton(
+fun GradientBigButton(
     text: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,

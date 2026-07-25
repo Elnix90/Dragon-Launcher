@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import org.elnix.dragonlauncher.i18n.R
 
 @Composable
-public fun WelcomePagePrivacy() {
+fun WelcomePagePrivacy() {
 
     val items = listOf(
         "Works fully offline (No internet access)",

@@ -17,7 +17,7 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.components.ShapedLauncherIcon
 
 @Composable
-public fun FinalPointIcon(
+fun FinalPointIcon(
     point: Point,
     size: Dp?,
     modifier: Modifier = Modifier,
@@ -57,7 +57,7 @@ public fun FinalPointIcon(
 }
 
 @Composable
-public fun AppIcon(
+fun AppIcon(
     app: Application,
     maxSize: Dp,
     modifier: Modifier = Modifier,
@@ -75,7 +75,7 @@ public fun AppIcon(
 }
 
 @Composable
-public fun ShortcutIcon(
+fun ShortcutIcon(
     shortcut: Action.LaunchShortcut,
     size: Dp,
     modifier: Modifier = Modifier,
@@ -91,7 +91,7 @@ public fun ShortcutIcon(
 }
 
 @Composable
-public fun ActionIcon(
+fun ActionIcon(
     action: Action,
     size: Dp,
     modifier: Modifier = Modifier,

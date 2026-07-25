@@ -14,7 +14,7 @@ import org.elnix.dragonlauncher.models.DragonLogViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 @Composable
-public fun LauncherSnackbarHost(
+fun LauncherSnackbarHost(
     dragonLogViewModel: DragonLogViewModel = activityViewModel(),
 ) {
     val snackbarHostState = remember { SnackbarHostState() }

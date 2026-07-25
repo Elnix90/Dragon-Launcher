@@ -61,7 +61,7 @@ import org.elnix.dragonlauncher.ui.remembers.rememberHoldAndRunController
 import org.elnix.dragonlauncher.ui.remembers.rememberLiveNestControllerStack
 
 @Composable
-public fun MainScreenOverlay(
+fun MainScreenOverlay(
     iconsViewModel: IconsViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel(),
     start: Offset?,
@@ -438,7 +438,7 @@ public fun MainScreenOverlay(
 }
 
 
-public fun defaultHapticFeedback(): CustomHapticFeedback = CustomHapticFeedback.build {
+fun defaultHapticFeedback(): CustomHapticFeedback = CustomHapticFeedback.build {
     haptic(20)
 }
 

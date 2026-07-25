@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 @Composable
-public fun SettingsWithTitle(
+fun SettingsWithTitle(
     title: Int?,
     trailingIcon: (@Composable RowScope.() -> Unit)? = null,
     content: @Composable () -> Unit

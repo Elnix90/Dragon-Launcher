@@ -95,7 +95,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-public fun FontTab() {
+fun FontTab() {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -747,7 +747,7 @@ public fun FontTab() {
 }
 
 @Composable
-public fun FontRow(
+fun FontRow(
     font: String,
     isSelected: Boolean,
     isInstalled: Boolean,

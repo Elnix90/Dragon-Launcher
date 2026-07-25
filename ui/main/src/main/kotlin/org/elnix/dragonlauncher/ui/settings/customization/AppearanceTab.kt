@@ -10,7 +10,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 
 @Composable
-public fun AppearanceTab() {
+fun AppearanceTab() {
     SettingsScaffold(
         title = stringResource(NavigationRoute.Appearance.resId),
         helpText = stringResource(R.string.appearance_tab_text),

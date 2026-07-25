@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.i18n.R
 
 @Composable
-public fun WelcomePageTutorial() {
+fun WelcomePageTutorial() {
 
 
     WelcomePagerHeader(

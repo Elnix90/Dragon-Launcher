@@ -17,7 +17,7 @@ import org.elnix.dragonlauncher.i18n.R
 
 
 @Suppress("FunctionName")
-public fun DrawScope.DecorationIcons(
+fun DrawScope.DecorationIcons(
     ctx: Context,
     center: Offset,
     iconSize: Size,
@@ -79,7 +79,7 @@ public fun DrawScope.DecorationIcons(
 
 
 
-public fun DrawScope.missingPoint(drawParams: DrawParams, center: Offset) {
+fun DrawScope.missingPoint(drawParams: DrawParams, center: Offset) {
     val size = 30.dp.toPx().toInt()
 
     val boltIcon =  DecorationCache.getOrCompute(3) {

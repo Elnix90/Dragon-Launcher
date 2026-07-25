@@ -44,7 +44,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun AppAliasesDialog(
+fun AppAliasesDialog(
     app: Application,
     workspaceViewModel: DrawerViewModel = activityViewModel(),
     onDismiss: () -> Unit

@@ -19,25 +19,25 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.ui.unit.IntOffset
 
 
-public fun <T> bouncySpec(): SpringSpec<T> = spring(
+fun <T> bouncySpec(): SpringSpec<T> = spring(
     dampingRatio = Spring.DampingRatioMediumBouncy,
     stiffness = Spring.StiffnessLow
 )
 
-public fun <T> defaultSpec(): SpringSpec<T> = spring(
+fun <T> defaultSpec(): SpringSpec<T> = spring(
     dampingRatio = Spring.DampingRatioHighBouncy,
     stiffness = Spring.StiffnessHigh
 )
 
-public fun <T> easingSpec(): TweenSpec<T> = tween(
+fun <T> easingSpec(): TweenSpec<T> = tween(
     durationMillis = 300,
     easing = FastOutSlowInEasing
 )
 
-public val navigationBouncySpec: SpringSpec<IntOffset> = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessLow)
+val navigationBouncySpec: SpringSpec<IntOffset> = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessLow)
 
 
-public val barsContentTransform: ContentTransform = ContentTransform(
+val barsContentTransform: ContentTransform = ContentTransform(
     targetContentEnter = slideInVertically(
         spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
@@ -54,8 +54,8 @@ public val barsContentTransform: ContentTransform = ContentTransform(
 )
 
 
-public val slideInHorizontalBouncy: EnterTransition = slideInHorizontally(bouncySpec()) { it } + fadeIn()
-public val slideOutHorizontalBouncy: ExitTransition = slideOutHorizontally(bouncySpec()) { it } + fadeOut()
+val slideInHorizontalBouncy: EnterTransition = slideInHorizontally(bouncySpec()) { it } + fadeIn()
+val slideOutHorizontalBouncy: ExitTransition = slideOutHorizontally(bouncySpec()) { it } + fadeOut()
 
-public val slideInVerticalBouncy: EnterTransition = slideInVertically(bouncySpec()) { it } + fadeIn()
-public val slideOutVerticalBouncy: ExitTransition = slideOutVertically(bouncySpec()) { it } + fadeOut()
+val slideInVerticalBouncy: EnterTransition = slideInVertically(bouncySpec()) { it } + fadeIn()
+val slideOutVerticalBouncy: ExitTransition = slideOutVertically(bouncySpec()) { it } + fadeOut()

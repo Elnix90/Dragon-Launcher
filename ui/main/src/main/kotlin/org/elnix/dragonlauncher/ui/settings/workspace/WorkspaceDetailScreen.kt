@@ -40,7 +40,7 @@ import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceLockedContent
 import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceUnavailableContent
 
 @Composable
-public fun WorkspaceDetailScreen(
+fun WorkspaceDetailScreen(
     workspaceId: String,
     drawerViewModel: DrawerViewModel = activityViewModel(),
     profilesViewModel: ProfilesViewModel = activityViewModel(),

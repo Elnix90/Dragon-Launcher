@@ -56,7 +56,7 @@ import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 
 @Composable
-public fun PointIconEditor(
+fun PointIconEditor(
     iconsViewModel: IconsViewModel = activityViewModel(),
     point: Point,
     onReset: (() -> Unit)? = null,
@@ -91,7 +91,7 @@ public fun PointIconEditor(
 }
 
 @Composable
-public fun AppIconEditor(
+fun AppIconEditor(
     app: Application,
     drawerViewModel: DrawerViewModel = activityViewModel(),
     iconViewModel: IconsViewModel = activityViewModel(),

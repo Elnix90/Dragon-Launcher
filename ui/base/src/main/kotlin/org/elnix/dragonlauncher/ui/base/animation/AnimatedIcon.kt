@@ -36,7 +36,7 @@ import kotlin.time.Duration.Companion.milliseconds
  * there are 3 possible states for this component:
  *  [Default], [Success] and [Error]
  */
-public enum class AnimatedIconStatus {
+enum class AnimatedIconStatus {
     Default, Success, Error
 }
 
@@ -49,11 +49,11 @@ public enum class AnimatedIconStatus {
  *
  * @param scope CoroutineScope for launching state change animations
  */
-public class AnimatedIcon
+class AnimatedIcon
 internal constructor(
     private val scope: CoroutineScope
 ) {
-    public val status: SettingFlow<AnimatedIconStatus> = SettingFlow(Default)
+    val status: SettingFlow<AnimatedIconStatus> = SettingFlow(Default)
 
     private var job: Job? = null
 
@@ -64,7 +64,7 @@ internal constructor(
      * Shows [AnimatedIconStatus.Error] icon for 500ms then returns to [AnimatedIconStatus.Default].
      * Cancels any previous pending state change.
      */
-    public fun setError() {
+    fun setError() {
         job?.cancel()
         job = scope.launch {
             status.value = Error
@@ -79,7 +79,7 @@ internal constructor(
      * Shows [AnimatedIconStatus.Success] icon for 500ms then returns to [AnimatedIconStatus.Default].
      * Cancels any previous pending state change.
      */
-    public fun setSuccess() {
+    fun setSuccess() {
         job = scope.launch {
             status.value = Success
             delay(500.milliseconds)
@@ -121,7 +121,7 @@ private fun AnimatedIconStatus.icon(
  * @return [AnimatedIcon] instance tied to current composition scope
  */
 @Composable
-public fun rememberAnimatedIcon(): AnimatedIcon {
+fun rememberAnimatedIcon(): AnimatedIcon {
     val scope = rememberCoroutineScope()
     return remember { AnimatedIcon(scope) }
 }
@@ -137,7 +137,7 @@ public fun rememberAnimatedIcon(): AnimatedIcon {
  * @param onClick Callback when icon is clicked
  */
 @Composable
-public fun AnimatedIcon.Icon(
+fun AnimatedIcon.Icon(
     @DrawableRes
     defaultIcon: Int,
     defaultColor: Color = MaterialTheme.colorScheme.onBackground,

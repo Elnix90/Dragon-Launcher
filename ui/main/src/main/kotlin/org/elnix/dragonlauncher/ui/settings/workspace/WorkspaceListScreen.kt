@@ -38,7 +38,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 
 
 @Composable
-public fun WorkspaceListScreen(drawerViewModel: DrawerViewModel = activityViewModel()) {
+fun WorkspaceListScreen(drawerViewModel: DrawerViewModel = activityViewModel()) {
     val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
 

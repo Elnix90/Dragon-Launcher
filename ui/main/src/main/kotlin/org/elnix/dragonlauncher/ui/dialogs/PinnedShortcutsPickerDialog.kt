@@ -71,7 +71,7 @@ private fun PinnedShortcutItem.matchesShortcutSearch(q: String): Boolean {
  * grouped by app. Allows the user to pick one to add as a swipe action.
  */
 @Composable
-public fun PinnedShortcutsPickerDialog(
+fun PinnedShortcutsPickerDialog(
     onDismiss: () -> Unit,
     onShortcutSelected: (Action.LaunchShortcut) -> Unit
 ) {

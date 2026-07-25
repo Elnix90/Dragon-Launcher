@@ -24,7 +24,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.AutoResizeableText
 import org.elnix.dragonlauncher.ui.svg.vectors.undraw404Error
 
 @Composable
-public fun ShizukuUnavailableDialog(
+fun ShizukuUnavailableDialog(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit = {},
     onConfirm: () -> Unit = {}

@@ -19,7 +19,7 @@ import org.elnix.dragonlauncher.ui.helpers.GradientBigButton
 import org.elnix.dragonlauncher.ui.remembers.rememberAutoBackupLauncher
 
 @Composable
-public fun WelcomePageBackup() {
+fun WelcomePageBackup() {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 

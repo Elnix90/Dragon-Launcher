@@ -37,7 +37,7 @@ import org.elnix.dragonlauncher.ui.statusbar.showChargingAnimation
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
+fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
     val mainScreenLayers = LocalMainScreenLayers.current

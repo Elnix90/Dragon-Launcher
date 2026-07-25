@@ -61,7 +61,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
-public fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
+fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 

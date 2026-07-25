@@ -41,7 +41,7 @@ private data class AppLocale(val locale: Locale, val name: String)
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun LocalePickerSheet(onDismissRequest: () -> Unit) {
+fun LocalePickerSheet(onDismissRequest: () -> Unit) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
     val sheetState = rememberBottomSheetState(skipPartiallyExpanded = true)
@@ -154,14 +154,14 @@ public fun LocalePickerSheet(onDismissRequest: () -> Unit) {
 }
 
 @Composable
-public fun listItemColors(): ListItemColors {
+fun listItemColors(): ListItemColors {
     return ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 }
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun segmentedListItemShapes(
+fun segmentedListItemShapes(
     index: Int,
     count: Int,
     singleElement: Boolean = count == 1,

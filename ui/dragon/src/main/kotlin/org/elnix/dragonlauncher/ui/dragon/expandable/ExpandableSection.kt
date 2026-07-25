@@ -38,7 +38,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun ExpandableSection(
+fun ExpandableSection(
     state: ExpandableSectionState,
     content: @Composable ColumnScope.() -> Unit
 ) {

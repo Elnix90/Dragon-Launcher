@@ -31,13 +31,13 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 
-public enum class GlowDrawOrder {
+enum class GlowDrawOrder {
     First,
     AfterErase,
     Last
 }
 
-public fun DrawScope.glowOverlay(
+fun DrawScope.glowOverlay(
     center: Offset,
     glow: CustomGlow
 ) {
@@ -57,7 +57,7 @@ public fun DrawScope.glowOverlay(
 }
 
 @Composable
-public fun GlowOverlay(
+fun GlowOverlay(
     center: Offset,
     glow: CustomGlow
 ) {
@@ -70,7 +70,7 @@ public fun GlowOverlay(
 }
 
 
-public fun DrawScope.drawNeonGlowLine(
+fun DrawScope.drawNeonGlowLine(
     start: Offset,
     end: Offset,
     color: Color,
@@ -144,7 +144,7 @@ private inline fun DrawScope.glowLine(
     }
 }
 
-public fun DrawScope.drawPathGlow(
+fun DrawScope.drawPathGlow(
     path: Path,
     color: Color,
     lineStrokeWidth: Float,
@@ -245,7 +245,7 @@ private inline fun customGlowPaint(
  * @return the [value] in pixels of `null`
  */
 @OptIn(ExperimentalContracts::class)
-public fun DrawScope.toPxOrNull(value: Dp?): Float? {
+fun DrawScope.toPxOrNull(value: Dp?): Float? {
     contract {
         returnsNotNull() implies (value != null)
     }

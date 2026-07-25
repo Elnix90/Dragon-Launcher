@@ -18,7 +18,7 @@ import org.elnix.dragonlauncher.ui.helpers.ShapePreview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun ShapePickerDialog(
+fun ShapePickerDialog(
     selected: IconShape,
     allowedShapes: Set<IconShape>? = null,
     onDismiss: () -> Unit,

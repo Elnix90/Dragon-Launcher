@@ -103,7 +103,7 @@ private val TextSecondary = Color(0xFFB2BEC3)
 
 @SuppressLint("MissingPermission")
 @Composable
-public fun DigitalPauseScreen(
+fun DigitalPauseScreen(
     application: Application,
     appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
     onCancel: () -> Unit
@@ -718,7 +718,7 @@ private fun PermissionNeededContent(ctx: Context) {
     }
 }
 
-public data class AppUsageStats(
+data class AppUsageStats(
     val yesterdayMinutes: Long,
     val todayMinutes: Long
 )

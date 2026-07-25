@@ -17,7 +17,7 @@ import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 @Composable
-public fun rememberAutoBackupLauncher(
+fun rememberAutoBackupLauncher(
     backupViewModel: BackupViewModel = activityViewModel(),
 ): ManagedActivityResultLauncher<String, Uri?> {
     val ctx = LocalContext.current

@@ -32,7 +32,7 @@ import kotlin.time.Duration.Companion.milliseconds
  * @return [HoldGestureState] used in UI to get the pointer pos and the progress
  */
 @Composable
-public fun rememberHoldToOpenSettings(
+fun rememberHoldToOpenSettings(
     onSettings: (Offset) -> Unit,
     holdDelay: Long,
     loadDuration: Long,
@@ -111,8 +111,8 @@ public fun rememberHoldToOpenSettings(
 }
 
 /** Container for the produced gesture state. */
-public class HoldGestureState(
-    public val pointerModifier: Modifier,
-    public val progressProvider: () -> Float,
-    public val centerProvider: () -> Offset?
+class HoldGestureState(
+    val pointerModifier: Modifier,
+    val progressProvider: () -> Float,
+    val centerProvider: () -> Offset?
 )

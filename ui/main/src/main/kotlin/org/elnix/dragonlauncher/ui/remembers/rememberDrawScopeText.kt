@@ -9,7 +9,7 @@ import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 import org.elnix.dragonlauncher.base.cache.DrawScopeText
 
 @Composable
-public fun rememberDrawScopeText(
+fun rememberDrawScopeText(
     point: Point,
     sizePx: Float,
     defaultPoint: Point

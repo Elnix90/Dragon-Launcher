@@ -81,7 +81,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun ColorSelectorTab() {
+fun ColorSelectorTab() {
     val ctx = LocalContext.current
     val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()

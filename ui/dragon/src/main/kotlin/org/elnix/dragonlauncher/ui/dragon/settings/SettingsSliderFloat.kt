@@ -19,7 +19,7 @@ import org.elnix.dragonlauncher.ui.composition.LocalSettingsPlacementChecker
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 
 @Composable
-public fun Setting(
+fun Setting(
     setting: FloatSettingObject,
     modifier: Modifier = Modifier,
     decimals: Int = 2,

@@ -20,7 +20,7 @@ import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 
 
 @Composable
-public fun DragonRow(
+fun DragonRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = rememberInteractionSource(),
@@ -50,7 +50,7 @@ public fun DragonRow(
 
 
 @Composable
-public fun DragonRow(
+fun DragonRow(
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit
 ) {

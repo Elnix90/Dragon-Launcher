@@ -46,7 +46,7 @@ private fun CheckIcon() {
 }
 
 @Composable
-public fun AppItemHorizontal(
+fun AppItemHorizontal(
     app: Application,
     selected: Boolean,
     onLongClick: ((Application) -> Unit)?,
@@ -116,7 +116,7 @@ public fun AppItemHorizontal(
 }
 
 @Composable
-public fun AppItemGrid(
+fun AppItemGrid(
     app: Application,
     selected: Boolean,
     onLongClick: ((Application) -> Unit)?,

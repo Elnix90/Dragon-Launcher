@@ -14,7 +14,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
-public fun ChangelogsScreen() {
+fun ChangelogsScreen() {
     val ctx = LocalContext.current
     val uriHandler = LocalUriHandler.current
     val versionCode by rememberVersionCode()

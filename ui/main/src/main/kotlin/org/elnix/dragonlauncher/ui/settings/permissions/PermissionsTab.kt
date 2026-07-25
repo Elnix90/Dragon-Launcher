@@ -38,7 +38,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
-public fun PermissionsTab(onBack: () -> Unit) {
+fun PermissionsTab(onBack: () -> Unit) {
     val ctx = LocalContext.current
     val permissionStates = remember { mutableStateMapOf<String, Boolean>() }
 

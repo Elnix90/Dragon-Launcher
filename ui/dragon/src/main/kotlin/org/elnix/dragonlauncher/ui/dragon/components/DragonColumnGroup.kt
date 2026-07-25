@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 
 @Composable
-public fun DragonColumnGroup(
+fun DragonColumnGroup(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -25,7 +25,7 @@ public fun DragonColumnGroup(
 
 
 @Composable
-public fun DragonColumn(
+fun DragonColumn(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {

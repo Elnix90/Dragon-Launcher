@@ -63,7 +63,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun ColorPickerRow(
+fun ColorPickerRow(
     title: String,
     description: String?,
     modifier: Modifier = Modifier,
@@ -320,7 +320,7 @@ private fun ColorPicker(
 }
 
 
-public fun pasteColorHexFromClipboard(ctx: Context): Color? {
+fun pasteColorHexFromClipboard(ctx: Context): Color? {
     ctx.pasteClipboard()?.let { pasted ->
         try {
             if (pasted.startsWith("#") && pasted.length == 9) {

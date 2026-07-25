@@ -36,7 +36,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 
 @Composable
-public fun <T> ActionSelectorRow(
+fun <T> ActionSelectorRow(
     options: List<T>,
     selected: T,
     enabled: Boolean = true,
@@ -106,7 +106,7 @@ public fun <T> ActionSelectorRow(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun <T> ActionSelector(
+fun <T> ActionSelector(
     label: String?,
     options: List<T>,
     optionLabel: @Composable (T) -> String = { it.toString() },

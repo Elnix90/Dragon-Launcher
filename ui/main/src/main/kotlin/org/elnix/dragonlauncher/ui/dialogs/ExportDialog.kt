@@ -32,7 +32,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 
 @Composable
-public fun ExportSettingsDialog(
+fun ExportSettingsDialog(
     onDismiss: () -> Unit,
     title: Int = R.string.select_settings_to_export,
     availableStores: Set<SettingsStore<*, *>> = backupableStores,
@@ -79,7 +79,7 @@ public fun ExportSettingsDialog(
 }
 
 @Composable
-public fun <T> SelectedActionRow(
+fun <T> SelectedActionRow(
     selected: SnapshotStateMap<T, Boolean>,
     totalNumber: Int,
     onAnyAction: (() -> Unit)? = null
@@ -122,7 +122,7 @@ public fun <T> SelectedActionRow(
 
 
 @Composable
-public fun StoreItem(
+fun StoreItem(
     selected: SnapshotStateMap<SettingsStore<*, *>, Boolean>,
     settingsStore: SettingsStore<*, *>
 ) {

@@ -120,7 +120,7 @@ private fun ColorPickerButtonInternal(
 
 
 @Composable
-public fun ColorPickerButtonOne(
+fun ColorPickerButtonOne(
     currentColor: Color,
     enabled: Boolean,
     onReset: () -> Unit,
@@ -152,7 +152,7 @@ public fun ColorPickerButtonOne(
 
 
 @Composable
-public fun ColorPickerButtonTwo(
+fun ColorPickerButtonTwo(
     currentColor: Color,
     enabled: Boolean,
     onReset: () -> Unit,

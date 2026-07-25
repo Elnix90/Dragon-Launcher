@@ -21,7 +21,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.json.JSONObject
 
 @Composable
-public fun rememberSettingsImportLauncher(
+fun rememberSettingsImportLauncher(
     backupViewModel: BackupViewModel = activityViewModel(),
     onJsonReady: (JSONObject) -> Unit
 ): ManagedActivityResultLauncher<Array<String>, Uri?> {

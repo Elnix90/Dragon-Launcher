@@ -82,7 +82,7 @@ import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun PointEditor(
+fun PointEditor(
     point: Point,
     defaultPoint: Point,
     isDefaultEditing: Boolean,

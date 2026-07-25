@@ -35,7 +35,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
     ExperimentalMaterial3Api::class
 )
 @Composable
-public fun WarningDialog(
+fun WarningDialog(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {

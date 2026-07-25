@@ -48,8 +48,8 @@ private inline fun <reified T> rememberDecodedObject(
 }
 
 
-public object CustomObjectJson : DragonJson<CustomObject>() {
-    public data class AngleLineObjects(
+object CustomObjectJson : DragonJson<CustomObject>() {
+    data class AngleLineObjects(
         val line: CustomObject,
         val angleLine: CustomObject,
         val startLine: CustomObject,
@@ -57,7 +57,7 @@ public object CustomObjectJson : DragonJson<CustomObject>() {
     )
 
     @Composable
-    public fun rememberAngleLineObjects(): AngleLineObjects {
+    fun rememberAngleLineObjects(): AngleLineObjects {
         val lineJson by LineObjectSettingStore.jsonSetting.asState()
         val angleLineJson by AngleObjectSettingStore.jsonSetting.asState()
         val startLineJson by StartObjectSettingStore.jsonSetting.asState()
@@ -97,7 +97,7 @@ public object CustomObjectJson : DragonJson<CustomObject>() {
 
 
     @Composable
-    public fun rememberHoldCustomObject(): State<CustomObject> {
+    fun rememberHoldCustomObject(): State<CustomObject> {
         val holdCustomObjectJson by HoldToActivateObject.jsonSetting.asState()
         return rememberDecodedObject(
             jsonString = holdCustomObjectJson,

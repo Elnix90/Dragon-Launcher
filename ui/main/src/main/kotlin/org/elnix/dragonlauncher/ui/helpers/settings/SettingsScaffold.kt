@@ -41,7 +41,7 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-public fun SettingsScaffold(
+fun SettingsScaffold(
     title: String,
     helpText: String,
     onReset: (() -> Unit)?,

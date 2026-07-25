@@ -116,7 +116,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-public fun PointsSettingsScreen(
+fun PointsSettingsScreen(
     iconsViewModel: IconsViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel(),
     drawerViewModel: DrawerViewModel = activityViewModel(),
@@ -254,7 +254,7 @@ public fun PointsSettingsScreen(
          * Transformed offset, represents the coordinated in space of the [offset] after undoing the
          * transformations of [angle], [zoom], and [offset] that are only for visual in the settings screen
          */
-        public val transformedOffset: Offset by lazy {
+        val transformedOffset: Offset by lazy {
             manipulationSystem.transform(this.offset)
         }
 
@@ -266,7 +266,7 @@ public fun PointsSettingsScreen(
          * as it can be interpreted by the [org.elnix.dragonlauncher.points.PointsService] and be
          * converted back to screen coordinates.
          */
-        public val normalizedOffset: Offset by lazy {
+        val normalizedOffset: Offset by lazy {
             manipulationSystem.normalize(this.transformedOffset)
         }
 
@@ -274,7 +274,7 @@ public fun PointsSettingsScreen(
          * Computes the closest point relative to this [transformedOffset].
          * @see org.elnix.dragonlauncher.points.PointsService.computeClosest
          */
-        public val bestP: Point? by lazy {
+        val bestP: Point? by lazy {
             pointsService.computeClosest(this.normalizedOffset, nestId)
         }
 
@@ -292,7 +292,7 @@ public fun PointsSettingsScreen(
 
 
         /** Executes [block] if [distanceSmallEnough] */
-        public inline infix fun ifDistanceIsSmallEnough(block: () -> Point?): Point? = if (distanceSmallEnough) block() else null
+        inline infix fun ifDistanceIsSmallEnough(block: () -> Point?): Point? = if (distanceSmallEnough) block() else null
 
         override fun toString(): String =
             "TR(\n" +

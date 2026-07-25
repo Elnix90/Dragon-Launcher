@@ -24,7 +24,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalUseCustomColorChannels
 
 @Composable
-public fun rememberCurrentColorScheme(
+fun rememberCurrentColorScheme(
     colorsViewModel: ColorsViewModel = activityViewModel()
 ): State<ColorScheme> {
 
@@ -50,7 +50,7 @@ public fun rememberCurrentColorScheme(
 }
 
 @Composable
-public fun DragonLauncherTheme(
+fun DragonLauncherTheme(
     fontViewModel: FontViewModel = activityViewModel(),
     colorsViewModel: ColorsViewModel = activityViewModel(),
     content: @Composable () -> Unit

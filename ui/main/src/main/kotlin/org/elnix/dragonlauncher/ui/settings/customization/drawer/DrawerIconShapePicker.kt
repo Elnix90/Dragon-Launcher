@@ -17,7 +17,7 @@ import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 
 @Composable
-public fun DrawerIconShapePicker() {
+fun DrawerIconShapePicker() {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 

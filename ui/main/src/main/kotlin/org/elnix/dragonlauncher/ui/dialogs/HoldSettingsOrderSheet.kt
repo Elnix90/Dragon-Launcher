@@ -60,7 +60,7 @@ private data class MenuItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
+fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -374,7 +374,7 @@ public fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
  *  @return
  */
 @Composable
-public fun rememberHoldMenuEntries(): State<List<NavigationRoute>> {
+fun rememberHoldMenuEntries(): State<List<NavigationRoute>> {
     val holdMenuEntriesString by HoldToActivateArcSettingsStore.holdMenuEntriesJson.asState()
 
     return retain(holdMenuEntriesString) {

@@ -37,7 +37,7 @@ import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
 @Composable
-public fun ExtensionsTab() {
+fun ExtensionsTab() {
     val ctx = LocalContext.current
     var extensions by remember { mutableStateOf<List<ExtensionModel>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
