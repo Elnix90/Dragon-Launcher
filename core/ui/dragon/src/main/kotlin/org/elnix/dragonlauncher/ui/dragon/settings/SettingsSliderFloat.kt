@@ -23,7 +23,6 @@ public fun Setting(
     setting: FloatSettingObject,
     modifier: Modifier = Modifier,
     decimals: Int = 2,
-    allowTextEditValue: Boolean = true,
     enabled: Boolean = true,
     customDesc: ((Float) -> String)? = null
 ) {
@@ -47,7 +46,6 @@ public fun Setting(
         valueRange = setting.allowedRange,
         enabled = enabled,
         decimals = decimals,
-        allowTextEditValue = allowTextEditValue,
         resetEnabled = tempState != setting.default,
         onReset = { scope.launch { setting.reset(ctx) } },
         onDragStateChange = { scope.launch { setting.set(ctx, tempState) } }

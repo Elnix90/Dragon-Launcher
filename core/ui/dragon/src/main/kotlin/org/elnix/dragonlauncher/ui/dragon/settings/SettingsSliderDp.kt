@@ -24,7 +24,6 @@ public fun Setting(
     setting: DpSettingObject,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    allowTextEditValue: Boolean = true,
     customDesc: ((Dp) -> String)? = null,
 ) {
     // Craches if this setting isn't placed inside a DragonSettingsGroup
@@ -47,7 +46,6 @@ public fun Setting(
         valueRange = setting.allowedRange,
         enabled = enabled,
         resetEnabled = tempState != setting.default,
-        allowTextEditValue = allowTextEditValue,
         onReset = { scope.launch { setting.reset(ctx) } },
         onDragStateChange = { scope.launch { setting.set(ctx, tempState) } },
         onChange = { tempState = it }

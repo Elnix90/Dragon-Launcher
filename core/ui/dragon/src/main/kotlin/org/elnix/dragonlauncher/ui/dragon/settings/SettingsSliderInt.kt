@@ -24,7 +24,6 @@ public fun Setting(
     setting: IntSettingObject,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    allowTextEditValue: Boolean = true,
     customDesc: ((Int) -> String)? = null,
     onChange: ((Int) -> Unit)? = null,
 ) {
@@ -47,7 +46,6 @@ public fun Setting(
         value = tempState,
         valueRange = setting.allowedRange,
         enabled = enabled,
-        allowTextEditValue = allowTextEditValue,
         resetEnabled = tempState != setting.default,
         onReset = { scope.launch { setting.reset(ctx) } },
         onDragStateChange = {
