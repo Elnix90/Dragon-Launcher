@@ -8,7 +8,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 /**
- * Unit tests for [Rect.translate] and [Rect.toRectF].
+ * Unit tests for [Rect.translate] and [toRectF].
  *
  * These extension functions modify Android's [Rect] in-place for convenience:
  * - [translate]: shifts all edges by (x, y)

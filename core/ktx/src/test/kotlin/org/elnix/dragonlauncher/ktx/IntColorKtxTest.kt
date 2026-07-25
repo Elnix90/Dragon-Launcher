@@ -9,11 +9,11 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 /**
- * Unit tests for [Int.isBrightColor] and [Int.sat] extension properties.
+ * Unit tests for [isBrightColor] and [sat] extension properties.
  *
  * These extensions operate on Android Color integers (ARGB format) using
  * [Color.red], [Color.green], [Color.blue] from `androidx.core:core-ktx`
- * and [androidx.core.graphics.RGBToHSL] from `androidx.core:core-ktx`.
+ * and [androidx.core.graphics.ColorUtils.RGBToHSL] from `androidx.core:core-ktx`.
  *
  * - [isBrightColor]: determines perceived brightness using the luminance formula
  *   (0.299R + 0.587G + 0.114B) and returns true if the color is "bright"
