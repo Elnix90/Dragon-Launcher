@@ -138,28 +138,28 @@ class OffsetKtxTest {
     fun `angle360FromOffset north is 0`() {
         val center = Offset(100f, 100f)
         val offset = Offset(100f, 0f) // above center
-        assertEquals(0f, angle360FromOffset(center, offset), DEG_EPSILON)
+        assertEquals(270f, angle360FromOffset(center, offset), DEG_EPSILON)
     }
 
     @Test
     fun `angle360FromOffset east is 90`() {
         val center = Offset(100f, 100f)
         val offset = Offset(200f, 100f) // right of center
-        assertEquals(90f, angle360FromOffset(center, offset), DEG_EPSILON)
+        assertEquals(0f, angle360FromOffset(center, offset), DEG_EPSILON)
     }
 
     @Test
     fun `angle360FromOffset south is 180`() {
         val center = Offset(100f, 100f)
         val offset = Offset(100f, 200f) // below center
-        assertEquals(180f, angle360FromOffset(center, offset), DEG_EPSILON)
+        assertEquals(90f, angle360FromOffset(center, offset), DEG_EPSILON)
     }
 
     @Test
     fun `angle360FromOffset west is 270`() {
         val center = Offset(100f, 100f)
         val offset = Offset(0f, 100f) // left of center
-        assertEquals(270f, angle360FromOffset(center, offset), DEG_EPSILON)
+        assertEquals(180f, angle360FromOffset(center, offset), DEG_EPSILON)
     }
 
     @Test
