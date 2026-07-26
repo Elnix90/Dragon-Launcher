@@ -79,7 +79,6 @@ fun rememberDrawParams(
 
     val showCurrentPoint by UiSettingsStore.showPreviewPoint.asState()
     val maxNestsDepth by UiSettingsStore.maxNestsDepth.asState()
-    val showPointInCenter by UiSettingsStore.showPointPreviewCenterStartPosition.asState()
 
     val showAllPointsInCurrentShape by UiSettingsStore.showAllPointsInCurrentShape.asState()
     val showAllPointsInCurrentNest by UiSettingsStore.showAllPointsInCurrentNest.asState()
@@ -96,15 +95,17 @@ fun rememberDrawParams(
     return remember(
         extraColors,
         maxNestsDepth,
-        showPointInCenter,
-        allowShowPointCenter,
+        eraseColor,
+        pointSettingsDisplay,
+        hideShapes,
+        skipSelected,
         showCurrentPoint,
         showAllPointsInCurrentShape,
+        showAllPointsInCurrentNest,
+        allowShowPointCenter,
         showPointPreviewCenterStartPosition,
-        pointSettingsDisplay,
         nestDebugOverlay,
         showCancelZone,
-        hideShapes,
         showShape,
         showAllShapesInNest,
         textMeasurer
@@ -122,7 +123,7 @@ fun rememberDrawParams(
             showCurrentPoint = showCurrentPoint,
             showAllPointsInCurrentShape = showAllPointsInCurrentShape,
             showAllPointsInCurrentNest = showAllPointsInCurrentNest,
-            allowShowPointInCenter = allowShowPointCenter && showPointInCenter,
+            allowShowPointInCenter = allowShowPointCenter && showPointPreviewCenterStartPosition,
             nestDebugOverlay = nestDebugOverlay,
             showCancelZone = showCancelZone,
             showShape = showShape,
