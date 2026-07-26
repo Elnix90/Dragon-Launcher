@@ -445,7 +445,7 @@ public data class Point(
         public val defaultHapticFeedback: CustomHapticFeedback? = null
         public const val defaultCycleActionsLoopDelayMs: Int = 500
         public const val defaultCycleActionsLoop: Boolean = true
-        public const val defaultFastActivation: Boolean = true
+        public const val defaultFastActivation: Boolean = false
         public const val defaultLiveNestMainNestOpacityPercent: Int = 50
         public val defaultGlow: CustomGlow = CustomGlow(radius = defaultSize * 1.05f)
         public val defaultGlowSelected: CustomGlow = CustomGlow(radius = defaultSize * 1.1f)
