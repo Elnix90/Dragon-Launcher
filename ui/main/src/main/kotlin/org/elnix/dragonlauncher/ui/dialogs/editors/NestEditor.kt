@@ -104,7 +104,7 @@ fun NestEditor(
         DialogTitle(
             text = stringResource(if (!isDefaultEditing) R.string.edit_nest else R.string.edit_default_nest),
             resetEnabled = editNest.isNotDefault
-        ) { editNest = defaultNest }
+        ) { editNest = emptyNest }
 
         Column(
             modifier = Modifier
