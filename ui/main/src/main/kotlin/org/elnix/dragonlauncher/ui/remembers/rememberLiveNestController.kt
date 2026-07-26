@@ -135,7 +135,7 @@ fun rememberLiveNestControllerStack(
                 if (last == null || pos distanceTo last >= 10f) {
                     recentPositions.add(pos)
                     if (recentPositions.size > 20) {
-                       recentPositions.removeAt(0)
+                        recentPositions.removeAt(0)
                     }
                     angleVersion++
                 }
@@ -158,7 +158,7 @@ fun rememberLiveNestControllerStack(
             val v2x = p.last().x - p[mid].x
             val v2y = p.last().y - p[mid].y
 
-            val mag1Squared = p.first() distanceSquaredTo  p[mid]
+            val mag1Squared = p.first() distanceSquaredTo p[mid]
             val mag2Squared = p[mid] distanceSquaredTo p.last()
             if (mag1Squared <= 100f || mag2Squared <= 100f) return@derivedStateOf false
 
@@ -166,11 +166,11 @@ fun rememberLiveNestControllerStack(
             val cosAngle = (dot / sqrt(mag1Squared * mag2Squared)).coerceIn(-1f, 1f)
             val turnAngle = acos(cosAngle).degrees
 
-            val distanceFirstLast = p.first() distanceTo p.last()
+            val distanceFirstLast = p.first() distanceSquaredTo  p.last()
 
-			// Should the threshold angle be configurable? Probably
-			// Should the jitter threshold (minimum distance) be configurable? Probably not?
-            turnAngle > 60f && distanceFirstLast >= 200f
+            // Should the threshold angle be configurable? Probably
+            // Should the jitter threshold (minimum distance) be configurable? Probably not?
+            turnAngle > 60f && distanceFirstLast >= 20_000f
         }
     }
 
