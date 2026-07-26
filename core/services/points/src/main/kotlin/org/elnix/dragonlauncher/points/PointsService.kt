@@ -18,13 +18,16 @@ import org.elnix.dragonlauncher.base.model.models.HitResult
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
 import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape.Companion.DefaultShapeJson
+import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape.Companion.emptyIntersectionShape
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.DefaultNestJson
 import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.NestsJson
+import org.elnix.dragonlauncher.base.model.serializables.Nest.Companion.emptyNest
 import org.elnix.dragonlauncher.base.model.serializables.Nests
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.DefaultPointJson
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.PointsJson
+import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.emptyPoint
 import org.elnix.dragonlauncher.base.model.serializables.Points
 import org.elnix.dragonlauncher.base.undoredo.UndoRedoManager
 import org.elnix.dragonlauncher.base.undoredo.UndoRedoStack
@@ -215,9 +218,9 @@ internal class PointsServiceImpl(
     private val density = ctx.resources.displayMetrics.density
 
 
-    override val defaultPoint: SettingFlow<Point> = SettingFlow(Point.defaultSwipePointsValues)
-    override val defaultNest: SettingFlow<Nest> = SettingFlow(Nest.defaultNestValues)
-    override val defaultIntersectionShape: SettingFlow<IntersectionShape> = SettingFlow(IntersectionShape.defaultIntersectionShapeValues)
+    override val defaultPoint: SettingFlow<Point> = SettingFlow(Point.dummySwipePoint())
+    override val defaultNest: SettingFlow<Nest> = SettingFlow(emptyNest)
+    override val defaultIntersectionShape: SettingFlow<IntersectionShape> = SettingFlow(emptyIntersectionShape)
 
     private val _points = MutableStateFlow(ConcurrentHashMap<Int, Point>())
     override val points: StateFlow<Map<Int, Point>> = _points.asStateFlow()
@@ -471,14 +474,14 @@ internal class PointsServiceImpl(
         val decodedNests = NestsJson.decode<Set<Nest>>(NestsSettingsStore.jsonSetting.get(ctx), emptySet())
         _nests.value = ConcurrentHashMap(decodedNests.associateBy { it.id })
 
-        val decodedDefaultPoint = DefaultPointJson.decode(DefaultPointSettingsStore.jsonSetting.get(ctx), Point.defaultSwipePointsValues)
+        val decodedDefaultPoint = DefaultPointJson.decode(DefaultPointSettingsStore.jsonSetting.get(ctx), emptyPoint)
         defaultPoint.value = decodedDefaultPoint
 
-        val decodedDefaultNest = DefaultNestJson.decode(DefaultNestSettingsStore.jsonSetting.get(ctx), Nest.defaultNestValues)
+        val decodedDefaultNest = DefaultNestJson.decode(DefaultNestSettingsStore.jsonSetting.get(ctx), emptyNest)
         defaultNest.value = decodedDefaultNest
 
         val decodedDefaultShape =
-            DefaultShapeJson.decode(DefaultShapeSettingsStore.jsonSetting.get(ctx), IntersectionShape.defaultIntersectionShapeValues)
+            DefaultShapeJson.decode(DefaultShapeSettingsStore.jsonSetting.get(ctx), emptyIntersectionShape)
         defaultIntersectionShape.value = decodedDefaultShape
     }
 
@@ -557,13 +560,13 @@ internal class PointsServiceImpl(
                 NestIntersectionShapesPathCache.evictAll()
             }
             if (resetDefaultPoint) {
-                defaultPoint.value = Point.defaultSwipePointsValues
+                defaultPoint.value = emptyPoint
             }
             if (resetDefaultNest) {
-                defaultNest.value = Nest.defaultNestValues
+                defaultNest.value = emptyNest
             }
             if (resetDefaultShape) {
-                defaultIntersectionShape.value = IntersectionShape.defaultIntersectionShapeValues
+                defaultIntersectionShape.value = emptyIntersectionShape
             }
         }
     }

@@ -140,4 +140,11 @@ public object BehaviorSettingsStore : MapSettingsStore() {
         description = R.string.create_live_nest_by_default_desc,
         default = true
     )
+
+    @SettingKey
+    public val openRootNestEachTime: BooleanSettingObject = boolean(
+        title = R.string.open_root_nest_each_time,
+        description = R.string.open_root_nest_each_time_desc,
+        default = false
+    )
 }

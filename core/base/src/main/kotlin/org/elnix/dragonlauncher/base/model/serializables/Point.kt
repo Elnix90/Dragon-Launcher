@@ -263,8 +263,13 @@ public data class Point(
      * When non-null, Hold & Run runs this action instead of the point’s main [action].
      * Null means the same action as tap/release (default).
      */
-    val holdAndRunAction: Action? = null
+    val holdAndRunAction: Action? = null,
 
+    /**
+     * When enabled, a sharp angle in the user's drag while hovering this point
+     * immediately enters the nested nest instead of waiting for the hold delay.
+     */
+    val fastActivation: Boolean? = null
 ) : Comparable<Point> {
 
     /**
@@ -364,10 +369,11 @@ public data class Point(
         this.liveNestSubNestOpacityPercent ?: defaultPoint.liveNestSubNestOpacityPercent.takeIfNot(defaultEditing)
         ?: defaultLiveNestMainNestOpacityPercent
 
-
     public inline fun getHaptic(defaultPoint: Point, defaultEditing: Boolean = false): CustomHapticFeedback? =
         this.haptic ?: defaultPoint.haptic.takeIfNot(defaultEditing) ?: defaultHapticFeedback
 
+    public inline fun getFastActivation(defaultPoint: Point, defaultEditing: Boolean = false): Boolean =
+        this.fastActivation ?: defaultPoint.fastActivation.takeIfNot(defaultEditing) ?: defaultFastActivation
 
     override fun compareTo(other: Point): Int = this.id.compareTo(other.id)
 
@@ -439,29 +445,10 @@ public data class Point(
         public val defaultHapticFeedback: CustomHapticFeedback? = null
         public const val defaultCycleActionsLoopDelayMs: Int = 500
         public const val defaultCycleActionsLoop: Boolean = true
+        public const val defaultFastActivation: Boolean = true
         public const val defaultLiveNestMainNestOpacityPercent: Int = 50
         public val defaultGlow: CustomGlow = CustomGlow(radius = defaultSize * 1.05f)
         public val defaultGlowSelected: CustomGlow = CustomGlow(radius = defaultSize * 1.1f)
-
-        public val defaultSwipePointsValues: Point = dummySwipePoint(null, -1).copy(
-            borderStroke = defaultBorderStroke,
-            borderStrokeSelected = defaultBorderStrokeSelected,
-            opacity = defaultOpacity,
-            innerPadding = defaultInnerPadding,
-            size = defaultSize,
-            borderShape = defaultBorderShape,
-            borderShapeSelected = defaultBorderShapeSelected,
-            liveNestPreviewDelayMs = defaultLiveNestPreviewDelayMs,
-            liveNestScale = defaultLiveNestScale,
-            liveNestGraceDistance = defaultLiveNestGraceDistance,
-            liveNestSnapsToFingerPosition = defaultLiveNestSnapsToFingerPosition,
-            holdAndRunDelayMs = defaultHoldAndRunDelayMs,
-            cycleActionsLoopDelayMs = defaultCycleActionsLoopDelayMs,
-            cycleActionsLoop = defaultCycleActionsLoop,
-            liveNestSubNestOpacityPercent = defaultLiveNestMainNestOpacityPercent,
-            glow = defaultGlow,
-            glowSelected = defaultGlowSelected
-        )
 
         public val emptyPoint: Point = dummySwipePoint()
 
@@ -493,7 +480,8 @@ public data class Point(
                     this.cycleActions == null &&
                     this.cycleActionsLoopDelayMs == null &&
                     this.holdAndRunDelayMs == null &&
-                    this.holdAndRunAction == null
+                    this.holdAndRunAction == null &&
+                    this.fastActivation == null
 
         public inline val Point.isNotDefault: Boolean
             get() = !isDefault

@@ -16,25 +16,30 @@ import kotlin.math.sin
 public inline infix fun Offset.distanceTo(b: Offset): Float =
     hypot(b.x - x, b.y - y)
 
+/**
+ * Return the distance squared to the receiver [Offset] of [other]
+ * Use this to avoid computing the square root when you only need to compare offsets lengths together
+ */
+public inline infix fun Offset.distanceSquaredTo(other: Offset): Float =
+    (other.x - x).pow(2) +  (other.y - y).pow(2)
+
 
 public fun angle360FromOffset(center: Offset, offset: Offset): Float {
     if (center == offset) return 0f
-    val dx = offset.x - center.x
-    val dy = offset.y - center.y
-    val angleRad = atan2(dx.toDouble(), -dy.toDouble())
-    var deg = Math.toDegrees(angleRad).toFloat()
-    if (deg < 0f) deg += 360f
-    return deg
+    return (offset - center).angleDeg()
+//    val dx = offset.x - center.x
+//    val dy = offset.y - center.y
+//    val angleRad = atan2(dx.toDouble(), -dy.toDouble())
+//    var deg = angleRad.degrees.toFloat()
+//    if (deg < 0f) deg += 360f
+//    return deg
 }
-
-public inline infix fun Offset.distanceSquaredTo(b: Offset): Float =
-    (b.x - x).pow(2) +  (b.y - y).pow(2)
 
 public fun Offset.angleRad(): Float = atan2(y, x)
 
 /** Angle 0–360 from [this] (north = 0, clockwise). */
 public fun Offset.angleDeg(): Float {
-    var deg = Math.toDegrees(this.angleRad().toDouble()).toFloat()
+    var deg = this.angleRad().degrees.toFloat()
     if (deg < 0f) deg += 360f
     return deg
 }
