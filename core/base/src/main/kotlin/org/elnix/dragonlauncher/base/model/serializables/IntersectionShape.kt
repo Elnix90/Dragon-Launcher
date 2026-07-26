@@ -127,18 +127,6 @@ public data class IntersectionShape(
 
         public val defaultHapticFeedback: CustomHapticFeedback = CustomHapticFeedback.singleTap
 
-        public val defaultIntersectionShapeValues: IntersectionShape = IntersectionShape(
-            id = -1,
-            shape = defaultShape,
-            scale = defaultScale,
-            rotation = defaultRotation,
-            offset = defaultOffset,
-            haptic = defaultHapticFeedback,
-            borderStroke = defaultBorderStroke,
-            glow = defaultGlow
-        )
-
-
         public val emptyIntersectionShape: IntersectionShape = IntersectionShape(-1)
 
         @Suppress("NOTHING_TO_INLINE")

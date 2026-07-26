@@ -3,23 +3,31 @@ package org.elnix.dragonlauncher.ui.remembers
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import io.github.elnix90.logging.SWIPE_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import org.elnix.dragonlauncher.base.model.models.HitResult
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.ktx.degrees
+import org.elnix.dragonlauncher.ktx.distanceSquaredTo
+import org.elnix.dragonlauncher.ktx.distanceTo
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
+import kotlin.math.acos
+import kotlin.math.sqrt
 import kotlin.time.Duration.Companion.milliseconds
 
 
@@ -47,6 +55,8 @@ data class LiveNestState(
     val nestedHit: HitResult?,
     val suppressMainLaunch: Boolean,
     val sweepAngleState: SweepAngleState,
+
+    val recentPositions: List<Offset>,
     /**
      * Resolve which action to fire on finger-up.
      * Returns:
@@ -110,6 +120,60 @@ fun rememberLiveNestControllerStack(
     val activeLevelIndex = nestStack.indexOfLast { it.liveNestActive }
     val isAnyLiveNestActive = activeLevelIndex > 0
 
+
+    val recentPositions = remember { mutableListOf<Offset>() }
+    var angleVersion by remember { mutableIntStateOf(0) }
+
+    val currentSnap by rememberUpdatedState(current)
+
+    LaunchedEffect(Unit) {
+        while (isActive) {
+            val pos = currentSnap
+            if (pos != null) {
+                val last = recentPositions.lastOrNull()
+
+                if (last == null || pos distanceTo last >= 10f) {
+                    recentPositions.add(pos)
+                    if (recentPositions.size > 20) {
+                        recentPositions.removeAt(0)
+                    }
+                    angleVersion++
+                }
+            }
+            delay(16.milliseconds)
+        }
+    }
+
+    val hasSharpAngle = remember {
+        derivedStateOf {
+            angleVersion
+
+            val p = recentPositions.toList()
+            val n = p.size
+            if (n < 4) return@derivedStateOf false
+
+            val mid = n / 2
+            val v1x = p[mid].x - p.first().x
+            val v1y = p[mid].y - p.first().y
+            val v2x = p.last().x - p[mid].x
+            val v2y = p.last().y - p[mid].y
+
+            val mag1Squared = p.first() distanceSquaredTo p[mid]
+            val mag2Squared = p[mid] distanceSquaredTo p.last()
+            if (mag1Squared <= 100f || mag2Squared <= 100f) return@derivedStateOf false
+
+            val dot = v1x * v2x + v1y * v2y
+            val cosAngle = (dot / sqrt(mag1Squared * mag2Squared)).coerceIn(-1f, 1f)
+            val turnAngle = acos(cosAngle).degrees
+
+            val distanceFirstLast = p.first() distanceSquaredTo  p.last()
+
+            // Should the threshold angle be configurable? Probably
+            // Should the jitter threshold (minimum distance) be configurable? Probably not?
+            turnAngle > 60f && distanceFirstLast >= 20_000f
+        }
+    }
+
     val rootHit = remember(
         resetTrigger,
         isAnyLiveNestActive,
@@ -148,7 +212,7 @@ fun rememberLiveNestControllerStack(
                 // Return the last cached hit (don't update)
                 level.releaseHitRef
             }
-            
+
             !level.liveNestActive || level.liveNestCenter == null || current == null || level.nestedNestId == null -> null
 
             else -> {
@@ -202,6 +266,8 @@ fun rememberLiveNestControllerStack(
             nestStack.forEach { level ->
                 level.liveNestCenter = null
             }
+            recentPositions.clear()
+            angleVersion++
         }
     }
 
@@ -252,10 +318,19 @@ fun rememberLiveNestControllerStack(
 //            val previousLiveNestCircles = scaledCircles[idx -1]
             val previousLiveNestCenter = nestStack[idx - 1].liveNestCenter ?: return@LaunchedEffect
 
+            val pointFastActivation = currentPoint.getFastActivation(defaultPoint)
+
+            val startTime = System.currentTimeMillis()
+            while (System.currentTimeMillis() - startTime < delayMs) {
+                if (pointFastActivation && hasSharpAngle.value) {
+                    break
+                }
+                delay(32.milliseconds)
+            }
 
             val currentPointOffset = currentPoint.getPos() + previousLiveNestCenter
 
-            delay(delayMs.milliseconds)
+//            delay(delayMs.milliseconds)
 
 
             val snapToCenterPos = currentPoint.liveNestSnapsToFingerPosition ?: defaultPoint.liveNestSnapsToFingerPosition
@@ -314,6 +389,7 @@ fun rememberLiveNestControllerStack(
                     else -> level.hostPoint
                 }
             },
+            recentPositions = recentPositions,
             clearAfterLaunch = {
                 level.liveNestActive = false
                 level.hostPoint = null

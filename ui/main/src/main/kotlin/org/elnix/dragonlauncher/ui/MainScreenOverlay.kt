@@ -292,12 +292,12 @@ fun MainScreenOverlay(
     }.reversed()
 
     val debugInfo by DebugSettingsStore.mainScreenDebugInfos.asState()
-
+    val nestDebugOverlay = LocalNestDebugOverlay.current
     val drawParams = rememberDrawParams(
         eraseColor = Color.Transparent,
         allowShowPointCenter = false,
         pointSettingsDisplay = false,
-        showCancelZone = LocalNestDebugOverlay.current,
+        showCancelZone = nestDebugOverlay,
         hideShapes = false,
         skipSelected = false
     )
@@ -418,6 +418,39 @@ fun MainScreenOverlay(
                             angleLineCustomObject = angleLineObject,
                             startCustomObject = startObject,
                             endCustomObject = endObject
+                        )
+
+                        if (!nestDebugOverlay) return@Canvas
+
+                        val pos = controller.recentPositions
+                        pos.forEach {
+                            drawCircle(
+                                color = Color.Red,
+                                radius = 5f,
+                                center = it
+                            )
+                        }
+
+                        if (pos.size < 4) return@Canvas
+
+                        val mid = pos.size / 2
+
+                        val start = pos.first()
+                        val middle = pos[mid]
+                        val end = pos.last()
+
+                        drawLine(
+                            start = start,
+                            end = middle,
+                            color = Color.Green,
+                            strokeWidth = 2f
+                        )
+
+                        drawLine(
+                            start = middle,
+                            end = end,
+                            color = Color.Green,
+                            strokeWidth = 2f
                         )
                     }
                 } else break

@@ -322,6 +322,24 @@ fun PointEditor(
                                     }
 
                                     SwitchRow(
+                                        title = stringResource(R.string.fast_activation),
+                                        description = stringResource(R.string.fast_activation_desc),
+                                        state = editPoint.getFastActivation(defaultPoint, isDefaultEditing),
+                                        resetEnabled = editPoint.fastActivation != null,
+                                        onReset = {
+                                            editPoint = editPoint.copy(fastActivation = null)
+                                        }
+                                    ) {
+                                        editPoint = editPoint.copy(fastActivation = it.takeIf {
+                                            it != emptyPoint.getFastActivation(
+                                                defaultPoint,
+                                                isDefaultEditing
+                                            )
+                                        })
+                                    }
+
+
+                                    SwitchRow(
                                         state = editPoint.getLiveNestSnapsToFingerPosition(defaultPoint, isDefaultEditing),
                                         title = stringResource(R.string.live_nest_snaps_to_finger_position),
                                         description = stringResource(R.string.live_nest_snaps_to_finger_position_desc),

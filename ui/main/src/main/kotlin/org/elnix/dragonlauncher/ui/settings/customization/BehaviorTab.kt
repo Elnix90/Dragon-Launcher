@@ -85,6 +85,7 @@ fun BehaviorTab() {
             Setting(BehaviorSettingsStore.keepScreenOn)
             Setting(BehaviorSettingsStore.disableHapticFeedbackGlobally)
             Setting(BehaviorSettingsStore.promptForShortcutsWhenAddingApp)
+            Setting(BehaviorSettingsStore.openRootNestEachTime)
             Setting(BehaviorSettingsStore.createLiveNestByDefaultWhenCreatingOpenCircleNestPoint)
             Setting(BehaviorSettingsStore.offScreenTimeout)
         }

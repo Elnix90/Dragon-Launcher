@@ -123,13 +123,6 @@ public data class Nest(
 
         public const val defaultCancelZone: Int = 50
 
-
-        public val defaultNestValues: Nest = Nest(
-            id = -1,
-            cancelZone = defaultCancelZone,
-            intersectionShapes = defaultIntersectionShapes
-        )
-
         public val emptyNest: Nest = Nest()
 
         public inline val Nest.isDefault: Boolean
