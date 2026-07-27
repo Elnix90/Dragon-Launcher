@@ -13,8 +13,6 @@ import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Welcome
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Widgets
 import org.elnix.dragonlauncher.i18n.R
 
-private const val Undefined: Int = -1
-
 @Suppress("EqualsOrHashCode")
 @Serializable
 public sealed class NavigationRoute : NavKey {
@@ -28,7 +26,7 @@ public sealed class NavigationRoute : NavKey {
     @Serializable
     public data object Main : NavigationRoute() {
         override val resId: Int = R.string.main_screen
-        override val icon: Int = Undefined
+        override val icon: Int = R.drawable.home
     }
 
     @Serializable
@@ -199,7 +197,7 @@ public sealed class NavigationRoute : NavKey {
     ) : NavigationRoute() {
         override fun hashCode(): Int = super.hashCode()
         override val resId: Int = R.string.logs
-        override val icon: Int = Undefined
+        override val icon: Int = R.drawable.source_notes
     }
 
     @Serializable
@@ -219,8 +217,8 @@ public sealed class NavigationRoute : NavKey {
         val workspaceId: String
     ) : NavigationRoute() {
         override fun hashCode(): Int = super.hashCode()
-        override val resId: Int = Undefined
-        override val icon: Int = Undefined
+        override val resId: Int = R.string.edit_workspace
+        override val icon: Int = R.drawable.edit_rounded
     }
 
     @Serializable
