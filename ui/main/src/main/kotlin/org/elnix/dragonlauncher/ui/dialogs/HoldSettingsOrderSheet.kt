@@ -3,10 +3,7 @@ package org.elnix.dragonlauncher.ui.dialogs
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -25,14 +22,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.logging.HOLD_TAG
-import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.DragonJson
@@ -46,9 +42,9 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.components.VerticalScrollIndicator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
+import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -98,57 +94,62 @@ fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
     )
 
     DragonModalBottomSheet(
-        onDismissRequest = onDismiss,
+        onDismissRequest = {
+            // Save in the reordered state, but only selected items
+            val saveList = HoldMenuEntriesJson.encode(
+                menuItems
+                    .filter { it.isSelected.value }
+                    .map { it.route }
+            )
+
+            scope.launch {
+                HoldToActivateArcSettingsStore.holdMenuEntriesJson.set(ctx, saveList)
+                onDismiss()
+            }
+        },
         sheetState = rememberBottomSheetState(true)
     ) {
+        DialogTitle(stringResource(R.string.edit_hold_to_activate_elements))
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(5.dp)
-        ){
-            Text(stringResource(R.string.edit_hold_to_activate_elements))
-
-            MultiSelectConnectedButtonRow(
-                entries = BackupSelectStoresButtons.entries,
-                enabled = { entry ->
-                    val selectedCount = menuItems.count { it.isSelected.value }
-                    when (entry) {
-                        BackupSelectStoresButtons.DeselectAll -> selectedCount > 0
-                        BackupSelectStoresButtons.SelectAll -> selectedCount < settingsRoutes.size
-                        BackupSelectStoresButtons.Invert -> true
+        MultiSelectConnectedButtonRow(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            entries = BackupSelectStoresButtons.entries,
+            enabled = { entry ->
+                val selectedCount = menuItems.count { it.isSelected.value }
+                when (entry) {
+                    BackupSelectStoresButtons.DeselectAll -> selectedCount > 0
+                    BackupSelectStoresButtons.SelectAll -> selectedCount < settingsRoutes.size
+                    BackupSelectStoresButtons.Invert -> true
+                }
+            }
+        ) {
+            when (it) {
+                BackupSelectStoresButtons.DeselectAll -> {
+                    menuItems.forEach { item ->
+                        item.isSelected.value = false
                     }
                 }
-            ) {
-                when (it) {
-                    BackupSelectStoresButtons.DeselectAll -> {
-                        menuItems.forEach { item ->
-                            item.isSelected.value = false
-                        }
-                    }
 
-                    BackupSelectStoresButtons.SelectAll -> {
-                        menuItems.forEach { item ->
-                            item.isSelected.value = true
-                        }
+                BackupSelectStoresButtons.SelectAll -> {
+                    menuItems.forEach { item ->
+                        item.isSelected.value = true
                     }
+                }
 
-                    BackupSelectStoresButtons.Invert -> {
-                        menuItems.forEach { item ->
-                            item.isSelected.value = !item.isSelected.value
-                        }
+                BackupSelectStoresButtons.Invert -> {
+                    menuItems.forEach { item ->
+                        item.isSelected.value = !item.isSelected.value
                     }
                 }
             }
         }
 
-        Box(
-            modifier = Modifier
-                .heightIn(max = 600.dp)
-                .weight(1f)
-        ) {
-            LazyColumn(state = lazyListState) {
+
+        Box(modifier = Modifier.heightIn(max = 600.dp)) {
+            LazyColumn(
+                state = lazyListState,
+                verticalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
                 items(menuItems, key = { it.route.toString() }) { entry ->
                     val isSelected by entry.isSelected
 
@@ -178,6 +179,11 @@ fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
                                 enabled = isEnabled,
                                 onCheckedChange = null
                             )
+                            Spacer(15.dp)
+                            Icon(
+                                painter = painterResource(entry.route.icon),
+                                contentDescription = "Entry icon"
+                            )
                             Spacer(5.dp)
                             Text(
                                 text = stringResource(entry.route.resId),
@@ -192,173 +198,11 @@ fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
                     }
                 }
             }
+            VerticalScrollIndicator(lazyListState.canScrollBackward, true)
             VerticalScrollIndicator(lazyListState.canScrollForward)
-        }
-
-        ValidateCancelButtons(
-            onCancel = onDismiss
-        ) {
-            // Save in the reordered state, but only selected items
-            val saveList = HoldMenuEntriesJson.encode(
-                menuItems
-                    .filter { it.isSelected.value }
-                    .map { it.route }
-            )
-            logD(HOLD_TAG) { "Saving: $saveList" }
-
-            scope.launch {
-                HoldToActivateArcSettingsStore.holdMenuEntriesJson.set(ctx, saveList)
-                onDismiss()
-            }
         }
     }
 }
-
-//private data class MenuItem(
-//    val route: NavigationRoute,
-//    val isSelected: MutableState<Boolean>,
-//)
-//
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
-//    val ctx = LocalContext.current
-//    val scope = rememberCoroutineScope()
-//
-//    val holdMenuEntries = rememberHoldMenuEntries()
-//    var menuItems: List<MenuItem> by remember {
-//        mutableStateOf(emptyList())
-//    }
-//
-//    LaunchedEffect(holdMenuEntries) {
-//        menuItems = buildList {
-//            settingsRoutes.forEach { route ->
-//                add(
-//                    MenuItem(
-//                        route = route,
-//                        isSelected = mutableStateOf(route in holdMenuEntries),
-//                    )
-//                )
-//            }
-//        }
-//    }
-//
-//    val lazyListState = rememberLazyListState()
-//    val reorderState = rememberReorderableLazyListState(
-//        lazyListState = lazyListState,
-//        onMove = { from, to ->
-//            menuItems = menuItems.toMutableList().apply {
-//                add(to.index, removeAt(from.index))
-//            }
-//        }
-//    )
-//
-//    DragonModalBottomSheet(
-//        onDismissRequest = onDismiss,
-//        sheetState = rememberModalBottomSheetState(true)
-//    ) {
-//
-//        Text(stringResource(R.string.edit_hold_to_activate_elements))
-//
-//        MultiSelectConnectedButtonRow(
-//            entries = BackupSelectStoresButtons.entries,
-//            enabled = { entry ->
-//                val selectedCount = menuItems.count { it.isSelected.value }
-//                when (entry) {
-//                    BackupSelectStoresButtons.DeselectAll -> selectedCount > 0
-//                    BackupSelectStoresButtons.SelectAll -> selectedCount < settingsRoutes.size
-//                    BackupSelectStoresButtons.Invert -> true
-//                }
-//            }
-//        ) {
-//            when (it) {
-//                BackupSelectStoresButtons.DeselectAll -> {
-//                    menuItems.forEach { item ->
-//                        item.isSelected.value = false
-//                    }
-//                }
-//
-//                BackupSelectStoresButtons.SelectAll -> {
-//                    menuItems.forEach { item ->
-//                        item.isSelected.value = true
-//                    }
-//                }
-//
-//                BackupSelectStoresButtons.Invert -> {
-//                    menuItems.forEach { item ->
-//                        item.isSelected.value = !item.isSelected.value
-//                    }
-//                }
-//            }
-//        }
-//
-//        Box(
-//            modifier = Modifier
-//                .heightIn(max = 600.dp)
-//                .weight(1f)
-//        ) {
-//            LazyColumn(state = lazyListState) {
-//                items(menuItems, key = { it.route.toString() }) { entry ->
-//                    val isSelected by entry.isSelected
-//
-//                    ReorderableItem(
-//                        state = reorderState,
-//                        key = entry.route.toString()
-//                    ) { isDragging ->
-//                        val scale by animateFloatAsState(if (isDragging) 1.03f else 1f)
-//
-//                        val isEnabled = entry.route != NavigationRoute.PointsSettings
-//                        val errorMessage = stringResource(R.string.cant_remove_to_avoid_lock_out)
-//
-//                        DragonRow(
-//                            onClick = {
-//                                if (isEnabled) {
-//                                    entry.isSelected.value = !isSelected
-//                                } else {
-//                                    ctx.showToast(errorMessage)
-//                                }
-//                            },
-//                            modifier = Modifier
-//                                .scale(scale)
-//                                .longPressDraggableHandle()
-//                        ) {
-//                            Checkbox(
-//                                checked = isSelected,
-//                                enabled = isEnabled,
-//                                onCheckedChange = null
-//                            )
-//                            Spacer(5.dp)
-//                            Text(
-//                                stringResource(routeResId(entry.route)),
-//                                modifier = Modifier.weight(1f)
-//                            )
-//                            Icon(
-//                                painter = painterResource(R.drawable.drag_handle),
-//                                contentDescription = "Drag handle",
-//                                modifier = Modifier.draggableHandle()
-//                            )
-//                        }
-//                    }
-//                }
-//            }
-//            VerticalScrollIndicator(lazyListState.canScrollForward)
-//        }
-//
-//        ValidateCancelButtons(
-//            onCancel = onDismiss
-//        ) {
-//            val saveList = HoldMenuEntriesJson.encode(menuItems.filter { it.isSelected.value }.map { it.route })
-//            logD(HOLD_TAG) { "Saving: $saveList" }
-//
-//            scope.launch {
-//                HoldToActivateArcSettingsStore.holdMenuEntries.set(ctx, saveList)
-//                onDismiss()
-//            }
-//        }
-//    }
-//}
-//
-//
 
 
 /**
