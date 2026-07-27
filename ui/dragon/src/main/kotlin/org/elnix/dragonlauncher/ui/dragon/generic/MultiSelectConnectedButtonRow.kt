@@ -49,6 +49,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
 @Composable
 fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
     entries: List<T>,
+    modifier: Modifier = Modifier,
     enabled: (T) -> Boolean = { true },
     checked: (T) -> Boolean = { true },
     onCheck: (T) -> Unit
@@ -56,6 +57,7 @@ fun <T : ToggleButtonOption> MultiSelectConnectedButtonRow(
     val interactionSources = List(entries.size) { rememberInteractionSource() }
 
     ButtonGroup(
+        modifier = modifier,
         overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
         horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
     ) {
