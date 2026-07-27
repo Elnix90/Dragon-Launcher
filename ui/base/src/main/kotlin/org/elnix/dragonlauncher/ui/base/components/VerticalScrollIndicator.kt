@@ -11,10 +11,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.animation.slideInVerticalBouncy
+import org.elnix.dragonlauncher.ui.base.animation.slideInVerticalBouncyUp
 import org.elnix.dragonlauncher.ui.base.animation.slideOutVerticalBouncy
+import org.elnix.dragonlauncher.ui.base.animation.slideOutVerticalBouncyUp
 
 /**
  * A lazy column with an auto-hiding scroll indicator icon.
@@ -72,6 +75,36 @@ fun BoxScope.VerticalScrollIndicator(visible: Boolean) {
             painter = painterResource(R.drawable.arrow_down),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.outline
+        )
+    }
+}
+
+/**
+ * A scroll indicator icon that appears at the bottom when content can be scrolled.
+ *
+ * Shows a down arrow icon with bouncy slide-in/out animations. Only visible
+ * when [visible] is true. Must be used within a [BoxScope].
+ *
+ * @param visible Whether to display the scroll indicator
+ */
+@Composable
+fun BoxScope.VerticalScrollIndicator(
+    visible: Boolean,
+    @Suppress("unused") isTop: Boolean
+) {
+    AnimatedVisibility(
+        visible = visible,
+        modifier = Modifier.align(Alignment.TopCenter),
+        enter = slideInVerticalBouncyUp,
+        exit = slideOutVerticalBouncyUp
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.arrow_down),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.outline,
+            modifier = Modifier.graphicsLayer {
+                rotationZ = 180f
+            }
         )
     }
 }

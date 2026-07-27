@@ -59,3 +59,6 @@ val slideOutHorizontalBouncy: ExitTransition = slideOutHorizontally(bouncySpec()
 
 val slideInVerticalBouncy: EnterTransition = slideInVertically(bouncySpec()) { it } + fadeIn()
 val slideOutVerticalBouncy: ExitTransition = slideOutVertically(bouncySpec()) { it } + fadeOut()
+
+val slideInVerticalBouncyUp: EnterTransition = slideInVertically(bouncySpec()) { -it } + fadeIn()
+val slideOutVerticalBouncyUp: ExitTransition = slideOutVertically(bouncySpec()) { -it } + fadeOut()
