@@ -1,19 +1,17 @@
 package org.elnix.dragonlauncher.ui.helpers
 
 import android.provider.Settings
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -29,6 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
+import kotlinx.coroutines.isActive
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
@@ -59,14 +58,12 @@ fun HoldToActivateArc(
 ) {
     if (center == null || progress <= 0f) return
 
+    val extraColors = LocalExtraColors.current
+
     val rotationsPerSecond by HoldToActivateArcSettingsStore.rotationsPerSecond.asState()
     val rgbLoading by HoldToActivateArcSettingsStore.holdRgbLoading.asState()
     val holdToActivateSettingsTolerance by HoldToActivateArcSettingsStore.holdToActivateSettingsTolerance.asState()
     val showToleranceOnMainScreen by HoldToActivateArcSettingsStore.showToleranceOnMainScreen.asState()
-
-
-    val ctx = LocalContext.current
-    val extraColors = LocalExtraColors.current
 
     val color = if (rgbLoading) {
         Color.hsv(progress * 360f, 1f, 1f)
@@ -82,28 +79,34 @@ fun HoldToActivateArc(
     val resolvedShape: Shape = remember(center) { customObject.shape.resolveShape() }
 
 
-    val infiniteTransition = rememberInfiniteTransition(label = "infinite")
+    val rotationAnimatable = remember { Animatable(0f) }
 
+    val ctx = LocalContext.current
     val animationScale = Settings.Global.getFloat(
         ctx.contentResolver,
         Settings.Global.ANIMATOR_DURATION_SCALE,
         1f
     )
 
-    // TODO
-    val rotationTween = if (rotationsPerSecond > 0f) {
-        (1000f / rotationsPerSecond / animationScale).toInt()
-    } else 1
+    LaunchedEffect(rotationsPerSecond, playAnimation) {
+        if (rotationsPerSecond > 0f && playAnimation) {
+            val durationMs = (1000f / rotationsPerSecond / animationScale).toInt().coerceAtLeast(1)
+            while (this@LaunchedEffect.isActive) {
+                rotationAnimatable.animateTo(
+                    targetValue = 360f,
+                    animationSpec = tween(durationMs, easing = LinearEasing)
+                )
+                rotationAnimatable.snapTo(0f)
+            }
+        } else {
+            rotationAnimatable.snapTo(0f)
+        }
+    }
 
-    val rotationAnimation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            tween(rotationTween, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "rotation"
-    )
+//    LaunchedEffect(rotationsPerSecond) {
+//        logWtf { "rotationPerSecond: $rotationsPerSecond, animation: ${rotationAnimatable.value}" }
+//    }
+
 
     val pathMeasurer = remember { PathMeasure() }
     val destinationPath = remember { Path() }
@@ -112,7 +115,7 @@ fun HoldToActivateArc(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .drawWithCache {
+            .drawBehind {
                 val diameterPx = customObject.size.toPx() * 2
                 val path = resolvedShape.toPath(Size(diameterPx, diameterPx), this)
 
@@ -125,35 +128,33 @@ fun HoldToActivateArc(
                 destinationPath.reset()
                 pathMeasurer.getSegment(0f, totalLength * progress, destinationPath)
 
-                onDrawBehind {
-                    withTransform({
-                        if (customObject.mirror) mirrorVertically(center)
+                withTransform({
+                    if (customObject.mirror) mirrorVertically(center)
 
-                        // Rotate to start to the angle position chosen
-                        rotate(
-                            degrees = rotationAngleStart.toFloat(),
-                            pivot = center
-                        )
+                    // Rotate to start to the angle position chosen
+                    rotate(
+                        degrees = rotationAngleStart.toFloat(),
+                        pivot = center
+                    )
 
-                        // Rotates with the animation rotation, computed above
-                        if (rotationsPerSecond > 0 && playAnimation) {
-                            rotate(degrees = rotationAnimation, pivot = center)
-                        }
-                        translate(center.x, center.y)
-                    }) {
-                        drawPathGlow(
-                            path = destinationPath,
-                            color = color,
-                            lineStrokeWidth = customObject.stroke.toPx(),
-                            glow = customObject.glow,
-                            erase = false,
-                            eraseColor = null
-                        )
+                    // Rotates with the animation rotation, computed above
+                    if (rotationsPerSecond > 0f && playAnimation) {
+                        rotate(degrees = rotationAnimatable.value, pivot = center)
                     }
+                    translate(center.x, center.y)
+                }) {
+                    drawPathGlow(
+                        path = destinationPath,
+                        color = color,
+                        lineStrokeWidth = customObject.stroke.toPx(),
+                        glow = customObject.glow,
+                        erase = false,
+                        eraseColor = null
+                    )
+                }
 
-                    if (showToleranceOnMainScreen) {
-                        holdTolerance(center, holdToActivateSettingsTolerance)
-                    }
+                if (showToleranceOnMainScreen) {
+                    holdTolerance(center, holdToActivateSettingsTolerance)
                 }
             }
     )
