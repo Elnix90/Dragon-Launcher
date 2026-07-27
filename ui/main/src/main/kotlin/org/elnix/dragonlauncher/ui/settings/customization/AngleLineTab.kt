@@ -32,7 +32,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.logging.logWtf
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.CustomObjectBlockProperties
@@ -305,8 +304,6 @@ fun AngleLineTab() {
                                     editObject = mutableAngleLineObject,
                                     default = defaultAngleCustomObject
                                 ) {
-
-                                    logWtf { "mutableObject: $mutableAngleLineObject\nit           : $it" }
                                     mutableAngleLineObject = it
                                 }
                             }
