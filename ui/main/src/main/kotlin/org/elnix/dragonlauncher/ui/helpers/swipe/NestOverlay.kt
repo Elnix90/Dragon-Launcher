@@ -141,6 +141,7 @@ fun DrawScope.NestOverlay(
             when {
                 depth > 1 -> true
                 isSettingDisplay -> true
+                selectedPointsIds.isEmpty() -> false
                 nest.getShowAllPointsInCurrentNest(defaultNest, drawParams.showAllPointsInCurrentNest) -> true
                 else -> {
                     (drawParams.showCurrentPoint && (id in selectedPointsIds)) ||
