@@ -616,6 +616,7 @@
     <string name="app_info_is_launchable">isLaunchable = %1$s</string>
     <string name="app_info_user_id">userId = %1$s</string>
     <string name="app_info_cache_key">Cache key = %1$s</string>
+    <string name="app_info_installer_package">Installer package key = %1$s</string>
     <string name="no_apps">No apps</string>
 
     <string name="activate_debug_mode">Activate Debug Mode</string>
@@ -1107,4 +1108,5 @@
     <string name="confirm_pattern">Confirm Pattern</string>
     <string name="pattern_size_desc">The number on dots in each row/column (its always a square)</string>
     <string name="pattern_size">Pattern Size</string>
+    <string name="export_apk">Export APK</string>
 </resources>

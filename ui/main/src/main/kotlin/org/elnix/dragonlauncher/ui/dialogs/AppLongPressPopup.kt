@@ -5,6 +5,7 @@ package org.elnix.dragonlauncher.ui.dialogs
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroup
@@ -21,14 +22,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
+import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
@@ -49,6 +53,10 @@ fun AppLongPressPopup(
     drawerViewModel: DrawerViewModel = activityViewModel(),
 ) {
     val ctx = LocalContext.current
+    val uriHandler = LocalUriHandler.current
+
+    val scope = rememberCoroutineScope()
+
     val appOverridesManager = drawerViewModel.appOverrideManager
     val workspacesManager = drawerViewModel.workspaceManager
     val selectedWorkspaceId by drawerViewModel.selectedWorkspaceId.collectAsState()
@@ -59,6 +67,8 @@ fun AppLongPressPopup(
     var showRenameDialog by remember { mutableStateOf(false) }
     var showAliasDialog by remember { mutableStateOf(false) }
     var showIconDialog by remember { mutableStateOf(false) }
+
+    val installerStoreLink = remember { app.getStoreDetails(ctx) }
 
 
     val entries = buildList {
@@ -112,6 +122,32 @@ fun AppLongPressPopup(
 
         add(
             MoreOptions(
+                text = { stringResource(R.string.export_apk) },
+                icon = R.drawable.share,
+                onClick = {
+                    scope.launch {
+                        app.shareApkFile(ctx)
+                    }
+                }
+            )
+        )
+
+        installerStoreLink?.let { link ->
+            add(
+                MoreOptions(
+                    text = { link.label },
+                    icon = link.icon,
+                    onClick = {
+                        scope.launch {
+                            uriHandler.openUri(link.url)
+                        }
+                    }
+                )
+            )
+        }
+
+        add(
+            MoreOptions(
                 text = { stringResource(R.string.detailed_info) },
                 icon = R.drawable.info,
                 onClick = {
@@ -120,6 +156,7 @@ fun AppLongPressPopup(
             )
         )
     }
+
     val cannotMessage = stringResource(R.string.cannot_directly_uninstall_from_other_profiles)
 
     Column {
@@ -182,7 +219,7 @@ fun AppLongPressPopup(
                 DropdownMenuItem(
                     onClick = option.onClick,
                     enabled = option.enabled,
-                    shape = if (index == entries.lastIndex) {
+                    shape = if (index == entries.lastIndex && installerStoreLink == null) {
                         MenuDefaults.trailingItemShape
                     } else {
                         MenuDefaults.middleItemShape
@@ -191,7 +228,8 @@ fun AppLongPressPopup(
                     leadingIcon = {
                         Icon(
                             painter = painterResource(option.icon),
-                            contentDescription = null
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 )

@@ -10,6 +10,7 @@ import android.content.pm.LauncherApps
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.UserHandle
+import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.getSystemService
@@ -190,22 +191,41 @@ public abstract class Application : Comparable<Application> {
             return when (installerPackage) {
                 "de.amazon.mShop.android", "com.amazon.venezia" -> {
                     StoreLink(
-                        "Amazon App Shop",
-                        "http://www.amazon.com/gp/mas/dl/android?p=${packageName}"
+                        label = "Amazon App Shop",
+                        url = "http://www.amazon.com/gp/mas/dl/android?p=${packageName}",
+                        icon = R.drawable.amazon
                     )
                 }
 
-                "com.android.vending" -> {
+                "dev.imranr.obtainium", "dev.imranr.obtainium.fdroid" -> {
                     StoreLink(
-                        "Google Play Store",
-                        "https://play.google.com/store/apps/details?id=${packageName}"
+                        label = "Obtainium",
+                        url = "https://obtainium.imranr.dev/app/${packageName}",
+                        icon = R.drawable.obtainium
                     )
                 }
 
-                "org.fdroid.fdroid", "com.aurora.adroid" -> {
+                "com.android.vending"-> {
                     StoreLink(
-                        "F-Droid",
-                        "https://f-droid.org/packages/${packageName}"
+                        label = "Google Play Store",
+                        url = "https://play.google.com/store/apps/details?id=${packageName}",
+                        icon = R.drawable.play_store
+                    )
+                }
+
+                "org.fdroid.fdroid" -> {
+                    StoreLink(
+                        label = "F-Droid",
+                        url = "https://f-droid.org/packages/${packageName}",
+                        icon = R.drawable.f_droid
+                    )
+                }
+
+                "com.aurora.store", "com.aurora.adroid"  -> {
+                    StoreLink(
+                        label = "Aurora Store",
+                        url = "https://play.google.com/store/apps/details?id=${packageName}",
+                        icon = R.drawable.aurora_store
                     )
                 }
 
@@ -238,5 +258,7 @@ public abstract class Application : Comparable<Application> {
 
 public data class StoreLink(
     val label: String,
-    val url: String
+    val url: String,
+    @DrawableRes
+    val icon: Int
 )
