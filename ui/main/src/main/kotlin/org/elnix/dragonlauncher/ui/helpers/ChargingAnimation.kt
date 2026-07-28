@@ -95,7 +95,8 @@ fun ChargingAnimation(
         }
         if (intensity == 0) return@LaunchedEffect
         while (isActive) {
-            val newBubbles = Array(intensity) { FloatArray(6) }
+            val currentIntensity = intensity
+            val newBubbles = Array(currentIntensity) { FloatArray(6) }
             withInfiniteAnimationFrameMillis {}
             for (i in 0 until intensity) {
                 val bubble = newBubbles[i]
