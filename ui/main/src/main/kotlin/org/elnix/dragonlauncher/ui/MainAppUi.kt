@@ -411,6 +411,7 @@ fun MainAppUi(
                         entry<NavigationRoute.Drawer>(metadata = drawerMetadata) {
                             AppDrawerScreen(
                                 onRegisterHomeHandler = { handler ->
+                                    // This part of the code is frightful
                                     drawerHomeHandler = handler
                                 },
                                 onLaunchAction = {
@@ -467,7 +468,6 @@ fun MainAppUi(
                 )
 
 
-
                 if (showFilePicker != null) {
                     val currentPoint = showFilePicker!!
 
@@ -522,17 +522,6 @@ fun MainAppUi(
                     val pendingApp = pendingAppToLaunch!!
                     DigitalPauseScreen(
                         application = pendingApp,
-//                                    onProceedWithTimer = { timeLimitMinutes ->
-//                                        val data = Intent().apply {
-//                                            putExtra(RESULT_EXTRA_TIME_LIMIT, timeLimitMinutes)
-//                                            putExtra(EXTRA_REMINDER_ENABLED, reminderEnabled)
-//                                            putExtra(EXTRA_REMINDER_INTERVAL, reminderInterval)
-//                                            putExtra(EXTRA_REMINDER_MODE, reminderMode)
-//                                        }
-//                                        setResult(RESULT_PROCEED_WITH_TIMER, data)
-//                                        finish()
-//                                    },
-
                         onCancel = { pendingAppToLaunch = null }
                     )
                 }
