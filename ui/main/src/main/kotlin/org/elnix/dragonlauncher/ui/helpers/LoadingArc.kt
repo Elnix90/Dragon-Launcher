@@ -146,7 +146,7 @@ fun HoldToActivateArc(
                     drawPathGlow(
                         path = destinationPath,
                         color = color,
-                        lineStrokeWidth = customObject.stroke.toPx(),
+                        lineStrokeWidth = customObject.stroke,
                         glow = customObject.glow,
                         erase = false,
                         eraseColor = null

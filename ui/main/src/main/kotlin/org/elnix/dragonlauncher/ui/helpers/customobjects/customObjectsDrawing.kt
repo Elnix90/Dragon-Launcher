@@ -41,7 +41,7 @@ fun DrawScope.customObject(
         drawPathGlow(
             path = path,
             color = customObject.color ?: angleColor,
-            lineStrokeWidth = customObject.stroke.toPx(),
+            lineStrokeWidth = customObject.stroke,
             glow = customObject.glow,
             erase = customObject.eraseBackground,
             eraseColor = eraseColor

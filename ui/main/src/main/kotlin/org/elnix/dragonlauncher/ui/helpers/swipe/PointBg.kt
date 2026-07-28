@@ -84,7 +84,7 @@ fun DrawScope.PointBg(
         drawPathGlow(
             path = path,
             color = borderColor,
-            lineStrokeWidth = borderStroke.toPx(),
+            lineStrokeWidth = borderStroke,
             glow = glow,
             erase = true,
             eraseColor = drawParams.eraseColor

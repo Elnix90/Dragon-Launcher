@@ -39,7 +39,7 @@ fun DrawScope.IntersectionShape(
 
     val size = shape.getSize(this.density, defaultShape)
     val color = shape.getColor(defaultShape, extraColors)
-    val strokeWith = shape.getBorderStroke(defaultShape).toPx()
+    val strokeWith = shape.getBorderStroke(defaultShape)
     val rotation = shape.getRotation(defaultShape)
     val position = center + shape.getOffset(defaultShape)
     val glow = shape.getGlow(defaultShape)

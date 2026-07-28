@@ -191,7 +191,7 @@ private fun DrawScope.angleObject(
         drawPathGlow(
             path = destinationPath,
             color = angleLineCustomObject.color ?: lineColor,
-            lineStrokeWidth = angleLineCustomObject.stroke.toPx(),
+            lineStrokeWidth = angleLineCustomObject.stroke,
             glow = angleLineCustomObject.glow,
             erase = angleLineCustomObject.eraseBackground,
             eraseColor = eraseColor

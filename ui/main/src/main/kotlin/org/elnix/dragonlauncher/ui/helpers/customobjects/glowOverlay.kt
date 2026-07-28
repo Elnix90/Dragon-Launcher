@@ -147,7 +147,7 @@ private inline fun DrawScope.glowLine(
 fun DrawScope.drawPathGlow(
     path: Path,
     color: Color,
-    lineStrokeWidth: Float,
+    lineStrokeWidth: Dp,
     glow: CustomGlow?,
     drawOrder: GlowDrawOrder = First,
     erase: Boolean,
@@ -191,12 +191,12 @@ private inline fun DrawScope.glow(
     }
 }
 
-private inline fun DrawScope.path(lineStrokeWidth: Float, path: Path, color: Color) {
+private inline fun DrawScope.path(lineStrokeWidth: Dp, path: Path, color: Color) {
     val style = when {
-        lineStrokeWidth == -1f -> return
-        lineStrokeWidth < 0f -> Fill
-        lineStrokeWidth == 0.0f -> Stroke(Stroke.HairlineWidth, cap = StrokeCap.Round)
-        else -> Stroke(lineStrokeWidth, cap = StrokeCap.Round)
+        lineStrokeWidth.value == -1f -> return
+        lineStrokeWidth.value < 0f -> Fill
+        lineStrokeWidth.value == 0.0f -> Stroke(Stroke.HairlineWidth, cap = StrokeCap.Round)
+        else -> Stroke(lineStrokeWidth.toPx(), cap = StrokeCap.Round)
     }
 
     drawPath(
