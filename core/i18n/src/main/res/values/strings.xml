@@ -214,6 +214,7 @@
     <string name="lock">Lock</string>
     <string name="reload_apps">Reload Apps</string>
     <string name="auto_separate">Auto Separate</string>
+    <string name="auto_separate_desc">Performs a separation of all the points too close from the ones you dragged, in a radial way, which means the separation can propagate until all points are far enough from each other</string>
     <string name="add_widget">Add Widget</string>
     <string name="widgets">Widgets</string>
     <string name="edit">Edit</string>
@@ -745,7 +746,10 @@
     <string name="usage_access">Usage Statistics Access</string>
     <string name="android_permissions">Android Permissions</string>
     <string name="manage_in_system_settings">Manage in system settings.</string>
+    <string name="snap_points_angle">Snap Points angle</string>
+    <string name="snap_points_angle_desc">Give a rounded angle to the points, such as snapping to 0° when close to 0°</string>
     <string name="snap_points">Snap Points</string>
+    <string name="snap_points_desc">Snap the Points to a virtual grid, configurable</string>
     <string name="undo">Undo</string>
     <string name="undo_all">Undo All</string>
     <string name="redo">Redo</string>
@@ -814,7 +818,9 @@
     <string name="widget_cell_size">Cell Size</string>
     <string name="widget_cell_size_help">The size of the grid that is used to snap widgets</string>
     <string name="nests_cell_size">Cell Size</string>
-    <string name="nests_cell_size_help">The size of the grid that is used to snap shapes</string>
+    <string name="points_cell_size">Cell Size</string>
+    <string name="nests_cell_size_desc">The size of the grid that is used to snap shapes</string>
+    <string name="points_cell_size_desc">The size of the virtual grid that is used to snap points</string>
     <string name="off_screen_timeout">Off-screen timeout (s)</string>
     <string name="off_screen_timeout_desc">How long the app waits before returning to home screen when you\'re in another screen. Doesn\'t apply to some specified screens, such as backup (because you pick a file). -1 means no return</string>
     <string name="paste">Paste</string>
@@ -1020,6 +1026,7 @@
     <string name="nest_debug_overlay">Nest debug overlay</string>
     <string name="nest_debug_overlay_desc">Adds some visual debug features in the drawing of nests</string>
     <string name="auto_merge">Auto merge</string>
+    <string name="auto_merge_desc">Can trigger actions when hovering a point with another, such as merging them to a new Nest</string>
     <string name="show_more_sheet">Show more sheet</string>
     <string name="show_angle_preview">Show angle preview</string>
     <plurals name="n_points_selected">
@@ -1109,4 +1116,8 @@
     <string name="pattern_size_desc">The number on dots in each row/column (its always a square)</string>
     <string name="pattern_size">Pattern Size</string>
     <string name="export_apk">Export APK</string>
+    <string name="allow_free_points">Allow free points</string>
+    <string name="allow_free_points_desc">Points are no longer required to snap to a shape, they can be moved around freely, and only snaps when close to a shape</string>
+    <string name="snap_points_to_shapes_desc">Whether or not to enable the snapping to the shapes. Can only be disabled it free point if true</string>
+    <string name="snap_points_to_shapes">Snap points to shapes</string>
 </resources>

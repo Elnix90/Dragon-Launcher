@@ -14,22 +14,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.runtime.asState
-import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.stores.map.SwipeMapSettingsStore
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
-import org.elnix.dragonlauncher.ui.dialogs.GamblingInputDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 
@@ -127,88 +121,23 @@ fun SettingsTitle(
 
 @Composable
 fun SpecialSettingsTitle(
-    nestId: Int,
     onSettings: () -> Unit,
-    onSelectAll: () -> Unit,
-    onEditDefaultPoint: () -> Unit,
-    onEditNest: () -> Unit,
-    onResetPoints: () -> Unit,
-    onGamble: (number: Int, snapToShapes: Boolean) -> Unit,
+    onShowMoreSheet: () -> Unit,
     onBack: () -> Unit
 ) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
-
-    var showGambleDialog by remember { mutableStateOf(false) }
-
-    val showAdvancedPointTools by SwipeMapSettingsStore.showAdvancedPointTools.asState()
-
     SettingsTitleInternal(
         title = stringResource(R.string.points_settings),
         onBack = onBack,
-        moreOptions = { dismiss ->
-            listOf(
-                MoreOptions(
-                    text = { stringResource(R.string.reset_all_points) },
-                    icon = R.drawable.delete_forever,
-                    onClick = {
-                        dismiss()
-                        onResetPoints()
-                    }
-                ),
-                MoreOptions(
-                    text = { stringResource(R.string.show_advanced_edit_tools) },
-                    icon = if (showAdvancedPointTools) R.drawable.toggle_on else R.drawable.toggle_off,
-                    onClick = {
-                        scope.launch {
-                            SwipeMapSettingsStore.showAdvancedPointTools.set(ctx, !showAdvancedPointTools)
-                            dismiss()
-                        }
-                    }
-                ),
-                MoreOptions(
-                    text = { stringResource(R.string.gamble_apps) },
-                    icon = R.drawable.casino,
-                    onClick = {
-                        dismiss()
-                        showGambleDialog = true
-                    }
-                ),
-                MoreOptions(
-                    text = { stringResource(R.string.select_all) },
-                    icon = R.drawable.select_all,
-                    onClick = {
-                        dismiss()
-                        onSelectAll()
-                    }
-                ),
-                MoreOptions(
-                    text = { stringResource(R.string.edit_default_point) },
-                    icon = R.drawable.edit_rounded,
-                    onClick = {
-                        dismiss()
-                        onEditDefaultPoint()
-                    }
-                ),
-                MoreOptions(
-                    text = { stringResource(R.string.edit_nest_arg, nestId) },
-                    icon = R.drawable.nest_icon,
-                    onClick = {
-                        dismiss()
-                        onEditNest()
-                    }
-                )
-            )
-        }
+        moreOptions = null
     ) {
+        AnimatedFab(
+            onClick = onShowMoreSheet,
+            icon = R.drawable.more_horiz
+        )
+
         AnimatedFab(
             onClick = onSettings,
             icon = R.drawable.settings
         )
-    }
-
-
-    if (showGambleDialog) {
-        GamblingInputDialog(onGamble) { showGambleDialog = false }
     }
 }

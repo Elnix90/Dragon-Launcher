@@ -170,7 +170,6 @@ private fun NestManagementItem(
                     action = Action.OpenCircleNest(nest.id),
                     id = -3
                 ),
-                alpha = 0.4f,
                 center = center,
                 eraseColor = bgColor
             )

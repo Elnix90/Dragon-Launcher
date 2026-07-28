@@ -156,8 +156,7 @@ public object Constants {
         public const val COLLIDING_SHAPE_THRESHOLD_PX: Float = 50f
         public const val HOVER_POINT_DURATION: Long = 500L
         public val HOVER_GRADIENT_RADIUS: Dp = 75.dp
-        public const val SNAP_STEP_DEG: Double = 15.0
-
+        public const val SNAP_STEP_DEG: Float = 15f
     }
 
     public object Drawer {

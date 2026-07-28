@@ -5,7 +5,6 @@ package org.elnix.dragonlauncher.ktx
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.util.fastRoundToInt
-import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.hypot
@@ -93,23 +92,6 @@ public inline fun Offset.undoTransformations(
 ): Offset = rotateBy(angle).minus(offset).times(zoom)
 
 
-
-
-/**
- * Snaps the value to the nearest integer if it crosses the threshold.
- * @param threshold The distance from an integer to trigger snapping
- */
-public fun Int.snapToRound(snapTo: Int, threshold: Int): Int {
-    return if (abs(this - snapTo) <= threshold) snapTo else this
-}
-/**
- * Snaps the value to the nearest integer if it crosses the threshold.
- * @param threshold The distance from an integer to trigger snapping
- */
-public fun Float.snapToRound(snapTo: Float, threshold: Float): Float {
-    return if (abs(this - snapTo) <= threshold) snapTo else this
-}
-
 /**
  * Snaps both x and y of the Offset to integers if they cross the threshold.
  * @param threshold The distance from an integer to trigger snapping
@@ -122,13 +104,13 @@ public fun Offset.snapToRound(snapTo: Offset, threshold: Float): Offset {
 }
 
 /**
- * Snaps both x and y of the Offset to integers if they cross the threshold.
+ * Snaps both x and y of the Offset to the closest multiple of [cellSizePx].
  * @param cellSizePx The size of the virtual grid to be snapped on
  */
 public fun Offset.snapToGrid(cellSizePx: Float): Offset {
     return Offset(
-        x = (this.x / cellSizePx).toInt() * cellSizePx,
-        y = (this.y / cellSizePx).toInt() * cellSizePx
+        x = this.x.snapToGrid(cellSizePx),
+        y = this.y.snapToGrid(cellSizePx)
     )
 }
 

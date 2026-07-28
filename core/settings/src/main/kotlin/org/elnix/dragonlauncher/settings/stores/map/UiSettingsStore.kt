@@ -70,13 +70,36 @@ public object UiSettingsStore : MapSettingsStore() {
     @SettingKey
     public val autoSeparatePoints: BooleanSettingObject = boolean(
         title = R.string.auto_separate,
+        description = R.string.auto_separate_desc,
         default = true
     )
 
     @SettingKey
     public val snapPoints: BooleanSettingObject = boolean(
         title = R.string.snap_points,
+        description = R.string.snap_points_desc,
         default = true
+    )
+
+    @SettingKey
+    public val snapPointsToShapes: BooleanSettingObject = boolean(
+        title = R.string.snap_points_to_shapes,
+        description = R.string.snap_points_to_shapes_desc,
+        default = true
+    )
+
+    @SettingKey
+    public val snapPointsAngle: BooleanSettingObject = boolean(
+        title = R.string.snap_points_angle,
+        description = R.string.snap_points_angle_desc,
+        default = true
+    )
+
+    @SettingKey
+    public val allowFreePoints: BooleanSettingObject = boolean(
+        title = R.string.allow_free_points,
+        description = R.string.allow_free_points_desc,
+        default = false
     )
 
     @SettingKey
@@ -106,6 +129,7 @@ public object UiSettingsStore : MapSettingsStore() {
     @SettingKey
     public val autoMerge: BooleanSettingObject = boolean(
         title = R.string.auto_merge,
+        description = R.string.auto_merge_desc,
         default = true
     )
 
@@ -212,7 +236,15 @@ public object UiSettingsStore : MapSettingsStore() {
     @SettingKey
     public val nestsCellSizeDp: DpSettingObject = dp(
         title = R.string.nests_cell_size,
-        description = R.string.nests_cell_size_help,
+        description = R.string.nests_cell_size_desc,
+        default = 30.dp,
+        allowedRange = 1.dp..100.dp
+    )
+
+    @SettingKey
+    public val pointsCellSizeDp: DpSettingObject = dp(
+        title = R.string.points_cell_size,
+        description = R.string.points_cell_size_desc,
         default = 30.dp,
         allowedRange = 1.dp..100.dp
     )

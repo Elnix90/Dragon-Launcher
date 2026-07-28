@@ -12,6 +12,8 @@ class FloatKtxTest {
     private companion object {
         /** Tolerance for floating-point comparisons. */
         const val EPSILON: Double = 1e-5
+        const val EPSILON_FLOAT: Float = 1e-5f
+
     }
 
     @Test
@@ -218,5 +220,110 @@ class FloatKtxTest {
         val testValue = 0.42f
         val expected = (testValue * 256).toInt()
         assertEquals(expected, testValue.to255)
+    }
+
+
+
+
+    @Test
+    fun `snapToRound snaps when within threshold`() {
+        assertEquals(5f, 4.9f.snapToRound(5f, 0.2f), EPSILON_FLOAT)
+    }
+
+    @Test
+    fun `snapToRound does not snap when beyond threshold`() {
+        assertEquals(4.5f, 4.5f.snapToRound(5f, 0.2f), EPSILON_FLOAT)
+    }
+
+    @Test
+    fun `snapToRound snaps exactly at snapTo value`() {
+        assertEquals(5f, 5f.snapToRound(5f, 0.1f), EPSILON_FLOAT)
+    }
+
+    @Test
+    fun `snapToRound snaps at lower boundary`() {
+        assertEquals(5f, 4.8f.snapToRound(5f, 0.2f), EPSILON_FLOAT)
+    }
+
+    @Test
+    fun `snapToRound snaps at upper boundary`() {
+        assertEquals(5f, 5.2f.snapToRound(5f, 0.2f), EPSILON_FLOAT)
+    }
+
+
+    @Test
+    fun `snapToGrid rounds positive value up`() {
+        val result = 27f.snapToGrid(10f)
+        assertEquals(30f, result, EPSILON_FLOAT)
+    }
+
+    @Test
+    fun `snapToGrid rounds positive value down`() {
+        val result = 23f.snapToGrid(10f)
+        assertEquals(20f, result, EPSILON_FLOAT)
+    }
+
+    @Test
+    fun `snapToGrid rounds negative value up`() {
+        val result = (-23f).snapToGrid(10f)
+        assertEquals(-20f, result, EPSILON_FLOAT)
+    }
+
+    @Test
+    fun `snapToGrid rounds negative value down`() {
+        val result = (-27f).snapToGrid(10f)
+        assertEquals(-30f, result, EPSILON_FLOAT)
+    }
+
+    @Test
+    fun `snapToGrid value already aligned returns unchanged`() {
+        val result = 30f.snapToGrid(10f)
+        assertEquals(30f, result, EPSILON_FLOAT)
+    }
+
+    @Test
+    fun `snapToGrid zero value`() {
+        val result = 0f.snapToGrid(10f)
+        assertEquals(0f, result, EPSILON_FLOAT)
+    }
+
+    @Test
+    fun `snapToGrid small grid size`() {
+        val result = 1.7f.snapToGrid(1f)
+        assertEquals(2f, result, EPSILON_FLOAT)
+    }
+
+    @Test
+    fun `snapToGrid fractional grid size`() {
+        val result = 5.6f.snapToGrid(2.5f)
+        assertEquals(5f, result, EPSILON_FLOAT)
+    }
+
+    @Test
+    fun `snapToGrid very small value with large grid`() {
+        val result = 2f.snapToGrid(100f)
+        assertEquals(0f, result, EPSILON_FLOAT)
+    }
+
+    @Test
+    fun `snapToGrid rounds to nearest at midpoint`() {
+        val result = 15f.snapToGrid(10f)
+        assertEquals(20f, result, EPSILON_FLOAT)
+    }
+
+    @Test
+    fun `snapToGrid large negative value`() {
+        val result = (-999f).snapToGrid(100f)
+        assertEquals(-1000f, result, EPSILON_FLOAT)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `snapToGrid zero grid size throws`() {
+        5f.snapToGrid(0f)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `snapToGrid negative grid size throws`() {
+        5f.snapToGrid(-10f)
     }
 }

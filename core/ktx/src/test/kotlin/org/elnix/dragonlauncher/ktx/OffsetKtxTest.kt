@@ -10,17 +10,7 @@ import kotlin.math.sqrt
 
 /**
  * Unit tests for Offset extension functions in [org.elnix.dragonlauncher.ktx].
- *
- * These functions implement core geometric math used throughout the launcher's
- * touch-drag and transformation pipeline:
- * - Distance calculations: [distanceTo], [distanceSquaredTo]
- * - Angle calculations: [angleDeg], [angleRad], [angle360FromOffset]
- * - Rotation: [rotateBy]
- * - Full transform pipeline: [applyTransformations], [undoTransformations]
- * - Snapping: [snapToRound] (both Float and Offset variants)
- * - Zone detection: [isInsideActiveZone]
- * - Display: [cleanString]
- *
+ * 
  * NOTE: Floating-point tests use a tolerance (epsilon) because trigonometric
  * operations and coordinate math inherently produce tiny rounding errors.
  */
@@ -263,30 +253,68 @@ class OffsetKtxTest {
 
 
     @Test
-    fun `snapToRound snaps when within threshold`() {
-        assertEquals(5f, 4.9f.snapToRound(5f, 0.2f), EPSILON)
+    fun `snapToGrid snaps positive coordinates`() {
+        val offset = Offset(25f, 47f)
+        val result = offset.snapToGrid(10f)
+
+        assertEquals(30f, result.x, EPSILON)
+        assertEquals(50f, result.y, EPSILON)
     }
 
     @Test
-    fun `snapToRound does not snap when beyond threshold`() {
-        assertEquals(4.5f, 4.5f.snapToRound(5f, 0.2f), EPSILON)
+    fun `snapToGrid snaps negative coordinates`() {
+        val offset = Offset(-25f, -47f)
+        val result = offset.snapToGrid(10f)
+
+        assertEquals(-20f, result.x, EPSILON)
+        assertEquals(-50f, result.y, EPSILON)
     }
 
     @Test
-    fun `snapToRound snaps exactly at snapTo value`() {
-        assertEquals(5f, 5f.snapToRound(5f, 0.1f), EPSILON)
+    fun `snapToGrid already snapped returns unchanged`() {
+        val offset = Offset(20f, 50f)
+        val result = offset.snapToGrid(10f)
+
+        assertEquals(20f, result.x, EPSILON)
+        assertEquals(50f, result.y, EPSILON)
     }
 
     @Test
-    fun `snapToRound snaps at lower boundary`() {
-        assertEquals(5f, 4.8f.snapToRound(5f, 0.2f), EPSILON)
+    fun `snapToGrid mixed coordinates`() {
+        val offset = Offset(33f, -16f)
+        val result = offset.snapToGrid(10f)
+
+        assertEquals(30f, result.x, EPSILON)
+        assertEquals(-20f, result.y, EPSILON)
     }
 
     @Test
-    fun `snapToRound snaps at upper boundary`() {
-        assertEquals(5f, 5.2f.snapToRound(5f, 0.2f), EPSILON)
+    fun `snapToGrid small cell size`() {
+        val offset = Offset(1.7f, 2.4f)
+        val result = offset.snapToGrid(1f)
+
+        assertEquals(2f, result.x, EPSILON)
+        assertEquals(2f, result.y, EPSILON)
     }
 
+    @Test
+    fun `snapToGrid zero offset`() {
+        val offset = Offset(0f, 0f)
+        val result = offset.snapToGrid(10f)
+
+        assertEquals(0f, result.x, EPSILON)
+        assertEquals(0f, result.y, EPSILON)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `snapToGrid zero cell size throws`() {
+        Offset(10f, 10f).snapToGrid(0f)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `snapToGrid negative cell size throws`() {
+        Offset(10f, 10f).snapToGrid(-5f)
+    }
 
     //  snapToRound (Offset extension)
 

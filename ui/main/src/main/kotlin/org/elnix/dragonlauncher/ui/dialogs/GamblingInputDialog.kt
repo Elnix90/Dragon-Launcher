@@ -1,7 +1,9 @@
 package org.elnix.dragonlauncher.ui.dialogs
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
@@ -20,10 +22,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
@@ -31,12 +34,14 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 @Composable
 fun GamblingInputDialog(
     onSelect: (number: Int, snapToShapes: Boolean) -> Unit,
+    initialSnap: Boolean,
     onDismiss: () -> Unit
 ) {
     val ctx = LocalContext.current
+    val allowFreePoints by UiSettingsStore.allowFreePoints.asState()
 
     var text by remember { mutableStateOf("") }
-    var snapToShapes by remember { mutableStateOf(false) }
+    var snapToShapes by remember { mutableStateOf(initialSnap) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -59,13 +64,16 @@ fun GamblingInputDialog(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(5.dp)
-
-                SwitchRow(
-                    state = snapToShapes,
-                    title = stringResource(R.string.snap_points),
-                    modifier = Modifier.clip(MaterialTheme.shapes.large)
-                ) { snapToShapes = it }
+                // Only show this when user has explicitly selected to allow free points
+                AnimatedVisibility(allowFreePoints) {
+                    SwitchRow(
+                        state = snapToShapes,
+                        title = stringResource(R.string.snap_points),
+                        modifier = Modifier
+                            .padding(top = 5.dp)
+                            .clip(MaterialTheme.shapes.large)
+                    ) { snapToShapes = it }
+                }
             }
         },
         confirmButton = {

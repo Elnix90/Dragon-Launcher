@@ -27,13 +27,11 @@ fun PointIcon(
     eraseColor: Color,
     modifier: Modifier = Modifier,
     depth: Int = 1,
-    alpha: Float = 1f,
     selected: Boolean = false,
 
     pointSettingsDisplay: Boolean = false,
     customText: Pair<DrawScopeText?, DrawScopeText?>? = null,
-    hideShapes: Boolean = false,
-    forceShowShapes: Boolean = false,
+    hideShapes: Boolean = false
 ) {
     val drawParams = rememberDrawParams(
         eraseColor = eraseColor,
