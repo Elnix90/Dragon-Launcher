@@ -282,7 +282,7 @@ fun PointsSettingsScreen(
 
 //    TODO("Reduce their glow by default")
 //    TODO("add icons to settings plugin system additionally to title/desc")
-    // TODO put nest system buttons in a rom with point edit-copy-remove
+
     /**
      * Holds an Offset and provides helper functions and value to manage it in the [PointsSettingsScreen] scope.
      */
