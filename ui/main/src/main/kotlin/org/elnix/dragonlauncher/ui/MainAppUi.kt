@@ -40,6 +40,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import io.github.elnix90.logging.SECURITY_SERVICE
 import io.github.elnix90.logging.SHIZUKU_TAG
 import io.github.elnix90.logging.TAG
 import io.github.elnix90.logging.logD
@@ -56,7 +57,10 @@ import org.elnix.dragonlauncher.base.model.serializables.Widget
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.base.navigaton.isInIgnoredReturnScreen
 import org.elnix.dragonlauncher.base.navigaton.isInTransparentScreen
-import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
+import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Device
+import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.None
+import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Pattern
+import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Pin
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.findFragmentActivity
 import org.elnix.dragonlauncher.ktx.showToast
@@ -85,10 +89,11 @@ import org.elnix.dragonlauncher.ui.dialogs.BackupResultDialog
 import org.elnix.dragonlauncher.ui.dialogs.FilePickerDialog
 import org.elnix.dragonlauncher.ui.dialogs.GoogleLockingWarningDialog
 import org.elnix.dragonlauncher.ui.dialogs.MainScreeLayersTab
-import org.elnix.dragonlauncher.ui.dialogs.PinUnlock
 import org.elnix.dragonlauncher.ui.dialogs.ShizukuOutputDialog
 import org.elnix.dragonlauncher.ui.dialogs.ShizukuUnavailableDialog
 import org.elnix.dragonlauncher.ui.dialogs.WidgetPickerDialog
+import org.elnix.dragonlauncher.ui.dialogs.security.PatternUnlock
+import org.elnix.dragonlauncher.ui.dialogs.security.PinUnlock
 import org.elnix.dragonlauncher.ui.drawer.AppDrawerScreen
 import org.elnix.dragonlauncher.ui.helpers.BottomBanners
 import org.elnix.dragonlauncher.ui.helpers.FpsCounterGraph
@@ -170,38 +175,30 @@ fun MainAppUi(
     val screenToUnlock by lockScreenViewModel.screenToUnlock.asState()
     val lockMethod by PrivateSettingsStore.lockMethod.asState()
 
+    LaunchedEffect(screenToUnlock) {
+        logD(SECURITY_SERVICE) { "Screen to unlock: $screenToUnlock"}
+    }
     LaunchedEffect(currentRoute) {
         lockScreenViewModel.onEnterNewRoute(currentRoute)
     }
 
-//    @SuppressLint("LocalContextGetResourceValueCall")
-//    fun NavBackStack<NavKey>.navigate(screen: NavigationRoute) {
-//
-//
-//    }
-//
-//    fun popBackMainScreen() {
-//        backStack.clear()
-//        backStack.add(NavigationRoute.Main)
-//    }
-
-
     val navigator: Navigator = object : Navigator {
-        override fun navigate(screen: NavigationRoute) {
-            fun go() {
-                backStack.remove(screen)
-                backStack.add(screen)
-            }
 
+        override fun go(screen: NavigationRoute) {
+            backStack.remove(screen)
+            backStack.add(screen)
+        }
+
+        override fun navigate(screen: NavigationRoute) {
             if (!isLocked) {
-                go()
+                go(screen)
                 return
             }
 
-            if (screen in NavigationRoute.settingsRoutes && lockMethod != LockMethod.None) {
+            if (screen in NavigationRoute.settingsRoutes && lockMethod != None) {
                 lockScreenViewModel.requestUnlock(screen)
             } else {
-                go()
+                go(screen)
             }
         }
 
@@ -547,37 +544,60 @@ fun MainAppUi(
                 GoogleLockingWarningDialog()
 
 
-                if (screenToUnlock != null && lockMethod == LockMethod.Pin) {
-                    PinUnlock(
-                        onDismiss = {
-                            lockScreenViewModel.cancelUnlock()
-                        },
-                        onValidate = {
+                if (screenToUnlock != null) {
+                    when (lockMethod) {
+                        None -> {
+                            // This block shouldn't be called
+                            navigator.go(screenToUnlock!!)
                             lockScreenViewModel.unlock()
-                            navigator.navigate(screenToUnlock!!)
                         }
-                    )
-                }
 
-                if (screenToUnlock != null && lockMethod == LockMethod.Device) {
-                    LaunchedEffect(screenToUnlock) {
-                        val activity = ctx.findFragmentActivity()
-                        if (activity != null && lockScreenViewModel.isDeviceUnlockAvailable()) {
-                            lockScreenViewModel.showDeviceUnlockPrompt(
-                                activity = activity,
+                        Pin -> {
+                            PinUnlock(
+                                onDismiss = {
+                                    lockScreenViewModel.cancelUnlock()
+                                },
                                 onSuccess = {
+                                    logD(SECURITY_SERVICE) { "onSuccess() called!"}
+                                    navigator.go(screenToUnlock!!)
                                     lockScreenViewModel.unlock()
-                                    navigator.navigate(screenToUnlock!!)
-                                },
-                                onError = { msg ->
-                                    ctx.showToast(ctx.getString(R.string.authentication_error, msg))
-                                    lockScreenViewModel.cancelUnlock()
-                                },
-                                onFailed = {
-                                    ctx.showToast(ctx.getString(R.string.authentication_failed))
-                                    lockScreenViewModel.cancelUnlock()
                                 }
                             )
+                        }
+
+                        Pattern -> {
+                            PatternUnlock(
+                                onDismiss = {
+                                    lockScreenViewModel.cancelUnlock()
+                                },
+                                onSuccess = {
+                                    navigator.go(screenToUnlock!!)
+                                    lockScreenViewModel.unlock()
+                                }
+                            )
+                        }
+
+                        Device -> {
+                            LaunchedEffect(screenToUnlock) {
+                                val activity = ctx.findFragmentActivity()
+                                if (activity != null && lockScreenViewModel.isDeviceUnlockAvailable()) {
+                                    lockScreenViewModel.showDeviceUnlockPrompt(
+                                        activity = activity,
+                                        onSuccess = {
+                                            lockScreenViewModel.unlock()
+                                            navigator.go(screenToUnlock!!)
+                                        },
+                                        onError = { msg ->
+                                            ctx.showToast(ctx.getString(R.string.authentication_error, msg))
+                                            lockScreenViewModel.cancelUnlock()
+                                        },
+                                        onFailed = {
+                                            ctx.showToast(ctx.getString(R.string.authentication_failed))
+                                            lockScreenViewModel.cancelUnlock()
+                                        }
+                                    )
+                                }
+                            }
                         }
                     }
                 }

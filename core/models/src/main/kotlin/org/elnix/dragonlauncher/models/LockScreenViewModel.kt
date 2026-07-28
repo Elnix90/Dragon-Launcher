@@ -15,6 +15,10 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
+import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Device
+import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.None
+import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Pattern
+import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Pin
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
@@ -40,7 +44,7 @@ public class LockScreenViewModel @Inject constructor(
 
     public fun removeLock() {
         viewModelScope.launch {
-            PrivateSettingsStore.lockPinHash.reset(application)
+            PrivateSettingsStore.lockHash.reset(application)
             PrivateSettingsStore.lockMethod.reset(application)
             unlock()
         }
@@ -48,18 +52,28 @@ public class LockScreenViewModel @Inject constructor(
 
     public fun setPinLockMethod(pin: String) {
         viewModelScope.launch {
-            val hash = securityService.hashPin(pin)
-            PrivateSettingsStore.lockPinHash.set(application, hash)
-            PrivateSettingsStore.lockMethod.set(application, LockMethod.Pin)
+            val hash = securityService.hash(pin)
+            PrivateSettingsStore.lockHash.set(application, hash)
+            PrivateSettingsStore.lockMethod.set(application, Pin)
             application.showToast(application.getString(R.string.pin_set_success))
+            unlock()
+        }
+    }
+
+    public fun setPatternLockMethod(pattern: String) {
+        viewModelScope.launch {
+            val hash = securityService.hash(pattern)
+            PrivateSettingsStore.lockHash.set(application, hash)
+            PrivateSettingsStore.lockMethod.set(application, Pattern)
+            application.showToast(application.getString(R.string.pattern_set_successfully))
             unlock()
         }
     }
 
     public fun setLockScreenMethod() {
         viewModelScope.launch {
-            PrivateSettingsStore.lockPinHash.reset(application)
-            PrivateSettingsStore.lockMethod.set(application, LockMethod.Device)
+            PrivateSettingsStore.lockHash.reset(application)
+            PrivateSettingsStore.lockMethod.set(application, Device)
             unlock()
         }
     }
@@ -76,6 +90,8 @@ public class LockScreenViewModel @Inject constructor(
         screenToUnlock.value = null
     }
 
+    public fun verify(pin: String, storedHash: String): Boolean = securityService.verify(pin, storedHash)
+
     public fun cancelUnlock() {
         screenToUnlock.value = null
     }
@@ -90,13 +106,9 @@ public class LockScreenViewModel @Inject constructor(
     public fun requestUnlock(targetScreen: NavigationRoute) {
         viewModelScope.launch {
             when (lockMethod.first()) {
-                LockMethod.None -> unlock()
+                None -> unlock()
 
-                LockMethod.Pin -> {
-                    screenToUnlock.value = targetScreen
-                }
-
-                LockMethod.Device -> {
+                Pin, Pattern, Device -> {
                     screenToUnlock.value = targetScreen
                 }
             }
@@ -116,6 +128,4 @@ public class LockScreenViewModel @Inject constructor(
         onError = onError,
         onFailed = onFailed
     )
-
-    public fun verifyPin(pin: String, storedHash: String): Boolean = securityService.verifyPin(pin, storedHash)
 }

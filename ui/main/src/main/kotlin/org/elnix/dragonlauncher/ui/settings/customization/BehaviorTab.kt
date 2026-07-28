@@ -20,10 +20,14 @@ import androidx.compose.ui.res.stringResource
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
+import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Device
+import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.None
+import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Pattern
+import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Pin
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
-import org.elnix.dragonlauncher.ui.dialogs.LockMethodDialog
+import org.elnix.dragonlauncher.ui.dialogs.security.LockMethodDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
@@ -57,12 +61,6 @@ fun BehaviorTab() {
         stringResource(R.string.super_warning_mode)
     ) { superWarningModeEnabled }
 
-
-    val lockDescription = when (lockMethod) {
-        LockMethod.None -> stringResource(R.string.lock_none)
-        LockMethod.Pin -> stringResource(R.string.lock_pin)
-        LockMethod.Device -> stringResource(R.string.lock_device_unlock)
-    }
 
     SettingsScaffold(
         title = stringResource(R.string.behavior),
@@ -102,7 +100,12 @@ fun BehaviorTab() {
         DragonSettingsGroup(R.string.security) {
             SettingsItem(
                 title = stringResource(R.string.lock_method),
-                description = lockDescription,
+                description = when (lockMethod) {
+                    None -> stringResource(R.string.lock_none)
+                    Pin -> stringResource(R.string.lock_pin)
+                    Device -> stringResource(R.string.lock_device_unlock)
+                    Pattern -> stringResource(R.string.pattern)
+                },
                 icon = R.drawable.lock
             ) { showLockMethodPicker = true }
 

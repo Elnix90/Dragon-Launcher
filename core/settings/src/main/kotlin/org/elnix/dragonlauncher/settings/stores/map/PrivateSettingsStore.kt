@@ -52,9 +52,29 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
         allowedRange = 0..Int.MAX_VALUE
     )
 
-    /** Hashed PIN for settings lock (SHA-256). Empty string means no PIN set. */
+    /**
+     *  Hashed code for settings lock (SHA-256).
+     *  This can contain either the Pattern hashed or the PIN hashed.
+     *  They are both stored as string, containing the digits in the LtR direction.
+     *
+     * For example:
+     * Pin can be: `"1234"`, and a patteran can also be the same (`"0123"`)
+     */
     @SettingKey
-    public val lockPinHash: StringSettingObject = string("")
+    public val lockHash: StringSettingObject = string("")
+
+    /**
+     * Only used when a pattern is used. determined the size of the used pattern
+     *
+     * CRITICAL: when the pattern size changes, the hash must be also recomputed!!
+     */
+    @SettingKey
+    public val patternSize: IntSettingObject = int(
+        title = R.string.pattern_size,
+        description = R.string.pattern_size_desc,
+        default = 3,
+        allowedRange = 2..10
+    )
 
     @SettingKey
     public val lockMethod: EnumSettingObject<LockMethod> = enum(LockMethod.None)

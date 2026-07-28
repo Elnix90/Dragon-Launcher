@@ -18,13 +18,13 @@ public interface SecurityService {
     /**
      * Hashes a PIN using SHA-256.
      */
-    public fun hashPin(pin: String): String
+    public fun hash(pin: String): String
 
 
     /**
      * Verifies a PIN against a stored hash.
      */
-    public fun verifyPin(pin: String, storedHash: String): Boolean
+    public fun verify(pin: String, storedHash: String): Boolean
 
     /**
      * Checks if device unlock (biometric or device credentials) is available.
@@ -48,15 +48,15 @@ public interface SecurityService {
  * Utility object for settings lock security operations.
  */
 internal class SecurityServiceImpl : SecurityService {
+    private val digest = MessageDigest.getInstance("SHA-256")
 
-    override fun hashPin(pin: String): String {
-        val digest = MessageDigest.getInstance("SHA-256")
+    override fun hash(pin: String): String {
         val hashBytes = digest.digest(pin.toByteArray(Charsets.UTF_8))
         return hashBytes.joinToString("") { "%02x".format(it) }
     }
 
-    override fun verifyPin(pin: String, storedHash: String): Boolean {
-        return hashPin(pin) == storedHash
+    override fun verify(pin: String, storedHash: String): Boolean {
+        return hash(pin) == storedHash
     }
 
     override fun isDeviceUnlockAvailable(ctx: Context): Boolean {

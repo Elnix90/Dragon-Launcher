@@ -1100,4 +1100,11 @@
     <string name="angle">Angle</string>
     <string name="start">Start</string>
     <string name="end">End</string>
+    <string name="pattern">Pattern</string>
+    <string name="pattern_set_successfully">Pattern set successfully!</string>
+    <string name="draw_pattern">Draw pattern</string>
+    <string name="set_pattern">Set pattern</string>
+    <string name="confirm_pattern">Confirm Pattern</string>
+    <string name="pattern_size_desc">The number on dots in each row/column (its always a square)</string>
+    <string name="pattern_size">Pattern Size</string>
 </resources>

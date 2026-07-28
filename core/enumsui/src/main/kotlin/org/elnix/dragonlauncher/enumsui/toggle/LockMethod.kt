@@ -17,6 +17,9 @@ public enum class LockMethod(
     /** Require a user-defined PIN code */
     Pin(R.string.lock_pin),
 
+    /** A pattern unlock size is configurable **/
+    Pattern(R.string.pattern),
+
     /** Use native Android device unlock (biometric + device credentials fallback) */
     Device(R.string.lock_device_unlock)
 }

@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.dragon.logging)
     implementation(libs.settings.core)
     implementation(libs.settings.runtime)
+    implementation(libs.compose.lock)
 
     api(libs.androidx.activity.compose)
     api(libs.androidx.activity)
