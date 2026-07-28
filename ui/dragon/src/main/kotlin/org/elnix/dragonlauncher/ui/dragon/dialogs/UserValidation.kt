@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.ui.dragon.dialogs
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,7 +47,7 @@ fun UserValidation(
     message: String?,
     validateText: String = stringResource(R.string.ok),
     cancelText: String = stringResource(R.string.cancel),
-    doNotRemindMeAgain: (() -> Unit)? = null,
+    doNotRemindMeAgain: ((Boolean) -> Unit)? = null,
     titleIcon: Int = R.drawable.warning,
     titleColor: Color = MaterialTheme.colorScheme.onErrorContainer,
     titleBgColor: Color = MaterialTheme.colorScheme.errorContainer,
@@ -116,17 +115,14 @@ fun UserValidation(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier
-                                .clip(MaterialTheme.shapes.large)
-                                .clickable {
-                                    doNotRemindMeAgainChecked = !doNotRemindMeAgainChecked
-                                }
+                            modifier = Modifier.clip(MaterialTheme.shapes.large)
                         ) {
                             if (doNotRemindMeAgain != null) {
                                 Checkbox(
                                     checked = doNotRemindMeAgainChecked,
                                     onCheckedChange = {
                                         doNotRemindMeAgainChecked = !doNotRemindMeAgainChecked
+                                        doNotRemindMeAgain(doNotRemindMeAgainChecked)
                                     },
                                     colors = AppObjectsColors.checkboxColors()
                                 )
@@ -138,9 +134,8 @@ fun UserValidation(
                                 )
                             }
 
-                            Spacer(Modifier.weight(1f))
-
                             if (copy) {
+                                Spacer(Modifier.weight(1f))
                                 DragonIconButton(
                                     icon = R.drawable.copy,
                                     contentDescription = "Copy",
