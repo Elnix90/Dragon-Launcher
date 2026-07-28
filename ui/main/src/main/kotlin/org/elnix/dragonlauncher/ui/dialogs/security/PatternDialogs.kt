@@ -57,6 +57,7 @@ import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.animation.slideInVerticalBouncyUp
 import org.elnix.dragonlauncher.ui.base.animation.slideOutVerticalBouncyUp
+import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.modifiers.selfAlignHorizontally
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
@@ -383,7 +384,6 @@ private fun PatternPrompt(
                 animationDelay = 100,
                 callback = object : ComposeLockCallback {
                     override fun onDotConnected(dot: Dot) {
-//                        logWtf { "dot.id.toString(): ${dot.id}, type = ${dot.id.toString()::class.simpleName}\npatternValue: $patternValue, type = ${patternValue::class.simpleName}" }
                         onAddPoint(dot.id.toString())
                     }
 
@@ -394,8 +394,15 @@ private fun PatternPrompt(
                     override fun onStart(dot: Dot) {
                         onAddPoint(dot.id.toString())
                     }
-                },
-                modifier = Modifier.fillMaxSize()
+                }
+            )
+
+
+            AnimatedFab(
+                icon = R.drawable.close,
+                minSize = 100.dp,
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+                onClick = onDismiss
             )
         }
     }
