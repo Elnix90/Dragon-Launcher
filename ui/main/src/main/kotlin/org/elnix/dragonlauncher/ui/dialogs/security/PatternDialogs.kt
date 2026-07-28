@@ -85,13 +85,13 @@ fun PatternUnlock(
     PatternPrompt(
         title = stringResource(R.string.unlock_settings),
         subtitle = stringResource(R.string.draw_pattern),
-        pinValue = pattern,
+        patternValue = pattern,
         errorMessage = errorMessage,
         showSizeSlider = false,
         failedTries = failedTries,
-        onPinChanged = { newValue ->
+        onAddPoint = { newDotId ->
             errorMessage = null
-            pattern = newValue
+            pattern += newDotId
         },
         onDismiss = {
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
@@ -123,6 +123,7 @@ fun PatternSetup(
     val haptic = LocalHapticFeedback.current
 
     val patternSize by PrivateSettingsStore.patternSize.asState()
+    val doNotRemindMeWarningDialog by UiSettingsStore.doNotRemindMeAgainPinLockWarning.asState()
 
 
     var firstPattern by remember { mutableStateOf("") }
@@ -130,7 +131,6 @@ fun PatternSetup(
     var isConfirmStep by remember { mutableStateOf(false) }
 
     var showWarningDialog by remember { mutableStateOf(false) }
-    val doNotRemindMeWarningDialog by UiSettingsStore.doNotRemindMeAgainPinLockWarning.asState()
 
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var failedTries by remember { mutableIntStateOf(0) }
@@ -148,16 +148,16 @@ fun PatternSetup(
     PatternPrompt(
         title = stringResource(R.string.set_pattern),
         subtitle = if (isConfirmStep) stringResource(R.string.confirm_pattern) else stringResource(R.string.draw_pattern),
-        pinValue = currentPin,
+        patternValue = currentPin,
         errorMessage = errorMessage,
         failedTries = failedTries,
         showSizeSlider = true,
-        onPinChanged = { newValue ->
+        onAddPoint = { newDotId ->
             errorMessage = null
             if (isConfirmStep) {
-                confirmPattern = newValue
+                confirmPattern += newDotId
             } else {
-                firstPattern = newValue
+                firstPattern += newDotId
             }
         },
         onDismiss = {
@@ -218,16 +218,16 @@ fun PatternSetup(
 }
 
 @OptIn(ExperimentalLayoutApi::class)
-@SuppressLint("UseOfNonLambdaOffsetOverload")
+@SuppressLint("UseOfNonLambdaOffsetOverload", "MissingPermission")
 @Composable
 private fun PatternPrompt(
     title: String,
     subtitle: String,
-    pinValue: String,
+    patternValue: String,
     showSizeSlider: Boolean,
     errorMessage: String? = null,
     failedTries: Int,
-    onPinChanged: (String) -> Unit,
+    onAddPoint: (String) -> Unit,
     onDismiss: () -> Unit,
     onDrawEnd: () -> Unit
 ) {
@@ -346,6 +346,8 @@ private fun PatternPrompt(
                 )
                 DialogDescription(subtitle)
 
+                DialogDescription("Current pattern: $patternValue")
+
                 if (showSizeSlider) DragonSettingsGroup { Setting(PrivateSettingsStore.patternSize) }
 
                 Column(
@@ -381,7 +383,8 @@ private fun PatternPrompt(
                 animationDelay = 100,
                 callback = object : ComposeLockCallback {
                     override fun onDotConnected(dot: Dot) {
-                        onPinChanged(pinValue + dot.id.toString())
+//                        logWtf { "dot.id.toString(): ${dot.id}, type = ${dot.id.toString()::class.simpleName}\npatternValue: $patternValue, type = ${patternValue::class.simpleName}" }
+                        onAddPoint(dot.id.toString())
                     }
 
                     override fun onResult(result: List<Dot>) {
@@ -389,7 +392,7 @@ private fun PatternPrompt(
                     }
 
                     override fun onStart(dot: Dot) {
-                        onPinChanged(dot.id.toString())
+                        onAddPoint(dot.id.toString())
                     }
                 },
                 modifier = Modifier.fillMaxSize()
