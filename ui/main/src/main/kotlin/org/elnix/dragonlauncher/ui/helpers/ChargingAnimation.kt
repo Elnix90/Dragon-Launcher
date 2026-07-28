@@ -135,39 +135,39 @@ fun ChargingAnimation(
     }
 }
 
-typealias Bubble = FloatArray
+private typealias Bubble = FloatArray
 
-inline var Bubble.posX: Float
+private inline var Bubble.posX: Float
     get() = this[0]
     set(value) {
         this[0] = value
     }
 
-inline var Bubble.posY: Float
+private inline var Bubble.posY: Float
     get() = this[1]
     set(value) {
         this[1] = value
     }
 
-inline var Bubble.deltaX: Float
+private inline var Bubble.deltaX: Float
     get() = this[2]
     set(value) {
         this[2] = value
     }
 
-inline var Bubble.deltaY: Float
+private inline var Bubble.deltaY: Float
     get() = this[3]
     set(value) {
         this[3] = value
     }
 
-inline var Bubble.radius: Float
+private inline var Bubble.radius: Float
     get() = this[4]
     set(value) {
         this[4] = value
     }
 
-inline var Bubble.lifetime: Float
+private inline var Bubble.lifetime: Float
     get() = this[5]
     set(value) {
         this[5] = value
