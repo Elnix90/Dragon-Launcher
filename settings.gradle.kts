@@ -60,6 +60,7 @@ include(":core:services:fonts")
 include(":core:services:security")
 include(":core:services:timer")
 include(":core:services:appshortcuts")
+include(":core:services:migration")
 
 include(":data:notifications")
 include(":data:database")
