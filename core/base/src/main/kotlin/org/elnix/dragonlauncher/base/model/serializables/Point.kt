@@ -315,10 +315,10 @@ public data class Point(
 
     public inline fun getBackgroundColor(selected: Boolean, defaultPoint: Point, extraColors: ExtraColors, defaultEditing: Boolean = false): Color =
         if (selected) {
-            this.backgroundColorSelected ?: defaultPoint.backgroundColorSelected.takeIfNot(defaultEditing)
+            this.backgroundColorSelected ?: defaultPoint.backgroundColorSelected.takeIfNot(defaultEditing) ?: defaultBackgroundColorSelected
         } else {
-            this.backgroundColor ?: defaultPoint.backgroundColor.takeIfNot(defaultEditing)
-        } ?: extraColors.shapes
+            this.backgroundColor ?: defaultPoint.backgroundColor.takeIfNot(defaultEditing) ?: defaultBackgroundColor
+        }
 
     public inline fun getBorderShape(selected: Boolean, defaultPoint: Point, defaultEditing: Boolean = false): IconShape =
         if (selected) {
@@ -379,44 +379,6 @@ public data class Point(
 
     override fun toString(): String = "Point(id = ${this.id}, offset = ${this.offset}, shapeId = ${this.shapeId})"
 
-//    override fun toString(): String =
-//        "Point(\n" +
-//                "  offset = ${offset}\n" +
-//                "  action = ${action}\n" +
-//                "  id = $id\n" +
-//                "  nestId = $nestId\n" +
-//                "  collidingShapeId = $collidingShapeId\n" +
-//                "  customIcon = ${customIcon}\n" +
-//                "  glow = ${glow}\n" +
-//                "  glowSelected = ${glowSelected}\n" +
-//                "  borderStroke = ${borderStroke}\n" +
-//                "  borderStrokeSelected = ${borderStrokeSelected}\n" +
-//                "  borderColor = ${borderColor}\n" +
-//                "  backgroundColor = ${backgroundColor}\n" +
-//                "  borderColorSelected = ${borderColorSelected}\n" +
-//                "  backgroundColorSelected = ${backgroundColorSelected}\n" +
-//                "  opacity = ${opacity}\n" +
-//                "  haptic = ${haptic}\n" +
-//                "  customName = ${customName}\n" +
-//                "  innerPadding = ${innerPadding}\n" +
-//                "  customActionColor = ${customActionColor}\n" +
-//                "  size = ${size}\n" +
-//                "  borderShape = ${borderShape}\n" +
-//                "  borderShapeSelected = ${borderShapeSelected}\n" +
-//                "  liveNestTargetNestId = ${liveNestTargetNestId}\n" +
-//                "  liveNestPreviewDelayMs = ${liveNestPreviewDelayMs}\n" +
-//                "  liveNestScale = ${liveNestScale}\n" +
-//                "  liveNestGraceDistancePx = ${liveNestGraceDistancePx}\n" +
-//                "  liveNestMainNestOpacityPercent = ${liveNestMainNestOpacityPercent}\n" +
-//                "  liveNestSnapsToFingerPosition = ${liveNestSnapsToFingerPosition}\n" +
-//                "  cycleActions = ${cycleActions}\n" +
-//                "  cycleActionStageDefaultDelay = ${cycleActionStageDefaultDelay}\n" +
-//                "  cycleActionsLoopDelayMs = ${cycleActionsLoopDelayMs}\n" +
-//                "  holdAndRunDelayMs = ${holdAndRunDelayMs}\n" +
-//                "  holdAndRunAction = ${holdAndRunAction}\n" +
-//                ")"
-
-
     public companion object {
         public fun dummySwipePoint(
             action: Action? = null,
@@ -435,6 +397,8 @@ public data class Point(
         public const val defaultOpacity: Float = 1f
         public val defaultInnerPadding: Dp = 5.dp
         public val defaultSize: Dp = 22.dp
+        public val defaultBackgroundColor: Color = Color.Transparent
+        public val defaultBackgroundColorSelected: Color = Color.Transparent
         public val defaultBorderShape: IconShape = IconShape.Circle
         public val defaultBorderShapeSelected: IconShape = IconShape.Circle
         public const val defaultLiveNestPreviewDelayMs: Int = 500
@@ -447,7 +411,7 @@ public data class Point(
         public const val defaultCycleActionsLoop: Boolean = true
         public const val defaultFastActivation: Boolean = false
         public const val defaultLiveNestMainNestOpacityPercent: Int = 50
-        public val defaultGlow: CustomGlow = CustomGlow(radius = defaultSize * 1.05f)
+        public val defaultGlow: CustomGlow = CustomGlow(radius = defaultSize)
         public val defaultGlowSelected: CustomGlow = CustomGlow(radius = defaultSize * 1.1f)
 
         public val emptyPoint: Point = dummySwipePoint()

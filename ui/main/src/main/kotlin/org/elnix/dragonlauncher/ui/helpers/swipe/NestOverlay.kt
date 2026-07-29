@@ -88,12 +88,15 @@ fun DrawScope.NestOverlay(
     val selectedShapes = drawParams.pointsService.getSelectedShapeIds(nest.id)
 
     if (!drawParams.hideShapes) {
-        repeat(if (depth == 1) 1 else 2) { pass ->
+        repeat(2) { pass ->
             interSectionShapes.forEach { shape ->
+                if (pass == 0 && depth == 1) return@forEach
+
                 val showShape = depth > 1 ||
                         isSettingDisplay ||
                         (nest.getShowAllShapes(defaultNest, drawParams.showAllShapesInNest) && selectedPointsIds.isNotEmpty()) ||
                         (nest.getShowCurrentShape(defaultNest, drawParams.showShape) && shape.id in selectedShapes)
+
 
                 if (showShape) {
                     val path = NestIntersectionShapesPathCache[shape] ?: return@forEach
@@ -104,7 +107,7 @@ fun DrawScope.NestOverlay(
                         defaultShape = defaultShape,
                         center = center,
                         extraColors = drawParams.extraColors,
-                        erase = pass == 0 && depth > 1,
+                        erase = pass == 0,
                         eraseColor = drawParams.eraseColor
                     )
                 }

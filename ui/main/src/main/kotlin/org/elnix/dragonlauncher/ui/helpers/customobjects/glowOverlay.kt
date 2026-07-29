@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isSpecified
@@ -41,18 +42,16 @@ fun DrawScope.glowOverlay(
     center: Offset,
     glow: CustomGlow
 ) {
-    toPxOrNull(glow.radius)?.let { radius ->
-        drawIntoCanvas { canvas ->
+    val glowRadius = glow.radius?.toPxOrNull(this) ?: return
 
-            val frameworkPaint = customGlowPaint(glow.color ?: Color.White, radius)
-
-            canvas.nativeCanvas.drawCircle(
-                center.x,
-                center.y,
-                radius,
-                frameworkPaint
-            )
-        }
+    drawIntoCanvas { canvas ->
+        val frameworkPaint = customGlowPaint(glow.color ?: Color.White, glowRadius)
+        canvas.nativeCanvas.drawCircle(
+            center.x,
+            center.y,
+            glowRadius,
+            frameworkPaint
+        )
     }
 }
 
@@ -80,11 +79,12 @@ fun DrawScope.drawNeonGlowLine(
     erase: Boolean,
     eraseColor: Color?
 ) {
-    when(drawOrder) {
+    when (drawOrder) {
         First -> {
             glowLine(glow, color, start, end)
             line(lineStrokeWidth, erase, eraseColor, start, end, color)
         }
+
         AfterErase, Last -> {
             line(lineStrokeWidth, erase, eraseColor, start, end, color)
             glowLine(glow, color, start, end)
@@ -100,27 +100,25 @@ private fun DrawScope.line(
     end: Offset,
     color: Color
 ) {
-    if (lineStrokeWidth >= 0f) {
-        val width = lineStrokeWidth.dp.toPx()
-        if (erase) {
-            drawLine(
-                color = eraseColor ?: Color.Transparent,
-                start = start,
-                end = end,
-                strokeWidth = width,
-                cap = StrokeCap.Round,
-                blendMode = BlendMode.Dst
-            )
-        }
-
+    val width = lineStrokeWidth.dp.toPxOrNull(this) ?: return
+    if (erase) {
         drawLine(
-            color = color,
+            color = eraseColor ?: Color.Transparent,
             start = start,
             end = end,
             strokeWidth = width,
-            cap = StrokeCap.Round
+            cap = StrokeCap.Round,
+            blendMode = BlendMode.Dst
         )
     }
+
+    drawLine(
+        color = color,
+        start = start,
+        end = end,
+        strokeWidth = width,
+        cap = StrokeCap.Round
+    )
 }
 
 private inline fun DrawScope.glowLine(
@@ -129,18 +127,20 @@ private inline fun DrawScope.glowLine(
     start: Offset,
     end: Offset
 ) {
-    toPxOrNull(glow?.radius)?.let { radius ->
-        drawIntoCanvas { canvas ->
-            val frameworkPaint = customGlowPaint(glow.color ?: color, radius)
+    if (glow == null) return
+    val glowRadius = glow.radius?.toPxOrNull(this) ?: return
+    val glowColor = glow.color ?: color
 
-            canvas.nativeCanvas.drawLine(
-                start.x,
-                start.y,
-                end.x,
-                end.y,
-                frameworkPaint
-            )
-        }
+    drawIntoCanvas { canvas ->
+        val frameworkPaint = customGlowPaint(glowColor, glowRadius)
+
+        canvas.nativeCanvas.drawLine(
+            start.x,
+            start.y,
+            end.x,
+            end.y,
+            frameworkPaint
+        )
     }
 }
 
@@ -153,22 +153,27 @@ fun DrawScope.drawPathGlow(
     erase: Boolean,
     eraseColor: Color?
 ) {
-
     when (drawOrder) {
         First -> {
             glow(glow, path, color)
-            erasePath(path, erase, eraseColor)
+            if (erase) {
+                erasePath(path, lineStrokeWidth, eraseColor)
+            }
             path(lineStrokeWidth, path, color)
         }
 
         AfterErase -> {
-            erasePath(path, erase, eraseColor)
+            if (erase) {
+                erasePath(path, lineStrokeWidth, eraseColor)
+            }
             glow(glow, path, color)
             path(lineStrokeWidth, path, color)
         }
 
         Last -> {
-            erasePath(path, erase, eraseColor)
+            if (erase) {
+                erasePath(path, lineStrokeWidth, eraseColor)
+            }
             path(lineStrokeWidth, path, color)
             glow(glow, path, color)
         }
@@ -181,13 +186,14 @@ private inline fun DrawScope.glow(
     path: Path,
     color: Color
 ) {
+    if (glow == null) return
+    val glowRadius = glow.radius.toPxOrNull(this) ?: return
+    val glowColor = glow.color ?: color
     val nativePath = path.asAndroidPath()
 
-    toPxOrNull(glow?.radius)?.let { radius ->
-        drawIntoCanvas { canvas ->
-            val frameworkPaint = customGlowPaint(glow.color ?: color, radius)
-            canvas.nativeCanvas.drawPath(nativePath, frameworkPaint)
-        }
+    drawIntoCanvas { canvas ->
+        val frameworkPaint = customGlowPaint(glowColor, glowRadius)
+        canvas.nativeCanvas.drawPath(nativePath, frameworkPaint)
     }
 }
 
@@ -206,19 +212,28 @@ private inline fun DrawScope.path(lineStrokeWidth: Dp, path: Path, color: Color)
     )
 }
 
-private inline fun DrawScope.erasePath(
+inline fun DrawScope.erasePath(
     path: Path,
-    erase: Boolean,
+    lineStrokeWidth: Dp,
     eraseColor: Color?
 ) {
-    if (erase) {
-        drawPath(
-            path = path,
-            color = eraseColor ?: Color.Transparent,
-            style = Fill,
-            blendMode = BlendMode.Src
-        )
-    }
+    val color = eraseColor ?: Color.Transparent
+    drawPath(
+        path = path,
+        color = color,
+        style = Fill,
+        blendMode = BlendMode.Src
+    )
+
+    val style = if (lineStrokeWidth.value > 0f) {
+        Stroke(lineStrokeWidth.toPx(), cap = StrokeCap.Round)
+    } else return
+    drawPath(
+        path = path,
+        color = color,
+        style = style,
+        blendMode = BlendMode.Src
+    )
 }
 
 
@@ -240,15 +255,17 @@ private inline fun customGlowPaint(
 }
 
 /**
- * Converts the given [value] to pixels only if it is higher than 0 or returns `null`
- * @param value the [Float] you want to convert to pixels
+ * Converts the [Dp] to pixels only if it is higher than 0 or returns `null`
+ * @param density the [Density] to pass from the drawscope
  * @return the [value] in pixels of `null`
  */
 @OptIn(ExperimentalContracts::class)
-fun DrawScope.toPxOrNull(value: Dp?): Float? {
+fun Dp?.toPxOrNull(density: Density): Float? {
     contract {
-        returnsNotNull() implies (value != null)
+        returnsNotNull() implies (this@toPxOrNull != null)
     }
-
-    return value?.takeIf { it.isSpecified && it.value > 0f }?.toPx()
+    if (this == null) return null
+    return with(density) {
+        this@toPxOrNull.takeIf { it.isSpecified && it.value > 0f }?.toPx()
+    }
 }

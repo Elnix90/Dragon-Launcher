@@ -2,6 +2,7 @@ package org.elnix.dragonlauncher.ui.helpers.swipe
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.clipPath
@@ -15,6 +16,7 @@ import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ktx.toPath
+import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowDrawOrder
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
 
 
@@ -85,14 +87,17 @@ fun DrawScope.PointBg(
             path = path,
             color = borderColor,
             lineStrokeWidth = borderStroke,
+            drawOrder = GlowDrawOrder.First,
             glow = glow,
             erase = true,
             eraseColor = drawParams.eraseColor
         )
+
         drawPath(
             path = path,
             color = backgroundColor,
-            style = Fill
+            style = Fill,
+            blendMode = BlendMode.Src
         )
     }
 

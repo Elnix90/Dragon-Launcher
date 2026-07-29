@@ -30,7 +30,7 @@ public data class ExtraColors(
 public val DefaultExtraColors: ExtraColors = ExtraColors(
     holdToActivate = Color(0xFF59007A),
     angleLine = Color(0xFFFF0000),
-    shapes = Color(0x92FFFFFF),
+    shapes = Color.White,
     launchApp = Color(0xFF55AAFF),
     openUrl = Color(0xFF66DD77),
     notificationShade = Color(0xFFFFBB44),

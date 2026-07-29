@@ -25,6 +25,7 @@ import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowDrawOrder
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
+import org.elnix.dragonlauncher.ui.helpers.customobjects.erasePath
 
 @Suppress("FunctionName")
 fun DrawScope.IntersectionShape(
@@ -37,12 +38,9 @@ fun DrawScope.IntersectionShape(
     eraseColor: Color?
 ) {
 
-    val size = shape.getSize(this.density, defaultShape)
-    val color = shape.getColor(defaultShape, extraColors)
-    val strokeWith = shape.getBorderStroke(defaultShape)
-    val rotation = shape.getRotation(defaultShape)
     val position = center + shape.getOffset(defaultShape)
-    val glow = shape.getGlow(defaultShape)
+    val rotation = shape.getRotation(defaultShape)
+    val size = shape.getSize(this.density, defaultShape)
 
     withTransform(
         {
@@ -60,15 +58,19 @@ fun DrawScope.IntersectionShape(
             )
         }
     ) {
-        drawPathGlow(
-            path = path,
-            color = color,
-            lineStrokeWidth = strokeWith,
-            glow = glow,
-            drawOrder = GlowDrawOrder.AfterErase,
-            erase = erase,
-            eraseColor = eraseColor
-        )
+        if (erase) {
+            erasePath(path, shape.getBorderStroke(defaultShape), eraseColor)
+        } else {
+            drawPathGlow(
+                path = path,
+                color = shape.getColor(defaultShape, extraColors),
+                lineStrokeWidth = shape.getBorderStroke(defaultShape),
+                glow = shape.getGlow(defaultShape),
+                drawOrder = GlowDrawOrder.First,
+                erase = false,
+                eraseColor = eraseColor
+            )
+        }
     }
 }
 
