@@ -103,11 +103,6 @@ fun HoldToActivateArc(
         }
     }
 
-//    LaunchedEffect(rotationsPerSecond) {
-//        logWtf { "rotationPerSecond: $rotationsPerSecond, animation: ${rotationAnimatable.value}" }
-//    }
-
-
     val pathMeasurer = remember { PathMeasure() }
     val destinationPath = remember { Path() }
     val matrix = remember { Matrix() }
