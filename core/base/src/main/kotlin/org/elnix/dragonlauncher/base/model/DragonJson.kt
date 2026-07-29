@@ -65,12 +65,12 @@ public abstract class DragonJson<T> {
      */
     public inline fun <reified T : Any> decode(string: Any?): T? {
         return runCatching {
-            val stringifiedString = string.toString()
+            val stringifiedString = string?.toString() ?: return null
             if (stringifiedString.isEmpty()) return null
 
             json.decodeFromString<T>(stringifiedString)
         }.onFailure { e ->
-            logE(JSON_TAG, e) { "Failed to decode JSON to ${T::class.simpleName}" }
+            logE(JSON_TAG, e) { "Failed to decode JSON:\n$string\n to ${T::class.simpleName}" }
         }.getOrNull()
     }
 
@@ -88,12 +88,12 @@ public abstract class DragonJson<T> {
      */
     public inline fun <reified T : Any> decode(string: Any?, fallback: T): T {
         return runCatching {
-            val stringifiedString = string.toString()
+            val stringifiedString = string?.toString() ?: return fallback
             if (stringifiedString.isEmpty()) return fallback
 
             json.decodeFromString<T>(stringifiedString)
         }.onFailure { e ->
-            logE(JSON_TAG, e) { "Failed to decode JSON to ${T::class.simpleName}, returning fallback" }
+            logE(JSON_TAG, e) { "Failed to decode JSON\n$string\n to ${T::class.simpleName}, returning fallback" }
         }.getOrElse { fallback }
     }
 }
