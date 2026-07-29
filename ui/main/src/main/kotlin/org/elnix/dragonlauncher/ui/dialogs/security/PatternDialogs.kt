@@ -347,8 +347,6 @@ private fun PatternPrompt(
                 )
                 DialogDescription(subtitle)
 
-                DialogDescription("Current pattern: $patternValue")
-
                 if (showSizeSlider) DragonSettingsGroup { Setting(PrivateSettingsStore.patternSize) }
 
                 Column(
