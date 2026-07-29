@@ -54,6 +54,7 @@ public class InitializationViewModel @Inject constructor(
 
         viewModelScope.launch {
             pointsService.set(points, nests, defaultPoint)
+            pointsService.persist()
             PrivateSettingsStore.hasInitialized.set(application, true)
         }
     }
