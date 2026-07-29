@@ -1,0 +1,554 @@
+{
+  "nests": [
+    {
+      "intersectionShapes": [
+        {
+          "id": 0,
+          "shape": {
+            "type": "Pentagon"
+          },
+          "scale": 1.2399075
+        },
+        {
+          "id": 2,
+          "scale": 2
+        },
+        {
+          "id": 1,
+          "scale": 1.5
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "cancelZone": 0,
+      "intersectionShapes": [
+        {
+          "id": 0
+        }
+      ]
+    }
+  ],
+  "points": [
+    {
+      "offset": "290.36,-290.36",
+      "action": {
+        "type": "OpenAppDrawer"
+      },
+      "id": 0,
+      "shapeId": 0
+    },
+    {
+      "offset": "7.48,-654.95",
+      "action": {
+        "type": "NotificationShade"
+      },
+      "id": 1,
+      "shapeId": 1
+    },
+    {
+      "offset": "0.0,426.25",
+      "action": {
+        "type": "ControlPanel"
+      },
+      "id": 2,
+      "shapeId": 0
+    },
+    {
+      "offset": "-163.15,-608.89",
+      "action": {
+        "type": "OpenCircleNest",
+        "nestId": 1
+      },
+      "id": 3,
+      "shapeId": 1,
+      "liveNestTargetNestId": 1,
+      "liveNestPreviewDelayMs": 5000,
+      "fastActivation": true
+    },
+    {
+      "offset": "-198.21,-343.31",
+      "action": {
+        "type": "LaunchApp",
+        "packageName": "com.aurora.store",
+        "profile": {
+          "type": "Personal",
+          "userHandle": 0,
+          "serial": 0
+        }
+      },
+      "id": 4,
+      "nestId": 1,
+      "shapeId": 0
+    },
+    {
+      "offset": "-419.41,0.0",
+      "action": {
+        "type": "LaunchApp",
+        "packageName": "com.sosauce.cutemusic",
+        "profile": {
+          "type": "Personal",
+          "userHandle": 0,
+          "serial": 0
+        }
+      },
+      "id": 5,
+      "nestId": 1,
+      "shapeId": 0
+    },
+    {
+      "offset": "-323.15,-186.57",
+      "action": {
+        "type": "LaunchApp",
+        "packageName": "com.sosauce.cutemusic.debug",
+        "profile": {
+          "type": "Personal",
+          "userHandle": 0,
+          "serial": 0
+        }
+      },
+      "id": 6,
+      "nestId": 1,
+      "shapeId": 0
+    },
+    {
+      "offset": "-363.32,209.76",
+      "action": {
+        "type": "LaunchApp",
+        "packageName": "com.mrsep.musicrecognizer",
+        "profile": {
+          "type": "Personal",
+          "userHandle": 0,
+          "serial": 0
+        }
+      },
+      "id": 7,
+      "nestId": 1,
+      "shapeId": 0
+    },
+    {
+      "offset": "0.0,-402.36",
+      "action": {
+        "type": "LaunchApp",
+        "packageName": "in.sunilpaulmathew.ashell",
+        "profile": {
+          "type": "Personal",
+          "userHandle": 0,
+          "serial": 0
+        }
+      },
+      "id": 8,
+      "nestId": 1,
+      "shapeId": 0
+    },
+    {
+      "offset": "-221.55,383.73",
+      "action": {
+        "type": "LaunchApp",
+        "packageName": "io.github.samolego.canta",
+        "profile": {
+          "type": "Personal",
+          "userHandle": 0,
+          "serial": 0
+        }
+      },
+      "id": 9,
+      "nestId": 1,
+      "shapeId": 0
+    },
+    {
+      "offset": "-550.41,-550.41",
+      "action": {
+        "type": "OpenCircleNest",
+        "nestId": 1
+      },
+      "id": 10,
+      "shapeId": 2,
+      "liveNestTargetNestId": 1,
+      "liveNestPreviewDelayMs": 5000,
+      "fastActivation": true
+    },
+    {
+      "offset": "0.0,397.32",
+      "action": {
+        "type": "LaunchApp",
+        "packageName": "in.sunilpaulmathew.ashell",
+        "profile": {
+          "type": "Personal",
+          "userHandle": 0,
+          "serial": 0
+        }
+      },
+      "id": 11,
+      "nestId": 1,
+      "shapeId": 0
+    },
+    {
+      "offset": "216.32,374.68",
+      "action": {
+        "type": "LaunchApp",
+        "packageName": "in.sunilpaulmathew.ashell",
+        "profile": {
+          "type": "Personal",
+          "userHandle": 0,
+          "serial": 0
+        }
+      },
+      "id": 12,
+      "nestId": 1,
+      "shapeId": 0
+    }
+  ],
+  "angle_line": {
+    "rgbLine": true,
+    "startAndAngleShareSameRandomAngle": false,
+    "showLineObjectPreview": false,
+    "showAngleLineObjectPreview": true,
+    "showStartObjectPreview": false,
+    "showEndObjectPreview": true,
+    "angleLineObjectsOrder": "Line,Angle,Start,End"
+  },
+  "backup": {
+    "autoBackupEnabled": false,
+    "autoBackupUri": "",
+    "backupStores": []
+  },
+  "behavior": {
+    "backAction": "{\n    \"type\": \"None\"\n}",
+    "doubleClickAction": "{\n    \"type\": \"OpenAppDrawer\"\n}",
+    "homeAction": "{\n    \"type\": \"OpenDragonLauncherSettings\"\n}",
+    "keepScreenOn": true,
+    "leftPadding": 60,
+    "rightPadding": 60,
+    "topPadding": 80,
+    "bottomPadding": 100,
+    "disableHapticFeedbackGlobally": false,
+    "superWarningMode": false,
+    "vibrateOnError": false,
+    "alarmSound": false,
+    "metalPipesSound": false,
+    "superWarningModeSound": 100,
+    "promptForShortcutsWhenAddingApp": false,
+    "offScreenTimeout": 10,
+    "createLiveNestByDefaultWhenCreatingOpenCircleNestPoint": true,
+    "openRootNestEachTime": false
+  },
+  "color_modes": {
+    "colorPickerMode": "Slider",
+    "defaultTheme": "Custom",
+    "colorPickerButtonOne": "Random",
+    "colorPickerButtonTwo": "Reset",
+    "dynamicColors": true,
+    "colorTestMode": false,
+    "useCustomColorChannels": true
+  },
+  "color": {
+    "primaryColor": "FF6650A4",
+    "onPrimaryColor": "FFCECECE",
+    "secondaryColor": "FF934EB2",
+    "onSecondaryColor": "FFCECECE",
+    "tertiaryColor": "FFCB84EC",
+    "onTertiaryColor": "FFCECECE",
+    "backgroundColor": "FF000000",
+    "onBackgroundColor": "FFCECECE",
+    "surfaceColor": "FF1A1328",
+    "onSurfaceColor": "FFCECECE",
+    "errorColor": "FFFF0000",
+    "onErrorColor": "FF000000",
+    "outlineColor": "FFCECECE",
+    "primaryContainerColor": "FF4E3A8F",
+    "onPrimaryContainerColor": "FFCECECE",
+    "inversePrimaryColor": "FF4E3A8F",
+    "secondaryContainerColor": "FF7A3A99",
+    "onSecondaryContainerColor": "FFCECECE",
+    "tertiaryContainerColor": "FFB070D9",
+    "onTertiaryContainerColor": "FFCECECE",
+    "surfaceVariantColor": "FF0F0A17",
+    "onSurfaceVariantColor": "FFCECECE",
+    "surfaceTintColor": "FF6650A4",
+    "inverseSurfaceColor": "FFE6E6E6",
+    "inverseOnSurfaceColor": "FFE6E6E6",
+    "errorContainerColor": "FFB81C1C",
+    "onErrorContainerColor": "FFCECECE",
+    "outlineVariantColor": "FF3A3350",
+    "scrimColor": "FF000000",
+    "surfaceBrightColor": "FF3A2F4A",
+    "surfaceContainerColor": "FF0F0A17",
+    "surfaceContainerHighColor": "FF1A1328",
+    "surfaceContainerHighestColor": "FF252035",
+    "surfaceContainerLowColor": "FF0F0A17",
+    "surfaceContainerLowestColor": "FF050000",
+    "surfaceDimColor": "FF0F0A17",
+    "primaryFixedColor": "FF8A70C4",
+    "primaryFixedDimColor": "FF6650A4",
+    "onPrimaryFixedColor": "FF000000",
+    "onPrimaryFixedVariantColor": "FF000000",
+    "secondaryFixedColor": "FFC89FD8",
+    "secondaryFixedDimColor": "FF934EB2",
+    "onSecondaryFixedColor": "FF000000",
+    "onSecondaryFixedVariantColor": "FFCECECE",
+    "tertiaryFixedColor": "FFE5B7F7",
+    "tertiaryFixedDimColor": "FFCB84EC",
+    "onTertiaryFixedColor": "FF000000",
+    "onTertiaryFixedVariantColor": "FFCECECE",
+    "angleLineColor": "FFFF0000",
+    "holdToActivateColor": "FF59007A",
+    "shapesColor": "FFFFFFFF",
+    "launchAppColor": "FF55AAFF",
+    "openUrlColor": "FF66DD77",
+    "notificationShadeColor": "FFFFBB44",
+    "controlPanelColor": "FFFF6688",
+    "openAppDrawerColor": "FFDD55FF",
+    "launcherSettingsColor": "FFFF0000",
+    "lockColor": "FF555555",
+    "openFileColor": "FF00FFF7",
+    "reloadColor": "FF886300",
+    "openRecentAppsColor": "FF880081",
+    "openCircleNestColor": "FF1BEE14",
+    "goParentNestColor": "FF1BEE14",
+    "toggleWifi": "FF0FFFFF",
+    "toggleBluetooth": "FF2196F3",
+    "toggleData": "FF806E00",
+    "runAdbCommand": "FF1BEE14"
+  },
+  "debug": {
+    "debugEnabled": true,
+    "mainScreenDebugInfos": false,
+    "nestDebugOverlay": true,
+    "cachesDebugOverlay": false,
+    "nestDebugInfo": false,
+    "settingsDebugInfo": false,
+    "widgetsDebugInfo": false,
+    "workspacesDebugInfo": false,
+    "forceAppLanguageSelector": true,
+    "autoRaiseDragonOnSystemLauncher": false,
+    "systemLauncherPackageName": "",
+    "useAccessibilityInsteadOfContextToExpandActionPanel": true,
+    "enableLogging": true,
+    "disableExtensionSignatureCheck": false,
+    "snackBarLogLevel": 8,
+    "filesLogLevel": 3,
+    "filterTag": "",
+    "showFps": true,
+    "showKillLauncherActionInActionPicker": false
+  },
+  "drawer": {
+    "autoOpenSingleMatch": true,
+    "disableAutoLaunchOnSpaceFirstChar": true,
+    "showAppIconsInDrawer": true,
+    "showAppLabelsInDrawer": false,
+    "autoShowKeyboardOnDrawer": true,
+    "tapEmptySpaceAction": "Close",
+    "gridSize": 5,
+    "horizontalAlignment": "Start",
+    "lastWorkspaceUsed": "user",
+    "leftDrawerAction": "CloseKb",
+    "rightDrawerAction": "Disabled",
+    "leftDrawerWidth": 0,
+    "rightDrawerWidth": 0,
+    "drawerEnterAction": "Clear",
+    "drawerHomeAction": "Close",
+    "scrollDownDrawerAction": "Close",
+    "scrollUpDrawerAction": "CloseKb",
+    "backDrawerAction": "Close",
+    "iconShape": "{\n    \"type\": \"PlatformDefault\"\n}",
+    "iconsSpacingHorizontal": 8,
+    "iconsSpacingVertical": 8,
+    "maxIconSize": 96,
+    "useCategory": false,
+    "categoryGridCells": 3,
+    "showCategoryName": true,
+    "showSearchBar": true,
+    "showRecentlyUsedApps": false,
+    "recentlyUsedAppsCount": 5,
+    "recentlyUsedPackages": "com.sosauce.cutemusic,org.elnix.notes,com.tharunbirla.librecuts,com.sosauce.cutemusic.debug,com.discord,com.mrsep.musicrecognizer",
+    "pullDownAnimations": true,
+    "pullDownWallPaperDim": true,
+    "pullDownScaleIn": true,
+    "toolbarsOrder": "Spacer,RecentlyUsed,SearchBar"
+  },
+  "hold_to_activate_arc": {
+    "holdDelayBeforeStartingLongClickSettings": 215,
+    "longCLickSettingsDuration": 0,
+    "holdToActivateSettingsTolerance": 10,
+    "showToleranceOnMainScreen": true,
+    "rotationsPerSecond": 1.312336,
+    "holdMenuEntriesJson": "[]",
+    "holdRgbLoading": true
+  },
+  "icons": {
+    "selectedIconPack": "",
+    "useIconTint": false,
+    "iconsTint": "00000000",
+    "themedIcons": false,
+    "forceThemed": false,
+    "adaptify": false
+  },
+  "language": {
+    "keyLang": ""
+  },
+  "private": {
+    "hasSeenWelcome": true,
+    "hasInitialized": true,
+    "showSetDefaultLauncherBanner": false,
+    "hideBetaVersionWarning": true,
+    "lastSeenVersionCodeWhatsNew": 57,
+    "lastSeenVersionCodeGoogleLockdownWarning": 57,
+    "lockHash": "",
+    "patternSize": 4,
+    "lockMethod": "None",
+    "welcomeScreenTempPage": 0,
+    "lastCrashStackTrace": "",
+    "isInDragAroundMode": true
+  },
+  "status_bar": {
+    "barBackgroundColor": "00000000",
+    "barTextColor": "FFFFFFFF",
+    "leftPadding": 5,
+    "rightPadding": 5,
+    "topPadding": 2,
+    "bottomPadding": 2
+  },
+  "ui": {
+    "showLaunchingAppLabel": true,
+    "showPreviewPoint": true,
+    "appLabelIconOverlayTopPadding": 50,
+    "appLabelOverlaySize": 18,
+    "appIconOverlaySize": 22,
+    "fullScreen": true,
+    "autoSeparatePoints": true,
+    "snapPoints": false,
+    "snapPointsToShapes": true,
+    "snapPointsAngle": true,
+    "allowFreePoints": false,
+    "snapShapesOffset": true,
+    "snapShapesCenter": false,
+    "snapShapesScale": false,
+    "snapShapeAngle": false,
+    "autoMerge": true,
+    "showPointPreviewCenterStartPosition": true,
+    "linePreviewSnapToAction": false,
+    "animationWhenSnapping": false,
+    "showAppLaunchingPreview": true,
+    "showAllPointsInCurrentShape": true,
+    "showAllPointsInCurrentNest": true,
+    "showCurrentShape": true,
+    "showAllShapesInNest": true,
+    "wallpaperDimMainScreen": 0,
+    "wallpaperDimDrawerScreen": 0,
+    "globalFont": "Default",
+    "maxNestsDepth": 2,
+    "maxLiveNestsDepth": 5,
+    "showGridWhenSnappingIsOn": true,
+    "nestsCellSizeDp": 30,
+    "pointsCellSizeDp": 30,
+    "widgetsCellSizeDp": 30,
+    "showTooltipsOnAddPointDialog": true,
+    "userThemes": [],
+    "multiplyOrSubtractOpacityInLiveNests": true,
+    "doNotRemindMeAgainPinLockWarning": true,
+    "useAppEvenIfSignatureIsNotMatched": false
+  },
+  "wellbeing": {
+    "socialMediaPauseEnabled": false,
+    "guiltModeEnabled": false,
+    "showUsageStats": true,
+    "pauseDurationSeconds": 10,
+    "reminderEnabled": false,
+    "reminderIntervalMinutes": 5,
+    "reminderMode": "Overlay",
+    "popupShowSessionTime": true,
+    "popupShowTodayTime": true,
+    "popupShowRemainingTime": true,
+    "returnToLauncherEnabled": false,
+    "pausedApps": []
+  },
+  "angle_object_setting_store": {
+    "stroke": 2,
+    "glow": {
+      "radius": 20
+    },
+    "shape": {
+      "type": "Circle"
+    },
+    "size": 50,
+    "rotation": 0,
+    "mirror": true
+  },
+  "default_nest": {},
+  "default_point": {
+    "offset": "0.0,0.0",
+    "action": {
+      "type": "OpenDragonLauncherSettings"
+    },
+    "id": 0,
+    "glow": {
+      "radius": 23.099998
+    },
+    "glowSelected": {
+      "radius": 24.2
+    },
+    "borderStroke": 4,
+    "borderStrokeSelected": 8,
+    "borderShape": {
+      "type": "Circle"
+    },
+    "borderShapeSelected": {
+      "type": "Circle"
+    },
+    "opacity": 1,
+    "innerPadding": 5,
+    "size": 22,
+    "liveNestPreviewDelayMs": 500,
+    "liveNestScale": 0.65,
+    "liveNestGraceDistance": 50,
+    "liveNestSubNestOpacityPercent": 50,
+    "liveNestSnapsToFingerPosition": true,
+    "cycleActionsLoopDelayMs": 500,
+    "cycleActionsLoop": true,
+    "holdAndRunDelayMs": 500
+  },
+  "default_shape": {
+    "id": -1,
+    "shape": {
+      "type": "Circle"
+    },
+    "scale": 1,
+    "rotation": 0,
+    "offset": "0.0,0.0",
+    "haptic": [
+      {
+        "isVibration": true,
+        "durationMs": 20,
+        "id": -7074125218822496346
+      }
+    ],
+    "borderStroke": 2,
+    "glow": {
+      "radius": 5
+    }
+  },
+  "end_object_setting_store": {
+    "stroke": 2.753358,
+    "glow": {
+      "radius": 125
+    },
+    "shape": {
+      "type": "Circle"
+    },
+    "size": 73.4861,
+    "rotation": 0
+  },
+  "hold_to_activate_object": {
+    "stroke": -1,
+    "glow": {
+      "radius": 63.336475
+    },
+    "shape": {
+      "type": "Pebble"
+    },
+    "size": 141.1,
+    "rotation": 0
+  },
+  "app_version": "4.0.0-beta (Caterpillar)-debug (57)"
+}
