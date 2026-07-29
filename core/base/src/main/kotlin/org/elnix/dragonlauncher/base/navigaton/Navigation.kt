@@ -230,6 +230,12 @@ public sealed class NavigationRoute : NavKey {
         override val icon: Int = R.drawable.timer
     }
 
+    @Serializable
+    public data object LockScreen : NavigationRoute() {
+        override val resId: Int = R.string.lock
+        override val icon: Int = R.drawable.lock
+    }
+
     override fun hashCode(): Int = System.identityHashCode(this)
 
     public companion object {

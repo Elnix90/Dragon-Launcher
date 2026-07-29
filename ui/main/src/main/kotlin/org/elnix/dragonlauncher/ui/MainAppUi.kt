@@ -176,9 +176,6 @@ fun MainAppUi(
     val screenToUnlock by securityViewModel.screenToUnlock.asState()
     val lockMethod by PrivateSettingsStore.lockMethod.asState()
 
-    LaunchedEffect(screenToUnlock) {
-        logD(SECURITY_SERVICE) { "Screen to unlock: $screenToUnlock"}
-    }
     LaunchedEffect(currentRoute) {
         securityViewModel.onEnterNewRoute(currentRoute)
     }
@@ -196,7 +193,10 @@ fun MainAppUi(
                 return
             }
 
+            if (NavigationRoute.LockScreen in backStack) return
+
             if (screen in NavigationRoute.settingsRoutes && lockMethod != None) {
+                backStack.add(NavigationRoute.LockScreen)
                 securityViewModel.requestUnlock(screen)
             } else {
                 go(screen)
@@ -465,132 +465,138 @@ fun MainAppUi(
                         entry<NavigationRoute.WorkspaceDetail>(metadata = horizontalMetadata) { key -> WorkspaceDetailScreen(key.workspaceId) }
 
                         entry<NavigationRoute.TimerExceeded> { key -> TimeLimitExceededScreen(key.appName) }
-                    }
-                )
-
-
-                if (showFilePicker != null) {
-                    val currentPoint = showFilePicker!!
-
-                    FilePickerDialog(
-                        onDismiss = { showFilePicker = null },
-                        onFileSelected = { newAction ->
-                            val updatedPoint = currentPoint.copy(action = newAction)
-                            pointsService.editPoint(currentPoint.id) { updatedPoint }
-                            showFilePicker = null
-                            launchAction(updatedPoint)
-                        }
-                    )
-                }
-
-
-                if (showWidgetPicker != null) {
-                    val nestToBind = showWidgetPicker!!
-                    WidgetPickerDialog(
-                        onBindCustomWidget = { id, info ->
-                            onBindCustomWidget(id, info, nestToBind)
-                        }
-                    ) { showWidgetPicker = null }
-                }
-
-
-                if (showShizukuCommandPromter != null) {
-                    AdbCommandInputDialog(
-                        onDismiss = { showShizukuCommandPromter = null },
-                        showLeaveEmptyNotice = false
-                    ) {
-                        if (it.command.trim().isNotEmpty()) {
-                            runShisukuCommandNotEmpty(it)
-                        }
-                    }
-                }
-
-                if (showShizukuUnavailableDialog) {
-                    ShizukuUnavailableDialog(
-                        onDismiss = {
-                            shizukuViewModel.dismissUnavailableDialog()
-                        },
-                        onConfirm = {
-                            if (isShizukuInstalled) launchAction(Action.LaunchApp(SHIZUKU_PACKAGE_NAME, Profile.dummy()))
-                            else uriHandler.openUri(URL_SHIZUKU_SITE)
-                        }
-                    )
-                }
-
-                var pendingAppToLaunch by appLaunchViewModel.pendingAppLaunch.asMutableState()
-
-                if (pendingAppToLaunch != null) {
-                    val pendingApp = pendingAppToLaunch!!
-                    DigitalPauseScreen(
-                        application = pendingApp,
-                        onCancel = { pendingAppToLaunch = null }
-                    )
-                }
-
-                BottomBanners(currentRoute)
-                ShizukuOutputDialog()
-                WhatsNewBottomSheet()
-                BackupResultDialog()
-                GoogleLockingWarningDialog()
-                SignatureWarningDialog()
-
-
-                if (screenToUnlock != null) {
-                    when (lockMethod) {
-                        None -> {
-                            // This block shouldn't be called
-                            navigator.go(screenToUnlock!!)
-                            securityViewModel.unlock()
-                        }
-
-                        Pin -> {
-                            PinUnlock(
-                                onDismiss = {
-                                    securityViewModel.cancelUnlock()
-                                },
-                                onSuccess = {
-                                    logD(SECURITY_SERVICE) { "onSuccess() called!"}
+                        entry<NavigationRoute.LockScreen> {
+                            when (lockMethod) {
+                                None -> {
+                                    // This block shouldn't be called
+                                    backStack.remove(NavigationRoute.LockScreen)
                                     navigator.go(screenToUnlock!!)
                                     securityViewModel.unlock()
                                 }
-                            )
-                        }
 
-                        Pattern -> {
-                            PatternUnlock(
-                                onDismiss = {
-                                    securityViewModel.cancelUnlock()
-                                },
-                                onSuccess = {
-                                    navigator.go(screenToUnlock!!)
-                                    securityViewModel.unlock()
-                                }
-                            )
-                        }
-
-                        Device -> {
-                            LaunchedEffect(screenToUnlock) {
-                                val activity = ctx.findFragmentActivity()
-                                if (activity != null && securityViewModel.isDeviceUnlockAvailable()) {
-                                    securityViewModel.showDeviceUnlockPrompt(
-                                        activity = activity,
+                                Pin -> {
+                                    PinUnlock(
+                                        onDismiss = {
+                                            backStack.remove(NavigationRoute.LockScreen)
+                                            securityViewModel.cancelUnlock()
+                                        },
                                         onSuccess = {
-                                            securityViewModel.unlock()
+                                            logD(SECURITY_SERVICE) { "onSuccess() called!" }
+                                            backStack.remove(NavigationRoute.LockScreen)
                                             navigator.go(screenToUnlock!!)
-                                        },
-                                        onError = { msg ->
-                                            ctx.showToast(ctx.getString(R.string.authentication_error, msg))
-                                            securityViewModel.cancelUnlock()
-                                        },
-                                        onFailed = {
-                                            ctx.showToast(ctx.getString(R.string.authentication_failed))
-                                            securityViewModel.cancelUnlock()
+                                            securityViewModel.unlock()
                                         }
                                     )
+                                }
+
+                                Pattern -> {
+                                    PatternUnlock(
+                                        onDismiss = {
+                                            backStack.remove(NavigationRoute.LockScreen)
+                                            securityViewModel.cancelUnlock()
+                                        },
+                                        onSuccess = {
+                                            backStack.remove(NavigationRoute.LockScreen)
+                                            navigator.go(screenToUnlock!!)
+                                            securityViewModel.unlock()
+                                        }
+                                    )
+                                }
+
+                                Device -> {
+                                    LaunchedEffect(screenToUnlock) {
+                                        val activity = ctx.findFragmentActivity()
+                                        if (activity != null && securityViewModel.isDeviceUnlockAvailable()) {
+                                            securityViewModel.showDeviceUnlockPrompt(
+                                                activity = activity,
+                                                onSuccess = {
+                                                    navigator.go(screenToUnlock!!)
+                                                    securityViewModel.unlock()
+                                                },
+                                                onError = { msg ->
+                                                    ctx.showToast(ctx.getString(R.string.authentication_error, msg))
+                                                    backStack.remove(NavigationRoute.LockScreen)
+                                                    securityViewModel.cancelUnlock()
+                                                },
+                                                onFailed = {
+                                                    ctx.showToast(ctx.getString(R.string.authentication_failed))
+                                                    backStack.remove(NavigationRoute.LockScreen)
+                                                    securityViewModel.cancelUnlock()
+                                                }
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
+                )
+
+                if (screenToUnlock == null) {
+                    if (showFilePicker != null) {
+                        val currentPoint = showFilePicker!!
+
+                        FilePickerDialog(
+                            onDismiss = { showFilePicker = null },
+                            onFileSelected = { newAction ->
+                                val updatedPoint = currentPoint.copy(action = newAction)
+                                pointsService.editPoint(currentPoint.id) { updatedPoint }
+                                showFilePicker = null
+                                launchAction(updatedPoint)
+                            }
+                        )
+                    }
+
+
+                    if (showWidgetPicker != null) {
+                        val nestToBind = showWidgetPicker!!
+                        WidgetPickerDialog(
+                            onBindCustomWidget = { id, info ->
+                                onBindCustomWidget(id, info, nestToBind)
+                            }
+                        ) { showWidgetPicker = null }
+                    }
+
+
+                    if (showShizukuCommandPromter != null) {
+                        AdbCommandInputDialog(
+                            onDismiss = { showShizukuCommandPromter = null },
+                            showLeaveEmptyNotice = false
+                        ) {
+                            if (it.command.trim().isNotEmpty()) {
+                                runShisukuCommandNotEmpty(it)
+                            }
+                        }
+                    }
+
+                    if (showShizukuUnavailableDialog) {
+                        ShizukuUnavailableDialog(
+                            onDismiss = {
+                                shizukuViewModel.dismissUnavailableDialog()
+                            },
+                            onConfirm = {
+                                if (isShizukuInstalled) launchAction(Action.LaunchApp(SHIZUKU_PACKAGE_NAME, Profile.dummy()))
+                                else uriHandler.openUri(URL_SHIZUKU_SITE)
+                            }
+                        )
+                    }
+
+                    var pendingAppToLaunch by appLaunchViewModel.pendingAppLaunch.asMutableState()
+
+                    if (pendingAppToLaunch != null) {
+                        val pendingApp = pendingAppToLaunch!!
+                        DigitalPauseScreen(
+                            application = pendingApp,
+                            onCancel = { pendingAppToLaunch = null }
+                        )
+                    }
+
+                    BottomBanners(currentRoute)
+                    ShizukuOutputDialog()
+                    WhatsNewBottomSheet()
+                    BackupResultDialog()
+                    GoogleLockingWarningDialog()
+                    SignatureWarningDialog()
                 }
             }
         }
