@@ -53,7 +53,6 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
@@ -75,7 +74,7 @@ fun AppPickerDialog(
     // Auto Show keyboard logic
     val focusRequester = remember { FocusRequester() }
 
-    var searchQuery by remember { mutableStateOf("") }
+    var searchQuery by drawerViewModel.searchQuery
     var isSearchBarEnabled by remember { mutableStateOf(false) }
 
     LaunchedEffect(isSearchBarEnabled) {
@@ -111,6 +110,7 @@ fun AppPickerDialog(
                 isMultiSelectMode = false
                 selectedApps.clear()
             } else {
+                searchQuery = ""
                 onDismiss()
             }
         },
@@ -234,34 +234,27 @@ fun AppPickerDialog(
                     )
                 }
 
-                // Multi-select action bar
                 AnimatedVisibility(isMultiSelectMode && selectedApps.isNotEmpty() && onMultipleAppsSelected != null) {
                     if (onMultipleAppsSelected != null) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .settingsGroup(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            val allApps by drawerViewModel.allApps.collectAsState()
 
-                            DragonButton(
-                                onClick = {
-                                    val pickedApps = allApps.filter { it.packageName in selectedApps }
-                                    onMultipleAppsSelected(pickedApps)
-                                    onDismiss()
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.playlist_add),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(8.dp)
-                                Text(stringResource(R.string.add_all_manual))
-                            }
+                        val allApps by drawerViewModel.allApps.collectAsState()
+
+                        DragonButton(
+                            onClick = {
+                                val pickedApps = allApps.filter { it.packageName in selectedApps }
+                                onMultipleAppsSelected(pickedApps)
+                                searchQuery = ""
+                                onDismiss()
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.playlist_add),
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(8.dp)
+                            Text(stringResource(R.string.add_all_manual))
                         }
                     }
                 }
@@ -281,7 +274,7 @@ fun AppPickerDialog(
                     else -> Profile.Type.Personal
                 }
 
-                val workspaceProfile = profiles.find { it?.type == workspaceProfileType}
+                val workspaceProfile = profiles.find { it?.type == workspaceProfileType }
 
                 val workspaceLocked = when (workspaceProfileType) {
                     Profile.Type.Personal -> false

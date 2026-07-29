@@ -416,6 +416,7 @@ fun MainAppUi(
                                     drawerHomeHandler = handler
                                 },
                                 onLaunchAction = {
+                                    drawerViewModel.searchQuery.value = ""
                                     launchAction(it)
                                     navigator.onBack()
                                 }
