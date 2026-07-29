@@ -19,7 +19,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 
 @Composable
-fun WarningReminder(modifier: Modifier = Modifier) {
+fun GoogleWarningReminder(modifier: Modifier = Modifier) {
 
     Card(
         modifier = modifier,
@@ -38,7 +38,7 @@ fun WarningReminder(modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = WarningManager.getDaysLeft().toString(),
+                    text = GoogleWarningManager.getDaysLeft().toString(),
                     style = MaterialTheme.typography.displayLarge,
                     color = MaterialTheme.colorScheme.error
                 )

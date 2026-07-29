@@ -31,6 +31,7 @@ import io.github.elnix90.logging.SECURITY_SERVICE
 import io.github.elnix90.logging.TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
+import java.security.MessageDigest
 
 
 /**
@@ -310,4 +311,46 @@ public fun Context.vibrate(milliseconds: Long) {
     }
 
     vibrator.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
+}
+
+
+
+public fun Context.checkSignature(expectedHash: String): Boolean {
+    return try {
+        val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            this.packageManager.getPackageInfo(
+                this.packageName,
+                PackageManager.GET_SIGNING_CERTIFICATES
+            )
+        } else {
+            // Fallback for older versions (pre-API 28)
+            @Suppress("DEPRECATION")
+            this.packageManager.getPackageInfo(
+                this.packageName,
+                PackageManager.GET_SIGNATURES
+            )
+        }
+
+        val signatures = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            packageInfo.signingInfo?.signingCertificateHistory ?: return false
+        } else {
+            @Suppress("DEPRECATION")
+            packageInfo.signatures ?: return false
+        }
+
+        signatures.any { signature ->
+            val hash = hashSignature(signature.toByteArray())
+            hash.equals(expectedHash, ignoreCase = true)
+        }
+    } catch (e: Exception) {
+        logE(SECURITY_SERVICE, e) { "Failed to get signatures" }
+        false
+    }
+}
+
+
+private fun hashSignature(signatureBytes: ByteArray): String {
+    val digest = MessageDigest.getInstance("SHA-256")
+    val hashBytes = digest.digest(signatureBytes)
+    return hashBytes.joinToString("") { "%02x".format(it) }
 }

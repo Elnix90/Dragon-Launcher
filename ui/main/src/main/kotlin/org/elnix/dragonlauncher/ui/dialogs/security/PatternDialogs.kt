@@ -50,7 +50,7 @@ import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.vibrate
-import org.elnix.dragonlauncher.models.LockScreenViewModel
+import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
@@ -72,7 +72,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 fun PatternUnlock(
     onDismiss: () -> Unit,
     onSuccess: () -> Unit,
-    lockScreenViewModel: LockScreenViewModel = activityViewModel()
+    securityViewModel: SecurityViewModel = activityViewModel()
 ) {
     val haptic = LocalHapticFeedback.current
     val pinHash by PrivateSettingsStore.lockHash.asState()
@@ -99,7 +99,7 @@ fun PatternUnlock(
             onDismiss()
         }
     ) {
-        if (lockScreenViewModel.verify(pattern, pinHash)) {
+        if (securityViewModel.verify(pattern, pinHash)) {
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
             pattern = ""
             onSuccess()

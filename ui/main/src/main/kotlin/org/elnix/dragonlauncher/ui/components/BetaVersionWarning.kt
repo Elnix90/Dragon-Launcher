@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,8 +33,13 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 
 
-enum class BetaVersionType {
-    App, Feature
+sealed class BetaVersionType {
+    data object App : BetaVersionType()
+    data object Feature : BetaVersionType()
+    data class Custom(
+        @StringRes
+        val customText: Int
+    ) : BetaVersionType()
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -102,6 +108,7 @@ fun BetaVersionWarning(
                 when (betaVersionType) {
                     BetaVersionType.App -> R.string.this_is_a_beta_version
                     BetaVersionType.Feature -> R.string.this_feature_is_in_beta
+                    is BetaVersionType.Custom -> betaVersionType.customText
                 }
             )
 

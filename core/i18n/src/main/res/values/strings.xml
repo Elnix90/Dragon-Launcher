@@ -1120,4 +1120,6 @@
     <string name="allow_free_points_desc">Points are no longer required to snap to a shape, they can be moved around freely, and only snaps when close to a shape</string>
     <string name="snap_points_to_shapes_desc">Whether or not to enable the snapping to the shapes. Can only be disabled it free point if true</string>
     <string name="snap_points_to_shapes">Snap points to shapes</string>
+    <string name="signature_not_matched">SIGNATURE IS NOT MATCHED!!! The app is not signed with the official key of the the official developper. You data might be compromised!</string>
+    <string name="use_anyways">Use anyways</string>
 </resources>

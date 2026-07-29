@@ -12,6 +12,7 @@ import io.github.elnix90.logging.logD
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.Constants.Signatures.DRAGON_LAUNCHER_SIGNATURE_HASH
 import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
@@ -20,6 +21,7 @@ import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.None
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Pattern
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Pin
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.checkSignature
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.security.SecurityService
@@ -27,7 +29,7 @@ import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import javax.inject.Inject
 
 @HiltViewModel
-public class LockScreenViewModel @Inject constructor(
+public class SecurityViewModel @Inject constructor(
     application: Application,
     private val securityService: SecurityService,
 ) : AndroidViewModel(application) {
@@ -37,7 +39,11 @@ public class LockScreenViewModel @Inject constructor(
 
     private val lockMethod: Flow<LockMethod> = PrivateSettingsStore.lockMethod.flow(application)
 
+    public val signatureMatched: SettingFlow<Boolean> = SettingFlow(true)
+    public val useAnyways: SettingFlow<Boolean> = SettingFlow(false)
+
     init {
+        signatureMatched.value = application.checkSignature(DRAGON_LAUNCHER_SIGNATURE_HASH)
         viewModelInitialized()
     }
 

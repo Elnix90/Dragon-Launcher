@@ -67,8 +67,8 @@ import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel
 import org.elnix.dragonlauncher.models.DrawerViewModel
-import org.elnix.dragonlauncher.models.LockScreenViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
+import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.models.ShizukuViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
@@ -124,6 +124,7 @@ import org.elnix.dragonlauncher.ui.settings.extensions.ExtensionsTab
 import org.elnix.dragonlauncher.ui.settings.wellbeing.WellbeingTab
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceDetailScreen
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceListScreen
+import org.elnix.dragonlauncher.ui.warning.SignatureWarningDialog
 import org.elnix.dragonlauncher.ui.welcome.WelcomeScreen
 import org.elnix.dragonlauncher.ui.wellbeing.DigitalPauseScreen
 import org.elnix.dragonlauncher.ui.wellbeing.TimeLimitExceededScreen
@@ -137,7 +138,7 @@ import rikka.shizuku.Shizuku
 fun MainAppUi(
     appLifecycleViewModel: AppLifecycleViewModel = activityViewModel(),
     drawerViewModel: DrawerViewModel = activityViewModel(),
-    lockScreenViewModel: LockScreenViewModel = activityViewModel(),
+    securityViewModel: SecurityViewModel = activityViewModel(),
     appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
     shizukuViewModel: ShizukuViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel(),
@@ -171,15 +172,15 @@ fun MainAppUi(
         derivedStateOf { backStack.lastOrNull() ?: NavigationRoute.Main }
     }
 
-    val isLocked by lockScreenViewModel.isLocked.asState()
-    val screenToUnlock by lockScreenViewModel.screenToUnlock.asState()
+    val isLocked by securityViewModel.isLocked.asState()
+    val screenToUnlock by securityViewModel.screenToUnlock.asState()
     val lockMethod by PrivateSettingsStore.lockMethod.asState()
 
     LaunchedEffect(screenToUnlock) {
         logD(SECURITY_SERVICE) { "Screen to unlock: $screenToUnlock"}
     }
     LaunchedEffect(currentRoute) {
-        lockScreenViewModel.onEnterNewRoute(currentRoute)
+        securityViewModel.onEnterNewRoute(currentRoute)
     }
 
     val navigator: Navigator = object : Navigator {
@@ -196,7 +197,7 @@ fun MainAppUi(
             }
 
             if (screen in NavigationRoute.settingsRoutes && lockMethod != None) {
-                lockScreenViewModel.requestUnlock(screen)
+                securityViewModel.requestUnlock(screen)
             } else {
                 go(screen)
             }
@@ -531,6 +532,7 @@ fun MainAppUi(
                 WhatsNewBottomSheet()
                 BackupResultDialog()
                 GoogleLockingWarningDialog()
+                SignatureWarningDialog()
 
 
                 if (screenToUnlock != null) {
@@ -538,18 +540,18 @@ fun MainAppUi(
                         None -> {
                             // This block shouldn't be called
                             navigator.go(screenToUnlock!!)
-                            lockScreenViewModel.unlock()
+                            securityViewModel.unlock()
                         }
 
                         Pin -> {
                             PinUnlock(
                                 onDismiss = {
-                                    lockScreenViewModel.cancelUnlock()
+                                    securityViewModel.cancelUnlock()
                                 },
                                 onSuccess = {
                                     logD(SECURITY_SERVICE) { "onSuccess() called!"}
                                     navigator.go(screenToUnlock!!)
-                                    lockScreenViewModel.unlock()
+                                    securityViewModel.unlock()
                                 }
                             )
                         }
@@ -557,11 +559,11 @@ fun MainAppUi(
                         Pattern -> {
                             PatternUnlock(
                                 onDismiss = {
-                                    lockScreenViewModel.cancelUnlock()
+                                    securityViewModel.cancelUnlock()
                                 },
                                 onSuccess = {
                                     navigator.go(screenToUnlock!!)
-                                    lockScreenViewModel.unlock()
+                                    securityViewModel.unlock()
                                 }
                             )
                         }
@@ -569,20 +571,20 @@ fun MainAppUi(
                         Device -> {
                             LaunchedEffect(screenToUnlock) {
                                 val activity = ctx.findFragmentActivity()
-                                if (activity != null && lockScreenViewModel.isDeviceUnlockAvailable()) {
-                                    lockScreenViewModel.showDeviceUnlockPrompt(
+                                if (activity != null && securityViewModel.isDeviceUnlockAvailable()) {
+                                    securityViewModel.showDeviceUnlockPrompt(
                                         activity = activity,
                                         onSuccess = {
-                                            lockScreenViewModel.unlock()
+                                            securityViewModel.unlock()
                                             navigator.go(screenToUnlock!!)
                                         },
                                         onError = { msg ->
                                             ctx.showToast(ctx.getString(R.string.authentication_error, msg))
-                                            lockScreenViewModel.cancelUnlock()
+                                            securityViewModel.cancelUnlock()
                                         },
                                         onFailed = {
                                             ctx.showToast(ctx.getString(R.string.authentication_failed))
-                                            lockScreenViewModel.cancelUnlock()
+                                            securityViewModel.cancelUnlock()
                                         }
                                     )
                                 }

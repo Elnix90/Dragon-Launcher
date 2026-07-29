@@ -51,9 +51,11 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.PointsViewModel
+import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.components.BetaVersionType
 import org.elnix.dragonlauncher.ui.components.BetaVersionWarning
 import org.elnix.dragonlauncher.ui.components.LocalePickerSheet
@@ -63,13 +65,16 @@ import org.elnix.dragonlauncher.ui.helpers.settings.ContributorItem
 import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
-import org.elnix.dragonlauncher.ui.warning.WarningManager
-import org.elnix.dragonlauncher.ui.warning.WarningReminder
+import org.elnix.dragonlauncher.ui.warning.GoogleWarningManager
+import org.elnix.dragonlauncher.ui.warning.GoogleWarningReminder
 
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
-fun SettingsScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
+fun SettingsScreen(
+    securityViewModel: SecurityViewModel = activityViewModel(),
+    pointsViewModel: PointsViewModel = activityViewModel()
+) {
     val ctx = LocalContext.current
     val uriHandler = LocalUriHandler.current
     val navigator = LocalNavigator.current
@@ -93,6 +98,8 @@ fun SettingsScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
 
     val nestId by pointsViewModel.nestsNavigationService.currentNestId.collectAsState()
 
+    val signatureMatched by securityViewModel.signatureMatched.asState()
+
     SettingsScaffold(
         title = stringResource(R.string.settings),
         onBack = navigator::onBack,
@@ -110,8 +117,12 @@ fun SettingsScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
             BetaVersionWarning(BetaVersionType.App)
         }
 
-        AnimatedVisibility(WarningManager.showWarning()) {
-            WarningReminder()
+        AnimatedVisibility(GoogleWarningManager.showWarning()) {
+            GoogleWarningReminder()
+        }
+
+        AnimatedVisibility(!signatureMatched) {
+            BetaVersionWarning(BetaVersionType.Custom(R.string.signature_not_matched))
         }
 
         DragonSettingsGroup(R.string.common_settings) {
@@ -130,7 +141,9 @@ fun SettingsScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                 onClick = {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !forceAppLanguageSelector) {
                         openSystemLanguageSettings(ctx)
-                    } else { showLanguageSheet = true }
+                    } else {
+                        showLanguageSheet = true
+                    }
                 }
             )
         }

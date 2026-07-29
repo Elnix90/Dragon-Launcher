@@ -278,4 +278,7 @@ public object UiSettingsStore : MapSettingsStore() {
         description = R.string.do_not_remind_me_again_pin_lock_desc,
         default = false
     )
+
+    @SettingKey
+    public val useAppEvenIfSignatureIsNotMatched: BooleanSettingObject = boolean(false)
 }

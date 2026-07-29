@@ -27,7 +27,7 @@ import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Pin
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.findFragmentActivity
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.models.LockScreenViewModel
+import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
@@ -39,7 +39,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun LockMethodDialog(
-    lockScreenViewModel: LockScreenViewModel = activityViewModel(),
+    securityViewModel: SecurityViewModel = activityViewModel(),
     onDismiss: () -> Unit
 ) {
     val ctx = LocalContext.current
@@ -69,7 +69,7 @@ fun LockMethodDialog(
                     Spacer(8.dp)
                     LockMethod.entries.forEach { method ->
 
-                        val unavailableText = if (method == Device && !lockScreenViewModel.isDeviceUnlockAvailable()) {
+                        val unavailableText = if (method == Device && !securityViewModel.isDeviceUnlockAvailable()) {
                             stringResource(R.string.device_credentials_not_available)
                         } else null
 
@@ -87,7 +87,7 @@ fun LockMethodDialog(
                                 }
 
                                 None -> {
-                                    lockScreenViewModel.removeLock()
+                                    securityViewModel.removeLock()
                                     onDismiss()
 
                                 }
@@ -95,11 +95,11 @@ fun LockMethodDialog(
                                 Device -> {
                                     // Test biometric authentication immediately
                                     val activity = ctx.findFragmentActivity()
-                                    if (activity != null && lockScreenViewModel.isDeviceUnlockAvailable()) {
-                                        lockScreenViewModel.showDeviceUnlockPrompt(
+                                    if (activity != null && securityViewModel.isDeviceUnlockAvailable()) {
+                                        securityViewModel.showDeviceUnlockPrompt(
                                             activity = activity,
                                             onSuccess = {
-                                                lockScreenViewModel.setLockScreenMethod()
+                                                securityViewModel.setLockScreenMethod()
                                                 onDismiss()
                                             },
                                             onError = { msg ->
@@ -147,7 +147,7 @@ fun LockMethodDialog(
                 pendingLockMethod = null
             },
             onPinSet = { pin ->
-                lockScreenViewModel.setPatternLockMethod(pin)
+                securityViewModel.setPatternLockMethod(pin)
 
                 showPatternSetupDialog = false
                 pendingLockMethod = null
@@ -163,7 +163,7 @@ fun LockMethodDialog(
                 pendingLockMethod = null
             },
             onPinSet = { pin ->
-                lockScreenViewModel.setPinLockMethod(pin)
+                securityViewModel.setPinLockMethod(pin)
 
                 showPinSetupDialog = false
                 pendingLockMethod = null

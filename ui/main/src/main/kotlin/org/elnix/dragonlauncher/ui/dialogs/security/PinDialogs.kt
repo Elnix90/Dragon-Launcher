@@ -66,7 +66,7 @@ import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ktx.vibrate
-import org.elnix.dragonlauncher.models.LockScreenViewModel
+import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
@@ -81,7 +81,7 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 fun PinUnlock(
     onDismiss: () -> Unit,
     onSuccess: () -> Unit,
-    lockScreenViewModel: LockScreenViewModel = activityViewModel()
+    securityViewModel: SecurityViewModel = activityViewModel()
 ) {
     val haptic = LocalHapticFeedback.current
     val pinHash by PrivateSettingsStore.lockHash.asState()
@@ -118,7 +118,7 @@ fun PinUnlock(
             onDismiss()
         }
     ) {
-        if (lockScreenViewModel.verify(pin, pinHash)) {
+        if (securityViewModel.verify(pin, pinHash)) {
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
             onSuccess()
             pinShapes.clear()

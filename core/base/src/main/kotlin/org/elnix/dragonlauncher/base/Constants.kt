@@ -126,6 +126,10 @@ public object Constants {
         )
     }
 
+    public object Signatures {
+        public const val DRAGON_LAUNCHER_SIGNATURE_HASH: String = "63068d94e01eeae50efcb2a0c43dfa8ac503a421cdeaf353d45b69ab933c0a06"
+    }
+
     public object PackageNames {
         public const val SHIZUKU_PACKAGE_NAME: String = "moe.shizuku.privileged.api"
     }
@@ -136,7 +140,6 @@ public object Constants {
     }
 
     public object URLs {
-
         public const val ELNIX90_GITHUB_PROFILE_LINK: String = "https://github.com/Elnix90"
         public const val GITHUB_REPO_LINK: String = "https://github.com/Elnix90/Dragon-Launcher"
         public const val GITHUB_REPO_RELEASES_LINK: String = "$GITHUB_REPO_LINK/releases/latest"
@@ -148,7 +151,6 @@ public object Constants {
         public const val DRAGON_WEBSITE: String = "https://dragonlauncher.lthb.fr/"
         public const val URL_SHIZUKU_SITE: String = "https://shizuku.rikka.app"
         public const val WEBLATE_LINK: String = "https://hosted.weblate.org/engage/dragon-launcher/"
-
     }
 
     public object Settings {
