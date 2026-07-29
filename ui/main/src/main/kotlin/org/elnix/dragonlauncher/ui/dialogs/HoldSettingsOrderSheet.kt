@@ -54,6 +54,8 @@ private data class MenuItem(
     val isSelected: MutableState<Boolean>,
 )
 
+private const val MAX_ITEMS_ALLOWED: Int = 5
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
@@ -110,12 +112,12 @@ fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
         sheetState = rememberBottomSheetState(true)
     ) {
         DialogTitle(stringResource(R.string.edit_hold_to_activate_elements))
+        val selectedCount = menuItems.count { it.isSelected.value }
 
         MultiSelectConnectedButtonRow(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             entries = BackupSelectStoresButtons.entries,
             enabled = { entry ->
-                val selectedCount = menuItems.count { it.isSelected.value }
                 when (entry) {
                     BackupSelectStoresButtons.DeselectAll -> selectedCount > 0
                     BackupSelectStoresButtons.SelectAll -> selectedCount < settingsRoutes.size
@@ -160,14 +162,15 @@ fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
                         val scale by animateFloatAsState(if (isDragging) 1.03f else 1f)
 
                         val isEnabled = entry.route != NavigationRoute.PointsSettings
-                        val errorMessage = stringResource(R.string.cant_remove_to_avoid_lock_out)
+                        val cannotRemovePointsSettings = stringResource(R.string.cant_remove_to_avoid_lock_out)
+                        val cannotAddMoreThan5 = stringResource(R.string.cannot_add_more_than_5)
 
                         DragonRow(
                             onClick = {
-                                if (isEnabled) {
-                                    entry.isSelected.value = !isSelected
-                                } else {
-                                    ctx.showToast(errorMessage)
+                                when {
+                                    !isEnabled -> ctx.showToast(cannotRemovePointsSettings)
+                                    selectedCount >= MAX_ITEMS_ALLOWED && !entry.isSelected.value -> ctx.showToast(cannotAddMoreThan5)
+                                    else -> entry.isSelected.value = !isSelected
                                 }
                             },
                             modifier = Modifier
@@ -224,6 +227,7 @@ fun rememberHoldMenuEntries(): State<List<NavigationRoute>> {
     return retain(holdMenuEntriesString) {
         derivedStateOf {
             HoldMenuEntriesJson.decode<List<NavigationRoute>>(holdMenuEntriesString, emptyList())
+                .take(MAX_ITEMS_ALLOWED)
                 .toMutableList()
                 .apply {
                     if (!this.any { it is NavigationRoute.PointsSettings }) {
