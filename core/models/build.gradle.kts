@@ -1,13 +1,7 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt.android)
-}
-
-kotlin {
-    jvmToolchain(21)
-    explicitApi()
+    alias(libs.plugins.dragon.library)
+    alias(libs.plugins.dragon.serialization)
+    alias(libs.plugins.dragon.hilt)
 }
 
 android {
@@ -29,6 +23,8 @@ dependencies {
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.compose.material3)
     implementation(libs.dragon.logging)
+    implementation(libs.settings.core)
+    implementation(libs.settings.runtime)
 
     implementation(libs.hilt.core)
     implementation(libs.hilt.android)
@@ -38,22 +34,21 @@ dependencies {
     api(libs.javax.inject)
 
     implementation(project(":core:settings"))
-    implementation(libs.settings.core)
-    implementation(libs.settings.runtime)
     api(project(":core:common"))
     api(project(":core:i18n"))
     api(project(":core:enumsui"))
     api(project(":core:shizuku"))
 
     api(project(":core:services:icons"))
-    api(project(":core:services:points"))
-    api(project(":core:services:recents"))
-    api(project(":core:services:colors"))
     api(project(":core:services:fonts"))
-    api(project(":core:services:security"))
-    api(project(":core:services:compat"))
     api(project(":core:services:timer"))
+    api(project(":core:services:colors"))
+    api(project(":core:services:points"))
+    api(project(":core:services:compat"))
     api(project(":core:services:badges"))
+    api(project(":core:services:recents"))
+    api(project(":core:services:security"))
+    api(project(":core:services:migration"))
 
     api(project(":data:database"))
     api(project(":data:notifications"))
@@ -63,5 +58,4 @@ dependencies {
     api(project(":core:profiles"))
     api(project(":core:permissions"))
     api(project(":core:ktx"))
-    api(project(":core:services:migration"))
 }

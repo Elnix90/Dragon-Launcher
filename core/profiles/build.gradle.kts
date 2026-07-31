@@ -1,8 +1,7 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.dragon.library)
+    alias(libs.plugins.dragon.serialization)
+    alias(libs.plugins.dragon.hilt)
 }
 
 android {

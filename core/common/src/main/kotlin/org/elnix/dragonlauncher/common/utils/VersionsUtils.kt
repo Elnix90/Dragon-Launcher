@@ -12,22 +12,33 @@ import org.elnix.dragonlauncher.common.utils.VersionsUtils.getVersionCode
 import org.elnix.dragonlauncher.common.utils.VersionsUtils.getVersionName
 
 public object VersionsUtils {
+    private var _versionCode: Int? = null
+
     /**
      * @return the current app version code (e.g. `46`)
      */
     public fun Context.getVersionCode(): Int =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            packageManager.getPackageInfo(packageName, 0).longVersionCode.toInt()
-        } else {
-            @Suppress("DEPRECATION")
-            packageManager.getPackageInfo(packageName, 0).versionCode
+        _versionCode ?: run {
+            _versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                packageManager.getPackageInfo(packageName, 0).longVersionCode.toInt()
+            } else {
+                @Suppress("DEPRECATION")
+                packageManager.getPackageInfo(packageName, 0).versionCode
+            }
+            _versionCode!!
         }
+
+
+    private var _versionName: String? = null
 
     /**
      * @return the current app version name (e.g. `2.7.0-Glowel`)
      */
     public fun Context.getVersionName(): String =
-        packageManager.getPackageInfo(packageName, 0).versionName ?: "unknown"
+        _versionName ?: run {
+            _versionName = packageManager.getPackageInfo(packageName, 0).versionName ?: "unknown"
+            _versionName!!
+        }
 
     /**
      * @return the current app version name and code formatted (e.g. `2.7.0-Glowel (46)`)
@@ -36,16 +47,24 @@ public object VersionsUtils {
         "${getVersionName()} (${getVersionCode()})"
 
     /**
-     * Checks if the current build is a beta version flavor
-     * Actually, it just checks if the version name contains  `beta`
+     * Checks if the current build is a `beta` version flavor
      *
-     * @return [Boolean] whether the build is a beta or not
+     * @return [Boolean] whether the build is a `beta` or not
      */
     public fun Context.isBetaVersion(): Boolean =
         getVersionName().contains("beta")
+
+    /**
+     * Checks if the current build is a `debug` version flavor
+     *
+     * @return [Boolean] whether the build is a `debug` or not
+     */
+    public fun Context.isDebugVersion(): Boolean =
+        getVersionName().contains("debug")
 }
 
 
+// TODO remove these as the remembered work is in the VersionsUtils object
 @Composable
 public fun rememberVersionCode(): State<Int> {
     val ctx = LocalContext.current

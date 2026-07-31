@@ -1,8 +1,7 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.dragon.library)
+    alias(libs.plugins.dragon.serialization)
+    alias(libs.plugins.dragon.hilt)
 }
 
 android {
@@ -11,22 +10,22 @@ android {
 }
 
 dependencies {
-
     implementation(libs.kotlin.stdlib)
     implementation(libs.androidx.core)
     implementation(libs.androidx.appcompat)
-    api(libs.androidx.roomruntime)
-    ksp(libs.androidx.roomcompiler)
-    api(libs.androidx.room)
     implementation(libs.settings.core)
     implementation(libs.settings.runtime)
 
+    api(libs.androidx.roomruntime)
+    api(libs.androidx.room)
+    ksp(libs.androidx.roomcompiler)
+
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
 
     implementation(project(":core:i18n"))
     implementation(project(":core:ktx"))
     implementation(project(":core:settings"))
     implementation(project(":core:base"))
-
 }

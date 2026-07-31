@@ -1,7 +1,7 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.dragon.library)
+    alias(libs.plugins.dragon.compose)
+    alias(libs.plugins.dragon.serialization)
 }
 
 android {
@@ -30,3 +30,4 @@ dependencies {
     implementation(project(":core:ktx"))
     implementation(project(":core:i18n"))
 }
+

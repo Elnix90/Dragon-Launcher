@@ -1,9 +1,9 @@
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.dragon.library)
+    alias(libs.plugins.dragon.compose)
+    alias(libs.plugins.dragon.serialization)
 }
 
 kotlin {
@@ -12,10 +12,6 @@ kotlin {
 
 android {
     namespace = "org.elnix.dragonlauncher.ui.composition"
-
-    buildFeatures {
-        compose = true
-    }
 }
 
 dependencies {

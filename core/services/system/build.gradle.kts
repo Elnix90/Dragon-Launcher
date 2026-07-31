@@ -1,14 +1,10 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.dragon.library)
+    alias(libs.plugins.dragon.compose)
 }
 
 android {
     namespace = "org.elnix.dragonlauncher.services.system"
-
-    buildFeatures {
-        compose = true
-    }
 }
 
 dependencies {

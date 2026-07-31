@@ -1,8 +1,7 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.dragon.library)
+    alias(libs.plugins.dragon.serialization)
+    alias(libs.plugins.dragon.hilt)
 }
 
 android {
@@ -22,10 +21,9 @@ dependencies {
     ksp(libs.hilt.compiler)
 
     implementation(project(":core:ktx"))
+    implementation(project(":core:settings"))
     implementation(project(":data:applications"))
     implementation(project(":data:notifications"))
-    implementation(project(":core:settings"))
     implementation(project(":core:profiles"))
     implementation(project(":core:base"))
-    implementation(project(":data:applications"))
 }

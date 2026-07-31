@@ -1,7 +1,6 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.hilt.android)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.dragon.library)
+    alias(libs.plugins.dragon.hilt)
 }
 
 android {
@@ -18,5 +17,4 @@ dependencies {
     ksp(libs.hilt.compiler)
 
     implementation(project(":core:permissions"))
-
 }

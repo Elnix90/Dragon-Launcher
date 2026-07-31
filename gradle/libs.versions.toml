@@ -1,11 +1,4 @@
 [versions]
-#noinspection UnusedVersionCatalogEntry
-minSdk = "26"
-#noinspection UnusedVersionCatalogEntry
-compileSdk = "37"
-#noinspection UnusedVersionCatalogEntry
-targetSdk = "37"
-
 agp = "9.2.1"
 
 annotation = "1.10.0"
@@ -165,6 +158,12 @@ robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "
 compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 
+# Dependencies of the build-logic (convention plugins) itself. Referenced from build-logic/build.gradle.kts.
+android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+android-gradle-api = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin" }
+
 [bundles]
 kotlin = ["kotlin-stdlib", "kotlinx-coroutines-core", "kotlinx-coroutines-android", "kotlinx-collections-immutable", "kotlinx-serialization-json", "kotlin-reflect", "kotlinx-datetime"]
 androidx-lifecycle = ["androidx-lifecycle-viewmodel", "androidx-lifecycle-common", "androidx-lifecycle-runtime", "androidx-lifecycle-viewmodel-compose"]
@@ -172,6 +171,11 @@ test = ["junit", "androidx-test-ext-junit"]
 
 [plugins]
 settings = { id = "io.github.elnix90.settings", version.ref = "settings" }
+dragon-library = { id = "dragon.library" }
+dragon-compose = { id = "dragon.compose" }
+dragon-serialization = { id = "dragon.serialization" }
+dragon-hilt = { id = "dragon.hilt" }
+dragon-application = { id = "dragon.application" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }

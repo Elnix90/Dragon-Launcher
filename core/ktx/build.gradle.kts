@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.dragon.library)
+    alias(libs.plugins.dragon.compose)
 }
 
 android {
@@ -26,5 +26,4 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.core)
 
     testDebugImplementation(libs.robolectric)
-    testDebugImplementation(platform(libs.androidx.compose.bom))
 }

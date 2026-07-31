@@ -14,9 +14,9 @@ pluginManagement {
 }
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-//    id("io.gitlab.arturgpgbosch.detekt") version "1.23.8"
-//    id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
 }
+
+includeBuild("build-logic")
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)

@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.dragon.library)
+    alias(libs.plugins.dragon.compose)
 }
 
 kotlin {
@@ -14,10 +14,6 @@ android {
 
     defaultConfig {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildFeatures {
-        compose = true
     }
 }
 
@@ -58,7 +54,6 @@ dependencies {
     api(project(":core:settings"))
 
     // Compose UI instrumented tests (src/androidTest/)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.compose.ui.test.junit4)
     androidTestImplementation(libs.bundles.test)
     androidTestImplementation(libs.androidx.test.runner)

@@ -1,13 +1,11 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.dragon.library)
+    alias(libs.plugins.dragon.hilt)
 }
 
 android {
     namespace = "org.elnix.dragonlauncher.appoverrides"
 }
-
 
 dependencies {
     implementation(libs.bundles.kotlin)

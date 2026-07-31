@@ -5,10 +5,7 @@ import java.net.URI
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.dragon.application)
 }
 
 
@@ -23,30 +20,14 @@ fun env(name: String): String? =
     System.getenv(name) ?: dotenv.getProperty(name)
 
 
-kotlin {
-    jvmToolchain(21)
-}
-
 extensions.configure<ApplicationExtension> {
     namespace = "org.elnix.dragonlauncher"
 
-    compileSdk {
-        version = release(libs.versions.compileSdk.get().toInt())
-    }
-
     defaultConfig {
         applicationId = "org.elnix.dragonlauncher"
-        minSdk = libs.versions.minSdk.get().toInt()
-        targetSdk = libs.versions.targetSdk.get().toInt()
         versionName = "4.0.0"
         versionCode = 57
     }
-
-    lint {
-        checkReleaseBuilds = false
-        abortOnError = false
-    }
-
 
     val hasSigningConfig = env("KEYSTORE_FILE") != null &&
             env("KEYSTORE_PASSWORD") != null &&
@@ -66,66 +47,21 @@ extensions.configure<ApplicationExtension> {
         }
     }
 
-    flavorDimensions += listOf("version")
-    productFlavors {
-        create("beta") {
-            dimension = "version"
-            applicationIdSuffix = ".beta"
-            versionNameSuffix = "-beta"
-            resValue("string", "app_name", "Dragon Launcher Beta")
-        }
-    }
-
     buildTypes {
-        release {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            versionNameSuffix = " (${property("version.code") as String})"
-
-            if (hasSigningConfig) {
-                signingConfig = signingConfigs.getByName("release")
-            }
-
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-
-        debug {
-            isDebuggable = true
-            isMinifyEnabled = false
-
+        if (hasSigningConfig) {
             // I use signing config because when I try to install the debug app, and that the release is installed, it won't work.
-            if (hasSigningConfig) {
+            getByName("release") {
                 signingConfig = signingConfigs.getByName("release")
             }
 
-            applicationIdSuffix = ".debug"
-            versionNameSuffix =  " (${property("version.code") as String})-debug"
+            getByName("beta") {
+                signingConfig = signingConfigs.getByName("release")
+            }
+
+            getByName("debug") {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
-
-    buildFeatures {
-        compose = true
-        buildConfig = true
-        resValues = true
-    }
-
-    packaging {
-        jniLibs.keepDebugSymbols.add("**/*.so")
-    }
-
-    dependenciesInfo {
-        // Disables dependency metadata when building APKs (for IzzyOnDroid/F-Droid)
-        includeInApk = false
-        // Disables dependency metadata when building Android App Bundles (for Google Play)
-        includeInBundle = false
     }
 }
 
@@ -168,7 +104,6 @@ dependencies {
     implementation(project(":core:permissions"))
     implementation(project(":core:services:migration"))
 }
-
 
 
 // Copy files in the fastlane/metadata dir to the assets folder, where they are compiled and added to the app
@@ -218,7 +153,7 @@ if (!gradle.startParameter.taskRequests.any { it.args.contains("buildHealth") })
 //            it.args.any { arg -> arg.contains("Release", ignoreCase = true) }
 //        }
 //        if (isReleaseVariant) {
-            dependsOn("downloadExtensionsRegistry")
+        dependsOn("downloadExtensionsRegistry")
 //        }
     }
 } else {

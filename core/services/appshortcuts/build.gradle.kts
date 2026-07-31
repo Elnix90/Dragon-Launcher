@@ -1,8 +1,6 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt.android)
-
+    alias(libs.plugins.dragon.library)
+    alias(libs.plugins.dragon.hilt)
 }
 
 android {
@@ -14,8 +12,8 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(libs.androidx.appcompat)
     implementation(libs.dragon.logging)
-
     implementation(libs.commons.text)
+
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
