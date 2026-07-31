@@ -29,10 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import io.github.elnix90.core.SettingsBackupManager
 import io.github.elnix90.core.stores.SettingsStore
-import io.github.elnix90.logging.BACKUP_TAG
-import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -40,7 +37,6 @@ import org.elnix.dragonlauncher.common.utils.DateUtils
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getFilePathFromUri
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
@@ -49,7 +45,6 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.ExportSettingsDialog
-import org.elnix.dragonlauncher.ui.dialogs.ImportSettingsDialog
 import org.elnix.dragonlauncher.ui.dialogs.SelectedActionRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumn
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -59,8 +54,6 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.remembers.rememberAutoBackupLauncher
 import org.elnix.dragonlauncher.ui.remembers.rememberSettingsExportLauncher
-import org.elnix.dragonlauncher.ui.remembers.rememberSettingsImportLauncher
-import org.json.JSONObject
 import kotlin.time.Duration.Companion.seconds
 
 @SuppressLint("LocalContextGetResourceValueCall")
@@ -97,21 +90,12 @@ fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
     }
 
     var selectedStoresForExport by remember { mutableStateOf(setOf<SettingsStore<*, *>>()) }
-    var selectedStoresForImport by remember { mutableStateOf(setOf<SettingsStore<*, *>>()) }
-    var importJson by remember { mutableStateOf<JSONObject?>(null) }
-    var showImportDialog by remember { mutableStateOf(false) }
     var showExportDialog by remember { mutableStateOf(false) }
-
 
     val settingsExportLauncher = rememberSettingsExportLauncher(selectedStoresForExport)
     val autoBackupLauncher = rememberAutoBackupLauncher()
 
-    val settingsImportLauncher = rememberSettingsImportLauncher(
-        onJsonReady = { json ->
-            importJson = json
-            showImportDialog = true
-        }
-    )
+
 
     SettingsScaffold(
         title = ctx.getString(R.string.backup),
@@ -124,19 +108,37 @@ fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
             }
         }
     ) {
-        BackupButtons(
-            onExport = { showExportDialog = true },
-            onImport = {
-                settingsImportLauncher.launch(
-                    arrayOf(
-                        "application/json",
-                        "text/plain",
-                        "application/octet-stream",
-                        "*/*"
+        Column(
+            Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            GradientBigButton(
+                text = stringResource(R.string.export_settings),
+                onClick = { showExportDialog = true },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.cloud_upload),
+                        contentDescription = stringResource(R.string.export_settings),
+                        tint = MaterialTheme.colorScheme.primary
                     )
+                }
+            )
+
+            ImportBackupButton {
+                GradientBigButton(
+                    text = stringResource(R.string.import_settings),
+                    onClick = it,
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.download),
+                            contentDescription = stringResource(R.string.import_settings),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 )
             }
-        )
+        }
 
         DragonSettingsGroup(R.string.automatic_backups) {
             Setting(BackupSettingsStore.autoBackupEnabled) {
@@ -209,7 +211,7 @@ fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
         }
 
         AnimatedVisibility(autoBackupEnabled) {
-            DragonSettingsGroup(R.string.auto_backup_stores,) {
+            DragonSettingsGroup(R.string.auto_backup_stores) {
                 SelectedActionRow(selectedStores, backupableStores.size) { save() }
 
                 selectedStores.entries.forEach { (settingsStore, isSelected) ->
@@ -249,83 +251,5 @@ fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
             }
         )
     }
-
-    importJson?.let { json ->
-        if (showImportDialog) {
-            ImportSettingsDialog(
-                backupJson = json,
-                onDismiss = {
-                    showImportDialog = false
-                    importJson = null
-                },
-                onConfirm = { selectedStores ->
-                    showImportDialog = false
-                    selectedStoresForImport = selectedStores
-
-                    scope.launch {
-                        try {
-                            SettingsBackupManager.importSettingsFromJson(
-                                ctx,
-                                json,
-                                selectedStoresForImport
-                            )
-                            backupViewModel.result.value = BackupResult(
-                                export = false,
-                                error = false,
-                                title = ctx.getString(R.string.import_successful)
-                            )
-
-                            importJson = null
-                        } catch (e: Exception) {
-                            logE(BACKUP_TAG, e) { "Import failed" }
-                            backupViewModel.result.value = BackupResult(
-                                export = false,
-                                error = true,
-                                title = ctx.getString(R.string.import_failed),
-                                message = e.message ?: ""
-                            )
-                        }
-                    }
-                }
-            )
-        }
-    }
 }
 
-@Composable
-private fun BackupButtons(
-    onExport: () -> Unit,
-    onImport: () -> Unit
-) {
-    Column(
-        Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        GradientBigButton(
-            text = stringResource(R.string.export_settings),
-            onClick = onExport,
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(R.drawable.cloud_upload),
-                    contentDescription = stringResource(R.string.export_settings),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            },
-            modifier = Modifier
-        )
-
-        GradientBigButton(
-            text = stringResource(R.string.import_settings),
-            onClick = onImport,
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(R.drawable.download),
-                    contentDescription = stringResource(R.string.import_settings),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            },
-            modifier = Modifier
-        )
-    }
-}

@@ -132,6 +132,9 @@ public interface PointsService {
      */
     public fun persist()
 
+    /** Reload all data from DataStore. */
+    public suspend fun load()
+
     /** Set the given [points], [nests] and [defaultPoint] if not null. */
     public fun set(
         newPoints: Points? = null,
@@ -350,8 +353,6 @@ internal class PointsServiceImpl(
     init {
         scope.launch {
             load()
-            resetGrids()
-            recomposeTrigger.value++
         }
     }
 
@@ -467,7 +468,7 @@ internal class PointsServiceImpl(
         applyChange { defaultIntersectionShape.value = newDefaultShape }
     }
 
-    private suspend fun load() {
+    override suspend fun load() {
         val decodedPoints = PointsJson.decode<Set<Point>>(PointsSettingsStore.jsonSetting.get(ctx), emptySet())
         _points.value = ConcurrentHashMap(decodedPoints.associateBy { it.id })
 
@@ -483,6 +484,9 @@ internal class PointsServiceImpl(
         val decodedDefaultShape =
             DefaultShapeJson.decode(DefaultShapeSettingsStore.jsonSetting.get(ctx), emptyIntersectionShape)
         defaultIntersectionShape.value = decodedDefaultShape
+
+        resetGrids()
+        recomposeTrigger.value++
     }
 
     override fun persist() {

@@ -47,30 +47,24 @@ extensions.configure<ApplicationExtension> {
         abortOnError = false
     }
 
+
+    val hasSigningConfig = env("KEYSTORE_FILE") != null &&
+            env("KEYSTORE_PASSWORD") != null &&
+            env("KEY_ALIAS") != null &&
+            env("KEY_PASSWORD") != null
+
     signingConfigs {
         create("release") {
-            val keystore = env("KEYSTORE_FILE")
-            val storePass = env("KEYSTORE_PASSWORD")
-            val alias = env("KEY_ALIAS")
-            val keyPass = env("KEY_PASSWORD")
-
-            if (
-                !keystore.isNullOrBlank() &&
-                !storePass.isNullOrBlank() &&
-                !alias.isNullOrBlank() &&
-                !keyPass.isNullOrBlank()
-            ) {
-                storeFile = file(keystore)
-                storePassword = storePass
-                keyAlias = alias
-                keyPassword = keyPass
-
+            if (hasSigningConfig) {
+                storeFile = file(env("KEYSTORE_FILE")!!)
+                storePassword = env("KEYSTORE_PASSWORD")!!
+                keyAlias = env("KEY_ALIAS")!!
+                keyPassword = env("KEY_PASSWORD")!!
             } else {
-                println("No keystore found, APK will be unsigned")
+                println("No signing config found, APK will be unsigned")
             }
         }
     }
-
 
     flavorDimensions += listOf("version")
     productFlavors {
@@ -81,13 +75,17 @@ extensions.configure<ApplicationExtension> {
             resValue("string", "app_name", "Dragon Launcher Beta")
         }
     }
+
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             versionNameSuffix = " (${property("version.code") as String})"
 
-            signingConfig = signingConfigs.getByName("release")
+            if (hasSigningConfig) {
+                signingConfig = signingConfigs.getByName("release")
+            }
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -99,8 +97,9 @@ extensions.configure<ApplicationExtension> {
             isMinifyEnabled = false
 
             // I use signing config because when I try to install the debug app, and that the release is installed, it won't work.
-            signingConfig = signingConfigs.getByName("release")
-
+            if (hasSigningConfig) {
+                signingConfig = signingConfigs.getByName("release")
+            }
 
             applicationIdSuffix = ".debug"
             versionNameSuffix =  " (${property("version.code") as String})-debug"
@@ -167,6 +166,7 @@ dependencies {
     implementation(project(":core:settings"))
 
     implementation(project(":core:permissions"))
+    implementation(project(":core:services:migration"))
 }
 
 

@@ -1,0 +1,211 @@
+{
+  "ui": {
+    "selected_icon_pack": "org.baitmooth.snow",
+    "icon_pack_tint": "FFE30059",
+    "wallpaperDimMainScreen": 0.26627475,
+    "wallpaperDimDrawerScreen": 0.13019802,
+    "globalFont": "Monospace",
+    "useCustomColorChannels": false,
+    "mainScreenLayers": "[{\"type\":\"org.elnix.dragonlauncher.common.serializables.MainScreenLayer.HoldToActivate\",\"enabled\":false},{\"type\":\"org.elnix.dragonlauncher.common.serializables.MainScreenLayer.Widgets\"},{\"type\":\"org.elnix.dragonlauncher.common.serializables.MainScreenLayer.DragOverlay\",\"enabled\":false},{\"type\":\"org.elnix.dragonlauncher.common.serializables.MainScreenLayer.StatusBar\"},{\"type\":\"org.elnix.dragonlauncher.common.serializables.MainScreenLayer.CustomDim\",\"enabled\":false},{\"type\":\"org.elnix.dragonlauncher.common.serializables.MainScreenLayer.ChargingAnimation\"}]"
+  },
+  "color_mode": {
+    "colorPickerMode": "DEFAULTS",
+    "defaultTheme": "CUSTOM"
+  },
+  "color": {
+    "primary_color": "FF2200A8",
+    "on_primary_color": "FF00455C",
+    "primary_container_color": "FF527A00",
+    "on_primary_container_color": "FF392100",
+    "inverse_primary_color": "FFDA0017",
+    "surface_color": "FF00ADF0",
+    "on_surface_color": "FF004AB1"
+  },
+  "new_actions": {
+    "points": [
+      {
+        "circleNumber": 0,
+        "angleDeg": 0,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.OpenAppDrawer"
+        },
+        "id": "9620c8c7-1199-43fb-a518-40ca99c9bac7"
+      },
+      {
+        "circleNumber": 1,
+        "angleDeg": 166.29647915113176,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.NotificationShade"
+        },
+        "id": "9603f96a-6b95-4670-8dd0-e6d718c25ce1"
+      },
+      {
+        "circleNumber": 1,
+        "angleDeg": 156.11056254660477,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.ControlPanel"
+        },
+        "id": "c40a00b4-0aaa-4081-96ca-06a6e5fcdb21"
+      }
+    ],
+    "nests": [
+      {}
+    ],
+    "default_point": [
+      {
+        "circleNumber": 0,
+        "angleDeg": 0,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.OpenDragonLauncherSettings"
+        },
+        "id": "74df9db5-0f4a-4757-b18a-ef336de67999",
+        "borderStroke": 4,
+        "borderStrokeSelected": 8,
+        "opacity": 1,
+        "innerPadding": 5,
+        "size": 22,
+        "borderShape": {
+          "type": "org.elnix.dragonlauncher.common.serializables.IconShape.Circle"
+        },
+        "borderShapeSelected": {
+          "type": "org.elnix.dragonlauncher.common.serializables.IconShape.Circle"
+        },
+        "liveNestPreviewDelayMs": 500,
+        "liveNestScale": 0.65,
+        "liveNestGraceDistancePx": 50,
+        "liveNestMainNestOpacityPercent": 50,
+        "liveNestSnapsToFingerPosition": true,
+        "cycleActionStageDefaultDelay": 500,
+        "cycleActionsLoopDelayMs": 500,
+        "holdAndRunDelayMs": 500
+      }
+    ]
+  },
+  "drawer": {
+    "autoOpenSingleMatch": false,
+    "disableAutoLaunchOnSpaceFirstChar": false,
+    "showAppLabelInDrawer": false,
+    "autoShowKeyboardOnDrawer": false,
+    "iconsShape": "{\"type\":\"Circle\"}",
+    "iconsSpacingVertical": 24,
+    "iconsSpacingHorizontal²": 28,
+    "maxIconSize": 57,
+    "categoryGridWidth": 2,
+    "categoryGridCells": 4,
+    "pullDownAnimations": false,
+    "pullDownWallPaperDim": false,
+    "pullDownScaleIn": false
+  },
+  "workspaces": {
+    "workspaces": [
+      {
+        "id": "system",
+        "name": "System",
+        "type": "SYSTEM",
+        "appIds": [],
+        "removedAppIds": [],
+        "enabled": true
+      },
+      {
+        "id": "all",
+        "name": "All",
+        "type": "ALL",
+        "appIds": [],
+        "removedAppIds": [],
+        "enabled": true
+      },
+      {
+        "id": "work",
+        "name": "Work",
+        "type": "WORK",
+        "appIds": [],
+        "removedAppIds": [],
+        "enabled": false
+      },
+      {
+        "id": "private",
+        "name": "Private Space",
+        "type": "PRIVATE",
+        "appIds": [],
+        "removedAppIds": [],
+        "enabled": false
+      }
+    ]
+  },
+  "behavior": {
+    "backAction": "{\"type\":\"org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.ControlPanel\"}",
+    "doubleClickAction": "{\"type\":\"org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.OpenAppDrawer\"}",
+    "homeAction": "{\"type\":\"org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.Lock\"}",
+    "keepScreenOn": true,
+    "leftPadding": 109,
+    "rightPadding": 99,
+    "upPadding": 133,
+    "downPadding": 181,
+    "disableHapticFeedbackGlobally": true,
+    "pointsActionSnapsToOuterCircle": false,
+    "offScreenTimeout": 27,
+    "createLiveNestByDefaultWhenCreatingOpenCircleNestPoint": false
+  },
+  "status_bar": {
+    "barBackgroundColor": "FF00864A",
+    "barTextColor": "FF4500A2"
+  },
+  "wellbeing": {
+    "SOCIAL_MEDIA_PAUSE_ENABLED": true,
+    "RETURN_TO_LAUNCHER_ENABLED": true
+  },
+  "swipe_map": {
+    "isInDragAroundMode": true
+  },
+  "status_bar_json": [
+    {
+      "type": "org.elnix.dragonlauncher.common.serializables.StatusBarSerializable.Date",
+      "formatter": "MMM dd",
+      "action": null,
+      "fontSize": 14,
+      "isBold": false,
+      "colorHex": null
+    },
+    {
+      "type": "org.elnix.dragonlauncher.common.serializables.StatusBarSerializable.Battery",
+      "showIcon": false,
+      "showPercentage": true,
+      "fontSize": 14,
+      "colorHex": null
+    },
+    {
+      "type": "org.elnix.dragonlauncher.common.serializables.StatusBarSerializable.Spacer",
+      "width": -1
+    },
+    {
+      "type": "org.elnix.dragonlauncher.common.serializables.StatusBarSerializable.Connectivity",
+      "showAirplaneMode": true,
+      "showWifi": true,
+      "showBluetooth": true,
+      "showVpn": true,
+      "showMobileData": true,
+      "showHotspot": true,
+      "showUsb": true,
+      "updateFrequency": 5,
+      "iconSize": 18
+    },
+    {
+      "type": "org.elnix.dragonlauncher.common.serializables.StatusBarSerializable.Spacer",
+      "width": -1
+    }
+  ],
+  "angle_line": {
+    "showAngleLineObjectPreview": true,
+    "lineJson": "{\"stroke\":27.55166,\"color\":-16766130,\"glow\":{\"radius\":71.90431},\"eraseBackground\":true}",
+    "angleLineJson": "{\"stroke\":13.798663,\"color\":-16771782,\"glow\":{\"radius\":20.0},\"rotation\":90,\"shape\":{\"type\":\"org.elnix.dragonlauncher.common.serializables.IconShape.Triangle\"},\"size\":171.20074,\"eraseBackground\":false}",
+    "startLineJson": "{\"stroke\":4.0,\"glow\":{\"radius\":53.29448},\"rotation\":55,\"shape\":{\"type\":\"org.elnix.dragonlauncher.common.serializables.IconShape.Pentagon\"},\"size\":30.0,\"eraseBackground\":true}",
+    "endLineJson": "{\"stroke\":0.0,\"glow\":{\"radius\":12.0},\"rotation\":0,\"shape\":{\"type\":\"org.elnix.dragonlauncher.common.serializables.IconShape.Circle\"},\"size\":8.0,\"eraseBackground\":false}"
+  },
+  "hold_to_activate": {
+    "holdToActivateSettingsTolerance": 77.38812,
+    "holdToActivateArcCustomObject": "{\"stroke\":45.52708,\"color\":-1965872,\"glow\":{\"radius\":86.95599},\"rotation\":-1,\"shape\":{\"type\":\"org.elnix.dragonlauncher.common.serializables.IconShape.EasterEgg\"},\"size\":173.05368,\"eraseBackground\":false}",
+    "showToleranceOnMainScreen": true,
+    "rotationPerSecond": 0.06739603
+  },
+  "app_version": "3.2.2 (Worm)-beta (56)"
+}

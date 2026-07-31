@@ -27,4 +27,7 @@ dependencies {
     implementation(libs.settings.core)
     implementation(libs.settings.runtime)
     implementation(project(":core:base"))
+
+    testImplementation(libs.junit)
+    testImplementation("org.json:json:20231013")
 }

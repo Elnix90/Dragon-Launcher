@@ -1,0 +1,341 @@
+{
+  "ui": {
+    "rgbLine": false,
+    "showLaunchingAppLabel": false,
+    "showLaunchingAppIcon": false,
+    "autoSeparatePoints": false,
+    "showAppPreviewIconCenterStartPosition": true
+  },
+  "color": {
+    "primary_color": "FF6650A4",
+    "on_primary_color": "FFCECECE",
+    "secondary_color": "FF934EB2",
+    "on_secondary_color": "FFCECECE",
+    "tertiary_color": "FFCB84EC",
+    "on_tertiary_color": "FFCECECE",
+    "background_color": "FF000000",
+    "on_background_color": "FFCECECE",
+    "surface_color": "FF1F1831",
+    "on_surface_color": "FFCECECE",
+    "error_color": "FFFF0000",
+    "on_error_color": "FFCECECE",
+    "outline_color": "FFCECECE",
+    "circle_color": "FF960000",
+    "notification_shade_color": "FF003486"
+  },
+  "new_actions": {
+    "points": [
+      {
+        "circleNumber": 0,
+        "angleDeg": 135,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "org.mozilla.firefox",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "7df57a52-74a0-4377-95c1-327f7771d0fd"
+      },
+      {
+        "circleNumber": 0,
+        "angleDeg": 179.99999999999807,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "org.thoughtcrime.securesms",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "03c3653c-bd82-4b13-8a39-d97511ac5fab"
+      },
+      {
+        "circleNumber": 1,
+        "angleDeg": 360,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.OpenAppDrawer"
+        },
+        "id": "a9324541-817a-4d6a-94a4-df79a84411c4"
+      },
+      {
+        "circleNumber": 0,
+        "angleDeg": 360,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "com.samsung.android.dialer",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "dfc6a01e-1d61-4046-8983-e3f9bf50ec20"
+      },
+      {
+        "circleNumber": 0,
+        "angleDeg": 327.8501840896536,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "com.google.android.apps.messaging",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "a9f72075-52dd-4c8d-81d9-aeb8755a90c2"
+      },
+      {
+        "circleNumber": 0,
+        "angleDeg": 298.4211212284076,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "com.lesspass.android",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "39e47961-beb9-4f74-b8d9-a12af0cc1ddb"
+      },
+      {
+        "circleNumber": 0,
+        "angleDeg": 270,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "com.google.android.apps.maps",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "9d36d194-b93d-46c5-85eb-13125659f191"
+      },
+      {
+        "circleNumber": 0,
+        "angleDeg": 240.79016568068812,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "com.google.android.gm",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "ab95c887-f0bb-4b73-8d0d-5191839215bf"
+      },
+      {
+        "circleNumber": 1,
+        "angleDeg": 210,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "com.discord",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "a5e8d476-e782-4dee-a9ce-2fcca3fa114d"
+      },
+      {
+        "circleNumber": 1,
+        "angleDeg": 285,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "com.spotify.music",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "b34d9cd8-ed2d-40c7-a427-bcf14aaeb626"
+      },
+      {
+        "circleNumber": 1,
+        "angleDeg": 90,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "com.sec.android.gallery3d",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "32489e58-be3d-4eb4-933e-66a770ff2bdc"
+      },
+      {
+        "circleNumber": 0,
+        "angleDeg": 90,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "com.sec.android.app.camera",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "957040c1-ef46-4821-b053-085be7686574"
+      },
+      {
+        "circleNumber": 1,
+        "angleDeg": 137.5676201589354,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "com.android.settings",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "0c723957-5ab7-436a-8f0c-27d23ce2e698"
+      },
+      {
+        "circleNumber": 1,
+        "angleDeg": 240,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "jp.gocro.smartnews.android",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "d114a565-6019-420d-8f02-1af8cc70f5ea"
+      },
+      {
+        "circleNumber": 1,
+        "angleDeg": 315,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "org.schabi.newpipe",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "17648784-7cdb-43b0-ae59-2b2c00edcc09"
+      },
+      {
+        "circleNumber": 0,
+        "angleDeg": 45,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.OpenCircleNest",
+          "nestId": -1278686122
+        },
+        "id": "aad4399b-f7ec-4152-a7fc-a670b014fb21"
+      },
+      {
+        "circleNumber": 0,
+        "angleDeg": 0,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "com.maltaisn.notes.sync",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "562992ba-e702-4b5a-98bc-6ca90ef3854f",
+        "nestId": -1278686122
+      },
+      {
+        "circleNumber": 0,
+        "angleDeg": 90,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "felixwiemuth.simplereminder",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "47c6a775-f14b-4dcc-9a5b-6dfd893afd2d",
+        "nestId": -1278686122
+      },
+      {
+        "circleNumber": 0,
+        "angleDeg": 270,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "com.samsung.android.calendar",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "23fbb783-3c3f-49bb-a305-f44cc9d1d853",
+        "nestId": -1278686122
+      },
+      {
+        "circleNumber": 0,
+        "angleDeg": 180,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "com.sec.android.app.clockpackage",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "8c7fbf60-58c1-4940-8c07-ed55044aef3d",
+        "nestId": -1278686122
+      },
+      {
+        "circleNumber": 1,
+        "angleDeg": 270,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "com.kitefaster.whitenoise",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "f22d8a77-c81b-48d3-9519-c959772a398c"
+      },
+      {
+        "circleNumber": 1,
+        "angleDeg": 180,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.OpenAppDrawer"
+        },
+        "id": "23a1db25-914c-4816-99eb-cd570c4a9c8e"
+      },
+      {
+        "circleNumber": 0,
+        "angleDeg": 210,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "io.element.android.x",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "2134ece6-f8f0-4d20-b7bb-535a7e8503ba"
+      },
+      {
+        "circleNumber": 1,
+        "angleDeg": 45,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.LaunchApp",
+          "packageName": "com.anthropic.claude",
+          "isPrivateSpace": false,
+          "userId": 0
+        },
+        "id": "19494adb-e401-41da-a570-ef9a7d0c0197"
+      }
+    ],
+    "nests": [
+      {
+        "dragDistances": {
+          "0": 323,
+          "-1": 160,
+          "1": 450
+        }
+      },
+      {
+        "id": -196020342,
+        "dragDistances": {
+          "-1": 150,
+          "0": 400,
+          "1": 700,
+          "2": 1000
+        }
+      },
+      {
+        "id": -1278686122,
+        "dragDistances": {
+          "-1": 141,
+          "0": 292
+        }
+      }
+    ],
+    "default_point": [
+      {
+        "circleNumber": 0,
+        "angleDeg": 0,
+        "action": {
+          "type": "org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.OpenDragonLauncherSettings"
+        },
+        "id": "4d2c1c86-d289-44d5-99be-25d63d1a4d7e",
+        "borderStrokeSelected": 8,
+        "opacity": 1,
+        "size": 34
+      }
+    ]
+  },
+  "drawer": {
+    "gridSize": 5,
+    "lastWorkspaceUsed": "user"
+  },
+  "workspaces": {},
+  "behavior": {
+    "backAction": "{\"type\":\"org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.GoParentNest\"}"
+  },
+  "backup": {
+    "autoBackupEnabled": true,
+    "autoBackupUri": "content:\/\/com.android.providers.downloads.documents\/document\/10160"
+  },
+  "app_version": "3.2.2 (Worm) (56)"
+}

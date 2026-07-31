@@ -159,6 +159,7 @@ fun PointsSettingsScreen(
     val defaultIntersectionShape by pointsService.defaultIntersectionShape.asState()
 
     val points by pointsService.points.collectAsState()
+    val nests by pointsService.nests.collectAsState()
 
     val isInDragAroundMode by isInDragAroundMode.asState()
 
@@ -210,7 +211,7 @@ fun PointsSettingsScreen(
     val nestsNavigationService = pointsViewModel.nestsNavigationService
     val nestId by nestsNavigationService.currentNestId.collectAsState()
     val currentNest = pointsService.findNestById(nestId)
-    val shapes = remember(nestId, currentNest, defaultNest) { currentNest.getInterSectionShapes(defaultNest) }
+    val shapes = remember( currentNest, defaultNest) { currentNest.getInterSectionShapes(defaultNest) }
 
     /**
      * Computes the new offset for the selected point.
@@ -1319,8 +1320,9 @@ fun PointsSettingsScreen(
      * Shows various information about the current settings state, may be unreadable when lots of points
      */
     DebugZone(DebugSettingsStore.settingsDebugInfo) {
-        Text("current nests id: $nestId")
+        Text("current nest: $currentNest")
         Text("Points number: ${points.size}")
+        Text("Nests number: ${nests.size}")
         Text("current Nest shapes number: ${shapes.size}")
         val firstPoint = selectedPointsIds.firstOrNull()?.let {
             pointsService.findPointById(it)

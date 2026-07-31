@@ -23,10 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -37,25 +34,17 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import `in`.hridayan.shapeindicators.ShapeIndicatorDefaults
 import `in`.hridayan.shapeindicators.ShapeIndicatorRow
-import io.github.elnix90.core.SettingsBackupManager
-import io.github.elnix90.logging.BACKUP_TAG
 import io.github.elnix90.logging.WELCOME_TAG
 import io.github.elnix90.logging.logD
-import io.github.elnix90.logging.logE
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.models.BackupResult
-import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.models.InitializationViewModel
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
-import org.elnix.dragonlauncher.ui.dialogs.ImportSettingsDialog
-import org.elnix.dragonlauncher.ui.remembers.rememberSettingsImportLauncher
-import org.json.JSONObject
 
 
 private const val pageNumber = 6
@@ -64,7 +53,6 @@ private const val pageNumber = 6
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun WelcomeScreen(
-    backupViewModel: BackupViewModel = activityViewModel(),
     initializationViewModel: InitializationViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
@@ -107,16 +95,6 @@ fun WelcomeScreen(
         }
     }
 
-    var importJson by remember { mutableStateOf<JSONObject?>(null) }
-    var showImportDialog by remember { mutableStateOf(false) }
-
-    val settingsImportLauncher = rememberSettingsImportLauncher(
-        onJsonReady = { json ->
-            importJson = json
-            showImportDialog = true
-        }
-    )
-
     // Prevent the user to quit
     BackHandler { }
 
@@ -147,17 +125,7 @@ fun WelcomeScreen(
                     .weight(1f)
             ) { page ->
                 when (page) {
-                    0 -> WelcomePageIntro({ pagerState.currentPage < 2 }) {
-                        settingsImportLauncher.launch(
-                            arrayOf(
-                                "application/json",
-                                "text/plain",
-                                "application/octet-stream",
-                                "*/*"
-                            )
-                        )
-                    }
-
+                    0 -> WelcomePageIntro(pagerState.currentPage < 2, ::setHasSeen)
                     1 -> WelcomePagePrivacy()
                     2 -> WelcomePageTutorial()
                     3 -> WelcomePageLauncher()
@@ -209,48 +177,6 @@ fun WelcomeScreen(
             if (next < pageNumber) {
                 scope.launch { pagerState.animateScrollToPage(next) }
             }
-        }
-    }
-
-    // Import Dialog (shows after file is picked)
-    importJson?.let { json ->
-        if (showImportDialog) {
-            ImportSettingsDialog(
-                backupJson = json,
-                onDismiss = {
-                    showImportDialog = false
-                    importJson = null
-                },
-                onConfirm = { selectedStores ->
-                    showImportDialog = false
-
-                    scope.launch {
-                        try {
-                            SettingsBackupManager.importSettingsFromJson(ctx, json, selectedStores)
-                            backupViewModel.result.value = BackupResult(
-                                export = false,
-                                error = false,
-                                title = ctx.getString(R.string.import_successful)
-                            )
-
-                            importJson = null
-                        } catch (e: Exception) {
-                            logE(BACKUP_TAG, e) { "Import Failed" }
-                            backupViewModel.result.value = BackupResult(
-                                export = false,
-                                error = true,
-                                title = ctx.getString(R.string.import_failed),
-                                message = e.message ?: ""
-                            )
-                        }
-                        PrivateSettingsStore.hasInitialized.set(ctx, true)
-                        setHasSeen()
-
-                        // Here I do not check the initialization of the launcher, as th user imports it's settings, and therefore, it is initialized!
-                        navigator.onBack()
-                    }
-                }
-            )
         }
     }
 }

@@ -63,4 +63,5 @@ dependencies {
     api(project(":core:profiles"))
     api(project(":core:permissions"))
     api(project(":core:ktx"))
+    api(project(":core:services:migration"))
 }

@@ -19,7 +19,10 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.ktx.hasUriReadWritePermission
 import org.elnix.dragonlauncher.ktx.showToast
+import org.elnix.dragonlauncher.migration.MigrationResult
+import org.elnix.dragonlauncher.migration.SettingsMigrationService
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
+import org.elnix.dragonlauncher.points.PointsService
 import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.toSettingsStoreList
@@ -29,10 +32,13 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(FlowPreview::class)
 @HiltViewModel
 public class BackupViewModel @Inject constructor(
-    application: Application
+    application: Application,
+    private val migrationService: SettingsMigrationService,
+    private val pointsService: PointsService
 ) : AndroidViewModel(application) {
 
     public val result: SettingFlow<BackupResult?> = SettingFlow(null)
+    public val migrationResult: SettingFlow<MigrationResult?> = SettingFlow(null)
     private val _backupTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     init {
@@ -49,6 +55,37 @@ public class BackupViewModel @Inject constructor(
 
     public fun commandBackup() {
         _backupTrigger.tryEmit(Unit)
+    }
+
+    /**
+     * Reads a JSON file from the given URI and migrates it if it's a legacy 3.2.2 backup.
+     */
+    public fun migrateFromLegacyBackup(content: String) {
+        viewModelScope.launch {
+            migrationResult.value = null
+            try {
+                val result = migrationService.migrateFromBackupJson(
+                    ctx = application,
+                    legacyJson = content
+                )
+                migrationResult.value = result
+                migrationService.logResult(result)
+
+                if (result.success) {
+                    pointsService.load()
+                }
+            } catch (e: Exception) {
+                logE(BACKUP_TAG, e) { "Legacy migration failed" }
+                migrationResult.value = MigrationResult.failure(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    /**
+     * Checks whether the given JSON content is a legacy 3.2.2 backup.
+     */
+    public fun isLegacyBackup(jsonContent: String): Boolean {
+        return migrationService.isLegacyBackup(jsonContent)
     }
 
     private suspend fun performBackup() {

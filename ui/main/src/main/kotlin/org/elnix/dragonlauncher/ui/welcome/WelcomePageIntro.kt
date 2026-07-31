@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +15,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,23 +28,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
+import org.elnix.dragonlauncher.ui.settings.backup.ImportBackupButton
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun WelcomePageIntro(
-    isVisible: () -> Boolean,
-    onImport: () -> Unit
+    isVisible: Boolean,
+    setAsSeen: () -> Unit
 ) {
-
     val ctx = LocalContext.current
+    val navigator = LocalNavigator.current
+    val scope = rememberCoroutineScope()
+
     val versionName = ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName ?: "unknown"
 
-    val headlinesAlpha = remember(isVisible()) {
+    val headlinesAlpha = remember(isVisible) {
         List(3) { Animatable(initialValue = 0f) }
     }
 
-    LaunchedEffect(isVisible()) {
-        delay(500)
+    LaunchedEffect(isVisible) {
+        delay(500.milliseconds)
         for (i in 0..2) {
             headlinesAlpha[i].animateTo(
                 targetValue = 1f,
@@ -115,15 +121,25 @@ fun WelcomePageIntro(
 
         Spacer(Modifier.weight(1f))
 
-        TextButton(
-            onClick = onImport
+        ImportBackupButton(
+            {
+                PrivateSettingsStore.hasInitialized.set(ctx, true)
+                setAsSeen()
+
+                // Here I do not check the initialization of the launcher, as th user imports it's settings, and therefore, it is initialized!
+                navigator.onBack()
+            }
         ) {
-            Text(
-                text = stringResource(R.string.import_settings),
-                color = MaterialTheme.colorScheme.onBackground.copy(0.5f),
-                textDecoration = TextDecoration.Underline,
-                textAlign = TextAlign.Center
-            )
+            TextButton(
+                onClick = it
+            ) {
+                Text(
+                    text = stringResource(R.string.import_settings),
+                    color = MaterialTheme.colorScheme.onBackground.copy(0.5f),
+                    textDecoration = TextDecoration.Underline,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }
