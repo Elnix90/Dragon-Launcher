@@ -9,13 +9,22 @@ import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.ButtonGroupScope
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,19 +37,29 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.core.util.clearAllData
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.Constants.URLs.DISCORD_INVITE_LINK
+import org.elnix.dragonlauncher.base.Constants.URLs.DRAGON_WEBSITE
+import org.elnix.dragonlauncher.base.Constants.URLs.ELNIX90_BUY_ME_A_COFFEE
 import org.elnix.dragonlauncher.base.Constants.URLs.ELNIX90_GITHUB_PROFILE_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.EXTENSIONS_GITHUB_REPO_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_ISSUES_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_RELEASES_LINK
+import org.elnix.dragonlauncher.base.Constants.URLs.MAILTO_LINK
+import org.elnix.dragonlauncher.base.Constants.URLs.REDDIT_LINK
+import org.elnix.dragonlauncher.base.Constants.URLs.WEBLATE_LINK
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.common.utils.LifecycleUtils.closeApp
@@ -171,13 +190,58 @@ fun SettingsScreen(
             }
         }
 
+
+
         DragonSettingsGroup(R.string.about) {
-            SettingsItem(
-                title = stringResource(R.string.changelogs),
-                icon = R.drawable.source_notes,
-                trailingIcon = R.drawable.open_in_new,
-                onExternalClick = { uriHandler.openUri("$GITHUB_REPO_LINK/blob/main/fastlane/metadata/android/en-US/changelogs/${versionCode}.txt") }
-            ) { navigator.navigate(NavigationRoute.Changelogs) }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+
+                fun ButtonGroupScope.ic(
+                    @DrawableRes ic: Int,
+                    link: String,
+                    `is`: MutableInteractionSource
+                ) {
+                    customItem(
+                        buttonGroupContent = {
+                            Icon(
+                                painter = painterResource(ic),
+                                contentDescription = null,
+                                tint = Color.Unspecified,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .animateWidth(`is`)
+                                    .height(40.dp)
+                                    .clip(MaterialTheme.shapes.extraLarge)
+                                    .clickable(interactionSource = `is`) { uriHandler.openUri(link) }
+                                    .padding(vertical = 8.dp)
+                            )
+                        }
+                    ) {}
+                }
+
+                val githubIcon = if (MaterialTheme.colorScheme.background.luminance() < 0.5) {
+                    R.drawable.github_invertocat_white
+                } else {
+                    R.drawable.github_invertocat_black
+                }
+
+                val interactionSources = remember { List(6) { MutableInteractionSource() } }
+                ButtonGroup(
+                    overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
+                    horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
+                ) {
+                    ic(githubIcon, GITHUB_REPO_LINK, interactionSources[0])
+                    ic(R.drawable.discord_symbol_blurple, DISCORD_INVITE_LINK, interactionSources[1])
+                    ic(R.drawable.reddit_icon_fullcolor, REDDIT_LINK, interactionSources[2])
+                    ic(R.drawable.dragon_launcher_foreground, DRAGON_WEBSITE, interactionSources[3])
+                    ic(R.drawable.weblate_icon, WEBLATE_LINK, interactionSources[4])
+                    ic(R.drawable.protonmail_icon, MAILTO_LINK, interactionSources[5])
+                }
+            }
+
 
             SettingsItem(
                 title = stringResource(R.string.source_code),
@@ -185,6 +249,14 @@ fun SettingsScreen(
                 trailingIcon = R.drawable.open_in_new,
                 onLongClick = { ctx.copyToClipboard(GITHUB_REPO_LINK) }
             ) { uriHandler.openUri(GITHUB_REPO_LINK) }
+
+
+            SettingsItem(
+                title = stringResource(R.string.changelogs),
+                icon = R.drawable.source_notes,
+                trailingIcon = R.drawable.open_in_new,
+                onExternalClick = { uriHandler.openUri("$GITHUB_REPO_LINK/blob/main/fastlane/metadata/android/en-US/changelogs/${versionCode}.txt") }
+            ) { navigator.navigate(NavigationRoute.Changelogs) }
 
             SettingsItem(
                 title = stringResource(R.string.check_for_update),
@@ -204,14 +276,34 @@ fun SettingsScreen(
         }
 
 
-        DragonSettingsGroup(R.string.contributors) {
+        DragonSettingsGroup(R.string.app_developer) {
             ContributorItem(
                 name = "Elnix90",
                 imageRes = R.drawable.elnix90,
                 description = stringResource(R.string.app_developer),
                 githubUrl = ELNIX90_GITHUB_PROFILE_LINK
             )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { uriHandler.openUri(ELNIX90_BUY_ME_A_COFFEE) }
+                    .padding(horizontal = 24.dp, vertical = 12.dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.buy_me_a_coffee),
+                    contentDescription = stringResource(R.string.buy_me_a_coffee),
+                    modifier = Modifier.size(32.dp)
+                )
+                Text(
+                    text = stringResource(R.string.buy_me_a_coffee),
+                    style = MaterialTheme.typography.bodySmallEmphasized
+                )
+            }
+        }
 
+        DragonSettingsGroup(R.string.contributors) {
             ContributorItem(
                 name = "YoannDev90",
                 imageRes = R.drawable.yoanndev90,

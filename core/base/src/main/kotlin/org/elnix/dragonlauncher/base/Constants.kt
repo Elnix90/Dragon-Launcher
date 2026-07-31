@@ -141,6 +141,7 @@ public object Constants {
 
     public object URLs {
         public const val ELNIX90_GITHUB_PROFILE_LINK: String = "https://github.com/Elnix90"
+        public const val ELNIX90_BUY_ME_A_COFFEE: String = "https://buymeacoffee.com/elnix90"
         public const val GITHUB_REPO_LINK: String = "https://github.com/Elnix90/Dragon-Launcher"
         public const val GITHUB_REPO_RELEASES_LINK: String = "$GITHUB_REPO_LINK/releases/latest"
         public const val GITHUB_REPO_ISSUES_LINK: String = "$GITHUB_REPO_LINK/issues/new"

@@ -17,11 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ktx.openUrl
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
@@ -29,16 +29,16 @@ fun ContributorItem(
     name: String,
     @DrawableRes imageRes: Int,
     description: String? = null,
-    githubUrl: String,
+    githubUrl: String
 ) {
     val ctx = LocalContext.current
-
+    val uriHandler = LocalUriHandler.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .combinedClickable(
                 onLongClick = { ctx.copyToClipboard(githubUrl) },
-                onClick = { ctx.openUrl(githubUrl) }
+                onClick = { uriHandler.openUri(githubUrl) }
             )
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
