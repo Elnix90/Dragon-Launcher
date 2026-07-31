@@ -113,12 +113,12 @@ fun SettingsScreen(
             }
         }
     ) {
-        AnimatedVisibility(showBetaVersionWarning) {
-            BetaVersionWarning(BetaVersionType.App)
-        }
-
         AnimatedVisibility(GoogleWarningManager.showWarning()) {
             GoogleWarningReminder()
+        }
+
+        AnimatedVisibility(showBetaVersionWarning) {
+            BetaVersionWarning(BetaVersionType.App)
         }
 
         AnimatedVisibility(!signatureMatched) {
