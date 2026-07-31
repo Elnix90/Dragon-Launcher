@@ -140,6 +140,7 @@ fun rememberAnimatedIcon(): AnimatedIcon {
 fun AnimatedIcon.Icon(
     @DrawableRes
     defaultIcon: Int,
+    modifier: Modifier = Modifier,
     defaultColor: Color = MaterialTheme.colorScheme.onBackground,
 
     successIcon: Int = R.drawable.check,
@@ -168,7 +169,7 @@ fun AnimatedIcon.Icon(
                 Success -> successColor
                 Error -> errorColor
             }.semiTransparentIfDisabled(enabled),
-            modifier = Modifier
+            modifier = modifier
                 .clip(RoundedCornerShape(5.dp))
                 .clickable(enabled = enabled, onClick = onClick)
                 .padding(5.dp)
