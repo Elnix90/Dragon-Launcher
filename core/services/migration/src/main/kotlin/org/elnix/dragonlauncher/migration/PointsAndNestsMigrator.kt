@@ -347,7 +347,7 @@ internal object PointsAndNestsMigrator {
      * @param oldAction The old action JSON object.
      * @return Migrated action JSON object.
      */
-    private fun migrateAction(oldAction: JSONObject): JSONObject {
+    internal fun migrateAction(oldAction: JSONObject): JSONObject {
         val newAction = JSONObject()
         val oldType = oldAction.optString("type", "None")
         val newType = oldType.removePrefix("org.elnix.dragonlauncher.common.serializables.SwipeActionSerializable.")

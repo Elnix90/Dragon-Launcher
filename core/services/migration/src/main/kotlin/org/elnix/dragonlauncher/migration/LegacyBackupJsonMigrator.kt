@@ -76,6 +76,12 @@ public class LegacyBackupJsonMigrator {
         val errors = mutableListOf<String>()
 
         val density = Density(ctx.resources.displayMetrics.density)
+        val configuration = ctx.resources.configuration
+        val migrationCtx = MigrationContext(
+            density = density,
+            screenWidthDp = configuration.screenWidthDp,
+            screenHeightDp = configuration.screenHeightDp
+        )
 
         val newStores = AllStores.associateBy { it.name }
 
@@ -96,29 +102,18 @@ public class LegacyBackupJsonMigrator {
 
         for (mapping in OldToNewStoreMapping.mappings.values) {
             try {
-                val oldData = json.optJSONObject(mapping.oldBackupKey)
-                    ?: json.optJSONArray(mapping.oldBackupKey)
-                    ?: run {
-                        if (mapping.splitInto.isNotEmpty()) {
-                            json.optJSONObject(mapping.oldBackupKey)
-                        } else null
-                    }
+                if (mapping.handledExternally) continue
 
-                if (oldData == null) {
+                val oldData = json.opt(mapping.oldBackupKey)
+
+                if (oldData == null || oldData == JSONObject.NULL) {
                     skipped.add(mapping.oldBackupKey)
                     continue
                 }
 
                 if (mapping.splitInto.isNotEmpty()) {
                     for ((newKey, extractor) in mapping.splitInto) {
-                        val extractedValue = when (oldData) {
-                            is JSONObject -> extractor(oldData)
-                            is JSONArray -> {
-                                if (newKey == mapping.oldBackupKey) oldData else null
-                            }
-
-                            else -> null
-                        }
+                        val extractedValue = extractor(oldData)
                         if (extractedValue != null) {
                             val targetStore = newStores[newKey]
                             if (targetStore != null) {
@@ -142,7 +137,10 @@ public class LegacyBackupJsonMigrator {
                 }
 
                 val transformedData = when (oldData) {
-                    is JSONObject -> applyKeyMapping(oldData, mapping)
+                    is JSONObject -> applyKeyMapping(
+                        ctx, oldData, mapping, migrationCtx, newStores, migrated
+                    )
+
                     is JSONArray -> oldData
                     else -> oldData
                 }
@@ -169,39 +167,95 @@ public class LegacyBackupJsonMigrator {
     }
 
     /**
-     * Applies key mappings and value transformations to a single store's JSON object.
+     * Applies key mappings, key routes, and value transformations to a single store's JSON object.
      *
      * - Keys listed in [StoreMapping.skipKeys] are dropped.
      * - Keys listed in [StoreMapping.keyMappings] are renamed.
-     * - Keys listed in [StoreMapping.splitInto] are excluded (handled separately).
+     * - Keys listed in [StoreMapping.keyRoutes] are moved into another store.
      * - Values are optionally transformed via [StoreMapping.valueTransformers].
      *
+     * @param ctx Android context for DataStore access.
      * @param source The old store JSON object.
      * @param mapping The mapping definition for this store.
+     * @param migrationCtx The [MigrationContext] for value transformations.
+     * @param newStores Lookup of all new stores by name.
+     * @param migrated Set of migrated store labels, extended when a route is written.
      * @return A new JSON object with transformed keys and values.
      */
-    private fun applyKeyMapping(
+    private suspend fun applyKeyMapping(
+        ctx: Context,
         source: JSONObject,
-        mapping: StoreMapping
+        mapping: StoreMapping,
+        migrationCtx: MigrationContext,
+        newStores: Map<String, SettingsStore<*, *>>,
+        migrated: MutableSet<String>
     ): JSONObject {
         val result = JSONObject()
 
         for (key in source.keys()) {
             if (key in mapping.skipKeys) continue
 
+            val route = mapping.keyRoutes[key]
+            if (route != null) {
+                val transformed = route.transform(source.get(key))
+                val routeTarget = newStores[route.targetStore]
+                if (routeTarget != null) {
+                    writeRoute(ctx, routeTarget, route.newKey, transformed)
+                    migrated.add("${mapping.oldBackupKey}.$key->${route.targetStore}")
+                }
+                continue
+            }
+
             val newKey = mapping.keyMappings[key] ?: key
             val value = source.get(key)
 
-            if (key in mapping.splitInto) continue
-
-            val transformed = mapping.valueTransformers[newKey]?.invoke(value)
-                ?: mapping.valueTransformers[key]?.invoke(value)
+            val transformed = mapping.valueTransformers[newKey]?.invoke(value, migrationCtx)
+                ?: mapping.valueTransformers[key]?.invoke(value, migrationCtx)
                 ?: value
 
             result.put(newKey, transformed)
         }
 
         return result
+    }
+
+    /**
+     * Writes a single key/value pair into a target store.
+     *
+     * Map-based stores receive a single-key [JSONObject], while JSON-backed
+     * stores receive the raw value directly.
+     *
+     * @param ctx Android context.
+     * @param store The target store.
+     * @param key The new key name inside the target store.
+     * @param value The value to write.
+     */
+    private suspend fun writeRoute(
+        ctx: Context,
+        store: SettingsStore<*, *>,
+        key: String,
+        value: Any?
+    ) {
+        @Suppress("UNCHECKED_CAST")
+        when (store) {
+            is MapSettingsStore -> {
+                val obj = JSONObject()
+                obj.put(key, value)
+                store.importFromBackup(ctx, obj)
+            }
+
+            is JsonObjectSettingsStore -> {
+                when (value) {
+                    is JSONObject -> store.importFromBackup(ctx, value)
+                    is JSONArray -> store.importFromBackup(ctx, value.optJSONObject(0) ?: JSONObject())
+                    else -> store.jsonSetting.set(ctx, value?.toString())
+                }
+            }
+
+            is JsonArraySettingsStore -> {
+                store.jsonSetting.set(ctx, value?.toString())
+            }
+        }
     }
 
     /**
@@ -234,23 +288,24 @@ public class LegacyBackupJsonMigrator {
             }
 
             is JsonArraySettingsStore -> {
-                val array = when (value) {
-                    is JSONArray -> value
-                    is JSONObject -> {
-                        if (value.length() > 0) {
-                            val arr = JSONArray()
-                            arr.put(value)
-                            arr
-                        } else null
+                when (value) {
+                    is JSONArray -> {
+                        logD(BACKUP_TAG) { "Importing an array of length ${value.length()}\n$value\n to ${store.name}"}
+                        store.importFromBackup(ctx, value)
                     }
 
-                    else -> null
-                }
-                if (array != null) {
-                    logD(BACKUP_TAG) { "Importing an array of length ${array.length()}\n$value\n to ${store.name}"}
-                    store.importFromBackup(ctx, array)
-                } else {
-                    logD(BACKUP_TAG) { "Value should have been JSONArray but is ${if (value==null) null else value::class.simpleName} to ${store.name}"}
+                    is JSONObject -> {
+                        // Object payloads (e.g. `app_overrides` is keyed by cache key) are stored
+                        // as their raw JSON string; the consuming manager decodes it directly.
+                        if (value.length() > 0) {
+                            logD(BACKUP_TAG) { "Importing an object of length ${value.length()}\n$value\n to ${store.name}"}
+                            store.jsonSetting.set(ctx, value.toString())
+                        } else {
+                            logD(BACKUP_TAG) { "value: $value is empty for ${store.name}"}
+                        }
+                    }
+
+                    else -> logD(BACKUP_TAG) { "Value should have been JSONArray or JSONObject but is ${if (value==null) null else value::class.simpleName} to ${store.name}"}
                 }
             }
 
@@ -262,6 +317,15 @@ public class LegacyBackupJsonMigrator {
                             val o = JSONObject()
                             o.put("data", value)
                             o
+                        } else null
+                    }
+
+                    is String -> {
+                        // Raw JSON string payloads (e.g. main_screen_layers stores the
+                        // encoded layers list directly).
+                        if (value.isNotBlank()) {
+                            store.jsonSetting.set(ctx, value)
+                            null
                         } else null
                     }
 
