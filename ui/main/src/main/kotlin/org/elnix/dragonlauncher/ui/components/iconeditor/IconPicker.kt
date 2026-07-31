@@ -5,16 +5,20 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -25,9 +29,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults.InputField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,11 +41,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
@@ -55,6 +63,7 @@ import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.models.IconPickerVM
 import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
+import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.components.ShapedLauncherIcon
 
@@ -68,8 +77,8 @@ fun IconPicker(
 ) {
     val iconSize = 48.dp
     val iconSizePx = iconSize.px
-
-    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+    val ctx = LocalContext.current
 
     val scope = rememberCoroutineScope()
 
@@ -101,36 +110,35 @@ fun IconPicker(
     ) {
         if (packsInstalled) {
             item(span = { GridItemSpan(columns) }) {
-                SearchBar(
-                    windowInsets = WindowInsets(0.dp),
-                    expanded = false,
-                    onExpandedChange = {},
-                    inputField = {
-                        InputField(
-                            leadingIcon = {
-                                Icon(
-                                    painterResource(R.drawable.search),
-                                    contentDescription = null
-                                )
-                            },
-                            onSearch = {},
-                            expanded = false,
-                            onExpandedChange = {},
-                            placeholder = {
-                                Text(stringResource(R.string.select_icon))
-                            },
-                            query = query,
-                            onQueryChange = {
-                                query = it
-                                scope.launch {
-                                    viewModel.searchIcon(query, filterIconPack)
-                                }
-                            },
-                        )
-                    }
-                ) {
 
-                }
+                TextField(
+                    value = query,
+                    onValueChange = {
+                        query = it
+                        scope.launch {
+                            viewModel.searchIcon(query, filterIconPack)
+                        }
+                    },
+                    textStyle = TextStyle(
+                        textAlign = TextAlign.Center,
+                        fontSize = 13.sp
+                    ),
+                    placeholder = {
+                        Text(stringResource(R.string.select_icon))
+                    },
+                    colors = AppObjectsColors.outlinedTextFieldColors(removeBorder = true),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.DecimalSigned,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { focusManager.clearFocus() }
+                    ),
+                    shape = CircleShape,
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(50.dp)
+                )
             }
         }
 
@@ -182,7 +190,7 @@ fun IconPicker(
                         val icon = remember(filterIconPack?.packageName) {
                             try {
                                 filterIconPack?.packageName?.let { pkg ->
-                                    context.packageManager.getApplicationIcon(pkg)
+                                    ctx.packageManager.getApplicationIcon(pkg)
                                 }
                             } catch (_: PackageManager.NameNotFoundException) {
                                 null

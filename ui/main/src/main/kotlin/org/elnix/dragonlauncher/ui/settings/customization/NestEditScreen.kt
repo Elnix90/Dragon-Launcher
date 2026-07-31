@@ -416,7 +416,7 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                                         leadingIcon = {
                                             IntersectionShapePreview(shape, defaultShape, 25.dp)
                                         },
-                                        trailingIcon = {
+                                        trailingContent = {
                                             Icon(
                                                 painter = painterResource(R.drawable.drag_indicator),
                                                 contentDescription = stringResource(R.string.drag_handle)
@@ -443,7 +443,7 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                                             contentDescription = null
                                         )
                                     },
-                                    trailingIcon = {
+                                    trailingContent = {
                                         Icon(
                                             painter = painterResource(R.drawable.drag_indicator),
                                             contentDescription = stringResource(R.string.drag_handle)
