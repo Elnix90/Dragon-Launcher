@@ -1034,8 +1034,8 @@
     <string name="show_more_sheet">Show more sheet</string>
     <string name="show_angle_preview">Show angle preview</string>
     <plurals name="n_points_selected">
-        <item quantity="one">%d point selected</item>
-        <item quantity="other">%d points selected</item>
+        <item quantity="one">point selected</item>
+        <item quantity="other">points selected</item>
     </plurals>
     <string name="see_selected_points">See selected points</string>
     <string name="point_not_found">Point not found</string>

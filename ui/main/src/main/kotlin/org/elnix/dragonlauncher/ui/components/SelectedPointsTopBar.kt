@@ -1,11 +1,9 @@
 package org.elnix.dragonlauncher.ui.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,10 +31,10 @@ import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.action
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Points
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ui.actions.FinalPointIcon
-import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
+import org.elnix.dragonlauncher.ui.base.animation.barsContentTransform
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
@@ -69,67 +68,101 @@ fun SelectedPointsTopBar(
         frozenPoints = points
     }
 
-    AnimatedVisibility(
-        visible = selectedPointsIds.isNotEmpty(),
-        enter = slideInVertically(
-            initialOffsetY = { fullHeight -> -fullHeight },
-            animationSpec = bouncySpec()
-        ) + fadeIn(animationSpec = tween(300)),
-        exit = slideOutVertically(
-            targetOffsetY = { fullHeight -> -fullHeight },
-            animationSpec = bouncySpec()
-        ) + fadeOut(animationSpec = tween(250)),
+    val whatPreviewToShow = when (selectedPointsIds.size) {
+        0 -> null
+        1 -> true
+        else -> false
+    }
+
+    var oldCount by remember { mutableIntStateOf(frozenIds.size) }
+
+    LaunchedEffect(frozenIds.size) {
+        oldCount = frozenIds.size
+    }
+
+    AnimatedContent(
+        targetState = whatPreviewToShow,
+        transitionSpec = { barsContentTransform },
+        contentAlignment = Alignment.Center,
         modifier = modifier
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(top = 10.dp)
-                .shapedClickable { showSelectedPointsDialog = true }
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                .padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            DragonIconButton(
-                icon = R.drawable.close,
-                contentDescription = R.string.deselect_all,
-                onClick = onDeselectAll
-            )
-
-            Spacer(5.dp)
-
-            Text(
-                pluralStringResource(
-                    R.plurals.n_points_selected,
-                    frozenIds.size,
-                    frozenIds.size
-                ),
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(3.dp)
-            )
-
-            Box {
-                DragonIconButton(
-                    icon = R.drawable.more_vert,
-                    contentDescription = R.string.more,
-                    onClick = { showMoreDialog = true }
+    ) { previewToShow ->
+        @Suppress("UnusedExpression")
+        when (previewToShow) {
+            null -> null
+            true -> {
+                val previewPointId = frozenIds.firstOrNull() ?: return@AnimatedContent
+                PointPreviewTitle(
+                    point = frozenPoints[previewPointId],
+                    topPadding = 30.dp,
+                    showLabel = true,
+                    showIcon = true
                 )
+            }
 
-                BurgerListAction(
-                    actions = listOf(
-                        MoreOptions(
-                            onClick = onSelectAll,
-                            icon = R.drawable.select_all,
-                            text = { stringResource(R.string.select_all) }
-                        ),
-                        MoreOptions(
-                            onClick = onInvert,
-                            icon = R.drawable.swap_calls,
-                            text = { stringResource(R.string.invert) }
+            false -> {
+                Row(
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .shapedClickable { showSelectedPointsDialog = true }
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                        .padding(10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    DragonIconButton(
+                        icon = R.drawable.close,
+                        contentDescription = R.string.deselect_all,
+                        onClick = onDeselectAll
+                    )
+
+                    Spacer(5.dp)
+
+                    AnimatedContent(
+                        targetState = frozenIds.size,
+                        transitionSpec = {
+                            if (oldCount < frozenIds.size) {
+                                slideInVertically { it } togetherWith slideOutVertically { -it }
+                            } else {
+                                slideInVertically { -it } togetherWith slideOutVertically { it }
+                            }
+                        }
+                    ) {
+                        Text(
+                            it.toString(),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(3.dp)
                         )
-                    ),
-                    isExpanded = showMoreDialog,
-                    onDismissRequest = { showMoreDialog = false }
-                )
+                    }
+                    Text(
+                        pluralStringResource(R.plurals.n_points_selected, frozenIds.size),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(3.dp)
+                    )
+
+                    Box {
+                        DragonIconButton(
+                            icon = R.drawable.more_vert,
+                            contentDescription = R.string.more,
+                            onClick = { showMoreDialog = true }
+                        )
+
+                        BurgerListAction(
+                            actions = listOf(
+                                MoreOptions(
+                                    onClick = onSelectAll,
+                                    icon = R.drawable.select_all,
+                                    text = { stringResource(R.string.select_all) }
+                                ),
+                                MoreOptions(
+                                    onClick = onInvert,
+                                    icon = R.drawable.swap_calls,
+                                    text = { stringResource(R.string.invert) }
+                                )
+                            ),
+                            isExpanded = showMoreDialog,
+                            onDismissRequest = { showMoreDialog = false }
+                        )
+                    }
+                }
             }
         }
     }
