@@ -14,8 +14,6 @@ import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.elnix.dragonlauncher.settings.AllStores
@@ -24,11 +22,6 @@ import timber.log.Timber
 
 @HiltAndroidApp
 class DragonLauncherApplication : Application() {
-    val appScope = CoroutineScope(
-        SupervisorJob() + Dispatchers.Default
-    )
-
-
     @SuppressLint("LogNotTimber")
     override fun onCreate() {
         super.onCreate()
@@ -60,11 +53,6 @@ class DragonLauncherApplication : Application() {
                 )
             }
         }
-    }
-
-    override fun onTerminate() {
-        super.onTerminate()
-        appScope.cancel()
     }
 
     private fun initializeAllStores() {
