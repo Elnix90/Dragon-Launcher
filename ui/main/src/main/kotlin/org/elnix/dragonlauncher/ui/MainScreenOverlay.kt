@@ -381,12 +381,14 @@ fun MainScreenOverlay(
                             .drawWithCache {
                                 onDrawBehind {
                                     iconsTrigger
+
                                     NestOverlay(
                                         center = liveNestCenterForDraw,
                                         nest = nestedNestForDraw,
                                         depth = 1,
                                         drawParams = drawParams,
                                         selectedAll = false,
+                                        lockedPoint = if (isDeepestController) null else controller.hostPoint
                                     )
                                 }
                             }

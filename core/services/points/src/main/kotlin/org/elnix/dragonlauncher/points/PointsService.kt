@@ -180,7 +180,12 @@ public interface PointsService {
         skipSelected: Boolean
     ): Points
 
-    public fun getSelectedShapeIds(nestId: Int): Set<Int>
+    public fun getSelectedShapeIds(
+        nestId: Int,
+        lockedPoint: Point?
+    ): Set<Int>
+
+    public fun getSelectedPoints(lockedPoint: Point?): List<Int>
 
     /**
      * Compute the closest point relative to the [normalizedPos] given their [Point.offset] and the eventual [shape][Point.shapeId] they are tied to
@@ -761,8 +766,17 @@ internal class PointsServiceImpl(
             .associateBy { it.id }
     }
 
-    override fun getSelectedShapeIds(nestId: Int): Set<Int> {
-        val selectedPointIds = selectedPointsIds.value.takeIf { it.isNotEmpty() } ?: return emptySet()
+    override fun getSelectedPoints(lockedPoint: Point?): List<Int> = if (lockedPoint != null) {
+        selectedPointsIds.value + lockedPoint.id
+    } else {
+        selectedPointsIds.value
+    } ?: emptyList()
+
+    override fun getSelectedShapeIds(
+        nestId: Int,
+        lockedPoint: Point?
+    ): Set<Int> {
+        val selectedPointIds = getSelectedPoints(lockedPoint).takeIf { it.isNotEmpty() } ?: return emptySet()
 
         return selectedPointIds.mapNotNullTo(mutableSetOf()) { id ->
             val point = findPointById(id) ?: return@mapNotNullTo null

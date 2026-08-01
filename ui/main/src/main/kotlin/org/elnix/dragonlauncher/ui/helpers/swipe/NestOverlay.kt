@@ -75,6 +75,7 @@ fun DrawScope.NestOverlay(
     center: Offset,
     drawParams: DrawParams,
     selectedAll: Boolean = false,
+    lockedPoint: Point? = null,
 ) {
     require(depth > 0)
 
@@ -84,9 +85,10 @@ fun DrawScope.NestOverlay(
     val interSectionShapes = nest.getInterSectionShapes(defaultNest)
     val defaultShape = drawParams.pointsService.defaultIntersectionShape.value
 
-    val selectedPointsIds = drawParams.pointsService.selectedPointsIds.value
-    val selectedShapes = drawParams.pointsService.getSelectedShapeIds(nest.id)
+    val selectedPointsIds = drawParams.pointsService.getSelectedPoints(lockedPoint)
+    val selectedShapes = drawParams.pointsService.getSelectedShapeIds(nest.id, lockedPoint)
 
+//    logWtf { "selected points: $selectedPointsIds" }
     if (!drawParams.hideShapes) {
         repeat(2) { pass ->
             interSectionShapes.forEach { shape ->
@@ -95,7 +97,9 @@ fun DrawScope.NestOverlay(
                 val showShape = depth > 1 ||
                         isSettingDisplay ||
                         (nest.getShowAllShapes(defaultNest, drawParams.showAllShapesInNest) && selectedPointsIds.isNotEmpty()) ||
-                        (nest.getShowCurrentShape(defaultNest, drawParams.showShape) && shape.id in selectedShapes)
+                        (nest.getShowCurrentShape(defaultNest, drawParams.showShape) &&
+                                (shape.id in selectedShapes))// ||
+//                                (lockedPoint != null && lockedPoint.nestId == nest.id && lockedPoint.shapeId == shape.id))
 
 
                 if (showShape) {
