@@ -278,11 +278,19 @@ public data class Point(
      *
      * ## This is the real position you want to use,
      * as the [offset] parameter is not aware of the potential [shapes][IntersectionShape] in the [Nest]
+     *
+     * @see getPos
      */
     @Transient
     var pos: Offset? = null
 
-    public fun getPos(): Offset {
+
+    /**
+     * Finally, after [pos], you generally use this function to avoid handing `null` behavior manually
+     *
+     * @return the offset of the point [pos] the point it has a shape and a [shape][IntersectionShape]
+     */
+    public inline fun getPos(): Offset {
         if (this.shapeId == null) return this.offset
         return this.pos ?: this.offset
     }
@@ -313,7 +321,7 @@ public data class Point(
             this.borderColor ?: defaultPoint.borderColor.takeIfNot(defaultEditing)
         } ?: extraColors.shapes
 
-    public inline fun getBackgroundColor(selected: Boolean, defaultPoint: Point, extraColors: ExtraColors, defaultEditing: Boolean = false): Color =
+    public inline fun getBackgroundColor(selected: Boolean, defaultPoint: Point, defaultEditing: Boolean = false): Color =
         if (selected) {
             this.backgroundColorSelected ?: defaultPoint.backgroundColorSelected.takeIfNot(defaultEditing) ?: defaultBackgroundColorSelected
         } else {

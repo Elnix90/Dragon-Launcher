@@ -2,10 +2,14 @@
 
 package org.elnix.dragonlauncher.base.model.serializables
 
+import androidx.annotation.FloatRange
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.DragonJson
+import org.elnix.dragonlauncher.base.model.serializables.serializers.DpSerializer
 import org.elnix.dragonlauncher.ktx.takeIfNot
 
 
@@ -29,7 +33,8 @@ public data class Nest(
      * How far the user has to swipe to start actions triggering.
      * In the opposite; how far does the zone that triggers nothing extends
      */
-    val cancelZone: Int? = null,
+    @Serializable(with = DpSerializer::class)
+    val cancelZone: Dp? = null,
 
     /**
      * A set of one or more [IntersectionShape], each one of them belongs to the nest and
@@ -57,18 +62,22 @@ public data class Nest(
      */
     val showCurrentShape: Boolean? = null,
 
+    /**
+     * If true, all points in the nest are visible in the nest, regardless of points
+     */
+    val showAllShapes: Boolean? = null,
 
     /**
      * If true, all points in the nest are visible in the nest, regardless of points
      */
-    val showAllShapes: Boolean? = null
+    @FloatRange(0.0, 5.0)
+    val previewScaleFactor: Float? = null
 ) {
 //    override fun toString(): String = "Nest(id = $id, contains ${intersectionShapes.size} shapes)"
 //    override fun toString(): String = "Nest N°$id"
 
-    // TODO
-//    public infix fun scaledBy(scale: Float): Nest = this
-    //this.copy(intersectionShapes = this.intersectionShapes.mapTo(mutableSetOf()) { it scaledBy scale })
+//    public fun scaledBy(scale: Float, defaultNest: Nest, defaultIntersectionShape: IntersectionShape): Nest =
+//        this.copy(intersectionShapes = this.getInterSectionShapes(defaultNest).mapTo(mutableSetOf()) { it.scaledBy(scale, defaultIntersectionShape) })
 
     /**
      * I cannot name this one `getName` as it's a primal functions created by the data class
@@ -79,7 +88,7 @@ public data class Nest(
     public inline fun getInterSectionShapes(defaultNest: Nest, defaultEditing: Boolean = false): Set<IntersectionShape> =
         this.intersectionShapes ?: defaultNest.intersectionShapes.takeIfNot(defaultEditing) ?: defaultIntersectionShapes
 
-    public inline fun getCancelZone(defaultNest: Nest, defaultEditing: Boolean = false): Int =
+    public inline fun getCancelZone(defaultNest: Nest, defaultEditing: Boolean = false): Dp =
         this.cancelZone ?: defaultNest.cancelZone.takeIfNot(defaultEditing) ?: defaultCancelZone
 
     public inline fun getShowAllPointsInCurrentNest(
@@ -102,6 +111,9 @@ public data class Nest(
     public inline fun getShowAllShapes(defaultNest: Nest, showAllShapesSetting: Boolean, defaultEditing: Boolean = false): Boolean =
         this.showAllShapes ?: defaultNest.showAllShapes.takeIfNot(defaultEditing) ?: showAllShapesSetting
 
+    public inline fun getPreviewScaleFactor(defaultNest: Nest, defaultEditing: Boolean = false): Float =
+        this.previewScaleFactor ?: defaultNest.previewScaleFactor.takeIfNot(defaultEditing) ?: defaultPreviewScaledFactor
+
     @Suppress("ConstPropertyName")
     public companion object {
 
@@ -121,7 +133,9 @@ public data class Nest(
             )
         )
 
-        public const val defaultCancelZone: Int = 50
+        public val defaultCancelZone: Dp = 50.dp
+
+        public const val defaultPreviewScaledFactor: Float = 2f
 
         public val emptyNest: Nest = Nest()
 
@@ -132,7 +146,8 @@ public data class Nest(
                     this.showAllPointsInCurrentShape == null &&
                     this.showAllPointsInCurrentNest == null &&
                     this.showCurrentShape == null &&
-                    this.showAllShapes == null
+                    this.showAllShapes == null &&
+                    this.previewScaleFactor == null
 
         public inline val Nest.isNotDefault: Boolean
             get() = !isDefault

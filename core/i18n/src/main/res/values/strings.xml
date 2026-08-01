@@ -85,6 +85,8 @@
     <string name="dragging_distance_selection">Dragging Distance Selection</string>
     <string name="circle">Circle Drag Distance</string>
     <string name="cancel_zone">Cancel Zone Drag</string>
+    <string name="preview_scale_factor">Preview Scale Factor</string>
+    <string name="preview_scale_factor_desc">How much the nest is scales when displaying a preview of it (when it\'s a sub nest in the current nest)</string>
     <string name="android_settings">Android Settings</string>
     <string name="changelogs">Changelogs</string>
     <string name="changelogs_help">The list of updates the app got since the first version</string>

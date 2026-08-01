@@ -63,7 +63,7 @@ fun DrawScope.PointBg(
 
 
     val borderColor = point.getBorderColor(selected, defaultPoint, extraColors)
-    val backgroundColor =  point.getBackgroundColor(selected, defaultPoint, extraColors)
+    val backgroundColor =  point.getBackgroundColor(selected, defaultPoint)
     val glow = point.getGlow(selected, defaultPoint)
 
     val borderIconShape = point.getBorderShape(selected, defaultPoint)

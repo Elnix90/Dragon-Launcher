@@ -29,7 +29,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -179,7 +178,7 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
     var selectedShapeId: Int? by remember { mutableStateOf(null) }
     val isInDragAroundMode: Boolean = selectedShapeId == null
 
-    var tempCancelZone by remember { mutableIntStateOf(currentNest.getCancelZone(defaultNest)) }
+    var tempCancelZone by remember { mutableStateOf(currentNest.getCancelZone(defaultNest)) }
 
     val paths: SnapshotStateMap<IntersectionShape, Path> = remember { mutableStateMapOf() }
     fun addPath(shape: IntersectionShape) {

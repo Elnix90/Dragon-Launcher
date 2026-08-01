@@ -715,7 +715,7 @@ internal class PointsServiceImpl(
             }
         }
 
-        val isInCancelZone = dist <= findNestById(nestId).getCancelZone(defaultNest.value) * density
+        val isInCancelZone = dist <= findNestById(nestId).getCancelZone(defaultNest.value).value * density
 
         // When inside the cancel zone there is no point to select.
         val selectedPoint = if (isInCancelZone) {

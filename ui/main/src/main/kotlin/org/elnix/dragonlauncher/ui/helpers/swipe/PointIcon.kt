@@ -80,8 +80,10 @@ fun DrawScope.PointIcon(
         !drawParams.preventDrawingSubNests
     ) {
         val nest = drawParams.pointsService.findNestById(action.nestId)
+        val scaleFactor = nest.getPreviewScaleFactor(drawParams.pointsService.defaultNest.value)
+
         val newDepth = depth + 1
-        val newScale = 1f / newDepth
+        val newScale = 1f / (newDepth * scaleFactor)
 
         scale(
             scale = newScale,

@@ -12,7 +12,6 @@ import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.serializables.Nest
@@ -88,7 +87,6 @@ fun DrawScope.NestOverlay(
     val selectedPointsIds = drawParams.pointsService.getSelectedPoints(lockedPoint)
     val selectedShapes = drawParams.pointsService.getSelectedShapeIds(nest.id, lockedPoint)
 
-//    logWtf { "selected points: $selectedPointsIds" }
     if (!drawParams.hideShapes) {
         repeat(2) { pass ->
             interSectionShapes.forEach { shape ->
@@ -98,9 +96,7 @@ fun DrawScope.NestOverlay(
                         isSettingDisplay ||
                         (nest.getShowAllShapes(defaultNest, drawParams.showAllShapesInNest) && selectedPointsIds.isNotEmpty()) ||
                         (nest.getShowCurrentShape(defaultNest, drawParams.showShape) &&
-                                (shape.id in selectedShapes))// ||
-//                                (lockedPoint != null && lockedPoint.nestId == nest.id && lockedPoint.shapeId == shape.id))
-
+                                (shape.id in selectedShapes))
 
                 if (showShape) {
                     val path = NestIntersectionShapesPathCache[shape] ?: return@forEach
@@ -131,7 +127,7 @@ fun DrawScope.NestOverlay(
                     Color.Magenta
                 )
             ),
-            radius = nest.getCancelZone(defaultNest).dp.toPx(),
+            radius = nest.getCancelZone(defaultNest).toPx(),
             center = center,
             style = Stroke(Stroke.HairlineWidth)
         )

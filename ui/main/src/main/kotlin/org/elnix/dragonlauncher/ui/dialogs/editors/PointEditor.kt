@@ -853,14 +853,13 @@ fun PointEditor(
                             ColorPickerRow(
                                 title = stringResource(R.string.background_selected),
                                 description = null,
-                                currentColor = editPoint.getBackgroundColor(true, defaultPoint, extraColors, isDefaultEditing)
+                                currentColor = editPoint.getBackgroundColor(true, defaultPoint, isDefaultEditing)
                             ) { selectedColor ->
                                 editPoint = editPoint.copy(
                                     backgroundColorSelected = selectedColor.takeIf {
                                         it != emptyPoint.getBackgroundColor(
                                             true,
                                             defaultPoint,
-                                            extraColors,
                                             isDefaultEditing
                                         )
                                     })
@@ -916,14 +915,13 @@ fun PointEditor(
                             ColorPickerRow(
                                 title = stringResource(R.string.background_color),
                                 description = null,
-                                currentColor = editPoint.getBackgroundColor(false, defaultPoint, extraColors, isDefaultEditing)
+                                currentColor = editPoint.getBackgroundColor(false, defaultPoint, isDefaultEditing)
                             ) { selectedColor ->
                                 editPoint = editPoint.copy(
                                     backgroundColor = selectedColor.takeIf {
                                         it != emptyPoint.getBackgroundColor(
                                             false,
                                             defaultPoint,
-                                            extraColors,
                                             isDefaultEditing
                                         )
                                     }

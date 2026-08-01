@@ -59,8 +59,7 @@ public data class IntersectionShape(
      */
     val pointsKeepTheirRelativePosition: Boolean? = null
 ) {
-// TODO
-//    public infix fun scaledBy(scale: Float): IntersectionShape = this.copy(scale = this.scale * scale)
+//    public fun scaledBy(scale: Float, defaultIntersectionShape: IntersectionShape): IntersectionShape = this.copy(scale = this.getScale(defaultIntersectionShape) * scale)
 
     /**
      * Returns the size of this [IntersectionShape], computed with the pixel density
