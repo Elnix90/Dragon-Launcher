@@ -11,10 +11,10 @@ import androidx.compose.ui.platform.LocalContext
 import io.github.elnix90.core.SettingsBackupManager
 import io.github.elnix90.core.stores.SettingsStore
 import io.github.elnix90.logging.BACKUP_TAG
+import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.migration.MigrationResult
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
@@ -33,82 +33,67 @@ fun ImportBackupButton(
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var selectedStoresForImport by remember { mutableStateOf(setOf<SettingsStore<*, *>>()) }
+
     var importJson by remember { mutableStateOf<JSONObject?>(null) }
-    var showImportDialog by remember { mutableStateOf(false) }
-    var showLegacyMigrationDialog by remember { mutableStateOf(false) }
     var legacyJsonString by remember { mutableStateOf<String?>(null) }
 
     val settingsImportLauncher = rememberSettingsImportLauncher(
         onJsonReady = { json ->
+            logD(BACKUP_TAG) { "Json ready: $json" }
             if (backupViewModel.isLegacyBackup(json.toString())) {
                 legacyJsonString = json.toString()
-                showLegacyMigrationDialog = true
             } else {
                 importJson = json
-                showImportDialog = true
             }
         }
     )
 
-    if (showLegacyMigrationDialog && legacyJsonString != null) {
+    legacyJsonString?.let {json ->
         MigrationDialog(
-            migrate = {
-                if (legacyJsonString.isNullOrBlank()) {
-                    backupViewModel.migrateFromLegacyBackup(legacyJsonString!!)
-                } else {
-                    backupViewModel.migrationResult.value = MigrationResult.failure("json string is null or blank")
-                }
-            },
-            onDismiss = {
-                showLegacyMigrationDialog = false
-                legacyJsonString = null
-            },
+            migrate = { backupViewModel.migrateFromLegacyBackup(json) },
+            onDismiss = { legacyJsonString = null },
             canDisagree = true
         )
     }
 
     importJson?.let { json ->
-        if (showImportDialog) {
-            ImportSettingsDialog(
-                backupJson = json,
-                onDismiss = {
-                    showImportDialog = false
-                    importJson = null
-                },
-                onConfirm = { selectedStores ->
-                    showImportDialog = false
-                    selectedStoresForImport = selectedStores
+        var selectedStoresForImport by remember { mutableStateOf(setOf<SettingsStore<*, *>>()) }
 
-                    scope.launch {
-                        try {
-                            SettingsBackupManager.importSettingsFromJson(
-                                ctx,
-                                json,
-                                selectedStoresForImport
-                            )
-                            backupViewModel.result.value = BackupResult(
-                                export = false,
-                                error = false,
-                                title = ctx.getString(R.string.import_successful)
-                            )
+        ImportSettingsDialog(
+            backupJson = json,
+            onDismiss = {
+                importJson = null
+            },
+            onConfirm = { selectedStores ->
+                selectedStoresForImport = selectedStores
 
-                            importJson = null
-                        } catch (e: Exception) {
-                            logE(BACKUP_TAG, e) { "Import failed" }
-                            backupViewModel.result.value = BackupResult(
-                                export = false,
-                                error = true,
-                                title = ctx.getString(R.string.import_failed),
-                                message = e.message ?: ""
-                            )
-                        }
-                        onConfirm?.invoke()
+                scope.launch {
+                    try {
+                        SettingsBackupManager.importSettingsFromJson(
+                            ctx,
+                            json,
+                            selectedStoresForImport
+                        )
+                        backupViewModel.result.value = BackupResult(
+                            export = false,
+                            error = false,
+                            title = ctx.getString(R.string.import_successful)
+                        )
+
+                        importJson = null
+                    } catch (e: Exception) {
+                        logE(BACKUP_TAG, e) { "Import failed" }
+                        backupViewModel.result.value = BackupResult(
+                            export = false,
+                            error = true,
+                            title = ctx.getString(R.string.import_failed),
+                            message = e.message ?: ""
+                        )
                     }
-
+                    onConfirm?.invoke()
                 }
-            )
-        }
+            }
+        )
     }
 
     content {
