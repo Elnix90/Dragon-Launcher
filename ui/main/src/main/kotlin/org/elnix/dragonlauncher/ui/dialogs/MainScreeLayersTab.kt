@@ -36,17 +36,12 @@ import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asStateNull
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
-import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.ChargingAnimation
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.MainScreenLayerJson
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.copyWithEnabled
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.defaultMainScreenLayers
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.enabled
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.label
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.CustomDim
-import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.DragOverlay
-import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.HoldToActivate
-import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Widgets
-import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.objects.MainScreenLayersSettingsStore
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
@@ -223,17 +218,18 @@ fun rememberMainScreenLayerOrder(): MutableState<List<MainScreenLayer>> {
     val orderString by MainScreenLayersSettingsStore.jsonSetting.asStateNull()
 
     return remember(orderString) {
-        val decoded = MainScreenLayerJson
-            .decode<List<MainScreenLayer>>(orderString)
+        val decoded = orderString
+            ?.let { MainScreenLayerJson.decode<List<MainScreenLayer>>(it) }
             ?.takeIf { layers ->
                 val expectedTypes = setOf(
-                    ChargingAnimation::class,
-                    StatusBar::class,
-                    Widgets::class,
-                    CustomDim::class,
-                    DragOverlay::class,
-                    HoldToActivate::class
+                    MainScreenLayer.ChargingAnimation::class,
+                    MainScreenLayer.StatusBar::class, // Fuuuuuuuuuuck it imported the wrong status bar class
+                    MainScreenLayer.Widgets::class,
+                    MainScreenLayer.CustomDim::class,
+                    MainScreenLayer.DragOverlay::class,
+                    MainScreenLayer.HoldToActivate::class
                 )
+
                 layers.map { it::class }.toSet() == expectedTypes
             }
             ?: defaultMainScreenLayers
