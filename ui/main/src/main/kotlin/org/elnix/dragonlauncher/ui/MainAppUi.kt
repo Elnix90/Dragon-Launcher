@@ -66,7 +66,6 @@ import org.elnix.dragonlauncher.ktx.findFragmentActivity
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel
-import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.models.SecurityViewModel
@@ -143,7 +142,6 @@ fun MainAppUi(
     appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
     shizukuViewModel: ShizukuViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel(),
-//    backupViewModel: BackupViewModel = activityViewModel(),
     onBindCustomWidget: (Int, ComponentName, nestId: Int) -> Unit,
     onResetWidgetSize: (id: Int, widgetId: Int) -> Unit,
     onRemoveWidget: (Widget) -> Unit
@@ -152,22 +150,6 @@ fun MainAppUi(
     val uriHandler = LocalUriHandler.current
     val pointsService = pointsViewModel.pointsService
 
-
-//    var isMigrationNeeded by remember { mutableStateOf(false) }
-//    LaunchedEffect(Unit) {
-//        isMigrationNeeded = backupViewModel.isMigrationNeeded()
-//    }
-//
-//    if (isMigrationNeeded) {
-//        CompositionLocalProvider(LocalDisableHapticFeedbackGlobally provides false) {
-//            MigrationDialog(
-//                migrate = { backupViewModel.attemptAutoMigration() },
-//                onDismiss = { isMigrationNeeded = false },
-//                canDisagree = false
-//            )
-//        }
-//        return
-//    }
 
     var showWidgetPicker by remember { mutableStateOf<Int?>(null) }
     var showFilePicker: Point? by remember { mutableStateOf(null) }
@@ -331,8 +313,9 @@ fun MainAppUi(
             ) { command ->
                 if (command.command.trim().isEmpty()) {
                     showShizukuCommandPromter = command
+                } else {
+                    runShisukuCommandNotEmpty(command)
                 }
-                runShisukuCommandNotEmpty(command)
             }
         } catch (e: Exception) {
             logE(TAG, e) { "Unknow error while launching action" }
