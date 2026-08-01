@@ -86,7 +86,7 @@ fun MainScreenOverlay(
     val rgbLine by AngleLineSettingsStore.rgbLine.asState()
 
     val showLaunchingAppLabel by UiSettingsStore.showLaunchingAppLabel.asState()
-    val showLaunchingAppIcon by UiSettingsStore.showPreviewPoint.asState()
+    val showLaunchingAppIcon by UiSettingsStore.showLaunchingAppIcon.asState()
 
     val appLabelIconOverlayTopPadding by UiSettingsStore.appLabelIconOverlayTopPadding.asState()
 

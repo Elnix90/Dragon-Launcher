@@ -77,7 +77,7 @@ fun rememberDrawParams(
     val ctx = LocalContext.current
     val extraColors = LocalExtraColors.current
 
-    val showCurrentPoint by UiSettingsStore.showPreviewPoint.asState()
+    val showCurrentPoint by UiSettingsStore.showLaunchingAppIcon.asState()
     val maxNestsDepth by UiSettingsStore.maxNestsDepth.asState()
 
     val showAllPointsInCurrentShape by UiSettingsStore.showAllPointsInCurrentShape.asState()

@@ -30,7 +30,7 @@ public object UiSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val showPreviewPoint: BooleanSettingObject = boolean(
+    public val showLaunchingAppIcon: BooleanSettingObject = boolean(
         title = R.string.show_launching_app_icon,
         description = R.string.show_launching_app_icon_description,
         default = true
@@ -65,72 +65,6 @@ public object UiSettingsStore : MapSettingsStore() {
         title = R.string.fullscreen_app,
         description = R.string.fullscreen_description,
         default = false
-    )
-
-    @SettingKey
-    public val autoSeparatePoints: BooleanSettingObject = boolean(
-        title = R.string.auto_separate,
-        description = R.string.auto_separate_desc,
-        default = true
-    )
-
-    @SettingKey
-    public val snapPoints: BooleanSettingObject = boolean(
-        title = R.string.snap_points,
-        description = R.string.snap_points_desc,
-        default = true
-    )
-
-    @SettingKey
-    public val snapPointsToShapes: BooleanSettingObject = boolean(
-        title = R.string.snap_points_to_shapes,
-        description = R.string.snap_points_to_shapes_desc,
-        default = true
-    )
-
-    @SettingKey
-    public val snapPointsAngle: BooleanSettingObject = boolean(
-        title = R.string.snap_points_angle,
-        description = R.string.snap_points_angle_desc,
-        default = true
-    )
-
-    @SettingKey
-    public val allowFreePoints: BooleanSettingObject = boolean(
-        title = R.string.allow_free_points,
-        description = R.string.allow_free_points_desc,
-        default = false
-    )
-
-    @SettingKey
-    public val snapShapesOffset: BooleanSettingObject = boolean(
-        title = R.string.snap_shapes_offset,
-        default = true
-    )
-
-    @SettingKey
-    public val snapShapesCenter: BooleanSettingObject = boolean(
-        title = R.string.snap_shapes_center,
-        default = true
-    )
-
-    @SettingKey
-    public val snapShapesScale: BooleanSettingObject = boolean(
-        title = R.string.snap_shapes_scale,
-        default = false
-    )
-
-    @SettingKey
-    public val snapShapeAngle: BooleanSettingObject = boolean(
-        title = R.string.snap_shapes_angle,
-        default = false
-    )
-
-    @SettingKey
-    public val autoMerge: BooleanSettingObject = boolean(
-        title = R.string.auto_merge,
-        description = R.string.auto_merge_desc,
-        default = true
     )
 
     @SettingKey
@@ -281,4 +215,75 @@ public object UiSettingsStore : MapSettingsStore() {
 
     @SettingKey
     public val useAppEvenIfSignatureIsNotMatched: BooleanSettingObject = boolean(false)
+
+
+    /**
+     * Point settings screen settings, only used in this screen
+     */
+
+    @SettingKey
+    public val autoSeparatePoints: BooleanSettingObject = boolean(
+        title = R.string.auto_separate,
+        description = R.string.auto_separate_desc,
+        default = true
+    )
+
+    @SettingKey
+    public val snapPoints: BooleanSettingObject = boolean(
+        title = R.string.snap_points,
+        description = R.string.snap_points_desc,
+        default = true
+    )
+
+    @SettingKey
+    public val snapPointsToShapes: BooleanSettingObject = boolean(
+        title = R.string.snap_points_to_shapes,
+        description = R.string.snap_points_to_shapes_desc,
+        default = true
+    )
+
+    @SettingKey
+    public val snapPointsAngle: BooleanSettingObject = boolean(
+        title = R.string.snap_points_angle,
+        description = R.string.snap_points_angle_desc,
+        default = true
+    )
+
+    @SettingKey
+    public val allowFreePoints: BooleanSettingObject = boolean(
+        title = R.string.allow_free_points,
+        description = R.string.allow_free_points_desc,
+        default = false
+    )
+
+    @SettingKey
+    public val snapShapesOffset: BooleanSettingObject = boolean(
+        title = R.string.snap_shapes_offset,
+        default = true
+    )
+
+    @SettingKey
+    public val snapShapesCenter: BooleanSettingObject = boolean(
+        title = R.string.snap_shapes_center,
+        default = true
+    )
+
+    @SettingKey
+    public val snapShapesScale: BooleanSettingObject = boolean(
+        title = R.string.snap_shapes_scale,
+        default = false
+    )
+
+    @SettingKey
+    public val snapShapeAngle: BooleanSettingObject = boolean(
+        title = R.string.snap_shapes_angle,
+        default = false
+    )
+
+    @SettingKey
+    public val autoMerge: BooleanSettingObject = boolean(
+        title = R.string.auto_merge,
+        description = R.string.auto_merge_desc,
+        default = true
+    )
 }

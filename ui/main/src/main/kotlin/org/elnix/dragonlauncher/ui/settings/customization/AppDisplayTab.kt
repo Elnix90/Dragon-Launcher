@@ -90,7 +90,7 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
             AnimatedVisibility(showAppLaunchingPreview) {
                 ExpandableSection(topOverlaySettingsState) {
                     Setting(UiSettingsStore.showLaunchingAppLabel)
-                    Setting(UiSettingsStore.showPreviewPoint)
+                    Setting(UiSettingsStore.showLaunchingAppIcon)
                     Setting(UiSettingsStore.appLabelIconOverlayTopPadding)
                     Setting(UiSettingsStore.appLabelOverlaySize)
                     Setting(UiSettingsStore.appIconOverlaySize)
@@ -131,7 +131,7 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
     val randomPoint = remember { points.values.random() }
 
     val showLaunchingAppLabel by UiSettingsStore.showLaunchingAppLabel.asState()
-    val showLaunchingAppIcon by UiSettingsStore.showPreviewPoint.asState()
+    val showLaunchingAppIcon by UiSettingsStore.showLaunchingAppIcon.asState()
     val appLabelIconOverlayTopPadding by UiSettingsStore.appLabelIconOverlayTopPadding.asState()
 
     if (topOverlaySettingsState.isExpanded()) {
