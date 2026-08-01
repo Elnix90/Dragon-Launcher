@@ -45,6 +45,7 @@
     <string name="import_successful">Import Successful</string>
     <string name="export_successful">Export Successful</string>
     <string name="unknown_error">Unknown Error</string>
+    <string name="no_file_picked">No file picked</string>
     <string name="color_selector_text">Select your preferred color theme</string>
     <string name="color_mode_all">All Colors</string>
     <string name="reset">Reset</string>

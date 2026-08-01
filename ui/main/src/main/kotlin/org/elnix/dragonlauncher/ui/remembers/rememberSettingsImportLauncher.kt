@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.remembers
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -8,7 +9,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import io.github.elnix90.logging.BACKUP_TAG
 import io.github.elnix90.logging.logD
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +20,7 @@ import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.json.JSONObject
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun rememberSettingsImportLauncher(
     backupViewModel: BackupViewModel = activityViewModel(),
@@ -28,15 +29,11 @@ fun rememberSettingsImportLauncher(
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val importCancelledText = stringResource(R.string.import_cancelled)
-    val importFailedText = stringResource(R.string.import_failed)
-
-
     fun onError(msg: String) {
         backupViewModel.result.value = BackupResult(
             export = false,
             error = true,
-            title = importFailedText,
+            title = ctx.getString(R.string.import_failed),
             message = msg
         )
     }
@@ -51,7 +48,8 @@ fun rememberSettingsImportLauncher(
             backupViewModel.result.value = BackupResult(
                 export = false,
                 error = true,
-                title = importCancelledText
+                title = ctx.getString(R.string.import_cancelled),
+                message = ctx.getString(R.string.no_file_picked)
             )
 
             return@rememberLauncherForActivityResult

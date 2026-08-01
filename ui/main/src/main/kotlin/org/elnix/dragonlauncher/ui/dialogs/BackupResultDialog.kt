@@ -24,12 +24,7 @@ fun BackupResultDialog(
         val errorMessage = res.message
 
         UserValidation(
-            title = when {
-                isError && isExport -> stringResource(R.string.export_failed)
-                isError && !isExport -> stringResource(R.string.import_failed)
-                !isError && isExport -> stringResource(R.string.export_successful)
-                else -> stringResource(R.string.import_successful)
-            },
+            title = res.title,
             message = when {
                 isError -> errorMessage.ifBlank { stringResource(R.string.unknown_error) }
                 isExport -> stringResource(R.string.export_successful)
