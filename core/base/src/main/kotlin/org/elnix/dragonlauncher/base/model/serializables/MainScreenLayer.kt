@@ -35,7 +35,7 @@ public sealed class MainScreenLayer {
     @Serializable
     @SerialName("StatusBar")
     public data class StatusBar(
-        val enabled: Boolean = true
+        val enabled: Boolean = false
     ) : MainScreenLayer()
 
     @Immutable
