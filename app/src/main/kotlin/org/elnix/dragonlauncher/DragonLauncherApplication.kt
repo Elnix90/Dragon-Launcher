@@ -18,11 +18,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.elnix.dragonlauncher.migration.SettingsMigrationService
 import org.elnix.dragonlauncher.settings.AllStores
 import org.elnix.dragonlauncher.settings.stores.map.LanguageSettingsStore
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltAndroidApp
 class DragonLauncherApplication : Application() {
@@ -30,8 +28,6 @@ class DragonLauncherApplication : Application() {
         SupervisorJob() + Dispatchers.Default
     )
 
-    @Inject
-    lateinit var migrationService: SettingsMigrationService
 
     @SuppressLint("LogNotTimber")
     override fun onCreate() {
@@ -55,8 +51,6 @@ class DragonLauncherApplication : Application() {
         Timber.plant(Timber.DebugTree())
 
         initializeAllStores()
-
-        attemptAutoMigration()
 
         CoroutineScope(Dispatchers.Default).launch {
             val tag = LanguageSettingsStore.keyLang.get(this@DragonLauncherApplication)
@@ -103,18 +97,5 @@ class DragonLauncherApplication : Application() {
         }
 
         logI(SETTINGS_TAG) { "Finished initializing settings;${AllStores.size} total stores, with: $totalSettings different settings and $totalJsonObject JsonObject and $totalJsonArray JsonArray stores" }
-    }
-
-    private fun attemptAutoMigration() {
-        migrationService.attemptAutoMigration(
-            ctx = this,
-            onComplete = { result ->
-                if (result.success) {
-                    logI(SETTINGS_TAG) { "Migration completed: ${result.message}" }
-                } else {
-                    logI(SETTINGS_TAG) { "Migration skipped or failed: ${result.message}" }
-                }
-            }
-        )
     }
 }

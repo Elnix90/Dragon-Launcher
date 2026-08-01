@@ -17,9 +17,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
@@ -56,7 +58,9 @@ import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.DragonLauncherTheme
 import org.elnix.dragonlauncher.ui.MainAppUi
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.dialogs.CrashScreen
+import org.elnix.dragonlauncher.ui.dialogs.MigrationDialog
 import org.elnix.dragonlauncher.ui.widgets.LauncherWidgetHolder
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -322,13 +326,31 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
 
             if (lastStackTrace.isNullOrBlank()) {
 
+                val backupViewModel: BackupViewModel = activityViewModel()
+
+                var isMigrationNeeded by remember { mutableStateOf(false) }
+                LaunchedEffect(Unit) {
+                    isMigrationNeeded = backupViewModel.isMigrationNeeded()
+                }
+
+                if (isMigrationNeeded) {
+                    MaterialTheme {
+                        CompositionLocalProvider(LocalDisableHapticFeedbackGlobally provides false) {
+                            MigrationDialog(
+                                migrate = { backupViewModel.attemptAutoMigration() },
+                                onDismiss = { isMigrationNeeded = false },
+                                canDisagree = false
+                            )
+                        }
+                    }
+                    return@setContent
+                }
 
                 // Loads the logging system, do not remove or you won't have any logs!
                 @Suppress("UnusedVariable", "unused")
                 val dragonLogViewModel: DragonLogViewModel = activityViewModel()
 
                 val appLifecycleViewModel: AppLifecycleViewModel = activityViewModel()
-                val backupViewModel: BackupViewModel = activityViewModel()
 
 
                 DragonLauncherTheme {

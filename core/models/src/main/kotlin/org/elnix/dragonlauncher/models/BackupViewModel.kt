@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.elnix90.core.SettingsBackupManager.exportSettings
 import io.github.elnix90.logging.BACKUP_TAG
+import io.github.elnix90.logging.SETTINGS_TAG
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logI
 import io.github.elnix90.logging.logV
@@ -86,6 +87,28 @@ public class BackupViewModel @Inject constructor(
      */
     public fun isLegacyBackup(jsonContent: String): Boolean {
         return migrationService.isLegacyBackup(jsonContent)
+    }
+
+    public fun isMigrationNeeded(): Boolean {
+        return migrationService.isMigrationNeeded(application)
+    }
+
+    public fun attemptAutoMigration() {
+        viewModelScope.launch {
+            migrationService.attemptAutoMigration(
+                ctx = application,
+                onComplete = { result ->
+                    migrationResult.value = result
+
+                    if (result.success) {
+                        pointsService.load()
+                        logI(SETTINGS_TAG) { "Migration completed: ${result.message}" }
+                    } else {
+                        logI(SETTINGS_TAG) { "Migration skipped or failed: ${result.message}" }
+                    }
+                }
+            )
+        }
     }
 
     private suspend fun performBackup() {

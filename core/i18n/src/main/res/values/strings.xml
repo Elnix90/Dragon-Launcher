@@ -1121,11 +1121,12 @@
     <string name="allow_free_points_desc">Points are no longer required to snap to a shape, they can be moved around freely, and only snaps when close to a shape</string>
     <string name="snap_points_to_shapes_desc">Whether or not to enable the snapping to the shapes. Can only be disabled it free point if true</string>
     <string name="snap_points_to_shapes">Snap points to shapes</string>
-    <string name="signature_not_matched">SIGNATURE IS NOT MATCHED!!! The app is not signed with the official key of the the official developper. You data might be compromised!</string>
+    <string name="signature_not_matched">SIGNATURE IS NOT MATCHED!!! The app is not signed with the official key of the official developer. You data might be compromised!</string>
     <string name="use_anyways">Use anyways</string>
-    <string name="migrating_settings">Migrating settings...</string>
-    <string name="migrate_from_322">Migrate from version 3.3.2?</string>
+    <string name="migrating_settings">Migrating settings…</string>
+    <string name="migrate_from_322">Migrate from version 3.3.2</string>
     <string name="migrate_from_322_desc">Your backup seems to come from the version 3.2.2 and needs to be migrated to the new version. Would you like to proceed?</string>
+    <string name="migrate_from_322_desc_forced">Welcome to this new version of Dragon, to continue your settings will perform an autonomous migration to the new system.</string>
     <string name="migrating_settings_desc">Converting your backup from 3.2.2 to 4.0.0 format. Please wait.</string>
     <string name="migrating_settings_desc_kidding">Just kidding, it doesn\'t take that long :)</string>
     <string name="migration_complete">Migration completed</string>

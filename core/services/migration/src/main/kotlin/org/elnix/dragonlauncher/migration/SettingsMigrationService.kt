@@ -6,10 +6,6 @@ import io.github.elnix90.logging.BACKUP_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logI
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 import org.json.JSONObject
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -36,8 +32,6 @@ import javax.inject.Singleton
 public class SettingsMigrationService @Inject constructor(
     @ApplicationContext private val ctx: Context
 ) {
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-
     private val dataStoreMigrator = DataStoreMigrator()
     private val backupJsonMigrator = LegacyBackupJsonMigrator()
 
@@ -50,35 +44,33 @@ public class SettingsMigrationService @Inject constructor(
      * @param ctx Android context (typically Application).
      * @param onComplete Callback invoked with the migration result on the main thread.
      */
-    public fun attemptAutoMigration(
+    public suspend fun attemptAutoMigration(
         ctx: Context,
-        onComplete: (MigrationResult) -> Unit
+        onComplete: suspend (MigrationResult) -> Unit
     ) {
-        scope.launch {
-            try {
-                logI(BACKUP_TAG) { "Checking if auto-migration is needed..." }
+        try {
+            logI(BACKUP_TAG) { "Checking if auto-migration is needed..." }
 
-                if (!dataStoreMigrator.isMigrationNeeded(ctx)) {
-                    logD(BACKUP_TAG) { "No migration needed" }
-                    onComplete(
-                        MigrationResult(
-                            success = true,
-                            message = "No migration needed - already up to date"
-                        )
+            if (!dataStoreMigrator.isMigrationNeeded(ctx)) {
+                logD(BACKUP_TAG) { "No migration needed" }
+                onComplete(
+                    MigrationResult(
+                        success = true,
+                        message = "No migration needed - already up to date"
                     )
-                    return@launch
-                }
-
-                logI(BACKUP_TAG) { "Starting auto-migration from old DataStore files..." }
-                val result = dataStoreMigrator.migrateFromOldDataStores(ctx)
-
-                logResult(result)
-
-                onComplete(result)
-            } catch (e: Exception) {
-                logE(BACKUP_TAG, e) { "Auto-migration failed with exception" }
-                onComplete(MigrationResult.failure(e.message ?: "Unknown error"))
+                )
+                return
             }
+
+            logI(BACKUP_TAG) { "Starting auto-migration from old DataStore files..." }
+            val result = dataStoreMigrator.migrateFromOldDataStores(ctx)
+
+            logResult(result)
+
+            onComplete(result)
+        } catch (e: Exception) {
+            logE(BACKUP_TAG, e) { "Auto-migration failed with exception" }
+            onComplete(MigrationResult.failure(e.message ?: "Unknown error"))
         }
     }
 
@@ -141,4 +133,6 @@ public class SettingsMigrationService @Inject constructor(
             false
         }
     }
+
+    public fun isMigrationNeeded(ctx: Context): Boolean = dataStoreMigrator.isMigrationNeeded(ctx)
 }

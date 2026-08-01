@@ -44,10 +44,11 @@ import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun LegacyMigrationDialog(
-    legacyJsonString: String,
-    backupViewModel: BackupViewModel = activityViewModel(),
-    onDismiss: () -> Unit
+fun MigrationDialog(
+    migrate: () -> Unit,
+    onDismiss: () -> Unit,
+    canDisagree: Boolean,
+    backupViewModel: BackupViewModel = activityViewModel()
 ) {
     val migrationResult by backupViewModel.migrationResult.asState()
     var showMigrationAcceptDialog by remember { mutableStateOf(true) }
@@ -55,10 +56,7 @@ fun LegacyMigrationDialog(
 
     fun triggerMigration() {
         showMigrationAcceptDialog = false
-
-        if (legacyJsonString.isNotBlank()) {
-            backupViewModel.migrateFromLegacyBackup(legacyJsonString)
-        }
+        migrate()
     }
 
     val progressAnimatable = remember { Animatable(0f) }
@@ -78,11 +76,11 @@ fun LegacyMigrationDialog(
         showMigrationAcceptDialog -> {
             UserValidation(
                 title = stringResource(R.string.migrate_from_322),
-                message = stringResource(R.string.migrate_from_322_desc),
+                message = stringResource(if (canDisagree) R.string.migrate_from_322_desc else R.string.migrate_from_322_desc_forced),
                 titleIcon = R.drawable.database_upload,
                 titleColor = MaterialTheme.colorScheme.onTertiary,
                 titleBgColor = MaterialTheme.colorScheme.tertiary,
-                onDismiss = onDismiss,
+                onDismiss = if (canDisagree) onDismiss else null,
                 onValidate = ::triggerMigration
             )
         }

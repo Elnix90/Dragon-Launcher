@@ -14,11 +14,12 @@ import io.github.elnix90.logging.BACKUP_TAG
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.migration.MigrationResult
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.dialogs.ImportSettingsDialog
-import org.elnix.dragonlauncher.ui.dialogs.LegacyMigrationDialog
+import org.elnix.dragonlauncher.ui.dialogs.MigrationDialog
 import org.elnix.dragonlauncher.ui.remembers.rememberSettingsImportLauncher
 import org.json.JSONObject
 
@@ -51,12 +52,19 @@ fun ImportBackupButton(
     )
 
     if (showLegacyMigrationDialog && legacyJsonString != null) {
-        LegacyMigrationDialog(
-            legacyJsonString = legacyJsonString!!,
+        MigrationDialog(
+            migrate = {
+                if (legacyJsonString.isNullOrBlank()) {
+                    backupViewModel.migrateFromLegacyBackup(legacyJsonString!!)
+                } else {
+                    backupViewModel.migrationResult.value = MigrationResult.failure("json string is null or blank")
+                }
+            },
             onDismiss = {
                 showLegacyMigrationDialog = false
                 legacyJsonString = null
-            }
+            },
+            canDisagree = true
         )
     }
 
