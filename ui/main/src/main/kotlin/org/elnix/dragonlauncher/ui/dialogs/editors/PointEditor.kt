@@ -96,6 +96,7 @@ fun PointEditor(
     var showEditIconDialog by remember { mutableStateOf(false) }
     var showEditActionDialog by remember { mutableStateOf(false) }
     var showShapePickerDialog by remember { mutableStateOf(false) }
+    var showShapeSelectedPickerDialog by remember { mutableStateOf(false) }
     var showSelectedShapePickerDialog by remember { mutableStateOf(false) }
     var showHapticFeedbackEditor by remember { mutableStateOf(false) }
 
@@ -105,6 +106,8 @@ fun PointEditor(
 
     var editingCycleStageActionIndex by remember { mutableStateOf<Int?>(null) }
     var editingCycleStageHapticIndex by remember { mutableStateOf<Int?>(null) }
+
+    var selectedView by remember { mutableStateOf(SelectedUnselectedViewMode.Unselected) }
 
 
     val currentActionColor = editPoint.action.actionColor(extraColors)
@@ -145,30 +148,13 @@ fun PointEditor(
             }
 
             DragonColumnGroup {
-//                Row(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .height(20.dp),
-//                    horizontalArrangement = Arrangement.SpaceEvenly
-//                ) {
-//                    Text(
-//                        text = stringResource(R.string.unselected_action),
-//                        color = MaterialTheme.colorScheme.onSurface,
-//                        style = MaterialTheme.typography.labelSmall
-//                    )
-//
-//                    Text(
-//                        text = stringResource(R.string.selected_action),
-//                        color = MaterialTheme.colorScheme.onSurface,
-//                        style = MaterialTheme.typography.labelSmall
-//                    )
-//                }
-
                 PointPreviewCanvas(
                     editPoint = editPoint,
                     backgroundColor = MaterialTheme.colorScheme.surface,
                     modifier = Modifier.fillMaxWidth(1f)
-                )
+                ) {
+                    selectedView = it
+                }
             }
         }
 
@@ -795,10 +781,6 @@ fun PointEditor(
                     }
                 }
 
-
-                // Selected / Unselected Options Toggler
-                var selectedView by remember { mutableStateOf(SelectedUnselectedViewMode.Selected) }
-
                 SingleSelectConnectedButtonRow(
                     entries = SelectedUnselectedViewMode.entries,
                     checked = { selectedView == it },
@@ -872,7 +854,7 @@ fun PointEditor(
                                 onReset = {
                                     editPoint = editPoint.copy(borderShapeSelected = null)
                                 }
-                            ) { showShapePickerDialog = true }
+                            ) { showShapeSelectedPickerDialog = true }
 
                         } else {
                             SliderWithLabel(
@@ -986,13 +968,30 @@ fun PointEditor(
 
     if (showShapePickerDialog) {
         ShapePickerDialog(
-            selected = editPoint.borderShape ?: Point.defaultBorderShape,
+            selected = editPoint.getBorderShape(false, defaultPoint, isDefaultEditing),
             onDismiss = { showShapePickerDialog = false }
         ) { newShape ->
             editPoint = editPoint.copy(
                 borderShape = newShape.takeIf {
                     it != emptyPoint.getBorderShape(
                         false,
+                        defaultPoint,
+                        isDefaultEditing
+                    )
+                }
+            )
+        }
+    }
+
+    if (showShapeSelectedPickerDialog) {
+        ShapePickerDialog(
+            selected = editPoint.getBorderShape(true, defaultPoint, isDefaultEditing),
+            onDismiss = { showShapeSelectedPickerDialog = false }
+        ) { newShape ->
+            editPoint = editPoint.copy(
+                borderShapeSelected = newShape.takeIf {
+                    it != emptyPoint.getBorderShape(
+                        true,
                         defaultPoint,
                         isDefaultEditing
                     )
