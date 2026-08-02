@@ -109,10 +109,6 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
 
             Setting(UiSettingsStore.showPointPreviewCenterStartPosition)
 
-            Setting(UiSettingsStore.linePreviewSnapToAction)
-            val snap by UiSettingsStore.linePreviewSnapToAction.asState()
-            Setting(UiSettingsStore.animationWhenSnapping, enabled = snap)
-
             val showAllShapes by UiSettingsStore.showAllShapesInNest.asState()
             var showShape by UiSettingsStore.showCurrentShape.asMutableState()
             Setting(UiSettingsStore.showCurrentShape, enabled = !showAllShapes)

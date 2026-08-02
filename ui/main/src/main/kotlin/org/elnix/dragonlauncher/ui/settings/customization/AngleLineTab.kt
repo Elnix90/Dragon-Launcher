@@ -47,6 +47,7 @@ import org.elnix.dragonlauncher.ktx.angle360FromOffset
 import org.elnix.dragonlauncher.ktx.distanceSquaredTo
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.settings.stores.objects.AngleObjectSettingStore
 import org.elnix.dragonlauncher.settings.stores.objects.EndObjectSettingStore
 import org.elnix.dragonlauncher.settings.stores.objects.LineObjectSettingStore
@@ -342,6 +343,9 @@ fun AngleLineTab() {
             DragonSettingsGroup(R.string.other) {
                 Setting(AngleLineSettingsStore.rgbLine)
                 Setting(AngleLineSettingsStore.startAndAngleShareSameRandomAngle)
+                Setting(UiSettingsStore.linePreviewSnapToAction)
+                val snap by UiSettingsStore.linePreviewSnapToAction.asState()
+                Setting(UiSettingsStore.animationWhenSnapping, enabled = snap)
                 Setting(ColorSettingsStore.angleLineColor)
             }
         }
