@@ -181,8 +181,7 @@ fun DrawScope.NestOverlay(
             point = drawPoint,
             center = pointOffset,
             selected = selectedAll || (p.id in selectedPointsIds),
-            drawParams = drawParams,
-            customText = null
+            drawParams = drawParams
         )
     }
 
@@ -194,8 +193,7 @@ fun DrawScope.NestOverlay(
                 depth = depth,
                 center = center,
                 selected = true,
-                drawParams = drawParams.copy(allowShowPointInCenter = false),
-                customText = null
+                drawParams = drawParams.copy(allowShowPointInCenter = false)
             )
         }
     }

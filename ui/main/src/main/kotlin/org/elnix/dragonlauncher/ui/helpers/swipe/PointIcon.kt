@@ -9,7 +9,6 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.graphicsLayer
-import org.elnix.dragonlauncher.base.cache.DrawScopeText
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
 
@@ -30,7 +29,6 @@ fun PointIcon(
     selected: Boolean = false,
 
     pointSettingsDisplay: Boolean = false,
-    customText: Pair<DrawScopeText?, DrawScopeText?>? = null,
     hideShapes: Boolean = false
 ) {
     val drawParams = rememberDrawParams(
@@ -54,7 +52,6 @@ fun PointIcon(
             center = center,
             selected = selected,
             drawParams = drawParams,
-            customText = customText
         )
     }
 }
@@ -66,8 +63,7 @@ fun DrawScope.PointIcon(
     center: Offset,
     selected: Boolean,
 
-    drawParams: DrawParams,
-    customText: Pair<DrawScopeText?, DrawScopeText?>?
+    drawParams: DrawParams
 ) {
     require(depth > 0)
 
@@ -102,8 +98,7 @@ fun DrawScope.PointIcon(
             point = point,
             selected = selected,
             center = center,
-            drawParams = drawParams,
-            customText = customText
+            drawParams = drawParams
         )
     }
 }

@@ -167,9 +167,6 @@ public class PointsViewModel @Inject constructor(
      * [distinctUntilChanged] to skip unchanged points. The inner [combine] tracks
      * default configuration, color scheme, and per-point icon changes.
      *
-     * Only [StablePointValues.customTexts] is left as `null`; the Compose layer
-     * supplies debug overlay text as a draw-time override when needed.
-     *
      * @param pointId the id of the point to observe
      */
     private suspend fun observePoint(pointId: Int) {
@@ -217,8 +214,7 @@ public class PointsViewModel @Inject constructor(
             innerPaddingPx = innerPaddingPx,
             borderRadii = borderRadii,
             iconSize = Size(borderRadii * 2f, borderRadii * 2f),
-            imageBitmap = imageBitmap,
-            customTexts = null
+            imageBitmap = imageBitmap
         )
     }
 

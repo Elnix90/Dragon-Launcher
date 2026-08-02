@@ -7,10 +7,8 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.text.drawText
 import androidx.compose.ui.unit.IntSize
 import org.elnix.dragonlauncher.base.cache.DrawPathCache
-import org.elnix.dragonlauncher.base.cache.DrawScopeText
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
@@ -24,8 +22,7 @@ fun DrawScope.PointBg(
     point: Point,
     selected: Boolean,
     center: Offset,
-    drawParams: DrawParams,
-    customText: Pair<DrawScopeText?, DrawScopeText?>?
+    drawParams: DrawParams
 ) {
     val extraColors = drawParams.extraColors
     val defaultPoint = drawParams.pointsService.defaultPoint.value
@@ -34,32 +31,9 @@ fun DrawScope.PointBg(
         return
     }
 
-
-    // THIS IS EXPENSIVE TO DRAW THAT'S WHY THEY ARE ONLY DRAWN IN DEBUG
-    val customTexts = customText ?: cached.customTexts
-    val firstText = customTexts?.first
-    if (firstText != null) {
-        drawText(
-            textLayoutResult = firstText.offsetTextLayoutResult,
-            color = extraColors.shapes,
-            topLeft = center - firstText.topLeft
-        )
-    }
-
-    val secondText = customTexts?.second
-    if (secondText != null) {
-        drawText(
-            textLayoutResult = secondText.offsetTextLayoutResult,
-            color = extraColors.shapes,
-            topLeft = center - secondText.topLeft
-        )
-    }
-
-
     val iconBitmap = cached.imageBitmap
     val iconSize = cached.iconSize
     val sizePx = cached.sizePx
-
 
     val borderColor = point.getBorderColor(selected, defaultPoint, extraColors)
     val backgroundColor =  point.getBackgroundColor(selected, defaultPoint)

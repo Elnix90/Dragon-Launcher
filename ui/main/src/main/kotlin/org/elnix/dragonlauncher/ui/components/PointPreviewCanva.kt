@@ -1,15 +1,18 @@
 package org.elnix.dragonlauncher.ui.components
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.base.cache.DrawScopeText
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.i18n.R
@@ -49,32 +52,43 @@ fun PointPreviewCanvas(
         val leftX = (width * 0.25f).px
         val rightX = (width * 0.75f).px
 
-        val selected = rememberCustomText(stringResource(R.string.selected_text),  pointSize)
-        val unselected = rememberCustomText(stringResource(R.string.unselected),  pointSize)
+        val leftCenter = Offset(leftX, centerY)
+        val rightCenter = Offset(rightX, centerY)
 
-        val customTextsSelected: Pair<DrawScopeText, DrawScopeText?> = selected to null
-        val customTextsUnselected: Pair<DrawScopeText, DrawScopeText?> = unselected to null
-
-        // Left action
         PointIcon(
             selected = false,
             point = editPoint,
             depth = Int.MAX_VALUE,
-            center = Offset(leftX, centerY),
+            center = leftCenter,
             eraseColor = backgroundColor,
-            pointSettingsDisplay = false,
-            customText = customTextsUnselected
+            pointSettingsDisplay = false
         )
 
-        // Right action
         PointIcon(
             selected = true,
             point = editPoint,
             depth = Int.MAX_VALUE,
-            center = Offset(rightX, centerY),
+            center = rightCenter,
             eraseColor = backgroundColor,
-            pointSettingsDisplay = false,
-            customText = customTextsSelected
+            pointSettingsDisplay = false
         )
+
+
+        val selected = rememberCustomText(stringResource(R.string.selected_text),  pointSize)
+        val unselected = rememberCustomText(stringResource(R.string.unselected),  pointSize)
+        val textColor = MaterialTheme.colorScheme.onSurface
+
+        Canvas(Modifier.fillMaxSize()) {
+            drawText(
+                textLayoutResult = selected.offsetTextLayoutResult,
+                color = textColor,
+                topLeft = leftCenter - selected.topLeft
+            )
+            drawText(
+                textLayoutResult = unselected.offsetTextLayoutResult,
+                color = textColor,
+                topLeft = rightCenter - unselected.topLeft
+            )
+        }
     }
 }
