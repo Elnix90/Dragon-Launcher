@@ -52,7 +52,7 @@ jobs:
           } >> $GITHUB_ENV
 
       - name: Build APKs
-        run: ./gradlew assembleBetaRelease assembleBetaDebug --parallel --no-daemon ${{ inputs.disable_gradle_cache && '--no-build-cache' || '--build-cache' }} -x lint
+        run: ./gradlew assembleBeta assembleDebug --parallel --no-daemon ${{ inputs.disable_gradle_cache && '--no-build-cache' || '--build-cache' }} -x lint
 
       - name: Prepare release artifacts
         run: |
@@ -60,13 +60,13 @@ jobs:
           RUN="${{ github.run_number }}"
           
           MIN="DragonLauncher-v${VER}-beta-${RUN}.apk"
-          DEBUG="DragonLauncher-v${VER}-beta-${RUN}-debug.apk"
+          DEBUG="DragonLauncher-v${VER}-debug-${RUN}.apk"
           MAPPING="Mappings-${{ env.VERSION }}.txt"
           
           # Rename APKs and mapping
-          mv app/build/outputs/apk/beta/release/app-beta-release.apk "$MIN"
-          mv app/build/outputs/apk/beta/debug/app-beta-debug.apk "$DEBUG"
-          mv app/build/outputs/mapping/betaRelease/mapping.txt "$MAPPING"
+          mv app/build/outputs/apk/beta/app-beta.apk "$MIN"
+          mv app/build/outputs/apk/debug/app-debug.apk "$DEBUG"
+          mv app/build/outputs/mapping/beta/mapping.txt "$MAPPING"
           
           {
             echo "APK_MIN=$MIN"
