@@ -120,7 +120,7 @@ public object UiSettingsStore : MapSettingsStore() {
     public val showAllShapesInNest: BooleanSettingObject = boolean(
         title = R.string.show_all_shapes,
         description = R.string.show_all_shapes_desc,
-        default = true
+        default = falsea
     )
 
     @SettingKey
