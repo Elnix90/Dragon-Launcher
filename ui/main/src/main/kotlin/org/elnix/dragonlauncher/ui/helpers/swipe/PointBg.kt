@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.ui.helpers.swipe
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.clipPath
@@ -96,8 +95,7 @@ fun DrawScope.PointBg(
         drawPath(
             path = path,
             color = backgroundColor,
-            style = Fill,
-            blendMode = BlendMode.Src
+            style = Fill
         )
     }
 
