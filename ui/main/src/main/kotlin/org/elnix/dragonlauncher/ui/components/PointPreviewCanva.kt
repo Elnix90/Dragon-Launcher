@@ -1,7 +1,11 @@
 package org.elnix.dragonlauncher.ui.components
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
@@ -15,6 +19,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.enumsui.select.SelectedUnselectedViewMode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.models.PointsViewModel
@@ -28,7 +33,8 @@ fun PointPreviewCanvas(
     editPoint: Point,
     modifier: Modifier = Modifier,
     backgroundColor: Color,
-    pointsViewModel: PointsViewModel = activityViewModel()
+    pointsViewModel: PointsViewModel = activityViewModel(),
+    onClick: ((SelectedUnselectedViewMode) -> Unit)? = null
 ) {
     val pointsService = pointsViewModel.pointsService
     val defaultPoint by pointsService.defaultPoint.asState()
@@ -74,21 +80,38 @@ fun PointPreviewCanvas(
         )
 
 
-        val selected = rememberCustomText(stringResource(R.string.selected_text),  pointSize)
-        val unselected = rememberCustomText(stringResource(R.string.unselected),  pointSize)
+        val selected = rememberCustomText(stringResource(R.string.selected_text), pointSize)
+        val unselected = rememberCustomText(stringResource(R.string.unselected), pointSize)
         val textColor = MaterialTheme.colorScheme.onSurface
 
         Canvas(Modifier.fillMaxSize()) {
             drawText(
-                textLayoutResult = selected.offsetTextLayoutResult,
-                color = textColor,
-                topLeft = leftCenter - selected.topLeft
-            )
-            drawText(
                 textLayoutResult = unselected.offsetTextLayoutResult,
                 color = textColor,
-                topLeft = rightCenter - unselected.topLeft
+                topLeft = leftCenter - unselected.topLeft
             )
+            drawText(
+                textLayoutResult = selected.offsetTextLayoutResult,
+                color = textColor,
+                topLeft = rightCenter - selected.topLeft
+            )
+        }
+
+        if (onClick != null) {
+            Row(Modifier.fillMaxSize()) {
+                Box(
+                    Modifier
+                        .fillMaxHeight()
+                        .weight(1f)
+                        .clickable { onClick(SelectedUnselectedViewMode.Unselected) }
+                )
+                Box(
+                    Modifier
+                        .fillMaxHeight()
+                        .weight(1f)
+                        .clickable { onClick(SelectedUnselectedViewMode.Selected) }
+                )
+            }
         }
     }
 }
