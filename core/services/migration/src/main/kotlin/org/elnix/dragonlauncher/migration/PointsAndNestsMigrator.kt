@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.migration
 
 import androidx.compose.ui.unit.Density
-import io.github.elnix90.logging.logWtf
 import org.elnix.dragonlauncher.migration.PointsAndNestsMigrator.migrateAction
 import org.json.JSONArray
 import org.json.JSONObject
@@ -98,7 +97,6 @@ internal object PointsAndNestsMigrator {
         for (i in 0 until oldNests.length()) {
             result.put(migrateNest(oldNests.getJSONObject(i), density))
         }
-        logWtf { "Nests Result: $result" }
         return result
     }
 
@@ -169,7 +167,6 @@ internal object PointsAndNestsMigrator {
             shapes.put(shape)
         }
         newNest.put("intersectionShapes", shapes)
-        logWtf { "NewNest: $newNest" }
     }
 
     /**
