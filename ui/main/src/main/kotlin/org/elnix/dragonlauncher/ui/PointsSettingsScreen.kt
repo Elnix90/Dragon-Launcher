@@ -158,6 +158,12 @@ fun PointsSettingsScreen(
     val defaultNest by pointsService.defaultNest.asState()
     val defaultIntersectionShape by pointsService.defaultIntersectionShape.asState()
 
+    // Force icons to recompose in the screen, because sometimes, the points icons are not loaded and display "?"
+    LaunchedEffect(Unit) {
+        delay(200.milliseconds)
+        pointsService.recompose()
+    }
+
     val points by pointsService.points.collectAsState()
     val nests by pointsService.nests.collectAsState()
 
@@ -211,7 +217,7 @@ fun PointsSettingsScreen(
     val nestsNavigationService = pointsViewModel.nestsNavigationService
     val nestId by nestsNavigationService.currentNestId.collectAsState()
     val currentNest = pointsService.findNestById(nestId)
-    val shapes = remember( currentNest, defaultNest) { currentNest.getInterSectionShapes(defaultNest) }
+    val shapes = remember(currentNest, defaultNest) { currentNest.getInterSectionShapes(defaultNest) }
 
     /**
      * Computes the new offset for the selected point.
@@ -282,7 +288,7 @@ fun PointsSettingsScreen(
     }
 
 //    TODO("Reduce their glow by default")
-//    TODO("add icons to settings plugin system additionally to title/desc")
+//    TODO("add icons to settings plugin system additionally to title/desc") flemme
 
     /**
      * Holds an Offset and provides helper functions and value to manage it in the [PointsSettingsScreen] scope.
