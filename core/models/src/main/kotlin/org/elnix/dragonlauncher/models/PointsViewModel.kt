@@ -179,10 +179,11 @@ public class PointsViewModel @Inject constructor(
             .collectLatest { currentPoint ->
                 combine(
                     pointsService.defaultPoint.flow,
+                    colorService.extraColors,
                     iconService.getPointIcon(currentPoint).distinctUntilChanged(),
                     IconsSettingsStore.renderForeground.flow(application),
                     IconsSettingsStore.renderBackground.flow(application)
-                ) { defaultPoint, icon, renderForeground, renderBackground ->
+                ) { defaultPoint, _, icon, renderForeground, renderBackground ->
                     computeStableValues(currentPoint, defaultPoint, icon, renderForeground, renderBackground)
                 }.collect { values ->
                     PointStableCache.compute(pointId) { values }
