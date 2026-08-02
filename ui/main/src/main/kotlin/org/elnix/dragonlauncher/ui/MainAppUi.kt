@@ -109,7 +109,7 @@ import org.elnix.dragonlauncher.ui.settings.customization.BehaviorTab
 import org.elnix.dragonlauncher.ui.settings.customization.ColorSelectorTab
 import org.elnix.dragonlauncher.ui.settings.customization.FontTab
 import org.elnix.dragonlauncher.ui.settings.customization.HoldToActivateArcTab
-import org.elnix.dragonlauncher.ui.settings.customization.IconPackTab
+import org.elnix.dragonlauncher.ui.settings.customization.IconsTab
 import org.elnix.dragonlauncher.ui.settings.customization.NestEditScreen
 import org.elnix.dragonlauncher.ui.settings.customization.StatusBarTab
 import org.elnix.dragonlauncher.ui.settings.customization.ThemesTab
@@ -444,7 +444,7 @@ fun MainAppUi(
                         entry<NavigationRoute.Colors>(metadata = horizontalMetadata) { ColorSelectorTab() }
                         entry<NavigationRoute.Theme>(metadata = horizontalMetadata) { ThemesTab() }
                         entry<NavigationRoute.Wallpaper>(metadata = horizontalMetadata) { WallpaperTab() }
-                        entry<NavigationRoute.IconPack>(metadata = horizontalMetadata) { IconPackTab(onBack = navigator::onBack) }
+                        entry<NavigationRoute.Icons>(metadata = horizontalMetadata) { IconsTab() }
                         entry<NavigationRoute.StatusBar>(metadata = horizontalMetadata) { StatusBarTab() }
                         entry<NavigationRoute.Fonts>(metadata = horizontalMetadata) { FontTab() }
                         entry<NavigationRoute.AngleLineEdit>(metadata = horizontalMetadata) { AngleLineTab() }

@@ -36,6 +36,29 @@ public object IconsSettingsStore : MapSettingsStore() {
 
 
     @SettingKey
+    public val onlyTintIconPack: BooleanSettingObject = boolean(
+        title = R.string.only_tint_icon_packs,
+        description = R.string.only_tint_icon_packs_desc,
+        default = true
+    )
+
+
+    @SettingKey
+    public val renderForeground: BooleanSettingObject = boolean(
+        title = R.string.render_foreground,
+        description = R.string.render_foreground_desc,
+        default = true
+    )
+
+
+    @SettingKey
+    public val renderBackground: BooleanSettingObject = boolean(
+        title = R.string.render_background,
+        description = R.string.render_background_desc,
+        default = true
+    )
+
+    @SettingKey
     public val themedIcons: BooleanSettingObject = boolean(
         title = R.string.themed_icons,
         description = R.string.themed_icons_desc,

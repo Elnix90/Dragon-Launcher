@@ -1018,6 +1018,8 @@
     <string name="adaptify_icons_desc">I have no idea what this option does but it was there when I copied some icons logic</string>
     <string name="icons_tint">The tint that is applied to icons</string>
     <string name="icons_tint_desc">Works better with some icon packs that are monochrome</string>
+    <string name="only_tint_icon_packs">Only tint Icon Packs</string>
+    <string name="only_tint_icon_packs_desc">Tinted app icons with no packs can be ugly if they don\'t have a transparent layer</string>
     <string name="use_icon_tint">Use Icon tint</string>
     <string name="use_icon_tint_desc">Whether to enable or not the icon tint</string>
     <string name="no_profile_found">No profile found in phone</string>
@@ -1135,4 +1137,9 @@
     <string name="migration_complete">Migration completed</string>
     <string name="migration_had_issues">Migration had issues</string>
     <string name="buy_me_a_coffee">Buy me a coffee</string>
+    <string name="render_foreground">Render Foreground</string>
+    <string name="render_foreground_desc">Whether or not to render the foreground layer of the icons</string>
+    <string name="render_background">Render Background</string>
+    <string name="render_background_desc">Whether or not to render the background layer of the icons</string>
+    <string name="icons_settings">Icons Settings</string>
 </resources>

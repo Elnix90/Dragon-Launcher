@@ -4,11 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
-import android.graphics.Rect
 import android.graphics.drawable.AdaptiveIconDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -16,9 +12,6 @@ import android.renderscript.Allocation
 import android.renderscript.Element
 import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
-import android.text.Layout
-import android.text.StaticLayout
-import android.text.TextPaint
 import android.util.Base64
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -33,16 +26,12 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
-import androidx.core.graphics.withSave
 import io.github.elnix90.logging.IMAGE_TAG
 import io.github.elnix90.logging.logE
-import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomIconProperties
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.resolveShape
-import org.elnix.dragonlauncher.i18n.R
 import java.io.ByteArrayOutputStream
-import kotlin.math.ceil
 
 public object ImageUtils {
 
@@ -56,7 +45,7 @@ public object ImageUtils {
         drawable: Drawable,
         width: Int,
         height: Int,
-        tint: Int? = null
+//        tint: Int? = null
     ): Bitmap {
         val bitmap = createBitmap(width, height)
         val canvas = Canvas(bitmap)
@@ -94,11 +83,7 @@ public object ImageUtils {
             drawable.draw(canvas)
         }
 
-
-        // If tint is not unspecified (transparent)
-        return tint?.takeIf { it != 0 }?.let {
-            bitmap.tintedWith(tint)
-        } ?: bitmap
+        return bitmap
     }
 
     public fun cropCenterSquare(src: Bitmap): Bitmap {
@@ -188,72 +173,72 @@ public object ImageUtils {
         return output
     }
 
+//
+//    public fun textToBitmap(
+//        text: String,
+//        sizePx: Int,
+//        color: Int = 0xFFFFFFFF.toInt()
+//    ): ImageBitmap {
+//        val paint = TextPaint(TextPaint.ANTI_ALIAS_FLAG).apply {
+//            textSize = sizePx.toFloat()
+//            this.color = color
+//            isSubpixelText = true
+//            isLinearText = true
+//        }
+//
+//        val maxWidth = ceil(paint.measureText(text)).toInt().coerceAtLeast(1)
+//
+//        val layout = StaticLayout.Builder
+//            .obtain(text, 0, text.length, paint, maxWidth)
+//            .setAlignment(Layout.Alignment.ALIGN_CENTER)
+//            .setIncludePad(false)
+//            .build()
+//
+//        val bitmap = createBitmap(
+//            layout.width.coerceAtLeast(1),
+//            layout.height.coerceAtLeast(1)
+//        )
+//
+//        val canvas = Canvas(bitmap)
+//        layout.draw(canvas)
+//
+//        return bitmap.asImageBitmap()
+//    }
 
-    public fun textToBitmap(
-        text: String,
-        sizePx: Int,
-        color: Int = 0xFFFFFFFF.toInt()
-    ): ImageBitmap {
-        val paint = TextPaint(TextPaint.ANTI_ALIAS_FLAG).apply {
-            textSize = sizePx.toFloat()
-            this.color = color
-            isSubpixelText = true
-            isLinearText = true
-        }
+//    public fun Bitmap.tintedWith(color: Int?): Bitmap {
+//        if (color == null) return this
+//        val bitmap = createBitmap(width, height)
+//        val canvas = Canvas(bitmap)
+//        val paint = Paint().apply {
+//            this.colorFilter = PorterDuffColorFilter(
+//                color,
+//                PorterDuff.Mode.SRC_IN
+//            )
+//        }
+//        canvas.drawBitmap(bitmap, 0f, 0f, paint)
+//        return bitmap
+//    }
 
-        val maxWidth = ceil(paint.measureText(text)).toInt().coerceAtLeast(1)
-
-        val layout = StaticLayout.Builder
-            .obtain(text, 0, text.length, paint, maxWidth)
-            .setAlignment(Layout.Alignment.ALIGN_CENTER)
-            .setIncludePad(false)
-            .build()
-
-        val bitmap = createBitmap(
-            layout.width.coerceAtLeast(1),
-            layout.height.coerceAtLeast(1)
-        )
-
-        val canvas = Canvas(bitmap)
-        layout.draw(canvas)
-
-        return bitmap.asImageBitmap()
-    }
-
-    public fun Bitmap.tintedWith(color: Int?): Bitmap {
-        if (color == null) return this
-        val bitmap = createBitmap(width, height)
-        val canvas = Canvas(bitmap)
-        val paint = Paint().apply {
-            this.colorFilter = PorterDuffColorFilter(
-                color,
-                PorterDuff.Mode.SRC_IN
-            )
-        }
-        canvas.drawBitmap(bitmap, 0f, 0f, paint)
-        return bitmap
-    }
-
-    public fun createDefaultBitmap(
+    private fun createDefaultBitmap(
         width: Int,
         height: Int
     ): Bitmap {
         val bitmap = createBitmap(width, height)
         val canvas = Canvas(bitmap)
-        canvas.drawColor(Color.Companion.Gray.toArgb())
+        canvas.drawColor(Color.Gray.toArgb())
         return bitmap
     }
 
-    public fun Context.loadDrawableResAsBitmap(
-        resId: Int,
-        width: Int,
-        height: Int
-    ): Bitmap {
-        val drawable = ContextCompat.getDrawable(this, resId)
-            ?: return createDefaultBitmap(width, height)
-
-        return loadDrawableAsBitmap(drawable, width, height)
-    }
+//    public fun Context.loadDrawableResAsBitmap(
+//        resId: Int,
+//        width: Int,
+//        height: Int
+//    ): Bitmap {
+//        val drawable = ContextCompat.getDrawable(this, resId)
+//            ?: return createDefaultBitmap(width, height)
+//
+//        return loadDrawableAsBitmap(drawable, width, height)
+//    }
 
 
     public fun Context.loadDrawableResAsImageBitmap(
@@ -268,94 +253,94 @@ public object ImageUtils {
     }
 
 
-    public fun createUntintedBitmap(
-        action: Action,
-        ctx: Context,
-        width: Int,
-        height: Int
-    ): Bitmap {
-        return with(ctx) {
-            when (action) {
-                is Action.LaunchApp -> {
-                    null
-//                    val dummyApplication = action.toApplication()
+//    public fun createUntintedBitmap(
+//        action: Action,
+//        ctx: Context,
+//        width: Int,
+//        height: Int
+//    ): Bitmap {
+//        return with(ctx) {
+//            when (action) {
+//                is Action.LaunchApp -> {
+//                    null
+////                    val dummyApplication = action.toApplication()
+////
+////                    val cacheKey = dummyApplication.key
+////                    logD(ICONS_TAG) { "Searching in drawer cache (${icons.cacheUUID})\naction: $action\ndummyApp: $dummyApplication\n cacheKey: $cacheKey" }
+////
+////                    icons.getOrCompute(cacheKey) {
+////
+////                        logW(ICONS_TAG) { "Did not find the cacheKey `$cacheKey` in drawer ${icons.cacheUUID}" }
+////
+////                        val drawable = pmCompat.getAppIcon(
+////                            packageName = action.packageName,
+////                            userId = action.userId ?: 0,
+////                            isPrivate = action.isPrivateSpace
+////                        )
+////
+////                        loadDrawableAsBitmap(drawable, width, height)
+////                    }
+//                }
 //
-//                    val cacheKey = dummyApplication.key
-//                    logD(ICONS_TAG) { "Searching in drawer cache (${icons.cacheUUID})\naction: $action\ndummyApp: $dummyApplication\n cacheKey: $cacheKey" }
+//                is Action.LaunchShortcut -> {
+////                    loadShortcutIcon(
+////                        ctx = ctx,
+////                        packageName = action.packageName,
+////                        shortcutId = action.shortcutId,
+////                        widthPx = width,
+////                        heightPx = height
+////                    ) ?: loadDrawableResAsBitmap(
+////                        R.drawable.ic_action_pinned_shortcut,
+////                        width,
+////                        height
+////                    )
+//                    null
+//                }
 //
-//                    icons.getOrCompute(cacheKey) {
+//                is Action.OpenUrl -> loadDrawableResAsBitmap(R.drawable.web, width, height)
 //
-//                        logW(ICONS_TAG) { "Did not find the cacheKey `$cacheKey` in drawer ${icons.cacheUUID}" }
+//                Action.NotificationShade -> loadDrawableResAsBitmap(R.drawable.notification, width, height)
 //
-//                        val drawable = pmCompat.getAppIcon(
-//                            packageName = action.packageName,
-//                            userId = action.userId ?: 0,
-//                            isPrivate = action.isPrivateSpace
-//                        )
+//                Action.ControlPanel -> loadDrawableResAsBitmap(R.drawable.ic_action_grid, width, height)
 //
-//                        loadDrawableAsBitmap(drawable, width, height)
-//                    }
-                }
+//                is Action.OpenAppDrawer -> loadDrawableResAsBitmap(R.drawable.ic_action_drawer, width, height)
+//
+//                is Action.OpenDragonLauncherSettings -> loadDrawableResAsBitmap(R.drawable.dragon_launcher_foreground, width, height)
+//
+//                Action.Lock -> loadDrawableResAsBitmap(R.drawable.ic_action_lock, width, height)
+//                is Action.OpenFile -> loadDrawableResAsBitmap(R.drawable.ic_action_open_file, width, height)
+//
+//                Action.ReloadApps -> loadDrawableResAsBitmap(R.drawable.ic_action_reload, width, height)
+//
+//                Action.OpenRecentApps -> loadDrawableResAsBitmap(R.drawable.ic_action_recent, width, height)
+//
+//                is Action.OpenCircleNest -> loadDrawableResAsBitmap(R.drawable.ic_action_target, width, height)
+//
+//                Action.GoParentNest -> loadDrawableResAsBitmap(R.drawable.fullscreen_exit, width, height)
+//
+//                is Action.OpenWidget -> loadDrawableResAsBitmap(R.drawable.ic_action_widgets, width, height)
+//
+//                is Action.RunAdbCommand -> loadDrawableResAsBitmap(R.drawable.adb_icon, width, height)
+//
+//                is Action.ToggleBluetooth -> loadDrawableResAsBitmap(R.drawable.bluetooth, width, height)
+//
+//                is Action.ToggleData -> loadDrawableResAsBitmap(R.drawable.cellular_icon, width, height)
+//
+//                is Action.ToggleWifi -> loadDrawableResAsBitmap(R.drawable.wifi, width, height)
+//                Action.KillLauncher -> loadDrawableResAsBitmap(R.drawable.ic_action_kill, width, height)
+//
+//                Action.None -> null
+//            } ?: loadDrawableResAsBitmap(R.drawable.ic_app_default, width, height)
+//        }
+//    }
 
-                is Action.LaunchShortcut -> {
-//                    loadShortcutIcon(
-//                        ctx = ctx,
-//                        packageName = action.packageName,
-//                        shortcutId = action.shortcutId,
-//                        widthPx = width,
-//                        heightPx = height
-//                    ) ?: loadDrawableResAsBitmap(
-//                        R.drawable.ic_action_pinned_shortcut,
-//                        width,
-//                        height
-//                    )
-                    null
-                }
-
-                is Action.OpenUrl -> loadDrawableResAsBitmap(R.drawable.web, width, height)
-
-                Action.NotificationShade -> loadDrawableResAsBitmap(R.drawable.notification, width, height)
-
-                Action.ControlPanel -> loadDrawableResAsBitmap(R.drawable.ic_action_grid, width, height)
-
-                is Action.OpenAppDrawer -> loadDrawableResAsBitmap(R.drawable.ic_action_drawer, width, height)
-
-                is Action.OpenDragonLauncherSettings -> loadDrawableResAsBitmap(R.drawable.dragon_launcher_foreground, width, height)
-
-                Action.Lock -> loadDrawableResAsBitmap(R.drawable.ic_action_lock, width, height)
-                is Action.OpenFile -> loadDrawableResAsBitmap(R.drawable.ic_action_open_file, width, height)
-
-                Action.ReloadApps -> loadDrawableResAsBitmap(R.drawable.ic_action_reload, width, height)
-
-                Action.OpenRecentApps -> loadDrawableResAsBitmap(R.drawable.ic_action_recent, width, height)
-
-                is Action.OpenCircleNest -> loadDrawableResAsBitmap(R.drawable.ic_action_target, width, height)
-
-                Action.GoParentNest -> loadDrawableResAsBitmap(R.drawable.fullscreen_exit, width, height)
-
-                is Action.OpenWidget -> loadDrawableResAsBitmap(R.drawable.ic_action_widgets, width, height)
-
-                is Action.RunAdbCommand -> loadDrawableResAsBitmap(R.drawable.adb_icon, width, height)
-
-                is Action.ToggleBluetooth -> loadDrawableResAsBitmap(R.drawable.bluetooth, width, height)
-
-                is Action.ToggleData -> loadDrawableResAsBitmap(R.drawable.cellular_icon, width, height)
-
-                is Action.ToggleWifi -> loadDrawableResAsBitmap(R.drawable.wifi, width, height)
-                Action.KillLauncher -> loadDrawableResAsBitmap(R.drawable.ic_action_kill, width, height)
-
-                Action.None -> null
-            } ?: loadDrawableResAsBitmap(R.drawable.ic_app_default, width, height)
-        }
-    }
-
-    public fun resolveCustomIconProperties(
-        base: Bitmap,
-        properties: CustomIconProperties,
-        sizePx: Int,
-        density: Density,
-        iconShape: IconShape
-    ): Bitmap {
+//    public fun resolveCustomIconProperties(
+//        base: Bitmap,
+//        properties: CustomIconProperties,
+//        sizePx: Int,
+//        density: Density,
+//        iconShape: IconShape
+//    ): Bitmap {
 //        // Step 1: choose source bitmap (override or base)
 //        val sourceBitmap: ImageBitmap = when (icon.type) {
 //            IconType.BITMAP -> {
@@ -388,51 +373,51 @@ public object ImageUtils {
 //        }
 
         // Step 2: prepare output bitmap
-        val outBitmap = createBitmap(sizePx, sizePx)
-        val canvas = Canvas(outBitmap)
-
-        // Step 3 & 4: opacity & color tint
-        val paint = Paint(
-            Paint.ANTI_ALIAS_FLAG
-        ).apply {
-            alpha = (properties.opacity
-                .coerceIn(0f, 1f) * 255).toInt()
-
-            properties.tint?.let {
-                colorFilter = PorterDuffColorFilter(
-                    it.toArgb(),
-                    PorterDuff.Mode.SRC_IN
-                )
-            }
-        }
-
-        canvas.withSave {
-            // Step 7: transform (scale + rotation)
-            val scaleX = properties.scaleX
-            val scaleY = properties.scaleY
-            val rotation = properties.rotationDeg
-
-            val half = sizePx / 2f
-
-            translate(half, half)
-            rotate(rotation.toFloat())
-            scale(scaleX, scaleY)
-            translate(-half, -half)
-
-
-            clipToShape(properties, iconShape, sizePx, density)
-
-            // Step 9: Save
-            drawBitmap(
-                base,
-                null,
-                Rect(0, 0, sizePx, sizePx),
-                paint
-            )
-        }
-
-        return outBitmap
-    }
+//        val outBitmap = createBitmap(sizePx, sizePx)
+//        val canvas = Canvas(outBitmap)
+//
+//        // Step 3 & 4: opacity & color tint
+//        val paint = Paint(
+//            Paint.ANTI_ALIAS_FLAG
+//        ).apply {
+//            alpha = (properties.opacity
+//                .coerceIn(0f, 1f) * 255).toInt()
+//
+//            properties.tint?.let {
+//                colorFilter = PorterDuffColorFilter(
+//                    it.toArgb(),
+//                    PorterDuff.Mode.SRC_IN
+//                )
+//            }
+//        }
+//
+//        canvas.withSave {
+//            // Step 7: transform (scale + rotation)
+//            val scaleX = properties.scaleX
+//            val scaleY = properties.scaleY
+//            val rotation = properties.rotationDeg
+//
+//            val half = sizePx / 2f
+//
+//            translate(half, half)
+//            rotate(rotation.toFloat())
+//            scale(scaleX, scaleY)
+//            translate(-half, -half)
+//
+//
+//            clipToShape(properties, iconShape, sizePx, density)
+//
+//            // Step 9: Save
+//            drawBitmap(
+//                base,
+//                null,
+//                Rect(0, 0, sizePx, sizePx),
+//                paint
+//            )
+//        }
+//
+//        return outBitmap
+//    }
 
     private fun Canvas.clipToShape(
         properties: CustomIconProperties,

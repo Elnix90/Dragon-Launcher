@@ -101,9 +101,9 @@ public sealed class NavigationRoute : NavKey {
     }
 
     @Serializable
-    @SerialName("IconPack")
-    public data object IconPack : NavigationRoute() {
-        override val resId: Int = R.string.icon_packs
+    @SerialName("Icons")
+    public data object Icons : NavigationRoute() {
+        override val resId: Int = R.string.icons_settings
         override val icon: Int = R.drawable.app_registration
     }
 
@@ -282,7 +282,7 @@ public sealed class NavigationRoute : NavKey {
                 Colors,
                 Wallpaper,
                 Widgets(),
-                IconPack,
+                Icons,
                 StatusBar,
                 Fonts,
                 Theme,

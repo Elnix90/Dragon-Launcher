@@ -1,14 +1,12 @@
 package org.elnix.dragonlauncher.models
 
 import android.app.Application
-import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Density
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +32,7 @@ import org.elnix.dragonlauncher.ktx.toPath
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.points.NestsNavigationService
 import org.elnix.dragonlauncher.points.PointsService
+import org.elnix.dragonlauncher.settings.stores.map.IconsSettingsStore
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
@@ -180,11 +179,11 @@ public class PointsViewModel @Inject constructor(
             .collectLatest { currentPoint ->
                 combine(
                     pointsService.defaultPoint.flow,
-                    colorService.colors,
-                    iconService.getPointIcon(currentPoint).distinctUntilChanged()
-                ) { defaultPoint, colorScheme, icon ->
-                    val isDark = colorScheme.background.luminance() < 0.5f
-                    computeStableValues(currentPoint, defaultPoint, colorScheme, isDark, icon)
+                    iconService.getPointIcon(currentPoint).distinctUntilChanged(),
+                    IconsSettingsStore.renderForeground.flow(application),
+                    IconsSettingsStore.renderBackground.flow(application)
+                ) { defaultPoint, icon, renderForeground, renderBackground ->
+                    computeStableValues(currentPoint, defaultPoint, icon, renderForeground, renderBackground)
                 }.collect { values ->
                     PointStableCache.compute(pointId) { values }
                 }
@@ -196,23 +195,21 @@ public class PointsViewModel @Inject constructor(
      *
      * @param point the point to compute values for
      * @param defaultPoint the default point configuration used for fallback sizes
-     * @param colorScheme the current Material 3 color scheme for icon rendering
-     * @param isDark whether the current theme is dark, affecting icon tones
      * @param icon the resolved [LauncherIcon] for this point, or null
      * @return the computed stable values ready for caching
      */
     private suspend fun computeStableValues(
         point: Point,
         defaultPoint: Point,
-        colorScheme: ColorScheme,
-        isDark: Boolean,
-        icon: LauncherIcon?
+        icon: LauncherIcon?,
+        renderForeground: Boolean,
+        renderBackground: Boolean,
     ): StablePointValues = withContext(Dispatchers.Default) {
         val sizePx = with(density) { point.getSize(defaultPoint).toPx() }
         val innerPaddingPx = with(density) { point.getInnerPadding(defaultPoint).toPx() }
         val borderRadii = (sizePx / 2 + innerPaddingPx).coerceAtLeast(0f)
 
-        val imageBitmap = renderPointIcon(icon, point, defaultPoint, colorScheme, isDark)
+        val imageBitmap = renderPointIcon(icon, point, defaultPoint, renderForeground, renderBackground)
 
         StablePointValues(
             sizePx = sizePx.coerceAtLeast(1f),
@@ -224,45 +221,41 @@ public class PointsViewModel @Inject constructor(
         )
     }
 
-    /**
-     * Renders a [LauncherIcon] into an [ImageBitmap]
-     * using the current theme colors.
-     *
-     * Delegates to [StaticLauncherIcon.render] or resolves [DynamicLauncherIcon]
-     * to its current frame before rendering.
-     *
-     * @param icon the launcher icon to render, or null
-     * @param defaultPoint the default point configuration (used for icon size)
-     * @param colorScheme the current Material 3 color scheme
-     * @param isDark whether the current theme is dark
-     * @return the rendered bitmap, or null if [icon] is null
-     */
-    private suspend fun renderPointIcon(
-        icon: LauncherIcon?,
-        point: Point,
-        defaultPoint: Point,
-        colorScheme: ColorScheme,
-        isDark: Boolean
-    ): ImageBitmap? {
-        val renderSettings = LauncherIconRenderSettings(
-            size = (point.getSize(defaultPoint).value * density.density).toInt() * 2,
-            fgThemeColor = colorScheme.onPrimaryContainer.toArgb(),
-            bgThemeColor = colorScheme.primaryContainer.toArgb(),
-            fgTone = if (isDark) 90 else 10,
-            bgTone = if (isDark) 30 else 90,
-        )
+        /**
+         * Renders a [LauncherIcon] into an [ImageBitmap]
+         * using the current theme colors.
+         *
+         * Delegates to [StaticLauncherIcon.render] or resolves [DynamicLauncherIcon]
+         * to its current frame before rendering.
+         *
+         * @param icon the launcher icon to render, or null
+         * @param defaultPoint the default point configuration (used for icon size)
+         * @return the rendered bitmap, or null if [icon] is null
+         */
+        private suspend fun renderPointIcon(
+            icon: LauncherIcon?,
+            point: Point,
+            defaultPoint: Point,
+            renderForeground: Boolean,
+            renderBackground: Boolean,
+        ): ImageBitmap? {
+            val renderSettings = LauncherIconRenderSettings(
+                size = (point.getSize(defaultPoint).value * density.density).toInt() * 2,
+                renderForeground = renderForeground,
+                renderBackground = renderBackground
+            )
 
-        return when (icon) {
-            is DynamicLauncherIcon -> {
-                val staticIcon = icon.getIcon(System.currentTimeMillis())
-                staticIcon.render(renderSettings).asImageBitmap()
+            return when (icon) {
+                is DynamicLauncherIcon -> {
+                    val staticIcon = icon.getIcon(System.currentTimeMillis())
+                    staticIcon.render(renderSettings).asImageBitmap()
+                }
+
+                is StaticLauncherIcon -> icon.render(renderSettings).asImageBitmap()
+
+                null -> null
             }
-
-            is StaticLauncherIcon -> icon.render(renderSettings).asImageBitmap()
-
-            null -> null
         }
-    }
 
     override fun onCleared() {
         pointTrackingJobs.values.forEach { it.cancel() }

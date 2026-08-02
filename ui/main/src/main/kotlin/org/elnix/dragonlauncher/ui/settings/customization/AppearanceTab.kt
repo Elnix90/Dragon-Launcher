@@ -19,7 +19,7 @@ fun AppearanceTab() {
     ) {
         DragonSettingsGroup(R.string.colors_and_icons) {
             RouteItem(NavigationRoute.Colors)
-            RouteItem(NavigationRoute.IconPack)
+            RouteItem(NavigationRoute.Icons)
             RouteItem(NavigationRoute.AppDisplay)
         }
 

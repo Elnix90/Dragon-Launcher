@@ -57,7 +57,9 @@ public interface PointsService {
     public val defaultNest: SettingFlow<Nest>
     public val defaultIntersectionShape: SettingFlow<IntersectionShape>
 
+
     public val recomposeTrigger: SettingFlow<Int>
+    public fun recompose()
 
     /**
      * Selected points ids, a [List] of all selected points, by order of selection.
@@ -237,6 +239,7 @@ internal class PointsServiceImpl(
     override val nests: StateFlow<Map<Int, Nest>> = _nests.asStateFlow()
 
     override val recomposeTrigger: SettingFlow<Int> = SettingFlow(0)
+    override fun recompose() { recomposeTrigger.value += 1 }
 
     override val selectedPointsIds: SettingFlow<List<Int>> = SettingFlow(emptyList())
 
@@ -274,7 +277,7 @@ internal class PointsServiceImpl(
     private inline fun applyChange(mutator: () -> Unit) {
         undoRedo.applyChange(mutator)
         resetGrids()
-        recomposeTrigger.value += 1
+        recompose()
     }
 
     override fun select(id: Int) {
@@ -304,28 +307,28 @@ internal class PointsServiceImpl(
 
             }
         }
-        recomposeTrigger.value++
+        recompose()
     }
 
     override fun deselect(id: Int) {
         if (id !in selectedPointsIds.value) return
         selectedPointsIds.value -= id
-        recomposeTrigger.value++
+        recompose()
     }
 
     override fun selectAll(nestId: Int) {
         selectedPointsIds.value = _points.value.filterValues { it.nestId == nestId }.keys.toList()
-        recomposeTrigger.value++
+        recompose()
     }
 
     override fun deselectAll() {
         selectedPointsIds.value = emptyList()
-        recomposeTrigger.value++
+        recompose()
     }
 
     override fun invertSelection(nestId: Int) {
         selectedPointsIds.value = _points.value.filterValues { it.nestId == nestId }.keys.toList() - selectedPointsIds.value.toSet()
-        recomposeTrigger.value++
+        recompose()
     }
 
     override fun selectOnyOne(id: Int?) {
@@ -352,7 +355,7 @@ internal class PointsServiceImpl(
                 selectedPointsIds.value = listOf(newSel.id)
             }
         }
-        recomposeTrigger.value++
+        recompose()
     }
 
     init {
@@ -491,7 +494,7 @@ internal class PointsServiceImpl(
         defaultIntersectionShape.value = decodedDefaultShape
 
         resetGrids()
-        recomposeTrigger.value++
+        recompose()
     }
 
     override fun persist() {
@@ -543,7 +546,7 @@ internal class PointsServiceImpl(
         }
 
         resetGrids()
-        recomposeTrigger.value++
+        recompose()
     }
 
 

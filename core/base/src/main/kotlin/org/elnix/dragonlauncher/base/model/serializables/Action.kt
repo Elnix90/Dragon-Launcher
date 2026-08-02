@@ -29,7 +29,6 @@ import org.elnix.dragonlauncher.i18n.R
  *  - `actionLabel`
  *  - `launchAction`
  *  - `actionColor`
- *  - [org.elnix.dragonlauncher.base.util.ImageUtils.createUntintedBitmap]
  */
 @Serializable
 @SerialName("Action")

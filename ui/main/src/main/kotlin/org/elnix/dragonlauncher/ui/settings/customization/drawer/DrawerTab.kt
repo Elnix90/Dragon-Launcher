@@ -122,7 +122,7 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
 
         DragonSettingsGroup(R.string.workspaces) {
             RouteItem(NavigationRoute.Workspace)
-            RouteItem(NavigationRoute.IconPack)
+            RouteItem(NavigationRoute.Icons)
         }
 
         DragonSettingsGroup(R.string.behavior) {

@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.IconsViewModel
@@ -19,6 +20,7 @@ import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.LazyRowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.IconPackListContent
@@ -26,12 +28,12 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.settings.customization.drawer.DrawerIconShapePicker
 
 @Composable
-fun IconPackTab(
-    onBack: () -> Unit,
+fun IconsTab(
     drawerViewModel: DrawerViewModel = activityViewModel(),
     iconsViewModel: IconsViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
+    val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
 
     val apps by drawerViewModel.userApps.collectAsState(initial = emptyList())
@@ -41,8 +43,11 @@ fun IconPackTab(
     val selectedPack = iconSettings.iconPack
 
     SettingsScaffold(
-        title = stringResource(R.string.icon_packs),
-        onBack = onBack,
+        title = stringResource(NavigationRoute.Icons.resId),
+        onBack =  {
+            iconsViewModel.reloadAllPointsIcons()
+            navigator.onBack()
+        },
         helpText = stringResource(R.string.icon_pack_help),
         resetText = stringResource(R.string.reset_icon_packs_tab),
         onReset = {
@@ -67,9 +72,15 @@ fun IconPackTab(
             Setting(IconsSettingsStore.useIconTint)
 
             val useIconTint by IconsSettingsStore.useIconTint.asState()
+            Setting(IconsSettingsStore.onlyTintIconPack, enabled = useIconTint) {
+                iconsViewModel.reinstallAllIconPacks()
+            }
             Setting(IconsSettingsStore.iconsTint, enabled = useIconTint) {
                 iconsViewModel.reinstallAllIconPacks()
             }
+
+            Setting(IconsSettingsStore.renderForeground)
+            Setting(IconsSettingsStore.renderBackground)
 
             Setting(IconsSettingsStore.themedIcons)
 

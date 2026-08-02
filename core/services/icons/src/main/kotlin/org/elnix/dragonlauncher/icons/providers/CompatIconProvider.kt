@@ -22,7 +22,7 @@ internal class CompatIconProvider(
         val icon = withContext(Dispatchers.IO) {
             val activityInfo = try {
                 ctx.packageManager.getActivityInfo(component, 0)
-            } catch (e: PackageManager.NameNotFoundException) {
+            } catch (_: PackageManager.NameNotFoundException) {
                 return@withContext null
             }
             val iconRes = activityInfo.iconResource

@@ -22,9 +22,8 @@ internal class ActionIconProvider(
                 // When the launch app is the dummy one, I return the app grid instead of an action icon
                 if (action != Action.LaunchApp.dummy) return null
             }
-            is Action.LaunchShortcut -> {
-
-            }
+//            is Action.LaunchShortcut -> {
+//            }
             else -> {/* no-op */}
         }
 

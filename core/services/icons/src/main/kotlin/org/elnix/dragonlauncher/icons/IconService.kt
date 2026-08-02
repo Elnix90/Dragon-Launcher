@@ -140,6 +140,8 @@ public class IconService(
             }.collectLatest { (settings, extraColors) ->
                 iconPacksUpdated.collectLatest {
 
+                    fun tint(): Int? = if (!settings.onlyTintIconPacks) settings.iconsTint else null
+
                     val providers = mutableListOf<IconProvider>()
 
                     // the most important provider, the first one, returns null to let the other providers compute
@@ -154,7 +156,7 @@ public class IconService(
                         ShortcutIconProvider(
                             ctx, shortcutRepository,
                             themed = settings.themedIcons,
-                            tint = settings.iconsTint,
+                            tint = tint(),
                         )
                     )
 
@@ -179,7 +181,7 @@ public class IconService(
                         DynamicClockIconProvider(
                             ctx = ctx,
                             themed = settings.themedIcons,
-                            tint = settings.iconsTint
+                            tint = tint(),
                         )
                     )
 
@@ -188,7 +190,7 @@ public class IconService(
                             ctx = ctx,
                             appRepository = appRepository,
                             themed = settings.themedIcons,
-                            tint = settings.iconsTint
+                            tint = tint(),
                         )
                     )
                     if (!isAtLeastApiLevel(33)) {
@@ -197,7 +199,7 @@ public class IconService(
                                 appRepository = appRepository,
                                 ctx = ctx,
                                 themed = settings.themedIcons,
-                                tint = settings.iconsTint
+                                tint = tint(),
                             )
                         )
                     }
@@ -205,7 +207,7 @@ public class IconService(
                         SystemIconProvider(
                             appRepository = appRepository,
                             themedIcons = settings.themedIcons,
-                            tint = settings.iconsTint
+                            tint = tint(),
                         )
                     )
 
@@ -320,6 +322,7 @@ public class IconService(
 
     public fun reloadAllPointIcons() {
         PointIconCache.evictAll()
+        pointService.recompose()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -412,7 +415,7 @@ public class IconService(
         size: Dp,
         reload: Boolean,
     ): Flow<LauncherIcon?> {
-        return combine(iconProviders, transformations, extraColors) { providers, transformations, extraColors ->
+        return combine(iconProviders, transformations, extraColors) { providers, transformations, _ ->
             val customIcon = point.customIcon
 
             /**

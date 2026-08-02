@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui.compositionslocals
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
@@ -11,6 +10,7 @@ import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.IconsSettingsStore
 
 
 data class DrawerSettings(
@@ -21,7 +21,8 @@ data class DrawerSettings(
     val iconsSpacingHorizontal: Dp,
     val horizontalAlignment: HorizontalAlignment,
     val iconShape: IconShape,
-    val darkTheme: Boolean
+    val renderForeground: Boolean,
+    val renderBackground: Boolean
 )
 
 val LocalDrawerSettings: ProvidableCompositionLocal<DrawerSettings> = compositionLocalOf { error("No DrawerSettings provided") }
@@ -36,8 +37,9 @@ fun ProvideDrawerSettings(content: @Composable () -> Unit) {
     val iconsSpacingHorizontal by DrawerSettingsStore.iconsSpacingHorizontal.asState()
     val horizontalAlignment by DrawerSettingsStore.horizontalAlignment.asState()
     val iconShape by DrawerSettingsStore.iconShape.asState()
-    val darkTheme = isSystemInDarkTheme()
 
+    val renderForeground by IconsSettingsStore.renderForeground.asState()
+    val renderBackground by IconsSettingsStore.renderBackground.asState()
     CompositionLocalProvider(
         LocalDrawerSettings provides DrawerSettings(
             maxIconSize = maxIconSize,
@@ -47,7 +49,8 @@ fun ProvideDrawerSettings(content: @Composable () -> Unit) {
             iconsSpacingHorizontal = iconsSpacingHorizontal,
             horizontalAlignment = horizontalAlignment,
             iconShape = iconShape,
-            darkTheme = darkTheme
+            renderForeground = renderForeground,
+            renderBackground = renderBackground
         ),
         content = content
     )

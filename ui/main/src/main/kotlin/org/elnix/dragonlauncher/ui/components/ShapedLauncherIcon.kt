@@ -39,7 +39,6 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.intl.Locale
@@ -59,7 +58,6 @@ import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.icons.TextLayer
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
 import org.elnix.dragonlauncher.base.icons.VectorLayer
-import org.elnix.dragonlauncher.base.icons.getTone
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ktx.drawWithColorFilter
 import org.elnix.dragonlauncher.ktx.px
@@ -78,7 +76,7 @@ fun ShapedLauncherIcon(
     badge: () -> Badge? = { null }
 ) {
     val icon = icon()
-    val drawerSettings =LocalDrawerSettings.current
+    val drawerSettings = LocalDrawerSettings.current
     val shape = drawerSettings.iconShape.resolveShape()
 
     var currentIcon by remember(icon) {
@@ -93,10 +91,8 @@ fun ShapedLauncherIcon(
 
     val renderSettings = LauncherIconRenderSettings(
         size = maxSize.px.toInt(),
-        fgThemeColor = MaterialTheme.colorScheme.onPrimaryContainer.toArgb(),
-        bgThemeColor = MaterialTheme.colorScheme.primaryContainer.toArgb(),
-        fgTone = if (drawerSettings.darkTheme) 90 else 10,
-        bgTone = if (drawerSettings.darkTheme) 30 else 90,
+        renderForeground = drawerSettings.renderForeground,
+        renderBackground = drawerSettings.renderBackground
     )
 
     var currentBitmap by remember {
@@ -156,11 +152,7 @@ fun ShapedLauncherIcon(
                             defaultHour = fg.defaultHour,
                             defaultSecond = fg.defaultSecond,
                             scale = fg.scale,
-                            tintColor = if (fg.tint == 0) {
-                                Color(renderSettings.fgThemeColor)
-                            } else {
-                                Color(getTone(fg.tint ?: 0, renderSettings.fgTone))
-                            },
+                            tint = fg.tint
                         )
                     }
 
@@ -170,25 +162,18 @@ fun ShapedLauncherIcon(
                             style = MaterialTheme.typography.headlineSmall.copy(
                                 fontSize = 20.sp * (maxSize / 48.dp)
                             ),
-                            color = if (fg.tint == 0) {
-                                Color(renderSettings.fgThemeColor)
-                            } else {
-                                Color(getTone(fg.tint ?: 0, renderSettings.fgTone))
-                            },
+                            color = Color(fg.tint ?: 0)
                         )
                     }
 
                     is VectorLayer -> {
                         Icon(
                             painter = painterResource(fg.icon), contentDescription = null,
-                            tint = if (fg.tint == 0) {
-                                Color(renderSettings.fgThemeColor)
-                            } else {
-                                Color(getTone(fg.tint ?: 0, renderSettings.fgTone))
-                            },
+                            tint = Color(fg.tint ?: 0),
                             modifier = Modifier.size(maxSize / 2f),
                         )
                     }
+
                     else -> {}
                 }
             } else {
@@ -284,7 +269,7 @@ private fun ClockLayer(
     defaultHour: Int,
     defaultSecond: Int,
     scale: Float,
-    tintColor: Color?,
+    tint: Int?,
     modifier: Modifier = Modifier,
 ) {
     val time = Instant.ofEpochMilli(LocalTime.current).atZone(ZoneId.systemDefault())
@@ -294,8 +279,8 @@ private fun ClockLayer(
     val hour = time.hour
 
     Canvas(modifier = modifier) {
-        val colorFilter = tintColor?.let {
-            PorterDuffColorFilter(tintColor.toArgb(), PorterDuff.Mode.SRC_IN)
+        val colorFilter = tint?.let {
+            PorterDuffColorFilter(tint, PorterDuff.Mode.SRC_IN)
         }
         withTransform({
             this.scale(scale)
