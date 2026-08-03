@@ -8,7 +8,6 @@ import androidx.compose.ui.unit.Density
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.elnix90.logging.logWtf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
@@ -192,8 +191,6 @@ public class PointsViewModel @Inject constructor(
                         settings = settings
                     )
                 }.collect { values ->
-                    logWtf { "Got new values: $values" }
-
                     PointStableCache.compute(pointId) { values }
                 }
             }
