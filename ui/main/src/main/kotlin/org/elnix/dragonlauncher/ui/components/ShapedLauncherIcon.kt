@@ -53,7 +53,6 @@ import org.elnix.dragonlauncher.base.icons.ClockSublayer
 import org.elnix.dragonlauncher.base.icons.ClockSublayerRole
 import org.elnix.dragonlauncher.base.icons.DynamicLauncherIcon
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
-import org.elnix.dragonlauncher.base.icons.LauncherIconRenderSettings
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.icons.TextLayer
 import org.elnix.dragonlauncher.base.icons.TransparentLayer
@@ -89,18 +88,15 @@ fun ShapedLauncherIcon(
         )
     }
 
-    val renderSettings = LauncherIconRenderSettings(
-        size = maxSize.px.toInt(),
-        renderForeground = drawerSettings.renderForeground,
-        renderBackground = drawerSettings.renderBackground
-    )
+    val size = maxSize.px.toInt()
+    val iconSettings = drawerSettings.iconSettings
 
     var currentBitmap by remember {
-        mutableStateOf(currentIcon?.getCachedBitmap(renderSettings))
+        mutableStateOf(currentIcon?.getCachedBitmap(size, iconSettings))
     }
 
-    LaunchedEffect(currentIcon, renderSettings) {
-        currentBitmap = currentIcon?.render(renderSettings)
+    LaunchedEffect(currentIcon, iconSettings) {
+        currentBitmap = currentIcon?.render(size, iconSettings)
     }
 
     if (icon is DynamicLauncherIcon) {

@@ -13,41 +13,39 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
+import org.elnix.dragonlauncher.base.model.models.IconSettings
 import org.elnix.dragonlauncher.ktx.drawWithColorFilter
 import java.lang.ref.WeakReference
 
 public sealed interface LauncherIcon
 
-public data class LauncherIconRenderSettings(
-    val size: Int,
-    val renderForeground: Boolean,
-    val renderBackground: Boolean
-)
+
 
 public data class StaticLauncherIcon(
     val foregroundLayer: LauncherIconLayer,
     val backgroundLayer: LauncherIconLayer,
 ) : LauncherIcon {
     private var cachedBitmap: WeakReference<Bitmap>? = null
-    private var cachedRenderSettings: LauncherIconRenderSettings? = null
+    private var cachedSize: Int? = null
+    private var cachedSettings: IconSettings? = null
     private var renderSemaphore = Semaphore(1)
 
-    public fun getCachedBitmap(settings: LauncherIconRenderSettings): Bitmap? {
-        return if (cachedRenderSettings == settings) cachedBitmap?.get() else null
+    public fun getCachedBitmap(size: Int, settings: IconSettings): Bitmap? {
+        return if (cachedSettings == settings &&  cachedSize == size) cachedBitmap?.get() else null
     }
 
     /**
      * Render this icon to a bitmap.
      */
-    public suspend fun render(settings: LauncherIconRenderSettings): Bitmap {
+    public suspend fun render(size: Int, settings: IconSettings): Bitmap {
         val cachedBmp = cachedBitmap?.get()
-        if (cachedRenderSettings == settings && cachedBmp != null) return cachedBmp
+        if (cachedSettings == settings && cachedSize == size && cachedBmp != null) return cachedBmp
         val bmp = withContext(Dispatchers.Default) {
             renderSemaphore.withPermit {
                 if (settings.renderForeground || settings.renderBackground) {
                     val bmp =
-                        if (cachedBmp == null || cachedBmp.width != settings.size || cachedBmp.height != settings.size) {
-                            createBitmap(settings.size, settings.size)
+                        if (cachedBmp == null || cachedBmp.width != size || cachedBmp.height != size) {
+                            createBitmap(size, size)
                         } else cachedBmp
                     val canvas = Canvas(bmp)
                     canvas.drawRect(
@@ -63,7 +61,8 @@ public data class StaticLauncherIcon(
                     }
 
                     cachedBitmap = WeakReference(bmp)
-                    cachedRenderSettings = settings
+                    cachedSettings = settings
+                    cachedSize = size
                     bmp
                 } else {
                     createBitmap(1,1)

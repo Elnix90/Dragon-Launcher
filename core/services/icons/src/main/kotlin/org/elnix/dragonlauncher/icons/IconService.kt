@@ -75,7 +75,7 @@ private object ShortcutIconCache : DragonCache<CacheKey, LauncherIcon>(Action.ac
 private object DrawerIconCache : DragonCache<CacheKey, LauncherIcon>(200)
 
 
-public class IconService(
+public class IconService internal constructor(
     private val ctx: Context,
     private val iconPackManager: IconPackManager,
     private val iconSettingsRepository: IconSettingsRepository,
@@ -161,7 +161,7 @@ public class IconService(
                     )
 
                     if (!settings.iconPack.isNullOrBlank()) {
-                        val pack = iconPackManager.getIconPack(settings.iconPack)
+                        val pack = iconPackManager.getIconPack(settings.iconPack!!)
                         if (pack != null) {
                             providers.add(
                                 IconPackIconProvider(
@@ -177,6 +177,7 @@ public class IconService(
                             logW(ICONS_TAG) { "Icon pack ${settings.iconPack} not found" }
                         }
                     }
+
                     providers.add(
                         DynamicClockIconProvider(
                             ctx = ctx,
@@ -231,14 +232,14 @@ public class IconService(
                         ForceThemedIconTransformation()
                     )
 
-                    iconProviders.value = providers
+                    this@IconService.iconProviders.value = providers
                     this@IconService.transformations.value = transformations
                 }
             }
         }
     }
 
-    public fun getRandomAppIcon(): CacheKey? = DrawerIconCache.getRandom()
+//    public fun getRandomAppIcon(): CacheKey? = DrawerIconCache.getRandom()
 
     public fun getCustomAppIcon(application: Application): Flow<CustomIcon?> {
         return appOverrideManager.appOverridesState.flow.map {
@@ -271,11 +272,11 @@ public class IconService(
     ): Flow<LauncherIcon?> {
         val customIcon = getCustomAppIcon(application)
 
-        return customIcon.flatMapLatest {
+        return customIcon.flatMapLatest { customIcon ->
             val iconSize = iconSize.first()
             val size = (iconSize.value * density.density).toInt()
 
-            resolveCustomAppIcon(application, size, reload, it)
+            resolveCustomAppIcon(application, size, reload, customIcon)
         }
     }
 
@@ -418,32 +419,27 @@ public class IconService(
         return combine(iconProviders, transformations, extraColors) { providers, transformations, _ ->
             val customIcon = point.customIcon
 
+            val cacheKey = CacheKey(
+                data = point.key,
+                customIconHashCode = customIcon.hashCode(),
+                providersHashCode = providers.hashCode(),
+                transformationsHashcode = transformations.hashCode()
+            )
+
             /**
              * Tries to find the icon in the point cache, and if not found, create a new one, by searching in the
              */
             var icon = if (!reload) {
-                PointIconCache[point.key] ?: run {
+                PointIconCache[cacheKey] ?: run {
                     when (point.action) {
                         is Action.LaunchApp -> {
-                            val key = CacheKey(
-                                data = point.key,
-                                customIconHashCode = customIcon.hashCode(),
-                                providersHashCode = providers.hashCode(),
-                                transformationsHashcode = transformations.hashCode()
-                            )
-                            DrawerIconCache[key]
+                            DrawerIconCache[cacheKey]
                         }
 
 
                         // TODO
                         is Action.LaunchShortcut -> {
-                            val key = CacheKey(
-                                data = point.key,
-                                customIconHashCode = customIcon.hashCode(),
-                                providersHashCode = providers.hashCode(),
-                                transformationsHashcode = transformations.hashCode()
-                            )
-                            ShortcutIconCache[key]
+                            ShortcutIconCache[cacheKey]
                         }
 
                         else -> null
@@ -462,7 +458,7 @@ public class IconService(
 
             if (icon != null) {
                 icon = icon.transform(transforms)
-                PointIconCache.compute(point.key) { icon }
+                PointIconCache.compute(cacheKey) { icon }
             }
             return@combine icon
         }

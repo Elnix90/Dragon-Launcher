@@ -6,9 +6,9 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.Density
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.elnix90.logging.logWtf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
@@ -22,17 +22,17 @@ import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.cache.StablePointValues
 import org.elnix.dragonlauncher.base.icons.DynamicLauncherIcon
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
-import org.elnix.dragonlauncher.base.icons.LauncherIconRenderSettings
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
+import org.elnix.dragonlauncher.base.model.models.IconSettings
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.colors.ColorService
 import org.elnix.dragonlauncher.icons.IconService
+import org.elnix.dragonlauncher.icons.IconSettingsRepository
 import org.elnix.dragonlauncher.ktx.toPath
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.points.NestsNavigationService
 import org.elnix.dragonlauncher.points.PointsService
-import org.elnix.dragonlauncher.settings.stores.map.IconsSettingsStore
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
@@ -64,6 +64,7 @@ public class PointsViewModel @Inject constructor(
     application: Application,
     private val colorService: ColorService,
     private val iconService: IconService,
+    private val iconSettingsRepository: IconSettingsRepository,
     public val pointsService: PointsService,
     public val nestsNavigationService: NestsNavigationService
 ) : AndroidViewModel(application) {
@@ -165,7 +166,7 @@ public class PointsViewModel @Inject constructor(
      * The outer flow uses [PointsService.recomposeTrigger] to detect point-data changes
      * (since [PointsService.points] does not emit on in-place mutations), combined with
      * [distinctUntilChanged] to skip unchanged points. The inner [combine] tracks
-     * default configuration, color scheme, and per-point icon changes.
+     * default configuration, icon settings, and per-point icon changes.
      *
      * @param pointId the id of the point to observe
      */
@@ -175,14 +176,24 @@ public class PointsViewModel @Inject constructor(
             .distinctUntilChanged()
             .collectLatest { currentPoint ->
                 combine(
+                    iconSettingsRepository.settings,
                     pointsService.defaultPoint.flow,
-                    colorService.extraColors,
                     iconService.getPointIcon(currentPoint).distinctUntilChanged(),
-                    IconsSettingsStore.renderForeground.flow(application),
-                    IconsSettingsStore.renderBackground.flow(application)
-                ) { defaultPoint, _, icon, renderForeground, renderBackground ->
-                    computeStableValues(currentPoint, defaultPoint, icon, renderForeground, renderBackground)
+                    colorService.extraColors
+                ) { flows ->
+                    val settings = flows[0] as IconSettings
+                    val defaultPoint = flows[1] as Point
+                    val icon = flows[2] as LauncherIcon?
+
+                    computeStableValues(
+                        point = currentPoint,
+                        defaultPoint = defaultPoint,
+                        icon = icon,
+                        settings = settings
+                    )
                 }.collect { values ->
+                    logWtf { "Got new values: $values" }
+
                     PointStableCache.compute(pointId) { values }
                 }
             }
@@ -200,14 +211,13 @@ public class PointsViewModel @Inject constructor(
         point: Point,
         defaultPoint: Point,
         icon: LauncherIcon?,
-        renderForeground: Boolean,
-        renderBackground: Boolean,
+        settings: IconSettings
     ): StablePointValues = withContext(Dispatchers.Default) {
         val sizePx = with(density) { point.getSize(defaultPoint).toPx() }
         val innerPaddingPx = with(density) { point.getInnerPadding(defaultPoint).toPx() }
         val borderRadii = (sizePx / 2 + innerPaddingPx).coerceAtLeast(0f)
 
-        val imageBitmap = renderPointIcon(icon, point, defaultPoint, renderForeground, renderBackground)
+        val imageBitmap = renderPointIcon(icon, point, defaultPoint, settings)
 
         StablePointValues(
             sizePx = sizePx.coerceAtLeast(1f),
@@ -218,41 +228,36 @@ public class PointsViewModel @Inject constructor(
         )
     }
 
-        /**
-         * Renders a [LauncherIcon] into an [ImageBitmap]
-         * using the current theme colors.
-         *
-         * Delegates to [StaticLauncherIcon.render] or resolves [DynamicLauncherIcon]
-         * to its current frame before rendering.
-         *
-         * @param icon the launcher icon to render, or null
-         * @param defaultPoint the default point configuration (used for icon size)
-         * @return the rendered bitmap, or null if [icon] is null
-         */
-        private suspend fun renderPointIcon(
-            icon: LauncherIcon?,
-            point: Point,
-            defaultPoint: Point,
-            renderForeground: Boolean,
-            renderBackground: Boolean,
-        ): ImageBitmap? {
-            val renderSettings = LauncherIconRenderSettings(
-                size = (point.getSize(defaultPoint).value * density.density).toInt() * 2,
-                renderForeground = renderForeground,
-                renderBackground = renderBackground
-            )
+    /**
+     * Renders a [LauncherIcon] into an [ImageBitmap]
+     * using the current theme colors.
+     *
+     * Delegates to [StaticLauncherIcon.render] or resolves [DynamicLauncherIcon]
+     * to its current frame before rendering.
+     *
+     * @param icon the launcher icon to render, or null
+     * @param defaultPoint the default point configuration (used for icon size)
+     * @return the rendered bitmap, or null if [icon] is null
+     */
+    private suspend fun renderPointIcon(
+        icon: LauncherIcon?,
+        point: Point,
+        defaultPoint: Point,
+        settings: IconSettings
+    ): ImageBitmap? {
+        val size = (point.getSize(defaultPoint).value * density.density).toInt() * 2
 
-            return when (icon) {
-                is DynamicLauncherIcon -> {
-                    val staticIcon = icon.getIcon(System.currentTimeMillis())
-                    staticIcon.render(renderSettings).asImageBitmap()
-                }
-
-                is StaticLauncherIcon -> icon.render(renderSettings).asImageBitmap()
-
-                null -> null
+        return when (icon) {
+            is DynamicLauncherIcon -> {
+                val staticIcon = icon.getIcon(System.currentTimeMillis())
+                staticIcon.render(size, settings).asImageBitmap()
             }
+
+            is StaticLauncherIcon -> icon.render(size, settings).asImageBitmap()
+
+            null -> null
         }
+    }
 
     override fun onCleared() {
         pointTrackingJobs.values.forEach { it.cancel() }

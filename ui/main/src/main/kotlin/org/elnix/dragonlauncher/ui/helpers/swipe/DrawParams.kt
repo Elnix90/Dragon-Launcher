@@ -9,10 +9,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.rememberTextMeasurer
 import io.github.elnix90.runtime.asState
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.theme.ExtraColors
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.points.PointsService
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
@@ -29,6 +31,7 @@ data class DrawParams(
 
     val pointsService: PointsService,
     val extraColors: ExtraColors,
+    val iconShape: IconShape,
 
     val maxNestsDepth: Int,
 
@@ -91,6 +94,7 @@ fun rememberDrawParams(
     val textMeasurer = rememberTextMeasurer()
     val nestDebugOverlay = LocalNestDebugOverlay.current
 
+    val iconShape by DrawerSettingsStore.iconShape.asState()
 
     return remember(
         extraColors,
@@ -114,6 +118,7 @@ fun rememberDrawParams(
             ctx = ctx,
             pointsService = pointsViewModel.pointsService,
             extraColors = extraColors,
+            iconShape = iconShape,
             maxNestsDepth = maxNestsDepth,
             eraseColor = eraseColor,
             preventDrawingSubNests = false,
