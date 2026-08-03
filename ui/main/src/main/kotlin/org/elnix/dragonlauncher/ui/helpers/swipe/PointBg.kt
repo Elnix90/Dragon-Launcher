@@ -93,6 +93,8 @@ fun DrawScope.PointBg(
                 )
             }
         }
+    } else {
+        unavailableAction(point, drawParams, center)
     }
 
     if (drawParams.pointSettingsDisplay) {

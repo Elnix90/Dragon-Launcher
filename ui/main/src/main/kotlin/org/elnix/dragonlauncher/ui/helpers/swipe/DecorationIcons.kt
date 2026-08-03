@@ -11,7 +11,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.DragonCache
+import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.util.ImageUtils.loadDrawableResAsImageBitmap
 import org.elnix.dragonlauncher.i18n.R
 
@@ -56,7 +58,7 @@ fun DrawScope.DecorationIcons(
 
     // Small bolt icon top right to indicate a Hold & Run
     if (point.holdAndRunDelayMs != null) {
-        val boltIcon =  DecorationCache.getOrCompute(1) {
+        val boltIcon = DecorationCache.getOrCompute(1) {
             ctx.loadDrawableResAsImageBitmap(
                 R.drawable.ic_hold_and_run_bolt,
                 badgeSize,
@@ -101,4 +103,56 @@ fun DrawScope.missingPoint(drawParams: DrawParams, center: Offset) {
     )
 }
 
-private object DecorationCache : DragonCache<Int, ImageBitmap>(3)
+fun DrawScope.unavailableAction(
+    point: Point,
+    drawParams: DrawParams,
+    center: Offset
+) {
+    val size = 30.dp.toPx().toInt()
+
+    val icon = (
+            if (point.action is Action.LaunchApp) {
+                when ((point.action as Action.LaunchApp).profile.type) {
+                    Profile.Type.Personal -> null
+                    Profile.Type.Work -> {
+                        DecorationCache.getOrCompute(3) {
+                            drawParams.ctx.loadDrawableResAsImageBitmap(
+                                resId = R.drawable.enterprise,
+                                width = size,
+                                height = size
+                            )
+                        }
+                    }
+
+                    Profile.Type.Private -> {
+                        DecorationCache.getOrCompute(4) {
+                            drawParams.ctx.loadDrawableResAsImageBitmap(
+                                resId = R.drawable.encrypted,
+                                width = size,
+                                height = size
+                            )
+                        }
+                    }
+                }
+            } else null
+            )
+        ?: DecorationCache.getOrCompute(2) {
+            drawParams.ctx.loadDrawableResAsImageBitmap(
+                resId = R.drawable.question_mark,
+                width = size,
+                height = size
+            )
+        }
+
+    val leftI = center.x.toInt() - size / 2
+    val topI = center.y.toInt() - size / 2
+
+    drawImage(
+        image = icon,
+        dstOffset = IntOffset(leftI, topI),
+        dstSize = IntSize(size, size),
+        colorFilter = ColorFilter.tint(Color.White)
+    )
+}
+
+private object DecorationCache : DragonCache<Int, ImageBitmap>(5)
