@@ -93,12 +93,10 @@ public class DrawerViewModel @Inject constructor(
         return recentsService.getRecentApps(count)
     }
 
-
-    public fun selectWorkspace(workspaceId: String): Unit = workspaceManager.selectWorkspace(workspaceId)
-    public val selectedWorkspaceId: StateFlow<String> = workspaceManager.selectedWorkspaceId.flow.stateIn(
-        viewModelScope,
-        SharingStarted.Lazily,
-        "user"
+    public val selectedWorkspaceId: StateFlow<String> = workspaceManager.selectedWorkspaceId.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Lazily,
+        initialValue = "user"
     )
 
     public fun queryAppShortcuts(packageName: String): List<ShortcutInfo> = appsRepository.queryAppShortcuts(packageName)

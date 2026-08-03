@@ -43,7 +43,7 @@ fun WorkspaceListScreen(drawerViewModel: DrawerViewModel = activityViewModel()) 
     val scope = rememberCoroutineScope()
 
     val workspaceManager = drawerViewModel.workspaceManager
-    val workspaces by workspaceManager.workspacesState.asState()
+    val workspaces by workspaceManager.workspaces.asState()
 
     var showCreateDialog by remember { mutableStateOf(false) }
     var showDeleteConfirm by remember { mutableStateOf<Workspace?>(null) }

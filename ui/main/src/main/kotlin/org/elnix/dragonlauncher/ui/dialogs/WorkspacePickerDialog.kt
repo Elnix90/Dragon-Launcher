@@ -29,7 +29,7 @@ fun WorkspacePickerDialog(
     onDismiss: () -> Unit,
     onActionPicked: (Action.OpenAppDrawer) -> Unit
 ) {
-    val workspaces by drawerViewModel.workspaceManager.workspacesState.asState()
+    val workspaces by drawerViewModel.workspaceManager.workspaces.asState()
 
     AlertDialog(
         onDismissRequest = onDismiss,

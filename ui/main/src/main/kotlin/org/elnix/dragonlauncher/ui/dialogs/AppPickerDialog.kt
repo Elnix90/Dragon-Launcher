@@ -84,10 +84,9 @@ fun AppPickerDialog(
         }
     }
 
-
-    val workspaceState by drawerViewModel.workspaceManager.workspacesState.asState()
-
+    val workspaceState by drawerViewModel.workspaceManager.workspaces.asState()
     val selectedWorkspaceId by drawerViewModel.selectedWorkspaceId.collectAsState()
+
     val initialIndex = workspaceState.indexOfFirst { it.id == selectedWorkspaceId }
     val pagerState = rememberPagerState(
         initialPage = initialIndex.coerceIn(0, (workspaceState.size - 1).coerceAtLeast(0)),

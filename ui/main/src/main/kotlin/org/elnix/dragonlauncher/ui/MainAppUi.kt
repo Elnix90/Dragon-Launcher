@@ -25,6 +25,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,6 +48,7 @@ import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
+import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.Constants.PackageNames.SHIZUKU_PACKAGE_NAME
 import org.elnix.dragonlauncher.base.Constants.URLs.URL_SHIZUKU_SITE
 import org.elnix.dragonlauncher.base.model.serializables.Action
@@ -73,6 +75,7 @@ import org.elnix.dragonlauncher.models.ShizukuViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.timer.AppTimerService.Companion.EXTRA_APP_NAME
 import org.elnix.dragonlauncher.timer.AppTimerService.Companion.SHOW_LAUNCHER
@@ -150,6 +153,7 @@ fun MainAppUi(
     val uriHandler = LocalUriHandler.current
     val pointsService = pointsViewModel.pointsService
 
+    val scope = rememberCoroutineScope()
 
     var showWidgetPicker by remember { mutableStateOf<Int?>(null) }
     var showFilePicker: Point? by remember { mutableStateOf(null) }
@@ -306,7 +310,9 @@ fun MainAppUi(
                 onAppSettings = navigator::navigate,
                 onAppDrawer = { workspaceId ->
                     if (workspaceId != null) {
-                        drawerViewModel.selectWorkspace(workspaceId)
+                        scope.launch {
+                            DrawerSettingsStore.lastWorkspaceUsed.set(ctx, workspaceId)
+                        }
                     }
                     navigator.navigate(NavigationRoute.Drawer)
                 }

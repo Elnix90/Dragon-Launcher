@@ -156,32 +156,34 @@ fun AppDrawerScreen(
 
 
     val workspacesManager = drawerViewModel.workspaceManager
-    val workspaceState by workspacesManager.workspacesState.asState()
-
+    val workspaces by workspacesManager.workspaces.asState()
     val selectedWorkspaceId by drawerViewModel.selectedWorkspaceId.collectAsState()
-    val initialIndex = workspaceState.indexOfFirst { it.id == selectedWorkspaceId }
+
+    val initialIndex = workspaces.indexOfFirst { it.id == selectedWorkspaceId }
     val pagerState = rememberPagerState(
-        initialPage = initialIndex.coerceIn(0, (workspaceState.size - 1).coerceAtLeast(0)),
-        pageCount = { workspaceState.size }
+        initialPage = initialIndex.coerceIn(0, (workspaces.size - 1).coerceAtLeast(0)),
+        pageCount = { workspaces.size }
     )
 
     /**
      * Updates the visible workspace
      */
-    LaunchedEffect(workspaceState, selectedWorkspaceId) {
-        if (workspaceState.isEmpty()) return@LaunchedEffect
+    LaunchedEffect(workspaces, selectedWorkspaceId) {
+        if (workspaces.isEmpty()) return@LaunchedEffect
 
-        val selectedVisible = workspaceState.any { it.id == selectedWorkspaceId }
-        val targetId = if (selectedVisible) selectedWorkspaceId else workspaceState.first().id
-        val targetIndex = workspaceState.indexOfFirst { it.id == targetId }
-
-        if (!selectedVisible) {
-            drawerViewModel.selectWorkspace(targetId)
-        }
+        val selectedPresent = workspaces.any { it.id == selectedWorkspaceId }
+        val targetId = if (selectedPresent) selectedWorkspaceId else workspaces.first().id
+        val targetIndex = workspaces.indexOfFirst { it.id == targetId }
 
         if (targetIndex >= 0 && pagerState.currentPage != targetIndex) {
             pagerState.scrollToPage(targetIndex)
         }
+    }
+
+    LaunchedEffect(pagerState.currentPage) {
+        val newWorkspace = if (workspaces.size > pagerState.currentPage) workspaces[pagerState.currentPage] else null
+        val targetId = newWorkspace?.id ?: workspaces.firstOrNull()?.id
+        DrawerSettingsStore.lastWorkspaceUsed.set(ctx, targetId)
     }
 
     fun closeKeyboard() {
@@ -463,7 +465,7 @@ fun AppDrawerScreen(
             key = { it.hashCode() }
         ) { pageIndex ->
 
-            val workspace = workspaceState[pageIndex]
+            val workspace = workspaces[pageIndex]
 
             val workspaceProfileType = when (workspace.type) {
                 WorkspaceType.Work -> Profile.Type.Work

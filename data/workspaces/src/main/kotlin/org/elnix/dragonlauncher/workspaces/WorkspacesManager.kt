@@ -3,13 +3,12 @@
 package org.elnix.dragonlauncher.workspaces
 
 import android.content.Context
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import io.github.elnix90.logging.WORKSPACES_TAG
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.base.SettingFlow
@@ -30,15 +29,17 @@ public class WorkspacesManager(
 
     private val scope = CoroutineScope(Job() + Dispatchers.IO)
 
-    public val workspacesState: SettingFlow<List<Workspace>> = SettingFlow(defaultWorkspaces)
-    public val selectedWorkspaceId: SettingFlow<String> = SettingFlow("user")
+    public val workspaces: SettingFlow<List<Workspace>> = SettingFlow(defaultWorkspaces)
+    public val selectedWorkspaceId: Flow<String> = DrawerSettingsStore.lastWorkspaceUsed.flow(ctx)
 
-    public val selectedWorkspace: Workspace? by mutableStateOf(workspacesState.value.firstOrNull())
+//    public val selectedWorkspace: Flow<Workspace?> = combine(workspaces.flow, selectedWorkspaceId) { workspaces, selected ->
+//        if (workspaces.isEmpty()) return@combine null
+//        workspaces.firstOrNull { it.id == selected } ?: workspaces.first()
+//    }
 
     init {
         scope.launch {
             loadWorkspaces()
-            selectedWorkspaceId.value = DrawerSettingsStore.lastWorkspaceUsed.get(ctx)
         }
     }
 
@@ -49,24 +50,24 @@ public class WorkspacesManager(
             if (jsonString.isBlank()) return@withContext
 
             val loadedState = WorkspaceJson.decode(jsonString, defaultWorkspaces)
-            workspacesState.value = loadedState
+            workspaces.value = loadedState
 
         } catch (e: Exception) {
             logE(WORKSPACES_TAG, e) { "Error while loading the workspaces state" }
-            workspacesState.value = defaultWorkspaces
+            workspaces.value = defaultWorkspaces
         }
     }
 
     private fun persistWorkspaces() = scope.launch(Dispatchers.IO) {
-        if (workspacesState.value == defaultWorkspaces) return@launch
-        val json = WorkspaceJson.encode(workspacesState.value)
+        if (workspaces.value == defaultWorkspaces) return@launch
+        val json = WorkspaceJson.encode(workspaces.value)
         WorkspaceSettingsStore.jsonSetting.set(ctx, json)
     }
 
 
     private inline fun update(newWorkSpaceState: (WorkspaceState) -> WorkspaceState?) {
-        newWorkSpaceState(workspacesState.value)?.let {
-            workspacesState.value = it
+        newWorkSpaceState(workspaces.value)?.let {
+            workspaces.value = it
             persistWorkspaces()
         }
     }
@@ -79,13 +80,13 @@ public class WorkspacesManager(
         }
     }
 
-    public fun selectWorkspace(id: String) {
-        selectedWorkspaceId.value = id
-
-        scope.launch {
-            DrawerSettingsStore.lastWorkspaceUsed.set(ctx, id)
-        }
-    }
+//    public fun selectWorkspace(id: String) {
+//        selectedWorkspaceId.value = id
+//
+//        scope.launch {
+//            DrawerSettingsStore.lastWorkspaceUsed.set(ctx, id)
+//        }
+//    }
 
 
     /** Enable/disable a workspace */
@@ -149,7 +150,7 @@ public class WorkspacesManager(
     }
 
     public fun resetWorkspaces() {
-        workspacesState.value = defaultWorkspaces
+        workspaces.value = defaultWorkspaces
 
         scope.launch {
             WorkspaceSettingsStore.resetAll(ctx)

@@ -46,7 +46,7 @@ fun WorkspaceDetailScreen(
     profilesViewModel: ProfilesViewModel = activityViewModel(),
 ) {
     val workspaceManager = drawerViewModel.workspaceManager
-    val workspaceState by workspaceManager.workspacesState.asState()
+    val workspaceState by workspaceManager.workspaces.asState()
     val workspace = workspaceState.first { it.id == workspaceId }
 
     val workspaceDebugInfos by DebugSettingsStore.workspacesDebugInfo.asState()
