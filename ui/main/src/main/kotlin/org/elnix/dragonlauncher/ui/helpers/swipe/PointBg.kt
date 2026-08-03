@@ -12,6 +12,7 @@ import org.elnix.dragonlauncher.base.cache.DrawPathCache
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
+import org.elnix.dragonlauncher.ktx.rect
 import org.elnix.dragonlauncher.ktx.toPath
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowDrawOrder
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
@@ -36,7 +37,7 @@ fun DrawScope.PointBg(
     val sizePx = cached.sizePx
 
     val borderColor = point.getBorderColor(selected, defaultPoint, extraColors)
-    val backgroundColor =  point.getBackgroundColor(selected, defaultPoint)
+    val backgroundColor = point.getBackgroundColor(selected, defaultPoint)
     val glow = point.getGlow(selected, defaultPoint)
 
     val borderIconShape = point.getBorderShape(selected, defaultPoint)
@@ -74,10 +75,11 @@ fun DrawScope.PointBg(
     }
 
     if (iconBitmap != null) {
+        val size = Size.rect(sizePx)
         val iconPath = DrawPathCache.getOrCompute(
-            Pair(borderIconShape, Size(sizePx, sizePx))
+            Pair(drawParams.iconShape, size)
         ) {
-            toPath(borderShape, Size(sizePx, sizePx))
+            toPath(drawParams.iconShape.resolveShape(), size)
         }
 
         translate(
