@@ -69,7 +69,7 @@ fun AppGrid(
 
     // Multi select things
     isMultiSelectMode: Boolean = false,
-    selectedPackages: List<String> = emptyList(),
+    selectedPackages: List<Application> = emptyList(),
     onEnterMultiSelect: ((Application) -> Unit)? = null,
     onToggleSelect: ((Application) -> Unit)? = null,
 
@@ -210,11 +210,9 @@ fun AppGrid(
                 verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical),
             ) {
                 items(visibleApps, key = { it.key.cacheKey }) { app ->
-                    val selected = app.packageName in selectedPackages
-
                     AppItemHorizontal(
                         app = app,
-                        selected = selected,
+                        selected = app in selectedPackages,
                         onLongClick = if (onEnterMultiSelect != null && onToggleSelect != null) { app ->
                             if (!isMultiSelectMode) {
                                 onEnterMultiSelect(app)
@@ -245,11 +243,10 @@ fun AppGrid(
                 horizontalArrangement = Arrangement.spacedBy(iconsSpacingHorizontal)
             ) {
                 items(visibleApps, key = { it.key.cacheKey }) { app ->
-                    val selected = app.packageName in selectedPackages
 
                     AppItemGrid(
                         app = app,
-                        selected = selected,
+                        selected = app in selectedPackages,
                         onLongClick = if (onEnterMultiSelect != null && onToggleSelect != null) { app ->
                             if (!isMultiSelectMode) {
                                 onEnterMultiSelect(app)

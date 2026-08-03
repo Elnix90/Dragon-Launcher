@@ -97,7 +97,7 @@ fun AppPickerDialog(
 
     // Multi-select state
     var isMultiSelectMode by remember { mutableStateOf(false) }
-    val selectedApps = remember { mutableStateListOf<String>() }
+    val selectedApps = remember { mutableStateListOf<Application>() }
 
     CustomAlertDialog(
         alignment = Alignment.Center,
@@ -235,13 +235,9 @@ fun AppPickerDialog(
 
                 AnimatedVisibility(isMultiSelectMode && selectedApps.isNotEmpty() && onMultipleAppsSelected != null) {
                     if (onMultipleAppsSelected != null) {
-
-                        val allApps by drawerViewModel.allApps.collectAsState()
-
                         DragonButton(
                             onClick = {
-                                val pickedApps = allApps.filter { it.packageName in selectedApps }
-                                onMultipleAppsSelected(pickedApps)
+                                onMultipleAppsSelected(selectedApps)
                                 searchQuery = ""
                                 onDismiss()
                             },
@@ -298,20 +294,21 @@ fun AppPickerDialog(
                             isMultiSelectMode = isMultiSelectMode,
                             onEnterMultiSelect = { app ->
                                 isMultiSelectMode = true
-                                if (!selectedApps.contains(app.packageName)) {
-                                    selectedApps.add(app.packageName)
+                                if (app !in selectedApps) {
+                                    selectedApps.add(app)
                                 }
                             },
                             onToggleSelect = { app ->
-                                if (selectedApps.contains(app.packageName)) {
-                                    selectedApps.remove(app.packageName)
+                                if (app in selectedApps) {
+                                    selectedApps.remove(app)
                                 } else {
-                                    selectedApps.add(app.packageName)
+                                    selectedApps.add(app)
                                 }
                                 if (selectedApps.isEmpty()) {
                                     isMultiSelectMode = false
                                 }
                             },
+                            selectedPackages = selectedApps,
                             longPressPopup = false,
                             onClick = {
                                 onAppSelected(it)
