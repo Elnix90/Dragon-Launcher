@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -134,8 +135,8 @@ import kotlin.time.Duration.Companion.milliseconds
 
 
 private data class TempPos(
-    var shapeId: Int?,
-    var offset: Animatable<Offset, AnimationVector2D>
+    val shapeId: MutableState<Int?>,
+    val offset: Animatable<Offset, AnimationVector2D>
 )
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
@@ -186,8 +187,6 @@ fun PointsSettingsScreen(
 
     val createLiveNestByDefaultWhenCreatingOpenCircleNestPoint by createLiveNestByDefaultWhenCreatingOpenCircleNestPoint.asState()
 
-    var center by remember { mutableStateOf(Offset.Zero) }
-
     val selectedPointsIds: List<Int> by pointsService.selectedPointsIds.asState()
     val aSinglePointIsSelected = selectedPointsIds.size == 1
 
@@ -203,14 +202,14 @@ fun PointsSettingsScreen(
     var showEditDefaultPoint by remember { mutableStateOf(false) }
     var showAddDialog by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf<Int?>(null) }
+    var showNestManagementDialog by remember { mutableStateOf(false) }
+    var showResetPointsAndNestsDialog by remember { mutableStateOf(false) }
 
     // Manual placement mode state (multi-select "Place one by one")
     var manualPlacementQueue by remember { mutableStateOf<List<Action>>(emptyList()) }
     val isInManualPlacementMode = manualPlacementQueue.isNotEmpty()
     var isDragging by remember { mutableStateOf(false) }
 
-    var showNestManagementDialog by remember { mutableStateOf(false) }
-    var showResetPointsAndNestsDialog by remember { mutableStateOf(false) }
 
     val rowsScrollStates = List(2) { rememberScrollState() }
 
@@ -263,6 +262,9 @@ fun PointsSettingsScreen(
             null
         }
     }
+
+
+    var center by remember { mutableStateOf(Offset.Zero) }
 
     val manipulationSystem = retain { ManipulationSystem(center) }
     LaunchedEffect(center) {
@@ -373,7 +375,7 @@ fun PointsSettingsScreen(
         pointsService.select(id)
         val point = pointsService.findPointById(id) ?: return
         selectedPointTempOffset[id] = TempPos(
-            shapeId = point.shapeId,
+            shapeId = mutableStateOf(point.shapeId),
             offset = Animatable(point.computePosition(), Offset.VectorConverter)
         )
     }
@@ -412,7 +414,7 @@ fun PointsSettingsScreen(
             val selected = selectedPointTempOffset[id]
 
             selected?.apply {
-                this@apply.shapeId = point.shapeId
+                this@apply.shapeId.value = point.shapeId
 
                 // Another coroutine to avoid them to be launched one after another
                 this@LaunchedEffect.launch {
@@ -423,7 +425,7 @@ fun PointsSettingsScreen(
                 }
             } ?: run {
                 selectedPointTempOffset[id] = TempPos(
-                    shapeId = point.shapeId,
+                    shapeId = mutableStateOf(point.shapeId),
                     offset = Animatable(pointPos, Offset.VectorConverter)
                 )
             }
@@ -663,7 +665,7 @@ fun PointsSettingsScreen(
              * - If the selected point is a live nest, it is drawn in transparency on top of it.
              *   **Only if the nest isn't a OpenCircleNest that points to the same nest action**
              */
-            key(selectedPointsIds, points.size, defaultPoint) {
+            key(recomposeTrigger, selectedPointsIds, points.size, defaultPoint) {
                 Box(
                     Modifier
                         .fillMaxSize()
@@ -701,7 +703,7 @@ fun PointsSettingsScreen(
 
                             selectedPointTempOffset
                                 .values
-                                .mapNotNullTo(mutableSetOf()) { it.shapeId }
+                                .mapNotNullTo(mutableSetOf()) { it.shapeId.value }
                                 .forEach { shapeId ->
                                     val shape = shapes.firstOrNull { it.id == shapeId } ?: return@Canvas
                                     val path = NestIntersectionShapesPathCache[shape] ?: return@Canvas
@@ -727,7 +729,7 @@ fun PointsSettingsScreen(
                     selectedPointTempOffset.forEach { (id, tempPos) ->
                         val point = pointsService.findPointById(id) ?: return@forEach
 
-                        val shapeId = tempPos.shapeId
+                        val shapeId = tempPos.shapeId.value
                         val tr = tempPos.offset.value.toTr()
                         val pointOffset = tr.transformedOffset
 
@@ -847,7 +849,7 @@ fun PointsSettingsScreen(
                                         val newShapeId = computePointMoved(point, tr.normalizedOffset, !allowFreePoints)
 
                                         selectedPointTempOffset[id]?.apply {
-                                            shapeId = newShapeId
+                                            shapeId.value = newShapeId
                                             val oldOffset = this@apply.offset.value
                                             scope.launch {
                                                 this@apply.offset.snapTo(oldOffset + dragAmount)
@@ -933,7 +935,7 @@ fun PointsSettingsScreen(
                                         selectedPointTempOffset.forEach { (id, tempPos) ->
                                             val finalPos = tempPos.offset.value.toTr().normalizedOffset
 
-                                            val shape = shapes.firstOrNull { it.id == tempPos.shapeId }
+                                            val shape = shapes.firstOrNull { it.id == tempPos.shapeId.value }
                                             val effectiveFinalPos: Offset = if (snapPointsAngle && shape != null) {
                                                 val pointRelativeOffset = finalPos - shape.getOffset(defaultIntersectionShape)
                                                 val angleRad = pointRelativeOffset.angleRad().degrees.toFloat()
@@ -951,7 +953,7 @@ fun PointsSettingsScreen(
                                             pointsService.editPoint(id) { old ->
                                                 old.copy(
                                                     offset = effectiveFinalPos.snap(),
-                                                    shapeId = tempPos.shapeId
+                                                    shapeId = tempPos.shapeId.value
                                                 )
                                             }
 
