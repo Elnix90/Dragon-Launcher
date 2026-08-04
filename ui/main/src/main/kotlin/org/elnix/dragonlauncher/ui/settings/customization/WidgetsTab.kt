@@ -82,6 +82,7 @@ import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsSnapping
 import org.elnix.dragonlauncher.enumsui.toggle.WidgetsToolsUpDown
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.rotateBy
+import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ktx.toDp
 import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
@@ -567,7 +568,6 @@ private fun DraggableWidget(
     onEdit: (Widget) -> Unit
 ) {
     val haptic = LocalHapticFeedback.current
-    val borderColor = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent
 
     val cellSizePx by widgetsViewModel.cellSizePx.collectAsState()
     val minSize = widgetsViewModel.minSize
@@ -692,8 +692,8 @@ private fun DraggableWidget(
                 clip = false
             }
             .border(
-                width = if (selected) 2.dp else 0.dp,
-                color = borderColor,
+                width = if (selected) 3.dp else 1.dp,
+                color = MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(selected),
                 shape = MaterialTheme.shapes.large
             )
     ) {
@@ -1021,7 +1021,7 @@ private fun DraggableWidget(
                         }
 
                         SmallShapeRow(
-                            selected = app.shape ?: IconShape.Square,
+                            selected = app.shape ?: IconShape.RightSquare,
                             onReset = {
                                 commitChange(app.copy(shape = null))
                             }
@@ -1034,7 +1034,7 @@ private fun DraggableWidget(
 
     if (showShapeEditor) {
         ShapePickerDialog(
-            selected = app.shape ?: IconShape.Square,
+            selected = app.shape ?: IconShape.RightSquare,
             onDismiss = { showShapeEditor = false }
         ) {
             commitChange(app.copy(shape = it))

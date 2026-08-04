@@ -80,7 +80,7 @@ fun WidgetHostView(
         AndroidView(
             modifier = modifier
                 .fillMaxSize()
-                .clip(widget.shape.resolveShape(default = IconShape.Square))
+                .clip(widget.shape.resolveShape(default = IconShape.RightSquare))
                 .pointerInteropFilter { blockTouches },
             factory = {
                 // Remove from previous parent if any (Compose safe re-attachment)
@@ -112,7 +112,7 @@ fun WidgetHostView(
                 action = widget.action,
                 modifier = modifier
                     .fillMaxSize()
-                    .clip(widget.shape.resolveShape(default = IconShape.Square))
+                    .clip(widget.shape.resolveShape(default = IconShape.RightSquare))
                     .conditional(!blockTouches) {
                         clickable { onLaunchAction() }
                     },
@@ -128,7 +128,7 @@ fun WidgetHostView(
             BoxWithConstraints(
                 modifier = modifier
                     .size(sizeDp)
-                    .clip(widget.shape.resolveShape(default = IconShape.Square))
+                    .clip(widget.shape.resolveShape(default = IconShape.RightSquare))
                     .conditional(!blockTouches) {
                         clickable { onLaunchAction() }
                     },
