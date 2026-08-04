@@ -112,7 +112,7 @@ public fun IconShape.resolveShape(): Shape =
  */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 public fun IconShape?.resolveShape(default: IconShape = IconShape.PlatformDefault): Shape {
-    return resolveShape(this ?: default)
+    return (this ?: default).resolveShape()
 }
 
 private val PlatformShape: Shape
