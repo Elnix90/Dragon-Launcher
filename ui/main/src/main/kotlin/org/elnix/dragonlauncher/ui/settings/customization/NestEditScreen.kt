@@ -134,7 +134,7 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
     val showGridWhenSnappingIsOn by UiSettingsStore.showGridWhenSnappingIsOn.asState()
 
     fun IntersectionShape.snap(): IntersectionShape {
-        val offset = this.getOffset(defaultShape)
+        val offset = this.getOffset(defaultShape, false)
 
         val newOffset = when {
             snapShapesCenter && snapShapesOffset -> offset.snapToGrid(cellSizePx).snapToRound(Offset.Zero, snapOffsetThreshold)
@@ -155,7 +155,7 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
 //            this.scale
 //        }
 
-        val newRotation = if (snapShapeAngle) this.getRotation(defaultShape).snapToRound(0, 20) else this.rotation
+        val newRotation = if (snapShapeAngle) this.getRotation(defaultShape, false).snapToRound(0, 20) else this.rotation
 
         return this.copy(
             offset = newOffset.takeIf { it != (defaultShape.offset ?: IntersectionShape.defaultOffset) },
@@ -178,16 +178,16 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
     var selectedShapeId: Int? by remember { mutableStateOf(null) }
     val isInDragAroundMode: Boolean = selectedShapeId == null
 
-    var tempCancelZone by remember { mutableStateOf(currentNest.getCancelZone(defaultNest)) }
+    var tempCancelZone by remember { mutableStateOf(currentNest.getCancelZone(defaultNest, false)) }
 
     val paths: SnapshotStateMap<IntersectionShape, Path> = remember { mutableStateMapOf() }
     fun addPath(shape: IntersectionShape) {
-        paths[shape] = shape.getShape(defaultShape).resolveShape().toPath(shape.getSize(density.density, defaultShape), density)
+        paths[shape] = shape.getShape(defaultShape, false).resolveShape().toPath(shape.getSize(density.density, defaultShape, false), density)
     }
 
     LaunchedEffect(defaultShape.offset, defaultShape, defaultNest.intersectionShapes, currentNest.intersectionShapes) {
         paths.clear()
-        currentNest.getInterSectionShapes(defaultNest).forEach { shape ->
+        currentNest.getInterSectionShapes(defaultNest, false).forEach { shape ->
             addPath(shape)
         }
         // Reset the selected shape. if you only added new ones, it'll resolve to the same as before, but if you removed the current selected one, it'll deselect cause it won't find it
@@ -389,7 +389,12 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                             }
                         } else {
                             DragonRow(onClick = { showDropDownMenu = true }) {
-                                IntersectionShapePreview(selectedShape, defaultShape, 30.dp)
+                                IntersectionShapePreview(
+                                    shape = selectedShape,
+                                    defaultShape = defaultShape,
+                                    size = 30.dp,
+                                    isDefaultEditing = false
+                                )
                                 Spacer(5.dp)
                                 Icon(
                                     painter = painterResource(R.drawable.drag_indicator),
@@ -413,7 +418,12 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                                     DropdownMenuItem(
                                         text = {},
                                         leadingIcon = {
-                                            IntersectionShapePreview(shape, defaultShape, 25.dp)
+                                            IntersectionShapePreview(
+                                                shape = shape,
+                                                defaultShape = defaultShape,
+                                                size = 25.dp,
+                                                isDefaultEditing = false
+                                            )
                                         },
                                         trailingContent = {
                                             Icon(
@@ -509,6 +519,7 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                                 center = center,
                                 extraColors = extraColors,
                                 erase = false,
+                                isDefaultEditing = false,
                                 eraseColor = null
                             )
                         }
@@ -584,9 +595,9 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                                 val shapeId = selectedShapeId ?: return@detectTransformGestures
                                 val shape = paths.keys.firstOrNull { it.id == shapeId } ?: return@detectTransformGestures
 
-                                val oldScale = shape.getScale(defaultShape)
+                                val oldScale = shape.getScale(defaultShape, false)
                                 val newScale = oldScale * gestureZoom
-                                val newAngle = (shape.getRotation(defaultShape) + gestureRotate) % 360
+                                val newAngle = (shape.getRotation(defaultShape, false) + gestureRotate) % 360
 
                                 val canvasCentroid = manipulationSystem.normalize(manipulationSystem.transform(centroid))
 
@@ -613,7 +624,7 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                                 //       - R(Δθ) * (C - center - O) * (newScale / oldScale)
                                 val newOffset =
                                     canvasPan + canvasCentroid -
-                                            (canvasCentroid - shape.getOffset(defaultShape)).rotateBy(gestureRotate) *
+                                            (canvasCentroid - shape.getOffset(defaultShape, false)).rotateBy(gestureRotate) *
                                             (newScale / oldScale)
 
                                 val newShape = shape.copy(
@@ -624,7 +635,7 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
 
                                 val newSnappedShape = newShape.snap()
 
-                                netOffsetChange = newSnappedShape.getOffset(defaultShape) - witnessShape!!.getOffset(defaultShape)
+                                netOffsetChange = newSnappedShape.getOffset(defaultShape, false) - witnessShape!!.getOffset(defaultShape, false)
 
                                 paths -= shape
                                 addPath(newShape)

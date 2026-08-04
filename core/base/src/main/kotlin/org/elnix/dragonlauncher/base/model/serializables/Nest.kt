@@ -10,7 +10,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.DragonJson
 import org.elnix.dragonlauncher.base.model.serializables.serializers.DpSerializer
-import org.elnix.dragonlauncher.ktx.takeIfNot
+import org.elnix.dragonlauncher.ktx.unless
 
 
 /**
@@ -85,34 +85,34 @@ public data class Nest(
     public inline fun nameOrId(): String =
         this.name ?: id.toString()
 
-    public inline fun getInterSectionShapes(defaultNest: Nest, defaultEditing: Boolean = false): Set<IntersectionShape> =
-        this.intersectionShapes ?: defaultNest.intersectionShapes.takeIfNot(defaultEditing) ?: defaultIntersectionShapes
+    public inline fun getInterSectionShapes(defaultNest: Nest, isDefaultEditing: Boolean): Set<IntersectionShape> =
+        this.intersectionShapes ?: (defaultNest.intersectionShapes unless isDefaultEditing) ?: defaultIntersectionShapes
 
-    public inline fun getCancelZone(defaultNest: Nest, defaultEditing: Boolean = false): Dp =
-        this.cancelZone ?: defaultNest.cancelZone.takeIfNot(defaultEditing) ?: defaultCancelZone
+    public inline fun getCancelZone(defaultNest: Nest, isDefaultEditing: Boolean): Dp =
+        this.cancelZone ?: (defaultNest.cancelZone unless isDefaultEditing) ?: defaultCancelZone
 
     public inline fun getShowAllPointsInCurrentNest(
         defaultNest: Nest,
         showAllPointsInCurrentNestSettings: Boolean,
-        defaultEditing: Boolean = false
+        isDefaultEditing: Boolean
     ): Boolean =
-        this.showAllPointsInCurrentNest ?: defaultNest.showAllPointsInCurrentNest.takeIfNot(defaultEditing) ?: showAllPointsInCurrentNestSettings
+        this.showAllPointsInCurrentNest ?: (defaultNest.showAllPointsInCurrentNest unless isDefaultEditing) ?: showAllPointsInCurrentNestSettings
 
     public inline fun getShowAllPointsInCurrentShape(
         defaultNest: Nest,
         showAllPointsInCurrentShapeSetting: Boolean,
-        defaultEditing: Boolean = false
+        isDefaultEditing: Boolean
     ): Boolean =
-        this.showAllPointsInCurrentShape ?: defaultNest.showAllPointsInCurrentShape.takeIfNot(defaultEditing) ?: showAllPointsInCurrentShapeSetting
+        this.showAllPointsInCurrentShape ?: (defaultNest.showAllPointsInCurrentShape unless isDefaultEditing) ?: showAllPointsInCurrentShapeSetting
 
-    public inline fun getShowCurrentShape(defaultNest: Nest, showCurrentShapeInNestSetting: Boolean, defaultEditing: Boolean = false): Boolean =
-        this.showCurrentShape ?: defaultNest.showCurrentShape.takeIfNot(defaultEditing) ?: showCurrentShapeInNestSetting
+    public inline fun getShowCurrentShape(defaultNest: Nest, showCurrentShapeInNestSetting: Boolean, isDefaultEditing: Boolean): Boolean =
+        this.showCurrentShape ?: (defaultNest.showCurrentShape unless isDefaultEditing) ?: showCurrentShapeInNestSetting
 
-    public inline fun getShowAllShapes(defaultNest: Nest, showAllShapesSetting: Boolean, defaultEditing: Boolean = false): Boolean =
-        this.showAllShapes ?: defaultNest.showAllShapes.takeIfNot(defaultEditing) ?: showAllShapesSetting
+    public inline fun getShowAllShapes(defaultNest: Nest, showAllShapesSetting: Boolean, isDefaultEditing: Boolean): Boolean =
+        this.showAllShapes ?: (defaultNest.showAllShapes unless isDefaultEditing) ?: showAllShapesSetting
 
-    public inline fun getPreviewScaleFactor(defaultNest: Nest, defaultEditing: Boolean = false): Float =
-        this.previewScaleFactor ?: defaultNest.previewScaleFactor.takeIfNot(defaultEditing) ?: defaultPreviewScaledFactor
+    public inline fun getPreviewScaleFactor(defaultNest: Nest, isDefaultEditing: Boolean): Float =
+        this.previewScaleFactor ?: (defaultNest.previewScaleFactor unless isDefaultEditing) ?: defaultPreviewScaledFactor
 
     @Suppress("ConstPropertyName")
     public companion object {

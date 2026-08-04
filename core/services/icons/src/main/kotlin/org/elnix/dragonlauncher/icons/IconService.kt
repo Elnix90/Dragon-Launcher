@@ -332,7 +332,7 @@ public class IconService internal constructor(
         reload: Boolean = false
     ): Flow<LauncherIcon?> {
         return defaultPoint.flow.flatMapLatest { defaultPoint ->
-            val size = point.getSize(defaultPoint)
+            val size = point.getSize(defaultPoint, false) // TODO
             resolveCustomPointIcon(point, size, reload)
         }
     }

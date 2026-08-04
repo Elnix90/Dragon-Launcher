@@ -33,6 +33,7 @@ fun PointIcon(
 ) {
     val drawParams = rememberDrawParams(
         eraseColor = eraseColor,
+        isDefaultEditing = false,
         pointSettingsDisplay = pointSettingsDisplay,
         showCancelZone = false,
         allowShowPointCenter = false,
@@ -76,7 +77,7 @@ fun DrawScope.PointIcon(
         !drawParams.preventDrawingSubNests
     ) {
         val nest = drawParams.pointsService.findNestById(action.nestId)
-        val scaleFactor = nest.getPreviewScaleFactor(drawParams.pointsService.defaultNest.value)
+        val scaleFactor = nest.getPreviewScaleFactor(drawParams.pointsService.defaultNest.value, drawParams.isDefaultEditing)
 
         val newDepth = depth + 1
         val newScale = 1f / (newDepth * scaleFactor)

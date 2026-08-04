@@ -36,13 +36,13 @@ fun DrawScope.PointBg(
     val iconSize = cached.iconSize
     val sizePx = cached.sizePx
 
-    val borderColor = point.getBorderColor(selected, defaultPoint, extraColors)
-    val backgroundColor = point.getBackgroundColor(selected, defaultPoint)
-    val glow = point.getGlow(selected, defaultPoint)
+    val borderColor = point.getBorderColor(selected, defaultPoint, extraColors, drawParams.isDefaultEditing)
+    val backgroundColor = point.getBackgroundColor(selected, defaultPoint, drawParams.isDefaultEditing)
+    val glow = point.getGlow(selected, defaultPoint, drawParams.isDefaultEditing)
 
-    val borderIconShape = point.getBorderShape(selected, defaultPoint)
+    val borderIconShape = point.getBorderShape(selected, defaultPoint, drawParams.isDefaultEditing)
     val borderShape = borderIconShape.resolveShape()
-    val borderStroke = point.getBorderStroke(selected, defaultPoint)
+    val borderStroke = point.getBorderStroke(selected, defaultPoint, drawParams.isDefaultEditing)
 
     val path = DrawPathCache.getOrCompute(Pair(borderIconShape, iconSize)) {
         toPath(borderShape, iconSize)

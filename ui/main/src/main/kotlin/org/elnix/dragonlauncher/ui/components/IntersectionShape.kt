@@ -35,12 +35,13 @@ fun DrawScope.IntersectionShape(
     center: Offset,
     extraColors: ExtraColors,
     erase: Boolean,
+    isDefaultEditing: Boolean,
     eraseColor: Color?
 ) {
 
-    val position = center + shape.getOffset(defaultShape)
-    val rotation = shape.getRotation(defaultShape)
-    val size = shape.getSize(this.density, defaultShape)
+    val position = center + shape.getOffset(defaultShape, isDefaultEditing)
+    val rotation = shape.getRotation(defaultShape, isDefaultEditing)
+    val size = shape.getSize(this.density, defaultShape, isDefaultEditing)
 
     withTransform(
         {
@@ -59,13 +60,13 @@ fun DrawScope.IntersectionShape(
         }
     ) {
         if (erase) {
-            erasePath(path, shape.getBorderStroke(defaultShape), eraseColor)
+            erasePath(path, shape.getBorderStroke(defaultShape, isDefaultEditing), eraseColor)
         } else {
             drawPathGlow(
                 path = path,
-                color = shape.getColor(defaultShape, extraColors),
-                lineStrokeWidth = shape.getBorderStroke(defaultShape),
-                glow = shape.getGlow(defaultShape),
+                color = shape.getColor(defaultShape, extraColors, isDefaultEditing),
+                lineStrokeWidth = shape.getBorderStroke(defaultShape, isDefaultEditing),
+                glow = shape.getGlow(defaultShape, isDefaultEditing),
                 drawOrder = GlowDrawOrder.First,
                 erase = false,
                 eraseColor = eraseColor
@@ -79,14 +80,15 @@ fun IntersectionShapePreview(
     shape: IntersectionShape,
     defaultShape: IntersectionShape,
     size: Dp,
+    isDefaultEditing: Boolean,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null
 ) {
-    val resolvedShape = shape.getShape(defaultShape).resolveShape()
+    val resolvedShape = shape.getShape(defaultShape, isDefaultEditing).resolveShape()
     Box(
         modifier = modifier
             .size(size)
-            .rotate(shape.getRotation(defaultShape).toFloat())
+            .rotate(shape.getRotation(defaultShape, isDefaultEditing).toFloat())
             .clip(MaterialTheme.shapes.medium)
             .conditional(onClick) {
                 clickable(onClick = it)

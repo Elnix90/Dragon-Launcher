@@ -34,6 +34,7 @@ data class DrawParams(
     val iconShape: IconShape,
 
     val maxNestsDepth: Int,
+    val isDefaultEditing: Boolean,
 
     /** Settings Screen only */
     val eraseColor: Color,
@@ -70,6 +71,7 @@ data class DrawParams(
 @Composable
 fun rememberDrawParams(
     eraseColor: Color,
+    isDefaultEditing: Boolean,
     allowShowPointCenter: Boolean,
     pointSettingsDisplay: Boolean,
     showCancelZone: Boolean,
@@ -120,6 +122,7 @@ fun rememberDrawParams(
             extraColors = extraColors,
             iconShape = iconShape,
             maxNestsDepth = maxNestsDepth,
+            isDefaultEditing = isDefaultEditing,
             eraseColor = eraseColor,
             preventDrawingSubNests = false,
             pointSettingsDisplay = pointSettingsDisplay,

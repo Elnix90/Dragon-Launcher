@@ -19,7 +19,7 @@ import org.elnix.dragonlauncher.base.model.serializables.serializers.OffsetSeria
 import org.elnix.dragonlauncher.base.theme.ExtraColors
 import org.elnix.dragonlauncher.ktx.rect
 import org.elnix.dragonlauncher.ktx.round
-import org.elnix.dragonlauncher.ktx.takeIfNot
+import org.elnix.dragonlauncher.ktx.unless
 
 
 /**
@@ -64,43 +64,43 @@ public data class IntersectionShape(
     /**
      * Returns the size of this [IntersectionShape], computed with the pixel density
      */
-    public inline fun getSize(density: Float, defaultIntersectionShape: IntersectionShape, defaultEditing: Boolean = false): Size =
-        Size.rect((this.scale ?: defaultIntersectionShape.scale.takeIfNot(defaultEditing) ?: defaultScale) * defaultSize.dp.value * density)
+    public inline fun getSize(density: Float, defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Size =
+        Size.rect((this.scale ?: (defaultIntersectionShape.scale unless isDefaultEditing) ?: defaultScale) * defaultSize.dp.value * density)
 
-    public inline fun getOffset(defaultIntersectionShape: IntersectionShape, defaultEditing: Boolean = false): Offset =
-        this.offset ?: defaultIntersectionShape.offset.takeIfNot(defaultEditing) ?: defaultOffset
+    public inline fun getOffset(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Offset =
+        this.offset ?: (defaultIntersectionShape.offset unless isDefaultEditing) ?: defaultOffset
 
-    public inline fun getOffsetX(defaultIntersectionShape: IntersectionShape, defaultEditing: Boolean = false): Float =
-        (this.offset?.x ?: defaultIntersectionShape.offset?.x.takeIfNot(defaultEditing) ?: defaultOffset.x).round(2)
+    public inline fun getOffsetX(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Float =
+        (this.offset?.x ?: defaultIntersectionShape.offset?.x.unless(isDefaultEditing) ?: defaultOffset.x).round(2)
 
-    public inline fun getOffsetY(defaultIntersectionShape: IntersectionShape, defaultEditing: Boolean = false): Float =
-        (this.offset?.y ?: defaultIntersectionShape.offset?.y.takeIfNot(defaultEditing) ?: defaultOffset.y).round(2)
+    public inline fun getOffsetY(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Float =
+        (this.offset?.y ?: defaultIntersectionShape.offset?.y.unless(isDefaultEditing) ?: defaultOffset.y).round(2)
 
 
-    public inline fun getScale(defaultIntersectionShape: IntersectionShape, defaultEditing: Boolean = false): Float =
-        (this.scale ?: defaultIntersectionShape.scale.takeIfNot(defaultEditing) ?: defaultScale).round(2)
+    public inline fun getScale(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Float =
+        (this.scale ?: (defaultIntersectionShape.scale unless isDefaultEditing) ?: defaultScale).round(2)
 
-    public inline fun getRotation(defaultIntersectionShape: IntersectionShape, defaultEditing: Boolean = false): Int =
-        this.rotation ?: defaultIntersectionShape.rotation.takeIfNot(defaultEditing) ?: defaultRotation
+    public inline fun getRotation(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Int =
+        this.rotation ?: (defaultIntersectionShape.rotation unless isDefaultEditing) ?: defaultRotation
 
-    public inline fun getColor(defaultIntersectionShape: IntersectionShape, extraColors: ExtraColors, defaultEditing: Boolean = false): Color =
-        this.color ?: defaultIntersectionShape.color.takeIfNot(defaultEditing) ?: extraColors.shapes
+    public inline fun getColor(defaultIntersectionShape: IntersectionShape, extraColors: ExtraColors, isDefaultEditing: Boolean): Color =
+        this.color ?: (defaultIntersectionShape.color unless isDefaultEditing) ?: extraColors.shapes
 
-    public inline fun getShape(defaultIntersectionShape: IntersectionShape, defaultEditing: Boolean = false): IconShape =
-        this.shape ?: defaultIntersectionShape.shape.takeIfNot(defaultEditing) ?: defaultShape
+    public inline fun getShape(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): IconShape =
+        this.shape ?: (defaultIntersectionShape.shape unless isDefaultEditing) ?: defaultShape
 
-    public inline fun getBorderStroke(defaultIntersectionShape: IntersectionShape, defaultEditing: Boolean = false): Dp =
-        this.borderStroke ?: defaultIntersectionShape.borderStroke.takeIfNot(defaultEditing) ?: defaultBorderStroke
+    public inline fun getBorderStroke(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Dp =
+        this.borderStroke ?: (defaultIntersectionShape.borderStroke unless isDefaultEditing) ?: defaultBorderStroke
 
-    public inline fun getGlow(defaultIntersectionShape: IntersectionShape, defaultEditing: Boolean = false): CustomGlow =
-        this.glow ?: defaultIntersectionShape.glow.takeIfNot(defaultEditing) ?: defaultGlow
+    public inline fun getGlow(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): CustomGlow =
+        this.glow ?: (defaultIntersectionShape.glow unless isDefaultEditing) ?: defaultGlow
 
-    public inline fun getHapticFeedback(defaultIntersectionShape: IntersectionShape, defaultEditing: Boolean = false): CustomHapticFeedback =
-        this.haptic ?: defaultIntersectionShape.haptic.takeIfNot(defaultEditing) ?: defaultHapticFeedback
+    public inline fun getHapticFeedback(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): CustomHapticFeedback =
+        this.haptic ?: (defaultIntersectionShape.haptic unless isDefaultEditing) ?: defaultHapticFeedback
 
-    public inline fun getPointsKeepTheirRelativePosition(defaultIntersectionShape: IntersectionShape, defaultEditing: Boolean = false): Boolean =
+    public inline fun getPointsKeepTheirRelativePosition(defaultIntersectionShape: IntersectionShape, isDefaultEditing: Boolean): Boolean =
         this.pointsKeepTheirRelativePosition
-            ?: defaultIntersectionShape.pointsKeepTheirRelativePosition.takeIfNot(defaultEditing)
+            ?: (defaultIntersectionShape.pointsKeepTheirRelativePosition unless isDefaultEditing)
             ?: defaultPointsKeepTheirRelativePosition
 
     @Suppress("ConstPropertyName")

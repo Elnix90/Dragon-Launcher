@@ -712,6 +712,7 @@
     <string name="edit_default_shape">Edit default shape</string>
     <string name="erase_background">Erase background</string>
     <string name="glow_radius">Glow Radius</string>
+    <string name="zero_means_no_glow">0 means no glow</string>
     <string name="glow_color">Glow color</string>
     <string name="enable_glow">Enable glow</string>
     <string name="line_object">Line object</string>

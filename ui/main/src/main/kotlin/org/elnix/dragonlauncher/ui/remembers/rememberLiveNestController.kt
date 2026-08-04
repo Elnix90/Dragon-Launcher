@@ -216,7 +216,7 @@ fun rememberLiveNestControllerStack(
             !level.liveNestActive || level.liveNestCenter == null || current == null || level.nestedNestId == null -> null
 
             else -> {
-                val graceDistance = level.hostPoint?.getLiveNestGraceDistance(defaultPoint)?.px
+                val graceDistance = level.hostPoint?.getLiveNestGraceDistance(defaultPoint, false)?.px
 
                 val normalizedPos = current - level.liveNestCenter!!
 
@@ -318,7 +318,7 @@ fun rememberLiveNestControllerStack(
 //            val previousLiveNestCircles = scaledCircles[idx -1]
             val previousLiveNestCenter = nestStack[idx - 1].liveNestCenter ?: return@LaunchedEffect
 
-            val pointFastActivation = currentPoint.getFastActivation(defaultPoint)
+            val pointFastActivation = currentPoint.getFastActivation(defaultPoint, false)
 
             val startTime = System.currentTimeMillis()
             while (System.currentTimeMillis() - startTime < delayMs) {

@@ -214,7 +214,7 @@ fun MainScreenOverlay(
                 val hitNest = pointsService.findNestById(hitNestId)
 
                 val targetShape =
-                    hitNest.getInterSectionShapes(defaultNest).find { deepestController.nestedHit?.selectedPoint?.shapeId == it.id }
+                    hitNest.getInterSectionShapes(defaultNest, false).find { deepestController.nestedHit?.selectedPoint?.shapeId == it.id }
 
                 val hapticToPerform = (point.haptic ?: targetShape?.haptic ?: defaultHapticFeedback())
                 hapticToPerform.perform(ctx)
@@ -295,6 +295,7 @@ fun MainScreenOverlay(
     val nestDebugOverlay = LocalNestDebugOverlay.current
     val drawParams = rememberDrawParams(
         eraseColor = Color.Transparent,
+        isDefaultEditing = false,
         allowShowPointCenter = false,
         pointSettingsDisplay = false,
         showCancelZone = nestDebugOverlay,

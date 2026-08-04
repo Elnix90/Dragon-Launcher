@@ -186,8 +186,7 @@ private inline fun DrawScope.glow(
     path: Path,
     color: Color
 ) {
-    if (glow == null) return
-    val glowRadius = glow.radius.toPxOrNull(this) ?: return
+    val glowRadius = glow?.radius.toPxOrNull(this) ?: return
     val glowColor = glow.color ?: color
     val nativePath = path.asAndroidPath()
 
@@ -253,6 +252,8 @@ private inline fun customGlowPaint(
         isAntiAlias = true
     }
 }
+
+//private object FrameworkPaintCache: DragonCache<Pair<Color, Float>, Paint>(200)
 
 /**
  * Converts the [Dp] to pixels only if it is higher than 0 or returns `null`

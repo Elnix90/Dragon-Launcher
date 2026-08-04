@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,11 +41,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.elnix90.logging.logWtf
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
+import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 import org.elnix.dragonlauncher.base.model.serializables.CycleActionStage
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.emptyPoint
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.isNotDefault
+import org.elnix.dragonlauncher.base.model.serializables.isSpecified
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.enumsui.select.PointFeaturePanel
 import org.elnix.dragonlauncher.enumsui.select.SelectedUnselectedViewMode
@@ -151,6 +155,7 @@ fun PointEditor(
                 PointPreviewCanvas(
                     editPoint = editPoint,
                     backgroundColor = MaterialTheme.colorScheme.surface,
+                    isDefaultEditing = isDefaultEditing,
                     modifier = Modifier.fillMaxWidth(1f)
                 ) {
                     selectedView = it
@@ -847,6 +852,48 @@ fun PointEditor(
                                     })
                             }
 
+
+                            SliderWithLabel(
+                                label = stringResource(R.string.glow_radius),
+                                description = stringResource(R.string.zero_means_no_glow),
+                                value = editPoint.getGlow(true, defaultPoint, isDefaultEditing).radius!!,
+                                valueRange = 0.dp..200.dp,
+                                decimals = 1,
+                                resetEnabled = editPoint.glowSelected?.radius != null,
+                                onReset = {
+                                    editPoint = editPoint.copy(glowSelected = editPoint.glowSelected?.copy(radius = null).takeIf { it.isSpecified })
+                                }
+                            ) { newGlowRadius ->
+                                val newGlow = (editPoint.glowSelected
+                                    ?.copy(radius = newGlowRadius)
+                                    ?: CustomGlow(radius = newGlowRadius))
+                                    .takeIf { it.isSpecified }
+
+                                logWtf { "NewGlow = $newGlow" }
+
+                                editPoint = editPoint.copy(
+                                    glowSelected = newGlow
+                                )
+                            }
+
+                            ColorPickerRow(
+                                title = stringResource(R.string.glow_color),
+                                description = null,
+                                enabled = true,
+                                currentColor = editPoint.getGlow(true, defaultPoint, isDefaultEditing).color ?: Color.Unspecified,
+                                onColorPicked = { newColor ->
+                                    val newGlow = (editPoint.glowSelected
+                                        ?.copy(color = newColor)
+                                        ?: CustomGlow(color = newColor))
+                                        .takeIf { it.isSpecified }
+                                    logWtf { "NewGlow = $newGlow" }
+
+                                    editPoint = editPoint.copy(
+                                        glowSelected = newGlow
+                                    )
+                                }
+                            )
+
                             ShapeRow(
                                 selected = editPoint.getBorderShape(true, defaultPoint, isDefaultEditing),
                                 title = stringResource(R.string.edit_border_shape),
@@ -862,9 +909,7 @@ fun PointEditor(
                                 value = editPoint.getBorderStroke(false, defaultPoint, isDefaultEditing),
                                 valueRange = 0.dp..50.dp,
                                 resetEnabled = editPoint.borderStroke != null,
-                                onReset = {
-                                    editPoint = editPoint.copy(borderStroke = null)
-                                }
+                                onReset = { editPoint = editPoint.copy(borderStroke = null) }
                             ) { newValue ->
                                 editPoint = editPoint.copy(
                                     borderStroke = newValue.takeIf {
@@ -909,6 +954,42 @@ fun PointEditor(
                                     }
                                 )
                             }
+
+                            logWtf { "EditPoint.glow: ${editPoint.glow}\nDefault.glow: ${defaultPoint.glow}" }
+
+                            SliderWithLabel(
+                                label = stringResource(R.string.glow_radius),
+                                description = stringResource(R.string.zero_means_no_glow),
+                                value = editPoint.getGlow(false, defaultPoint, isDefaultEditing).radius!!,
+                                valueRange = 0.dp..200.dp,
+                                decimals = 1,
+                                resetEnabled = editPoint.glow?.radius != null,
+                                onReset = {
+                                    editPoint = editPoint.copy(glow = editPoint.glow?.copy(radius = null).takeIf { it.isSpecified })
+                                }
+                            ) { newGlowRadius ->
+                                editPoint = editPoint.copy(
+                                    glow = (editPoint.glow
+                                        ?.copy(radius = newGlowRadius)
+                                        ?: CustomGlow(radius = newGlowRadius))
+                                        .takeIf { it.isSpecified }
+                                )
+                            }
+
+                            ColorPickerRow(
+                                title = stringResource(R.string.glow_color),
+                                description = null,
+                                enabled = true,
+                                currentColor = editPoint.getGlow(false, defaultPoint, isDefaultEditing).color ?: Color.Unspecified,
+                                onColorPicked = { newColor ->
+                                    editPoint = editPoint.copy(
+                                        glow = (editPoint.glow
+                                            ?.copy(color = newColor)
+                                            ?: CustomGlow(color = newColor))
+                                            .takeIf { it.isSpecified }
+                                    )
+                                }
+                            )
 
                             ShapeRow(
                                 selected = editPoint.getBorderShape(false, defaultPoint, isDefaultEditing),

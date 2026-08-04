@@ -718,7 +718,7 @@ internal class PointsServiceImpl(
             }
         }
 
-        val isInCancelZone = dist <= findNestById(nestId).getCancelZone(defaultNest.value).value * density
+        val isInCancelZone = dist <= findNestById(nestId).getCancelZone(defaultNest.value, false).value * density
 
         // When inside the cancel zone there is no point to select.
         val selectedPoint = if (isInCancelZone) {
@@ -741,21 +741,21 @@ internal class PointsServiceImpl(
         val shapeId = point.shapeId ?: run { return point.offset }
 
         val nest = findNestById(point.nestId)
-        val shape = nest.getInterSectionShapes(defaultNest.value).find { it.id == shapeId } ?: return point.offset
+        val shape = nest.getInterSectionShapes(defaultNest.value, false).find { it.id == shapeId } ?: return point.offset
 
         return computePointOffsetRealTime(point, shape)
     }
 
     @Suppress("NOTHING_TO_INLINE")
     override inline fun computePointOffsetRealTime(point: Point, shape: IntersectionShape): Offset {
-        val shapeOffset = shape.getOffset(defaultIntersectionShape.value)
+        val shapeOffset = shape.getOffset(defaultIntersectionShape.value, false)
 
         val angleRad = (point.offset - shapeOffset).angleRad()
 
-        val halfSize = shape.getSize(density, defaultIntersectionShape.value).width / 2
-        val rotationRad = (shape.getRotation(defaultIntersectionShape.value)).radians.toFloat()
+        val halfSize = shape.getSize(density, defaultIntersectionShape.value, false).width / 2
+        val rotationRad = (shape.getRotation(defaultIntersectionShape.value, false)).radians.toFloat()
 
-        return shapeOffset + computeShapeBoundary(shape.getShape(defaultIntersectionShape.value), halfSize, angleRad, rotationRad)
+        return shapeOffset + computeShapeBoundary(shape.getShape(defaultIntersectionShape.value, false), halfSize, angleRad, rotationRad)
     }
 
     override fun getPointsForNest(

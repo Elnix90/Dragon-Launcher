@@ -143,7 +143,12 @@ fun NestEditor(
                     horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.End)
                 ) {
                     shapes.sortedBy { it.id }.forEach {
-                        IntersectionShapePreview(it, defaultShape, size = 20.dp)
+                        IntersectionShapePreview(
+                            shape = it,
+                            defaultShape = defaultShape,
+                            size = 20.dp,
+                            isDefaultEditing = isDefaultEditing
+                        )
                     }
                 }
             }
@@ -247,7 +252,6 @@ fun NestEditor(
             isDefaultEditing = isDefaultEditing,
             defaultShape = defaultShape,
             defaultShapes = defaultShapes,
-            onUpdateShapes = onUpdateShapes,
         ) { newShapes ->
             editNest = editNest.copy(intersectionShapes = newShapes.takeIf { it != defaultShapes })
             showNestShapesManagementDialog = false

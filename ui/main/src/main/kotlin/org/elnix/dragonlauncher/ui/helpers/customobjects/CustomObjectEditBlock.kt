@@ -99,6 +99,7 @@ fun EditCustomObjectBlock(
 
             SliderWithLabel(
                 label = stringResource(R.string.glow_radius),
+                description = stringResource(R.string.zero_means_no_glow),
                 value = editObject.glow?.radius ?: default.glow?.radius!!, // I have no idea how this hasn't crashed yet for me lol
                 valueRange = 0.dp..200.dp,
                 decimals = 1,

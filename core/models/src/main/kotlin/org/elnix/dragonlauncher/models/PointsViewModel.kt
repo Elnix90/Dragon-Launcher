@@ -82,15 +82,15 @@ public class PointsViewModel @Inject constructor(
 
                         val nests = pointsService.nests.value
 
-                        val uniqueShapes = nests.values.flatMap { it.getInterSectionShapes(pointsService.defaultNest.value) }
+                        val uniqueShapes = nests.values.flatMap { it.getInterSectionShapes(pointsService.defaultNest.value, false) }
                         NestIntersectionShapesPathCache.updateMaxCacheSize(uniqueShapes.size)
 
                         for (shape in uniqueShapes) {
                             NestIntersectionShapesPathCache.compute(shape) {
-                                shape.getShape(pointsService.defaultIntersectionShape.value)
+                                shape.getShape(pointsService.defaultIntersectionShape.value, false)
                                     .resolveShape()
                                     .toPath(
-                                        shape.getSize(density.density, pointsService.defaultIntersectionShape.value),
+                                        shape.getSize(density.density, pointsService.defaultIntersectionShape.value, false),
                                         density
                                     )
                             }
@@ -210,8 +210,8 @@ public class PointsViewModel @Inject constructor(
         icon: LauncherIcon?,
         settings: IconSettings
     ): StablePointValues = withContext(Dispatchers.Default) {
-        val sizePx = with(density) { point.getSize(defaultPoint).toPx() }
-        val innerPaddingPx = with(density) { point.getInnerPadding(defaultPoint).toPx() }
+        val sizePx = with(density) { point.getSize(defaultPoint, false).toPx() }
+        val innerPaddingPx = with(density) { point.getInnerPadding(defaultPoint, false).toPx() }
         val borderRadii = (sizePx / 2 + innerPaddingPx).coerceAtLeast(0f)
 
         val imageBitmap = renderPointIcon(icon, point, defaultPoint, settings)
@@ -242,7 +242,7 @@ public class PointsViewModel @Inject constructor(
         defaultPoint: Point,
         settings: IconSettings
     ): ImageBitmap? {
-        val size = (point.getSize(defaultPoint).value * density.density).toInt() * 2
+        val size = (point.getSize(defaultPoint, false).value * density.density).toInt() * 2
 
         return when (icon) {
             is DynamicLauncherIcon -> {

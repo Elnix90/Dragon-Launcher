@@ -27,7 +27,7 @@ fun FinalPointIcon(
     val pointsService = pointsViewModel.pointsService
     val defaultPoint by pointsService.defaultPoint.asState()
 
-    val pointSize = size ?: point.getSize(defaultPoint)
+    val pointSize = size ?: point.getSize(defaultPoint, false)
 
     when (val action = point.action) {
 

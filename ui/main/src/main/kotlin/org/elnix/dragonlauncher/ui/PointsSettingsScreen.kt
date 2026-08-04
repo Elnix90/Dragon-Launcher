@@ -216,7 +216,7 @@ fun PointsSettingsScreen(
     val nestsNavigationService = pointsViewModel.nestsNavigationService
     val nestId by nestsNavigationService.currentNestId.collectAsState()
     val currentNest = pointsService.findNestById(nestId)
-    val shapes = remember(currentNest, defaultNest) { currentNest.getInterSectionShapes(defaultNest) }
+    val shapes = remember(currentNest, defaultNest) { currentNest.getInterSectionShapes(defaultNest, false) }
 
     /**
      * Computes the new offset for the selected point.
@@ -719,6 +719,7 @@ fun PointsSettingsScreen(
                                         center = center,
                                         extraColors = extraColors,
                                         erase = false,
+                                        isDefaultEditing = false,
                                         eraseColor = null
                                     )
                                 }
@@ -739,8 +740,8 @@ fun PointsSettingsScreen(
                                 val endOffset: Offset = if (shapeId == null) {
                                     center
                                 } else {
-                                    shapes.firstOrNull { it.id == shapeId }?.let {
-                                        center + it.getOffset(defaultIntersectionShape)
+                                    shapes.firstOrNull { it.id == shapeId }?.let { shape ->
+                                        center + shape.getOffset(defaultIntersectionShape, false)
                                     } ?: center
                                 }
 
@@ -937,7 +938,7 @@ fun PointsSettingsScreen(
 
                                             val shape = shapes.firstOrNull { it.id == tempPos.shapeId.value }
                                             val effectiveFinalPos: Offset = if (snapPointsAngle && shape != null) {
-                                                val pointRelativeOffset = finalPos - shape.getOffset(defaultIntersectionShape)
+                                                val pointRelativeOffset = finalPos - shape.getOffset(defaultIntersectionShape, false)
                                                 val angleRad = pointRelativeOffset.angleRad().degrees.toFloat()
                                                 val snappedAngle = angleRad.snapToGrid(SNAP_STEP_DEG)
 
