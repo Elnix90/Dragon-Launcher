@@ -289,7 +289,6 @@ fun PointsSettingsScreen(
         (((dist + screenMaxDimension) / cellSizePx) * 1.5 * (1 / zoom.value)).toInt().fastCoerceAtMost(5000)
     }
 
-//    TODO("Reduce their glow by default")
 //    TODO("add icons to settings plugin system additionally to title/desc") flemme
 
     /**

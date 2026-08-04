@@ -342,20 +342,6 @@ public data class Point(
             this.glow.takeDefaults((defaultPoint.glow unless isDefaultEditing), defaultGlow)
         }
 
-//    public inline fun getGlowRadius(selected: Boolean, defaultPoint: Point, isDefaultEditing: Boolean): Dp =
-//        if (selected) {
-//            this.glowSelected?.radius ?: defaultPoint.glowSelected?.radius.takeIfNot(isDefaultEditing) ?: defaultGlowSelected.radius!!
-//        } else {
-//            this.glow?.radius ?: defaultPoint.glow?.radius.takeIfNot(isDefaultEditing) ?: defaultGlow.radius!!
-//        }
-//
-//    public inline fun getGlowColor(selected: Boolean, defaultPoint: Point, isDefaultEditing: Boolean): Color =
-//        if (selected) {
-//            this.glowSelected?.color ?: defaultPoint.glowSelected?.color.takeIfNot(isDefaultEditing) ?: defaultGlowSelected.color
-//        } else {
-//            this.glow?.color ?: defaultPoint.glow?.color.takeIfNot(isDefaultEditing) ?: defaultGlow.color
-//        } ?: Color.Unspecified
-
     public inline fun getOpacity(defaultPoint: Point, isDefaultEditing: Boolean): Float =
         this.opacity ?: (defaultPoint.opacity unless isDefaultEditing) ?: defaultOpacity
 
@@ -433,8 +419,8 @@ public data class Point(
         public const val defaultCycleActionsLoop: Boolean = true
         public const val defaultFastActivation: Boolean = false
         public const val defaultLiveNestMainNestOpacityPercent: Int = 50
-        public val defaultGlow: CustomGlow = CustomGlow(radius = defaultSize)
-        public val defaultGlowSelected: CustomGlow = CustomGlow(radius = defaultSize * 1.1f)
+        public val defaultGlow: CustomGlow = CustomGlow(radius = 5.dp)
+        public val defaultGlowSelected: CustomGlow = CustomGlow(radius = 10.dp)
 
         public val emptyPoint: Point = dummySwipePoint()
 
