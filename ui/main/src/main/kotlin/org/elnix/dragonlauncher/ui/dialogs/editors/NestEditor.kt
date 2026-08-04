@@ -15,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -176,12 +175,10 @@ fun NestEditor(
                     onUpdateCancelZone(null)
                     editNest = editNest.copy(cancelZone = null)
                 },
-                onDragStateChange = { isDragging ->
-                    if (!isDragging) {
-                        editNest = editNest.copy(cancelZone = tempCancelZone)
-                    }
-                },
-                onChange = onUpdateCancelZone
+                onChange = {
+                    onUpdateCancelZone(it)
+                    editNest = editNest.copy(cancelZone = it)
+                }
             )
 
             SwitchRow(
@@ -223,24 +220,17 @@ fun NestEditor(
                 editNest = editNest.copy(showAllShapes = value)
             }
 
-            var tempScaleFactor by remember(
-                editNest.previewScaleFactor,
-                defaultNest.previewScaleFactor
-            ) { mutableFloatStateOf(editNest.getPreviewScaleFactor(defaultNest, isDefaultEditing)) }
-            
+
             SliderWithLabel(
                 label = stringResource(R.string.preview_scale_factor),
                 description = stringResource(R.string.preview_scale_factor_desc),
-                value = tempScaleFactor,
+                value = editNest.getPreviewScaleFactor(defaultNest, isDefaultEditing),
                 valueRange = 0f..5f,
                 resetEnabled = editNest.previewScaleFactor != null,
                 onReset = { editNest = editNest.copy(previewScaleFactor = null) },
-                onDragStateChange = { isDragging ->
-                    if (!isDragging) {
-                        editNest = editNest.copy(previewScaleFactor = tempScaleFactor)
-                    }
-                },
-                onChange = { tempScaleFactor = it }
+                onChange = {
+                    editNest = editNest.copy(previewScaleFactor = it)
+                }
             )
         }
     }

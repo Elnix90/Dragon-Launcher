@@ -725,7 +725,9 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
             isDefaultEditing = true,
             tempCancelZone = tempCancelZone,
             onUpdateShapes = { /* no-op */ },
-            onUpdateCancelZone = { /* no-op */ }
+            onUpdateCancelZone = {
+                tempCancelZone = currentNest.getCancelZone(defaultNest, true)
+            }
         ) { newNest, _ ->
             pointsService.editDefaultNest(newNest)
             showEditDefaultNestSheet = false
