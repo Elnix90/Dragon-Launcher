@@ -70,7 +70,7 @@ jobs:
           
           {
             echo "APK_MIN=$MIN"
-            echo "APK_DEBUG=DEBUG"
+            echo "APK_DEBUG=$DEBUG"
             echo "MAPPING=$MAPPING"
             echo "TAG_NAME=v${VER}-beta-${RUN}"
           } >> $GITHUB_ENV
