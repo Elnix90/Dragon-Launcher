@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.WindowInsets
@@ -57,13 +58,15 @@ import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySw
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.model.serializables.Widget
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.base.navigaton.isInIgnoredReturnScreen
-import org.elnix.dragonlauncher.base.navigaton.isInTransparentScreen
+import org.elnix.dragonlauncher.base.navigaton.halfTransparentScreen
+import org.elnix.dragonlauncher.base.navigaton.inTransparentScreen
+import org.elnix.dragonlauncher.base.navigaton.isIgnoredReturnScreen
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Device
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.None
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Pattern
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Pin
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ktx.findFragmentActivity
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
@@ -228,7 +231,7 @@ fun MainAppUi(
                 val offScreenUserTimeout = lastInteraction.takeIf { it != -1L }
 
                 if (offScreenUserTimeout != null) {
-                    val isInIgnoredRoutes = currentRoute.isInIgnoredReturnScreen
+                    val isInIgnoredRoutes = currentRoute.isIgnoredReturnScreen
 
                     val userHasExceededTimeout = appLifecycleViewModel.isTimeoutExceeded(offScreenUserTimeout)
 
@@ -361,8 +364,12 @@ fun MainAppUi(
     }
 
     val containerColor by animateColorAsState(
-        if (currentRoute.isInTransparentScreen) Color.Transparent
-        else MaterialTheme.colorScheme.background
+        targetValue = when {
+            currentRoute.inTransparentScreen -> Color.Transparent
+            currentRoute.halfTransparentScreen -> MaterialTheme.colorScheme.background.alphaMultiplier(0.5f)
+            else -> MaterialTheme.colorScheme.background
+        },
+        animationSpec = tween(500)
     )
 
     val colorTestMode by ColorModesSettingsStore.colorTestMode.asState()

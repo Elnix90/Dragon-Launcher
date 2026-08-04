@@ -84,6 +84,7 @@ import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.GoParentNest
 import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.NestManagement
 import org.elnix.dragonlauncher.enumsui.toggle.SelectedPointEditTools
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ktx.angleRad
 import org.elnix.dragonlauncher.ktx.degrees
 import org.elnix.dragonlauncher.ktx.distanceTo
@@ -688,10 +689,11 @@ fun PointsSettingsScreen(
                         }
                     }
 
+                    val eraseColor = MaterialTheme.colorScheme.background.alphaMultiplier(0.5f)
                     NestOverlay(
                         center = center,
                         nest = currentNest,
-                        eraseColor = MaterialTheme.colorScheme.background,
+                        eraseColor = eraseColor,
                         pointSettingsDisplay = true,
                         hideShapes = false,
                         skipSelected = true
@@ -760,7 +762,7 @@ fun PointsSettingsScreen(
                             point = point,
                             selected = true,
                             pointSettingsDisplay = true,
-                            eraseColor = MaterialTheme.colorScheme.background,
+                            eraseColor = eraseColor,
 //                            customText = customText
                         )
 
@@ -778,7 +780,7 @@ fun PointsSettingsScreen(
                             modifier = Modifier.graphicsLayer { alpha = 0.4f },
                             center = pointOffset,
                             nest = nestedNest,
-                            eraseColor = MaterialTheme.colorScheme.background,
+                            eraseColor = eraseColor,
                             pointSettingsDisplay = true
                         )
                     }

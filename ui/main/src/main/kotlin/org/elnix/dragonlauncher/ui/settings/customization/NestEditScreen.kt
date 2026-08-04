@@ -64,6 +64,7 @@ import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.GoParentNest
 import org.elnix.dragonlauncher.enumsui.toggle.NestEditTools.NestManagement
 import org.elnix.dragonlauncher.enumsui.toggle.ShapesEditTools
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ktx.rotateBy
 import org.elnix.dragonlauncher.ktx.snapToGrid
@@ -532,7 +533,7 @@ fun NestEditScreen(pointsViewModel: PointsViewModel = activityViewModel()) {
                             cancelZone = tempCancelZone
                         ),
                         depth = Int.MAX_VALUE,
-                        eraseColor = MaterialTheme.colorScheme.background,
+                        eraseColor = MaterialTheme.colorScheme.background.alphaMultiplier(0.5f),
                         pointSettingsDisplay = true,
                         showCancelZone = true,
                         hideShapes = true
