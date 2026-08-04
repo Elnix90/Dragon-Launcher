@@ -72,7 +72,7 @@ fun AppItemHorizontal(
     ) {
 
         if (drawerSettings.showAppIconsInDrawer) {
-            AppIcon(app, drawerSettings.maxIconSize)
+            AppIcon(app, drawerSettings.iconSize)
         }
 
         if (drawerSettings.showAppLabelsInDrawer) {
@@ -126,7 +126,7 @@ fun AppItemGrid(
             .padding(5.dp)
     ) {
         if (drawerSettings.showAppIconsInDrawer) {
-            AppIcon(app, drawerSettings.maxIconSize)
+            AppIcon(app, drawerSettings.iconSize)
         }
 
         if (drawerSettings.showAppLabelsInDrawer) {

@@ -518,7 +518,7 @@
     <string name="edit_icons_shape_desc">تخصيص شكل الأيقونات في الدرج وبقية التطبيق</string>
     <string name="random_shape">شكل عشوائي</string>
     <string name="grid_size">حجم الشبكة</string>
-    <string name="max_icon_size">أقصى حجم للأيقونة</string>
+
     <string name="icons_spacing_vertical">تباعد الأيقونات الرأسي</string>
     <string name="icons_spacing_horizontal">تباعد الأيقونات الأفقي</string>
     <string name="depth">العمق</string>
@@ -594,7 +594,7 @@
     <string name="show_app_icons_in_drawer_desc">عرض أيقونات التطبيقات أو عدم عرضها في الشبكة</string>
     <string name="show_app_labels_in_drawer">إظهار أسماء التطبيقات في الدرج</string>
     <string name="show_app_labels_in_drawer_desc">عرض أو عدم عرض أسماء التطبيقات بجانب أيقوناتها</string>
-    <string name="max_icon_size_desc">أقصى حجم يمكن أن تصل إليه الأيقونات، جرب الإعدادات الأخرى للوصول إلى ما تفضله</string>
+
     <string name="icons_spacing_vertical_desc">هامش الأيقونات الرأسي</string>
     <string name="icons_spacing_horizontal_desc">هامش الأيقونات الأفقي</string>
     <string name="category_settings">إعدادات الفئات</string>

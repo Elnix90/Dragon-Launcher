@@ -73,7 +73,6 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
     val rightDrawerWidth by DrawerSettingsStore.rightDrawerWidth.asState()
 
     val drawerCategorySettingsState = rememberExpandableSection(stringResource(R.string.category_settings))
-    val drawerNormalSettingsState = rememberExpandableSection(stringResource(R.string.grid_settings))
 
     val autoLaunchSingleMatch by DrawerSettingsStore.autoOpenSingleMatch.asState()
     val showRecentlyUsed by DrawerSettingsStore.showRecentlyUsedApps.asState()
@@ -160,17 +159,14 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
                 Setting(DrawerSettingsStore.categoryGridCells)
             }
 
-            ExpandableSection(drawerNormalSettingsState) {
-                Setting(DrawerSettingsStore.maxIconSize)
-                Setting(DrawerSettingsStore.iconsSpacingHorizontal)
-                Setting(DrawerSettingsStore.iconsSpacingVertical)
-            }
-
             DrawerIconShapePicker()
         }
 
         DragonSettingsGroup(R.string.grid_settings) {
             Setting(DrawerSettingsStore.gridSize)
+            Setting(DrawerSettingsStore.iconSize)
+            Setting(DrawerSettingsStore.iconsSpacingHorizontal)
+            Setting(DrawerSettingsStore.iconsSpacingVertical)
 
             val gridSize by DrawerSettingsStore.gridSize.asState()
             val horizontalAlignment by DrawerSettingsStore.horizontalAlignment.asState()

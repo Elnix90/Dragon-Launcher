@@ -390,7 +390,7 @@
     <string name="edit_icons_shape_desc">Passen Sie die Form der Symbole in der Schublade und im Rest der App an</string>
     <string name="random_shape">Zufällige Form</string>
     <string name="grid_size">Rastergröße</string>
-    <string name="max_icon_size">Maximale Symbolgröße</string>
+
     <string name="icons_spacing_vertical">Symbole Abstand vertikal</string>
     <string name="icons_spacing_horizontal">Symbole Abstand horizontal</string>
     <string name="depth">Tiefe</string>
@@ -467,7 +467,7 @@
     <string name="show_app_icons_in_drawer_desc">Zeigen Sie die App-Symbole an oder nicht im Raster</string>
     <string name="show_app_labels_in_drawer">App-Labels in der Schublade anzeigen</string>
     <string name="show_app_labels_in_drawer_desc">Zeigen Sie die App-Namen entlang ihrer Symbole an oder nicht</string>
-    <string name="max_icon_size_desc">Die maximale Größe, die die Symbole erreichen können, spielen Sie mit anderen Einstellungen, um etwas zu erreichen, das Ihnen gefällt</string>
+
     <string name="icons_spacing_vertical_desc">Vertikale Symbolauffüllung</string>
     <string name="icons_spacing_horizontal_desc">Horizontale Symbolauffüllung</string>
     <string name="category_settings">Kategorieeinstellungen</string>

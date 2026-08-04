@@ -415,7 +415,7 @@
     <string name="edit_icons_shape_desc">自定义抽屉及应用其余部分中图标的裁剪形状</string>
     <string name="random_shape">随机形状</string>
     <string name="grid_size">网格大小</string>
-    <string name="max_icon_size">最大图标尺寸</string>
+
     <string name="icons_spacing_vertical">图标垂直间距</string>
     <string name="icons_spacing_horizontal">图标水平间距</string>
     <string name="depth">最大渲染深度</string>
@@ -491,7 +491,7 @@
     <string name="show_app_icons_in_drawer_desc">决定是否在网格列表中渲染应用图标</string>
     <string name="show_app_labels_in_drawer">在抽屉中显示应用名称标签</string>
     <string name="show_app_labels_in_drawer_desc">决定是否在图标旁显示对应的应用名称</string>
-    <string name="max_icon_size_desc">图标能达到的最大尺寸，可配合其他设置调整至最满意状态</string>
+
     <string name="icons_spacing_vertical_desc">图标垂直外边距</string>
     <string name="icons_spacing_horizontal_desc">图标水平外边距</string>
     <string name="category_settings">分类设置</string>

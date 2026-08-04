@@ -17,7 +17,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 
 
 data class DrawerSettings(
-    val maxIconSize: Dp,
+    val iconSize: Dp,
     val showAppIconsInDrawer: Boolean,
     val showAppLabelsInDrawer: Boolean,
     val iconsSpacingVertical: Dp,
@@ -35,7 +35,7 @@ fun ProvideDrawerSettings(
     content: @Composable () -> Unit
 ) {
 
-    val maxIconSize by DrawerSettingsStore.maxIconSize.asState()
+    val iconSize by DrawerSettingsStore.iconSize.asState()
     val showAppIconsInDrawer by DrawerSettingsStore.showAppIconsInDrawer.asState()
     val showAppLabelsInDrawer by DrawerSettingsStore.showAppLabelsInDrawer.asState()
     val iconsSpacingVertical by DrawerSettingsStore.iconsSpacingVertical.asState()
@@ -46,7 +46,7 @@ fun ProvideDrawerSettings(
 
     CompositionLocalProvider(
         LocalDrawerSettings provides DrawerSettings(
-            maxIconSize = maxIconSize,
+            iconSize = iconSize,
             showAppIconsInDrawer = showAppIconsInDrawer,
             showAppLabelsInDrawer = showAppLabelsInDrawer,
             iconsSpacingVertical = iconsSpacingVertical,

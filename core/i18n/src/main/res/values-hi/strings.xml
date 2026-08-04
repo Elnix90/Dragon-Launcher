@@ -387,7 +387,7 @@
     <string name="edit_icons_shape_desc">ड्रॉअर और ऐप के बाकी हिस्सों में आइकन पर आकृति को अनुकूलित करें</string>
     <string name="random_shape">यादृच्छिक आकार</string>
     <string name="grid_size">ग्रिड का आकार</string>
-    <string name="max_icon_size">अधिकतम चिह्न आकार</string>
+
     <string name="icons_spacing_vertical">प्रतीक लंबवत रिक्ति</string>
     <string name="icons_spacing_horizontal">चिह्न क्षैतिज रिक्ति</string>
     <string name="depth">गहराई</string>
@@ -464,7 +464,7 @@
     <string name="show_app_icons_in_drawer_desc">ऐप आइकन प्रदर्शित करें या ग्रिड नहीं</string>
     <string name="show_app_labels_in_drawer">दराज में ऐप लेबल दिखाएं</string>
     <string name="show_app_labels_in_drawer_desc">ऐप के नाम उनके आइकन के साथ प्रदर्शित करें या नहीं</string>
-    <string name="max_icon_size_desc">आइकन जिस अधिकतम आकार तक पहुंच सकते हैं, अपनी पसंद की कोई चीज़ हासिल करने के लिए अन्य सेटिंग्स के साथ खेलें</string>
+
     <string name="icons_spacing_vertical_desc">लंबवत चिह्न पैडिंग</string>
     <string name="icons_spacing_horizontal_desc">क्षैतिज चिह्न पैडिंग</string>
     <string name="category_settings">श्रेणी सेटिंग</string>

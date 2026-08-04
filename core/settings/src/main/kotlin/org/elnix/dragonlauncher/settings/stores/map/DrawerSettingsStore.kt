@@ -169,10 +169,10 @@ public object DrawerSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val maxIconSize: DpSettingObject = dp(
-        description = R.string.max_icon_size_desc,
-        title = R.string.max_icon_size,
-        default = 96.dp,
+    public val iconSize: DpSettingObject = dp(
+        description = R.string.icon_size_desc,
+        title = R.string.icon_size,
+        default = 48.dp,
         allowedRange = 0.dp..200.dp
     )
 

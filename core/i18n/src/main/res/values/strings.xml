@@ -435,7 +435,7 @@
     <string name="random_shape">Random Shape</string>
     <string name="grid_size">Grid Size</string>
     <string name="grid_size_desc">The number of app icons in the width on the drawer</string>
-    <string name="max_icon_size">Max icon Size</string>
+
     <string name="icons_spacing_vertical">icons Spacing vertical</string>
     <string name="icons_spacing_horizontal">icons Spacing horizontal</string>
     <string name="depth">Depth</string>
@@ -521,7 +521,8 @@
     <string name="show_app_icons_in_drawer_desc">Display the app icons or not it the grid</string>
     <string name="show_app_labels_in_drawer">Show app labels in drawer</string>
     <string name="show_app_labels_in_drawer_desc">Display or not the app names along their icons</string>
-    <string name="max_icon_size_desc">The maximum size that the icons can reach, play with other settings to achieve something you like</string>
+    <string name="icon_size">Icon Size</string>
+    <string name="icon_size_desc">The size of the drawer icons. Play with other settings to achieve something you like</string>
     <string name="icons_spacing_vertical_desc">Vertical icons padding</string>
     <string name="icons_spacing_horizontal_desc">Horizontal icons padding</string>
     <string name="category_settings">Category settings</string>

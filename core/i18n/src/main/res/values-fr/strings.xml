@@ -391,7 +391,7 @@
     <string name="edit_icons_shape_desc">Personnalisez la forme sur les icônes du tiroir et le reste de l’application</string>
     <string name="random_shape">Forme aléatoire</string>
     <string name="grid_size">Taille de la grille</string>
-    <string name="max_icon_size">Taille maximale de l’icône</string>
+
     <string name="icons_spacing_vertical">icônes Verticale d’espacement</string>
     <string name="icons_spacing_horizontal">icônes Espacement horizontal</string>
     <string name="depth">Profondeur</string>
@@ -468,7 +468,7 @@
     <string name="show_app_icons_in_drawer_desc">Afficher les icônes de l’application ou pas sur la grille</string>
     <string name="show_app_labels_in_drawer">Afficher les libelles de l’application dans le tiroir</string>
     <string name="show_app_labels_in_drawer_desc">Affichez ou non les noms des applications sur leurs icônes</string>
-    <string name="max_icon_size_desc">La taille maximale que les icônes peuvent atteindre, jouez avec d’autres réglages pour obtenir ce que vous aimez</string>
+
     <string name="icons_spacing_vertical_desc">Rembourrage vertical des icônes</string>
     <string name="icons_spacing_horizontal_desc">Rembourrage d’icônes horizontales</string>
     <string name="category_settings">Paramètres des catégories</string>

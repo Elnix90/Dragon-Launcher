@@ -100,7 +100,7 @@ public class IconService internal constructor(
 
     private val defaultPoint: SettingFlow<Point> = pointService.defaultPoint
 
-    private val iconSize = DrawerSettingsStore.maxIconSize.flow(ctx)
+    private val iconSize = DrawerSettingsStore.iconSize.flow(ctx)
 
     private val iconProviders: MutableStateFlow<List<IconProvider>> = MutableStateFlow(listOf())
 

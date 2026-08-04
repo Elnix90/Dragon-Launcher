@@ -415,7 +415,7 @@
     <string name="edit_icons_shape_desc">டிராயரில் உள்ள ஐகான்களிலும், ஆப்சின் மற்ற பகுதிகளிலும் வடிவத்தைத் தனிப்பயனாக்கவும்</string>
     <string name="random_shape">சீரற்ற வடிவம்</string>
     <string name="grid_size">கட்ட அளவு</string>
-    <string name="max_icon_size">அதிகபட்ச படவுரு அளவு</string>
+
     <string name="icons_spacing_vertical">ஐகான்கள் செங்குத்து இடைவெளி</string>
     <string name="icons_spacing_horizontal">சின்னங்கள் கிடைமட்ட இடைவெளி</string>
     <string name="depth">ஆழம்</string>
@@ -491,7 +491,7 @@
     <string name="show_app_icons_in_drawer_desc">பயன்பாட்டு ஐகான்களைக் காட்டவும் அல்லது அது கட்டம் அல்ல</string>
     <string name="show_app_labels_in_drawer">டிராயரில் பயன்பாட்டு லேபிள்களைக் காட்டு</string>
     <string name="show_app_labels_in_drawer_desc">பயன்பாட்டின் பெயர்களை அவற்றின் ஐகான்களுடன் காட்டவும் அல்லது காட்டவும்</string>
-    <string name="max_icon_size_desc">ஐகான்கள் அடையக்கூடிய அதிகபட்ச அளவு, நீங்கள் விரும்பும் ஒன்றை அடைய மற்ற அமைப்புகளுடன் விளையாடவும்</string>
+
     <string name="icons_spacing_vertical_desc">செங்குத்து சின்னங்கள் திணிப்பு</string>
     <string name="icons_spacing_horizontal_desc">கிடைமட்ட சின்னங்கள் திணிப்பு</string>
     <string name="category_settings">வகை அமைப்புகள்</string>
