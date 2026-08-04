@@ -55,7 +55,6 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
@@ -97,17 +96,17 @@ fun ColorPickerRow(
             horizontalArrangement = Arrangement.End
         ) {
 
-            ColorPickerButtonOne(
+            ColorPickerButton(
+                button = ColorModesSettingsStore.colorPickerButtonOne,
                 currentColor = currentColor,
                 enabled = enabled,
-                onReset = { onColorPicked(null) },
                 onColorPicked = onColorPicked
             )
 
-            ColorPickerButtonTwo(
+            ColorPickerButton(
+                button = ColorModesSettingsStore.colorPickerButtonTwo,
                 currentColor = currentColor,
                 enabled = enabled,
-                onReset = { onColorPicked(null) },
                 onColorPicked = onColorPicked
             )
 
@@ -129,7 +128,10 @@ fun ColorPickerRow(
     if (showPicker) {
         DragonModalBottomSheet(
             sheetState = rememberBottomSheetState(true),
-            onDismissRequest = { showPicker = false }
+            onDismissRequest = {
+                onColorPicked(actualColor)
+                showPicker = false
+            }
         ) {
             Column(
                 modifier = Modifier
@@ -165,13 +167,6 @@ fun ColorPickerRow(
                     initialPage = initialPage,
                     onColorSelected = { actualColor = it }
                 )
-
-                ValidateCancelButtons(
-                    onCancel = { showPicker = false }
-                ) {
-                    onColorPicked(actualColor)
-                    showPicker = false
-                }
             }
         }
     }

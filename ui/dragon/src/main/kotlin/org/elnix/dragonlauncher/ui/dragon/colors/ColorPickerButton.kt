@@ -16,7 +16,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,8 +24,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.runtime.asState
-import kotlinx.coroutines.launch
+import io.github.elnix90.core.objects.EnumSettingObject
+import io.github.elnix90.runtime.asMutableState
 import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Copy
@@ -36,25 +35,28 @@ import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Reset
 import org.elnix.dragonlauncher.ktx.randomColor
 import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ktx.toHexWithAlpha
-import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 
 
 @Composable
-private fun ColorPickerButtonInternal(
-    button: ColorPickerButtonAction,
+fun ColorPickerButton(
+    button: EnumSettingObject<ColorPickerButtonAction>,
     enabled: Boolean,
     currentColor: Color,
-    onReset: () -> Unit,
-    onModeChanged: (ColorPickerButtonAction) -> Unit,
-    onColorPicked: (Color) -> Unit
+    onColorPicked: (Color?) -> Unit
 ) {
     val ctx = LocalContext.current
+    var button by button.asMutableState()
 
     var showSelector by remember { mutableStateOf(false) }
     LaunchedEffect(enabled) {
         if (!enabled) {
             showSelector = false
         }
+    }
+
+    val buttonEnabled = when (button) {
+        Reset -> currentColor != Color.Unspecified
+        Random, Copy,Paste -> true
     }
 
     Box {
@@ -66,13 +68,13 @@ private fun ColorPickerButtonInternal(
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceContainerHigh.semiTransparentIfDisabled(enabled))
                 .combinedClickable(
-                    enabled = enabled,
+                    enabled = enabled && buttonEnabled,
                     onLongClick = { showSelector = true }
                 ) {
                     when (button) {
                         Random -> onColorPicked(randomColor(minLuminance = 0.2f))
                         Reset -> {
-                            onReset()
+                            onColorPicked(null)
                         }
 
                         Copy -> ctx.copyToClipboard(currentColor.toHexWithAlpha)
@@ -107,7 +109,7 @@ private fun ColorPickerButtonInternal(
                         modifier = Modifier
                             .clip(CircleShape)
                             .clickable {
-                                onModeChanged(it)
+                                button = it
                                 showSelector = false
                             }
                             .padding(5.dp)
@@ -116,68 +118,4 @@ private fun ColorPickerButtonInternal(
             }
         }
     }
-}
-
-
-@Composable
-fun ColorPickerButtonOne(
-    currentColor: Color,
-    enabled: Boolean,
-    onReset: () -> Unit,
-    onColorPicked: (Color) -> Unit
-) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
-
-    val button by ColorModesSettingsStore.colorPickerButtonOne.asState()
-
-    val buttonEnabled = when (button) {
-        Reset -> currentColor != Color.Unspecified
-        Random, Copy,Paste -> true
-    }
-
-    ColorPickerButtonInternal(
-        button = button,
-        enabled = enabled && buttonEnabled,
-        currentColor = currentColor,
-        onReset = onReset,
-        onModeChanged = {
-            scope.launch {
-                ColorModesSettingsStore.colorPickerButtonOne.set(ctx, it)
-            }
-        },
-        onColorPicked = onColorPicked
-    )
-}
-
-
-@Composable
-fun ColorPickerButtonTwo(
-    currentColor: Color,
-    enabled: Boolean,
-    onReset: () -> Unit,
-    onColorPicked: (Color) -> Unit
-) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
-
-    val button by ColorModesSettingsStore.colorPickerButtonTwo.asState()
-
-    val buttonEnabled = when (button) {
-        Reset -> currentColor != Color.Unspecified
-        Random, Copy,Paste -> true
-    }
-
-    ColorPickerButtonInternal(
-        button = button,
-        enabled = enabled && buttonEnabled,
-        currentColor = currentColor,
-        onReset = onReset,
-        onModeChanged = {
-            scope.launch {
-                ColorModesSettingsStore.colorPickerButtonTwo.set(ctx, it)
-            }
-        },
-        onColorPicked = onColorPicked
-    )
 }
