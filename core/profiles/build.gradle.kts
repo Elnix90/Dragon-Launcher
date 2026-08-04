@@ -11,6 +11,7 @@ android {
 dependencies {
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.core)
+    implementation(libs.dragon.logging)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.elnix90.logging.APP_LAUNCH_TAG
 import io.github.elnix90.logging.logE
+import io.github.elnix90.logging.logI
 import io.github.elnix90.logging.logW
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,6 +21,7 @@ import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.compat.PackageManagerCompat
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
@@ -57,10 +59,42 @@ public class AppLaunchViewModel @Inject constructor(
 
     public fun requestAppLaunch(launchAction: Action.LaunchApp) {
         viewModelScope.launch {
-            val app: Application? = appRepository.findOne(launchAction.packageName, launchAction.profile.userHandle).first()
+            // Resolve the stored profile to the live one, as the persisted userHandle
+            // may have been serialized incorrectly (e.g. by older versions).
+            val profile = profileManager.resolveProfile(launchAction.profile)
+            if (profile == null) {
+                logW(APP_LAUNCH_TAG) { "Profile ${launchAction.profile} not found for ${launchAction.packageName}" }
+                return@launch
+            }
+
+            val app = appRepository.findOne(launchAction.packageName, profile.userHandle).first()
             if (app != null) {
                 requestAppLaunch(app)
+            } else {
+                launchLockedApp(profile, launchAction.packageName)
             }
+        }
+    }
+
+    /**
+     * Requests an unlock of the given profile and launches the app once it's
+     * available. The wait for the unlock is unbounded: it lasts as long as it
+     * takes the user to confirm the unlock dialog. Only the wait for the app to
+     * appear in the app list afterwards is bounded.
+     */
+    private fun launchLockedApp(profile: Profile, packageName: String) {
+        if (!isAtLeastApiLevel(28) || !profileManager.isProfileLocked(profile)) {
+            logW(APP_LAUNCH_TAG) { "App $packageName not available and ${profile.type} profile is not locked" }
+            return
+        }
+
+        logI(APP_LAUNCH_TAG) { "Unlocking ${profile.type} profile to launch $packageName" }
+        profileManager.unlockProfile(profile)
+
+        viewModelScope.launch {
+            if (!waitForProfileUnlock(profile)) return@launch
+            val app = waitForAppAvailability(profile, packageName) ?: return@launch
+            requestAppLaunch(app)
         }
     }
 
@@ -114,29 +148,31 @@ public class AppLaunchViewModel @Inject constructor(
     }
 
     private fun launchAppWithProfileUnlock(app: Application) {
-
         currentLaunchJob?.cancel()
-
         currentLaunchJob = viewModelScope.launch {
-            val activeProfiles = profileManager.activeProfiles.first()
-
-            if (app.profile !in activeProfiles && isAtLeastApiLevel(28)) {
+            if (isAtLeastApiLevel(28) && profileManager.isProfileLocked(app.profile)) {
+                logI(APP_LAUNCH_TAG) { "Unlocking ${app.profile.type} profile to launch ${app.packageName}" }
                 profileManager.unlockProfile(app.profile)
-
-                try {
-                    withTimeoutOrNull(10_000L.milliseconds) {
-                        profileManager.getProfileState(app.profile).first { it?.locked == false }
-                    }?.let {
-                        launchAppDirectly(app)
-                    } ?: run {
-                        logW(APP_LAUNCH_TAG) { "Timeout expired for profile unlock" }
-                    }
-                } catch (e: CancellationException) {
-                    logE(APP_LAUNCH_TAG, e) { "App launch canceled" }
-                }
-            } else {
-                launchAppDirectly(app)
+                if (!waitForProfileUnlock(app.profile)) return@launch
             }
+            launchAppDirectly(app)
+        }
+    }
+
+    private suspend fun waitForProfileUnlock(profile: Profile): Boolean = try {
+        profileManager.getProfileState(profile).first { it?.locked == false }
+        true
+    } catch (e: CancellationException) {
+        logE(APP_LAUNCH_TAG, e) { "App launch canceled while waiting for profile unlock" }
+        false
+    }
+
+    private suspend fun waitForAppAvailability(profile: Profile, packageName: String): Application? {
+        return withTimeoutOrNull(15_000L.milliseconds) {
+            appRepository.findOne(packageName, profile.userHandle).first { it != null }
+        } ?: run {
+            logW(APP_LAUNCH_TAG) { "App $packageName still not available after ${profile.type} profile unlock" }
+            null
         }
     }
 

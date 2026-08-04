@@ -12,6 +12,9 @@ import android.os.UserManager.USER_TYPE_PROFILE_MANAGED
 import android.os.UserManager.USER_TYPE_PROFILE_PRIVATE
 import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
+import io.github.elnix90.logging.PROFILES_TAG
+import io.github.elnix90.logging.logE
+import io.github.elnix90.logging.logI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -35,7 +38,7 @@ internal data class ProfileWithState(
 )
 
 public class ProfileManager(
-    private val ctx: Context,
+    ctx: Context,
     private val permissionsManager: PermissionsManager,
 ) {
     private val mutex = Mutex()
@@ -88,6 +91,10 @@ public class ProfileManager(
                     addAction(Intent.ACTION_PROFILE_ADDED)
                     addAction(Intent.ACTION_PROFILE_REMOVED)
                 }
+                if (isAtLeastApiLevel(35)) {
+                    addAction(Intent.ACTION_PROFILE_AVAILABLE)
+                    addAction(Intent.ACTION_PROFILE_UNAVAILABLE)
+                }
                 if (isAtLeastApiLevel(31)) {
                     addAction(Intent.ACTION_PROFILE_ACCESSIBLE)
                     addAction(Intent.ACTION_PROFILE_INACCESSIBLE)
@@ -137,8 +144,8 @@ public class ProfileManager(
     }
 
     public fun getProfile(userHandle: UserHandle): Flow<Profile?> {
-        return profileStates.map {
-            it.find { it?.profile?.userHandle == userHandle }?.profile
+        return profileStates.map { profiles ->
+            profiles.find { it?.profile?.userHandle == userHandle }?.profile
         }
     }
 
@@ -162,18 +169,78 @@ public class ProfileManager(
     }
 
     private fun getProfileState(userHandle: UserHandle): Profile.State {
+        val quietMode = userHandle != Process.myUserHandle() &&
+            userManager.isQuietModeEnabled(userHandle)
+        val unlocked = userManager.isUserUnlocked(userHandle)
         return Profile.State(
-            locked = !userManager.isUserUnlocked(userHandle),
+            locked = quietMode || !unlocked,
         )
     }
 
+    /**
+     * Whether the given profile is currently locked (quiet mode or not started).
+     *
+     * This is the source of truth used before deciding to request an unlock.
+     * The running user is never considered locked, as `isQuietModeEnabled` is
+     * meaningless for the main/personal user.
+     */
+    public fun isProfileLocked(profile: Profile): Boolean {
+        if (profile.userHandle == Process.myUserHandle()) {
+            return !userManager.isUserUnlocked(profile.userHandle)
+        }
+        return userManager.isQuietModeEnabled(profile.userHandle) ||
+            !userManager.isUserUnlocked(profile.userHandle)
+    }
+
+    /**
+     * Resolves a stored [Profile] (e.g. deserialized from a point action) to the
+     * live profile currently present on this device, or null if it doesn't exist.
+     *
+     * The stored `userHandle` can be unreliable: it is serialized as a plain user
+     * id and older persisted data may carry a wrong one. The `serial` is a stable,
+     * device-wide unique identifier, so it is preferred when it matches.
+     */
+    public suspend fun resolveProfile(profile: Profile): Profile? {
+        if (profileStates.value.none { it != null }) {
+            runCatching { refreshProfiles() }
+        }
+
+        if (profile.serial != 0L) {
+            profileStates.value.firstOrNull { it?.profile?.serial == profile.serial }
+                ?.profile
+                ?.let { return it }
+        }
+
+        return profileStates.value.firstOrNull { it?.profile?.userHandle == profile.userHandle }
+            ?.profile
+    }
+
     @RequiresApi(28)
-    public fun unlockProfile(profile: Profile) {
-        userManager.requestQuietModeEnabled(false, profile.userHandle)
+    public fun unlockProfile(profile: Profile): Boolean {
+        return try {
+            val requested = userManager.requestQuietModeEnabled(false, profile.userHandle)
+            logI(PROFILES_TAG) { "Requested unlock of the ${profile.type} profile, success=$requested" }
+            requested
+        } catch (e: SecurityException) {
+            logE(PROFILES_TAG, e) { "Security error while requesting unlock of the ${profile.type} profile" }
+            false
+        } catch (e: Exception) {
+            logE(PROFILES_TAG, e) { "Failed to request unlock of the ${profile.type} profile" }
+            false
+        }
     }
 
     @RequiresApi(28)
     public fun lockProfile(profile: Profile) {
-        userManager.requestQuietModeEnabled(true, profile.userHandle)
+        try {
+            userManager.requestQuietModeEnabled(true, profile.userHandle)
+            logI(PROFILES_TAG) { "Locked the ${profile.type} profile" }
+        } catch (e: Exception) {
+            logE(PROFILES_TAG, e) { "Failed to lock the ${profile.type} profile" }
+        }
+    }
+
+    public fun isUserUnlocked(userHandle: UserHandle): Boolean {
+        return userManager.isUserUnlocked(userHandle)
     }
 }

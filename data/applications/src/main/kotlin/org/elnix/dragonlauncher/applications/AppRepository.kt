@@ -64,7 +64,7 @@ public interface AppRepository {
 
 internal class AppRepositoryImpl(
     private val ctx: Context,
-    profileManager: ProfileManager,
+    private val profileManager: ProfileManager,
     private val packageManagerCompat: PackageManagerCompat,
     private val appOverridesManager: AppOverridesManager,
     private val stringNormalizer: StringNormalizer,
@@ -240,12 +240,16 @@ internal class AppRepositoryImpl(
         // TODO add custom label
     }
 
-    override suspend fun fromAction(action: Action.LaunchApp): Application? =
-        installedApps
+    override suspend fun fromAction(action: Action.LaunchApp): Application? {
+        // Resolve the stored profile to the live one, as the persisted userHandle
+        // may have been serialized incorrectly (e.g. by older versions).
+        val profile = profileManager.resolveProfile(action.profile) ?: return null
+        return installedApps
             .first()
             .firstOrNull {
-                it.packageName == action.packageName && it.profile == action.profile
+                it.packageName == action.packageName && it.profile == profile
             }
+    }
 
     /**
      * Returns a filtered and sorted list of apps for the specified workspace as a reactive Flow.
