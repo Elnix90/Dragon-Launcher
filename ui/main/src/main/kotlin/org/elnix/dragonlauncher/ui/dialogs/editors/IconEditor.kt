@@ -129,7 +129,7 @@ private fun IconEditorImpl(
         onDismissRequest = { onDismiss(editIcon, editProperties) },
         sheetState = rememberBottomSheetState(true),
         content = {
-            DialogTitle(stringResource(R.string.icon_editor), resetEnabled = editIcon == null && editProperties.isNotEmpty) {
+            DialogTitle(stringResource(R.string.icon_editor), resetEnabled = editIcon != null || editProperties.isNotEmpty) {
                 editIcon = null
                 editProperties = CustomIconProperties()
             }
