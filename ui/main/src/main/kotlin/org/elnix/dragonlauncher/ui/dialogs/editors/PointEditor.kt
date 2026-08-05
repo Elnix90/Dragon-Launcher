@@ -41,7 +41,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.github.elnix90.logging.logWtf
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 import org.elnix.dragonlauncher.base.model.serializables.CycleActionStage
@@ -864,15 +863,11 @@ fun PointEditor(
                                     editPoint = editPoint.copy(glowSelected = editPoint.glowSelected?.copy(radius = null).takeIf { it.isSpecified })
                                 }
                             ) { newGlowRadius ->
-                                val newGlow = (editPoint.glowSelected
-                                    ?.copy(radius = newGlowRadius)
-                                    ?: CustomGlow(radius = newGlowRadius))
-                                    .takeIf { it.isSpecified }
-
-                                logWtf { "NewGlow = $newGlow" }
-
                                 editPoint = editPoint.copy(
-                                    glowSelected = newGlow
+                                    glowSelected = (editPoint.glowSelected
+                                        ?.copy(radius = newGlowRadius)
+                                        ?: CustomGlow(radius = newGlowRadius))
+                                        .takeIf { it.isSpecified }
                                 )
                             }
 
@@ -882,14 +877,11 @@ fun PointEditor(
                                 enabled = true,
                                 currentColor = editPoint.getGlow(true, defaultPoint, isDefaultEditing).color ?: Color.Unspecified,
                                 onColorPicked = { newColor ->
-                                    val newGlow = (editPoint.glowSelected
-                                        ?.copy(color = newColor)
-                                        ?: CustomGlow(color = newColor))
-                                        .takeIf { it.isSpecified }
-                                    logWtf { "NewGlow = $newGlow" }
-
                                     editPoint = editPoint.copy(
-                                        glowSelected = newGlow
+                                        glowSelected = (editPoint.glowSelected
+                                            ?.copy(color = newColor)
+                                            ?: CustomGlow(color = newColor))
+                                            .takeIf { it.isSpecified }
                                     )
                                 }
                             )
@@ -954,8 +946,6 @@ fun PointEditor(
                                     }
                                 )
                             }
-
-                            logWtf { "EditPoint.glow: ${editPoint.glow}\nDefault.glow: ${defaultPoint.glow}" }
 
                             SliderWithLabel(
                                 label = stringResource(R.string.glow_radius),
