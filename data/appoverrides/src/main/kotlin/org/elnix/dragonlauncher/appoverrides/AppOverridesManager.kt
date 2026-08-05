@@ -136,31 +136,6 @@ public class AppOverridesManager(
         }
     }
 
-//    /**
-//     * Mainly debug funny thing, it's like customizing all app icons at once
-//     * for each app installed, it applies to it the custom icon
-//     *
-//     * @param icon
-//     */
-//    fun applyIconToApps(
-//        icon: CustomIcon?
-//    ) {
-//        scope.launch {
-//            iconSemaphore.withPermit {
-//
-//                // Store icon ONCE
-//                val sharedIcon = icon?.copy()
-//
-//                _workspacesState.value = _workspacesState.value.copy(
-//                    appOverrides = _apps.value.associate {
-//                        (it.key to AppOverride(customIcon = sharedIcon))
-//                    }
-//                )
-//            }
-//        }
-//        persistWorkspaces()
-//    }
-
 
     public fun resetOverrides() {
         appOverrides.value = defaultAppOverrides
