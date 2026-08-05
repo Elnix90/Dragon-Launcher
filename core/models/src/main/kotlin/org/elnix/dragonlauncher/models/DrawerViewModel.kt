@@ -99,7 +99,15 @@ public class DrawerViewModel @Inject constructor(
         initialValue = "User"
     )
 
-    public fun queryAppShortcuts(packageName: String): List<ShortcutInfo> = appsRepository.queryAppShortcuts(packageName)
+    public val activeWorkspaces : StateFlow<List<Workspace>> = workspaceManager.workspaces.flow.map { workspaces ->
+        workspaces.filter { it.enabled }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Lazily,
+        initialValue = emptyList()
+    )
+
+            public fun queryAppShortcuts(packageName: String): List<ShortcutInfo> = appsRepository.queryAppShortcuts(packageName)
 
     public fun hasPermission(permission: PermissionGroup): Flow<Boolean> = permissionsManager.hasPermission(permission)
 

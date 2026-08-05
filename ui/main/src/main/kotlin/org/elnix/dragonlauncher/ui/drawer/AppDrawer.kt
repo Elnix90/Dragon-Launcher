@@ -93,7 +93,6 @@ import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
@@ -155,25 +154,24 @@ fun AppDrawerScreen(
     }
 
 
-    val workspacesManager = drawerViewModel.workspaceManager
-    val workspaces by workspacesManager.workspaces.asState()
+    val activeWorkspaces by drawerViewModel.activeWorkspaces.collectAsState()
     val selectedWorkspaceId by drawerViewModel.selectedWorkspaceId.collectAsState()
 
-    val initialIndex = workspaces.indexOfFirst { it.id == selectedWorkspaceId }
+    val initialIndex = activeWorkspaces.indexOfFirst { it.id == selectedWorkspaceId }
     val pagerState = rememberPagerState(
-        initialPage = initialIndex.coerceIn(0, (workspaces.size - 1).coerceAtLeast(0)),
-        pageCount = { workspaces.size }
+        initialPage = initialIndex.coerceIn(0, (activeWorkspaces.size - 1).coerceAtLeast(0)),
+        pageCount = { activeWorkspaces.size }
     )
 
     /**
      * Updates the visible workspace
      */
-    LaunchedEffect(workspaces, selectedWorkspaceId) {
-        if (workspaces.isEmpty()) return@LaunchedEffect
+    LaunchedEffect(activeWorkspaces, selectedWorkspaceId) {
+        if (activeWorkspaces.isEmpty()) return@LaunchedEffect
 
-        val selectedPresent = workspaces.any { it.id == selectedWorkspaceId }
-        val targetId = if (selectedPresent) selectedWorkspaceId else workspaces.first().id
-        val targetIndex = workspaces.indexOfFirst { it.id == targetId }
+        val selectedPresent = activeWorkspaces.any { it.id == selectedWorkspaceId }
+        val targetId = if (selectedPresent) selectedWorkspaceId else activeWorkspaces.first().id
+        val targetIndex = activeWorkspaces.indexOfFirst { it.id == targetId }
 
         if (targetIndex >= 0 && pagerState.currentPage != targetIndex) {
             pagerState.scrollToPage(targetIndex)
@@ -181,8 +179,8 @@ fun AppDrawerScreen(
     }
 
     LaunchedEffect(pagerState.currentPage) {
-        val newWorkspace = if (workspaces.size > pagerState.currentPage) workspaces[pagerState.currentPage] else null
-        val targetId = newWorkspace?.id ?: workspaces.firstOrNull()?.id
+        val newWorkspace = if (activeWorkspaces.size > pagerState.currentPage) activeWorkspaces[pagerState.currentPage] else null
+        val targetId = newWorkspace?.id ?: activeWorkspaces.firstOrNull()?.id
         DrawerSettingsStore.lastWorkspaceUsed.set(ctx, targetId)
     }
 
@@ -465,7 +463,7 @@ fun AppDrawerScreen(
             key = { it.hashCode() }
         ) { pageIndex ->
 
-            val workspace = workspaces[pageIndex]
+            val workspace = activeWorkspaces[pageIndex]
 
             val workspaceProfileType = when (workspace.type) {
                 WorkspaceType.Work -> Profile.Type.Work
