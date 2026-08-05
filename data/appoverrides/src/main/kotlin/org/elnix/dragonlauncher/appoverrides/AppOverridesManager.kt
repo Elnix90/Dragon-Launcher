@@ -100,15 +100,6 @@ public class AppOverridesManager(
                 if (it == old) new
                 else it
             }
-//            val updatedAliases = currentAliases.toMutableList().apply {
-//                val oldIndex = indexOf(old)
-//                if (oldIndex != -1) {
-//                    set(oldIndex, new)
-//                } else {
-//                    add(new)
-//                }
-//            }
-            logWtf { "Current aliases: $currentAliases\nnewAliases: $newAliases" }
             override.copy(aliases = newAliases.takeIf { it.isNotEmpty() })
         }
     }
@@ -116,7 +107,6 @@ public class AppOverridesManager(
     public fun removeAliasFromApp(cacheKey: CacheKey, aliasToRemove: String) {
         updateOv(cacheKey) { old ->
             val newAliases = old.aliases?.minus(aliasToRemove)?.takeIf { it.isNotEmpty() }
-            logWtf { "Old aliases: $old\new aliases: $newAliases" }
             old.copy(aliases = newAliases)
         }
     }

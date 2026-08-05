@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -44,13 +45,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
@@ -104,13 +102,12 @@ fun IconPicker(
     val columns by DrawerSettingsStore.gridSize.asState()
 
     LazyVerticalGrid(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().heightIn(max = 9999.dp),
         columns = GridCells.Fixed(columns),
         contentPadding = contentPadding,
     ) {
         if (packsInstalled) {
             item(span = { GridItemSpan(columns) }) {
-
                 TextField(
                     value = query,
                     onValueChange = {
@@ -119,16 +116,11 @@ fun IconPicker(
                             viewModel.searchIcon(query, filterIconPack)
                         }
                     },
-                    textStyle = TextStyle(
-                        textAlign = TextAlign.Center,
-                        fontSize = 13.sp
-                    ),
                     placeholder = {
                         Text(stringResource(R.string.select_icon))
                     },
                     colors = AppObjectsColors.outlinedTextFieldColors(removeBorder = true),
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.DecimalSigned,
                         imeAction = ImeAction.Done
                     ),
                     keyboardActions = KeyboardActions(

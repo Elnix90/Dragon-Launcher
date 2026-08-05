@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ui.helpers
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
@@ -16,24 +17,24 @@ import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 
 @Composable
-fun DebugZone(visible: Boolean, content: @Composable () -> Unit) {
+fun DebugZone(visible: Boolean, content: @Composable ColumnScope.() -> Unit) {
     if (!visible) return
 
-    Column(
-        modifier = Modifier
-            .padding(10.dp)
-            .settingsGroup()
+    CompositionLocalProvider(
+        LocalContentColor provides Color.White,
+        LocalTextStyle provides MaterialTheme.typography.labelSmall
     ) {
-        CompositionLocalProvider(
-            LocalContentColor provides Color.White,
-            LocalTextStyle provides MaterialTheme.typography.labelSmall,
+        Column(
+            modifier = Modifier
+                .padding(10.dp)
+                .settingsGroup(),
             content = content
         )
     }
 }
 
 @Composable
-fun DebugZone(setting: BooleanSettingObject, content: @Composable () -> Unit) {
+fun DebugZone(setting: BooleanSettingObject, content: @Composable ColumnScope.() -> Unit) {
     val isVisible by setting.asState()
     DebugZone(isVisible, content)
 }

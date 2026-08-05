@@ -1004,11 +1004,7 @@ fun PointEditor(
     }
 
     if (showEditIconDialog) {
-        PointIconEditor(
-            point = editPoint,
-            onDismiss = { showEditIconDialog = false }
-        ) { newIcon ->
-
+        PointIconEditor(editPoint) { newIcon ->
             val previewPoint = point.copy(customIcon = newIcon)
 
             iconsViewModel.reloadIcon(previewPoint)
@@ -1017,6 +1013,7 @@ fun PointEditor(
             editPoint = editPoint.copy(customIcon = newIcon)
         }
     }
+
     if (showEditActionDialog) {
         AddPointDialog(
             onDismiss = { showEditActionDialog = false },

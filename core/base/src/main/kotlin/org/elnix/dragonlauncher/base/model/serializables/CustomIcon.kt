@@ -18,7 +18,7 @@ import org.elnix.dragonlauncher.base.model.serializables.serializers.ColorSerial
 @SerialName("CustomIcon")
 public sealed class CustomIcon {
     public companion object {
-        public fun CustomIcon.getProperties(): CustomIconProperties = when(this) {
+        public fun CustomIcon.getProperties(): CustomIconProperties = when (this) {
             is AdaptifiedLegacyIcon -> this.properties
             is CustomIconPackIcon -> this.properties
             is CustomTextIcon -> this.properties
@@ -51,7 +51,7 @@ public data class CustomIconPackIcon(
     val allowThemed: Boolean,
     val tint: Int?,
     val properties: CustomIconProperties = CustomIconProperties()
-): CustomIcon()
+) : CustomIcon()
 
 @Immutable
 @Serializable
@@ -63,7 +63,7 @@ public data class AdaptifiedLegacyIcon(
      */
     val bgColor: Int = UnspecifiedColor,
     val properties: CustomIconProperties = CustomIconProperties()
-): CustomIcon() {
+) : CustomIcon() {
 
     public companion object {
         /**
@@ -101,7 +101,7 @@ public data class ForceThemedIcon(
 @SerialName("UnmodifiedSystemDefaultIcon")
 public data class UnmodifiedSystemDefaultIcon(
     val properties: CustomIconProperties = CustomIconProperties()
-): CustomIcon()
+) : CustomIcon()
 
 @Immutable
 @Serializable
@@ -110,7 +110,7 @@ public data class CustomTextIcon(
     val text: String,
     val color: Int = 0,
     val properties: CustomIconProperties = CustomIconProperties()
-): CustomIcon()
+) : CustomIcon()
 
 /**
  * Use the default placeholder icon
@@ -120,7 +120,7 @@ public data class CustomTextIcon(
 @SerialName("DefaultPlaceholderIcon")
 public data class DefaultPlaceholderIcon(
     val properties: CustomIconProperties = CustomIconProperties()
-): CustomIcon()
+) : CustomIcon()
 
 
 @Immutable
@@ -132,21 +132,30 @@ public data class CustomIconProperties(
 
     /** Icon opacity multiplier (0.0 – 1.0). */
     @FloatRange(0.0, 1.0)
-    val opacity: Float = defaultOpacity,
+    val opacity: Float? = null,
 
     /** Per-corner radius override for icon clipping. */
     val shape: IconShape? = null,
 
     /** Rotation applied to the icon in degrees. */
     @IntRange(-180, 180)
-    val rotationDeg: Int = defaultRotationDeg,
+    val rotationDeg: Int? = null,
 
     /** Horizontal scale multiplier. */
-    val scaleX: Float = defaultScaleX,
+    val scaleX: Float? = null,
 
     /** Vertical scale multiplier. */
-    val scaleY: Float = defaultScaleY,
+    val scaleY: Float? = null,
 ) {
+
+    public val isNotEmpty: Boolean
+        get() = tint != null ||
+                opacity != null ||
+                shape != null ||
+                rotationDeg != null ||
+                scaleX != null ||
+                scaleY != null
+
     public companion object {
         public const val defaultOpacity: Float = 1f
         public const val defaultRotationDeg: Int = 0
