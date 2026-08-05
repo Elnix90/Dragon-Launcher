@@ -336,7 +336,7 @@ internal class AppRepositoryImpl(
                                 }
                             }
                         ),
-                        secondaryFields = appOverridesManager.getAliasesForApp(app)
+                        secondaryFields = appOverridesManager.getAliasesForApp(app).first()
                     )
                     if (score.score < 0.8f) return@mapNotNull null
                     app

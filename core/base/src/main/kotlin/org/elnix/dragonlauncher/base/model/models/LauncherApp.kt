@@ -27,7 +27,11 @@ public data class LauncherApp(
     override val isLaunchable: Boolean = true
 
     override val label: String
-        get() = labelOverride ?: launcherActivityInfo.label.toString()
+        get() = labelOverride ?: defaultLabel
+
+    override val defaultLabel: String by lazy {
+        launcherActivityInfo.label.toString()
+    }
 
 
     override fun overrideLabel(label: String): Application {

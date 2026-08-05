@@ -26,8 +26,11 @@ public data class SystemApp(
     override val isLaunchable: Boolean = false
 
     override val label: String
-        get() = labelOverride ?: applicationInfo.loadLabel(ctx.packageManager).toString()
+        get() = labelOverride ?:  defaultLabel
 
+    override val defaultLabel: String by lazy {
+        applicationInfo.loadLabel(ctx.packageManager).toString()
+    }
 
     override fun overrideLabel(label: String): Application {
         return this.copy(labelOverride = label)

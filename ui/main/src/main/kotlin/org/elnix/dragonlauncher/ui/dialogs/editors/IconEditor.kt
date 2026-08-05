@@ -100,7 +100,7 @@ fun AppIconEditor(
 ) {
 
     val appOverrideManager = drawerViewModel.appOverrideManager
-    val appOverrides by appOverrideManager.appOverridesState.asState()
+    val appOverrides by appOverrideManager.appOverrides.asState()
     val initialCustomIcon = appOverrides[app.key]?.customIcon
 
     var editCustomIcon by remember(initialCustomIcon) { mutableStateOf(initialCustomIcon) }

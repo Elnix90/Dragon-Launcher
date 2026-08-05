@@ -1,7 +1,9 @@
 package org.elnix.dragonlauncher.enumsui.select
 
-import org.elnix.dragonlauncher.i18n.R
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.compositionLocalOf
 import org.elnix.dragonlauncher.enumsui.SelectButtonOption
+import org.elnix.dragonlauncher.i18n.R
 
 public enum class WorkspaceViewMode(
     override val resId: Int,
@@ -11,3 +13,5 @@ public enum class WorkspaceViewMode(
     Added(R.string.workspace_added),
     Removed(R.string.workspace_removed)
 }
+
+public val LocalWorkspaceViewMode: ProvidableCompositionLocal<WorkspaceViewMode> = compositionLocalOf { WorkspaceViewMode.Default }

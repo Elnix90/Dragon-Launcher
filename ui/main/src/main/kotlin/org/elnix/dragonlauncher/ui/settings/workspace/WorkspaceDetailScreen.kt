@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -23,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
+import org.elnix.dragonlauncher.enumsui.select.LocalWorkspaceViewMode
 import org.elnix.dragonlauncher.enumsui.select.WorkspaceViewMode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
@@ -118,12 +120,14 @@ fun WorkspaceDetailScreen(
                         }
 
                         else -> {
-                            AppGrid(
-                                apps = apps.sortedBy { it.label },
-                                longPressPopup = true,
-                                onClick = null,
-                                reloadAllowed = false
-                            )
+                            CompositionLocalProvider(LocalWorkspaceViewMode provides selectedView) {
+                                AppGrid(
+                                    apps = apps.sortedBy { it.label },
+                                    longPressPopup = true,
+                                    onClick = null,
+                                    reloadAllowed = false
+                                )
+                            }
                         }
                     }
                 }

@@ -24,6 +24,7 @@ public data class PointApp(
     // TODO
     override val isSuspended: Boolean = false
     override val label: String = ""
+    override val defaultLabel: String = ""
     override val labelOverride: String = ""
     override val profile: Profile = Profile.dummy()
     override val versionName: String = ""

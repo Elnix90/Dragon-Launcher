@@ -34,6 +34,7 @@ import java.text.Collator
 public abstract class Application : Comparable<Application> {
 
     public abstract val label: String
+    public abstract val defaultLabel: String
     public abstract val labelOverride: String?
     public abstract fun overrideLabel(label: String): Application
 

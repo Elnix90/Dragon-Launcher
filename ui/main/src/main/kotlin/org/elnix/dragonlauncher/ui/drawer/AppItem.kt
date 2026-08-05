@@ -87,7 +87,7 @@ fun AppItemHorizontal(
         expanded = showLongPressPopup,
         onDismissRequest = { showLongPressPopup = false }
     ) {
-        AppLongPressPopup(app)
+        AppLongPressPopup(app) { showLongPressPopup = false }
     }
 }
 
@@ -144,6 +144,6 @@ fun AppItemGrid(
         expanded = showLongPressPopup,
         onDismissRequest = { showLongPressPopup = false }
     ) {
-        AppLongPressPopup(app)
+        AppLongPressPopup(app) { showLongPressPopup = false }
     }
 }

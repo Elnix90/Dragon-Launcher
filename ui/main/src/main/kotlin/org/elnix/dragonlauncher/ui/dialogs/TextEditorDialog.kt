@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,8 +20,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
+import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
@@ -31,15 +37,22 @@ import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 fun TextEditorDialog(
     title: @Composable () -> String,
     placeHolder: @Composable () -> String,
+    defaultText: String,
     initialText: String,
     onDismiss: () -> Unit,
-    onValidate: (String) -> Unit
+    onValidate: (String?) -> Unit
 ) {
-    var editText by remember { mutableStateOf(initialText) }
-    val title = title()
+    val focusRequester = remember { FocusRequester() }
+
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(initialText, TextRange(initialText.length))) }
+    LaunchedEffect(Unit) {
+        yield()
+        focusRequester.requestFocus()
+    }
 
     AlertDialog(
         title = {
+            val title = title()
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -60,10 +73,14 @@ fun TextEditorDialog(
         onDismissRequest = onDismiss,
         text = {
             TextField(
-                value = editText,
-                onValueChange = { editText = it },
+                value = textFieldValue,
+                onValueChange = { textFieldValue = it },
                 singleLine = true,
-                trailingIcon = { ResetIcon { editText = initialText } },
+                trailingIcon = {
+                    ResetIcon(textFieldValue.text != defaultText) {
+                        textFieldValue = TextFieldValue(defaultText, TextRange(defaultText.length))
+                    }
+                },
                 placeholder = {
                     Text(placeHolder())
                 },
@@ -72,7 +89,7 @@ fun TextEditorDialog(
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = { onValidate(editText) }
+                    onDone = { onValidate(textFieldValue.text.trim()) }
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -82,11 +99,12 @@ fun TextEditorDialog(
         },
         confirmButton = {
             ValidateCancelButtons(
-                validateEnabled = editText.trim() != "",
+                validateEnabled = textFieldValue.text.trim() != "",
                 onCancel = onDismiss
-            ) { onValidate(editText.trim()) }
+            ) { onValidate(textFieldValue.text.trim()) }
         },
         dismissButton = {},
+        modifier = Modifier.focusRequester(focusRequester),
         containerColor = MaterialTheme.colorScheme.surface,
         shape = MaterialTheme.shapes.large
     )

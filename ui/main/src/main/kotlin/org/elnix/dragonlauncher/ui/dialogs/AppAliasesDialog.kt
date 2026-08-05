@@ -2,16 +2,14 @@
 
 package org.elnix.dragonlauncher.ui.dialogs
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -22,11 +20,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -38,8 +36,10 @@ import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
+import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -55,40 +55,16 @@ fun AppAliasesDialog(
     val cacheKey = app.key
 
     val appOverridesManager = workspaceViewModel.appOverrideManager
-    val aliases = appOverridesManager.getAliasesForApp(app)
-
+    val aliases by appOverridesManager.getAliasesForApp(app).collectAsState(emptySet())
 
     AlertDialog(
-        title = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.alternate_email),
-                        contentDescription = stringResource(R.string.app_aliases),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-
-                    Text(
-                        text = stringResource(R.string.app_aliases),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-
-                }
-
-                Text(
-                    text = app.label,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-        },
         onDismissRequest = onDismiss,
+        title = {
+            DialogTitle(
+                stringResource(id = R.string.app_aliases),
+                resetEnabled = aliases.isNotEmpty()
+            ) { appOverridesManager.resetAliasForApp(cacheKey) }
+        },
         text = {
             Column(
                 modifier = Modifier
@@ -96,35 +72,20 @@ fun AppAliasesDialog(
                     .heightIn(max = 700.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                LazyRow(
+                FlowRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(2.dp),
-                    contentPadding = PaddingValues(10.dp)
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    item(
-                        key = "Add tag"
-                    ) {
-                        Button(
-                            modifier = Modifier.animateItem(),
-                            onClick = { showAliasEditScreen = "" },
-                            shapes = ButtonDefaults.shapes(),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                contentColor = contentColorFor(MaterialTheme.colorScheme.surfaceContainerHigh)
-                            )
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.add_circle),
-                                contentDescription = null
-                            )
-                        }
-                    }
-                    items(
-                        items = aliases.toList()
-                    ) { alias ->
+
+                    AnimatedFab(
+                        icon = R.drawable.add,
+                        containerColor = MaterialTheme.colorScheme.secondary
+                    ) { showAliasEditScreen = "" }
+
+                    aliases.forEach { alias ->
                         val interactionSource = rememberInteractionSource()
                         val isPressed by interactionSource.collectIsPressedAsState()
-
 
                         var canDelete by remember { mutableStateOf(false) }
                         LaunchedEffect(isPressed) {
@@ -139,12 +100,10 @@ fun AppAliasesDialog(
 
                         val containerColor by animateColorAsState(
                             if (canDelete) MaterialTheme.colorScheme.errorContainer
-                            else MaterialTheme.colorScheme.surfaceContainerHigh
+                            else MaterialTheme.colorScheme.primaryContainer
                         )
 
-
                         Button(
-                            modifier = Modifier.animateItem(),
                             onClick = {
                                 if (canDelete) {
                                     appOverridesManager.removeAliasFromApp(cacheKey, alias)
@@ -159,7 +118,16 @@ fun AppAliasesDialog(
                                 contentColor = contentColorFor(containerColor)
                             )
                         ) {
-                            Text(alias)
+                            AnimatedContent(canDelete) {
+                                if (!it) {
+                                    Text(alias)
+                                } else {
+                                    Icon(
+                                        painter = painterResource(R.drawable.delete_forever),
+                                        contentDescription = null
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -179,17 +147,25 @@ fun AppAliasesDialog(
     if (showAliasEditScreen != null) {
 
         val old = showAliasEditScreen!!
+        val isCreateAlias = old == ""
 
         TextEditorDialog(
             title = {
-                if (old == "") stringResource(R.string.create_alias)
+                if (isCreateAlias) stringResource(R.string.create_alias)
                 else stringResource(R.string.edit_alias)
             },
             placeHolder = { stringResource(R.string.alias) },
             initialText = old,
-            onDismiss = { showAliasEditScreen = null }
+            defaultText = old,
+            onDismiss = { showAliasEditScreen = null },
         ) { new ->
-            appOverridesManager.updateAliasToApp(old, new, cacheKey)
+
+            when {
+                new == null -> appOverridesManager.removeAliasFromApp(cacheKey, old)
+                isCreateAlias -> appOverridesManager.addAliasToApp(new, cacheKey)
+                else -> appOverridesManager.updateAliasToApp(old, new, cacheKey)
+            }
+
             showAliasEditScreen = null
         }
     }

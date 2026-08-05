@@ -242,7 +242,7 @@ public class IconService internal constructor(
 //    public fun getRandomAppIcon(): CacheKey? = DrawerIconCache.getRandom()
 
     public fun getCustomAppIcon(application: Application): Flow<CustomIcon?> {
-        return appOverrideManager.appOverridesState.flow.map {
+        return appOverrideManager.appOverrides.flow.map {
             it[application.key]?.customIcon
         }
     }

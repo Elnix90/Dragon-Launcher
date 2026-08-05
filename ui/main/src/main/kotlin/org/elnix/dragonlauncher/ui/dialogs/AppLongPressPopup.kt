@@ -34,12 +34,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.enumsui.select.LocalWorkspaceViewMode
+import org.elnix.dragonlauncher.enumsui.select.WorkspaceViewMode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
@@ -51,13 +54,16 @@ fun AppLongPressPopup(
     app: Application,
     appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
     drawerViewModel: DrawerViewModel = activityViewModel(),
+    close: () -> Unit
 ) {
     val ctx = LocalContext.current
     val uriHandler = LocalUriHandler.current
+    val workspaceViewMode = LocalWorkspaceViewMode.current
 
     val scope = rememberCoroutineScope()
 
     val appOverridesManager = drawerViewModel.appOverrideManager
+    val appOverrides by appOverridesManager.appOverrides.asState()
     val workspacesManager = drawerViewModel.workspaceManager
     val selectedWorkspaceId by drawerViewModel.selectedWorkspaceId.collectAsState()
 
@@ -94,31 +100,35 @@ fun AppLongPressPopup(
             )
         )
 
-        add(
-            MoreOptions(
-                text = { stringResource(R.string.add_to_workspace) },
-                icon = R.drawable.add_circle,
-                onClick = {
-                    workspacesManager.addAppToWorkspace(
-                        id = selectedWorkspaceId,
-                        cacheKey = app.key
-                    )
-                }
+        if (workspaceViewMode == WorkspaceViewMode.Removed) {
+            add(
+                MoreOptions(
+                    text = { stringResource(R.string.add_to_workspace) },
+                    icon = R.drawable.add_circle,
+                    onClick = {
+                        workspacesManager.addAppToWorkspace(
+                            id = selectedWorkspaceId,
+                            cacheKey = app.key
+                        )
+                        close()
+                    }
+                )
             )
-        )
-
-        add(
-            MoreOptions(
-                text = { stringResource(R.string.remove_from_workspace) },
-                icon = R.drawable.remove_circle,
-                onClick = {
-                    workspacesManager.removeAppFromWorkspace(
-                        id = selectedWorkspaceId,
-                        cacheKey = app.key
-                    )
-                }
+        } else {
+            add(
+                MoreOptions(
+                    text = { stringResource(R.string.remove_from_workspace) },
+                    icon = R.drawable.remove_circle,
+                    onClick = {
+                        workspacesManager.removeAppFromWorkspace(
+                            id = selectedWorkspaceId,
+                            cacheKey = app.key
+                        )
+                        close()
+                    }
+                )
             )
-        )
+        }
 
         add(
             MoreOptions(
@@ -127,6 +137,7 @@ fun AppLongPressPopup(
                 onClick = {
                     scope.launch {
                         app.shareApkFile(ctx)
+                        close()
                     }
                 }
             )
@@ -140,6 +151,7 @@ fun AppLongPressPopup(
                     onClick = {
                         scope.launch {
                             uriHandler.openUri(link.url)
+                            close()
                         }
                     }
                 )
@@ -246,11 +258,11 @@ fun AppLongPressPopup(
 
     if (showRenameDialog) {
         val cacheKey = app.key
-
         TextEditorDialog(
             title = { stringResource(R.string.rename) },
             placeHolder = { app.label },
             onDismiss = { showRenameDialog = false },
+            defaultText = app.defaultLabel,
             initialText = app.label
         ) { newName ->
             appOverridesManager.renameApp(
