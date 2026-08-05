@@ -67,6 +67,7 @@ fun AppGrid(
 
     drawerViewModel: DrawerViewModel = activityViewModel(),
 
+    reloadAllowed: Boolean = true,
     // Multi select things
     isMultiSelectMode: Boolean = false,
     selectedPackages: List<Application> = emptyList(),
@@ -145,22 +146,24 @@ fun AppGrid(
                             color = MaterialTheme.colorScheme.onBackground
                         )
 
-                        var isLoading by remember { mutableStateOf(false) }
+                        if (reloadAllowed) {
+                            var isLoading by remember { mutableStateOf(false) }
 
-                        Crossfade(isLoading) { showLoadingIcon ->
-                            if (showLoadingIcon) {
-                                LoadingIndicator()
-                                LaunchedEffect(Unit) {
-                                    delay(1.seconds)
-                                    isLoading = false
-                                }
-                            } else {
-                                DragonIconButton(
-                                    icon = R.drawable.refresh,
-                                    contentDescription = stringResource(R.string.reload_apps)
-                                ) {
-                                    drawerViewModel.reloadApps()
-                                    isLoading = true
+                            Crossfade(isLoading) { showLoadingIcon ->
+                                if (showLoadingIcon) {
+                                    LoadingIndicator()
+                                    LaunchedEffect(Unit) {
+                                        delay(1.seconds)
+                                        isLoading = false
+                                    }
+                                } else {
+                                    DragonIconButton(
+                                        icon = R.drawable.refresh,
+                                        contentDescription = stringResource(R.string.reload_apps)
+                                    ) {
+                                        drawerViewModel.reloadApps()
+                                        isLoading = true
+                                    }
                                 }
                             }
                         }
