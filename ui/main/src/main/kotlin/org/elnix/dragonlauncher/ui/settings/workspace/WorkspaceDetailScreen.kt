@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.Profile
@@ -27,6 +28,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
@@ -44,6 +46,7 @@ fun WorkspaceDetailScreen(
     drawerViewModel: DrawerViewModel = activityViewModel(),
     profilesViewModel: ProfilesViewModel = activityViewModel(),
 ) {
+    val ctx = LocalContext.current
     val workspaceManager = drawerViewModel.workspaceManager
     val workspaces by workspaceManager.workspaces.asState()
     val workspace = workspaces.first { it.id == workspaceId }
@@ -53,6 +56,9 @@ fun WorkspaceDetailScreen(
 
     LaunchedEffect(Unit) {
         drawerViewModel.searchQuery.value = ""
+
+        // This way, the remove from workspace and add to workspace will work, otherwise they add and remove apps to the real last workspace used
+        DrawerSettingsStore.lastWorkspaceUsed.set(ctx, workspaceId)
     }
 
     val apps by drawerViewModel

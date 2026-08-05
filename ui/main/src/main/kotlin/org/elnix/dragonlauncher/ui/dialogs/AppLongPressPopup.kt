@@ -99,7 +99,7 @@ fun AppLongPressPopup(
                 text = { stringResource(R.string.add_to_workspace) },
                 icon = R.drawable.add_circle,
                 onClick = {
-                    workspacesManager.removeAppFromWorkspace(
+                    workspacesManager.addAppToWorkspace(
                         id = selectedWorkspaceId,
                         cacheKey = app.key
                     )
@@ -112,7 +112,7 @@ fun AppLongPressPopup(
                 text = { stringResource(R.string.remove_from_workspace) },
                 icon = R.drawable.remove_circle,
                 onClick = {
-                    workspacesManager.addAppToWorkspace(
+                    workspacesManager.removeAppFromWorkspace(
                         id = selectedWorkspaceId,
                         cacheKey = app.key
                     )
