@@ -7,42 +7,35 @@ import kotlinx.serialization.Serializable
 @SerialName("Workspace")
 public data class Workspace(
     val id: String,
-    val name: String,
     val type: WorkspaceType,
     val appIds: Set<CacheKey>? = null,
-    val removedAppIds: Set<CacheKey>? = null,
+    val removedAppIds: Set<CacheKey>? = setOf(CacheKey("org.elnix.dragonlauncher", 0)),
     val enabled: Boolean = true
 ) {
     public companion object {
         // I disable non-user workspaces by default, enable it if you need it (only used for nerds) (those who download my app are btw :) )
         public val defaultWorkspaces: List<Workspace> = listOf(
             Workspace(
-                id = "user",
-                name = "User",
-                type = WorkspaceType.User,
-                appIds = setOf(CacheKey("org.elnix.dragonlauncher", 0)),
+                id = "User",
+                type = WorkspaceType.User
             ),
             Workspace(
-                id = "system",
-                name = "System",
+                id = "System",
                 type = WorkspaceType.System,
                 enabled = false
             ),
             Workspace(
-                id = "all",
-                name = "All",
+                id = "All",
                 type = WorkspaceType.All,
                 enabled = false
             ),
             Workspace(
-                id = "work",
-                name = "Work",
+                id = "Work",
                 type = WorkspaceType.Work,
                 enabled = false
             ),
             Workspace(
-                id = "private",
-                name = "Private Space",
+                id = "Private Space",
                 type = WorkspaceType.Private,
                 enabled = false
             ) // Android 15+ only

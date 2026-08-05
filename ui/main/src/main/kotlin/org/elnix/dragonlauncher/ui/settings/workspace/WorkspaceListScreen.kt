@@ -13,12 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
@@ -40,7 +39,6 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @Composable
 fun WorkspaceListScreen(drawerViewModel: DrawerViewModel = activityViewModel()) {
     val navigator = LocalNavigator.current
-    val scope = rememberCoroutineScope()
 
     val workspaceManager = drawerViewModel.workspaceManager
     val workspaces by workspaceManager.workspaces.asState()
@@ -63,18 +61,17 @@ fun WorkspaceListScreen(drawerViewModel: DrawerViewModel = activityViewModel()) 
         }
     )
 
-    fun save() {
-        scope.launch { workspaceManager.setWorkspaceOrder(objects) }
-    }
+    // This function is really annoying, I can't really explain why it works here, but without the behavior ir really strange,
+    // I remembered this function could be used, and by magic it nw works correctly!!
+    // Comment for me later: do not remove, it doesn't cost much and works!!!!!
+    val objectsOther by rememberUpdatedState(objects)
 
     Box(modifier = Modifier.fillMaxSize()) {
         SettingsScaffold(
             title = stringResource(R.string.workspaces),
             helpText = stringResource(R.string.workspace_help),
             resetText = stringResource(R.string.reset_workspaces),
-            onReset = {
-                scope.launch { workspaceManager.resetWorkspaces() }
-            },
+            onReset = { workspaceManager.resetWorkspaces() },
             lasyListState = lazyListState,
             bottomContent = {
                 Row(
@@ -98,31 +95,23 @@ fun WorkspaceListScreen(drawerViewModel: DrawerViewModel = activityViewModel()) 
                         WorkspaceRow(
                             workspace = ws,
                             isDragging = isDragging,
-                            modifier = Modifier.longPressDraggableHandle(
-                                onDragStopped = ::save
-                            ),
-                            onClick = {
-                                if (ws.type != WorkspaceType.Private) {
-                                    navigator.navigate(NavigationRoute.WorkspaceDetail(ws.id))
-                                }
-                            },
-                            onCheck = { scope.launch { workspaceManager.setWorkspaceEnabled(ws.id, it) } },
+                            onClick = { navigator.navigate(NavigationRoute.WorkspaceDetail(ws.id)) },
+                            onCheck = { workspaceManager.setWorkspaceEnabled(ws.id, it) },
                             onAction = { action ->
                                 when (action) {
                                     WorkspaceAction.Edit -> {
                                         renameTarget = ws
-                                        nameBuffer = ws.name
+                                        nameBuffer = ws.id
                                     }
 
                                     WorkspaceAction.Delete -> {
-                                        if (ws.type != WorkspaceType.Private) {
-                                            showDeleteConfirm = ws
-                                        }
+                                        showDeleteConfirm = ws
                                     }
                                 }
-                            },
-                            onDragEnd = ::save
-                        )
+                            }
+                        ) {
+                            workspaceManager.setWorkspaceOrder(objectsOther)
+                        }
                     }
                 }
             }
@@ -136,7 +125,7 @@ fun WorkspaceListScreen(drawerViewModel: DrawerViewModel = activityViewModel()) 
         type = WorkspaceType.Custom,
         onNameChange = { nameBuffer = it },
         onConfirm = { selectedType ->
-            scope.launch { workspaceManager.createWorkspace(nameBuffer.trim(), selectedType) }
+            workspaceManager.createWorkspace(nameBuffer.trim(), selectedType)
             showCreateDialog = false
         },
         onDismiss = { showCreateDialog = false }
@@ -150,14 +139,12 @@ fun WorkspaceListScreen(drawerViewModel: DrawerViewModel = activityViewModel()) 
         onNameChange = { nameBuffer = it },
         onConfirm = { selectedType ->
             val targetId = renameTarget
-            if (targetId != null && nameBuffer.isNotBlank()) {
-                scope.launch {
-                    workspaceManager.editWorkspace(
-                        targetId.id,
-                        nameBuffer.trim(),
-                        selectedType
-                    )
-                }
+            if (targetId != null && nameBuffer.isNotBlank() && nameBuffer !in workspaces.map { it.id }) {
+                workspaceManager.editWorkspace(
+                    oldId = targetId.id,
+                    newId = nameBuffer.trim(),
+                    type = selectedType
+                )
             }
             renameTarget = null
         },
@@ -168,13 +155,11 @@ fun WorkspaceListScreen(drawerViewModel: DrawerViewModel = activityViewModel()) 
         val workSpaceToDelete = showDeleteConfirm!!
         UserValidation(
             title = stringResource(R.string.delete_workspace),
-            message = "${stringResource(R.string.are_you_sure_to_delete_workspace)} '${workSpaceToDelete.name}' ?",
+            message = "${stringResource(R.string.are_you_sure_to_delete_workspace)} '${workSpaceToDelete.id}' ?",
             onDismiss = { showDeleteConfirm = null }
         ) {
-            scope.launch {
-                workspaceManager.deleteWorkspace(workSpaceToDelete.id)
-                showDeleteConfirm = null
-            }
+            workspaceManager.deleteWorkspace(workSpaceToDelete.id)
+            showDeleteConfirm = null
         }
     }
 }

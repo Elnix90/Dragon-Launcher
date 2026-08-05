@@ -96,7 +96,7 @@ public class DrawerViewModel @Inject constructor(
     public val selectedWorkspaceId: StateFlow<String> = workspaceManager.selectedWorkspaceId.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Lazily,
-        initialValue = "user"
+        initialValue = "User"
     )
 
     public fun queryAppShortcuts(packageName: String): List<ShortcutInfo> = appsRepository.queryAppShortcuts(packageName)

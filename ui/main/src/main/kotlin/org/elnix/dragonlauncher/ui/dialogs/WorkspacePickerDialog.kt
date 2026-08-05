@@ -81,7 +81,7 @@ fun WorkspacePickerDialog(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = workspace.name,
+                            text = workspace.id,
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurface
                         )

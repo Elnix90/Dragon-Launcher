@@ -2,6 +2,7 @@ package org.elnix.dragonlauncher.ui.settings.workspace
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,36 +25,28 @@ import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.enumsui.toggle.WorkspaceAction
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 
 @Composable
 fun ReorderableCollectionItemScope.WorkspaceRow(
     workspace: Workspace,
-    modifier: Modifier,
     isDragging: Boolean = false,
     onClick: () -> Unit,
     onCheck: (Boolean) -> Unit,
     onAction: (WorkspaceAction) -> Unit,
     onDragEnd: () -> Unit
 ) {
-    val enabled = workspace.enabled
-
-    val scale by animateFloatAsState(
-        if (isDragging) 1.03f else 1f
-    )
-
-    val elevation by animateDpAsState(
-        if (isDragging) 16.dp else 0.dp
-    )
+    val scale by animateFloatAsState(if (isDragging) 1.03f else 1f)
+    val elevation by animateDpAsState(if (isDragging) 16.dp else 0.dp)
 
     Card(
-        shape = MaterialTheme.shapes.large,
+        shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(elevation),
-        modifier = modifier
+        modifier = Modifier
             .scale(scale)
-            .shapedClickable(onClick = onClick)
+            .longPressDraggableHandle(onDragStopped = onDragEnd)
+            .clickable(onClick = onClick)
     ) {
         Row(
             modifier = Modifier
@@ -63,13 +56,13 @@ fun ReorderableCollectionItemScope.WorkspaceRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Checkbox(
-                checked = enabled,
+                checked = workspace.enabled,
                 onCheckedChange = { onCheck(it) },
                 colors = AppObjectsColors.checkboxColors()
             )
 
             Text(
-                text = workspace.name,
+                text = workspace.id,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f)
             )
@@ -78,12 +71,16 @@ fun ReorderableCollectionItemScope.WorkspaceRow(
                 modifier = Modifier.padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                WorkspaceAction.entries.forEach { action ->
-                    DragonIconButton(
-                        icon = action.iconEnabled,
-                        contentDescription = action.resId
-                    ) { onAction(action) }
-                }
+                DragonIconButton(
+                    icon = WorkspaceAction.Edit.iconEnabled,
+                    contentDescription = WorkspaceAction.Edit.resId
+                ) { onAction(WorkspaceAction.Edit) }
+
+                DragonIconButton(
+                    icon = WorkspaceAction.Delete.iconEnabled,
+                    contentDescription = WorkspaceAction.Delete.resId,
+                    colors = AppObjectsColors.cancelIconButtonColors()
+                ) { onAction(WorkspaceAction.Delete) }
             }
 
             Icon(

@@ -215,7 +215,7 @@ fun AppPickerDialog(
                             )
                         ) {
                             Text(
-                                text = workspace.name,
+                                text = workspace.id,
                                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
                             )
                         }

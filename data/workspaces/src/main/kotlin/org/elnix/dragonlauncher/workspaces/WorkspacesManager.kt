@@ -58,18 +58,18 @@ public class WorkspacesManager(
         }
     }
 
-    private fun persistWorkspaces() = scope.launch(Dispatchers.IO) {
-        if (workspaces.value == defaultWorkspaces) return@launch
-        val json = WorkspaceJson.encode(workspaces.value)
-        WorkspaceSettingsStore.jsonSetting.set(ctx, json)
+    public fun persistWorkspaces() {
+        scope.launch(Dispatchers.IO) {
+            if (workspaces.value == defaultWorkspaces) return@launch
+            val json = WorkspaceJson.encode(workspaces.value)
+            WorkspaceSettingsStore.jsonSetting.set(ctx, json)
+        }
     }
 
 
-    private inline fun update(newWorkSpaceState: (WorkspaceState) -> WorkspaceState?) {
-        newWorkSpaceState(workspaces.value)?.let {
-            workspaces.value = it
-            persistWorkspaces()
-        }
+    private inline fun update(newWorkSpaceState: (WorkspaceState) -> WorkspaceState) {
+        workspaces.value = newWorkSpaceState(workspaces.value)
+        persistWorkspaces()
     }
 
     private inline fun updateWs(id: String, newWs: (Workspace) -> Workspace) {
@@ -99,8 +99,7 @@ public class WorkspacesManager(
     public fun createWorkspace(name: String, type: WorkspaceType) {
         update { old ->
             old + Workspace(
-                id = System.currentTimeMillis().toString(),
-                name = name,
+                id = name,
                 type = type,
                 enabled = true,
                 removedAppIds = emptySet(),
@@ -109,9 +108,9 @@ public class WorkspacesManager(
         }
     }
 
-    public fun editWorkspace(id: String, name: String, type: WorkspaceType) {
-        updateWs(id) { old ->
-            old.copy(name = name, type = type)
+    public fun editWorkspace(oldId: String, newId: String, type: WorkspaceType) {
+        updateWs(oldId) { old ->
+            old.copy(id = newId, type = type)
         }
     }
 
