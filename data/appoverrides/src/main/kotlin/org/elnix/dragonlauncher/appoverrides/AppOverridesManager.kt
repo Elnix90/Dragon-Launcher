@@ -5,7 +5,6 @@ package org.elnix.dragonlauncher.appoverrides
 import android.content.Context
 import io.github.elnix90.logging.WORKSPACES_TAG
 import io.github.elnix90.logging.logE
-import io.github.elnix90.logging.logWtf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -22,7 +21,7 @@ import org.elnix.dragonlauncher.base.model.serializables.AppOverrideState
 import org.elnix.dragonlauncher.base.model.serializables.CacheKey
 import org.elnix.dragonlauncher.base.model.serializables.CustomIcon
 import org.elnix.dragonlauncher.base.model.serializables.CustomIconProperties
-import org.elnix.dragonlauncher.settings.stores.array.AppOverridesSettingsStore
+import org.elnix.dragonlauncher.settings.stores.objects.AppOverridesSettingsStore
 
 
 public object AppOverridesJson : DragonJson<AppOverrideState>()
@@ -72,14 +71,10 @@ public class AppOverridesManager(
             val newOverride = newOverride(prevOverride)
 
             val new = if (newOverride != null && newOverride.isNotNullOrEmpty) {
-                logWtf { "New isn't empty: $newOverride" }
                 old + (cacheKey to newOverride)
             } else {
-                logWtf { "New is empty: $newOverride" }
                 old - cacheKey
             }
-
-            logWtf { "Updating app overrides:\nold : $old\nnew : $new\n " }
             new
         }
     }
