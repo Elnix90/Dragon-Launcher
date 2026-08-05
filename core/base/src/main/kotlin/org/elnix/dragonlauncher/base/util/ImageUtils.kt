@@ -418,55 +418,58 @@ public object ImageUtils {
 //
 //        return outBitmap
 //    }
+}
 
-    private fun Canvas.clipToShape(
-        properties: CustomIconProperties,
-        iconShape: IconShape,
-        sizePx: Int,
-        density: Density
-    ) {
-        // Step 8: CLip to shape
-        val shape = (properties.shape ?: iconShape).resolveShape()
+/**
+ * Clips the canvas to the [properties] shape, falling back to [iconShape] when
+ * the properties do not override it. Applied per icon before drawing.
+ */
+public fun Canvas.clipToShape(
+    properties: CustomIconProperties,
+    iconShape: IconShape,
+    sizePx: Int,
+    density: Density
+) {
+    val shape = (properties.shape ?: iconShape).resolveShape()
 
-        val outline = shape.createOutline(
-            size = Size(sizePx.toFloat(), sizePx.toFloat()),
-            layoutDirection = LayoutDirection.Ltr,
-            density = density
-        )
+    val outline = shape.createOutline(
+        size = Size(sizePx.toFloat(), sizePx.toFloat()),
+        layoutDirection = LayoutDirection.Ltr,
+        density = density
+    )
 
-        when (outline) {
+    when (outline) {
 
-            is Outline.Rectangle -> {
-                clipRect(
-                    0f,
-                    0f,
-                    sizePx.toFloat(),
-                    sizePx.toFloat()
+        is Outline.Rectangle -> {
+            clipRect(
+                0f,
+                0f,
+                sizePx.toFloat(),
+                sizePx.toFloat()
+            )
+        }
+
+        is Outline.Rounded -> {
+            val rr = outline.roundRect
+
+            val path = Path().apply {
+                addRoundRect(
+                    rr.left,
+                    rr.top,
+                    rr.right,
+                    rr.bottom,
+                    rr.topLeftCornerRadius.x,
+                    rr.topLeftCornerRadius.y,
+                    Path.Direction.CW
                 )
             }
 
-            is Outline.Rounded -> {
-                val rr = outline.roundRect
+            clipPath(path)
+        }
 
-                val path = Path().apply {
-                    addRoundRect(
-                        rr.left,
-                        rr.top,
-                        rr.right,
-                        rr.bottom,
-                        rr.topLeftCornerRadius.x,
-                        rr.topLeftCornerRadius.y,
-                        Path.Direction.CW
-                    )
-                }
-
-                clipPath(path)
-            }
-
-            is Outline.Generic -> {
-                val path = outline.path.asAndroidPath()
-                clipPath(path)
-            }
+        is Outline.Generic -> {
+            val path = outline.path.asAndroidPath()
+            clipPath(path)
         }
     }
 }

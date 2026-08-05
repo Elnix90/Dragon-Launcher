@@ -25,7 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,7 +52,6 @@ import org.elnix.dragonlauncher.enumsui.select.PointFeaturePanel
 import org.elnix.dragonlauncher.enumsui.select.SelectedUnselectedViewMode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.round
-import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.actionLabel
@@ -89,7 +87,6 @@ fun PointEditor(
     point: Point,
     defaultPoint: Point,
     isDefaultEditing: Boolean,
-    iconsViewModel: IconsViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel(), // Only used to get live nest stuff
     onDismiss: (Point) -> Unit
 ) {
@@ -117,18 +114,6 @@ fun PointEditor(
 
     val label = editPoint.customName ?: actionLabel(editPoint.action)
     val actionColor = editPoint.action.actionColor(extraColors, editPoint.customActionColor)
-
-    LaunchedEffect(
-        editPoint.action,
-        editPoint.customIcon,
-        editPoint.customActionColor,
-        editPoint.size,
-        editPoint.cycleActions,
-        editPoint.holdAndRunDelayMs,
-        editPoint.size
-    ) {
-        iconsViewModel.reloadIcon(editPoint)
-    }
 
     DragonModalBottomSheet(
         onDismissRequest = { onDismiss(editPoint) },
@@ -1004,13 +989,12 @@ fun PointEditor(
     }
 
     if (showEditIconDialog) {
-        PointIconEditor(editPoint) { newIcon ->
-            val previewPoint = point.copy(customIcon = newIcon)
-
-            iconsViewModel.reloadIcon(previewPoint)
-
+        PointIconEditor(editPoint) { newIcon, newProperties ->
             showEditIconDialog = false
-            editPoint = editPoint.copy(customIcon = newIcon)
+            editPoint = editPoint.copy(
+                customIcon = newIcon,
+                iconProperties = newProperties?.takeIf { it.isNotEmpty }
+            )
         }
     }
 

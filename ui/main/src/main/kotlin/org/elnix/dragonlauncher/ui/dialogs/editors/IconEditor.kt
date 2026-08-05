@@ -5,37 +5,37 @@ package org.elnix.dragonlauncher.ui.dialogs.editors
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.models.PointApp
 import org.elnix.dragonlauncher.base.model.serializables.CustomIcon
-import org.elnix.dragonlauncher.base.model.serializables.CustomIcon.Companion.getProperties
-import org.elnix.dragonlauncher.base.model.serializables.CustomIcon.Companion.setProperties
 import org.elnix.dragonlauncher.base.model.serializables.CustomIconProperties
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.IconsViewModel
-import org.elnix.dragonlauncher.ui.actions.AppIcon
+import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
-import org.elnix.dragonlauncher.ui.components.PointPreviewCanvas
+import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.components.ShapedLauncherIcon
 import org.elnix.dragonlauncher.ui.components.iconeditor.IconPicker
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalDrawerSettings
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
@@ -47,38 +47,26 @@ import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.ShapeRow
+import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 
 
 @Composable
 fun PointIconEditor(
     point: Point,
     iconsViewModel: IconsViewModel = activityViewModel(),
-    onPicked: (CustomIcon?) -> Unit
+    onPicked: (CustomIcon?, CustomIconProperties?) -> Unit
 ) {
-
-    var editCustomIcon by remember(point.customIcon) { mutableStateOf(point.customIcon) }
-    val previewPoint = point.copy(customIcon = editCustomIcon)
-
     val pointApp = remember(point.key) { PointApp(point) }
 
     IconEditorImpl(
         application = pointApp,
-        customIcon = editCustomIcon,
-        preview = {
-            PointPreviewCanvas(
-                editPoint = previewPoint,
-                isDefaultEditing = false,
-                backgroundColor = MaterialTheme.colorScheme.surface,
-                modifier = Modifier.weight(1f)
-            )
+        customIcon = point.customIcon,
+        initialProperties = point.iconProperties ?: CustomIconProperties(),
+        resolvePreview = { sizePx, icon, properties ->
+            iconsViewModel.getPointIconOnce(point, sizePx, icon, properties)
         },
-        onUpdate = {
-            editCustomIcon = it
-            iconsViewModel.reloadIcon(point.copy(customIcon = editCustomIcon))
-        }
-    ) {
-        onPicked(editCustomIcon)
-    }
+        onDismiss = onPicked
+    )
 }
 
 @Composable
@@ -92,24 +80,24 @@ fun AppIconEditor(
     val appOverrideManager = drawerViewModel.appOverrideManager
     val appOverrides by appOverrideManager.appOverrides.asState()
     val initialCustomIcon = appOverrides[app.key]?.customIcon
-
-    var editCustomIcon by remember(initialCustomIcon) { mutableStateOf(initialCustomIcon) }
+    val initialProperties = appOverrides[app.key]?.iconProperties ?: CustomIconProperties()
 
     IconEditorImpl(
         application = app,
-        customIcon = editCustomIcon,
-        preview = {
-            AppIcon(app, 56.dp)
+        customIcon = initialCustomIcon,
+        initialProperties = initialProperties,
+        resolvePreview = { sizePx, icon, properties ->
+            iconViewModel.getAppIconOnce(app, sizePx, icon, properties)
         },
-        onUpdate = {
-            editCustomIcon = it
-            appOverrideManager.setAppIcon(app.key, editCustomIcon)
-            iconViewModel.reloadIcon(app)
+        onDismiss = { newIcon, newProperties ->
+            appOverrideManager.setAppCustomization(
+                app.key,
+                newIcon,
+                newProperties.takeIf { it.isNotEmpty }
+            )
+            onDismiss()
         }
-    ) {
-        appOverrideManager.setAppIcon(app.key, editCustomIcon)
-        onDismiss()
-    }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -117,36 +105,68 @@ fun AppIconEditor(
 private fun IconEditorImpl(
     application: Application,
     customIcon: CustomIcon?,
-    preview: @Composable RowScope.() -> Unit,
-    onUpdate: (CustomIcon?) -> Unit,
-    onDismiss: (CustomIcon?) -> Unit
+    initialProperties: CustomIconProperties,
+    resolvePreview: suspend (sizePx: Int, icon: CustomIcon?, properties: CustomIconProperties) -> LauncherIcon?,
+    onDismiss: (CustomIcon?, CustomIconProperties) -> Unit
 ) {
-    var editIcon by remember { mutableStateOf(customIcon) }
-    var editProperties by remember { mutableStateOf(customIcon?.getProperties() ?: CustomIconProperties()) }
-
+    val iconSize = LocalDrawerSettings.current.iconSize
     val defaultIconShape = LocalDrawerSettings.current.iconShape
-    var showShapePickerDialog by remember { mutableStateOf(false) }
+
+    var editIcon by remember(customIcon, initialProperties) { mutableStateOf(customIcon) }
+    var editProperties by remember(customIcon, initialProperties) { mutableStateOf(initialProperties) }
+
+    var showAdvancedSettings by remember { mutableStateOf(false) }
+    var previewIcon by remember(application) { mutableStateOf<LauncherIcon?>(null) }
+    val previewSizePx = with(LocalDensity.current) { iconSize.toPx() }.toInt()
+
+    LaunchedEffect(editIcon, editProperties) {
+        previewIcon = resolvePreview(previewSizePx, editIcon, editProperties)
+    }
+
+    // TODO when picking unmodified system icon, it doesn't work and bug out completely I don't want to bother with that anymore
 
     DragonModalBottomSheet(
-        onDismissRequest = { onDismiss(editIcon?.setProperties(editProperties)) },
+        onDismissRequest = { onDismiss(editIcon, editProperties) },
         sheetState = rememberBottomSheetState(true),
         content = {
             DialogTitle(stringResource(R.string.icon_editor), resetEnabled = editIcon == null && editProperties.isNotEmpty) {
-                onUpdate(null)
                 editIcon = null
                 editProperties = CustomIconProperties()
             }
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
-                content = preview
+                content = {
+                    ShapedLauncherIcon(
+                        size = iconSize,
+                        icon = { previewIcon }
+                    )
+                }
             )
 
-            DebugZone(true) {
+            DebugZone(DebugSettingsStore.settingsDebugInfo) {
                 Text(editProperties.toString())
                 Text(editIcon.toString())
             }
 
+            DragonSettingsGroup {
+                SettingsItem(
+                    title = stringResource(R.string.advanced),
+                    icon = R.drawable.eyeglasses_3
+                ) { showAdvancedSettings = true }
+            }
+
+            Spacer(15.dp)
+
+            IconPicker(application) {
+                editIcon = it
+            }
+        }
+    )
+
+    if (showAdvancedSettings) {
+        DragonModalBottomSheet({showAdvancedSettings = false}) {
             Column(
                 modifier = Modifier
                     .heightIn(max = 800.dp)
@@ -202,6 +222,9 @@ private fun IconEditorImpl(
                     }
                 }
 
+
+                var showShapePickerDialog by remember { mutableStateOf(false) }
+
                 DragonSettingsGroup(R.string.advanced) {
                     ColorPickerRow(
                         title = stringResource(R.string.tint),
@@ -226,12 +249,7 @@ private fun IconEditorImpl(
                         editProperties = editProperties.copy(shape = it)
                     }
                 }
-
-                IconPicker(application) {
-                    editIcon = (it?.setProperties(editProperties))
-                    onUpdate(editIcon?.setProperties(editProperties))
-                }
             }
         }
-    )
+    }
 }

@@ -247,10 +247,17 @@ public class IconService internal constructor(
         }
     }
 
-    public fun reloadAppIcon(application: Application) {
-        @Suppress("UnusedFlow")
-        getAppIcon(application, true)
+    public fun getCustomIconProperties(application: Application): Flow<CustomIconProperties?> {
+        return appOverrideManager.appOverrides.flow.map {
+            it[application.key]?.iconProperties
+        }
     }
+
+//    public fun reloadAppIcon(application: Application) {
+//        scope.launch {
+//            getAppIcon(application, true).first()
+//        }
+//    }
 
     public fun reloadAllAppIcons() {
         DrawerIconCache.evictAll()
@@ -271,12 +278,15 @@ public class IconService internal constructor(
         reload: Boolean = false
     ): Flow<LauncherIcon?> {
         val customIcon = getCustomAppIcon(application)
+        val iconProperties = getCustomIconProperties(application)
 
-        return customIcon.flatMapLatest { customIcon ->
+        return combine(customIcon, iconProperties) { customIcon, properties ->
+            Pair(customIcon, properties)
+        }.flatMapLatest { (customIcon, properties) ->
             val iconSize = iconSize.first()
             val size = (iconSize.value * density.density).toInt()
 
-            resolveCustomAppIcon(application, size, reload, customIcon)
+            resolveCustomAppIcon(application, size, reload, customIcon, properties)
         }
     }
 
@@ -316,10 +326,11 @@ public class IconService internal constructor(
     }
 
 
-    public fun reloadPointIcon(point: Point) {
-        @Suppress("UnusedFlow")
-        getPointIcon(point, true)
-    }
+//    public fun reloadPointIcon(point: Point) {
+//        scope.launch {
+//            getPointIcon(point, true).first()
+//        }
+//    }
 
     public fun reloadAllPointIcons() {
         PointIconCache.evictAll()
@@ -332,16 +343,17 @@ public class IconService internal constructor(
         reload: Boolean = false
     ): Flow<LauncherIcon?> {
         return defaultPoint.flow.flatMapLatest { defaultPoint ->
-            val size = point.getSize(defaultPoint, false) // TODO
+            val size = point.getSize(defaultPoint, false)
             resolveCustomPointIcon(point, size, reload)
         }
     }
 
 
-    public fun reloadShortcutIcon(shortcut: Action.LaunchShortcut) {
-        @Suppress("UnusedFlow")
-        getShortcutIcon(shortcut, true)
-    }
+//    public fun reloadShortcutIcon(shortcut: Action.LaunchShortcut) {
+//        scope.launch {
+//            getShortcutIcon(shortcut, true).first()
+//        }
+//    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     public fun getShortcutIcon(
@@ -379,13 +391,17 @@ public class IconService internal constructor(
         application: Application,
         size: Int,
         reload: Boolean,
-        customIcon: CustomIcon?
+        customIcon: CustomIcon?,
+        iconProperties: CustomIconProperties?
     ): Flow<LauncherIcon?> {
         return combine(iconProviders, transformations) { providers, transformations ->
 
+            val effectiveProperties = (customIcon?.getProperties()?.takeIf { it.isNotEmpty }
+                ?: iconProperties).takeIf { it?.isNotEmpty == true }
+
             val cacheKey = CacheKey(
                 data = application.key,
-                customIconHashCode = customIcon.hashCode(),
+                customIconHashCode = 31 * (customIcon?.hashCode() ?: 0) + effectiveProperties.hashCode(),
                 providersHashCode = providers.hashCode(),
                 transformationsHashcode = transformations.hashCode()
             )
@@ -405,6 +421,9 @@ public class IconService internal constructor(
 
             if (icon != null) {
                 icon = icon.transform(transforms)
+                if (effectiveProperties != null && icon is StaticLauncherIcon) {
+                    icon = icon.copy(properties = effectiveProperties)
+                }
                 DrawerIconCache.compute(cacheKey) { icon }
             }
             return@combine icon
@@ -418,10 +437,12 @@ public class IconService internal constructor(
     ): Flow<LauncherIcon?> {
         return combine(iconProviders, transformations, extraColors) { providers, transformations, _ ->
             val customIcon = point.customIcon
+            val effectiveProperties = (customIcon?.getProperties()?.takeIf { it.isNotEmpty }
+                ?: point.iconProperties).takeIf { it?.isNotEmpty == true }
 
             val cacheKey = CacheKey(
                 data = point.key,
-                customIconHashCode = customIcon.hashCode(),
+                customIconHashCode = 31 * (customIcon?.hashCode() ?: 0) + effectiveProperties.hashCode(),
                 providersHashCode = providers.hashCode(),
                 transformationsHashcode = transformations.hashCode()
             )
@@ -458,9 +479,65 @@ public class IconService internal constructor(
 
             if (icon != null) {
                 icon = icon.transform(transforms)
+                if (effectiveProperties != null && icon is StaticLauncherIcon) {
+                    icon = icon.copy(properties = effectiveProperties)
+                }
                 PointIconCache.compute(cacheKey) { icon }
             }
             return@combine icon
+        }
+    }
+
+    /**
+     * One-shot resolution of a single app icon with [customIcon] and [properties] applied,
+     * bypassing the store and the override manager. Used by the icon editor to preview
+     * changes live without touching the database.
+     */
+    public suspend fun getAppIconOnce(
+        application: Application,
+        size: Int,
+        customIcon: CustomIcon?,
+        properties: CustomIconProperties?
+    ): LauncherIcon? {
+        return resolveIconOnce(Action.LaunchApp(application), size, customIcon, properties)
+    }
+
+    /**
+     * One-shot resolution of a single point icon with [customIcon] and [properties] applied,
+     * bypassing the store and the override manager. Used by the icon editor to preview
+     * changes live without touching the database.
+     */
+    public suspend fun getPointIconOnce(
+        point: Point,
+        size: Int,
+        customIcon: CustomIcon?,
+        properties: CustomIconProperties?
+    ): LauncherIcon? {
+        return resolveIconOnce(point.action, size, customIcon, properties)
+    }
+
+    private suspend fun resolveIconOnce(
+        action: Action,
+        size: Int,
+        customIcon: CustomIcon?,
+        properties: CustomIconProperties?
+    ): LauncherIcon? {
+        val providers = iconProviders.value
+        val transforms = transformations.value
+
+        val provs = if (customIcon != null) getProviders(customIcon) + providers else providers
+        val effectiveTransforms = getTransformations(customIcon) ?: transforms
+
+        val icon = provs.getFirstIcon(action, size) ?: return null
+        val transformed = icon.transform(effectiveTransforms)
+
+        val effectiveProperties = (properties.takeIf { it?.isNotEmpty == true }
+            ?: customIcon?.getProperties()).takeIf { it?.isNotEmpty == true }
+
+        return if (effectiveProperties != null && transformed is StaticLauncherIcon) {
+            transformed.copy(properties = effectiveProperties)
+        } else {
+            transformed
         }
     }
 
@@ -539,7 +616,7 @@ public class IconService internal constructor(
     ): List<CustomIconWithPreview> {
         val suggestions = mutableListOf<CustomIconWithPreview>()
 
-        val rawIcon = iconProviders.first().getFirstIcon(action, size) ?: return emptyList()
+        val rawIcon = iconProviders.value.getFirstIcon(action, size) ?: return emptyList()
 
         val defaultTransformations = transformations.first()
 
@@ -650,8 +727,8 @@ public class IconService internal constructor(
         action: Action,
         size: Int
     ): CustomIconWithPreview? {
-        val icon = iconProviders.first().getFirstIcon(action, size)
-            ?.transform(transformations.first()) ?: return null
+        val icon = iconProviders.value.getFirstIcon(action, size)
+            ?.transform(transformations.value) ?: return null
         return CustomIconWithPreview(
             customIcon = null,
             preview = icon

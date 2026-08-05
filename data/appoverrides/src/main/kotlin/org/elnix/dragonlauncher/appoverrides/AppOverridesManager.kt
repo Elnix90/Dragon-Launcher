@@ -21,6 +21,7 @@ import org.elnix.dragonlauncher.base.model.serializables.AppOverride.Companion.d
 import org.elnix.dragonlauncher.base.model.serializables.AppOverrideState
 import org.elnix.dragonlauncher.base.model.serializables.CacheKey
 import org.elnix.dragonlauncher.base.model.serializables.CustomIcon
+import org.elnix.dragonlauncher.base.model.serializables.CustomIconProperties
 import org.elnix.dragonlauncher.settings.stores.array.AppOverridesSettingsStore
 
 
@@ -122,10 +123,16 @@ public class AppOverridesManager(
             old.copy(customName = customName?.takeIf { it.isNotEmpty() })
         }
     }
-
-    public fun setAppIcon(cacheKey: CacheKey, customIcon: CustomIcon?) {
+    public fun setAppCustomization(
+        cacheKey: CacheKey,
+        customIcon: CustomIcon?,
+        iconProperties: CustomIconProperties?
+    ) {
         updateOv(cacheKey) { old ->
-            old.copy(customIcon = customIcon)
+            old.copy(
+                customIcon = customIcon,
+                iconProperties = iconProperties
+            )
         }
     }
 

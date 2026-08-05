@@ -188,15 +188,15 @@ fun MainScreenOverlay(
             hp
         }
     }
-
-    // Reload the point icon depending on the action in the cycleController
-    LaunchedEffect(hoveredPoint?.id, cycleActionsController.currentStageIndex) {
-        if (!isDragging) return@LaunchedEffect
-        val hp = hoveredPoint ?: return@LaunchedEffect
-        if (hp.cycleActions.isNullOrEmpty()) return@LaunchedEffect
-        val dp = displayPoint ?: return@LaunchedEffect
-        iconsViewModel.reloadIcon(dp)
-    }
+//
+//    // Reload the point icon depending on the action in the cycleController
+//    LaunchedEffect(hoveredPoint?.id, cycleActionsController.currentStageIndex) {
+//        if (!isDragging) return@LaunchedEffect
+//        val hp = hoveredPoint ?: return@LaunchedEffect
+//        if (hp.cycleActions.isNullOrEmpty()) return@LaunchedEffect
+//        val dp = displayPoint ?: return@LaunchedEffect
+//        iconsViewModel.reloadIcon(dp)
+//    }
 
 
     val holdAndRun = rememberHoldAndRunController(

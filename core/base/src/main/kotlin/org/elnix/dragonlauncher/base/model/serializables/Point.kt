@@ -125,6 +125,12 @@ public data class Point(
     val customIcon: CustomIcon? = null,
 
     /**
+     * Properties applied to the default (null [customIcon]) icon.
+     * When [customIcon] is set, its own [CustomIconProperties] are used instead.
+     */
+    val iconProperties: CustomIconProperties? = null,
+
+    /**
      * Custom Glow that can be applied to the border
      */
     val glow: CustomGlow? = null,
@@ -427,6 +433,7 @@ public data class Point(
         public inline val Point.isDefault: Boolean
             get() = this.shapeId == null &&
                     this.customIcon == null &&
+                    this.iconProperties?.isNotEmpty != true &&
                     this.glow == null &&
                     this.glowSelected == null &&
                     this.borderStroke == null &&

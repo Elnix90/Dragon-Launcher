@@ -15,6 +15,8 @@ import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.models.IconSettings
 import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.CustomIcon
+import org.elnix.dragonlauncher.base.model.serializables.CustomIconProperties
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.icons.IconService
 import org.elnix.dragonlauncher.icons.IconSettingsRepository
@@ -87,9 +89,35 @@ public class IconsViewModel @Inject constructor(
 //    public suspend fun getActionIconOnce(action: Action): LauncherIcon? =
 //        iconsService.getActionIcon(action).first()
 
-    public fun reloadIcon(app: Application): Unit = iconsService.reloadAppIcon(app)
-    public fun reloadIcon(point: Point): Unit = iconsService.reloadPointIcon(point)
-    public fun reloadIcon(shortcut: Action.LaunchShortcut): Unit = iconsService.reloadShortcutIcon(shortcut)
+//    public fun reloadIcon(app: Application): Unit = iconsService.reloadAppIcon(app)
+//    public fun reloadIcon(point: Point): Unit = iconsService.reloadPointIcon(point)
+//    public fun reloadIcon(shortcut: Action.LaunchShortcut): Unit = iconsService.reloadShortcutIcon(shortcut)
+
+    /**
+     * One-shot preview of a single app icon with the given [customIcon] and [properties],
+     * bypassing the store and the override manager. Used by the icon editor to render
+     * live previews while editing.
+     */
+    public suspend fun getAppIconOnce(
+        application: Application,
+        size: Int,
+        customIcon: CustomIcon?,
+        properties: CustomIconProperties?
+    ): LauncherIcon? =
+        iconsService.getAppIconOnce(application, size, customIcon, properties)
+
+    /**
+     * One-shot preview of a single point icon with the given [customIcon] and [properties],
+     * bypassing the store and the override manager. Used by the icon editor to render
+     * live previews while editing.
+     */
+    public suspend fun getPointIconOnce(
+        point: Point,
+        size: Int,
+        customIcon: CustomIcon?,
+        properties: CustomIconProperties?
+    ): LauncherIcon? =
+        iconsService.getPointIconOnce(point, size, customIcon, properties)
 
 
 

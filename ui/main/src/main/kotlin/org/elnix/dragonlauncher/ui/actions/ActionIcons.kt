@@ -68,7 +68,7 @@ fun AppIcon(
 
     ShapedLauncherIcon(
         modifier = modifier,
-        maxSize = maxSize,
+        size = maxSize,
         icon = { icon },
         badge = { badge }
     )
@@ -85,7 +85,7 @@ fun ShortcutIcon(
 
     ShapedLauncherIcon(
         modifier = modifier,
-        maxSize = size,
+        size = size,
         icon = { icon }
     )
 }
@@ -101,7 +101,7 @@ fun ActionIcon(
 
     ShapedLauncherIcon(
         modifier = modifier,
-        maxSize = size,
+        size = size,
         icon = { icon }
     )
 }

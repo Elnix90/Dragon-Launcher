@@ -1213,7 +1213,7 @@ fun PointsSettingsScreen(
                 defaultPoint = defaultPoint,
                 isDefaultEditing = false
             ) { newPoint ->
-                iconsViewModel.reloadIcon(newPoint)
+//                iconsViewModel.reloadIcon(newPoint)
 
                 pointsService.editPoint(newPoint.id) { newPoint }
 

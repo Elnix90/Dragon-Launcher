@@ -296,7 +296,7 @@ fun IconPreview(
         modifier = Modifier.padding(vertical = 8.dp)
     ) {
         ShapedLauncherIcon(
-            maxSize = iconSize,
+            size = iconSize,
             icon = { item?.preview },
             modifier = Modifier.clickable(onClick = onClick),
         )

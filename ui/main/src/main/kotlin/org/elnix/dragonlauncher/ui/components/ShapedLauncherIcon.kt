@@ -70,7 +70,7 @@ import android.graphics.Shader as PlatformShader
 @Composable
 fun ShapedLauncherIcon(
     modifier: Modifier = Modifier,
-    maxSize: Dp,
+    size: Dp,
     icon: () -> LauncherIcon? = { null },
     badge: () -> Badge? = { null }
 ) {
@@ -88,15 +88,15 @@ fun ShapedLauncherIcon(
         )
     }
 
-    val size = maxSize.px.toInt()
+    val sizePxInt = size.px.toInt()
     val iconSettings = drawerSettings.iconSettings
 
     var currentBitmap by remember {
-        mutableStateOf(currentIcon?.getCachedBitmap(size, iconSettings))
+        mutableStateOf(currentIcon?.getCachedBitmap(sizePxInt, iconSettings))
     }
 
     LaunchedEffect(currentIcon, iconSettings) {
-        currentBitmap = currentIcon?.render(size, iconSettings)
+        currentBitmap = currentIcon?.render(sizePxInt, iconSettings)
     }
 
     if (icon is DynamicLauncherIcon) {
@@ -108,7 +108,7 @@ fun ShapedLauncherIcon(
 
     Box(
         modifier = modifier
-            .sizeIn(maxWidth = maxSize, maxHeight = maxSize)
+            .sizeIn(maxWidth = size, maxHeight = size)
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -119,7 +119,7 @@ fun ShapedLauncherIcon(
             if (bmp != null && ic != null) {
                 Canvas(
                     modifier = Modifier
-                        .requiredSize(maxSize)
+                        .requiredSize(size)
 //                        .scale(maxIconSize / defaultIconSize, TransformOrigin.Center)
                 ) {
                     val brush = BitmapShaderBrush(bmp)
@@ -156,7 +156,7 @@ fun ShapedLauncherIcon(
                         Text(
                             text = fg.text,
                             style = MaterialTheme.typography.headlineSmall.copy(
-                                fontSize = 20.sp * (maxSize / 48.dp)
+                                fontSize = 20.sp * (size / 48.dp)
                             ),
                             color = Color(fg.tint ?: 0)
                         )
@@ -166,7 +166,7 @@ fun ShapedLauncherIcon(
                         Icon(
                             painter = painterResource(fg.icon), contentDescription = null,
                             tint = Color(fg.tint ?: 0),
-                            modifier = Modifier.size(maxSize / 2f),
+                            modifier = Modifier.size(size / 2f),
                         )
                     }
 
@@ -189,7 +189,7 @@ fun ShapedLauncherIcon(
             Surface(
                 tonalElevation = 1.dp,
                 modifier = Modifier
-                    .size(maxSize * 0.33f)
+                    .size(size * 0.33f)
                     .align(Alignment.BottomEnd),
                 color = MaterialTheme.colorScheme.tertiary,
                 shape = CircleShape
@@ -203,7 +203,7 @@ fun ShapedLauncherIcon(
                         CircularProgressIndicator(
                             modifier = Modifier.fillMaxSize(0.8f),
                             progress = { progress },
-                            strokeWidth = maxSize / 48,
+                            strokeWidth = size / 48,
                             color = MaterialTheme.colorScheme.onTertiary
                         )
                     }
@@ -214,7 +214,7 @@ fun ShapedLauncherIcon(
                         Icon(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(maxSize / 24),
+                                .padding(size / 24),
                             painter = painterResource(badgeIcon.iconRes),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onTertiary,
@@ -223,7 +223,7 @@ fun ShapedLauncherIcon(
                         Canvas(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(maxSize / 48)
+                                .padding(size / 48)
                         ) {
                             badgeIcon.drawable.setBounds(
                                 0,
@@ -241,7 +241,7 @@ fun ShapedLauncherIcon(
                             color = MaterialTheme.colorScheme.secondaryContainer,
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontSize = with(LocalDensity.current) {
-                                    maxSize.toSp() * 0.2f
+                                    size.toSp() * 0.2f
                                 }
                             ),
                         )
