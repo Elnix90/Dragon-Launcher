@@ -75,7 +75,7 @@ public class DrawerViewModel @Inject constructor(
         getOnlyAdded: Boolean = false,
         getOnlyRemoved: Boolean = false
     ): StateFlow<List<Application>> = appsRepository.search(
-        searchQuery.value,
+        searchQuery.value.trim(),
         workspace = workspace,
         getOnlyAdded = getOnlyAdded,
         getOnlyRemoved = getOnlyRemoved,
