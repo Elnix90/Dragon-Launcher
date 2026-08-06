@@ -309,6 +309,7 @@ fun AppPickerDialog(
                                 }
                             },
                             selectedPackages = selectedApps,
+                            onReload = drawerViewModel::reloadApps,
                             longPressPopup = false,
                             onClick = {
                                 onAppSelected(it)

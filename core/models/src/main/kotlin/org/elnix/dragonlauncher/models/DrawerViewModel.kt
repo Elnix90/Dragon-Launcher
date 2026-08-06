@@ -89,9 +89,7 @@ public class DrawerViewModel @Inject constructor(
         appsRepository.refreshApps()
     }
 
-    public fun getRecentApps(count: Int): StateFlow<List<Application>> {
-        return recentsService.getRecentApps(count)
-    }
+    public fun getRecentApps(count: Int): StateFlow<List<Application>> = recentsService.getRecentApps(count)
 
     public val selectedWorkspaceId: StateFlow<String> = workspaceManager.selectedWorkspaceId.stateIn(
         scope = viewModelScope,
@@ -99,7 +97,7 @@ public class DrawerViewModel @Inject constructor(
         initialValue = "User"
     )
 
-    public val activeWorkspaces : StateFlow<List<Workspace>> = workspaceManager.workspaces.flow.map { workspaces ->
+    public val activeWorkspaces: StateFlow<List<Workspace>> = workspaceManager.workspaces.flow.map { workspaces ->
         workspaces.filter { it.enabled }
     }.stateIn(
         scope = viewModelScope,
@@ -107,7 +105,7 @@ public class DrawerViewModel @Inject constructor(
         initialValue = emptyList()
     )
 
-            public fun queryAppShortcuts(packageName: String): List<ShortcutInfo> = appsRepository.queryAppShortcuts(packageName)
+    public fun queryAppShortcuts(packageName: String): List<ShortcutInfo> = appsRepository.queryAppShortcuts(packageName)
 
     public fun hasPermission(permission: PermissionGroup): Flow<Boolean> = permissionsManager.hasPermission(permission)
 

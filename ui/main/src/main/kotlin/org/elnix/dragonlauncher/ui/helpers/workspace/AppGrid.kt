@@ -42,10 +42,9 @@ import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.models.AppCategory
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
-import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalDrawerSettings
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.drawer.AppItemGrid
 import org.elnix.dragonlauncher.ui.drawer.AppItemHorizontal
@@ -65,34 +64,32 @@ fun AppGrid(
 
     paddingValues: PaddingValues = PaddingValues(),
 
-    drawerViewModel: DrawerViewModel = activityViewModel(),
-
-    reloadAllowed: Boolean = true,
     // Multi select things
     isMultiSelectMode: Boolean = false,
     selectedPackages: List<Application> = emptyList(),
     onEnterMultiSelect: ((Application) -> Unit)? = null,
     onToggleSelect: ((Application) -> Unit)? = null,
+    onReload: (() -> Unit)? = null,
 
     onTopStateChange: ((Boolean) -> Unit)? = null,
     longPressPopup: Boolean,
     onClick: ((Application) -> Unit)?
 ) {
-    var openedCategory by remember { mutableStateOf<AppCategory?>(null) }
+    val drawerSettings = LocalDrawerSettings.current
+    val useCategory = drawerSettings.useCategory
+    val gridSize = drawerSettings.gridSize
+    val categoryGridCells = drawerSettings.categoryGridCells
+    val iconsSpacingVertical = drawerSettings.iconsSpacingVertical
+    val iconsSpacingHorizontal = drawerSettings.iconsSpacingHorizontal
 
-    val useCategory by DrawerSettingsStore.useCategory.asState()
-    val gridSize by DrawerSettingsStore.gridSize.asState()
-    val categoryGridCells by DrawerSettingsStore.categoryGridCells.asState()
-    val iconsSpacingVertical by DrawerSettingsStore.iconsSpacingVertical.asState()
-    val iconsSpacingHorizontal by DrawerSettingsStore.iconsSpacingHorizontal.asState()
+    var openedCategory by remember { mutableStateOf<AppCategory?>(null) }
 
     val visibleApps by remember(apps) {
         derivedStateOf {
-            // Only display the apps that belongs to the selected category, if enabled
-            apps.filter {
-                if (useCategory) openedCategory?.let { cat -> cat == it.category } ?: true
-                else true
-            }
+            if (useCategory) {
+                // Only display the apps that belongs to the selected category, if enabled
+                apps.filter { openedCategory?.let { cat -> cat == it.category } ?: true }
+            } else apps
         }
     }
 
@@ -146,7 +143,7 @@ fun AppGrid(
                             color = MaterialTheme.colorScheme.onBackground
                         )
 
-                        if (reloadAllowed) {
+                        if (onReload != null) {
                             var isLoading by remember { mutableStateOf(false) }
 
                             Crossfade(isLoading) { showLoadingIcon ->
@@ -161,7 +158,7 @@ fun AppGrid(
                                         icon = R.drawable.refresh,
                                         contentDescription = stringResource(R.string.reload_apps)
                                     ) {
-                                        drawerViewModel.reloadApps()
+                                        onReload()
                                         isLoading = true
                                     }
                                 }

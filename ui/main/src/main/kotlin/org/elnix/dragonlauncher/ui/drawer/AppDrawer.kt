@@ -154,8 +154,8 @@ fun AppDrawerScreen(
     }
 
 
-    val activeWorkspaces by drawerViewModel.activeWorkspaces.collectAsState()
-    val selectedWorkspaceId by drawerViewModel.selectedWorkspaceId.collectAsState()
+    val activeWorkspaces by drawerViewModel.activeWorkspaces.collectAsStateWithLifecycle()
+    val selectedWorkspaceId by drawerViewModel.selectedWorkspaceId.collectAsStateWithLifecycle()
 
     val initialIndex = activeWorkspaces.indexOfFirst { it.id == selectedWorkspaceId }
     val pagerState = rememberPagerState(
@@ -459,8 +459,7 @@ fun AppDrawerScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(start = leftDrawerWidth, end = rightDrawerWidth),
-            state = pagerState,
-            key = { it.hashCode() }
+            state = pagerState
         ) { pageIndex ->
 
             val workspace = activeWorkspaces[pageIndex]
@@ -558,7 +557,8 @@ fun AppDrawerScreen(
                             AppGrid(
                                 apps = recentApps,
                                 fillMaxSize = false,
-                                longPressPopup = true
+                                longPressPopup = true,
+                                onReload = drawerViewModel::reloadApps
                             ) {
                                 onLaunchAction(it.action)
                             }

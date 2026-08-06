@@ -124,8 +124,7 @@ fun WorkspaceDetailScreen(
                                 AppGrid(
                                     apps = apps.sortedBy { it.label },
                                     longPressPopup = true,
-                                    onClick = null,
-                                    reloadAllowed = false
+                                    onClick = null
                                 )
                             }
                         }
