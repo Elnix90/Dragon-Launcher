@@ -98,6 +98,8 @@ import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalActiveWorkspaces
+import org.elnix.dragonlauncher.ui.compositionslocals.LocalDrawerSettings
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.helpers.wallpaper.WallpaperDim
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppDrawerSearch
@@ -118,33 +120,22 @@ fun AppDrawerScreen(
 ) {
     val ctx = LocalContext.current
     val navigator = LocalNavigator.current
+    val drawerSettings = LocalDrawerSettings.current
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusRequester = remember { FocusRequester() }
 
-    val autoLaunchSingleMatch by DrawerSettingsStore.autoOpenSingleMatch.asState()
-    val disableAutoLaunchOnSpaceFirstChar by DrawerSettingsStore.disableAutoLaunchOnSpaceFirstChar.asState()
-    val tapEmptySpaceToRaiseKeyboard by DrawerSettingsStore.tapEmptySpaceAction.asState()
-    val drawerEnterAction by DrawerSettingsStore.drawerEnterAction.asState()
-    val drawerBackAction by DrawerSettingsStore.backDrawerAction.asState()
-    val drawerHomeAction by DrawerSettingsStore.drawerHomeAction.asState()
-    val drawerScrollDownAction by DrawerSettingsStore.scrollDownDrawerAction.asState()
-    val drawerScrollUpAction by DrawerSettingsStore.scrollUpDrawerAction.asState()
-    val showSearchBar by DrawerSettingsStore.showSearchBar.asState()
-    val showRecentlyUsedApps by DrawerSettingsStore.showRecentlyUsedApps.asState()
-    val recentlyUsedAppsCount by DrawerSettingsStore.recentlyUsedAppsCount.asState()
-    val autoShowKeyboard by DrawerSettingsStore.autoShowKeyboardOnDrawer.asState()
-    val drawerToolbarsOrder by DrawerSettingsStore.toolbarsOrder.asState()
+    val autoShowKeyboard  = drawerSettings.autoShowKeyboard
+    val showSearchBar  = drawerSettings.showSearchBar
+    val showRecentlyUsedApps  = drawerSettings.showRecentlyUsedApps
+    val toolbarsOrder  = drawerSettings.toolbarsOrder
 
-    val recentApps by drawerViewModel.getRecentApps(recentlyUsedAppsCount).collectAsStateWithLifecycle(emptyList())
+    val recentApps by drawerViewModel.getRecentApps(drawerSettings.recentlyUsedAppsCount).collectAsStateWithLifecycle(emptyList())
 
 
     var haveToLaunchFirstApp by remember { mutableStateOf(false) }
-
     var searchQuery by drawerViewModel.searchQuery
-
-    val focusRequester = remember { FocusRequester() }
-    val focusManager = LocalFocusManager.current
-    val keyboardController = LocalSoftwareKeyboardController.current
     var isSearchFocused by remember { mutableStateOf(false) }
-
 
     LaunchedEffect(Unit, autoShowKeyboard) {
         if (autoShowKeyboard) {
@@ -154,7 +145,7 @@ fun AppDrawerScreen(
     }
 
 
-    val activeWorkspaces by drawerViewModel.activeWorkspaces.collectAsStateWithLifecycle()
+    val activeWorkspaces= LocalActiveWorkspaces.current
     val selectedWorkspaceId by drawerViewModel.selectedWorkspaceId.collectAsStateWithLifecycle()
 
     val initialIndex = activeWorkspaces.indexOfFirst { it.id == selectedWorkspaceId }
@@ -223,7 +214,7 @@ fun AppDrawerScreen(
     DisposableEffect(Unit) {
 
         val handler = {
-            launchDrawerAction(drawerHomeAction)
+            launchDrawerAction(drawerSettings.drawerHomeAction)
         }
 
         onRegisterHomeHandler(handler)
@@ -234,13 +225,13 @@ fun AppDrawerScreen(
     }
 
     BackHandler {
-        launchDrawerAction(drawerBackAction)
+        launchDrawerAction(drawerSettings.drawerBackAction)
     }
 
 
-    val filteredToolbarsOrder by remember(drawerToolbarsOrder, showSearchBar, showRecentlyUsedApps) {
+    val filteredToolbarsOrder by remember(toolbarsOrder, showSearchBar, showRecentlyUsedApps) {
         derivedStateOf {
-            drawerToolbarsOrder.filter { item ->
+            toolbarsOrder.filter { item ->
                 when (item) {
                     RecentlyUsed -> showRecentlyUsedApps
                     SearchBar -> showSearchBar
@@ -373,7 +364,7 @@ fun AppDrawerScreen(
 
                 // Launch Up action on any up scroll large enough
                 if (available.y < -15) {
-                    launchDrawerAction(drawerScrollUpAction)
+                    launchDrawerAction(drawerSettings.drawerScrollUpAction)
                 }
 
                 return Offset.Zero
@@ -388,7 +379,7 @@ fun AppDrawerScreen(
 
                 // DOWN action
                 if (pullOffset > thresholdPx) {
-                    launchDrawerAction(drawerScrollDownAction)
+                    launchDrawerAction(drawerSettings.drawerScrollDownAction)
                 }
 
                 // reset
@@ -400,27 +391,26 @@ fun AppDrawerScreen(
         }
     }
 
-
-    val animatedScale by animateFloatAsState(
-        targetValue = if (pullDownScaleIn) (pullProgress.pow(0.9f)).coerceIn(0.95f, 1f)
-        else 1f
-    )
-
-
-    val pullDownPadding = if (pullDownAnimations) pullOffset else 0f
-    val animatedPadding by animateDpAsState(targetValue = pullDownPadding.toDp)
-
     val wallpaperDimDrawerScreen by UiSettingsStore.wallpaperDimDrawerScreen.asState()
     val pullDownWallPaperDimFadeEnabled by DrawerSettingsStore.pullDownWallPaperDim.asState()
 
-    val animatedDim by animateFloatAsState(targetValue = pullProgress)
+    val leftDrawerAction by DrawerSettingsStore.leftDrawerAction.asState()
+    val leftDrawerWidth by DrawerSettingsStore.leftDrawerWidth.asState()
+
+    val rightDrawerAction by DrawerSettingsStore.rightDrawerAction.asState()
+    val rightDrawerWidth by DrawerSettingsStore.rightDrawerWidth.asState()
+
+    val profiles by profilesViewModel.profiles.collectAsState(emptyList())
+    val profileStates by profilesViewModel.profileStates.collectAsState(emptyList())
+
+
+    val animatedScale by animateFloatAsState(if (pullDownScaleIn) (pullProgress.pow(0.9f)).coerceIn(0.95f, 1f) else 1f)
+    val animatedPadding by animateDpAsState((if (pullDownAnimations) pullOffset else 0f).toDp)
+    val animatedDim by animateFloatAsState(targetValue = if (pullDownWallPaperDimFadeEnabled) pullProgress else 1f)
+
     // Dims the wallpaper, when the user starts pulling down,
     // the dim amount is reduced proportionally to the drag amount
-    val dimAmount = wallpaperDimDrawerScreen *
-            if (pullDownWallPaperDimFadeEnabled) animatedDim
-            else 1f
-
-    WallpaperDim(dimAmount)
+    WallpaperDim(wallpaperDimDrawerScreen * animatedDim)
 
 
     Box(
@@ -436,25 +426,14 @@ fun AppDrawerScreen(
                 }
             }
             .clickable(
-                enabled = tapEmptySpaceToRaiseKeyboard.isUsed,
+                enabled = drawerSettings.tapEmptySpaceAction.isUsed,
                 indication = null,
                 interactionSource = null
             ) {
                 toggleKeyboard()
             }
     ) {
-
-        val leftDrawerAction by DrawerSettingsStore.leftDrawerAction.asState()
-        val leftDrawerWidth by DrawerSettingsStore.leftDrawerWidth.asState()
-
-        val rightDrawerAction by DrawerSettingsStore.rightDrawerAction.asState()
-        val rightDrawerWidth by DrawerSettingsStore.rightDrawerWidth.asState()
-
         DrawerActions(leftDrawerAction, leftDrawerWidth, rightDrawerAction, rightDrawerWidth, ::launchDrawerAction)
-
-        val profiles by profilesViewModel.profiles.collectAsState(emptyList())
-        val profileStates by profilesViewModel.profileStates.collectAsState(emptyList())
-
         HorizontalPager(
             modifier = Modifier
                 .fillMaxSize()
@@ -488,10 +467,10 @@ fun AppDrawerScreen(
             LaunchedEffect(haveToLaunchFirstApp, apps) {
 
                 val autoLaunch =
-                    autoLaunchSingleMatch &&
+                    drawerSettings.autoOpenSingleMatch &&
                             apps.size == 1 &&
                             searchQuery.isNotEmpty() &&
-                            !(disableAutoLaunchOnSpaceFirstChar && searchQuery.first() == ' ')
+                            !(drawerSettings.disableAutoLaunchOnSpaceFirstChar && searchQuery.first() == ' ')
 
                 if (haveToLaunchFirstApp || autoLaunch && apps.isNotEmpty()) {
                     onLaunchAction(apps.first().action)
@@ -504,7 +483,10 @@ fun AppDrawerScreen(
                 }
 
                 workspaceLocked -> {
-                    WorkspaceLockedContent(workspaceProfile)
+                    WorkspaceLockedContent(
+                        workspaceProfile = workspaceProfile,
+                        isActive = selectedWorkspaceId == workspace.id
+                    )
                 }
 
                 else -> {
@@ -536,7 +518,7 @@ fun AppDrawerScreen(
 
         var showMoreMenu by remember { mutableStateOf(false) }
 
-        drawerToolbarsOrder.forEach { toolbar ->
+        toolbarsOrder.forEach { toolbar ->
             when (toolbar) {
                 Spacer -> Spacer(Modifier.weight(1f))
 
@@ -600,7 +582,7 @@ fun AppDrawerScreen(
                             },
                             onSearchChanged = { searchQuery = it },
                             modifier = Modifier.focusRequester(focusRequester),
-                            onEnterPressed = { launchDrawerAction(drawerEnterAction) },
+                            onEnterPressed = { launchDrawerAction(drawerSettings.drawerEnterAction) },
                             onFocusStateChanged = { isSearchFocused = it }
                         )
                     }

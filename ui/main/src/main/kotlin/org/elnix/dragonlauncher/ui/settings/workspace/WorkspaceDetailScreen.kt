@@ -116,7 +116,7 @@ fun WorkspaceDetailScreen(
                         }
 
                         workspaceLocked -> {
-                            WorkspaceLockedContent(workspaceProfile)
+                            WorkspaceLockedContent(workspaceProfile, true)
                         }
 
                         else -> {

@@ -337,6 +337,8 @@
     <string name="auto_launch_single_match_desc">When only one app is visible in the drawer, it\'ll be automatically launched</string>
     <string name="auto_show_keyboard">Auto show keyboard</string>
     <string name="auto_show_keyboard_desc">Open the keyboard upon entering the drawer</string>
+    <string name="auto_ask_to_unlock_profile">Auto ask to unlock profile</string>
+    <string name="auto_ask_to_unlock_profile_desc">When the selected workspace points to a locked profile, it asks automatically to unlock it</string>
     <string name="tap_empty_space_action">Tap empty space action</string>
     <string name="close_kb">Close Keyboard</string>
     <string name="open_kb">Open keyboard</string>

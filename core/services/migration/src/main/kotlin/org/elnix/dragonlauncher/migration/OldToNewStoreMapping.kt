@@ -203,6 +203,9 @@ internal object OldToNewStoreMapping {
                 "showAppLabelInDrawer" to "showAppLabelsInDrawer",
                 "categoryGridWidth" to "categoryGridCells",
                 "iconsShape" to "iconShape",
+                "scrollDownDrawerAction" to "drawerScrollDownAction",
+                "scrollUpDrawerAction" to "drawerScrollUpAction",
+                "backDrawerAction" to "drawerBackAction",
                 "tabEmptySpaceToRaiseKeyboard" to "tapEmptySpaceAction",
                 "recentlyUsedPackagesSet" to "recentlyUsedPackages",
                 "iconsSpacingHorizontal\u00B2" to "iconsSpacingHorizontal"

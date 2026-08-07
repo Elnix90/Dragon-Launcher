@@ -65,6 +65,15 @@ public object DrawerSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
+    public val autoAskToUnlockProfile: BooleanSettingObject = boolean(
+        title = R.string.auto_show_keyboard,
+        description = R.string.auto_show_keyboard_desc,
+        default = true
+    )
+
+
+
+    @SettingKey
     public val tapEmptySpaceAction: EnumSettingObject<DrawerActions> = enum(
         title = R.string.tap_empty_space_action,
         default = DrawerActions.Close
@@ -127,19 +136,19 @@ public object DrawerSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val scrollDownDrawerAction: EnumSettingObject<DrawerActions> = enum(
+    public val drawerScrollDownAction: EnumSettingObject<DrawerActions> = enum(
         title = R.string.scroll_down_action,
         default = DrawerActions.defaultScrollDownAction
     )
 
     @SettingKey
-    public val scrollUpDrawerAction: EnumSettingObject<DrawerActions> = enum(
+    public val drawerScrollUpAction: EnumSettingObject<DrawerActions> = enum(
         title = R.string.scroll_up_action,
         default = DrawerActions.defaultScrollUpAction
     )
 
     @SettingKey
-    public val backDrawerAction: EnumSettingObject<DrawerActions> = enum(
+    public val drawerBackAction: EnumSettingObject<DrawerActions> = enum(
         title = R.string.back_action,
         default = DrawerActions.defaultBackAction
     )
@@ -256,6 +265,6 @@ public object DrawerSettingsStore : MapSettingsStore() {
     @SettingKey
     public val toolbarsOrder: EnumListSettingObject<DrawerToolbar> = enumList(
         title = R.string.toolbars_order,
-        default = DrawerToolbar.defaultDrawerToolbarOrder
+        default = DrawerToolbar.defaultToolbarOrder
     )
 }

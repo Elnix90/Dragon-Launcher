@@ -285,7 +285,10 @@ fun AppPickerDialog(
                     }
 
                     workspaceLocked -> {
-                        WorkspaceLockedContent(workspaceProfile)
+                        WorkspaceLockedContent(
+                            workspaceProfile = workspaceProfile,
+                            isActive = selectedWorkspaceId == workspace.id
+                        )
                     }
 
                     else -> {

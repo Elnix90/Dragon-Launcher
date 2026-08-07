@@ -13,7 +13,7 @@ public enum class DrawerToolbar(
     SearchBar(R.string.search_bar, R.drawable.search);
 
     public companion object {
-        public val defaultDrawerToolbarOrder: List<DrawerToolbar> = listOf(
+        public val defaultToolbarOrder: List<DrawerToolbar> = listOf(
             Spacer,
             RecentlyUsed,
             SearchBar

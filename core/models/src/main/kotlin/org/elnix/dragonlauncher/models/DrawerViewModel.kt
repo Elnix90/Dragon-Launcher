@@ -97,11 +97,17 @@ public class DrawerViewModel @Inject constructor(
         initialValue = "User"
     )
 
+
+    /**
+     * Returns a flow containing only the active workspaces.
+     * It shares the flow using [SharingStarted.Eagerly] and its really important,
+     * so that the flow always receives the correct workspaces, and not an emptyList when it starts to collect it
+     */
     public val activeWorkspaces: StateFlow<List<Workspace>> = workspaceManager.workspaces.flow.map { workspaces ->
         workspaces.filter { it.enabled }
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.Lazily,
+        started = SharingStarted.Eagerly,
         initialValue = emptyList()
     )
 

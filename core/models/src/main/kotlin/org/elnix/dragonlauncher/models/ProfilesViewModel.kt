@@ -41,7 +41,7 @@ public class ProfilesViewModel @Inject constructor(
     }
 
 
-    public fun setProfileLock(profile: Profile?, locked: Boolean) {
+    public fun askProfileLock(profile: Profile?, locked: Boolean) {
         if (isAtLeastApiLevel(28) && profile != null) {
             if (locked) {
                 profileManager.lockProfile(profile)

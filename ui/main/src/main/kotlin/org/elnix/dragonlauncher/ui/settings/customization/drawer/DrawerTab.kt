@@ -44,7 +44,7 @@ import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.animation.easingSpec
 import org.elnix.dragonlauncher.ui.base.modifiers.semiTransparentIfDisabled
-import org.elnix.dragonlauncher.ui.dialogs.DrawerToolbarsOrderDialog
+import org.elnix.dragonlauncher.ui.dialogs.toolbarsOrderDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
@@ -74,7 +74,7 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
 
     val drawerCategorySettingsState = rememberExpandableSection(stringResource(R.string.category_settings))
 
-    val autoLaunchSingleMatch by DrawerSettingsStore.autoOpenSingleMatch.asState()
+    val autoOpenSingleMatch by DrawerSettingsStore.autoOpenSingleMatch.asState()
     val showRecentlyUsed by DrawerSettingsStore.showRecentlyUsedApps.asState()
     val useCategory by DrawerSettingsStore.useCategory.asState()
 
@@ -126,8 +126,9 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
 
         DragonSettingsGroup(R.string.behavior) {
             Setting(DrawerSettingsStore.autoOpenSingleMatch)
-            Setting(DrawerSettingsStore.disableAutoLaunchOnSpaceFirstChar, enabled = autoLaunchSingleMatch)
+            Setting(DrawerSettingsStore.disableAutoLaunchOnSpaceFirstChar, enabled = autoOpenSingleMatch)
             Setting(DrawerSettingsStore.autoShowKeyboardOnDrawer)
+            Setting(DrawerSettingsStore.autoAskToUnlockProfile)
         }
 
         DragonSettingsGroup(R.string.drawer_pull_down_settings) {
@@ -197,10 +198,10 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
         }
 
         DragonSettingsGroup(R.string.drawer_actions) {
-            DrawerActionSelector(DrawerSettingsStore.scrollUpDrawerAction)
-            DrawerActionSelector(DrawerSettingsStore.scrollDownDrawerAction)
+            DrawerActionSelector(DrawerSettingsStore.drawerScrollUpAction)
+            DrawerActionSelector(DrawerSettingsStore.drawerScrollDownAction)
             DrawerActionSelector(DrawerSettingsStore.tapEmptySpaceAction)
-            DrawerActionSelector(DrawerSettingsStore.backDrawerAction)
+            DrawerActionSelector(DrawerSettingsStore.drawerBackAction)
             DrawerActionSelector(DrawerSettingsStore.drawerEnterAction)
             DrawerActionSelector(DrawerSettingsStore.drawerHomeAction)
         }
@@ -326,7 +327,7 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
     }
 
     if (showToolbarsOrderDialog) {
-        DrawerToolbarsOrderDialog { showToolbarsOrderDialog = false }
+        toolbarsOrderDialog { showToolbarsOrderDialog = false }
     }
 }
 
