@@ -57,7 +57,7 @@ junitExt = "1.7.0"
 robolectric = "4.16.1"
 json = "20260719"
 
-dependency-analysis = "3.17.0"
+dependency-analysis = "3.18.0"
 
 logging = "1.0.2"
 settings = "1.2.0"

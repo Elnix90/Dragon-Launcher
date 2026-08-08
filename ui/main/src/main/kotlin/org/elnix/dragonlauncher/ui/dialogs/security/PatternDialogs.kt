@@ -43,9 +43,9 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.lock.ComposeLock
-import io.github.elnix90.lock.ComposeLockCallback
 import io.github.elnix90.lock.Dot
+import io.github.elnix90.lock.PatternLock
+import io.github.elnix90.lock.patttern.ComposeLockCallback
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
@@ -371,7 +371,7 @@ private fun PatternPrompt(
                 }
             }
 
-            ComposeLock(
+            PatternLock(
                 dimension = patternSize,
                 sensitivity = 100f,
                 dotsColor = MaterialTheme.colorScheme.primary,

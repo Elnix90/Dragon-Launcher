@@ -50,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
@@ -58,6 +59,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import io.github.elnix90.lock.PinLock
+import io.github.elnix90.lock.pin.PinIndicator
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
@@ -295,11 +298,7 @@ private fun PinPrompt(
         metalPipesSoundEnabled = metalPipesSound
     )
 
-    val backgroundOverlayColor = remember {
-        Animatable(
-            Color.Transparent
-        )
-    }
+    val backgroundOverlayColor = remember { Animatable(Color.Transparent) }
 
     LaunchedEffect(failedTries) {
         if (failedTries > 0 && superWarningMode) {
@@ -307,6 +306,8 @@ private fun PinPrompt(
                 backgroundOverlayColor.animateTo(Color.Red)
 
                 if (vibrateOnError) {
+                    // Forcefully vibrate using the low-level API to not rely on the phone settings.
+                    // This will ALWAYS vibrate,no matter what the user settings are 😈
                     ctx.vibrate(500L)
                 }
 
@@ -382,8 +383,7 @@ private fun PinPrompt(
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-                PinIndicator(pinShapes)
-
+                PinIndicator(pinShapes) { it.resolveShape() }
                 AnimatedVisibility(errorMessage != null) {
                     if (errorMessage != null) {
                         Text(
@@ -395,7 +395,7 @@ private fun PinPrompt(
                 }
             }
 
-            NumericPinPad(
+            PinLock(
                 modifier = Modifier.fillMaxWidth(),
                 onDigit = { digit ->
                     if (pinValue.length < maxDigits) {
@@ -412,187 +412,4 @@ private fun PinPrompt(
             )
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Composable
-private fun PinIndicator(
-    shapes: List<IconShape>
-) {
-    val scope = rememberCoroutineScope()
-    val lazyState = rememberLazyListState()
-
-    LaunchedEffect(shapes.size) {
-        if (shapes.isNotEmpty()){
-            scope.launch { lazyState.scrollToItem(shapes.lastIndex) }
-        }
-    }
-
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        state = lazyState
-    ) {
-        items(shapes) { shape ->
-            var scaleTarget by remember { mutableFloatStateOf(0f) }
-
-            // Trigger visibility only once when shape is added
-            // I find this genius
-            LaunchedEffect(shape) {
-                scaleTarget = 1f
-            }
-
-            val scale by animateFloatAsState(
-                targetValue = scaleTarget,
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessLow
-                )
-            )
-
-            Box(
-                modifier = Modifier
-                    .size(25.dp)
-                    .graphicsLayer(scaleX = scale, scaleY = scale)
-                    .background(
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = shape.resolveShape()
-                    )
-            )
-        }
-    }
-}
-
-
-@Composable
-private fun NumericPinPad(
-    modifier: Modifier,
-    validateEnabled: Boolean,
-    backSpaceOrClose: Boolean,
-    onDigit: (String) -> Unit,
-    onValidate: () -> Unit,
-    onClear: () -> Unit
-) {
-    val rows = listOf(
-        listOf("1", "2", "3"),
-        listOf("4", "5", "6"),
-        listOf("7", "8", "9")
-    )
-
-    val spacing = 20.dp
-
-
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(spacing)
-    ) {
-        rows.forEach { row ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(spacing)
-            ) {
-                row.forEach { digit ->
-                    KeypadButton(
-                        text = digit,
-                        modifier = Modifier.weight(1f),
-                        onClick = onDigit
-                    )
-                }
-            }
-        }
-
-
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(spacing)
-        ) {
-            AnimatedContent(
-                targetState = backSpaceOrClose,
-                modifier = Modifier.weight(1f)
-            ) {
-
-                KeypadButton(
-                    icon = if (it) R.drawable.backspace else R.drawable.close,
-                    tint = MaterialTheme.colorScheme.error,
-                    onClick = onClear
-                )
-            }
-
-            KeypadButton(
-                text = "0",
-                modifier = Modifier.weight(1f),
-                onClick = onDigit
-            )
-
-            KeypadButton(
-                icon = R.drawable.check,
-                tint = Color.Green,
-                modifier = Modifier.weight(1f),
-                onClick = onValidate,
-                enabled = validateEnabled
-            )
-        }
-    }
-}
-
-@Composable
-private fun KeypadButton(
-    modifier: Modifier = Modifier,
-    icon: Int,
-    tint: Color,
-    enabled: Boolean = true,
-    onClick: (() -> Unit)? = null,
-) {
-
-    Box(
-        modifier = modifier.keyPadModifier(enabled, onClick),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            painterResource(id = icon),
-            contentDescription = null,
-            tint = tint
-        )
-    }
-}
-
-@Composable
-private fun KeypadButton(
-    text: String,
-    modifier: Modifier = Modifier,
-    onClick: (String) -> Unit,
-) {
-
-    Box(
-        modifier = modifier.keyPadModifier { onClick(text) },
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = text,
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.ExtraBold
-        )
-    }
-}
-
-
-@Composable
-private fun Modifier.keyPadModifier(
-    enabled: Boolean = true,
-    onClick: (() -> Unit)? = null
-): Modifier {
-
-    return this
-        .aspectRatio(1f)
-        .then(
-            onClick?.let { click ->
-                Modifier.shapedClickable(
-                    enabled = enabled,
-                    onClick = click
-                )
-            } ?: Modifier
-        )
-        .background(MaterialTheme.colorScheme.surface.semiTransparentIfDisabled(enabled))
-        .padding(15.dp)
 }
