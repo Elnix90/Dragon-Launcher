@@ -62,7 +62,7 @@ dependency-analysis = "3.17.0"
 logging = "1.0.2"
 settings = "1.2.0"
 
-compose-lock = "1.1.0"
+compose-lock = "1.2.0"
 
 [libraries]
 androidx-activity = { module = "androidx.activity:activity", version.ref = "activityCompose" }
