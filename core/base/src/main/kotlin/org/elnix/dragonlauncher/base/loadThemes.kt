@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.base.loader
+package org.elnix.dragonlauncher.base
 
 import android.content.Context
 import kotlinx.coroutines.Dispatchers

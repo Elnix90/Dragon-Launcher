@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.base.loader
+package org.elnix.dragonlauncher.base
 
 import android.content.Context
 import io.github.elnix90.logging.EXTENSION_MANAGER_TAG

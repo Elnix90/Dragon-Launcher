@@ -24,8 +24,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import org.elnix.dragonlauncher.base.loadExtensionRegistry
 import org.elnix.dragonlauncher.base.model.serializables.ExtensionModel
-import org.elnix.dragonlauncher.base.loader.loadExtensionRegistry
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.ui.components.BetaVersionType

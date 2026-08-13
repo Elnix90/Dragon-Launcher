@@ -47,8 +47,8 @@ import io.github.elnix90.logging.THEMES_TAG
 import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.loadThemes
 import org.elnix.dragonlauncher.base.model.models.ThemeObject
-import org.elnix.dragonlauncher.base.loader.loadThemes
 import org.elnix.dragonlauncher.base.utils.DateUtils
 import org.elnix.dragonlauncher.enumsui.select.ExportImportTheme
 import org.elnix.dragonlauncher.i18n.R
