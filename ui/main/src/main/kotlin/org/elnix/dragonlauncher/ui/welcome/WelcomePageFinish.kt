@@ -41,7 +41,7 @@ fun WelcomePageFinish(
             horizontalArrangement = Arrangement.spacedBy(15.dp)
         ) {
             Image(
-                painter = painterResource(R.drawable.celebration),
+                painter = painterResource(R.mipmap.celebration),
                 contentDescription = stringResource(R.string.everything_ready),
                 modifier = Modifier.size(80.dp)
             )

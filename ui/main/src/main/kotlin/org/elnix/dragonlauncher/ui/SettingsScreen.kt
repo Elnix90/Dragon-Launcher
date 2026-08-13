@@ -236,7 +236,7 @@ fun SettingsScreen(
                     ic(githubIcon, GITHUB_REPO_LINK, interactionSources[0])
                     ic(R.drawable.discord_symbol_blurple, DISCORD_INVITE_LINK, interactionSources[1])
                     ic(R.drawable.reddit_icon_fullcolor, REDDIT_LINK, interactionSources[2])
-                    ic(R.drawable.dragon_launcher_foreground, DRAGON_WEBSITE, interactionSources[3])
+                    ic(R.mipmap.dragon_launcher_foreground, DRAGON_WEBSITE, interactionSources[3])
                     ic(R.drawable.weblate_icon, WEBLATE_LINK, interactionSources[4])
                     ic(R.drawable.protonmail_icon, MAILTO_LINK, interactionSources[5])
                 }
@@ -279,7 +279,7 @@ fun SettingsScreen(
         DragonSettingsGroup(R.string.app_developer) {
             ContributorItem(
                 name = "Elnix90",
-                imageRes = R.drawable.elnix90,
+                imageRes = R.mipmap.elnix90,
                 description = stringResource(R.string.app_developer),
                 githubUrl = ELNIX90_GITHUB_PROFILE_LINK
             )
@@ -306,21 +306,21 @@ fun SettingsScreen(
         DragonSettingsGroup(R.string.contributors) {
             ContributorItem(
                 name = "YoannDev90",
-                imageRes = R.drawable.yoanndev90,
+                imageRes = R.mipmap.yoanndev90,
                 description = stringResource(R.string.yoann_desc),
                 githubUrl = "https://github.com/YoannDev90"
             )
 
             ContributorItem(
                 name = "Lucky",
-                imageRes = R.drawable.lucky_the_cookie,
+                imageRes = R.mipmap.lucky_the_cookie,
                 description = stringResource(R.string.lucky_desc),
                 githubUrl = "https://lthb.fr"
             )
 
             ContributorItem(
                 name = "Federico",
-                imageRes = R.drawable.federico,
+                imageRes = R.mipmap.federico,
                 description = stringResource(R.string.federico_desc),
                 githubUrl = "https://github.com/federicobuttafuori"
             )

@@ -33,9 +33,9 @@ fun WelcomePageTutorial() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
-            TutorialEntry(R.drawable.long_click_3second,R.string.long_click_to_access_settings)
-            TutorialEntry(R.drawable.configure_your_apps,R.string.configure_your_apps)
-            TutorialEntry(R.drawable.swipe_to_open_app,R.string.swipe_to_open_app)
+            TutorialEntry(R.mipmap.long_click_3second,R.string.long_click_to_access_settings)
+            TutorialEntry(R.mipmap.configure_your_apps,R.string.configure_your_apps)
+            TutorialEntry(R.mipmap.swipe_to_open_app,R.string.swipe_to_open_app)
         }
     }
 }

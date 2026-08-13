@@ -299,7 +299,7 @@
     <string name="wellbeing">டிசிட்டல் நல்வாழ்வு</string>
     <string name="wellbeing_help">உங்கள் டிசிட்டல் பழக்கங்களைக் கட்டுப்படுத்தவும். கவனத்தை சிதறடிக்கும் ஆப்சைத் திறப்பதற்கு முன் இடைநிறுத்தி, உங்கள் பயன்பாட்டைப் பற்றி சிந்தியுங்கள்.</string>
     <string name="social_media_pause">சமூக ஊடக இடைநிறுத்தம்</string>
-    <string name="social_media_pause_description">உங்கள் கவனத்தைத் திசைதிருப்பக்கூடிய பயன்பாடுகளைத் திறப்பதற்கு முன் நினைவாற்றல் திரையைக் காட்டுங்கள் (டிக்டோக், இன்ச்டாகிராம், ச்னாப்சாட்...)</string>
+    <string name="social_media_pause_description">உங்கள் கவனத்தைத் திசைதிருப்பக்கூடிய பயன்பாடுகளைத் திறப்பதற்கு முன் நினைவாற்றல் திரையைக் காட்டுங்கள் (டிக்டோக், இன்ச்டாகிராம், ச்னாப்சாட்…)</string>
     <string name="guilt_mode">நேர விழிப்புணர்வு முறை</string>
     <string name="guilt_mode_description">பயன்பாடுகளில் செலவழித்த நேரத்தை நீங்கள் பிரதிபலிக்க உதவும் உண்மையான பயன்பாட்டு புள்ளிவிவரங்களைக் காண்பி</string>
     <string name="pause_duration">இடைநிறுத்த காலம்</string>
@@ -351,7 +351,7 @@
     <string name="time_limit_minutes">%dmin</string>
     <string name="time_limit_encourage_short">சிறந்த தேர்வு! குறுகிய அமர்வுகள் நீங்கள் கவனம் செலுத்த உதவும் 🎯</string>
     <string name="time_limit_encourage_medium">அது நியாயமானது. கவனமாய் இரு! 🧘</string>
-    <string name="time_limit_encourage_long">அது மிக நீண்டது... உங்களுக்கு இவ்வளவு நேரம் தேவை என்று உறுதியாக உள்ளீர்களா? 🤔</string>
+    <string name="time_limit_encourage_long">அது மிக நீண்டது… உங்களுக்கு இவ்வளவு நேரம் தேவை என்று உறுதியாக உள்ளீர்களா? 🤔</string>
     <string name="time_limit_encourage_very_long">அது நிறைய திரை நேரம். முதலில் ஒரு குறுகிய அமர்வை முயற்சிக்கலாமா? 😅</string>
     <string name="time_limit_start">தொடங்கு</string>
     <string name="time_limit_cancel">ரத்துசெய்</string>

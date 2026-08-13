@@ -661,7 +661,7 @@
     <string name="main_screen_layers_help">Configurer l\'ordre et l\'affichage des couches d\'écran principales</string>
     <string name="main_screen_layers_reset">Êtes-vous sûr de vouloir réinitialiser les couches à leur valeur par défaut?</string>
     <string name="main_screen_layers_reset_title">Réinitialiser les couches d\'écran principales</string>
-    <string name="show_after">Afficher après...</string>
+    <string name="show_after">Afficher après…</string>
     <string name="show_after_help">Combien de temps il attend, après que le dragage a commencé à se montrer</string>
     <string name="hold_to_activate">Maintenir pour activer</string>
     <string name="dim_amount_help">Combien de niveau d\'obscurité (c\'est un enfer de traduire ça en français, SVP parlez anglais) (couleur du fond) est appliqué sur l\'écran</string>
