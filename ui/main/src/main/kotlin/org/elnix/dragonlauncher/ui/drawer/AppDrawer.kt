@@ -571,7 +571,7 @@ fun AppDrawerScreen(
                                         actions = listOf(
                                             MoreOptions(
                                                 onClick = { navigator.navigate(NavigationRoute.DrawerSettings) },
-                                                icon = R.drawable.ic_action_drawer,
+                                                icon = R.drawable.workspaces,
                                                 text = { stringResource(R.string.drawer_settings) }
                                             )
                                         ),
