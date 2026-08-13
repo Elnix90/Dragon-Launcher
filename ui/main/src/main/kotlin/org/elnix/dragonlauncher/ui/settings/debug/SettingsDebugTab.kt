@@ -1,5 +1,3 @@
-@file:Suppress("AssignedValueIsNeverRead")
-
 package org.elnix.dragonlauncher.ui.settings.debug
 
 import androidx.compose.foundation.layout.Arrangement

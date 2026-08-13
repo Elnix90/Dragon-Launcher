@@ -1,5 +1,3 @@
-@file:Suppress("AssignedValueIsNeverRead")
-
 package org.elnix.dragonlauncher.ui
 
 import android.annotation.SuppressLint
@@ -27,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -366,7 +363,6 @@ fun MainAppUi(
     }
 
     val pointsScreensTransparency by UiSettingsStore.pointsScreensTransparency.asState()
-    val pointsScreensTransparencyState by rememberUpdatedState(pointsScreensTransparency)
 
     val containerColor by animateColorAsState(
         targetValue = when {

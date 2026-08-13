@@ -1,5 +1,3 @@
-@file:Suppress("AssignedValueIsNeverRead")
-
 package org.elnix.dragonlauncher.ui.dialogs
 
 import androidx.compose.foundation.layout.Arrangement
@@ -42,7 +40,6 @@ import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
@@ -63,10 +60,8 @@ fun AppLongPressPopup(
     val scope = rememberCoroutineScope()
 
     val appOverridesManager = drawerViewModel.appOverrideManager
-    val appOverrides by appOverridesManager.appOverrides.asState()
     val workspacesManager = drawerViewModel.workspaceManager
     val selectedWorkspaceId by drawerViewModel.selectedWorkspaceId.collectAsState()
-
 
     var showDetailedAppInfoDialog by remember { mutableStateOf(false) }
 
@@ -75,7 +70,6 @@ fun AppLongPressPopup(
     var showIconDialog by remember { mutableStateOf(false) }
 
     val installerStoreLink = remember { app.getStoreDetails(ctx) }
-
 
     val entries = buildList {
         add(

@@ -1,5 +1,3 @@
-@file:Suppress("AssignedValueIsNeverRead")
-
 package org.elnix.dragonlauncher.ui.settings.customization
 
 
@@ -96,7 +94,6 @@ fun ColorSelectorTab() {
     val errorSectionState = rememberExpandableSection(stringResource(R.string.error_colors_section))
     val outlineSectionState = rememberExpandableSection(stringResource(R.string.outline_colors_section))
     val surfaceContainerSectionState = rememberExpandableSection(stringResource(R.string.surface_container_colors_section))
-//    val fixedSectionState = rememberExpandableSection(stringResource(R.string.fixed_colors_section))
 
     var showResetValidation by remember { mutableStateOf(false) }
     var showBurgerMenu by remember { mutableStateOf(false) }

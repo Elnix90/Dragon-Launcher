@@ -1,5 +1,3 @@
-@file:Suppress("ClassName")
-
 package org.elnix.dragonlauncher.database
 
 import android.content.Context
@@ -17,15 +15,11 @@ import org.elnix.dragonlauncher.database.entities.SavedSearchableEntity
         SavedSearchableEntity::class,
         IconEntity::class,
         IconPackEntity::class,
-    ], version = 32, exportSchema = true
+    ], version = 1, exportSchema = true
 )
 @TypeConverters(ComponentNameConverter::class)
 public abstract class AppDatabase : RoomDatabase() {
     public abstract fun iconDao(): IconDao
-//    abstract fun searchableDao(): SearchableDao
-//
-//    abstract fun backupDao(): BackupRestoreDao
-//    abstract fun customAttrsDao(): CustomAttrsDao
 
     public companion object {
         private var _instance: AppDatabase? = null

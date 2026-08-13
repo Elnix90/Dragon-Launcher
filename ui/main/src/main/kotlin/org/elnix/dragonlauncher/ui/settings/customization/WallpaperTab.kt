@@ -1,4 +1,4 @@
-@file:Suppress("AssignedValueIsNeverRead", "DEPRECATION")
+@file:Suppress("DEPRECATION")
 
 package org.elnix.dragonlauncher.ui.settings.customization
 
@@ -28,8 +28,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.model.models.WallpaperTarget
 import org.elnix.dragonlauncher.base.WallpaperHelper
+import org.elnix.dragonlauncher.base.model.models.WallpaperTarget
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ktx.showToast

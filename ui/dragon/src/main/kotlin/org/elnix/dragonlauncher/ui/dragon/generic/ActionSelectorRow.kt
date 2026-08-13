@@ -1,5 +1,3 @@
-@file:Suppress("AssignedValueIsNeverRead")
-
 package org.elnix.dragonlauncher.ui.dragon.generic
 
 import androidx.compose.foundation.clickable
@@ -39,7 +37,6 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 fun <T> ActionSelectorRow(
     options: List<T>,
     selected: T,
-    enabled: Boolean = true,
     switchEnabled: Boolean = true,
     label: String,
     optionLabel: @Composable (T) -> String = { it.toString() },

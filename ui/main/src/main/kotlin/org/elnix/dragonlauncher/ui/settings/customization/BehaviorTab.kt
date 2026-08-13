@@ -1,5 +1,3 @@
-@file:Suppress("AssignedValueIsNeverRead")
-
 package org.elnix.dragonlauncher.ui.settings.customization
 
 import android.annotation.SuppressLint
@@ -19,7 +17,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Device
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.None
 import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Pattern
@@ -50,7 +47,7 @@ fun BehaviorTab() {
     val bottomPadding by BehaviorSettingsStore.bottomPadding.asState()
 
     val lockMethod by PrivateSettingsStore.lockMethod.asState()
-    val superWarningModeEnabled = lockMethod != LockMethod.None
+    val superWarningModeEnabled = lockMethod != None
 
     val paddingState = rememberExpandableSection(stringResource(R.string.drag_zone_padding), mode = ExpandableSectionMode.Expandable)
     val showAppPreviewOverlay = paddingState.isExpanded()

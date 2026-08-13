@@ -1,5 +1,3 @@
-@file:Suppress("AssignedValueIsNeverRead")
-
 package org.elnix.dragonlauncher.ui.dialogs.security
 
 import android.annotation.SuppressLint
@@ -86,7 +84,6 @@ fun PatternUnlock(
     PatternPrompt(
         title = stringResource(R.string.unlock_settings),
         subtitle = stringResource(R.string.draw_pattern),
-        patternValue = pattern,
         errorMessage = errorMessage,
         showSizeSlider = false,
         failedTries = failedTries,
@@ -137,8 +134,6 @@ fun PatternSetup(
     var failedTries by remember { mutableIntStateOf(0) }
     val pinMismatch = stringResource(R.string.pin_mismatch)
 
-    val currentPin = if (isConfirmStep) confirmPattern else firstPattern
-
     LaunchedEffect(patternSize) {
         errorMessage = null
         firstPattern = ""
@@ -149,7 +144,6 @@ fun PatternSetup(
     PatternPrompt(
         title = stringResource(R.string.set_pattern),
         subtitle = if (isConfirmStep) stringResource(R.string.confirm_pattern) else stringResource(R.string.draw_pattern),
-        patternValue = currentPin,
         errorMessage = errorMessage,
         failedTries = failedTries,
         showSizeSlider = true,
@@ -224,7 +218,6 @@ fun PatternSetup(
 private fun PatternPrompt(
     title: String,
     subtitle: String,
-    patternValue: String,
     showSizeSlider: Boolean,
     errorMessage: String? = null,
     failedTries: Int,

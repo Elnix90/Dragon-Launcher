@@ -1,5 +1,3 @@
-@file:Suppress("AssignedValueIsNeverRead")
-
 package org.elnix.dragonlauncher.ui.dialogs.editors
 
 import androidx.compose.animation.AnimatedContent

@@ -86,11 +86,12 @@ fun BoxScope.VerticalScrollIndicator(visible: Boolean) {
  * when [visible] is true. Must be used within a [BoxScope].
  *
  * @param visible Whether to display the scroll indicator
+ * @param isTop only here to differentiate the 2 overloads
  */
 @Composable
 fun BoxScope.VerticalScrollIndicator(
     visible: Boolean,
-    @Suppress("unused") isTop: Boolean
+    isTop: Boolean
 ) {
     AnimatedVisibility(
         visible = visible,

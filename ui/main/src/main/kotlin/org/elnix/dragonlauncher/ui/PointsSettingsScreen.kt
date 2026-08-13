@@ -1,5 +1,3 @@
-@file:Suppress("RedundantVisibilityModifier")
-
 package org.elnix.dragonlauncher.ui
 
 import androidx.activity.compose.BackHandler

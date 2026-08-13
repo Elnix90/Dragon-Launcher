@@ -1,5 +1,3 @@
-@file:Suppress("AssignedValueIsNeverRead")
-
 package org.elnix.dragonlauncher.ui.settings.workspace
 
 import androidx.compose.foundation.layout.Box

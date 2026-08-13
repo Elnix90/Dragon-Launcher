@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package org.elnix.dragonlauncher.appoverrides
 
 import android.content.Context

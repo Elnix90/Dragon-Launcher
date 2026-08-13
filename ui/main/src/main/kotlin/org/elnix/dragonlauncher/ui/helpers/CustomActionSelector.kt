@@ -1,5 +1,3 @@
-@file:Suppress("AssignedValueIsNeverRead")
-
 package org.elnix.dragonlauncher.ui.helpers
 
 import androidx.compose.animation.AnimatedVisibility

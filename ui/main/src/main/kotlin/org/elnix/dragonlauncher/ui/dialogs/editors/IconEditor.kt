@@ -1,4 +1,4 @@
-@file:Suppress("AssignedValueIsNeverRead", "DEPRECATION")
+@file:Suppress("DEPRECATION")
 
 package org.elnix.dragonlauncher.ui.dialogs.editors
 

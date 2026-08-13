@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package org.elnix.dragonlauncher.workspaces
 
 import android.content.Context
@@ -7,7 +5,7 @@ import io.github.elnix90.logging.WORKSPACES_TAG
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -27,7 +25,7 @@ public class WorkspacesManager(
     private val ctx: Context
 ) {
 
-    private val scope = CoroutineScope(Job() + Dispatchers.IO)
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     public val workspaces: SettingFlow<List<Workspace>> = SettingFlow(defaultWorkspaces)
     public val selectedWorkspaceId: Flow<String> = DrawerSettingsStore.lastWorkspaceUsed.flow(ctx)
