@@ -20,7 +20,6 @@ class DragonAndroidApplicationPlugin : Plugin<Project> {
             )
             forceKotlinMetadataResolution()
 
-            val versionCode = providers.gradleProperty("version.code").get()
 
             extensions.configure(ApplicationExtension::class.java) {
                 compileSdk {
@@ -41,7 +40,7 @@ class DragonAndroidApplicationPlugin : Plugin<Project> {
                     release {
                         isMinifyEnabled = true
                         isShrinkResources = true
-                        versionNameSuffix = " ($versionCode)"
+                        versionNameSuffix = " ($VERSION_CODE)"
                         proguardFiles(
                             getDefaultProguardFile("proguard-android-optimize.txt"),
                             "proguard-rules.pro",
@@ -51,7 +50,7 @@ class DragonAndroidApplicationPlugin : Plugin<Project> {
                     create("beta") {
                         isMinifyEnabled = true
                         applicationIdSuffix = ".beta"
-                        versionNameSuffix = " ($versionCode)-beta"
+                        versionNameSuffix = " ($VERSION_CODE)-beta"
                         proguardFiles(
                             getDefaultProguardFile("proguard-android-optimize.txt"),
                             "proguard-rules.pro",
@@ -62,7 +61,7 @@ class DragonAndroidApplicationPlugin : Plugin<Project> {
                         isDebuggable = true
                         isMinifyEnabled = false
                         applicationIdSuffix = ".debug"
-                        versionNameSuffix = " ($versionCode)-debug"
+                        versionNameSuffix = " ($VERSION_CODE)-debug"
                     }
                 }
 
