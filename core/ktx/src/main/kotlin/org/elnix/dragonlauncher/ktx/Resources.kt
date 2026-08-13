@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ktx
 
+import android.annotation.SuppressLint
 import android.content.res.Resources
 import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
@@ -7,11 +8,12 @@ import android.graphics.drawable.Drawable
 public fun Resources.getIntArrayOrNull(id: Int): IntArray? {
     return try {
         getIntArray(id)
-    } catch (e: Resources.NotFoundException) {
+    } catch (_: Resources.NotFoundException) {
         null
     }
 }
 
+@SuppressLint("UseCompatLoadingForDrawables")
 public fun Resources.getDrawableOrNull(id: Int, theme: Resources.Theme? = null): Drawable? {
     return try {
         getDrawable(id, theme)
@@ -23,7 +25,7 @@ public fun Resources.getDrawableOrNull(id: Int, theme: Resources.Theme? = null):
 public fun Resources.obtainTypedArrayOrNull(id: Int): TypedArray? {
     return try {
         obtainTypedArray(id)
-    } catch (e: Resources.NotFoundException) {
+    } catch (_: Resources.NotFoundException) {
         null
     }
 }
