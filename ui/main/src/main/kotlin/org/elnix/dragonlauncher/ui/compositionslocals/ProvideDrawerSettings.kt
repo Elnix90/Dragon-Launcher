@@ -6,6 +6,7 @@ import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.elnix90.runtime.asState
@@ -27,6 +28,7 @@ data class DrawerSettings(
     val categoryGridCells: Int,
     val showAppIconsInDrawer: Boolean,
     val showAppLabelsInDrawer: Boolean,
+    val labelTextColor: Color,
     val iconsSpacingVertical: Dp,
     val iconsSpacingHorizontal: Dp,
     val horizontalAlignment: HorizontalAlignment,
@@ -63,6 +65,7 @@ fun ProvideDrawerSettings(
     val categoryGridCells by DrawerSettingsStore.categoryGridCells.asState()
     val showAppIconsInDrawer by DrawerSettingsStore.showAppIconsInDrawer.asState()
     val showAppLabelsInDrawer by DrawerSettingsStore.showAppLabelsInDrawer.asState()
+    val labelTextColor by DrawerSettingsStore.labelTextColor.asState()
     val iconsSpacingVertical by DrawerSettingsStore.iconsSpacingVertical.asState()
     val iconsSpacingHorizontal by DrawerSettingsStore.iconsSpacingHorizontal.asState()
     val horizontalAlignment by DrawerSettingsStore.horizontalAlignment.asState()
@@ -93,6 +96,7 @@ fun ProvideDrawerSettings(
             categoryGridCells = categoryGridCells,
             showAppIconsInDrawer = showAppIconsInDrawer,
             showAppLabelsInDrawer = showAppLabelsInDrawer,
+            labelTextColor = labelTextColor,
             iconsSpacingVertical = iconsSpacingVertical,
             iconsSpacingHorizontal = iconsSpacingHorizontal,
             horizontalAlignment = horizontalAlignment,

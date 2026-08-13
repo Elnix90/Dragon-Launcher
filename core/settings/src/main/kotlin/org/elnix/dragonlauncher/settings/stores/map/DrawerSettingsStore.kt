@@ -1,9 +1,11 @@
 package org.elnix.dragonlauncher.settings.stores.map
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.annotations.SettingKey
 import io.github.elnix90.annotations.SettingsStore
 import io.github.elnix90.core.objects.BooleanSettingObject
+import io.github.elnix90.core.objects.ColorSettingObject
 import io.github.elnix90.core.objects.DpSettingObject
 import io.github.elnix90.core.objects.EnumListSettingObject
 import io.github.elnix90.core.objects.EnumSettingObject
@@ -11,6 +13,7 @@ import io.github.elnix90.core.objects.IntSettingObject
 import io.github.elnix90.core.objects.StringListSettingObject
 import io.github.elnix90.core.objects.StringSettingObject
 import io.github.elnix90.core.objects.boolean
+import io.github.elnix90.core.objects.color
 import io.github.elnix90.core.objects.dp
 import io.github.elnix90.core.objects.enum
 import io.github.elnix90.core.objects.enumList
@@ -55,6 +58,13 @@ public object DrawerSettingsStore : MapSettingsStore() {
         title = R.string.show_app_labels_in_drawer,
         description = R.string.show_app_labels_in_drawer_desc,
         default = true
+    )
+
+    @SettingKey
+    public val labelTextColor: ColorSettingObject = color(
+        title = R.string.drawer_label_color,
+        description = R.string.drawer_label_color_desc,
+        default = Color.Unspecified
     )
 
     @SettingKey

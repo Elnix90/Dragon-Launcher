@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
+import org.elnix.dragonlauncher.ktx.specifiedOrNull
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
@@ -79,7 +80,10 @@ fun AppItemHorizontal(
             Spacer(drawerSettings.iconsSpacingHorizontal)
             Text(
                 text = app.label,
-                color = MaterialTheme.colorScheme.onBackground
+                color = drawerSettings.labelTextColor.specifiedOrNull() ?: MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.labelSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
@@ -132,7 +136,7 @@ fun AppItemGrid(
         if (drawerSettings.showAppLabelsInDrawer) {
             Text(
                 text = app.label,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = drawerSettings.labelTextColor.specifiedOrNull() ?: MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.labelSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis

@@ -153,6 +153,7 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
 
             Setting(DrawerSettingsStore.showAppIconsInDrawer)
             Setting(DrawerSettingsStore.showAppLabelsInDrawer)
+            Setting(DrawerSettingsStore.labelTextColor)
 
             ExpandableSection(drawerCategorySettingsState) {
                 Setting(DrawerSettingsStore.useCategory)
