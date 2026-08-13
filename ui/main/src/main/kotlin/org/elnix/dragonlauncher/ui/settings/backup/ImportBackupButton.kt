@@ -17,6 +17,8 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
+import org.elnix.dragonlauncher.models.PointsViewModel
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.dialogs.ImportSettingsDialog
 import org.elnix.dragonlauncher.ui.dialogs.MigrationDialog
@@ -28,6 +30,7 @@ import org.json.JSONObject
 fun ImportBackupButton(
     onConfirm: (suspend () -> Unit)? = null,
     backupViewModel: BackupViewModel = activityViewModel(),
+    pointsViewModel: PointsViewModel = activityViewModel(),
     content: @Composable (onImport: () -> Unit) -> Unit
 ) {
     val ctx = LocalContext.current
@@ -70,9 +73,9 @@ fun ImportBackupButton(
                 scope.launch {
                     try {
                         SettingsBackupManager.importSettingsFromJson(
-                            ctx,
-                            json,
-                            selectedStoresForImport
+                            ctx = ctx,
+                            json = json,
+                            requestedStores = selectedStoresForImport
                         )
                         backupViewModel.result.value = BackupResult(
                             export = false,
@@ -80,6 +83,9 @@ fun ImportBackupButton(
                             title = ctx.getString(R.string.import_successful)
                         )
 
+                        onConfirm?.invoke()
+                        PrivateSettingsStore.hasInitialized.set(ctx, true)
+                        pointsViewModel.pointsService.load()
                         importJson = null
                     } catch (e: Exception) {
                         logE(BACKUP_TAG, e) { "Import failed" }
@@ -90,7 +96,6 @@ fun ImportBackupButton(
                             message = e.message ?: ""
                         )
                     }
-                    onConfirm?.invoke()
                 }
             }
         )

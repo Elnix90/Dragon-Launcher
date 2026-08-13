@@ -15,7 +15,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.settings.backup.ImportBackupButton
@@ -41,7 +39,6 @@ fun WelcomePageIntro(
 ) {
     val ctx = LocalContext.current
     val navigator = LocalNavigator.current
-    val scope = rememberCoroutineScope()
 
     val versionName = ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName ?: "unknown"
 
@@ -122,10 +119,8 @@ fun WelcomePageIntro(
         Spacer(Modifier.weight(1f))
 
         ImportBackupButton(
-            {
-                PrivateSettingsStore.hasInitialized.set(ctx, true)
+            onConfirm = {
                 setAsSeen()
-
                 // Here I do not check the initialization of the launcher, as th user imports it's settings, and therefore, it is initialized!
                 navigator.onBack()
             }

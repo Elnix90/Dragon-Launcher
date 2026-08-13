@@ -26,6 +26,7 @@ import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import org.elnix.dragonlauncher.points.PointsService
 import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.toSettingsStoreList
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
@@ -74,6 +75,8 @@ public class BackupViewModel @Inject constructor(
 
                 if (result.success) {
                     pointsService.load()
+                    PrivateSettingsStore.hasInitialized.set(application, true)
+                    PrivateSettingsStore.hasSeenWelcome.set(application, true)
                 }
             } catch (e: Exception) {
                 logE(BACKUP_TAG, e) { "Legacy migration failed" }

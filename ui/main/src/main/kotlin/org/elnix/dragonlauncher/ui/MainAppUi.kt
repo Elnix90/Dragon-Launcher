@@ -379,6 +379,8 @@ fun MainAppUi(
     LaunchedEffect(hasSeenWelcome) {
         if (hasSeenWelcome == false) {
             navigator.navigate(NavigationRoute.Welcome)
+        } else if (hasSeenWelcome == true) {
+            navigator.popBackMainScreen()
         }
     }
 

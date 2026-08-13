@@ -4,11 +4,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -16,9 +20,10 @@ import io.github.elnix90.core.stores.SettingsStore
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.ui.base.components.LazyColumnWithScrollIndicator
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
+import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtonsWithLoading
 import org.json.JSONObject
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ImportSettingsDialog(
     backupJson: JSONObject,
@@ -35,12 +40,16 @@ fun ImportSettingsDialog(
         }
     }
 
+    var hasClickedImport by remember { mutableStateOf(false) }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
-            ValidateCancelButtons(
-                onCancel = onDismiss
+            ValidateCancelButtonsWithLoading(
+                onCancel = onDismiss,
+                hasClickedValidate = hasClickedImport
             ) {
+                hasClickedImport = true
                 onConfirm(availableStores.filter { selected[it] == true }.toSet())
             }
         },

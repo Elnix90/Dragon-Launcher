@@ -12,8 +12,11 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,7 +31,7 @@ import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons.SelectA
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.backupableStores
 import org.elnix.dragonlauncher.ui.base.components.LazyColumnWithScrollIndicator
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
+import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtonsWithLoading
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 
 @Composable
@@ -48,12 +51,16 @@ fun ExportSettingsDialog(
         }
     }
 
+    var hasClickedImport by remember { mutableStateOf(false) }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
-            ValidateCancelButtons(
-                onCancel = onDismiss
+            ValidateCancelButtonsWithLoading(
+                onCancel = onDismiss,
+                hasClickedValidate = hasClickedImport
             ) {
+                hasClickedImport = true
                 onConfirm(selected.filterValues { it }.keys)
             }
         },
