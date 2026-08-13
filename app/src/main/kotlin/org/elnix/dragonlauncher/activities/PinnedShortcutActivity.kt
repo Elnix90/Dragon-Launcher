@@ -4,12 +4,12 @@ import android.content.pm.LauncherApps
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ktx.showToast
 import io.github.elnix90.logging.PINNED_SHORTCUTS
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logW
+import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.showToast
 
 /**
  * Activity that receives pinned shortcut requests from other apps.
@@ -68,7 +68,7 @@ class PinnedShortcutActivity : ComponentActivity() {
 
         // Add the shortcut as a new swipe point on circle 0, nest 0
         lifecycleScope.launch {
-            TODO()
+//            TODO make it send intent to add a point
 //            try {
 //                val existingPoints = SwipeSettingsStore.getPoints(this@PinnedShortcutActivity)
 //
