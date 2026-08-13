@@ -206,14 +206,6 @@ class MigrationTest {
     }
 
     @Test
-    fun `removed stores have null newBackupKey and empty splitInto`() {
-        for ((_, mapping) in OldToNewStoreMapping.mappings) {
-            if (mapping.newBackupKey == null && mapping.splitInto.isEmpty()) {
-            }
-        }
-    }
-
-    @Test
     fun `witness files are loadable`() {
         val v1 = loadResource("backup-3.2.2-witness-1.json")
         assertTrue("witness-1 should contain points", v1.contains("points"))
