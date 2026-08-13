@@ -125,7 +125,7 @@ public object UiSettingsStore : MapSettingsStore() {
 
     @SettingKey
     public val wallpaperDimMainScreen: FloatSettingObject = float(
-        title = R.string.wallpaper_dim_amount,
+        title = R.string.wallpaper_dim_amount_main,
         description = R.string.dim_amount_help,
         default = 0f,
         allowedRange = 0f..1f
@@ -133,11 +133,20 @@ public object UiSettingsStore : MapSettingsStore() {
 
     @SettingKey
     public val wallpaperDimDrawerScreen: FloatSettingObject = float(
-        title = R.string.wallpaper_dim_amount,
+        title = R.string.wallpaper_dim_amount_drawer,
         description = R.string.dim_amount_help,
         default = 0f,
         allowedRange = 0f..1f
     )
+
+    @SettingKey
+    public val pointsScreensTransparency: FloatSettingObject = float(
+        title = R.string.points_screens_transparency,
+        description = R.string.points_screens_transparency_desc,
+        default = 0.5f,
+        allowedRange = 0f..1f
+    )
+
 
     @SettingKey
     public val globalFont: StringSettingObject = string("Default")

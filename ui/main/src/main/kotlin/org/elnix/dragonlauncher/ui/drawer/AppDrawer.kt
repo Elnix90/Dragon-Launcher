@@ -123,6 +123,8 @@ fun AppDrawerScreen(
     val drawerSettings = LocalDrawerSettings.current
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val haptic = LocalHapticFeedback.current
+    val density = LocalDensity.current
     val focusRequester = remember { FocusRequester() }
 
     val autoShowKeyboard  = drawerSettings.autoShowKeyboard
@@ -258,7 +260,6 @@ fun AppDrawerScreen(
     var recentAppsHeightPx by remember { mutableIntStateOf(0) }
 
 
-    val density = LocalDensity.current
 
     val appsContentPadding = remember(filteredToolbarsOrder, searchBarHeightPx, recentAppsHeightPx) {
         PaddingValues(
@@ -290,7 +291,6 @@ fun AppDrawerScreen(
 
     var atTop by remember { mutableStateOf(true) }
 
-    val haptic = LocalHapticFeedback.current
 
     val thresholdPx = Constants.Drawer.DRAWER_DRAG_DOWN_THRESHOLD.dp.px
     val maxDragDownOffset = Constants.Drawer.DRAWER_MAX_DRAG_DOWN.dp.px
@@ -392,6 +392,7 @@ fun AppDrawerScreen(
     }
 
     val wallpaperDimDrawerScreen by UiSettingsStore.wallpaperDimDrawerScreen.asState()
+    val wallpaperDimMainScreen by UiSettingsStore.wallpaperDimMainScreen.asState()
     val pullDownWallPaperDimFadeEnabled by DrawerSettingsStore.pullDownWallPaperDim.asState()
 
     val leftDrawerAction by DrawerSettingsStore.leftDrawerAction.asState()
@@ -406,11 +407,16 @@ fun AppDrawerScreen(
 
     val animatedScale by animateFloatAsState(if (pullDownScaleIn) (pullProgress.pow(0.9f)).coerceIn(0.95f, 1f) else 1f)
     val animatedPadding by animateDpAsState((if (pullDownAnimations) pullOffset else 0f).toDp)
-    val animatedDim by animateFloatAsState(targetValue = if (pullDownWallPaperDimFadeEnabled) pullProgress else 1f)
+
+    val dim = remember(pullProgress, pullDownWallPaperDimFadeEnabled, wallpaperDimDrawerScreen, wallpaperDimMainScreen) {
+       if (pullDownWallPaperDimFadeEnabled) {
+           wallpaperDimDrawerScreen + pullProgress * (wallpaperDimDrawerScreen - wallpaperDimMainScreen)
+       } else wallpaperDimDrawerScreen
+    }
 
     // Dims the wallpaper, when the user starts pulling down,
     // the dim amount is reduced proportionally to the drag amount
-    WallpaperDim(wallpaperDimDrawerScreen * animatedDim)
+    WallpaperDim(dim)
 
 
     Box(

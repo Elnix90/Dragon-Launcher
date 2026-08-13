@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -80,6 +81,7 @@ import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.timer.AppTimerService.Companion.EXTRA_APP_NAME
 import org.elnix.dragonlauncher.timer.AppTimerService.Companion.SHOW_LAUNCHER
 import org.elnix.dragonlauncher.ui.actions.launchAction
@@ -363,10 +365,13 @@ fun MainAppUi(
         }
     }
 
+    val pointsScreensTransparency by UiSettingsStore.pointsScreensTransparency.asState()
+    val pointsScreensTransparencyState by rememberUpdatedState(pointsScreensTransparency)
+
     val containerColor by animateColorAsState(
         targetValue = when {
             currentRoute.inTransparentScreen -> Color.Transparent
-            currentRoute.halfTransparentScreen -> MaterialTheme.colorScheme.background.alphaMultiplier(0.5f)
+            currentRoute.halfTransparentScreen -> MaterialTheme.colorScheme.background.alphaMultiplier(pointsScreensTransparency)
             else -> MaterialTheme.colorScheme.background
         },
         animationSpec = tween(500)

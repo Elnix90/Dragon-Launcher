@@ -272,7 +272,7 @@
     <string name="enable_scale_snap">Skalenfang aktivieren</string>
     <string name="home_action">Home-Aktion</string>
     <string name="drawer_home_action">Schubladen-Home-Aktion</string>
-    <string name="wallpaper_dim_amount">Tapetendimmmenge</string>
+
     <string name="fullscreen_description">Die obere Leiste und die Navigationsschaltflächen/Gestenschaltflächen anzeigen oder nicht</string>
     <string name="rgb_loading_description">Zeigen Sie beim Eingeben der Einstellungen einen RBG-Gradienten auf dem Ladekreis an, während Sie die Taste 3 Sekunden lang gedrückt halten</string>
     <string name="rgb_line_selector_description">Zeigen Sie den Aktionswähler (die Linie, die Ihrem Finger folgt) je nach Winkel in einem RGB-Verlauf an</string>

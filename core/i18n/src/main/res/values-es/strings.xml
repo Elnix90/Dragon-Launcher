@@ -276,7 +276,7 @@
     <string name="enable_scale_snap">Habilitar ajuste de escala</string>
     <string name="home_action">Inicio Acción</string>
     <string name="drawer_home_action">Acción de inicio del cajón</string>
-    <string name="wallpaper_dim_amount">Atenuación del fondo de pantalla</string>
+
     <string name="fullscreen_description">Mostrar o no la barra superior y los botones de navegación/botón de gestos</string>
     <string name="rgb_loading_description">Muestra un degradado RBG en el círculo de carga al ingresar a los ajustes mientras mantienes presionado durante 3 segundos</string>
     <string name="rgb_line_selector_description">Muestra el selector de acción (la línea que sigue a tu dedo) en un degradado RGB dependiendo del ángulo</string>

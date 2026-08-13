@@ -273,7 +273,7 @@
     <string name="enable_scale_snap">Activer l\'accrochage à l\'échelle</string>
     <string name="home_action">Action à domicile</string>
     <string name="drawer_home_action">Action de la maison du tiroir</string>
-    <string name="wallpaper_dim_amount">Quantité de papier peint</string>
+
     <string name="fullscreen_description">Afficher ou non la barre supérieure et les boutons de navigation/bouton geste</string>
     <string name="rgb_loading_description">Afficher un dégradé RBG sur le cercle de chargement lors de la saisie des paramètres, tout en maintenant enfoncé pendant 3 secondes</string>
     <string name="rgb_line_selector_description">Afficher le sélecteur d\'action (la ligne qui suit votre doigt) dans un dégradé RVB en fonction de l\'angle</string>

@@ -291,7 +291,7 @@
     <string name="enable_scale_snap">启用缩放吸附</string>
     <string name="home_action">主页键动作</string>
     <string name="drawer_home_action">抽屉内主页键动作</string>
-    <string name="wallpaper_dim_amount">壁纸暗化程度</string>
+
     <string name="fullscreen_description">是否在顶部状态栏和导航栏/手势提示条处进行全屏隐藏</string>
     <string name="rgb_loading_description">进入设置长按 3 秒时，在加载圆圈上显示 RGB 渐变特效</string>
     <string name="rgb_line_selector_description">根据手指拖动的角度，以 RGB 渐变色显示动作选择线（随手指移动的线条）</string>

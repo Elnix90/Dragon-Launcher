@@ -298,7 +298,7 @@
     <string name="enable_scale_snap">அளவுகோல் ச்னாப்பை இயக்கு</string>
     <string name="home_action">முகப்பு நடவடிக்கை</string>
     <string name="drawer_home_action">அலமாரி முகப்பு நடவடிக்கை</string>
-    <string name="wallpaper_dim_amount">வால்பேப்பர் மங்கலான அளவு</string>
+
     <string name="fullscreen_description">மேல் பட்டை மற்றும் வழிசெலுத்தல் பொத்தான்கள் / சைகை பொத்தானைக் காட்டவும் அல்லது காட்டவும்</string>
     <string name="rgb_loading_description">3 வினாடிகள் கீழே வைத்திருக்கும் போது, அமைப்புகளை உள்ளிடும்போது, ஏற்றுதல் வட்டத்தில் RBG சாய்வு காட்டவும்</string>
     <string name="rgb_line_selector_description">ஆக்சன் செலக்டரை (உங்கள் விரலைப் பின்தொடரும் கோடு) கோணத்தைப் பொறுத்து RGB சாய்வில் காட்டவும்</string>

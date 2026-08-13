@@ -302,7 +302,8 @@
     <string name="enable_scale_snap">Enable scale snap</string>
     <string name="home_action">Home Action</string>
     <string name="drawer_home_action">Drawer Home action</string>
-    <string name="wallpaper_dim_amount">Wallpaper dim amount</string>
+    <string name="wallpaper_dim_amount_main">Wallpaper dim amount (Main Screen)</string>
+    <string name="wallpaper_dim_amount_drawer">Wallpaper dim amount (Drawer)</string>
     <string name="wallpaper_dim">Wallpaper dim</string>
     <string name="fullscreen_description">Display or not the top bar and the navigation buttons / gesture button</string>
     <string name="rgb_loading_description">Show a RBG gradient on the loading circle upon entering settings, while holding down for 3 seconds</string>
@@ -1148,4 +1149,6 @@
     <string name="icons_settings">Icons Settings</string>
     <string name="drawer_label_color">Label color</string>
     <string name="drawer_label_color_desc">The colr of the app names in the drawer. defaults to the onBackground color</string>
+    <string name="points_screens_transparency">Points screens transparency</string>
+    <string name="points_screens_transparency_desc">The transparency of all screens that display points of swipe related stuff, so that you can see your wallpaper through and better customize</string>
 </resources>
