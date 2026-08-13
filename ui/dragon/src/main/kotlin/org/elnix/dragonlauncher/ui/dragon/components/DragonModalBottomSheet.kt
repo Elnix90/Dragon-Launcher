@@ -1,21 +1,16 @@
 package org.elnix.dragonlauncher.ui.dragon.components
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.add
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetDefaults.DragHandle
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
-import androidx.compose.material3.Surface
 import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
@@ -85,15 +80,3 @@ fun rememberBottomSheetState(skipPartiallyExpanded: Boolean = false): SheetState
 @Composable
 fun rememberBottomSheetState(state: ExpandableSectionState): SheetState =
     rememberBottomSheetState(state.mode is ExpandableSectionMode.ModalSheet && state.mode.skipPartiallyExpanded)
-
-
-@Composable
-private fun DragHandle() {
-    Surface(
-        modifier = Modifier.padding(vertical = 22.dp),
-        color = MaterialTheme.colorScheme.outline,
-        shape = MaterialTheme.shapes.extraLarge,
-    ) {
-        Box(Modifier.size(width = 32.dp, height = 4.dp))
-    }
-}

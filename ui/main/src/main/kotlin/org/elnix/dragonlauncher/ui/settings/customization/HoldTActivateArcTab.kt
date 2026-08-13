@@ -5,22 +5,23 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
@@ -31,10 +32,12 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.
 import org.elnix.dragonlauncher.enumsui.toggle.HoldActions
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getCenter
+import org.elnix.dragonlauncher.ktx.toDp
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
 import org.elnix.dragonlauncher.settings.stores.objects.HoldToActivateObject
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.components.VerticalDragZone
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.HoldSettingsOrderSheet
@@ -91,14 +94,10 @@ fun HoldToActivateArcTab() {
         onReset = {
             scope.launch {
                 HoldToActivateArcSettingsStore.resetAll(ctx)
-
-//                mutableHoldObject = CustomObject.defaultHoldCustomObject
                 HoldToActivateObject.resetAll(ctx)
             }
         },
         topContent = {
-            var boxSize by remember { mutableStateOf(IntSize.Zero) }
-
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
@@ -141,27 +140,40 @@ fun HoldToActivateArcTab() {
                 }
             }
 
-            BoxWithConstraints(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .then(hold.pointerModifier)
-                    .onSizeChanged { boxSize = it }
-            ) {
-                val center = if (!manualMode) {
-                    this.constraints.getCenter()
-                } else hold.centerProvider()
 
-                val progress = if (!manualMode) {
-                    progress.value
-                } else hold.progressProvider()
+            Column {
+                var height by remember { mutableIntStateOf(0) }
+                var isFirstPositioning by remember { mutableStateOf(true) }
 
-                HoldToActivateArc(
-                    center = center,
-                    progress = progress,
-                    customObject = mutableHoldObject,
-                    playAnimation = playAnimation
-                )
+                BoxWithConstraints(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(height.toDp)
+                        .onGloballyPositioned { layoutCoordinates ->
+                            if (isFirstPositioning) {
+                                height = layoutCoordinates.size.width
+                                isFirstPositioning = false
+                            }
+                        }
+                        .then(hold.pointerModifier)
+                ) {
+                    val center = if (!manualMode) {
+                        this.constraints.getCenter()
+                    } else hold.center
+
+                    val progress = if (!manualMode) {
+                        progress.value
+                    } else hold.progress
+
+                    HoldToActivateArc(
+                        center = center,
+                        progress = progress,
+                        customObject = mutableHoldObject,
+                        playAnimation = playAnimation
+                    )
+                }
+
+                VerticalDragZone { height += it.toInt() }
             }
         }
     ) {

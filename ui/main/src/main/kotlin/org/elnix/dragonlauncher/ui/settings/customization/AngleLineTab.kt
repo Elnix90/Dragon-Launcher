@@ -9,15 +9,16 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -45,6 +46,7 @@ import org.elnix.dragonlauncher.enumsui.select.AngleObject
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.angle360FromOffset
 import org.elnix.dragonlauncher.ktx.distanceSquaredTo
+import org.elnix.dragonlauncher.ktx.toDp
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
@@ -53,6 +55,7 @@ import org.elnix.dragonlauncher.settings.stores.objects.EndObjectSettingStore
 import org.elnix.dragonlauncher.settings.stores.objects.LineObjectSettingStore
 import org.elnix.dragonlauncher.settings.stores.objects.StartObjectSettingStore
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
+import org.elnix.dragonlauncher.ui.components.VerticalDragZone
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.AngleLineObjectsOrderDialog
@@ -201,10 +204,19 @@ fun AngleLineTab() {
         },
         scrollableContent = false,
         topContent = {
+            var height by remember { mutableIntStateOf(0) }
+            var isFirstPositioning by remember { mutableStateOf(true) }
+
             Box(
                 modifier = Modifier
-                    .aspectRatio(1f)
                     .fillMaxWidth()
+                    .height(height.toDp)
+                    .onGloballyPositioned { layoutCoordinates ->
+                        if (isFirstPositioning) {
+                            height = layoutCoordinates.size.width
+                            isFirstPositioning = false
+                        }
+                    }
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDragStart = { position: Offset ->
@@ -259,6 +271,8 @@ fun AngleLineTab() {
                         }
                     }
             )
+
+            VerticalDragZone { height += it.toInt() }
         }
     ) {
 
@@ -273,9 +287,9 @@ fun AngleLineTab() {
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
             AnimatedContent(currentEditObject) { angleObject ->
-               Column(
-                   verticalArrangement = Arrangement.spacedBy(5.dp)
-               ) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
                     when (angleObject) {
                         AngleObject.Line -> {
                             DragonSettingsGroup { Setting(AngleLineSettingsStore.showLineObjectPreview) }

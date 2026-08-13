@@ -53,66 +53,69 @@ fun rememberHoldToOpenSettings(
         }
     }
 
-    return remember(holdDelay, loadDuration, tolerance, onSettings) {
-        HoldGestureState(
-            pointerModifier = Modifier.pointerInput(Unit) {
+    val pointerModifier = remember(holdDelay, loadDuration, tolerance, onSettings) {
+        Modifier.pointerInput(Unit) {
 
-                awaitEachGesture {
+            awaitEachGesture {
 
-                    val down = awaitFirstDown()
-                    anchor = down.position
+                val down = awaitFirstDown()
+                anchor = down.position
 
-                    val holdJob = scope.launch {
-                        progress.snapTo(0f)
+                val holdJob = scope.launch {
+                    progress.snapTo(0f)
 
-                        delay(holdDelay.milliseconds)
+                    delay(holdDelay.milliseconds)
 
-                        progress.animateTo(
-                            targetValue = 1f,
-                            animationSpec = tween(
-                                durationMillis = loadDuration.toInt(),
-                                easing = LinearEasing
-                            )
+                    progress.animateTo(
+                        targetValue = 1f,
+                        animationSpec = tween(
+                            durationMillis = loadDuration.toInt(),
+                            easing = LinearEasing
                         )
+                    )
 
-                        onSettings(down.position)
-                        reset()
-                    }
-
-                    while (true) {
-                        val event = awaitPointerEvent()
-                        val change = event.changes.firstOrNull { it.id == down.id }
-
-                        if (change == null || !change.pressed) {
-                            holdJob.cancel()
-                            reset()
-                            break
-                        }
-
-                        // Check drag distance
-                        val dist = anchor?.let {
-                            (change.position - it).getDistance()
-                        } ?: 999f
-
-                        if (dist > tolerancePx) {
-                            holdJob.cancel()
-                            reset()
-                            break
-                        }
-
-                        change.consume()
-                    }
+                    onSettings(down.position)
+                    reset()
                 }
-            },
-            progressProvider = { progress.value },
-            centerProvider = { anchor }
-        )
+
+                while (true) {
+                    val event = awaitPointerEvent()
+                    val change = event.changes.firstOrNull { it.id == down.id }
+
+                    if (change == null || !change.pressed) {
+                        holdJob.cancel()
+                        reset()
+                        break
+                    }
+
+                    // Check drag distance
+                    val dist = anchor?.let {
+                        (change.position - it).getDistance()
+                    } ?: 999f
+
+                    if (dist > tolerancePx) {
+                        holdJob.cancel()
+                        reset()
+                        break
+                    }
+
+                    change.consume()
+                }
+            }
+        }
     }
+
+
+    return HoldGestureState(
+        pointerModifier = pointerModifier,
+        progress = progress.value,
+        center = anchor
+    )
 }
 
 /** Container for the produced gesture state. */
 class HoldGestureState(
     val pointerModifier: Modifier,
-    val progressProvider: () -> Float,
-    val centerProvider: () -> Offset?
+    val progress: Float,
+    val center: Offset?
 )

@@ -304,8 +304,8 @@ fun MainScreen(
                     is MainScreenLayer.HoldToActivate -> {
                         // Hold to activate
                         HoldToActivateArc(
-                            center = hold.centerProvider(),
-                            progress = hold.progressProvider(),
+                            center = hold.center,
+                            progress = hold.progress,
                             customObject = holdCustomObject,
                         )
 
