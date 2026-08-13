@@ -235,7 +235,6 @@
     <string name="rgb_line_selector">आरजीबी लाइन चयनकर्ता</string>
     <string name="show_app_launch_preview">ऐप लॉन्च पूर्वावलोकन दिखाएँ</string>
     <string name="show_app_line_preview">ऐप लाइन पूर्वावलोकन दिखाएँ</string>
-    <string name="do_you_hate_it">\"क्या तुम्हें इससे नफरत है\?\"</string>
     <string name="line_preview_snap_to_action">कार्रवाई के लिए लाइन पूर्वावलोकन स्नैप</string>
     <string name="icon_packs_found">%1$d आइकन पैक मिले</string>
     <string name="default_text">गलती करना</string>

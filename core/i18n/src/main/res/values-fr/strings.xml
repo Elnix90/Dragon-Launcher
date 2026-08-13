@@ -238,7 +238,6 @@
     <string name="rgb_line_selector">Sélecteur de ligne RVB</string>
     <string name="show_app_launch_preview">Afficher l\'aperçu du lancement de l\'application</string>
     <string name="show_app_line_preview">Afficher l\'aperçu de la ligne d\'application</string>
-    <string name="do_you_hate_it">\" Est-ce que tu détestes ça \? \"</string>
     <string name="line_preview_snap_to_action">Aperçu de la ligne instantané à l\'action</string>
     <string name="icon_packs_found">%1$d packs d\'icônes trouvés</string>
     <string name="default_text">Défaut</string>

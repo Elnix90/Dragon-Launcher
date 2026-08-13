@@ -44,7 +44,6 @@
     <string name="reset_to_default_colors">恢复默认颜色</string>
     <string name="make_every_colors_random">随机所有颜色</string>
     <string name="angle_line_color">角度线颜色</string>
-    <string name="circle_color">圆圈颜色</string>
     <string name="launch_app_color">启动应用文本颜色</string>
     <string name="open_url_color">打开网页文本颜色</string>
     <string name="notification_shade_color">通知栏动作颜色</string>
@@ -151,8 +150,6 @@
     <string name="invalid_format">格式无效，请检查上方的示例。</string>
     <string name="next_alarm_at">闹钟 %1$s</string>
     <string name="theme_selector_help">选择预设主题，您可以备份自己的设置，也可以在 GitHub 上提交 Pull Request 来贡献您的主题</string>
-    <string name="open_nest_circle">打开嵌套圆环</string>
-    <string name="delete_circle_nest">删除嵌套圆环</string>
     <string name="workspace_defaults">所有应用</string>
     <string name="workspace_added">已添加的应用</string>
     <string name="workspace_removed">隐藏的应用</string>
@@ -166,8 +163,6 @@
     <string name="add_widget">添加小部件</string>
     <string name="widgets">小部件</string>
     <string name="edit">编辑</string>
-    <string name="widgets_floating_apps">小部件 / 悬浮应用</string>
-    <string name="floating_apps_tab_help">管理您的工作区小部件和悬浮应用：添加、排序、缩放和定位它们。\n“幽灵化 (Ghosted)”意味着小部件不可点击。\n“前台化 (Foreground)”意味着小部件上不响应拖动手势。\n您可以尝试将这两者结合，以达到您喜欢的配置状态</string>
     <string name="delete_widget">删除小部件</string>
     <string name="add_point">添加点 (Point)</string>
     <string name="remove_point">移除点 (Point)</string>
@@ -257,8 +252,6 @@
     <string name="rgb_line_selector">RGB 动作选择线</string>
     <string name="show_app_launch_preview">显示应用启动预览</string>
     <string name="show_app_line_preview">显示应用轨迹线预览</string>
-    <string name="show_app_angle_preview">显示应用角度预览。 %1$s</string>
-    <string name="do_you_hate_it">" 你讨厌它吗？"</string>
     <string name="line_preview_snap_to_action">线条预览吸附到动作</string>
     <string name="icon_packs_found">找到 %1$d 个图标包</string>
     <string name="default_text">默认</string>
@@ -300,7 +293,6 @@
     <string name="show_app_angle_preview_description">在轨迹线上显示角度指示器</string>
     <string name="show_app_icon_start_drag_position_description">在您开始拖动的位置中心显示当前选中的应用</string>
     <string name="line_preview_snap_to_action_description">轨迹线条预览将不再自由移动，当有可对应的动作时它会直接吸附过去</string>
-    <string name="show_all_actions_on_current_circle_description">选中某个动作时，同圆圈内的所有其他点也会同步显示</string>
     <string name="min_angle_to_activate">触发所需的最小角度</string>
     <string name="app_label_overlay_size">应用标签覆盖层大小</string>
     <string name="app_icon_overlay_size">应用图标覆盖层大小</string>
@@ -561,18 +553,12 @@
     <string name="show_status_bar_desc">在桌面显示顶部的系统状态栏，若禁用则完全隐藏状态栏</string>
     <string name="disable_haptic_globally">全局禁用触觉振动反馈</string>
     <string name="disable_haptic_globally_desc">如果您不习惯物理振动，可以强制阻止 Dragon 在任何触点交互或选取时产生振动反馈</string>
-    <string name="point_action_snaps_to_outer_circle">点动作直接吸附至外圈</string>
-    <string name="point_action_snaps_to_outer_circle_desc">决定动作是在滑到内侧圈时被触发激活，还是在外侧圈才被触发激活</string>
     <string name="drag_handle">拖拽控制手柄</string>
     <string name="private_space_title">私密空间</string>
     <string name="private_space_locked">私密空间已锁定</string>
     <string name="private_space_authenticating">正在验证身份…</string>
-    <string name="private_space_managed_by_android">此配置文件由 Android 系统原生托管。</string>
     <string name="private_space_manage_instructions">若要添加、删除应用，或想销毁此独立空间配置文件，请前往系统自带的“安卓系统设置”。</string>
     <string name="samsung_secure_folder_settings">三星安全文件夹</string>
-    <string name="secure_folder_prefer_enabled">将优先使用三星安全文件夹来替代原生安卓私密空间功能。</string>
-    <string name="secure_folder_prefer_disabled">正在使用标准的 Android 原生私密空间。</string>
-    <string name="secure_folder_unavailable">此设备不支持或未启用三星安全文件夹功能</string>
     <string name="app_info_name">应用名称 = %1$s</string>
     <string name="app_info_package_name">应用包名 = %1$s</string>
     <string name="app_info_is_enabled">是否启用 = %1$s</string>
@@ -625,7 +611,6 @@
     <string name="reload">刷新重载</string>
     <string name="select_icon">选择目标图标</string>
     <string name="max_notification_icons">最大通知栏图标显示数</string>
-    <string name="need_to_be_default_launcher_to_use_private_space">必须将本应用设为默认启动器才能正常对接私密空间</string>
     <string name="use_differential_loading_private_space">对私密空间启用差分加载</string>
     <string name="use_differential_loading_private_space_desc">当发现私密应用未能正常出现在对应工作区时，请开启此开关。日常建议保持关闭状态以获得更好的整体系统性能</string>
     <string name="edit_border_shape">编辑外部轮廓边界形状</string>
@@ -689,7 +674,6 @@
     <string name="usage_access">应用使用情况统计数据访问权 (Usage Statistics)</string>
     <string name="android_permissions">安卓原生底层权限明细</string>
     <string name="manage_in_system_settings">跳转至安卓原生系统设置中进行细节更改。</string>
-    <string name="free_move_dragged_point">允许自由任意挪动被拖拽的各个定位触点</string>
     <string name="snap_points">控制触点自动吸附对齐规则</string>
     <string name="undo">撤销</string>
     <string name="undo_all">全盘撤销</string>
@@ -722,7 +706,6 @@
     <string name="steps">自定义多段马达步进</string>
     <string name="you_can_edit_haptic_feedback_on_nest_settings">您也可以在独立的每个圆环嵌套高阶属性中去针对性微调其特有的振动风格</string>
     <string name="edit_nest_help">在此全面修改该圆环的物理边界尺寸、外张拖动判定间距、独立的手势反馈振动以及其他各种极为高级的核心微调参数</string>
-    <string name="reset_nest_text">您确定要将当前这个圆环完全抹除并打回原厂默认空置状态吗？您此前付诸心血微调的所有个性化变量都将丢失！</string>
     <string name="use_custom_color_channels">干预 Material 全局组件底色通道</string>
     <string name="use_custom_color_channels_desc">强行覆盖系统自带的各类 Material 原生交互对象（例如开关滑块等）的默认变色通道，强制它们使用我自己这套个性化配色映射</string>
     <string name="hold_settings_help">此处的参数用于精细调整：当您在没有任何触点的主屏空白处长按足够长时间后，会在手指周围逐渐闭合扩散出来的那个弧形加载圈。注意：您无法彻底禁用此功能，因为该长按动作是您日后万一在桌面把界面逻辑彻底搞砸、找不到任何按钮时的‘最后一道逃生门’。保留它，您就能随时自救进入设置或重置应用，而不至于死锁重装。</string>
@@ -755,8 +738,6 @@
     <string name="dim_amount_help">拖拽发生时，给桌面的底色壁纸强行蒙上一层多深密度的墨色灰度半透明滤镜，以此创造层次悬殊的沉浸对比</string>
     <string name="snap_rotation">强制以每 15° 为一档阶梯进行角度步进吸附</string>
     <string name="enable_snap_move">开启网格刚性吸附对齐挪动</string>
-    <string name="cell_size">网格单元格像素边长</string>
-    <string name="cell_size_help">设定虚拟隐形对齐网格的单方块像素体积，用于在您挪动或者缩放桌面小部件时提供阶梯式的磁力规整吸附</string>
     <string name="off_screen_timeout">离屏不活动超时自动打道回府时限 (秒)</string>
     <string name="off_screen_timeout_desc">当您驻留在诸如二级列表或复杂设置这类分支子页面却把手机扔在一旁毫无操作时，应用在强制把页面自动弹回最清净的桌面主屏幕前所忍耐等待的时间。此规则会自动规避某些必须静止的场景（例如您正调用文件管理器选取文件时）。将其参数改为 -1 则表示永不强退、维持现场</string>
     <string name="paste">粘贴</string>

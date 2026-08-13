@@ -51,7 +51,6 @@
     <string name="reset_to_default_colors">இயல்புநிலை வண்ணங்களுக்கு மீட்டமைக்கவும்</string>
     <string name="make_every_colors_random">அனைத்து வண்ணங்களையும் சீரமைக்கவும்</string>
     <string name="angle_line_color">ஆங்கிள் லைன் கலர்</string>
-    <string name="circle_color">வட்டத்தின் நிறம்</string>
     <string name="launch_app_color">பயன்பாட்டு நிறத்தைத் தொடங்கவும்</string>
     <string name="open_url_color">முகவரி நிறத்தைத் திறக்கவும்</string>
     <string name="notification_shade_color">அறிவிப்பு நிழல் நிறம்</string>
@@ -201,8 +200,6 @@
     <string name="invalid_format">தவறான வடிவம். மேலே உள்ள எடுத்துக்காட்டுகளைச் சரிபார்க்கவும்.</string>
     <string name="next_alarm_at">அலாரம் %1$s</string>
     <string name="theme_selector_help">முன் வரையறுக்கப்பட்ட தீம்களைத் தேர்ந்தெடுங்கள், உங்கள் அமைப்புகளை காப்புப் பிரதி எடுக்கலாம் மற்றும் கிதுப்பில் இழுக்கும் கோரிக்கையில் கருப்பொருள் முன்மொழியலாம்</string>
-    <string name="open_nest_circle">திறந்த வட்டக் கூடு</string>
-    <string name="delete_circle_nest">சர்க்கிள் நெச்டை நீக்கு</string>
     <string name="workspace_defaults">அனைத்து பயன்பாடுகள்</string>
     <string name="workspace_added">பயன்பாடுகள் சேர்க்கப்பட்டது</string>
     <string name="workspace_removed">மறைக்கப்பட்ட பயன்பாடுகள்</string>
@@ -216,8 +213,6 @@
     <string name="add_widget">விட்செட்டைச் சேர்க்கவும்</string>
     <string name="widgets">நிரல்பலகை</string>
     <string name="edit">தொகு</string>
-    <string name="widgets_floating_apps">விட்செட்டுகள் / மிதக்கும் பயன்பாடுகள்</string>
-    <string name="floating_apps_tab_help">உங்கள் பணியிட விட்செட்கள் மற்றும் மிதக்கும் பயன்பாடுகளை நிர்வகிக்கவும்: அவற்றைச் சேர்க்கவும், மறுவரிசைப்படுத்தவும், அளவை மாற்றவும் மற்றும் நிலைப்படுத்தவும். \nகோச்டெட் என்றால் விட்செட்டை சொடுக்கு செய்ய முடியாது \nமுன்புறம் என்றால் இழுக்கும் சைகைகள் விட்செட்டில் பதிவு செய்யப்படவில்லை \nநீங்கள் விரும்பும் உள்ளமைவை அடைய இந்த இரண்டின் கலவையை முயற்சி செய்யலாம்</string>
     <string name="delete_widget">விட்செட்டை நீக்கு</string>
     <string name="add_point">புள்ளியைச் சேர்க்கவும்</string>
     <string name="remove_point">புள்ளியை அகற்று</string>
@@ -262,8 +257,6 @@
     <string name="rgb_line_selector">RGB வரி தேர்வி</string>
     <string name="show_app_launch_preview">ஆப்சின் துவக்க முன்னோட்டத்தைக் காட்டு</string>
     <string name="show_app_line_preview">பயன்பாட்டு வரி முன்னோட்டத்தைக் காட்டு</string>
-    <string name="show_app_angle_preview">ஆப் ஆங்கிள் மாதிரிக்காட்சியைக் காட்டு. %1$s</string>
-    <string name="do_you_hate_it">" நீங்கள் அதை வெறுக்கிறீர்களா?"</string>
     <string name="line_preview_snap_to_action">வரி முன்னோட்டம் செயலில் இறங்குகிறது</string>
     <string name="icon_packs_found">%1$d படவுரு பேக்குகள் கண்டறியப்பட்டன</string>
     <string name="default_text">இயல்புநிலை</string>
@@ -307,7 +300,6 @@
     <string name="show_app_angle_preview_description">கோட்டில் கோணக் காட்டியைக் காட்டவும்</string>
     <string name="show_app_icon_start_drag_position_description">நீங்கள் நட்சத்திரமிட்ட இடத்தின் மையத்தில் தற்போதைய தேர்ந்தெடுக்கப்பட்ட பயன்பாட்டை இழுத்து காண்பிக்கவும்</string>
     <string name="line_preview_snap_to_action_description">வரி மாதிரிக்காட்சியை நகர்த்துவதற்கு இலவசம் இல்லை, ஒன்று இருக்கும்போது அது தேர்ந்தெடுக்கப்பட்ட செயலுக்குச் செல்லும்</string>
-    <string name="show_all_actions_on_current_circle_description">ஒரு செயலைத் தேர்ந்தெடுக்கும்போது, அனைத்து ஒரே வட்டப் புள்ளிகளும் காட்டப்படும்</string>
     <string name="min_angle_to_activate">செயல்படுத்துவதற்கான குறைந்தபட்ச கோணம்</string>
     <string name="app_label_overlay_size">ஆப் சிட்டை மேலடுக்கு அளவு</string>
     <string name="app_icon_overlay_size">பயன்பாட்டு படவுரு மேலடுக்கு அளவு</string>
@@ -561,18 +553,12 @@
     <string name="show_status_bar_desc">நிலைப் பட்டியைக் காட்டு, முடக்கப்பட்டிருந்தால் எதுவும் காட்டப்படவில்லை</string>
     <string name="disable_haptic_globally">உலகளவில் ஆப்டிக் பின்னூட்டத்தை முடக்கு</string>
     <string name="disable_haptic_globally_desc">நீங்கள் அதை வெறுக்கும் பட்சத்தில் புள்ளிகள் தேர்வில் டிராகனை எந்தவிதமான கருத்துகளையும் வெளியிடுவதைத் தடுக்கவும்</string>
-    <string name="point_action_snaps_to_outer_circle">பாயிண்ட் ஆக்‌சன் வெளிப்புற வட்டத்திற்குச் செல்கிறது</string>
-    <string name="point_action_snaps_to_outer_circle_desc">செயல் உள் வட்டத்தில் அல்லது வெளிப்புறத்தில் செயல்படுத்தப்பட்டதா என்பதைத் தேர்ந்தெடுக்கவும்</string>
     <string name="drag_handle">கைப்பிடியை இழுக்கவும்</string>
     <string name="private_space_title">தனிப்பட்ட இடம்</string>
     <string name="private_space_locked">தனிப்பட்ட இடம் பூட்டப்பட்டுள்ளது</string>
     <string name="private_space_authenticating">அங்கீகரிக்கிறது…</string>
-    <string name="private_space_managed_by_android">இந்த சுயவிவரம் ஆண்ட்ராய்டு சிச்டத்தால் நிர்வகிக்கப்படுகிறது.</string>
     <string name="private_space_manage_instructions">ஆப்சைச் சேர்க்க அல்லது அகற்ற அல்லது இந்தச் சுயவிவரத்தை நீக்க, ஆண்ட்ராய்டு அமைப்புகளைப் பயன்படுத்தவும்.</string>
     <string name="samsung_secure_folder_settings">சாம்சங் பாதுகாப்பான கோப்புறை</string>
-    <string name="secure_folder_prefer_enabled">தனிப்பட்ட இடத்திற்குப் பதிலாக பாதுகாப்பான கோப்புறை பயன்படுத்தப்படும்.</string>
-    <string name="secure_folder_prefer_disabled">நிலையான ஆண்ட்ராய்டு தனியார் இடத்தைப் பயன்படுத்துதல்.</string>
-    <string name="secure_folder_unavailable">இந்தச் சாதனத்தில் பாதுகாப்பான கோப்புறை இல்லை</string>
     <string name="app_info_name">பெயர் = %1$s</string>
     <string name="app_info_package_name">தொகுப்பு பெயர் = %1$s</string>
     <string name="app_info_is_enabled">இயக்கப்பட்டது = %1$s</string>
@@ -625,7 +611,6 @@
     <string name="reload">ஏற்றவும்</string>
     <string name="select_icon">ஐகானைத் தேர்ந்தெடுக்கவும்</string>
     <string name="max_notification_icons">அதிகபட்ச அறிவிப்பு சின்னங்கள்</string>
-    <string name="need_to_be_default_launcher_to_use_private_space">தனிப்பட்ட இடத்தைப் பயன்படுத்த, இயல்புநிலை துவக்கியாக இருக்க வேண்டும்</string>
     <string name="use_differential_loading_private_space">வேறுபட்ட ஏற்றுதல் தனிப்பட்ட இடத்தைப் பயன்படுத்தவும்</string>
     <string name="use_differential_loading_private_space_desc">தனிப்பட்ட பயன்பாடுகள் பயனர் பணியிடத்தில் தோன்றும் போது இதை மாற்றவும், இல்லையெனில் செயல்திறன்களுக்காக அதைத் தேர்வு செய்யாமல் வைக்கவும்</string>
     <string name="edit_border_shape">பார்டர் வடிவத்தைத் திருத்து</string>
@@ -689,7 +674,6 @@
     <string name="usage_access">பயன்பாட்டு புள்ளிவிவர அணுகல்</string>
     <string name="android_permissions">ஆண்ட்ராய்டு அனுமதிகள்</string>
     <string name="manage_in_system_settings">கணினி அமைப்புகளில் நிர்வகிக்கவும்.</string>
-    <string name="free_move_dragged_point">இலவச நகர்வு இழுக்கப்பட்ட புள்ளி</string>
     <string name="snap_points">ச்னாப் புள்ளிகள்</string>
     <string name="undo">செயல்தவிர்</string>
     <string name="undo_all">அனைத்தையும் செயல்தவிர்</string>
@@ -722,7 +706,6 @@
     <string name="steps">படிகள்</string>
     <string name="you_can_edit_haptic_feedback_on_nest_settings">நெச்ட் அமைப்புகளில் ஆப்டிக் கருத்தைத் திருத்தலாம்</string>
     <string name="edit_nest_help">கூட்டின் அளவு, இழுத்துச் செல்லும் தூரங்கள், ஆப்டிக் பின்னூட்டங்கள் மற்றும் பிற பயனுள்ள அமைப்புகளைத் தனிப்பயனாக்குங்கள்</string>
-    <string name="reset_nest_text">இந்த கூட்டை அதன் இயல்பு நிலைக்கு மீட்டமைக்கவா? நீங்கள் மாற்றிய அனைத்து தனிப்பயன் மதிப்புகளையும் இழப்பீர்கள்!</string>
     <string name="use_custom_color_channels">தனிப்பயன் வண்ண சேனல்களைப் பயன்படுத்தவும்</string>
     <string name="use_custom_color_channels_desc">என்னுடையதைப் பயன்படுத்த, சுவிட்சுகள் போன்ற பொருள் பொருள்களுக்குப் பயன்படுத்தப்படும் இயல்புநிலை வண்ண சேனல்களை மேலெழுதவும்</string>
     <string name="hold_settings_help">மெயின் ச்கிரீனில் நீண்ட நேரம் வைத்திருக்கும் போது உருவாகும் ஆர்க் தொடர்பான அமைப்புகளை, உங்களால் முழுமையாக முடக்க முடியாது, இல்லையெனில், அமைப்புகளுக்கு இட்டுச் செல்லும் கடைசி கதவை நீங்கள் இழக்க நேரிடும், நீங்கள் அதைச் செய்தால், பயன்பாட்டை மீட்டமைக்க வேண்டிய கட்டாயம் ஏற்படும்.</string>
@@ -755,8 +738,6 @@
     <string name="dim_amount_help">திரையில் எவ்வளவு மங்கலான (வால்பேப்பர் நிறம்) பயன்படுத்தப்படுகிறது</string>
     <string name="snap_rotation">15° மூலம் ச்னாப் சுழற்சி</string>
     <string name="enable_snap_move">ச்னாப் நகர்வை இயக்கு</string>
-    <string name="cell_size">செல் அளவு</string>
-    <string name="cell_size_help">விட்செட் அளவுகளை எடுக்கப் பயன்படும் கட்டத்தின் அளவு</string>
     <string name="off_screen_timeout">ஆஃப்-ச்கிரீன் டைம்அவுட் (கள்)</string>
     <string name="off_screen_timeout_desc">நீங்கள் மற்றொரு திரையில் இருக்கும்போது முகப்புத் திரைக்குத் திரும்புவதற்கு முன்பு ஆப்ச் எவ்வளவு நேரம் காத்திருக்கிறது. காப்புப்பிரதி (நீங்கள் கோப்பைத் தேர்ந்தெடுப்பதால்) போன்ற சில குறிப்பிட்ட திரைகளுக்குப் பொருந்தாது. -1 என்றால் திரும்ப வராது</string>
     <string name="paste">ஒட்டவும்</string>

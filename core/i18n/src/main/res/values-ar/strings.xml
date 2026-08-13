@@ -51,7 +51,6 @@
     <string name="reset_to_default_colors">إعادة ضبط الألوان الافتراضية</string>
     <string name="make_every_colors_random">جعل جميع الألوان عشوائية</string>
     <string name="angle_line_color">لون خط الزاوية</string>
-    <string name="circle_color">لون الدائرة</string>
     <string name="launch_app_color">لون تشغيل التطبيق</string>
     <string name="open_url_color">لون فتح الرابط</string>
     <string name="notification_shade_color">لون ستارة الإشعارات</string>
@@ -304,8 +303,6 @@
     <string name="invalid_format">تنسيق غير صالح. تحقق من الأمثلة أعلاه.</string>
     <string name="next_alarm_at">المنبه %1$s</string>
     <string name="theme_selector_help">حدد سمات محددة مسبقاً، يمكنك نسخ إعداداتك احتياطياً واقتراح سمتك في طلب سحب على GitHub</string>
-    <string name="open_nest_circle">فتح عش الدائرة</string>
-    <string name="delete_circle_nest">حذف عش الدائرة</string>
     <string name="workspace_defaults">جميع التطبيقات</string>
     <string name="workspace_added">التطبيقات المضافة</string>
     <string name="workspace_removed">التطبيقات المخفية</string>
@@ -319,8 +316,6 @@
     <string name="add_widget">إضافة أداة مصغرة</string>
     <string name="widgets">الأدوات المصغرة</string>
     <string name="edit">تحرير</string>
-    <string name="widgets_floating_apps">الأدوات المصغرة / التطبيقات العائمة</string>
-    <string name="floating_apps_tab_help">إدارة أدوات مساحة العمل والتطبيقات العائمة: إضافتها، إعادة ترتيبها، تغيير حجمها، وتحديد موقعها.\n\"شبحية\" تعني أن الأداة غير قابلة للنقر\n\"في المقدمة\" تعني أن إيماءات السحب لا يتم تسجيلها على الأداة\nيمكنك تجربة مزيج من هذين الخيارين للوصول إلى التكوين الذي تفضله</string>
     <string name="delete_widget">حذف الأداة المصغرة</string>
     <string name="add_point">إضافة نقطة</string>
     <string name="remove_point">إزالة نقطة</string>
@@ -365,8 +360,6 @@
     <string name="rgb_line_selector">محدد خط RGB</string>
     <string name="show_app_launch_preview">إظهار معاينة تشغيل التطبيق</string>
     <string name="show_app_line_preview">إظهار معاينة خط التطبيق</string>
-    <string name="show_app_angle_preview">إظهار معاينة زاوية التطبيق. %1$s</string>
-    <string name="do_you_hate_it">" هل تكره ذلك؟"</string>
     <string name="line_preview_snap_to_action">محاذاة معاينة الخط للإجراء</string>
     <string name="icon_packs_found">تم العثور على %1$d حزمة أيقونات</string>
     <string name="default_text">افتراضي</string>
@@ -663,18 +656,12 @@
     <string name="show_status_bar_desc">عرض شريط الحالة، إذا تم تعطيله فلن يظهر شيء</string>
     <string name="disable_haptic_globally">تعطيل الردود اللمسية عالمياً</string>
     <string name="disable_haptic_globally_desc">منع التنين من إصدار أي ردود فعل لمسية عند اختيار النقاط إذا كنت تكرهها</string>
-    <string name="point_action_snaps_to_outer_circle">إجراء النقطة ينجذب للدائرة الخارجية</string>
-    <string name="point_action_snaps_to_outer_circle_desc">اختر ما إذا كان الإجراء يتم تفعيله في الدائرة الداخلية أم الخارجية</string>
     <string name="drag_handle">مقبض السحب</string>
     <string name="private_space_title">المساحة الخاصة</string>
     <string name="private_space_locked">المساحة الخاصة مقفولة</string>
     <string name="private_space_authenticating">جاري المصادقة…</string>
-    <string name="private_space_managed_by_android">هذا الملف الشخصي مدار بواسطة نظام أندرويد.</string>
     <string name="private_space_manage_instructions">لإضافة أو إزالة تطبيقات، أو حذف هذا الملف الشخصي، استخدم إعدادات أندرويد.</string>
     <string name="samsung_secure_folder_settings">مجلد سامسونج الآمن</string>
-    <string name="secure_folder_prefer_enabled">سيتم استخدام المجلد الآمن بدلاً من المساحة الخاصة.</string>
-    <string name="secure_folder_prefer_disabled">استخدام مساحة أندرويد الخاصة القياسية.</string>
-    <string name="secure_folder_unavailable">المجلد الآمن غير متاح على هذا الجهاز</string>
     <string name="app_info_name">الاسم = %1$s</string>
     <string name="app_info_package_name">اسم الحزمة = %1$s</string>
     <string name="app_info_is_enabled">مفعل = %1$s</string>
@@ -727,7 +714,6 @@
     <string name="reload">إعادة تحميل</string>
     <string name="select_icon">حدد الأيقونة</string>
     <string name="max_notification_icons">أقصى عدد لأيقونات الإشعارات</string>
-    <string name="need_to_be_default_launcher_to_use_private_space">يجب أن يكون المشغل الافتراضي لاستخدام المساحة الخاصة</string>
     <string name="use_differential_loading_private_space">استخدام التحميل التفاضلي للمساحة الخاصة</string>
     <string name="use_differential_loading_private_space_desc">قم بتفعيل هذا عندما تظهر التطبيقات الخاصة في مساحة عمل المستخدم، وإلا اتركه غير محدد للأداء</string>
     <string name="edit_border_shape">تحرير شكل الحدود</string>
@@ -791,7 +777,6 @@
     <string name="usage_access">الوصول إلى إحصائيات الاستخدام</string>
     <string name="android_permissions">أذونات أندرويد</string>
     <string name="manage_in_system_settings">الإدارة في إعدادات النظام.</string>
-    <string name="free_move_dragged_point">حركة حرة للنقطة المسحوبة</string>
     <string name="snap_points">نقاط المحاذاة</string>
     <string name="undo">تراجع</string>
     <string name="undo_all">تراجع عن الكل</string>
@@ -824,7 +809,6 @@
     <string name="steps">الخطوات</string>
     <string name="you_can_edit_haptic_feedback_on_nest_settings">يمكنك تحرير الردود اللمسية في إعدادات العش</string>
     <string name="edit_nest_help">تخصيص حجم العش، مسافات السحب، الردود اللمسية، وإعدادات مفيدة أخرى</string>
-    <string name="reset_nest_text">إعادة ضبط هذا العش إلى حالته الافتراضية؟ ستفقد جميع القيم المخصصة التي غيرتها!</string>
     <string name="use_custom_color_channels">استخدام قنوات ألوان مخصصة</string>
     <string name="use_custom_color_channels_desc">تجاوز قنوات الألوان الافتراضية المستخدمة لعناصر Material، مثل المفاتيح، لاستخدام قنواتي الخاصة</string>
     <string name="hold_settings_help">الإعدادات المتعلقة بالقوس الذي يظهر عندما تضغط مطولاً لفترة كافية على الشاشة الرئيسية. لا يمكنك تعطيله تماماً، وإلا فقد تفقد الباب الأخير الذي يقودك للإعدادات إذا أخطأت في التكوين، مما سيضطرك لإعادة ضبط التطبيق.</string>
@@ -857,8 +841,6 @@
     <string name="dim_amount_help">مقدار التعتيم (لون الخلفية) المطبق على الشاشة</string>
     <string name="snap_rotation">محاذاة التدوير بـ 15 درجة</string>
     <string name="enable_snap_move">تفعيل محاذاة الحركة</string>
-    <string name="cell_size">حجم الخلية</string>
-    <string name="cell_size_help">حجم الشبكة المستخدمة لمحاذاة أحجام الأدوات المصغرة</string>
     <string name="off_screen_timeout">مهلة الخروج من الشاشة (ثانية)</string>
     <string name="off_screen_timeout_desc">كم من الوقت ينتظر التطبيق قبل العودة إلى الشاشة الرئيسية عندما تكون في شاشة أخرى. لا ينطبق على بعض الشاشات المحددة، مثل النسخ الاحتياطي (لأنك تختار ملفاً). -1 تعني عدم العودة</string>
     <string name="paste">لصق</string>

@@ -48,7 +48,6 @@
     <string name="reset_to_default_colors">Restablecer a los colores predeterminados</string>
     <string name="make_every_colors_random">Aleatorizar todos los colores</string>
     <string name="angle_line_color">Color de la línea de ángulo</string>
-    <string name="circle_color">Color del círculo</string>
     <string name="launch_app_color">Lanzamiento de App Color</string>
     <string name="open_url_color">URL abierta color</string>
     <string name="notification_shade_color">Color de tono de notificación</string>
@@ -179,8 +178,6 @@
     <string name="invalid_format">Formato inválido. Consulta los ejemplos anteriores.</string>
     <string name="next_alarm_at">Alarma %1$s</string>
     <string name="theme_selector_help">Selecciona un tema predefinido, puedes respaldar sus ajustes y proporcionar su tema en la solicitud de extracción en el GitHub</string>
-    <string name="open_nest_circle">Nido Circular Abierto</string>
-    <string name="delete_circle_nest">Eliminar Nido de Círculo</string>
     <string name="workspace_defaults">Todas las aplicaciones</string>
     <string name="workspace_added">Aplicaciones añadidas</string>
     <string name="workspace_removed">Aplicaciones ocultas</string>
@@ -194,8 +191,6 @@
     <string name="add_widget">Añadir widget</string>
     <string name="widgets">Widgets</string>
     <string name="edit">Edición</string>
-    <string name="widgets_floating_apps">Widgets / Aplicaciones flotantes</string>
-    <string name="floating_apps_tab_help">Administre los widgets y aplicaciones flotantes de su espacio de trabajo: agréguelos, reordenelos, cambie su tamaño y colóquelos.\n Fantasma significa que no se puede hacer clic en el widget\nPrimer plano significa que los gestos de arrastre no están registrados en el widget\nPuede probar una combinación de estos dos para lograr la configuración que desee</string>
     <string name="delete_widget">Eliminar widget</string>
     <string name="add_point">Punto de Añadir</string>
     <string name="remove_point">Punto de eliminación</string>
@@ -240,8 +235,6 @@
     <string name="rgb_line_selector">Selector de línea RGB</string>
     <string name="show_app_launch_preview">Mostrar vista previa del inicio de la aplicación</string>
     <string name="show_app_line_preview">Mostrar vista previa de la línea de la aplicación</string>
-    <string name="show_app_angle_preview">Mostrar vista previa del ángulo de la aplicación. %1$s</string>
-    <string name="do_you_hate_it">" • ¿No te gusta?"</string>
     <string name="line_preview_snap_to_action">Vista previa de línea: ajuste a la acción</string>
     <string name="icon_packs_found">%1$d paquetes de iconos encontrados</string>
     <string name="default_text">Por defecto</string>
@@ -285,7 +278,6 @@
     <string name="show_app_angle_preview_description">Mostrar el indicador del ángulo en la línea</string>
     <string name="show_app_icon_start_drag_position_description">Muestra la aplicación seleccionada actualmente en el centro de donde destacaste para arrastrar</string>
     <string name="line_preview_snap_to_action_description">La vista previa de línea no se puede mover libremente, se ajusta a la acción seleccionada cuando hay una</string>
-    <string name="show_all_actions_on_current_circle_description">Cuando se selecciona una acción, también se muestran todos los puntos del mismo círculo</string>
     <string name="min_angle_to_activate">Ángulo mínimo para activar</string>
     <string name="app_label_overlay_size">Tamaño de superposición de etiquetas de aplicaciones</string>
     <string name="app_icon_overlay_size">Tamaño de superposición del icono de la aplicación</string>
@@ -543,18 +535,12 @@
     <string name="show_status_bar_desc">Mostrar la barra de estado, si está deshabilitada no se muestra nada</string>
     <string name="disable_haptic_globally">Deshabilitar la retroalimentación háptica globalmente</string>
     <string name="disable_haptic_globally_desc">Evite que Dragon produzca retroalimentación háptica en la selección de puntos en caso de que lo odie</string>
-    <string name="point_action_snaps_to_outer_circle">La acción del punto se ajusta al círculo exterior</string>
-    <string name="point_action_snaps_to_outer_circle_desc">Elige si la acción se activa en el círculo interior o exterior</string>
     <string name="drag_handle">Controlador de arrastre</string>
     <string name="private_space_title">Espacio privado</string>
     <string name="private_space_locked">Espacio privado bloqueado</string>
     <string name="private_space_authenticating">Autenticando…</string>
-    <string name="private_space_managed_by_android">Este perfil es administrado por el sistema Android.</string>
     <string name="private_space_manage_instructions">Para añadir o quitar apps, o eliminar este perfil, usa Ajustes de Android.</string>
     <string name="samsung_secure_folder_settings">Carpeta segura de Samsung</string>
-    <string name="secure_folder_prefer_enabled">Se utilizará Carpeta segura en lugar de Espacio privado.</string>
-    <string name="secure_folder_prefer_disabled">Usando el espacio privado estándar de Android.</string>
-    <string name="secure_folder_unavailable">Carpeta segura no disponible en este dispositivo</string>
     <string name="app_info_name">name = %1$s</string>
     <string name="app_info_package_name">Nombre del paquete = %1$s</string>
     <string name="app_info_is_enabled">Activo = %1$s</string>
@@ -606,7 +592,6 @@
     <string name="reload">Recarga</string>
     <string name="select_icon">Seleccionar icono</string>
     <string name="max_notification_icons">Iconos de notificación al máximo</string>
-    <string name="need_to_be_default_launcher_to_use_private_space">Debe ser el launcher por defecto para usar espacio privado</string>
     <string name="use_differential_loading_private_space">Uso del espacio privado de carga diferencial</string>
     <string name="use_differential_loading_private_space_desc">Desactiva esto cuando aparezcan aplicaciones privadas en el espacio de trabajo del usuario; de lo contrario, déjalo desmarcado para el rendimiento</string>
     <string name="edit_border_shape">Editar la forma del borde</string>
@@ -689,7 +674,6 @@
     <string name="usage_access">Acceso a estadísticas de uso</string>
     <string name="android_permissions">Permisos de Android</string>
     <string name="manage_in_system_settings">Gestionar ajustes del sistema.</string>
-    <string name="free_move_dragged_point">Arrastrar libremente el punto seleccionado</string>
     <string name="snap_points">Ajustar puntos</string>
     <string name="undo">Deshacer</string>
     <string name="undo_all">Deshacer todo</string>
@@ -757,7 +741,6 @@
     <string name="steps">Pasos</string>
     <string name="you_can_edit_haptic_feedback_on_nest_settings">Puedes editar la respuesta háptica en los ajustes anidados</string>
     <string name="edit_nest_help">Configura en tamaño del nido, distancia del arrastre, retroalimentación háptica y otros ajustes útiles</string>
-    <string name="reset_nest_text">¿Restaurar el nido a su estado predeterminado?, todos los cambios ¡Desaparecerán!</string>
     <string name="use_custom_color_channels">Usar canales de color personalizados</string>
     <string name="use_custom_color_channels_desc">Anular los canales de color predeterminados, usados para los objetos de material, como los interruptores, para usar los del launcher</string>
     <string name="app_display_desc">Cambia ajustes relacionados a app de aplicación global, en el contexto del lanzador, sin color relacionado</string>
@@ -805,8 +788,6 @@
     <string name="dim_amount_help">Cuanto dim (color de tapiz) está aplicado en la pantalla</string>
     <string name="snap_rotation">Rotación rápida de 15°</string>
     <string name="enable_snap_move">Habilitar el movimiento rápido</string>
-    <string name="cell_size">Tamaño de celda</string>
-    <string name="cell_size_help">El tamaño de la cuadrícula que se utiliza para ajustar los tamaños de los widgets</string>
     <string name="off_screen_timeout">Tiempo de espera del apagado de pantalla (s)</string>
     <string name="off_screen_timeout_desc">Cuánto tiempo espera la aplicación antes de volver a la pantalla de inicio cuando estás en otra pantalla. No se aplica a algunas pantallas específicas, como la de copia de seguridad (porque seleccionas un archivo). -1 significa que no hay retorno</string>
     <string name="paste">Pegar</string>
