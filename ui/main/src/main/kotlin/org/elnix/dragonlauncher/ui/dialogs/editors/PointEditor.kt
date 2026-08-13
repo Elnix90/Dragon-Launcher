@@ -173,15 +173,19 @@ fun PointEditor(
 
                 AnimatedContent(expandedFeaturePanel) { expandedFeature ->
                     @Suppress("UnusedExpression")
-                    when (expandedFeature) {
-                        PointFeaturePanel.LiveNest -> {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        when (expandedFeature) {
+                            PointFeaturePanel.LiveNest -> {
 
-                            val liveNestTargetNestId = editPoint.liveNestTargetNestId
-                            val liveNestEnabled = liveNestTargetNestId != null
-                            val targetNest = if (liveNestEnabled) pointsViewModel.pointsService.findNestById(liveNestTargetNestId) else null
-                            val nestLabel = targetNest?.name ?: targetNest?.let { "Nest ${it.id}" } ?: ""
+                                val liveNestTargetNestId = editPoint.liveNestTargetNestId
+                                val liveNestEnabled = liveNestTargetNestId != null
+                                val targetNest = if (liveNestEnabled) pointsViewModel.pointsService.findNestById(liveNestTargetNestId) else null
+                                val nestLabel = targetNest?.name ?: targetNest?.let { "Nest ${it.id}" } ?: ""
 
-                            Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                                 if (!liveNestEnabled && !isDefaultEditing) {
                                     DragonButton(
                                         modifier = Modifier
@@ -348,16 +352,10 @@ fun PointEditor(
                                     }
                                 }
                             }
-                        }
 
-                        PointFeaturePanel.CycleActions -> {
-                            val cycleStages = editPoint.cycleActions ?: emptyList()
+                            PointFeaturePanel.CycleActions -> {
+                                val cycleStages = editPoint.cycleActions ?: emptyList()
 
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalArrangement = Arrangement.spacedBy(10.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
                                 if (!isDefaultEditing) {
                                     cycleStages.forEachIndexed { index, stage ->
                                         val stageLabel = actionLabel(stage.action)
@@ -476,41 +474,50 @@ fun PointEditor(
                                 }
 
                                 AnimatedVisibility(cycleStages.isNotEmpty() || isDefaultEditing) {
-                                    val cycleActionLoop = editPoint.getCycleActionsStageLoop(defaultPoint, isDefaultEditing)
-                                    SwitchRow(
-                                        state = cycleActionLoop,
-                                        title = stringResource(R.string.cycle_actions_loop),
-                                        description = stringResource(R.string.cycle_actions_loop_desc)
-                                    ) { on ->
-                                        editPoint = editPoint.copy(
-                                            cycleActionsLoop = on.takeIf { it != emptyPoint.getCycleActionsStageLoop(defaultPoint, isDefaultEditing) }
-                                        )
-                                    }
+                                    Column(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        val cycleActionLoop = editPoint.getCycleActionsStageLoop(defaultPoint, isDefaultEditing)
+                                        SwitchRow(
+                                            state = cycleActionLoop,
+                                            title = stringResource(R.string.cycle_actions_loop),
+                                            description = stringResource(R.string.cycle_actions_loop_desc)
+                                        ) { on ->
+                                            editPoint = editPoint.copy(
+                                                cycleActionsLoop = on.takeIf {
+                                                    it != emptyPoint.getCycleActionsStageLoop(
+                                                        defaultPoint,
+                                                        isDefaultEditing
+                                                    )
+                                                }
+                                            )
+                                        }
 
-                                    AnimatedVisibility(cycleActionLoop) {
-                                        SliderWithLabel(
-                                            label = stringResource(R.string.cycle_actions_loop_delay),
-                                            value = editPoint.getCycleActionsStageLoopDelayMs(defaultPoint, isDefaultEditing),
-                                            valueRange = 50..5000,
-                                            resetEnabled = true,
-                                            onReset = {
-                                                editPoint = editPoint.copy(cycleActionsLoopDelayMs = null)
+                                        AnimatedVisibility(cycleActionLoop) {
+                                            SliderWithLabel(
+                                                label = stringResource(R.string.cycle_actions_loop_delay),
+                                                value = editPoint.getCycleActionsStageLoopDelayMs(defaultPoint, isDefaultEditing),
+                                                valueRange = 50..5000,
+                                                resetEnabled = true,
+                                                onReset = {
+                                                    editPoint = editPoint.copy(cycleActionsLoopDelayMs = null)
+                                                }
+                                            ) { ms ->
+                                                editPoint = editPoint.copy(cycleActionsLoopDelayMs = ms.takeIf {
+                                                    it != emptyPoint.getCycleActionsStageLoopDelayMs(
+                                                        defaultPoint,
+                                                        isDefaultEditing
+                                                    )
+                                                })
                                             }
-                                        ) { ms ->
-                                            editPoint = editPoint.copy(cycleActionsLoopDelayMs = ms.takeIf {
-                                                it != emptyPoint.getCycleActionsStageLoopDelayMs(
-                                                    defaultPoint,
-                                                    isDefaultEditing
-                                                )
-                                            })
                                         }
                                     }
                                 }
                             }
-                        }
 
-                        PointFeaturePanel.HoldAndRun -> {
-                            Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                            PointFeaturePanel.HoldAndRun -> {
                                 if (isDefaultEditing) {
                                     SliderWithLabel(
                                         label = stringResource(R.string.default_hold_and_run_delay),
@@ -629,9 +636,9 @@ fun PointEditor(
                                     }
                                 }
                             }
-                        }
 
-                        null -> null
+                            null -> null
+                        }
                     }
                 }
             }
