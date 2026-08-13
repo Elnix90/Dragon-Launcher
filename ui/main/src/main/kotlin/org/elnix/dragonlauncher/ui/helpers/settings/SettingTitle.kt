@@ -28,7 +28,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 
 @Composable
-private fun SettingsTitleInternal(
+fun BaseSettingsTitle(
     title: String,
     onBack: () -> Unit,
     moreOptions: ((() -> Unit) -> List<MoreOptions>)?,
@@ -43,30 +43,35 @@ private fun SettingsTitleInternal(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp, vertical = 20.dp)
-            .clickable(
-                indication = null,
-                interactionSource = interactionSource,
-                onClick = onBack
-            )
+        modifier = Modifier.fillMaxWidth()
     ) {
-
-        AnimatedFab(
-            onClick = onBack,
-            interactionSource = interactionSource,
-            icon = R.drawable.back
-        )
-
-        Text(
-            text = title,
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleLarge,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier
                 .weight(1f)
-                .basicMarquee(iterations = 2)
-        )
+                .clickable(
+                    indication = null,
+                    interactionSource = interactionSource,
+                    onClick = onBack
+                )
+                .padding(horizontal = 10.dp, vertical = 20.dp)
+        ) {
+            AnimatedFab(
+                onClick = onBack,
+                interactionSource = interactionSource,
+                icon = R.drawable.back
+            )
+
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier
+                    .weight(1f)
+                    .basicMarquee(iterations = 2)
+            )
+        }
 
         actions?.let {
             Box {
@@ -101,7 +106,7 @@ fun SettingsTitle(
     onBack: () -> Unit
 ) {
 
-    SettingsTitleInternal(
+    BaseSettingsTitle(
         title = title,
         moreOptions = moreOptions,
         onBack = onBack
@@ -114,30 +119,6 @@ fun SettingsTitle(
             onClick = helpIcon,
             icon = R.drawable.help,
             contentDescription = stringResource(R.string.help)
-        )
-    }
-}
-
-
-@Composable
-fun SpecialSettingsTitle(
-    onSettings: () -> Unit,
-    onShowMoreSheet: () -> Unit,
-    onBack: () -> Unit
-) {
-    SettingsTitleInternal(
-        title = stringResource(R.string.points_settings),
-        onBack = onBack,
-        moreOptions = null
-    ) {
-        AnimatedFab(
-            onClick = onShowMoreSheet,
-            icon = R.drawable.more_horiz
-        )
-
-        AnimatedFab(
-            onClick = onSettings,
-            icon = R.drawable.settings
         )
     }
 }

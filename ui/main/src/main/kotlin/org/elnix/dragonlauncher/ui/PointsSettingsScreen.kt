@@ -125,8 +125,8 @@ import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowOverlay
+import org.elnix.dragonlauncher.ui.helpers.settings.BaseSettingsTitle
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
-import org.elnix.dragonlauncher.ui.helpers.settings.SpecialSettingsTitle
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
 import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 import org.elnix.dragonlauncher.ui.helpers.swipe.backgroundCenteredSquareGrid
@@ -459,14 +459,24 @@ fun PointsSettingsScreen(
         horizontalPadding = 0.dp,
         scrollableContent = false,
         specialSettingsTitle = {
-            SpecialSettingsTitle(
-                onSettings = {
-                    pointsService.persist()
-                    navigator.navigate(NavigationRoute.Settings)
-                },
-                onShowMoreSheet = { showMoreSheet = true },
-                onBack = handleBack
-            )
+            BaseSettingsTitle(
+                title = stringResource(R.string.points_settings),
+                onBack = handleBack,
+                moreOptions = null
+            ) {
+                AnimatedFab(
+                    onClick = { showMoreSheet = true },
+                    icon = R.drawable.more_horiz
+                )
+
+                AnimatedFab(
+                    onClick = {
+                        pointsService.persist()
+                        navigator.navigate(NavigationRoute.Settings)
+                    },
+                    icon = R.drawable.settings
+                )
+            }
         },
         bottomContent = {
             RowWithScrollIndicator(rowsScrollStates[1]) {
