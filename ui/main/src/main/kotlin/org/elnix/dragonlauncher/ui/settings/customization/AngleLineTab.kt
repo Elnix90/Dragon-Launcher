@@ -357,7 +357,13 @@ fun AngleLineTab() {
             DragonSettingsGroup(R.string.other) {
                 Setting(AngleLineSettingsStore.rgbLine)
                 Setting(AngleLineSettingsStore.startAndAngleShareSameRandomAngle)
-                Setting(UiSettingsStore.linePreviewSnapToAction)
+                Setting(UiSettingsStore.linePreviewSnapToAction) { enabled ->
+                    if (!enabled) {
+                        scope.launch {
+                            UiSettingsStore.animationWhenSnapping.set(ctx, false)
+                        }
+                    }
+                }
                 val snap by UiSettingsStore.linePreviewSnapToAction.asState()
                 Setting(UiSettingsStore.animationWhenSnapping, enabled = snap)
                 Setting(ColorSettingsStore.angleLineColor)
