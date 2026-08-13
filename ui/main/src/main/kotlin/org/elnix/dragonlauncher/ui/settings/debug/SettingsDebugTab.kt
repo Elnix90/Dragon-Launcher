@@ -21,7 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.core.SettingsBackupManager
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.AllStores
 import org.elnix.dragonlauncher.ui.dialogs.ExportSettingsDialog

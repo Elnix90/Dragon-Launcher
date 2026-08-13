@@ -34,7 +34,7 @@ dependencies {
     api(libs.javax.inject)
 
     implementation(project(":core:settings"))
-    api(project(":core:common"))
+    api(project(":core:base"))
     api(project(":core:i18n"))
     api(project(":core:enumsui"))
     api(project(":core:shizuku"))

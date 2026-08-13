@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.common.utils
+package org.elnix.dragonlauncher.base.utils
 
 import android.content.Context
 import android.os.Build
@@ -8,8 +8,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import org.elnix.dragonlauncher.common.utils.VersionsUtils.getVersionCode
-import org.elnix.dragonlauncher.common.utils.VersionsUtils.getVersionName
+import org.elnix.dragonlauncher.base.utils.VersionsUtils.getVersionCode
+import org.elnix.dragonlauncher.base.utils.VersionsUtils.getVersionName
 
 public object VersionsUtils {
     private var _versionCode: Int? = null

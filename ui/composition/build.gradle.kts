@@ -18,6 +18,6 @@ dependencies {
     api(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.ui.text)
 
-    api(project(":core:common"))
+    api(project(":core:base"))
     api(project(":core:models"))
 }

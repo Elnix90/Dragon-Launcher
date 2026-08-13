@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.common.loader
+package org.elnix.dragonlauncher.base.loader
 
 import android.content.Context
 import io.github.elnix90.logging.TAG

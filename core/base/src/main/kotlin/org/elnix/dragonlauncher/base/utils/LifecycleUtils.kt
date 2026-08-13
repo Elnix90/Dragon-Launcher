@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.common.utils
+package org.elnix.dragonlauncher.base.utils
 
 import androidx.activity.ComponentActivity
 import kotlin.system.exitProcess

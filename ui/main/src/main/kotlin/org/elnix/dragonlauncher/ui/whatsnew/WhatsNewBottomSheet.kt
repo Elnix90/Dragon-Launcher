@@ -20,9 +20,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.loader.loadChangelogs
-import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
-import org.elnix.dragonlauncher.common.utils.rememberVersionCode
+import org.elnix.dragonlauncher.base.loader.loadChangelogs
+import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.base.utils.rememberVersionCode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.components.Spacer

@@ -21,7 +21,6 @@ dependencies {
     implementation(project(":core:base"))
     implementation(project(":core:settings"))
     implementation(project(":core:ktx"))
-    implementation(project(":core:common"))
     implementation(project(":core:profiles"))
     implementation(project(":core:services:compat"))
 }

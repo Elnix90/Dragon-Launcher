@@ -54,8 +54,8 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.base.model.serializables.HapticEntry
 import org.elnix.dragonlauncher.base.model.serializables.HapticEntry.Companion.defaultHapticDuration
 import org.elnix.dragonlauncher.base.model.serializables.HapticEntry.Companion.defaultVibrationDuration
-import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
-import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.pasteClipboard
+import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.pasteClipboard
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ktx.showToast

@@ -64,9 +64,9 @@ import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.base.model.serializables.StatusBarJson
 import org.elnix.dragonlauncher.base.model.serializables.allStatusBars
-import org.elnix.dragonlauncher.common.utils.DateUtils
-import org.elnix.dragonlauncher.common.utils.DateUtils.isValidDateFormat
-import org.elnix.dragonlauncher.common.utils.DateUtils.isValidTimeFormat
+import org.elnix.dragonlauncher.base.utils.DateUtils
+import org.elnix.dragonlauncher.base.utils.DateUtils.isValidDateFormat
+import org.elnix.dragonlauncher.base.utils.DateUtils.isValidTimeFormat
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore

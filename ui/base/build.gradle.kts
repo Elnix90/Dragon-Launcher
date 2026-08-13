@@ -44,9 +44,8 @@ dependencies {
     api(libs.androidx.activity.compose)
     api(libs.androidx.compose.animation)
 
-    api(project(":core:enumsui"))
-    api(project(":core:models"))
-    api(project(":core:common"))
-    api(project(":core:settings"))
     api(project(":core:base"))
+    api(project(":core:models"))
+    api(project(":core:enumsui"))
+    api(project(":core:settings"))
 }

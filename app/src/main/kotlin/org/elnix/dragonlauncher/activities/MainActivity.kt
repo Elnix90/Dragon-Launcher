@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.base.model.serializables.Action
-import org.elnix.dragonlauncher.common.WidgetHostProvider
+import org.elnix.dragonlauncher.base.WidgetHostProvider
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.AppLifecycleViewModel

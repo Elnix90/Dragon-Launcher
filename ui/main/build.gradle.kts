@@ -71,9 +71,8 @@ dependencies {
     api(project(":ui:base"))
 
     api(project(":core:base"))
-    api(project(":core:models"))
     api(project(":core:i18n"))
-    api(project(":core:common"))
+    api(project(":core:models"))
     api(project(":core:enumsui"))
     api(project(":core:settings"))
 

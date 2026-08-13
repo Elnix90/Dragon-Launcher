@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.common.utils
+package org.elnix.dragonlauncher.base.utils
 
 import android.annotation.SuppressLint
 import android.app.role.RoleManager
@@ -21,7 +21,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isDefaultLauncher
+import org.elnix.dragonlauncher.base.utils.ConnectivityUtils.isDefaultLauncher
 import org.elnix.dragonlauncher.ktx.showToast
 import io.github.elnix90.logging.STATUS_BAR_TAG
 import io.github.elnix90.logging.logE

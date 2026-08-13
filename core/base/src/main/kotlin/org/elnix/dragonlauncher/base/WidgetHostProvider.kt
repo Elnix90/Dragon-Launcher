@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.common
+package org.elnix.dragonlauncher.base
 
 import android.appwidget.AppWidgetHostView
 import android.appwidget.AppWidgetProviderInfo

@@ -20,7 +20,7 @@ import androidx.navigation3.runtime.NavKey
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.common.utils.rememberIsDefaultLauncher
+import org.elnix.dragonlauncher.base.utils.rememberIsDefaultLauncher
 import org.elnix.dragonlauncher.ktx.hasUriReadWritePermission
 import org.elnix.dragonlauncher.settings.stores.map.BackupSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore

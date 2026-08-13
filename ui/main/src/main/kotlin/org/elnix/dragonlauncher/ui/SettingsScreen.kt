@@ -61,11 +61,11 @@ import org.elnix.dragonlauncher.base.Constants.URLs.MAILTO_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.REDDIT_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.WEBLATE_LINK
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
-import org.elnix.dragonlauncher.common.utils.LifecycleUtils.closeApp
-import org.elnix.dragonlauncher.common.utils.VersionsUtils.isBetaVersion
-import org.elnix.dragonlauncher.common.utils.rememberVersionCode
-import org.elnix.dragonlauncher.common.utils.rememberVersionName
+import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.base.utils.LifecycleUtils.closeApp
+import org.elnix.dragonlauncher.base.utils.VersionsUtils.isBetaVersion
+import org.elnix.dragonlauncher.base.utils.rememberVersionCode
+import org.elnix.dragonlauncher.base.utils.rememberVersionName
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ktx.showToast

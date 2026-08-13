@@ -21,12 +21,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar
-import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.getMobileDataStatus
-import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isAirplaneMode
-import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isBluetoothEnabled
-import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isHotspotEnabled
-import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isVpnEnabled
-import org.elnix.dragonlauncher.common.utils.ConnectivityUtils.isWifiEnabled
+import org.elnix.dragonlauncher.base.utils.ConnectivityUtils.getMobileDataStatus
+import org.elnix.dragonlauncher.base.utils.ConnectivityUtils.isAirplaneMode
+import org.elnix.dragonlauncher.base.utils.ConnectivityUtils.isBluetoothEnabled
+import org.elnix.dragonlauncher.base.utils.ConnectivityUtils.isHotspotEnabled
+import org.elnix.dragonlauncher.base.utils.ConnectivityUtils.isVpnEnabled
+import org.elnix.dragonlauncher.base.utils.ConnectivityUtils.isWifiEnabled
 import org.elnix.dragonlauncher.i18n.R
 
 @Composable

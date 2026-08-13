@@ -82,7 +82,7 @@ import androidx.compose.ui.unit.sp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.models.Application
-import org.elnix.dragonlauncher.common.utils.DateUtils.formatDuration
+import org.elnix.dragonlauncher.base.utils.DateUtils.formatDuration
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore

@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.common.utils
+package org.elnix.dragonlauncher.base.utils
 
 import android.content.ComponentName
 import android.content.Context
@@ -14,7 +14,7 @@ import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.toLocalDateTime
 import org.elnix.dragonlauncher.base.Constants.PackageNameLists.knownClockPackages
 import org.elnix.dragonlauncher.base.model.models.DateTimeFormats
-import org.elnix.dragonlauncher.common.utils.DateUtils.defaultDateTimeFormatter
+import org.elnix.dragonlauncher.base.utils.DateUtils.defaultDateTimeFormatter
 import io.github.elnix90.logging.TAG
 import io.github.elnix90.logging.logD
 import java.time.LocalDate

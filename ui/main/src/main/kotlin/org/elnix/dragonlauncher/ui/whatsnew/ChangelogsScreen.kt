@@ -7,9 +7,9 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
-import org.elnix.dragonlauncher.common.loader.loadChangelogs
-import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
-import org.elnix.dragonlauncher.common.utils.rememberVersionCode
+import org.elnix.dragonlauncher.base.loader.loadChangelogs
+import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.base.utils.rememberVersionCode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 

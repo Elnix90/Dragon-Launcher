@@ -21,10 +21,12 @@ dependencies {
     ksp(libs.hilt.compiler)
 
     implementation(project(":core:ktx"))
+    implementation(project(":core:i18n"))
+    implementation(project(":core:base"))
+    implementation(project(":core:settings"))
+    implementation(project(":core:permissions"))
+
     implementation(project(":data:applications"))
     implementation(project(":data:notifications"))
-    implementation(project(":core:permissions"))
-    implementation(project(":core:settings"))
 
-    implementation(project(":core:base"))
 }

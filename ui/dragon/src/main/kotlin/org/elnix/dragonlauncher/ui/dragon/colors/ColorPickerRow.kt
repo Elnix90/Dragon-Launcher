@@ -41,8 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
-import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.pasteClipboard
+import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.pasteClipboard
 import org.elnix.dragonlauncher.enumsui.select.ColorPickerMode
 import org.elnix.dragonlauncher.enumsui.toggle.ColorActions
 import org.elnix.dragonlauncher.i18n.R

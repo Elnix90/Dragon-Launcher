@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.common.utils
+package org.elnix.dragonlauncher.base.utils
 
 import android.content.ClipData
 import android.content.ClipboardManager

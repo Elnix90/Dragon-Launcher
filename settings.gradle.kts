@@ -34,7 +34,6 @@ include(":app")
 include(":core:libs:material-shapes")
 
 include(":core:ktx")
-include(":core:common")
 include(":core:settings")
 include(":core:enumsui")
 include(":core:models")

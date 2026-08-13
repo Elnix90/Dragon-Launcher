@@ -44,7 +44,7 @@ import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.animation.easingSpec
 import org.elnix.dragonlauncher.ui.base.modifiers.semiTransparentIfDisabled
-import org.elnix.dragonlauncher.ui.dialogs.toolbarsOrderDialog
+import org.elnix.dragonlauncher.ui.dialogs.ToolbarsOrderDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
@@ -328,7 +328,7 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
     }
 
     if (showToolbarsOrderDialog) {
-        toolbarsOrderDialog { showToolbarsOrderDialog = false }
+        ToolbarsOrderDialog { showToolbarsOrderDialog = false }
     }
 }
 

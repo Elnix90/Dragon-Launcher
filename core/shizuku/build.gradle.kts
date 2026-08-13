@@ -13,5 +13,5 @@ dependencies {
 
     api(libs.kotlinx.coroutines.core)
 
-    implementation(project(":core:common"))
+    implementation(project(":core:base"))
 }

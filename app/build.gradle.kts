@@ -97,7 +97,6 @@ dependencies {
     implementation(project(":ui:theme"))
     implementation(project(":ui:composition"))
 
-    implementation(project(":core:common"))
     implementation(project(":core:models"))
     implementation(project(":core:settings"))
 

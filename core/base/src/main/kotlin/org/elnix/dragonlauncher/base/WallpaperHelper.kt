@@ -1,4 +1,4 @@
-package org.elnix.dragonlauncher.common
+package org.elnix.dragonlauncher.base
 
 import android.app.WallpaperManager
 import android.content.Context

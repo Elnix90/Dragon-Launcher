@@ -46,10 +46,9 @@ dependencies {
 
     implementation(project(":ui:base"))
     implementation(project(":ui:theme"))
+    implementation(project(":core:base"))
     implementation(project(":ui:composition"))
 
-    implementation(project(":core:base"))
-    implementation(project(":core:common"))
     api(project(":core:enumsui"))
     api(project(":core:settings"))
 

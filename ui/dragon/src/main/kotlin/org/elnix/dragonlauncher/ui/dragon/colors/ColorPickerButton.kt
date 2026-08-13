@@ -26,7 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.core.objects.EnumSettingObject
 import io.github.elnix90.runtime.asMutableState
-import org.elnix.dragonlauncher.common.utils.CopyPasteUtils.copyToClipboard
+import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Copy
 import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction.Paste

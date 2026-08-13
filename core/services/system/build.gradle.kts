@@ -12,12 +12,13 @@ dependencies {
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.dragon.logging)
+    implementation(libs.settings.core)
+    implementation(libs.settings.runtime)
     implementation(libs.timber)
 
     api(libs.kotlinx.coroutines.core)
 
-    api(project(":core:common"))
+    api(project(":core:ktx"))
+    api(project(":core:base"))
     implementation(project(":core:settings"))
-    implementation(libs.settings.core)
-    implementation(libs.settings.runtime)
 }
