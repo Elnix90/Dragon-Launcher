@@ -17,18 +17,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
-import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 
 @Composable
-fun BaseSettingsTitle(
+fun SettingsTitle(
     title: String,
     onBack: () -> Unit,
     moreOptions: ((() -> Unit) -> List<MoreOptions>)?,
@@ -75,10 +72,7 @@ fun BaseSettingsTitle(
 
         actions?.let {
             Box {
-                DragonIconButton(
-                    icon = R.drawable.more_vert,
-                    contentDescription = stringResource(R.string.open_burger_menu)
-                ) { showBurgerMenu = true }
+                AnimatedFab(R.drawable.more_vert) { showBurgerMenu = true }
 
                 BurgerListAction(
                     isExpanded = showBurgerMenu,
@@ -90,35 +84,10 @@ fun BaseSettingsTitle(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            modifier = Modifier.padding(end = 10.dp)
         ) {
             specialContent()
         }
-    }
-}
-
-@Composable
-fun SettingsTitle(
-    title: String,
-    moreOptions: ((() -> Unit) -> List<MoreOptions>)? = null,
-    resetIcon: (() -> Unit)?,
-    helpIcon: () -> Unit,
-    onBack: () -> Unit
-) {
-
-    BaseSettingsTitle(
-        title = title,
-        moreOptions = moreOptions,
-        onBack = onBack
-    ) {
-        if (resetIcon != null) {
-            ResetIcon(onReset = resetIcon)
-        }
-
-        DragonIconButton(
-            onClick = helpIcon,
-            icon = R.drawable.help,
-            contentDescription = stringResource(R.string.help)
-        )
     }
 }

@@ -340,7 +340,7 @@ fun SettingsScreen(
             val debugModeAlreadyEnabledText =
                 stringResource(R.string.debug_mode_already_enabled)
             val versionNameCopiedToClipboard =
-                stringResource(R.string.version_copied_to_clipboard)
+                stringResource(R.string.copied_to_clipboard)
 
             Text(
                 text = "${stringResource(R.string.app_name)} $versionName ($versionCode)",

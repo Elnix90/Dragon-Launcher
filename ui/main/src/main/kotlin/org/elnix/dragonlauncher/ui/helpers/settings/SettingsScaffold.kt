@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,28 +38,29 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
+import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
+import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SettingsScaffold(
     title: String,
-    helpText: String,
+    helpText: String?,
+    resetTitle: String = stringResource(R.string.reset_default_settings),
+    resetText: String?,
     onReset: (() -> Unit)?,
-    modifier: Modifier = Modifier,
     onBack: (() -> Unit)? = null,
     moreOptions: ((() -> Unit) -> List<MoreOptions>)? = null,
     horizontalPadding: Dp = 16.dp,
     applyPadding: Boolean = true,
-    resetTitle: String = stringResource(R.string.reset_default_settings),
-    resetText: String?,
+    scrollableContent: Boolean = true,
+    imePadding: Boolean = true,
     lasyListState: LazyListState? = null,
     scrollState: ScrollState? = null,
     topContent: @Composable (ColumnScope.() -> Unit)? = null,
     bottomContent: @Composable (ColumnScope.() -> Unit)? = null,
-    specialSettingsTitle: @Composable (() -> Unit)? = null,
-    scrollableContent: Boolean = true,
-    imePadding: Boolean = true,
+    specialSettingsTitleContent: @Composable (RowScope.() -> Unit)? = null,
     lazyContent: (LazyListScope.() -> Unit)? = null,
     content: @Composable (ColumnScope.() -> Unit)? = null
 ) {
@@ -79,7 +81,7 @@ fun SettingsScaffold(
 
     Scaffold(
         containerColor = Color.Transparent,
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .conditional(imePadding) {
                 imePadding()
@@ -96,17 +98,24 @@ fun SettingsScaffold(
                     Spacer(5.dp)
                 }
 
-                if (specialSettingsTitle != null) {
-                    specialSettingsTitle()
-                } else {
-                    SettingsTitle(
-                        title = title,
-                        moreOptions = moreOptions,
-                        helpIcon = { showHelpDialog = true },
-                        resetIcon = if (onReset != null) {
-                            { showResetDialog = true }
-                        } else null,
-                    ) { handleBack() }
+                SettingsTitle(
+                    title = title,
+                    moreOptions = moreOptions,
+                    onBack = handleBack
+                ) {
+                    specialSettingsTitleContent?.invoke(this)
+
+                    if (onReset != null) {
+                        ResetIcon { showResetDialog = true }
+                    }
+
+                    if (helpText != null) {
+                        DragonIconButton(
+                            onClick = { showHelpDialog = true },
+                            icon = R.drawable.help,
+                            contentDescription = stringResource(R.string.help)
+                        )
+                    }
                 }
             }
         }

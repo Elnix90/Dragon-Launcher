@@ -605,7 +605,7 @@
     <string name="advanced">Avanzado</string>
     <string name="yoann_desc">Colaborar importante (extensiones, mejoras, widgets)</string>
     <string name="lucky_desc">Colaborador importante (bienestar digital y recordatorios)</string>
-    <string name="version_copied_to_clipboard">Versión copiada al portapapeles</string>
+
     <string name="permission_tab_help">Controlar los permisos de la aplicación y el acceso a extensiones externas</string>
     <string name="special_system_access">Acceso especial al sistema</string>
     <string name="notification_access">Acceso a notificaciones</string>

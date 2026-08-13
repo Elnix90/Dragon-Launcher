@@ -69,8 +69,8 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.animation.Icon
 import org.elnix.dragonlauncher.ui.base.animation.rememberAnimatedIcon
+import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -190,18 +190,15 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
         helpText = "Logs, need more info?",
         onReset = null,
         resetText = null,
-        moreOptions = { dismiss ->
-            listOf(
-                MoreOptions(
-                    text = { stringResource(R.string.refresh) },
-                    onClick = {
-                        refreshTrigger++; ctx.showToast("Refreshing...")
-                        dismiss()
-                    },
-                    icon = R.drawable.refresh,
-                )
+        specialSettingsTitleContent = {
+            AnimatedFab(
+                onClick = {
+                    refreshTrigger++
+                    ctx.showToast("Refreshing...")
+                },
+                icon = R.drawable.refresh
             )
-        }
+        },
     ) {
         ExpandableSection(rememberExpandableSection("Device info")) {
             Card(Modifier.fillMaxWidth()) {

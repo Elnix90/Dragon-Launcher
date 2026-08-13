@@ -587,7 +587,7 @@
     <string name="select_all">Alles auswählen</string>
     <string name="invert">Invertieren</string>
     <string name="advanced">Fortgeschritten</string>
-    <string name="version_copied_to_clipboard">Version zur Zwischenablage kopiert</string>
+
     <string name="notification_access">Benachrichtigungsberechtigung</string>
     <string name="install_from_unknown_source_permission">Von unbekannter Quelle installieren (APK)</string>
     <string name="android_permissions">Android Berechtigungen</string>

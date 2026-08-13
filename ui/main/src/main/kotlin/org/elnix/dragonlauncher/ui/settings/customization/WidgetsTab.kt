@@ -93,7 +93,6 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
-import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
@@ -101,6 +100,7 @@ import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonColumn
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
@@ -171,16 +171,10 @@ fun WidgetsTab(
         onReset = { widgetsViewModel.resetAllWidgets() },
         applyPadding = false,
         scrollableContent = false,
-        moreOptions = { dismiss ->
-            listOf(
-                MoreOptions(
-                    text = { stringResource(R.string.show_more_sheet) },
-                    onClick = {
-                        showMoreSheet = !showMoreSheet
-                        dismiss()
-                    },
-                    icon = R.drawable.more_vert,
-                )
+        specialSettingsTitleContent = {
+            AnimatedFab(
+                onClick = { showMoreSheet = true },
+                icon = R.drawable.more_horiz
             )
         },
         bottomContent = {
@@ -473,6 +467,7 @@ fun WidgetsTab(
             val canResetZoom = zoom.value != 1f
             val canResetRotation = angle.value != 0f
 
+            Spacer(5.dp)
             MultiSelectConnectedButtonRow(
                 entries = MoveAroundTools.entries,
                 enabled = {
@@ -508,7 +503,9 @@ fun WidgetsTab(
                 }
             }
 
-            Setting(UiSettingsStore.widgetsCellSizeDp)
+            DragonSettingsGroup(R.string.advanced) {
+                Setting(UiSettingsStore.widgetsCellSizeDp)
+            }
         }
     }
 

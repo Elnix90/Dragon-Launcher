@@ -125,7 +125,6 @@ import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowOverlay
-import org.elnix.dragonlauncher.ui.helpers.settings.BaseSettingsTitle
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
 import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
@@ -451,32 +450,26 @@ fun PointsSettingsScreen(
     BackHandler(onBack = handleBack)
 
     SettingsScaffold(
-        title = "",
+        title = stringResource(R.string.points_settings),
         onBack = handleBack,
-        helpText = "",
+        helpText = null,
         onReset = null,
         resetText = null,
         horizontalPadding = 0.dp,
         scrollableContent = false,
-        specialSettingsTitle = {
-            BaseSettingsTitle(
-                title = stringResource(R.string.points_settings),
-                onBack = handleBack,
-                moreOptions = null
-            ) {
-                AnimatedFab(
-                    onClick = { showMoreSheet = true },
-                    icon = R.drawable.more_horiz
-                )
+        specialSettingsTitleContent = {
+            AnimatedFab(
+                onClick = { showMoreSheet = true },
+                icon = R.drawable.more_horiz
+            )
 
-                AnimatedFab(
-                    onClick = {
-                        pointsService.persist()
-                        navigator.navigate(NavigationRoute.Settings)
-                    },
-                    icon = R.drawable.settings
-                )
-            }
+            AnimatedFab(
+                onClick = {
+                    pointsService.persist()
+                    navigator.navigate(NavigationRoute.Settings)
+                },
+                icon = R.drawable.settings
+            )
         },
         bottomContent = {
             RowWithScrollIndicator(rowsScrollStates[1]) {

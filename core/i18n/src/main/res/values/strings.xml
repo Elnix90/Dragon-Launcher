@@ -682,7 +682,7 @@
     <string name="yoann_desc">Important contributor (Extensions, performances, widgets)</string>
     <string name="lucky_desc">Imortant contributor (Digital wellbeing and reminders)</string>
     <string name="federico_desc">Imortant contributor (Widgets screen features and translations)</string>
-    <string name="version_copied_to_clipboard">Version copied to clipboard</string>
+    <string name="copied_to_clipboard">Copied to clipboard!</string>
     <string name="permission_tab_help">Control the app permissions, and different access it has to external extensions</string>
     <string name="special_system_access">Special system access</string>
     <string name="notification_access">Notification access</string>

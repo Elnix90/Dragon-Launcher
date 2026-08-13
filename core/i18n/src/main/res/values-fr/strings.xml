@@ -614,7 +614,7 @@
     <string name="advanced">Avancé</string>
     <string name="yoann_desc">Contributeur majeur (extensions, performances, widgets)</string>
     <string name="lucky_desc">Contributeur majeur (Bien-être numérique et rappels)</string>
-    <string name="version_copied_to_clipboard">Version copiée dans le presse-papiers</string>
+
     <string name="snap_points">Accroche les points aux angles</string>
     <string name="undo">Annuler</string>
     <string name="undo_all">Tout annuler</string>

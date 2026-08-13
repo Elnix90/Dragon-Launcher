@@ -55,8 +55,8 @@ import org.elnix.dragonlauncher.settings.stores.objects.EndObjectSettingStore
 import org.elnix.dragonlauncher.settings.stores.objects.LineObjectSettingStore
 import org.elnix.dragonlauncher.settings.stores.objects.StartObjectSettingStore
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
+import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.components.VerticalDragZone
-import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.AngleLineObjectsOrderDialog
 import org.elnix.dragonlauncher.ui.dialogs.rememberLineObjectsOrder
@@ -190,16 +190,10 @@ fun AngleLineTab() {
                 EndObjectSettingStore.resetAll(ctx)
             }
         },
-        moreOptions = { dismiss ->
-            listOf(
-                MoreOptions(
-                    text = { stringResource(R.string.configure_draw_order) },
-                    onClick = {
-                        showOrderDialog = true
-                        dismiss()
-                    },
-                    icon = R.drawable.height,
-                )
+        specialSettingsTitleContent = {
+            AnimatedFab(
+                onClick = { showOrderDialog = true },
+                icon = R.drawable.height
             )
         },
         scrollableContent = false,
