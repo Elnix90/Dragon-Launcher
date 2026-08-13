@@ -3,13 +3,14 @@ package org.elnix.dragonlauncher.shizuku
 import android.content.pm.PackageManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import rikka.shizuku.Shizuku
 
 public class ShizukuPermissionHandler {
 
     private val _permissionGranted: MutableStateFlow<Boolean> =
         MutableStateFlow(getInitialPermissionState())
-    public val permissionGranted: StateFlow<Boolean> get() = _permissionGranted
+    public val permissionGranted: StateFlow<Boolean> = _permissionGranted.asStateFlow()
 
     private var permissionListener: Shizuku.OnRequestPermissionResultListener
 

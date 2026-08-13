@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import org.elnix.dragonlauncher.ui.base.UiConstants
 import org.elnix.dragonlauncher.ui.base.animation.defaultSpec
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.base.withHaptic
@@ -54,11 +53,8 @@ fun provideClickableShape(
 ): Shape {
     val isPressed by interactionSource.collectIsPressedAsState()
 
-    val pressedTargetRoundedCornerPercent: Int = UiConstants.PRESSED_DRAGON_SHAPE_CORNER_PERCENT
-    val normalTargetRoundedCornerPercent: Int = UiConstants.DRAGON_SHAPE_CORNER_PERCENT
-
     val shapeRound by animateIntAsState(
-        targetValue = if (isPressed || isSelected) pressedTargetRoundedCornerPercent else normalTargetRoundedCornerPercent,
+        targetValue = if (isPressed || isSelected) 20 else 35,
         label = "shape_anim",
         animationSpec = defaultSpec()
     )

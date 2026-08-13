@@ -16,22 +16,13 @@
 
 package org.elnix.dragonlauncher.material.shapes
 
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.util.fastForEach
 import androidx.graphics.shapes.Cubic
-import androidx.graphics.shapes.Morph
 import androidx.graphics.shapes.RoundedPolygon
-import androidx.graphics.shapes.TransformResult
 import kotlin.math.PI
 import kotlin.math.atan2
-
-/** Transforms a [RoundedPolygon] with the given [Matrix] */
-internal fun RoundedPolygon.transformed(matrix: Matrix): RoundedPolygon = transformed { x, y ->
-    val transformedPoint = matrix.map(Offset(x, y))
-    TransformResult(transformedPoint.x, transformedPoint.y)
-}
 
 /**
  * Gets a [Path] representation for a [RoundedPolygon] shape. Note that there is some rounding
@@ -64,49 +55,6 @@ internal fun RoundedPolygon.toPath(
         cubics = cubics,
         rotationPivotX = centerX,
         rotationPivotY = centerY,
-    )
-    return path
-}
-
-/**
- * Returns a [Path] for a [Morph].
- *
- * @param progress the [Morph]'s progress
- * @param path a [Path] to rewind and set with the new path data
- * @param startAngle an angle (in degrees) to rotate the [Path] to start drawing from
- * @param repeatPath whether or not to repeat the [Path] twice before closing it. This flag is
- *   useful when the caller would like to draw parts of the path while offsetting the start and stop
- *   positions (for example, when phasing and rotating a path to simulate a motion as a Star
- *   circular progress indicator advances).
- * @param closePath whether or not to close the created [Path]
- * @param rotationPivotX the rotation pivot on the X axis. By default it's set to 0, and that should
- *   align with [Morph] instances that were created for RoundedPolygons with zero centerX. In case
- *   the RoundedPolygon were normalized (i.e. moved to (0.5, 0.5)), or where created with a
- *   different centerX coordinated, this pivot point may need to be aligned to support a proper
- *   rotation.
- * @param rotationPivotY the rotation pivot on the Y axis. By default it's set to 0, and that should
- *   align with [Morph] instances that were created for RoundedPolygons with zero centerY. In case
- *   the RoundedPolygon were normalized (i.e. moves to (0.5, 0.5)), or where created with a
- *   different centerY coordinated, this pivot point may need to be aligned to support a proper
- *   rotation.
- */
-internal fun Morph.toPath(
-    progress: Float,
-    path: Path = Path(),
-    startAngle: Int = 270, // 12 O'clock
-    repeatPath: Boolean = false,
-    closePath: Boolean = true,
-    rotationPivotX: Float = 0f,
-    rotationPivotY: Float = 0f,
-): Path {
-    pathFromCubics(
-        path = path,
-        startAngle = startAngle,
-        repeatPath = repeatPath,
-        closePath = closePath,
-        cubics = asCubics(progress),
-        rotationPivotX = rotationPivotX,
-        rotationPivotY = rotationPivotY,
     )
     return path
 }

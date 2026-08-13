@@ -34,7 +34,7 @@ public class IconPickerVM (
 
     public val installedIconPacks: Flow<List<IconPack>> = iconService.getInstalledIconPacks()
 
-    public val iconSearchResults: MutableState<List<CustomIconWithPreview>> = mutableStateOf(emptyList<CustomIconWithPreview>())
+    public val iconSearchResults: MutableState<List<CustomIconWithPreview>> = mutableStateOf(emptyList())
     public val isSearchingIcons: MutableState<Boolean> = mutableStateOf(false)
 
 

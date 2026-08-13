@@ -51,16 +51,6 @@ internal class PackageManagerCompatImpl(
     private val launcherApps = ctx.getSystemService(LauncherApps::class.java)!!
     private val userManager = ctx.getSystemService(UserManager::class.java)!!
 
-
-    private fun isAppEnabled(pkgName: String): Boolean {
-        return try {
-            pm.getApplicationEnabledSetting(pkgName) !=
-                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-        } catch (_: Exception) {
-            true
-        }
-    }
-
     override fun isSystemApp(appInfo: ApplicationInfo): Boolean {
         val isSystem = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
         val isUpdatedSystem = (appInfo.flags and ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0
@@ -75,6 +65,7 @@ internal class PackageManagerCompatImpl(
         val result = mutableListOf<ApplicationInfo>()
         val seenPackages = mutableSetOf<String>()
 
+        // TODO wtf why isn't the userHandle used?
         userManager.userProfiles.forEach { userHandle ->
             try {
                 // Get all apps including hidden ones

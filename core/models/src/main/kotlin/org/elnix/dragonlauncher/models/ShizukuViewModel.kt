@@ -30,13 +30,9 @@ public class ShizukuViewModel @Inject constructor() : ViewModel() {
         outputValue.value = null
     }
 
-    public fun shizukuPermissionState(): StateFlow<Boolean> {
-        return shizukuPermissionHandler.permissionGranted
-    }
+    public fun shizukuPermissionState(): StateFlow<Boolean> = shizukuPermissionHandler.permissionGranted
 
-    public fun requestShizukuPermission() {
-        return shizukuPermissionHandler.requestPermission()
-    }
+    public fun requestShizukuPermission(): Unit = shizukuPermissionHandler.requestPermission()
 
     public fun executeShizukuCommand(command: String) {
         viewModelScope.launch {
