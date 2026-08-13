@@ -2,6 +2,7 @@ package org.elnix.dragonlauncher.models
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
@@ -14,7 +15,6 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.icons.CustomIconWithPreview
 import org.elnix.dragonlauncher.icons.IconPack
 import org.elnix.dragonlauncher.icons.IconService
-import kotlin.coroutines.coroutineContext
 import kotlin.time.Duration.Companion.milliseconds
 
 public class IconPickerVM (
@@ -46,7 +46,7 @@ public class IconPickerVM (
             isSearchingIcons.value = false
             return
         }
-        withContext(coroutineContext) {
+        withContext(Dispatchers.IO) {
             debounceSearchJob = launch {
                 delay(500.milliseconds)
                 isSearchingIcons.value = true
