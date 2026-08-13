@@ -25,7 +25,7 @@ import javax.inject.Inject
 public class ProfilesViewModel @Inject constructor(
     application: Application,
     private val profileManager: ProfileManager,
-    private val permissionsManager: PermissionsManager
+    permissionsManager: PermissionsManager
 ) : AndroidViewModel(application) {
 
     public val profiles: SharedFlow<List<Profile?>> = profileManager.profiles.shareIn(

@@ -28,7 +28,7 @@ import javax.inject.Inject
 public class IconsViewModel @Inject constructor(
     private val iconsService: IconService,
     private val badgeService: BadgeService,
-    private val iconSettingsRepository: IconSettingsRepository
+    iconSettingsRepository: IconSettingsRepository
 ) : ViewModel() {
 
 

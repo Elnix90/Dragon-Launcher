@@ -83,7 +83,7 @@ public class IconService internal constructor(
     private val shortcutRepository: AppShortcutRepository,
     private val appOverrideManager: AppOverridesManager,
     private val pointService: PointsService,
-    private val colorService: ColorService
+    colorService: ColorService
 ) {
     private val density = Density(ctx.dp)
 

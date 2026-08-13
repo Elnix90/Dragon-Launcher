@@ -18,7 +18,7 @@ import org.elnix.dragonlauncher.icons.IconService
 import kotlin.time.Duration.Companion.milliseconds
 
 public class IconPickerVM (
-    private val app: Application,
+    app: Application,
     private val iconService: IconService
 ) {
 
