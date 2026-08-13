@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="help">Aiuto</string>
-    <string name="back">Indietro</string>
     <string name="reset_default_settings">Resetta impostazioni di default</string>
     <string name="reset_settings_in_this_tab">Resetta impostazioni di default in questa scheda</string>
     <string name="ok">OK</string>
@@ -11,7 +10,6 @@
     <string name="appearance_tab_text">Cambia impostazioni di aspetto</string>
     <string name="fullscreen_app">Schermo intero</string>
     <string name="app_display">Aggiungi schermo</string>
-    <string name="language_hindi">Indiano</string>
     <string name="export_successful">Esportazione Riuscita</string>
     <string name="unknown_error">Errore Sconosciuto</string>
     <string name="color_selector_text">Scegli il tema di colori</string>
@@ -22,6 +20,5 @@
     <string name="angle_line_color">Colore Linea Angolo</string>
     <string name="launch_app_color">Colore Avvia Applicazione</string>
     <string name="control_panel_color">Colore Pannello Di Controllo</string>
-    <string name="show_sub_nest_size_slider">Mostra slider sotto-raggruppamenti</string>
     <string name="precision_mode_active">Modalità di Precisione</string>
 </resources>

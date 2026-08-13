@@ -1,7 +1,6 @@
 <resources>
     <string name="accessibility_service_description">DragonLauncher가 알림 창, 빠른 설정 패널, 최근 앱 열기, 현재 활동 확인 등을 할 수 있게 해줍니다(제스처 내비게이션을 잃지 않고는 Dragon을 기본 런처로 설정할 수 없는 Xiaomi 사용자를 위한 경우)</string>
     <string name="help">도움말</string>
-    <string name="back">뒤로</string>
     <string name="reset_default_settings">기본 설정 초기화</string>
     <string name="reset_settings_in_this_tab">이 탭에서 기본 설정을 재설정하세요</string>
     <string name="ok">그래</string>
@@ -13,15 +12,7 @@
     <string name="app_display">앱 디스플레이</string>
     <string name="color_selector">컬러 셀렉터</string>
     <string name="debug">디버그</string>
-    <string name="language_english">영어</string>
-    <string name="language_french">프랑스어</string>
-    <string name="language_german">독일 사람</string>
-    <string name="language_spanish">스페인 사람</string>
-    <string name="language_hindi">힌디 어</string>
-    <string name="language_korean">한국인</string>
-    <string name="language_portuguese">포르투갈 인</string>
     <string name="system_default">시스템 기본 상태</string>
-    <string name="choose_your_app_language">앱 언어를 선택하세요</string>
     <string name="version">버전</string>
     <string name="export_cancelled">수출 취소</string>
     <string name="import_cancelled">수입 취소</string>
@@ -66,7 +57,6 @@
     <string name="test_colors">색상 테스트</string>
     <string name="exit_test_mode">테스트 모드 종료</string>
     <string name="exit_test_mode_message">색상 변경 사항을 저장하시겠습니까, 아니면 폐기하시겠습니까?</string>
-    <string name="back_to_colors_settings">색상 설정으로 돌아가기</string>
     <string name="dark_theme">다크 테마</string>
     <string name="amoled_theme">AMOLED 테마</string>
     <string name="system_theme">시스템 테마</string>
@@ -83,7 +73,6 @@
     <string name="set_default_launcher">기본 런처로 설정해</string>
     <string name="close">닫습니다</string>
     <string name="dragging_distance_selection">드래그 거리 선택</string>
-    <string name="circle">원형 항력 거리</string>
     <string name="cancel_zone">존 드래그 취소</string>
     <string name="android_settings">안드로이드 설정</string>
     <string name="changelogs">변경 기록</string>
@@ -124,14 +113,11 @@
     <string name="configure_your_apps">설정에서 앱과 바로가기를 설정하세요</string>
     <string name="theme_selector">테마 셀렉터</string>
     <string name="everything_ready">모든 준비 완료!</string>
-    <string name="home">홈</string>
     <string name="edit_point">수정 포인트</string>
     <string name="choose_action">행동을 선택하세요</string>
     <string name="automatic_backups">자동 백업</string>
-    <string name="change">변화</string>
     <string name="remove">제거</string>
     <string name="trigger_backup">트리거 백업</string>
-    <string name="last_backup">마지막 백업</string>
     <string name="auto_backup_stores">자동 백업 저장소</string>
     <string name="recent_apps">최근 앱</string>
     <string name="open_recent_apps_color">최근 앱 색상 열기</string>
@@ -192,7 +178,6 @@
     <string name="add_widget">위젯 추가</string>
     <string name="widgets">위젯</string>
     <string name="delete_widget">삭제 위젯</string>
-    <string name="add_point">추가 점수</string>
     <string name="remove_point">제거 지점</string>
     <string name="copy_point">복사 지점</string>
     <string name="ghosted">고스트</string>
@@ -213,9 +198,6 @@
     <string name="background_selected">국경 배경 선택됨</string>
     <string name="custom_action_color">커스텀 액션 컬러</string>
     <string name="icon_editor">아이콘 에디터</string>
-    <string name="pick_image">이미지 선택</string>
-    <string name="pick_from_icon_pack">아이콘 팩에서 선택하세요</string>
-    <string name="no_custom_icon">커스텀 아이콘은 없습니다</string>
     <string name="no_search_match">검색 매칭 없어</string>
     <string name="size">크기</string>
     <string name="rotation">회전</string>
@@ -227,10 +209,7 @@
     <string name="select_app">셀렉트 앱</string>
     <string name="enter_url">URL을 입력하세요</string>
     <string name="invalid_url">잘못된 URL</string>
-    <string name="unselected_action">선택되지 않은 작업</string>
-    <string name="selected_action">선택한 작업</string>
     <string name="haptic_feedback">햅틱 피드백</string>
-    <string name="text_emoji">텍스트/이모지</string>
     <string name="rgb_loading_settings">RGB 로딩 설정</string>
     <string name="rgb_line_selector">RGB 라인 선택기</string>
     <string name="show_app_launch_preview">앱 실행 미리보기 표시</string>
@@ -243,24 +222,17 @@
     <string name="set_wallpaper">배경화면 설정</string>
     <string name="manage_nests">둥지 관리</string>
     <string name="copy">복사</string>
-    <string name="edit_nests">네스트 편집</string>
     <string name="pick_a_nest">둥지를 골라라</string>
     <string name="create_new_nest">새 둥지 만들기</string>
-    <string name="copy_id">ID 복사</string>
     <string name="open_burger_menu">버거 메뉴 열기</string>
     <string name="selected_text">선택된</string>
     <string name="unselected">선택 해제됨</string>
-    <string name="general_style">일반 스타일</string>
-    <string name="individual_style">개별 스타일</string>
     <string name="inner_padding">내부 패딩</string>
-    <string name="plain_color">일반 색상</string>
     <string name="tint">색조</string>
-    <string name="icon_pack_tint">아이콘 팩 틴트</string>
     <string name="show_app_icon_start_drag_position">드래그 시작 위치에 앱 아이콘 표시</string>
 
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d개 선택됨</string>
-    <string name="add_all_auto">원에 자동 배치</string>
     <string name="add_all_manual">하나씩 배치</string>
     <string name="place_app_where">%s을(를) 어디에 배치하시겠습니까?</string>
     <string name="tap_circle_to_place">원을 탭하여 앱 배치</string>
@@ -292,9 +264,7 @@
     <string name="workspace_default">기본값</string>
 
     <!--  ─────────────  Pinned Shortcuts  ─────────────  -->
-    <string name="pinned_shortcut_added">바로가기 "%s"가 서클에 추가되었습니다</string>
     <string name="pinned_shortcut_failed">고정된 바로가기 추가 실패</string>
-    <string name="pinned_shortcut_already_exists">"%s" 바로가기가 이미 서클에 있습니다</string>
     <string name="pinned_shortcuts">고정된 바로가기</string>
     <string name="no_pinned_shortcuts">사용 가능한 고정된 바로가기 없음</string>
 
@@ -307,13 +277,10 @@
     <string name="private_space_title">프라이빗 스페이스</string>
     <string name="private_space_locked">프라이빗 스페이스가 잠겨 있습니다</string>
     <string name="private_space_authenticating">인증 중…</string>
-    <string name="private_space_manage_instructions">앱 추가/제거 또는 이 프로필 삭제는 Android 설정에서 수행하세요.</string>
     <string name="app_info_name">name = %1$s</string>
     <string name="app_info_package_name">packageName = %1$s</string>
-    <string name="app_info_is_enabled">isEnabled = %1$s</string>
     <string name="app_info_is_system">isSystem = %1$s</string>
     <string name="app_info_is_work_profile">isWork = %1$s</string>
     <string name="app_info_is_private_profile">isPrivate = %1$s</string>
     <string name="app_info_is_launchable">isLaunchable = %1$s</string>
-    <string name="app_info_user_id">userId = %1$s</string>
 </resources>

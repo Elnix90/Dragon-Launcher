@@ -2,7 +2,6 @@
 <resources>
     <string name="accessibility_service_description">Permet à DragonLauncher d\'ouvrir le volet de notifications et le panneau des réglages rapides.</string>
     <string name="help">Aide</string>
-    <string name="back">Précédent</string>
     <string name="reset_default_settings">Réinitialiser les paramètres par défaut</string>
     <string name="reset_settings_in_this_tab">Réinitialiser les paramètres par défaut dans cet onglet</string>
     <string name="ok">D’accord</string>
@@ -22,15 +21,7 @@
     <string name="extension_manual_install_title">Installation Manuelle</string>
     <string name="extension_manual_install_desc">Si vous n\'avez pas d\'extension d\'installation, téléchargez l\'APK et sélectionnez-le ci-dessous pour l\'installer.</string>
     <string name="select_apk">Sélectionner l\'APK</string>
-    <string name="language_english">Anglais</string>
-    <string name="language_french">Français</string>
-    <string name="language_german">Allemand</string>
-    <string name="language_spanish">Espagnol</string>
-    <string name="language_hindi">hindi</string>
-    <string name="language_korean">coréen</string>
-    <string name="language_portuguese">portugais</string>
     <string name="system_default">Par défaut système</string>
-    <string name="choose_your_app_language">Choisissez la langue de votre application</string>
     <string name="version">Version</string>
     <string name="export_cancelled">Exportation annulée</string>
     <string name="import_cancelled">Importation annulée</string>
@@ -63,7 +54,6 @@
     <string name="test_colors">Tester les couleurs</string>
     <string name="exit_test_mode">Quitter le mode test</string>
     <string name="exit_test_mode_message">Voulez-vous enregistrer vos modifications de couleur ou les annuler ?</string>
-    <string name="back_to_colors_settings">Retour aux paramètres de couleurs</string>
     <string name="dark_theme">Thème sombre</string>
     <string name="amoled_theme">Thème AMOLED</string>
     <string name="system_theme">Thème du système</string>
@@ -80,7 +70,6 @@
     <string name="set_default_launcher">Définir comme lanceur par défaut</string>
     <string name="close">Fermer</string>
     <string name="dragging_distance_selection">Sélection de la distance de traînage</string>
-    <string name="circle">Distance de traînée circulaire</string>
     <string name="cancel_zone">Annuler la traînée de zone</string>
     <string name="android_settings">Paramètres Android</string>
     <string name="changelogs">Journaux de modifications</string>
@@ -92,7 +81,6 @@
     <string name="drawer_actions">Actions du tiroir</string>
     <string name="close_app_drawer">Fermer le tiroir</string>
     <string name="font_selector">Sélecteur de police</string>
-    <string name="font_selector_desc">Choisissez une police pour toute l\'application. Vous pouvez importer les vôtre ou utilisez le catalogue.</string>
     <string name="toggle_kb">Clavier basculant</string>
     <string name="behavior">Comportement</string>
     <string name="workspaces">Espaces de travail</string>
@@ -125,14 +113,11 @@
     <string name="configure_your_apps">Configurez vos applications et raccourcis dans les paramètres</string>
     <string name="theme_selector">Sélecteur de thème</string>
     <string name="everything_ready">Tout est prêt !</string>
-    <string name="home">Accueil</string>
     <string name="edit_point">Point de modification</string>
     <string name="choose_action">Choisissez une action</string>
     <string name="automatic_backups">Sauvegardes automatiques</string>
-    <string name="change">Changement</string>
     <string name="remove">Retirer</string>
     <string name="trigger_backup">Sauvegarde de déclencheurs</string>
-    <string name="last_backup">Dernière sauvegarde</string>
     <string name="auto_backup_stores">Stockage automatique de sauvegarde</string>
     <string name="recent_apps">Applications récentes</string>
     <string name="open_recent_apps_color">Ouvrir la couleur des applications récentes</string>
@@ -195,7 +180,6 @@
     <string name="edit">Édit</string>
     <string name="widgets_tab_help"><![CDATA[Gérez les widgets de votre espace de travail et les applications flottantes : ajoutez-les, réorganisez-les, redimensionnez et positionnez-les.\n Ghosted signifie que le widget n\'est pas cliquable.\nLe premier plan signifie que les gestes de glissement ne sont pas enregistrés sur le widget.\nVous pouvez essayer une combinaison de ces deux pour obtenir la configuration que vous souhaitez.]]></string>
     <string name="delete_widget">Supprimer widget</string>
-    <string name="add_point">Point d’ajout</string>
     <string name="remove_point">Point de retrait</string>
     <string name="copy_point">Point de copie</string>
     <string name="ghosted">Ghosté</string>
@@ -216,9 +200,6 @@
     <string name="background_selected">Couleur d\'arrière-plan sélectionnée</string>
     <string name="custom_action_color">Personnaliser la couleur de l\'action</string>
     <string name="icon_editor">Éditeur d’icônes</string>
-    <string name="pick_image">Sélectionner une image</string>
-    <string name="pick_from_icon_pack">Sélectionner depuis un pack d\'icônes</string>
-    <string name="no_custom_icon">Pas d\'icône personnalisé</string>
     <string name="no_search_match">Pas de résultat de recherche</string>
     <string name="size">Taille</string>
     <string name="rotation">Rotation</string>
@@ -230,10 +211,7 @@
     <string name="select_app">Select App</string>
     <string name="enter_url">Entrez l\'URL</string>
     <string name="invalid_url">URL invalide</string>
-    <string name="unselected_action">Action non sélectionnée</string>
-    <string name="selected_action">Action sélectionnée</string>
     <string name="haptic_feedback">Retour haptique</string>
-    <string name="text_emoji">Texte / Emoji</string>
     <string name="rgb_loading_settings">Paramètres de chargement RVB</string>
     <string name="rgb_line_selector">Sélecteur de ligne RVB</string>
     <string name="show_app_launch_preview">Afficher l\'aperçu du lancement de l\'application</string>
@@ -246,23 +224,16 @@
     <string name="set_wallpaper">Définir le papier peint</string>
     <string name="manage_nests">Gestion des nids</string>
     <string name="copy">Copie</string>
-    <string name="edit_nests">Modifier les nids</string>
     <string name="pick_a_nest">Choisissez un nid</string>
     <string name="create_new_nest">Créer un nouveau nid</string>
-    <string name="copy_id">Copier l\'identifiant</string>
     <string name="open_burger_menu">Ouvrir le menu des hamburgers</string>
     <string name="selected_text">Choisi</string>
     <string name="unselected">Désélectionné</string>
-    <string name="general_style">Style général</string>
-    <string name="individual_style">Style individuel</string>
     <string name="inner_padding">Rembourrage intérieur</string>
-    <string name="plain_color">Couleur unie</string>
     <string name="tint">Teinte</string>
-    <string name="icon_pack_tint">Teinte du pack d\'icônes</string>
     <string name="show_app_icon_start_drag_position">Afficher l\'icône de l\'application en position de démarrage</string>
     <string name="make_all_colors_identical">Rendre toutes les couleurs identiques</string>
     <string name="apply">Appliquer</string>
-    <string name="reload_point_icons">Icônes de points de rechargement</string>
     <string name="center_selected_widget">Widget sélectionné au centre</string>
     <string name="reset_widget">Réinitialiser le widget</string>
     <string name="select_previous_widget">Sélectionner le widget précédent</string>
@@ -271,7 +242,6 @@
     <string name="move_selected_widget_down">Déplacer le widget sélectionné vers le bas</string>
     <string name="enable_scale_snap">Activer l\'accrochage à l\'échelle</string>
     <string name="home_action">Action à domicile</string>
-    <string name="drawer_home_action">Action de la maison du tiroir</string>
 
     <string name="fullscreen_description">Afficher ou non la barre supérieure et les boutons de navigation/bouton geste</string>
     <string name="rgb_loading_description">Afficher un dégradé RBG sur le cercle de chargement lors de la saisie des paramètres, tout en maintenant enfoncé pendant 3 secondes</string>
@@ -281,10 +251,8 @@
     <string name="show_app_angle_preview_description">Afficher l\'indicateur d\'angle sur la ligne</string>
     <string name="show_app_icon_start_drag_position_description">Affichez l\'application actuellement sélectionnée au centre de l\'endroit où vous avez commencé à faire glisser</string>
     <string name="line_preview_snap_to_action_description">L\'aperçu de la ligne n\'est pas libre de se déplacer, il s\'aligne sur l\'action sélectionnée lorsqu\'il y en a une.</string>
-    <string name="min_angle_to_activate">Angle minimum à activer</string>
     <string name="app_label_overlay_size">Taille de superposition des étiquettes d\'application</string>
     <string name="app_icon_overlay_size">Taille de superposition des icônes d\'application</string>
-    <string name="next">Suivant</string>
     <string name="loading_themes">Chargement des thèmes…</string>
     <string name="already_default_launcher">Lanceur déjà par défaut</string>
     <string name="open_default_launcher_settings">Ouvrir les paramètres du lanceur par défaut</string>
@@ -294,7 +262,6 @@
     <string name="app_aliases">Aliases d’applications</string>
     <string name="edit_alias">Éditeur alias</string>
     <string name="alias">Alias</string>
-    <string name="add_alias">Ajouter un alias</string>
     <string name="create_alias">Créer un alias</string>
     <string name="scroll_up_action">Action de défilement vers le haut</string>
     <string name="scroll_down_action">Action de défilement vers le bas</string>
@@ -340,8 +307,6 @@
     <string name="reminder_mode_title">Rappel d\'utilisation</string>
     <string name="reminder_mode_description">Recevez des rappels périodiques lorsque vous restez trop longtemps sur une app en pause</string>
     <string name="reminder_interval">Intervalle de rappel</string>
-    <string name="reminder_mode_notification">Notification</string>
-    <string name="reminder_mode_overlay">Popup à l\'écran</string>
     <string name="overlay_permission_required">Permission de superposition</string>
     <string name="overlay_permission_description">Pour afficher des rappels par-dessus d\'autres applications, Dragon Launcher a besoin de la permission « Afficher par-dessus d\'autres apps ».</string>
     <!--  Popup Display Options  -->
@@ -443,7 +408,6 @@
     <string name="surface_container_low_color">Basse Surface Container</string>
     <string name="surface_container_lowest_color">Conteneur de surface le plus bas</string>
     <string name="surface_dim_color">Obscurité de surface</string>
-    <string name="fixed_colors_section">Couleurs fixes</string>
     <string name="primary_fixed_color">Primaire fixe</string>
     <string name="primary_fixed_dim_color">Dim fixe primaire</string>
     <string name="on_primary_fixed_color">Sur primaire fixe</string>
@@ -452,13 +416,10 @@
     <string name="secondary_fixed_dim_color">Dim fixe secondaire</string>
     <string name="on_secondary_fixed_color">Sur le secondaire fixe</string>
     <string name="on_secondary_fixed_variant_color">Sur la variante secondaire fixe</string>
-    <string name="tertiary_fixed_color">Tertiaire fixe</string>
-    <string name="tertiary_fixed_dim_color">Dim fixe tertiaire</string>
     <string name="on_tertiary_fixed_color">Sur le terme tertiaire fixe</string>
     <string name="on_tertiary_fixed_variant_color">Sur la variante fixe tertiaire</string>
     <string name="custom_colors">Couleurs personnalisées</string>
     <string name="normal_colors">Couleurs normales</string>
-    <string name="source">Source</string>
     <string name="reset_all_points">Réinitialisez tous les points</string>
     <string name="reset_all_points_desc">Toutes vos actions seront réinitialisées, cela ne peut pas être annulé !</string>
     <string name="use_categories">Catégories d’utilisation</string>
@@ -472,12 +433,10 @@
     <string name="icons_spacing_horizontal_desc">Rembourrage d’icônes horizontales</string>
     <string name="category_settings">Paramètres des catégories</string>
     <string name="expanded_chevron_indicator">Indicateur de chevron élargi</string>
-    <string name="category_grid_width">Largeur de grille de catégorie</string>
     <string name="grid_settings">Réglages de la grille</string>
     <string name="category_cells">Cellules de catégorie</string>
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d sélectionnée(s)</string>
-    <string name="add_all_auto">Placement automatique sur le cercle</string>
     <string name="add_all_manual">Placer une par une</string>
     <string name="place_app_where">Où voulez-vous placer %s ?</string>
     <string name="tap_circle_to_place">Appuyez sur le cercle pour placer l\'app</string>
@@ -509,9 +468,7 @@
     <string name="select_workspace_hint">Choisissez quel profil s\'ouvre par défaut. Vous pouvez toujours changer en glissant à gauche ou à droite dans le tiroir.</string>
     <string name="workspace_default">Par défaut</string>
     <!--  ─────────────  Pinned Shortcuts  ─────────────  -->
-    <string name="pinned_shortcut_added">Raccourci "%s" ajouté à vos cercles</string>
     <string name="pinned_shortcut_failed">Échec de l\'ajout du raccourci</string>
-    <string name="pinned_shortcut_already_exists">Le raccourci "%s" est déjà sur vos cercles</string>
     <string name="pinned_shortcuts">Raccourcis</string>
     <string name="no_pinned_shortcuts">Aucun raccourci disponible</string>
     <!--  ─────────────  Recently Used Apps  ─────────────  -->
@@ -540,16 +497,12 @@
     <string name="private_space_title">Espace privé</string>
     <string name="private_space_locked">Espace privé verrouillé</string>
     <string name="private_space_authenticating">Authentification…</string>
-    <string name="private_space_manage_instructions">Pour ajouter ou supprimer des apps, ou supprimer ce profil, utilisez les paramètres Android.</string>
-    <string name="samsung_secure_folder_settings">Dossier sécurisé Samsung</string>
     <string name="app_info_name">name = %1$s</string>
     <string name="app_info_package_name">packageName = %1$s</string>
-    <string name="app_info_is_enabled">isEnabled = %1$s</string>
     <string name="app_info_is_system">isSystem = %1$s</string>
     <string name="app_info_is_work_profile">isWork = %1$s</string>
     <string name="app_info_is_private_profile">isPrivate = %1$s</string>
     <string name="app_info_is_launchable">isLaunchable = %1$s</string>
-    <string name="app_info_user_id">userId = %1$s</string>
     <string name="no_apps">Pas d’applications</string>
     <string name="activate_debug_mode">Activez le mode débogage</string>
     <string name="activate_debug_mode_desc">Activez les fonctionnalités de débogage sur toute l’application</string>
@@ -569,8 +522,6 @@
     <string name="are_you_sure">Tu es sûr \?</string>
     <string name="store_reset">Réinitialisation des magasins</string>
     <string name="debug_infos">Infos de débogage</string>
-    <string name="private_space_debug_info">Informations sur le débogage en espace privé</string>
-    <string name="private_space_debug_info_desc">Afficher les informations de débogage de l’état de l’espace privé par-dessus tout</string>
     <string name="super_warning_mode">Mode Super Avertissement</string>
     <string name="super_warning_mode_desc">Faites quelque chose de drôle quand vous entrez une épingle incorrecte</string>
     <string name="super_warning_mode_sound">Mode Super Avertissement + son</string>
@@ -593,8 +544,6 @@
     <string name="reload">Rechargement</string>
     <string name="select_icon">Icône de sélection</string>
     <string name="max_notification_icons">Icônes de notification maximale</string>
-    <string name="use_differential_loading_private_space">Utiliser l’espace privé de charge différentielle</string>
-    <string name="use_differential_loading_private_space_desc">Désactivez cela lorsque des applications privées apparaissent dans l’espace de travail utilisateur, sinon gardez les performances non cochées</string>
     <string name="edit_border_shape">Modifier la forme de la bordure</string>
     <string name="hold_settings">Paramètres de maintien</string>
     <string name="hold_to_activate_tolerance">Maintenez pour activer la tolérance</string>
@@ -606,11 +555,6 @@
     <string name="spacer">Séparateur</string>
     <string name="show_percentage">Afficher le pourcentage</string>
     <string name="show_percentage_desc">Afficher le pourcentage de batterie</string>
-    <string name="set_status_bar_template">Définir le modèle de barre de statut (le mien). Attention: en cliquant dessus, cela efface votre configuration actuelle !</string>
-    <string name="notch_mode">Mode: Notch (Fixe un spacer sur l\'encoche)</string>
-    <string name="google_lockdown_warning">\"Google a annoncé qu\'à partir de 2026/2027, toutes les applications sur les appareils Android certifiés nécessiteront que le développeur soumette des informations d\'identité personnelles directement à Google. Étant donné que les développeurs de cette application n\'acceptent pas cette exigence, cette application ne fonctionnera plus sur les appareils Android certifiés après cette date. \"</string>
-    <string name="dismiss">Rejeter</string>
-    <string name="nest_radius">Rayon du nid</string>
     <string name="edit_nest">Modifier le nid</string>
     <string name="angle_line">Ligne d\'angle</string>
     <string name="angle_line_help">Personnalisez l\'apparence de la ligne qui apparaît lorsque vous faites glisser sur l\'écran principal</string>
@@ -623,7 +567,6 @@
     <string name="erase_background">Effacer le fond</string>
     <string name="glow_radius">Rayon de lueur</string>
     <string name="glow_color">Couleur lumineuse</string>
-    <string name="enable_glow">Activer la lueur</string>
     <string name="line_object">Objet ligne</string>
     <string name="angle_object">Objet en angle</string>
     <string name="start_object">Objet de départ</string>
@@ -677,20 +620,6 @@
     <string name="undo_all">Tout annuler</string>
     <string name="redo">Refaire</string>
     <string name="redo_all">Tout refaire</string>
-    <string name="move_point_clockwise">Tourner le point dans le sens horaire</string>
-    <string name="move_point_anticlockwise">Tourner le point dans le sens antihoraire</string>
-    <string name="show_nest_preview">Afficher la previsualisation du nid</string>
-    <string name="general">Général</string>
-    <string name="action">Action</string>
-    <string name="icon">Icône</string>
-    <string name="shapes">Formes</string>
-    <string name="reset_default_point">Réinitialiser le point par defaut</string>
-    <string name="reset_point">Réinitialiser le point</string>
-    <string name="reset_default_point_desc">Cela réinitialisera les paramètres de point par défaut, ce qui signifie, tous les points qui ne remplacent pas les paramètres</string>
-    <string name="reset_point_desc">Cela réinitialisera le point courant à ses valeurs par défaut. Après cela, il utilisera les valeurs de point par défaut pour chacune de ses entrées non spécifiques (taille, bordures...)</string>
-    <string name="default_point_help_text">Modifier les valeurs que tous les points prennent par défaut, vous pouvez remplacer manuellement chacune de ces valeurs par point</string>
-    <string name="edit_point_help_desc">Modifier un point spécifique, si vous voulez modifier tous les points à la fois, utilisez le bouton plus sur l\'écran des paramètres et cliquez sur \"Modifier les paramètres par défaut\"</string>
-    <string name="collapse">Fermer</string>
     <string name="haptic_feedback_editor">Éditeur de retour haptique</string>
     <string name="vibration">Vibration</string>
     <string name="delay">Délai</string>
@@ -709,19 +638,15 @@
     <string name="haptic_preset_long_press">Confirmation d\'appui long</string>
     <string name="presets">Pré-réglages</string>
     <string name="steps">Étapes</string>
-    <string name="you_can_edit_haptic_feedback_on_nest_settings">Vous pouvez modifier le retour haptique sur les paramètres de nid</string>
     <string name="edit_nest_help">Personnaliser la taille du nid, les distances de dragage, les retours haptiques et d\'autres paramètres utiles</string>
     <string name="reset_nest">Réinitialiser ce nid à l\'état par défaut ?</string>
     <string name="use_custom_color_channels">Utilisez des canaux de couleur personnalisés</string>
     <string name="use_custom_color_channels_desc">Ignorer les canaux de couleur par défaut utilisés pour les objets matériels, tels que les interrupteurs, pour utiliser la mienne</string>
     <string name="hold_settings_help">Les réglages liés à l\'arc qui apparaît lorsque vous tenez assez longtemps sur l\'écran principal, Vous ne pouvez pas complètement désactiver, sinon, vous pouvez lâcher la dernière porte qui peut vous mener à des réglages, si vous avez fait de la merde, et ainsi être forcé de réinitialiser l\'application.</string>
-    <string name="rotation_start_angle">Rotation de l\'angle de départ</string>
-    <string name="rotation_start_angle_desc">Je pense que c\'est assez clair</string>
     <string name="rotation_per_second">Rotations/seconde</string>
     <string name="rotation_per_second_desc">Combien de tours sur lui-même il fait en une seconde</string>
     <string name="enable_backup">Activer la sauvegarde</string>
     <string name="choose_a_auto_backup_file">Choisissez un fichier de sauvegarde automatique</string>
-    <string name="show_sub_nest_size_slider">Afficher le curseur de taille de sous-nids</string>
     <string name="minus_one_means_random">-1 signifie aléatoire au démarrage</string>
     <string name="search_bar">Barre de recherche</string>
     <string name="toolbars_order">Ordre des barres d\'outils</string>
@@ -746,7 +671,6 @@
     <string name="widget_cell_size_help">La taille de la grille utilisée pour les tailles des widgets</string>
     <string name="off_screen_timeout">Durée en dehors de l\'écran</string>
     <string name="off_screen_timeout_desc">Combien de temps l\'application attend avant de revenir à l\'écran d\'accueil lorsque vous êtes dans un autre écran. Ne s\'applique pas à certains écrans spécifiés, tels que la sauvegarde (parce que vous choisissez un fichier). -1 signifie pas de retour</string>
-    <string name="paste">Coller</string>
     <string name="appearance">Apparence</string>
     <string name="search_shortcuts">Rechercher des Raccourcis…</string>
     <string name="fast">Rapide.</string>

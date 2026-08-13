@@ -2,7 +2,6 @@
 <resources>
     <string name="accessibility_service_description">Permite a DragonLauncher abrir el sombreado de notificaciones, el panel de ajustes rápidos, abrir aplicaciones recientes y comprobar la actividad actual (para usuarios de Xiaomi que no pueden poner Dragon como launcher por defecto sin perder la navegación por gestos)</string>
     <string name="help">Ayuda</string>
-    <string name="back">Atrás</string>
     <string name="reset_default_settings">Restablecer ajustes predeterminados</string>
     <string name="reset_settings_in_this_tab">Restablece ajustes predeterminados en esta lengüeta</string>
     <string name="ok">De acuerdo</string>
@@ -22,15 +21,7 @@
     <string name="extension_manual_install_title">Instalación manual</string>
     <string name="extension_manual_install_desc">Si no tienes una extensión de instalación, descarga el APK y scelútalo abajo para instalar.</string>
     <string name="select_apk">Seleccionar APK</string>
-    <string name="language_english">Inglés</string>
-    <string name="language_french">Francés</string>
-    <string name="language_german">Alemán</string>
-    <string name="language_spanish">Español</string>
-    <string name="language_hindi">hindi</string>
-    <string name="language_korean">coreano</string>
-    <string name="language_portuguese">portugués</string>
     <string name="system_default">Sistema predeterminado</string>
-    <string name="choose_your_app_language">Elige el idioma de tu app</string>
     <string name="version">Versión</string>
     <string name="export_cancelled">Exportación cancelada</string>
     <string name="import_cancelled">Importación cancelada</string>
@@ -62,7 +53,6 @@
     <string name="test_colors">Probar Colores</string>
     <string name="exit_test_mode">Salir del Modo de Prueba</string>
     <string name="exit_test_mode_message">¿Quieres guardar tus cambios de color o descartarlos?</string>
-    <string name="back_to_colors_settings">Volver a los Ajustes de Colores</string>
     <string name="dark_theme">Tema oscuro</string>
     <string name="amoled_theme">Tema AMOLED</string>
     <string name="system_theme">Tema del Sistema</string>
@@ -79,7 +69,6 @@
     <string name="set_default_launcher">Configurar como lanzador predeterminado</string>
     <string name="close">Cierre</string>
     <string name="dragging_distance_selection">Selección de distancia de arrastre</string>
-    <string name="circle">Distancia de arrastre del círculo</string>
     <string name="cancel_zone">Cancelar la resistencia de la zona</string>
     <string name="android_settings">Ajustes de Android</string>
     <string name="changelogs">Registros de cambios</string>
@@ -91,7 +80,6 @@
     <string name="drawer_actions">Acciones de cajón</string>
     <string name="close_app_drawer">Cerrar cajón</string>
     <string name="font_selector">Selector de fuentes</string>
-    <string name="font_selector_desc">Elige una fuente para toda la app. Puedes importar tus propias fuentes o añadirlas desde el catálogo.</string>
     <string name="toggle_kb">Teclado alterno</string>
     <string name="behavior">Comportamiento</string>
     <string name="workspaces">Espacios de trabajo</string>
@@ -123,14 +111,11 @@
     <string name="configure_your_apps">Configura tus aplicaciones y atajos en los ajustes</string>
     <string name="theme_selector">Selector de temas</string>
     <string name="everything_ready">¡Todo listo!</string>
-    <string name="home">Inicial</string>
     <string name="edit_point">Punto de edición</string>
     <string name="choose_action">Elige Acción</string>
     <string name="automatic_backups">Copias de seguridad automáticas</string>
-    <string name="change">Cambio</string>
     <string name="remove">Eliminar</string>
     <string name="trigger_backup">Copia de seguridad de disparadores</string>
-    <string name="last_backup">Último respaldo</string>
     <string name="auto_backup_stores">Almacenes automáticos de respaldo</string>
     <string name="recent_apps">Aplicaciones recientes</string>
     <string name="open_recent_apps_color">Abrir Apps Recientes Color</string>
@@ -192,7 +177,6 @@
     <string name="widgets">Widgets</string>
     <string name="edit">Edición</string>
     <string name="delete_widget">Eliminar widget</string>
-    <string name="add_point">Punto de Añadir</string>
     <string name="remove_point">Punto de eliminación</string>
     <string name="copy_point">Punto de Copia</string>
     <string name="ghosted">Fantasma</string>
@@ -213,9 +197,6 @@
     <string name="background_selected">Antecedentes de la frontera seleccionados</string>
     <string name="custom_action_color">Color de acción personalizado</string>
     <string name="icon_editor">Editor de iconos</string>
-    <string name="pick_image">Elige la imagen</string>
-    <string name="pick_from_icon_pack">Elige del paquete de iconos</string>
-    <string name="no_custom_icon">Sin icono personalizado</string>
     <string name="no_search_match">Sin búsqueda</string>
     <string name="size">Tamaño</string>
     <string name="rotation">Rotación</string>
@@ -227,10 +208,7 @@
     <string name="select_app">Seleccionar la aplicación</string>
     <string name="enter_url">Ingrese la URL</string>
     <string name="invalid_url">URL no válida</string>
-    <string name="unselected_action">Acción no seleccionada</string>
-    <string name="selected_action">Acción seleccionada</string>
     <string name="haptic_feedback">Retroalimentación háptica</string>
-    <string name="text_emoji">Texto/Emoji</string>
     <string name="rgb_loading_settings">Ajustes de carga RGB</string>
     <string name="rgb_line_selector">Selector de línea RGB</string>
     <string name="show_app_launch_preview">Mostrar vista previa del inicio de la aplicación</string>
@@ -243,23 +221,16 @@
     <string name="set_wallpaper">Establecer fondo de pantalla</string>
     <string name="manage_nests">Manejo de Nidos</string>
     <string name="copy">Copiar</string>
-    <string name="edit_nests">Editar nidos</string>
     <string name="pick_a_nest">Elige un nido</string>
     <string name="create_new_nest">Crear nuevo nido</string>
-    <string name="copy_id">Copiar identificación</string>
     <string name="open_burger_menu">Abrir menú de hamburguesas</string>
     <string name="selected_text">Seleccionado</string>
     <string name="unselected">No seleccionado</string>
-    <string name="general_style">Estilo general</string>
-    <string name="individual_style">Estilo individual</string>
     <string name="inner_padding">Acolchado interior</string>
-    <string name="plain_color">Color liso</string>
     <string name="tint">Tinte</string>
-    <string name="icon_pack_tint">Tinte del paquete de iconos</string>
     <string name="show_app_icon_start_drag_position">Mostrar el ícono de la aplicación en la posición de inicio de arrastre</string>
     <string name="make_all_colors_identical">Hacer que todos los colores sean idénticos</string>
     <string name="apply">Aplicar</string>
-    <string name="reload_point_icons">Iconos de puntos de recarga</string>
     <string name="center_selected_widget">Centrar el widget seleccionado</string>
     <string name="reset_widget">Restablecer widget</string>
     <string name="select_previous_widget">Seleccionar widget anterior</string>
@@ -268,7 +239,6 @@
     <string name="move_selected_widget_down">Mover el widget seleccionado hacia abajo</string>
     <string name="enable_scale_snap">Habilitar ajuste de escala</string>
     <string name="home_action">Inicio Acción</string>
-    <string name="drawer_home_action">Acción de inicio del cajón</string>
 
     <string name="fullscreen_description">Mostrar o no la barra superior y los botones de navegación/botón de gestos</string>
     <string name="rgb_loading_description">Muestra un degradado RBG en el círculo de carga al ingresar a los ajustes mientras mantienes presionado durante 3 segundos</string>
@@ -278,10 +248,8 @@
     <string name="show_app_angle_preview_description">Mostrar el indicador del ángulo en la línea</string>
     <string name="show_app_icon_start_drag_position_description">Muestra la aplicación seleccionada actualmente en el centro de donde destacaste para arrastrar</string>
     <string name="line_preview_snap_to_action_description">La vista previa de línea no se puede mover libremente, se ajusta a la acción seleccionada cuando hay una</string>
-    <string name="min_angle_to_activate">Ángulo mínimo para activar</string>
     <string name="app_label_overlay_size">Tamaño de superposición de etiquetas de aplicaciones</string>
     <string name="app_icon_overlay_size">Tamaño de superposición del icono de la aplicación</string>
-    <string name="next">Próximo</string>
     <string name="loading_themes">Cargando temas…</string>
     <string name="already_default_launcher">Lanzador ya predeterminado</string>
     <string name="open_default_launcher_settings">Abrir ajustes del lanzador predeterminados</string>
@@ -291,7 +259,6 @@
     <string name="app_aliases">Apodos</string>
     <string name="edit_alias">Editar alias</string>
     <string name="alias">Alias</string>
-    <string name="add_alias">Agregar alias</string>
     <string name="create_alias">Crear alias</string>
     <string name="scroll_up_action">Acción de desplazamiento hacia arriba</string>
     <string name="scroll_down_action">Acción de desplazamiento hacia abajo</string>
@@ -339,8 +306,6 @@
     <string name="reminder_mode_description">Reciba recordatorios periódicos cuando permanezca demasiado tiempo en una aplicación en pausa</string>
     <string name="reminder_interval">Intervalo de recordatorio</string>
     <string name="reminder_interval_description">Recordármelo cada %d minutos</string>
-    <string name="reminder_mode_notification">Notificación</string>
-    <string name="reminder_mode_overlay">Ventana emergente en pantalla</string>
     <string name="overlay_permission_required">Permiso de superposición</string>
     <string name="overlay_permission_description">Para mostrar recordatorios sobre otras aplicaciones, Dragon Launcher necesita el permiso \"Mostrar sobre otras aplicaciones\".</string>
     <!--  Popup Display Options  -->
@@ -442,7 +407,6 @@
     <string name="surface_container_low_color">Contenedor de superficie bajo</string>
     <string name="surface_container_lowest_color">Contenedor de superficie más bajo</string>
     <string name="surface_dim_color">Superficie tenue</string>
-    <string name="fixed_colors_section">Colores fijos</string>
     <string name="primary_fixed_color">Fijo primario</string>
     <string name="primary_fixed_dim_color">Atenuación fija primaria</string>
     <string name="on_primary_fixed_color">En primario fijo</string>
@@ -451,13 +415,10 @@
     <string name="secondary_fixed_dim_color">Atenuación fija secundaria</string>
     <string name="on_secondary_fixed_color">En secundaria fija</string>
     <string name="on_secondary_fixed_variant_color">En variante fija secundaria</string>
-    <string name="tertiary_fixed_color">Terciario Fijo</string>
-    <string name="tertiary_fixed_dim_color">Terciario fijo tenue</string>
     <string name="on_tertiary_fixed_color">En Terciario Fijo</string>
     <string name="on_tertiary_fixed_variant_color">Sobre la variante fija terciaria</string>
     <string name="custom_colors">Colores personalizados</string>
     <string name="normal_colors">Colores normales</string>
-    <string name="source">Fuente</string>
     <string name="reset_all_points">Restablecer todos los puntos</string>
     <string name="reset_all_points_desc">Todas tus acciones se restablecerán, ¡esto no se puede deshacer!</string>
     <string name="use_categories">Usar categorías</string>
@@ -471,12 +432,10 @@
     <string name="icons_spacing_horizontal_desc">Relleno de iconos horizontales</string>
     <string name="category_settings">Ajustes de categoría</string>
     <string name="expanded_chevron_indicator">Indicador de chevron ampliado</string>
-    <string name="category_grid_width">Ancho de cuadrícula de categoría</string>
     <string name="grid_settings">Ajustes de cuadrícula</string>
     <string name="category_cells">Celdas de categoría</string>
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d seleccionada(s)</string>
-    <string name="add_all_auto">Colocar automáticamente en el círculo</string>
     <string name="add_all_manual">Colocar una por una</string>
     <string name="place_app_where">¿Dónde quieres colocar %s?</string>
     <string name="tap_circle_to_place">Toca el círculo para colocar la app</string>
@@ -508,9 +467,7 @@
     <string name="select_workspace_hint">Elige qué espacio de trabajo se abre por defecto. Siempre puedes cambiar deslizando a izquierda o derecha en el cajón.</string>
     <string name="workspace_default">Predeterminado</string>
     <!--  ─────────────  Pinned Shortcuts  ─────────────  -->
-    <string name="pinned_shortcut_added">Acceso directo "%s" añadido a tus círculos</string>
     <string name="pinned_shortcut_failed">Error al añadir el acceso directo fijado</string>
-    <string name="pinned_shortcut_already_exists">El acceso directo "%s" ya está en tus círculos</string>
     <string name="pinned_shortcuts">Accesos directos fijados</string>
     <string name="no_pinned_shortcuts">No hay accesos directos fijados disponibles</string>
     <!--  ─────────────  Recently Used Apps  ─────────────  -->
@@ -539,16 +496,12 @@
     <string name="private_space_title">Espacio privado</string>
     <string name="private_space_locked">Espacio privado bloqueado</string>
     <string name="private_space_authenticating">Autenticando…</string>
-    <string name="private_space_manage_instructions">Para añadir o quitar apps, o eliminar este perfil, usa Ajustes de Android.</string>
-    <string name="samsung_secure_folder_settings">Carpeta segura de Samsung</string>
     <string name="app_info_name">name = %1$s</string>
     <string name="app_info_package_name">Nombre del paquete = %1$s</string>
-    <string name="app_info_is_enabled">Activo = %1$s</string>
     <string name="app_info_is_system">Del sistema = %1$s</string>
     <string name="app_info_is_work_profile">Tiene perfil de trabajo= %1$s</string>
     <string name="app_info_is_private_profile">Tiene un perfil privado = %1$s</string>
     <string name="app_info_is_launchable">Se puede abrir = %1$s</string>
-    <string name="app_info_user_id">id de usuario = %1$s</string>
     <string name="no_apps">No hay aplicaciones</string>
     <string name="activate_debug_mode">Activar el modo de depuración</string>
     <string name="activate_debug_mode_desc">Activar las funciones de depuración en toda la aplicación</string>
@@ -568,8 +521,6 @@
     <string name="are_you_sure">¿Estás seguro\?</string>
     <string name="store_reset">Reinicio de las tiendas</string>
     <string name="debug_infos">Información de depuración</string>
-    <string name="private_space_debug_info">Información de depuración en espacio privado</string>
-    <string name="private_space_debug_info_desc">Muestra la información de depuración del estado del espacio privado encima de todo</string>
     <string name="super_warning_mode">Modo Súper Advertencia</string>
     <string name="super_warning_mode_desc">Haz algo gracioso cuando escribes un pin equivocado</string>
     <string name="super_warning_mode_sound">Modo de Súper Advertencia + sonido</string>
@@ -592,8 +543,6 @@
     <string name="reload">Recarga</string>
     <string name="select_icon">Seleccionar icono</string>
     <string name="max_notification_icons">Iconos de notificación al máximo</string>
-    <string name="use_differential_loading_private_space">Uso del espacio privado de carga diferencial</string>
-    <string name="use_differential_loading_private_space_desc">Desactiva esto cuando aparezcan aplicaciones privadas en el espacio de trabajo del usuario; de lo contrario, déjalo desmarcado para el rendimiento</string>
     <string name="edit_border_shape">Editar la forma del borde</string>
     <string name="hold_settings">Ajustes retenidos</string>
     <string name="hold_to_activate_tolerance">Mantener la resistencia para activar la tolerancia</string>
@@ -605,11 +554,6 @@
     <string name="spacer">Camina</string>
     <string name="show_percentage">Porcentaje de espectáculo</string>
     <string name="show_percentage_desc">Mostrar el porcentaje de batería en texto plano</string>
-    <string name="set_status_bar_template">¡Aviso de configurar plantilla de barra de sattus (mía). ¡Al hacer clic aquí borra tu configuración actual!</string>
-    <string name="notch_mode">Modo: Muesca (Aplica un espaciador en la muesca)</string>
-    <string name="google_lockdown_warning">"\"Google ha anunciado que, a partir de 2026/2027, todas las aplicaciones en dispositivos Android certificados requerirán que el desarrollador envíe datos de identidad personal directamente a Google. Dado que los desarrolladores de esta aplicación no están de acuerdo con este requisito, esta aplicación ya no funcionará en dispositivos Android certificados después de ese tiempo.\" "</string>
-    <string name="dismiss">Despedir</string>
-    <string name="nest_radius">Radio del nido</string>
     <string name="edit_nest">Editar nido</string>
     <string name="angle_line">Línea de ángulo</string>
     <string name="angle_line_help">Personaliza la apariencia de la línea que aparece al arrastrar en la pantalla principal</string>
@@ -622,7 +566,6 @@
     <string name="erase_background">Borrar antecedentes</string>
     <string name="glow_radius">Radio de resplandor</string>
     <string name="glow_color">Color de resplandor</string>
-    <string name="enable_glow">Activar el resplandor</string>
     <string name="line_object">Objeto de línea</string>
     <string name="angle_object">Objeto angular</string>
     <string name="start_object">Objeto de inicio</string>
@@ -679,12 +622,6 @@
     <string name="undo_all">Deshacer todo</string>
     <string name="redo">Revertir</string>
     <string name="redo_all">Revertir todo</string>
-    <string name="move_point_clockwise">Mover el punto en sentido horario</string>
-    <string name="move_point_anticlockwise">Mover punto en sentido antihorario</string>
-    <string name="show_nest_preview">Visualizar elementos anidados</string>
-    <string name="general">General</string>
-    <string name="action">Accción</string>
-    <string name="collapse">Colapsar</string>
     <string name="haptic_feedback_editor">Editor de respuesta háptica</string>
     <string name="vibration">Vibración</string>
     <string name="delay">Retrasar</string>
@@ -705,7 +642,6 @@
     <string name="select_settings_to_import">Seleccione los ajustes para importar</string>
     <string name="edit_hold_to_activate_elements">Mantener presionado para editar elementos activos</string>
     <string name="edit_hold_to_activate_elements_desc">Editar las acciones invocadas tras presionar durante 3 segundos. 1 indica autoredirección</string>
-    <string name="less">Menos</string>
     <string name="warning">¡Advertencia!</string>
     <string name="access_app">Acceso a la aplicación (es posible que nuevamente experimente fallas)</string>
     <string name="shizuku_unavailable">Shizuku no está disponible</string>
@@ -739,7 +675,6 @@
     <string name="haptic_preset_long_press">Mantener pulsado para confirmar</string>
     <string name="presets">Preajustes</string>
     <string name="steps">Pasos</string>
-    <string name="you_can_edit_haptic_feedback_on_nest_settings">Puedes editar la respuesta háptica en los ajustes anidados</string>
     <string name="edit_nest_help">Configura en tamaño del nido, distancia del arrastre, retroalimentación háptica y otros ajustes útiles</string>
     <string name="use_custom_color_channels">Usar canales de color personalizados</string>
     <string name="use_custom_color_channels_desc">Anular los canales de color predeterminados, usados para los objetos de material, como los interruptores, para usar los del launcher</string>
@@ -757,13 +692,11 @@
     <string name="default_hold_and_run_delay_summary">Retardar aplicados cuando habilite Mantener y Ejecutar en un punto (cubre «Habilitar Mantener y Ejecutar»).</string>
     <string name="app_info_cache_key">Tecla caché = %1$s</string>
     <string name="federico_desc">Contribuidor Imortant (Características de pantalla de widgets y traducciones)</string>
-    <string name="it_is_using_max_depth_equals_one">Está utilizando maxDepth = 1</string>
     <string name="hold_settings_help">Los ajustes relacionados para el arco que engendra cuando mantiene por un suficiente largo en la pantalla principal, no puede deshabilitarlo completamente, por otro caso pudo perder la última puerta que puede dejarle establecer, si lo hiciste algo mal, y por lo tanto te verás forzar a reiniciar la aplicación.</string>
     <string name="rotation_per_second">Rotaciones/segundo</string>
     <string name="rotation_per_second_desc">¿Cuántas vueltas da sobre sí mismo en un segundo</string>
     <string name="enable_backup">Habilitar respaldo</string>
     <string name="choose_a_auto_backup_file">Elija un archivo de respaldo automático</string>
-    <string name="show_sub_nest_size_slider">Muestra tamaño de sub‐nido deslizador</string>
     <string name="minus_one_means_random">-1 significa aleatorio en el inicio</string>
     <string name="search_bar">Barra de Búsqueda</string>
     <string name="toolbars_order">Ordenar barra de herramientas</string>
@@ -790,12 +723,6 @@
     <string name="enable_snap_move">Habilitar el movimiento rápido</string>
     <string name="off_screen_timeout">Tiempo de espera del apagado de pantalla (s)</string>
     <string name="off_screen_timeout_desc">Cuánto tiempo espera la aplicación antes de volver a la pantalla de inicio cuando estás en otra pantalla. No se aplica a algunas pantallas específicas, como la de copia de seguridad (porque seleccionas un archivo). -1 significa que no hay retorno</string>
-    <string name="paste">Pegar</string>
-    <string name="default_point_help_text">Edita el valor para cada punto por defecto, puede anular manualmente por cada punto</string>
-    <string name="edit_point_help_desc">edita un punto específico, puede editarlos todos a la vez editando los ajustes de los puntos por defecto. (Más menú en la cima)</string>
-    <string name="rotation_start_angle">Inicia ángulo de rotación</string>
-    <string name="rotation_start_angle_desc">Supongo que se explica por sí solo</string>
-    <string name="resolution">Resolución</string>
     <string name="align_start">Inicio</string>
     <string name="align_center">Centro</string>
     <string name="align_end">Final</string>
@@ -809,12 +736,10 @@
     <string name="reset_rotation">Restablece rotación</string>
     <string name="reset_zoom">Restablece ampliación/reducción</string>
     <string name="edit_workspace">Editar Pupitre</string>
-    <string name="show_advanced_edit_tools">Mostrar Herramientas de Edición Avanzada</string>
     <string name="random">Aleatorio</string>
     <string name="special_options">Opciones Especiales</string>
     <string name="colors_and_icons">Colores e Iconos</string>
     <string name="configuration">Configuración</string>
-    <string name="reset_default_point_desc">Esto restablecerá todos los puntos de ajuste por defecto, y afectarán cada uno de los puntos que no tengan parámetros predeterminados</string>
     <string name="cant_remove_to_avoid_lock_out">No puede eliminar esto para evitar estar bloqueado fuera de los ajustes</string>
     <string name="pin_code_warning_desc">Para restablecer en caso que lo olvide, puede no elegir pero restablecer todos los ajustes de app a través de app android en el menú info</string>
     <string name="refresh">Refrescar</string>
@@ -824,14 +749,11 @@
     <string name="disable">Deshabilitar</string>
     <string name="disabled">Deshabilitado</string>
     <string name="live_nest">Nido Vivo</string>
-    <string name="live_nest_enabled">Nido Vivo habilitado</string>
-    <string name="live_nest_disabled">Nido Vivo deshabilitado</string>
     <string name="live_nest_target_nest">Nido destino</string>
     <string name="live_nest_hold_delay">Mantener retardo (ms)</string>
     <string name="live_nest_scale">Escala de nido</string>
     <string name="live_nest_pick_nest">Tomar nido</string>
     <string name="live_nest_snaps_to_finger_position">El nido vivo se ajusta a la posición del dedo</string>
-    <string name="cycle_actions_stage_default_delay">Retardo de etapa predeterminado (ms)</string>
     <string name="live_nests_depth_desc">¿Cuántos nidos vivos se pueden dibujar a la vez?</string>
     <string name="live_nest_depth">Profundidad de los nidos vivos</string>
     <string name="enter_adb_command">Introduzca comando ADB</string>
@@ -857,18 +779,12 @@
     <string name="hold_and_run">Mantener y Ejecutar</string>
     <string name="cycle_actions_loop">Bucle</string>
     <string name="cycle_actions_loop_desc">Tras la última etapa, espere en “Loop Over” y, a continuación, repita el ciclo.</string>
-    <string name="cycle_actions_loop_over">Bucle Superior</string>
     <string name="cycle_actions_add_stage">Añadir etapa</string>
     <string name="cycle_actions_stage">Etapa %1$d</string>
     <string name="cycle_actions_delay">Retención adicional para alcanzar esta etapa (ms)</string>
     <string name="cycle_actions_loop_delay">Retardo bucle superior (ms)</string>
     <string name="hold_and_run_delay">Mantener antes de ejecutar (ms)</string>
     <string name="multiply_or_subtract_opacity_in_live_nests_desc">Cuando está desactivado, multiplica la opacidad para ofrecer una IU limpia, y cuando está activado, la resta para alcanzar más rápidamente la opacidad cero y ocultar los elementos anidados inferiores para evitar el desorden en la interfaz de usuario</string>
-    <string name="reset_point_desc">Esto restaurará este punto</string>
-    <string name="icon">icono</string>
-    <string name="shapes">aspectos</string>
-    <string name="reset_default_point">Restablece punto por defecto</string>
-    <string name="reset_point">Restablecer punto</string>
     <string name="hold_and_run_enable">Habilitar Mantener y Ejecutar</string>
     <string name="hold_and_run_custom_action">Mantener Personal y Ejecutar acción</string>
 </resources>

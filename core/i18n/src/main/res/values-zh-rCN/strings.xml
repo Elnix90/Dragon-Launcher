@@ -3,7 +3,6 @@
     <string name="fullscreen_app">­</string>
     <string name="accessibility_service_description">允许 DragonLauncher 打开通知栏、快速设置面板、查看最近应用以及检查当前活动（适用于无法在不丢失手势导航的情况下将 Dragon 设置为默认启动器的普通小米用户）</string>
     <string name="help">帮助</string>
-    <string name="back">返回</string>
     <string name="reset_default_settings">恢复默认设置</string>
     <string name="reset_settings_in_this_tab">重置此标签页的设置</string>
     <string name="ok">确定</string>
@@ -25,7 +24,6 @@
     <string name="extension_manual_install_desc">如果您没有安装扩展，请下载 APK 并从下方选择进行安装。</string>
     <string name="select_apk">选择 APK</string>
     <string name="system_default">系统默认</string>
-    <string name="choose_your_app_language">选择应用语言</string>
     <string name="version">版本</string>
     <string name="export_cancelled">导出已取消</string>
     <string name="import_cancelled">导入已取消</string>
@@ -58,7 +56,6 @@
     <string name="test_colors">测试颜色</string>
     <string name="exit_test_mode">退出测试模式</string>
     <string name="exit_test_mode_message">您要保存颜色更改还是放弃它们？</string>
-    <string name="back_to_colors_settings">返回颜色设置</string>
     <string name="dark_theme">深色主题</string>
     <string name="amoled_theme">AMOLED 纯黑主题</string>
     <string name="system_theme">系统默认主题</string>
@@ -75,7 +72,6 @@
     <string name="set_default_launcher">设为默认启动器</string>
     <string name="close">关闭</string>
     <string name="dragging_distance_selection">拖动距离选择</string>
-    <string name="circle">圆圈拖动距离</string>
     <string name="cancel_zone">取消区域拖动距离</string>
     <string name="android_settings">安卓系统设置</string>
     <string name="changelogs">更新日志</string>
@@ -87,7 +83,6 @@
     <string name="drawer_actions">抽屉动作</string>
     <string name="close_app_drawer">关闭抽屉</string>
     <string name="font_selector">字体选择器</string>
-    <string name="font_selector_desc">为整个应用选择一种字体。您可以导入自己的字体或使用内置目录。</string>
     <string name="font_manage_help">在此管理字体。您可以导入自己的 TTF/OTF 文件，或从 Google Fonts 目录中下载。</string>
     <string name="font_catalog">字体目录</string>
     <string name="font_import">导入</string>
@@ -112,14 +107,11 @@
     <string name="configure_your_apps">在设置中配置您的应用和快捷方式</string>
     <string name="theme_selector">在设置中配置您的应用和快捷方式</string>
     <string name="everything_ready">一切就绪！</string>
-    <string name="home">主页</string>
     <string name="edit_point">编辑点 (Point)</string>
     <string name="choose_action">选择动作</string>
     <string name="automatic_backups">自动备份</string>
-    <string name="change">更改</string>
     <string name="remove">移除</string>
     <string name="trigger_backup">立即触发备份</string>
-    <string name="last_backup">上次备份</string>
     <string name="auto_backup_stores">自动备份存储位置</string>
     <string name="recent_apps">最近应用</string>
     <string name="open_recent_apps_color">最近应用动作颜色</string>
@@ -164,7 +156,6 @@
     <string name="widgets">小部件</string>
     <string name="edit">编辑</string>
     <string name="delete_widget">删除小部件</string>
-    <string name="add_point">添加点 (Point)</string>
     <string name="remove_point">移除点 (Point)</string>
     <string name="every_setting_will_return_to_its_default_state_this_cannot_be_undone_the_app_will_kill_itself">所有设置都将恢复到默认状态，此操作无法撤销，应用随后将自动强退</string>
     <string name="reset_all_settings">重置所有设置？！</string>
@@ -230,9 +221,6 @@
     <string name="background_selected">选中时的背景</string>
     <string name="custom_action_color">自定义动作颜色</string>
     <string name="icon_editor">图标编辑器</string>
-    <string name="pick_image">选取图片</string>
-    <string name="pick_from_icon_pack">从图标包中选取</string>
-    <string name="no_custom_icon">无自定义图标</string>
     <string name="no_search_match">未找到匹配的搜索结果</string>
     <string name="size">大小</string>
     <string name="rotation">旋转</string>
@@ -244,10 +232,7 @@
     <string name="select_app">选择应用</string>
     <string name="enter_url">输入网址</string>
     <string name="invalid_url">无效的网址</string>
-    <string name="unselected_action">未选中时的动作</string>
-    <string name="selected_action">选中时的动作</string>
     <string name="haptic_feedback">触觉反馈</string>
-    <string name="text_emoji">表情符号</string>
     <string name="rgb_loading_settings">RGB 加载设置</string>
     <string name="rgb_line_selector">RGB 动作选择线</string>
     <string name="show_app_launch_preview">显示应用启动预览</string>
@@ -258,23 +243,16 @@
     <string name="set_wallpaper">所有设置都将恢复到默认状态，此操作无法撤销，应用随后将自动强退</string>
     <string name="manage_nests">管理圆环嵌套</string>
     <string name="copy">复制</string>
-    <string name="edit_nests">编辑圆环嵌套</string>
     <string name="pick_a_nest">选取一个圆环</string>
     <string name="create_new_nest">创建新圆环</string>
-    <string name="copy_id">复制 id</string>
     <string name="open_burger_menu">打开汉堡菜单</string>
     <string name="selected_text">已选中</string>
     <string name="unselected">未选中</string>
-    <string name="general_style">全局样式</string>
-    <string name="individual_style">独立样式</string>
     <string name="inner_padding">内边距</string>
-    <string name="plain_color">纯色</string>
     <string name="tint">着色</string>
-    <string name="icon_pack_tint">图标包着色</string>
     <string name="show_app_icon_start_drag_position">在开始拖动位置显示应用图标</string>
     <string name="make_all_colors_identical">使所有颜色保持一致</string>
     <string name="apply">应用</string>
-    <string name="reload_point_icons">重载各点图标</string>
     <string name="center_selected_widget">居中选中固定的小部件</string>
     <string name="reset_widget">重置小部件</string>
     <string name="select_previous_widget">选择上一个小部件</string>
@@ -283,7 +261,6 @@
     <string name="move_selected_widget_down">向下移动选中部件</string>
     <string name="enable_scale_snap">启用缩放吸附</string>
     <string name="home_action">主页键动作</string>
-    <string name="drawer_home_action">抽屉内主页键动作</string>
 
     <string name="fullscreen_description">是否在顶部状态栏和导航栏/手势提示条处进行全屏隐藏</string>
     <string name="rgb_loading_description">进入设置长按 3 秒时，在加载圆圈上显示 RGB 渐变特效</string>
@@ -293,10 +270,8 @@
     <string name="show_app_angle_preview_description">在轨迹线上显示角度指示器</string>
     <string name="show_app_icon_start_drag_position_description">在您开始拖动的位置中心显示当前选中的应用</string>
     <string name="line_preview_snap_to_action_description">轨迹线条预览将不再自由移动，当有可对应的动作时它会直接吸附过去</string>
-    <string name="min_angle_to_activate">触发所需的最小角度</string>
     <string name="app_label_overlay_size">应用标签覆盖层大小</string>
     <string name="app_icon_overlay_size">应用图标覆盖层大小</string>
-    <string name="next">下一步</string>
     <string name="loading_themes">正在加载主题…</string>
     <string name="already_default_launcher">已经是默认启动器</string>
     <string name="open_default_launcher_settings">打开默认启动器设置</string>
@@ -309,18 +284,10 @@
     <string name="app_aliases">应用别名</string>
     <string name="edit_alias">编辑别名</string>
     <string name="alias">别名</string>
-    <string name="add_alias">添加别名</string>
     <string name="create_alias">创建别名</string>
     <string name="scroll_up_action">向上滚动动作</string>
     <string name="scroll_down_action">向下滚动动作</string>
     <string name="auto_launch_single_match">单结果时自动启动</string>
-    <string name="language_english">English</string>
-    <string name="language_french">Français</string>
-    <string name="language_german">Deutsch</string>
-    <string name="language_spanish">Español</string>
-    <string name="language_hindi">हिन्दी</string>
-    <string name="language_korean">한국어</string>
-    <string name="language_portuguese">Português</string>
     <string name="auto_launch_single_match_desc">当抽屉中只过滤显示出一个应用时，将自动将其启动</string>
     <string name="auto_show_keyboard">自动弹出键盘</string>
     <string name="auto_show_keyboard_desc">进入应用抽屉时自动打开键盘</string>
@@ -361,8 +328,6 @@
     <string name="reminder_mode_description">当您在已加入停顿的应用中停留太久时，接收定期提醒</string>
     <string name="reminder_interval">提醒间隔时间</string>
     <string name="reminder_interval_description">每 %d 分钟提醒我一次</string>
-    <string name="reminder_mode_notification">通知栏消息</string>
-    <string name="reminder_mode_overlay">屏幕弹窗</string>
     <string name="overlay_permission_required">需要“显示在其他应用上层”权限</string>
     <string name="overlay_permission_description">为了在其他应用之上显示提醒信息，Dragon Launcher 需要“显示在其他应用上层”权限。</string>
     <string name="popup_display_title">弹窗内容</string>
@@ -459,7 +424,6 @@
     <string name="surface_container_low_color">表面容器 (低明度)</string>
     <string name="surface_container_lowest_color">表面容器 (最低明度)</string>
     <string name="surface_dim_color">表面色 (昏暗)</string>
-    <string name="fixed_colors_section">固定颜色 (Fixed Colors)</string>
     <string name="primary_fixed_color">固定主色</string>
     <string name="primary_fixed_dim_color">固定主色 (昏暗)</string>
     <string name="on_primary_fixed_color">固定主体内容色</string>
@@ -468,13 +432,10 @@
     <string name="secondary_fixed_dim_color">固定次要色 (昏暗)</string>
     <string name="on_secondary_fixed_color">固定次要内容色</string>
     <string name="on_secondary_fixed_variant_color">固定次要内容色变体</string>
-    <string name="tertiary_fixed_color">固定第三色</string>
-    <string name="tertiary_fixed_dim_color">固定第三色 (昏暗)</string>
     <string name="on_tertiary_fixed_color">固定第三内容色</string>
     <string name="on_tertiary_fixed_variant_color">固定第三内容色变体</string>
     <string name="custom_colors">自定义颜色</string>
     <string name="normal_colors">常规颜色</string>
-    <string name="source">来源</string>
     <string name="reset_all_points">重置所有配置点</string>
     <string name="reset_all_points_desc">您所有的快捷操作点都将被清空，此操作不可撤销！</string>
     <string name="use_categories">使用分类</string>
@@ -488,11 +449,9 @@
     <string name="icons_spacing_horizontal_desc">图标水平外边距</string>
     <string name="category_settings">分类设置</string>
     <string name="expanded_chevron_indicator">展开状态折叠箭头指示</string>
-    <string name="category_grid_width">分类网格宽度</string>
     <string name="grid_settings">网格设置</string>
     <string name="category_cells">分类网格列数</string>
     <string name="multi_select_count">已选中 %d 项</string>
-    <string name="add_all_auto">自动排列在圆圈上</string>
     <string name="add_all_manual">逐个手动放置</string>
     <string name="place_app_where">您想将“%s”放置在哪个位置？</string>
     <string name="tap_circle_to_place">轻触圆圈以放置该应用</string>
@@ -520,9 +479,7 @@
     <string name="select_default_workspace">选择默认工作区</string>
     <string name="select_workspace_hint">选择默认情况下打开哪一个工作区。后续您始终可以通过在抽屉中向左或向右滑动来进行工作区切换。</string>
     <string name="workspace_default">默认主区</string>
-    <string name="pinned_shortcut_added">快捷方式“%s”已成功添加到您的操作圈中</string>
     <string name="pinned_shortcut_failed">添加快捷方式失败</string>
-    <string name="pinned_shortcut_already_exists">“%s”快捷方式已存在于您的操作圈中</string>
     <string name="pinned_shortcuts">快捷方式列表</string>
     <string name="no_pinned_shortcuts">无可用快捷方式</string>
     <string name="select_shortcut_action_title">为 %1$s 选择具体触发动作</string>
@@ -557,16 +514,12 @@
     <string name="private_space_title">私密空间</string>
     <string name="private_space_locked">私密空间已锁定</string>
     <string name="private_space_authenticating">正在验证身份…</string>
-    <string name="private_space_manage_instructions">若要添加、删除应用，或想销毁此独立空间配置文件，请前往系统自带的“安卓系统设置”。</string>
-    <string name="samsung_secure_folder_settings">三星安全文件夹</string>
     <string name="app_info_name">应用名称 = %1$s</string>
     <string name="app_info_package_name">应用包名 = %1$s</string>
-    <string name="app_info_is_enabled">是否启用 = %1$s</string>
     <string name="app_info_is_system">是否为系统应用 = %1$s</string>
     <string name="app_info_is_work_profile">是否为工作资料空间 = %1$s</string>
     <string name="app_info_is_private_profile">是否为私密独立空间 = %1$s</string>
     <string name="app_info_is_launchable">是否包含启动入口 = %1$s</string>
-    <string name="app_info_user_id">用户专属 id = %1$s</string>
     <string name="app_info_cache_key">缓存校验 Key = %1$s</string>
     <string name="no_apps">没有找到应用</string>
     <string name="activate_debug_mode">开启调试模式</string>
@@ -587,8 +540,6 @@
     <string name="are_you_sure">您确定要继续吗？</string>
     <string name="store_reset">存储状态已全部重置</string>
     <string name="debug_infos">调试基础信息</string>
-    <string name="private_space_debug_info">私密空间底层调试参数</string>
-    <string name="private_space_debug_info_desc">在最顶层悬浮覆盖显示私密空间目前的状态调试日志</string>
     <string name="super_warning_mode">超级恶搞警告模式</string>
     <string name="super_warning_mode_desc">当您不小心输入了错误的 PIN 码时，应用会执行一些滑稽有趣的干扰行为</string>
     <string name="super_warning_mode_sound">超级警告模式 + 音效配合</string>
@@ -611,8 +562,6 @@
     <string name="reload">刷新重载</string>
     <string name="select_icon">选择目标图标</string>
     <string name="max_notification_icons">最大通知栏图标显示数</string>
-    <string name="use_differential_loading_private_space">对私密空间启用差分加载</string>
-    <string name="use_differential_loading_private_space_desc">当发现私密应用未能正常出现在对应工作区时，请开启此开关。日常建议保持关闭状态以获得更好的整体系统性能</string>
     <string name="edit_border_shape">编辑外部轮廓边界形状</string>
     <string name="hold_settings">长按阻尼与范围设置</string>
     <string name="hold_to_activate_tolerance">长按生效时的防抖死区半径 (像素)</string>
@@ -624,11 +573,6 @@
     <string name="spacer">留白间距组件 (Spacer)</string>
     <string name="show_percentage">显示电池百分比数字</string>
     <string name="show_percentage_desc">直接以纯文本数字形式在状态栏呈现电量百分比信息</string>
-    <string name="set_status_bar_template">应用推荐的状态栏预设模板（警告：点击后将完全擦除覆盖您现有的状态栏排版布局！）</string>
-    <string name="notch_mode">模式：刘海屏适配 (在有前置挖孔刘海的区域自动塞入空置间距占位)</string>
-    <string name="google_lockdown_warning">"Google 官方此前已正式宣布：自 2026/2027 年起，所有在经过认证的 Android 设备上运行的应用程序，均需开发者直接向 Google 提交全套个人真实身份详细信息进行备案登记。鉴于本软件的诸位底层开源开发者极其不赞同此项侵犯性隐私条款，在到达该时间节点后，本软件将不再继续兼容和运作于这些已被 Google 官方认证审查的商业 Android 设备之上。敬请悉知。 "</string>
-    <string name="dismiss">知道了 / 关闭</string>
-    <string name="nest_radius">圆环嵌套半径</string>
     <string name="edit_nest">编辑圆环嵌套</string>
     <string name="angle_line">指向角度线</string>
     <string name="angle_line_help">对您在桌面主屏幕按住并拖拽滑动时，跟随您手指方向所延伸出来的指向线条进行外观美化</string>
@@ -641,7 +585,6 @@
     <string name="erase_background">清除图形背景背景</string>
     <string name="glow_radius">外发光扩散半径</string>
     <string name="glow_color">外发光色彩</string>
-    <string name="enable_glow">开启霓虹外发光特效</string>
     <string name="line_object">轨迹线条实体样式</string>
     <string name="angle_object">角度指示实体样式</string>
     <string name="start_object">起点物件形状</string>
@@ -679,13 +622,6 @@
     <string name="undo_all">全盘撤销</string>
     <string name="redo">重做</string>
     <string name="redo_all">全盘重做</string>
-    <string name="move_point_clockwise">使对应快捷触点顺时针微调旋转</string>
-    <string name="move_point_anticlockwise">使对应快捷触点逆时针微调旋转</string>
-    <string name="show_nest_preview">展示嵌套内容结构缩略预览</string>
-    <string name="it_is_using_max_depth_equals_one">当前系统强制指定最大限制深度值为 1 (maxDepth = 1)</string>
-    <string name="general">基础常规</string>
-    <string name="action">响应操作</string>
-    <string name="collapse">折叠收起面板</string>
     <string name="haptic_feedback_editor">振动马达触觉反馈波形编辑器</string>
     <string name="vibration">触能物理振动项</string>
     <string name="delay">时差空置延迟</string>
@@ -704,7 +640,6 @@
     <string name="haptic_preset_long_press">长按 - 阻尼感渐进确认</string>
     <string name="presets">官方定制振动预设库</string>
     <string name="steps">自定义多段马达步进</string>
-    <string name="you_can_edit_haptic_feedback_on_nest_settings">您也可以在独立的每个圆环嵌套高阶属性中去针对性微调其特有的振动风格</string>
     <string name="edit_nest_help">在此全面修改该圆环的物理边界尺寸、外张拖动判定间距、独立的手势反馈振动以及其他各种极为高级的核心微调参数</string>
     <string name="use_custom_color_channels">干预 Material 全局组件底色通道</string>
     <string name="use_custom_color_channels_desc">强行覆盖系统自带的各类 Material 原生交互对象（例如开关滑块等）的默认变色通道，强制它们使用我自己这套个性化配色映射</string>
@@ -713,7 +648,6 @@
     <string name="rotation_per_second_desc">配置该几何动画元素在短短一秒钟时间内，绕着自身核心中轴轴心能够完成多少次疯狂的旋转</string>
     <string name="enable_backup">开具备份长效服务</string>
     <string name="choose_a_auto_backup_file">绑定用于自动覆盖写入的本地备份目标文件</string>
-    <string name="show_sub_nest_size_slider">显化二级子环嵌套尺寸缩放调节滑块</string>
     <string name="minus_one_means_random">将其填入数值 -1 则代表每次冷启动应用时都采用全新的随机数</string>
     <string name="search_bar">桌面全局搜索框布局</string>
     <string name="toolbars_order">工具条堆叠覆盖顺序管理</string>
@@ -740,7 +674,6 @@
     <string name="enable_snap_move">开启网格刚性吸附对齐挪动</string>
     <string name="off_screen_timeout">离屏不活动超时自动打道回府时限 (秒)</string>
     <string name="off_screen_timeout_desc">当您驻留在诸如二级列表或复杂设置这类分支子页面却把手机扔在一旁毫无操作时，应用在强制把页面自动弹回最清净的桌面主屏幕前所忍耐等待的时间。此规则会自动规避某些必须静止的场景（例如您正调用文件管理器选取文件时）。将其参数改为 -1 则表示永不强退、维持现场</string>
-    <string name="paste">粘贴</string>
     <string name="refresh">强行刷新数据</string>
     <string name="crash">糟糕，应用程序刚刚崩溃了！</string>
     <string name="access_app">尝试重新忽略并潜入应用（注意：这有可能会导致您再度直面崩溃）</string>
@@ -771,7 +704,6 @@
     <string name="select_settings_to_import">勾选您准备提取载入的备份配置文件项</string>
     <string name="edit_hold_to_activate_elements">自定义长按 3 秒逃生弧圈内绑定的控制项</string>
     <string name="edit_hold_to_activate_elements_desc">微调长按桌面 3 秒时所绽放出来的功能按键。若只留 1 个动作，则长按读条蓄满后会无需挑选直接自动触发跳转</string>
-    <string name="less">收起少许</string>
     <string name="warning">前方高能安全警告！</string>
     <string name="this_is_a_beta_version">当前您所安装和体验的软件版本归属于公测 Beta 测试阶段。这意味着其底层依然隐伏着各种脾气古怪的不稳定因素和各色尚未捕捉的 Bug。若您在倒腾过程中遭遇任何诡异状况，非常恳请和期待您能将它们积极反馈给身单力薄的我！这对我改进代码真的有无法估量的大力协助。❤</string>
     <string name="this_feature_is_in_beta">该高阶子功能正处于核心 Beta 测试孵化期，其功能脉络尚未最终构建完全，且随时有崩坏跑偏的风险。非常欢迎向我砸来您的各类改进脑洞或者崩溃日志，一同将其淬炼得更完美！</string>
@@ -784,8 +716,6 @@
     <string name="disable">停用</string>
     <string name="disabled">已禁用</string>
     <string name="live_nest">动态嵌套圆环 (Live Nest)</string>
-    <string name="live_nest_enabled">动态嵌套环功能已铺开开启</string>
-    <string name="live_nest_disabled">动态嵌套环功能已被强制关闭</string>
     <string name="live_nest_target_nest">接轨的目标二级子圆环</string>
     <string name="live_nest_hold_delay">蓄力展开等待延迟 (毫秒)</string>
     <string name="live_nest_scale">该独立嵌套环的整体缩放比例</string>
@@ -804,9 +734,7 @@
     <string name="cycle_actions_delay">为了滑入此段高阶位阶手指需要多在原地按住憋气的时间 (毫秒)</string>
     <string name="cycle_actions_loop">无限闭环大循环</string>
     <string name="cycle_actions_loop_desc">当手指已经一条路走到最末尾的一个动作阶段时，在“循环休止等待”区间稍作凝滞，随后重头再来死循环该档位交替圈。</string>
-    <string name="cycle_actions_loop_over">循环休止等待状态</string>
     <string name="cycle_actions_loop_delay">进行大循环交接棒时的等待时差 (毫秒)</string>
-    <string name="cycle_actions_stage_default_delay">各档位间进行递进跃迁的缺省延迟基准 (毫秒)</string>
     <string name="live_nests_depth_desc">允许同一个手势路径里同时向更深维度纵深拉出展示多少个嵌套二级子环</string>
     <string name="live_nest_depth">可允许的动态嵌套纵深极限层数</string>
     <string name="enter_adb_command">输入待执行的 ADB 核心命令</string>
@@ -817,17 +745,6 @@
     <string name="kill_launcher">强退并彻底杀死本桌面进程</string>
     <string name="multiply_or_subtract_opacity_in_live_nests">深层嵌套不透明度算法切换（乘法 vs 减法）</string>
     <string name="multiply_or_subtract_opacity_in_live_nests_desc">关闭时：底层图层选用‘不透明度乘法算法’，从而提供一种丝滑剔透的层层叠加高级 UI 氛围；开启时：系统将切换为‘不透明度减法算法’，这能让那些被压在重重深层之下的更早期祖先图层极快地消减清零至 0% 透明隐藏，进而从根本上断绝低效劣质的 UI 视觉元素大乱炖乱象，杜绝显存性能拥堵</string>
-    <string name="icon">图标</string>
-    <string name="shapes">几何轮廓模型</string>
-    <string name="reset_default_point">洗白重置全局配置点初始模板</string>
-    <string name="reset_point">洗白重置当前该配置点</string>
-    <string name="reset_default_point_desc">这将直接将底层的全局触点初始基准设置彻底扫地出门重来，这会间接牵连波及到所有‘未曾单独配置过专属高阶属性’的底层那些普通无辜触点</string>
-    <string name="reset_point_desc">一键将当前这枚触点上精心自定义过的特立独行参数全部粉碎擦除，恢复空白</string>
-    <string name="default_point_help_text">集中修改普天之下所有基准触点的通用初始规格，后续若有需要，您依然可以在每一枚触点自身的独立面板里去单独实行特权微调覆盖</string>
-    <string name="edit_point_help_desc">针对眼前这枚特定的触点去进行特权雕琢。顺便一提，点击顶部的右侧‘更多菜单’可以直接进入上方提到的‘全局初始模板’去对普天之下的触点完成一次性的大面积统筹修改</string>
-    <string name="rotation_start_angle">动画旋转初始起步偏转夹角</string>
-    <string name="rotation_start_angle_desc">字面意思，这非常浅显易懂，用来规定起始时的视觉倾斜度</string>
-    <string name="resolution">物理屏幕分辨率</string>
     <string name="align_start">靠左 / 靠顶居首对齐</string>
     <string name="align_center">正中心绝对居中对齐</string>
     <string name="align_end">靠右 / 靠底居末对齐</string>
@@ -841,7 +758,6 @@
     <string name="reset_rotation">角度清零恢复正向</string>
     <string name="reset_zoom">缩放倍率打回 1.0 标准原大</string>
     <string name="edit_workspace">精心修剪工作区布局</string>
-    <string name="show_advanced_edit_tools">在版面上常驻铺开各种高级进阶修改工具箱</string>
     <string name="random">天马行空随机生成</string>
     <string name="special_options">特殊高级专有权柄特权项</string>
     <string name="colors_and_icons">色彩美学与图标更换</string>

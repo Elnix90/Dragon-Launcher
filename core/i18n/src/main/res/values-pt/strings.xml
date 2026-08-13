@@ -1,7 +1,6 @@
 <resources>
     <string name="accessibility_service_description">Permite que o DragonLauncher abra a sombra de notificações, o painel de configurações rápidas, abra aplicativos recentes e verifique a atividade atual (para usuários da xiaomi que não podem definir o Dragon como launcher padrão sem perder a navegação por gestos</string>
     <string name="help">Ajuda</string>
-    <string name="back">Voltar</string>
     <string name="reset_default_settings">Redefinir configurações padrão</string>
     <string name="reset_settings_in_this_tab">Redefinir as configurações padrão nesta aba</string>
     <string name="ok">Okey</string>
@@ -13,15 +12,7 @@
     <string name="app_display">Exibição do aplicativo</string>
     <string name="color_selector">Seletor de cores</string>
     <string name="debug">Depuração</string>
-    <string name="language_english">Inglês</string>
-    <string name="language_french">Francês</string>
-    <string name="language_german">Alemão</string>
-    <string name="language_spanish">Espanhol</string>
-    <string name="language_hindi">hindi</string>
-    <string name="language_korean">coreano</string>
-    <string name="language_portuguese">Português</string>
     <string name="system_default">Sistema Padrão</string>
-    <string name="choose_your_app_language">Escolha o idioma do seu aplicativo</string>
     <string name="version">Versão</string>
     <string name="export_cancelled">Exportação Cancelada</string>
     <string name="import_cancelled">Importação Cancelada</string>
@@ -66,7 +57,6 @@
     <string name="test_colors">Testar Cores</string>
     <string name="exit_test_mode">Sair do Modo de Teste</string>
     <string name="exit_test_mode_message">Você quer salvar suas mudanças de cor ou descartá-las?</string>
-    <string name="back_to_colors_settings">Voltar para Configurações de Cores</string>
     <string name="dark_theme">Tema Sombrio</string>
     <string name="amoled_theme">Tema AMOLED</string>
     <string name="system_theme">Tema do Sistema</string>
@@ -83,7 +73,6 @@
     <string name="set_default_launcher">Definir como launcher padrão</string>
     <string name="close">Fechar</string>
     <string name="dragging_distance_selection">Seleção de Distância de Arrasto</string>
-    <string name="circle">Distância de arrasto do círculo</string>
     <string name="cancel_zone">Cancelar arrasto na zona</string>
     <string name="android_settings">Configurações do Android</string>
     <string name="changelogs">Registros de alterações</string>
@@ -125,14 +114,11 @@
     <string name="configure_your_apps">Configure seus aplicativos e atalhos nas configurações</string>
     <string name="theme_selector">Seletor de temas</string>
     <string name="everything_ready">Tudo pronto!</string>
-    <string name="home">Casa</string>
     <string name="edit_point">Ponto de edição</string>
     <string name="choose_action">Escolha Ação</string>
     <string name="automatic_backups">Backups automáticos</string>
-    <string name="change">Mudança</string>
     <string name="remove">Remover</string>
     <string name="trigger_backup">Backup de Gatilho</string>
-    <string name="last_backup">Último backup</string>
     <string name="auto_backup_stores">Armazenamento Automático de Backup</string>
     <string name="recent_apps">Aplicativos recentes</string>
     <string name="open_recent_apps_color">Abrir Cores dos Apps Recentes</string>
@@ -193,7 +179,6 @@
     <string name="add_widget">Adicionar Widget</string>
     <string name="widgets">Widgets</string>
     <string name="delete_widget">Excluir widget</string>
-    <string name="add_point">Ponto de Adição</string>
     <string name="remove_point">Remover Ponto</string>
     <string name="copy_point">Ponto de Cópia</string>
     <string name="ghosted">Ignorado</string>
@@ -214,9 +199,6 @@
     <string name="background_selected">Histórico da Fronteira Selecionado</string>
     <string name="custom_action_color">Cor de Ação Personalizada</string>
     <string name="icon_editor">Editor de ícones</string>
-    <string name="pick_image">Escolha da imagem</string>
-    <string name="pick_from_icon_pack">Escolha entre o pacote de ícones</string>
-    <string name="no_custom_icon">Sem ícone personalizado</string>
     <string name="no_search_match">Sem correspondência de busca</string>
     <string name="size">Tamanho</string>
     <string name="rotation">Rotação</string>
@@ -228,10 +210,7 @@
     <string name="select_app">Selecionar o App</string>
     <string name="enter_url">Insira o URL</string>
     <string name="invalid_url">URL inválido</string>
-    <string name="unselected_action">Ação não selecionada</string>
-    <string name="selected_action">Ação selecionada</string>
     <string name="haptic_feedback">Feedback tátil</string>
-    <string name="text_emoji">Texto/Emoji</string>
     <string name="rgb_loading_settings">Configurações de carregamento RGB</string>
     <string name="rgb_line_selector">Seletor de linha RGB</string>
     <string name="show_app_launch_preview">Mostrar visualização de inicialização do aplicativo</string>
@@ -244,24 +223,17 @@
     <string name="set_wallpaper">Definir papel de parede</string>
     <string name="manage_nests">Gerenciamento de ninhos</string>
     <string name="copy">Cópia</string>
-    <string name="edit_nests">Editar ninhos</string>
     <string name="pick_a_nest">Escolha um ninho</string>
     <string name="create_new_nest">Criar novo ninho</string>
-    <string name="copy_id">Copiar ID</string>
     <string name="open_burger_menu">Menu de hambúrguer aberto</string>
     <string name="selected_text">Selecionado</string>
     <string name="unselected">Não selecionado</string>
-    <string name="general_style">Estilo geral</string>
-    <string name="individual_style">Estilo individual</string>
     <string name="inner_padding">Preenchimento interno</string>
-    <string name="plain_color">Cor Simples</string>
     <string name="tint">Matiz</string>
-    <string name="icon_pack_tint">Matiz do pacote de ícones</string>
     <string name="show_app_icon_start_drag_position">Mostrar ícone do aplicativo na posição inicial de arrastar</string>
 
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d selecionado(s)</string>
-    <string name="add_all_auto">Colocar automaticamente no círculo</string>
     <string name="add_all_manual">Colocar um por um</string>
     <string name="place_app_where">Onde você quer colocar %s?</string>
     <string name="tap_circle_to_place">Toque no círculo para colocar o app</string>
@@ -293,9 +265,7 @@
     <string name="workspace_default">Padrão</string>
 
     <!--  ─────────────  Pinned Shortcuts  ─────────────  -->
-    <string name="pinned_shortcut_added">Atalho "%s" adicionado aos seus círculos</string>
     <string name="pinned_shortcut_failed">Falha ao adicionar atalho fixado</string>
-    <string name="pinned_shortcut_already_exists">O atalho "%s" já está nos seus círculos</string>
     <string name="pinned_shortcuts">Atalhos fixados</string>
     <string name="no_pinned_shortcuts">Nenhum atalho fixado disponível</string>
 
@@ -308,13 +278,10 @@
     <string name="private_space_title">Espaço Privado</string>
     <string name="private_space_locked">Espaço Privado bloqueado</string>
     <string name="private_space_authenticating">Autenticando…</string>
-    <string name="private_space_manage_instructions">Para adicionar/remover apps ou excluir este perfil, use as Configurações do Android.</string>
     <string name="app_info_name">name = %1$s</string>
     <string name="app_info_package_name">packageName = %1$s</string>
-    <string name="app_info_is_enabled">isEnabled = %1$s</string>
     <string name="app_info_is_system">isSystem = %1$s</string>
     <string name="app_info_is_work_profile">isWork = %1$s</string>
     <string name="app_info_is_private_profile">isPrivate = %1$s</string>
     <string name="app_info_is_launchable">isLaunchable = %1$s</string>
-    <string name="app_info_user_id">userId = %1$s</string>
 </resources>

@@ -2,7 +2,6 @@
 <resources>
     <string name="accessibility_service_description">DragonLauncher अधिसूचना छाया, त्वरित सेटिंग्स पैनल, हाल के क्षुधा खोलने और वर्तमान गतिविधि के लिए जाँच करने के लिए अनुमति देता है (xiaomi उपयोगकर्ताओं के लिए जो इशारा नेविगेशन खोने के बिना डिफ़ॉल्ट लांचर के रूप में ड्रैगन सेट नहीं कर सकते हैं</string>
     <string name="help">मदद</string>
-    <string name="back">शर्त लगाना</string>
     <string name="reset_default_settings">डिफ़ॉल्ट सेटिंग्स रीसेट करें</string>
     <string name="reset_settings_in_this_tab">इस टैब में डिफ़ॉल्ट सेटिंग्स रीसेट करें</string>
     <string name="ok">ठीक है</string>
@@ -22,15 +21,7 @@
     <string name="extension_manual_install_title">मैनुअल स्थापना</string>
     <string name="extension_manual_install_desc">यदि आपके पास इंस्टॉलेशन एक्सटेंशन नहीं है, तो एपीके डाउनलोड करें और इंस्टॉल करने के लिए नीचे इसे चुनें।</string>
     <string name="select_apk">APK चुनें</string>
-    <string name="language_english">अंग्रेज़ी</string>
-    <string name="language_french">फ़्रेंच</string>
-    <string name="language_german">जर्मन</string>
-    <string name="language_spanish">स्पैनिश</string>
-    <string name="language_hindi">हिंदी</string>
-    <string name="language_korean">कोरियाई</string>
-    <string name="language_portuguese">पुर्तगाली</string>
     <string name="system_default">सिस्टम डिफ़ॉल्ट</string>
-    <string name="choose_your_app_language">अपनी ऐप्लिकेशन की भाषा चुनें</string>
     <string name="version">विवरण</string>
     <string name="export_cancelled">निर्यात रद्द कर दिया गया</string>
     <string name="import_cancelled">आयात रद्द किया गया</string>
@@ -62,7 +53,6 @@
     <string name="test_colors">रंग परीक्षण करें</string>
     <string name="exit_test_mode">टेस्ट मोड से बाहर निकलें</string>
     <string name="exit_test_mode_message">क्या आप अपनी रंग परिवर्तन सहेजना चाहते हैं या उन्हें त्यागना चाहते हैं?</string>
-    <string name="back_to_colors_settings">रंग सेटिंग्स पर वापस जाएं</string>
     <string name="dark_theme">डार्क थीम</string>
     <string name="amoled_theme">AMOLED थीम</string>
     <string name="system_theme">सिस्टम थीम</string>
@@ -79,7 +69,6 @@
     <string name="set_default_launcher">डिफ़ॉल्ट लॉन्चर के रूप में सेट करें</string>
     <string name="close">बंद करना</string>
     <string name="dragging_distance_selection">ड्रैगिंग दूरी चयन</string>
-    <string name="circle">सर्कल ड्रैग दूरी</string>
     <string name="cancel_zone">ज़ोन ड्रैग रद्द करें</string>
     <string name="android_settings">Android सेटिंग्स</string>
     <string name="changelogs">चैंज</string>
@@ -91,7 +80,6 @@
     <string name="drawer_actions">दराज की क्रियाएं</string>
     <string name="close_app_drawer">दराज बंद करें</string>
     <string name="font_selector">वैश्विक फ़ॉन्ट चयनकर्ता</string>
-    <string name="font_selector_desc">पूरे ऐप के लिए एक फ़ॉन्ट चुनें। अधिक फोंट जल्द ही आ रहे हैं!</string>
     <string name="toggle_kb">कीबोर्ड टॉगल करें</string>
     <string name="behavior">व्यवहार</string>
     <string name="workspaces">कार्यक्षेत्र</string>
@@ -122,14 +110,11 @@
     <string name="configure_your_apps">सेटिंग में अपने ऐप्लिकेशन और शॉर्टकट कॉन्फ़िगर करें</string>
     <string name="theme_selector">थीम चयनकर्ता</string>
     <string name="everything_ready">सब कुछ तैयार!</string>
-    <string name="home">घर</string>
     <string name="edit_point">संपादन बिंदु</string>
     <string name="choose_action">कार्रवाई चुनें</string>
     <string name="automatic_backups">स्वचालित बैकअप</string>
-    <string name="change">छोटे सिक्‍के</string>
     <string name="remove">हटाना</string>
     <string name="trigger_backup">ट्रिगर बैकअप</string>
-    <string name="last_backup">अंतिम बैकअप</string>
     <string name="auto_backup_stores">स्वचालित बैकअप स्टोर</string>
     <string name="recent_apps">हाल के ऐप्स</string>
     <string name="open_recent_apps_color">हाल के ऐप्स का रंग खोलें</string>
@@ -192,7 +177,6 @@
     <string name="edit">संपादित करें</string>
     <string name="widgets_tab_help">अपने कार्यक्षेत्र विजेट और फ़्लोटिंग ऐप्स को प्रबंधित करें: उन्हें जोड़ें, पुन: व्यवस्थित करें, आकार बदलें और स्थिति दें।\n घोस्टेड का मतलब है कि विजेट क्लिक करने योग्य नहीं है\nफोरग्राउंड का मतलब है कि ड्रैग जेस्चर विजेट पर पंजीकृत नहीं हैं\nआप अपनी पसंद के कॉन्फ़िगरेशन को प्राप्त करने के लिए इन दोनों के संयोजन का प्रयास कर सकते हैं</string>
     <string name="delete_widget">विजेट हटाएं</string>
-    <string name="add_point">बिंदु जोड़ें</string>
     <string name="remove_point">बिंदु निकालें</string>
     <string name="copy_point">कॉपी प्वाइंट</string>
     <string name="ghosted">भूत</string>
@@ -213,9 +197,6 @@
     <string name="background_selected">बॉर्डर पृष्ठभूमि चयनित</string>
     <string name="custom_action_color">कस्टम एक्शन रंग</string>
     <string name="icon_editor">आइकन संपादक</string>
-    <string name="pick_image">छवि चुनें</string>
-    <string name="pick_from_icon_pack">आइकन पैक में से चुनें</string>
-    <string name="no_custom_icon">कोई कस्टम आइकन नहीं</string>
     <string name="no_search_match">कोई खोज मिलान नहीं</string>
     <string name="size">आकार वाला</string>
     <string name="rotation">रोटेशन</string>
@@ -227,10 +208,7 @@
     <string name="select_app">ऐप चुनें</string>
     <string name="enter_url">यूआरएल दर्ज करें</string>
     <string name="invalid_url">असामान्य यूआरएल</string>
-    <string name="unselected_action">अचयनित क्रिया</string>
-    <string name="selected_action">चयनित क्रिया</string>
     <string name="haptic_feedback">हैप्टिक राय</string>
-    <string name="text_emoji">टेक्स्ट/इमोजी</string>
     <string name="rgb_loading_settings">आरजीबी लोडिंग सेटिंग्स</string>
     <string name="rgb_line_selector">आरजीबी लाइन चयनकर्ता</string>
     <string name="show_app_launch_preview">ऐप लॉन्च पूर्वावलोकन दिखाएँ</string>
@@ -243,23 +221,16 @@
     <string name="set_wallpaper">वॉलपेपर सेट करो</string>
     <string name="manage_nests">घोंसला प्रबंधन</string>
     <string name="copy">प्रतिलिपि</string>
-    <string name="edit_nests">घोंसले संपादित करें</string>
     <string name="pick_a_nest">एक घोंसला चुनें</string>
     <string name="create_new_nest">नया घोंसला बनाएं</string>
-    <string name="copy_id">आईडी कॉपी करें</string>
     <string name="open_burger_menu">बर्गर मेनू खोलें</string>
     <string name="selected_text">चयनित</string>
     <string name="unselected">इसे नहीं चुना जाता</string>
-    <string name="general_style">सामान्य शैली</string>
-    <string name="individual_style">व्यक्तिगत शैली</string>
     <string name="inner_padding">भीतरी गद्दी</string>
-    <string name="plain_color">सादा रंग</string>
     <string name="tint">टिंट</string>
-    <string name="icon_pack_tint">चिह्न पैक टिंट</string>
     <string name="show_app_icon_start_drag_position">स्टार्ट ड्रैग पोजीशन में ऐप आइकन दिखाएं</string>
     <string name="make_all_colors_identical">सभी रंगों को एक जैसा बनाएं</string>
     <string name="apply">आवेदन करना</string>
-    <string name="reload_point_icons">अंक चिह्न पुनः लोड करें</string>
     <string name="center_selected_widget">केंद्र चयनित विजेट</string>
     <string name="reset_widget">विजेट रीसेट करें</string>
     <string name="select_previous_widget">पिछला विजेट चुनें</string>
@@ -268,7 +239,6 @@
     <string name="move_selected_widget_down">चयनित विजेट को नीचे ले जाएँ</string>
     <string name="enable_scale_snap">स्केल स्नैप सक्षम करें</string>
     <string name="home_action">होम एक्शन</string>
-    <string name="drawer_home_action">दराज गृह क्रिया</string>
 
     <string name="fullscreen_description">शीर्ष पट्टी और नेविगेशन बटन/जेस्चर बटन प्रदर्शित करें या नहीं</string>
     <string name="rgb_loading_description">सेटिंग्स में प्रवेश करने पर, 3 सेकंड के लिए दबाए रखते हुए, लोडिंग सर्कल पर एक आरबीजी ग्रेडिएंट दिखाएं</string>
@@ -278,10 +248,8 @@
     <string name="show_app_angle_preview_description">लाइन पर कोण सूचक प्रदर्शित करें</string>
     <string name="show_app_icon_start_drag_position_description">वर्तमान चयनित ऐप को उस स्थान के केंद्र में प्रदर्शित करें जहां आपने खींचने के लिए तारांकित किया था</string>
     <string name="line_preview_snap_to_action_description">लाइन पूर्वावलोकन को स्थानांतरित करने के लिए स्वतंत्र नहीं है, यह चयनित क्रिया होने पर तुरंत उस पर आ जाता है</string>
-    <string name="min_angle_to_activate">सक्रिय करने के लिए न्यूनतम कोण</string>
     <string name="app_label_overlay_size">ऐप लेबल ओवरले आकार</string>
     <string name="app_icon_overlay_size">ऐप आइकन ओवरले आकार</string>
-    <string name="next">अगला</string>
     <string name="loading_themes">थीम लोड हो रही हैं…</string>
     <string name="already_default_launcher">पहले से ही डिफ़ॉल्ट लॉन्चर</string>
     <string name="open_default_launcher_settings">डिफ़ॉल्ट लॉन्चर सेटिंग्स खोलें</string>
@@ -290,7 +258,6 @@
     <string name="dont_customize">अनुकूलित न करें और सीधे ड्रैगन लॉन्चर का उपयोग प्रारंभ न करें</string>
     <string name="edit_alias">उपनाम संपादित करें</string>
     <string name="alias">उपनाम</string>
-    <string name="add_alias">उपनाम जोड़ें</string>
     <string name="create_alias">उपनाम बनाएँ</string>
     <string name="scroll_up_action">कार्रवाई ऊपर स्क्रॉल करें</string>
     <string name="scroll_down_action">कार्रवाई नीचे स्क्रॉल करें</string>
@@ -336,8 +303,6 @@
     <string name="reminder_mode_title">उपयोग अनुस्मारक</string>
     <string name="reminder_mode_description">जब आप किसी रुके हुए ऐप पर बहुत देर तक रहते हैं तो समय-समय पर अनुस्मारक प्राप्त करें</string>
     <string name="reminder_interval">अनुस्मारक अंतराल</string>
-    <string name="reminder_mode_notification">अधिसूचना</string>
-    <string name="reminder_mode_overlay">ऑन-स्क्रीन पॉपअप</string>
     <string name="overlay_permission_required">ओवरले अनुमति</string>
     <string name="overlay_permission_description">अन्य ऐप्स पर अनुस्मारक प्रदर्शित करने के लिए, ड्रैगन लॉन्चर को \"अन्य ऐप्स पर प्रदर्शित करें\" अनुमति की आवश्यकता होती है।</string>
     <!--  Popup Display Options  -->
@@ -439,7 +404,6 @@
     <string name="surface_container_low_color">भूतल कंटेनर कम</string>
     <string name="surface_container_lowest_color">भूतल कंटेनर निम्नतम</string>
     <string name="surface_dim_color">सतह मंद</string>
-    <string name="fixed_colors_section">निश्चित रंग</string>
     <string name="primary_fixed_color">प्राथमिक निश्चित</string>
     <string name="primary_fixed_dim_color">प्राइमरी फिक्स्ड डिम</string>
     <string name="on_primary_fixed_color">प्राइमरी फिक्स्ड पर</string>
@@ -448,13 +412,10 @@
     <string name="secondary_fixed_dim_color">सेकेंडरी फिक्स्ड डिम</string>
     <string name="on_secondary_fixed_color">सेकेंडरी फिक्स्ड पर</string>
     <string name="on_secondary_fixed_variant_color">सेकेंडरी फिक्स्ड वेरिएंट पर</string>
-    <string name="tertiary_fixed_color">तृतीयक स्थिर</string>
-    <string name="tertiary_fixed_dim_color">तृतीयक निश्चित मंद</string>
     <string name="on_tertiary_fixed_color">तृतीयक पर निश्चित</string>
     <string name="on_tertiary_fixed_variant_color">तृतीयक निश्चित संस्करण पर</string>
     <string name="custom_colors">कस्टम रंग</string>
     <string name="normal_colors">सामान्य रंग</string>
-    <string name="source">स्रोत</string>
     <string name="reset_all_points">सभी बिंदु रीसेट करें</string>
     <string name="reset_all_points_desc">आपके सभी कार्य रीसेट कर दिए जाएंगे, इसे पूर्ववत नहीं किया जा सकता!</string>
     <string name="use_categories">श्रेणियों का प्रयोग करें</string>
@@ -468,12 +429,10 @@
     <string name="icons_spacing_horizontal_desc">क्षैतिज चिह्न पैडिंग</string>
     <string name="category_settings">श्रेणी सेटिंग</string>
     <string name="expanded_chevron_indicator">विस्तारित शेवरॉन संकेतक</string>
-    <string name="category_grid_width">श्रेणी ग्रिड चौड़ाई</string>
     <string name="grid_settings">ग्रिड सेटिंग्स</string>
     <string name="category_cells">श्रेणी कोशिकाएँ</string>
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d चयनित</string>
-    <string name="add_all_auto">सर्कल पर स्वचालित रूप से रखें</string>
     <string name="add_all_manual">एक-एक करके रखें</string>
     <string name="place_app_where">%s को कहाँ रखना चाहते हैं?</string>
     <string name="tap_circle_to_place">ऐप रखने के लिए सर्कल पर टैप करें</string>
@@ -505,9 +464,7 @@
     <string name="select_workspace_hint">चुनें कि कौन सा वर्कस्पेस डिफ़ॉल्ट रूप से खुलेगा। आप ड्रॉअर में बाएं या दाएं स्वाइप करके हमेशा बदल सकते हैं।</string>
     <string name="workspace_default">डिफ़ॉल्ट</string>
     <!--  ─────────────  Pinned Shortcuts  ─────────────  -->
-    <string name="pinned_shortcut_added">शॉर्टकट "%s" आपके सर्कल में जोड़ा गया</string>
     <string name="pinned_shortcut_failed">पिन किए गए शॉर्टकट को जोड़ने में विफल</string>
-    <string name="pinned_shortcut_already_exists">"%s" शॉर्टकट पहले से आपके सर्कल में है</string>
     <string name="pinned_shortcuts">पिन किए गए शॉर्टकट</string>
     <string name="no_pinned_shortcuts">कोई पिन किया गया शॉर्टकट उपलब्ध नहीं</string>
     <!--  ─────────────  Recently Used Apps  ─────────────  -->
@@ -536,16 +493,12 @@
     <string name="private_space_title">निजी स्पेस</string>
     <string name="private_space_locked">निजी स्पेस लॉक है</string>
     <string name="private_space_authenticating">प्रमाणीकरण हो रहा है…</string>
-    <string name="private_space_manage_instructions">ऐप जोड़ने/हटाने या इस प्रोफ़ाइल को हटाने के लिए Android सेटिंग्स का उपयोग करें।</string>
-    <string name="samsung_secure_folder_settings">सैमसंग सिक्योर फोल्डर</string>
     <string name="app_info_name">name = %1$s</string>
     <string name="app_info_package_name">packageName = %1$s</string>
-    <string name="app_info_is_enabled">isEnabled = %1$s</string>
     <string name="app_info_is_system">isSystem = %1$s</string>
     <string name="app_info_is_work_profile">isWork = %1$s</string>
     <string name="app_info_is_private_profile">isPrivate = %1$s</string>
     <string name="app_info_is_launchable">isLaunchable = %1$s</string>
-    <string name="app_info_user_id">userId = %1$s</string>
     <string name="no_apps">कोई ऐप्स नहीं</string>
     <string name="activate_debug_mode">डिबग मोड सक्रिय करें</string>
     <string name="activate_debug_mode_desc">पूरे ऐप में डिबग सुविधाएं सक्षम करें</string>
@@ -565,8 +518,6 @@
     <string name="are_you_sure">क्या आपको यकीन है\?</string>
     <string name="store_reset">स्टोर रीसेट</string>
     <string name="debug_infos">डीबग जानकारी</string>
-    <string name="private_space_debug_info">निजी स्थान डिबग जानकारी</string>
-    <string name="private_space_debug_info_desc">हर चीज़ के शीर्ष पर निजी स्थान स्थिति डिबग जानकारी प्रदर्शित करें</string>
     <string name="super_warning_mode">सुपर चेतावनी मोड</string>
     <string name="super_warning_mode_desc">जब आप गलत पिन डालें तो कुछ मज़ेदार करें</string>
     <string name="super_warning_mode_sound">सुपर चेतावनी मोड + ध्वनि</string>
@@ -589,8 +540,6 @@
     <string name="reload">पुनः लोड करें</string>
     <string name="select_icon">आइकन चुनें</string>
     <string name="max_notification_icons">अधिकतम अधिसूचना चिह्न</string>
-    <string name="use_differential_loading_private_space">डिफरेंशियल लोडिंग प्राइवेट स्पेस का उपयोग करें</string>
-    <string name="use_differential_loading_private_space_desc">जब निजी ऐप्स उपयोगकर्ता के कार्यक्षेत्र में दिखाई दें तो इसे टॉगल करें, अन्यथा प्रदर्शन के लिए इसे अनचेक रखें</string>
     <string name="edit_border_shape">बॉर्डर आकार संपादित करें</string>
     <string name="hold_settings">सेटिंग्स दबाए रखें</string>
     <string name="hold_to_activate_tolerance">सहनशीलता को सक्रिय करने के लिए दबाए रखें</string>
@@ -602,11 +551,6 @@
     <string name="spacer">स्पेसर</string>
     <string name="show_percentage">प्रतिशत दिखाएँ</string>
     <string name="show_percentage_desc">सादे पाठ में बैटरी प्रतिशत प्रदर्शित करें</string>
-    <string name="set_status_bar_template">स्टेटस बार टेम्प्लेट (मेरा) चेतावनी सेट करें, इस पर क्लिक करने से आपका वर्तमान सेटअप मिट जाता है!</string>
-    <string name="notch_mode">मोड: नॉच (नॉच पर स्पेसर लगाता है)</string>
-    <string name="google_lockdown_warning">\"Google ने घोषणा की है कि, 2026/2027 से शुरू होकर, प्रमाणित एंड्रॉइड डिवाइसों पर सभी ऐप्स के लिए डेवलपर को व्यक्तिगत पहचान विवरण सीधे Google को सबमिट करना होगा। चूंकि इस ऐप के डेवलपर्स इस आवश्यकता से सहमत नहीं हैं, इसलिए यह ऐप उस समय के बाद प्रमाणित एंड्रॉइड डिवाइसों पर काम नहीं करेगा।\"</string>
-    <string name="dismiss">नकार देना</string>
-    <string name="nest_radius">घोंसला त्रिज्या</string>
     <string name="edit_nest">घोंसला संपादित करें</string>
     <string name="angle_line">कोण रेखा</string>
     <string name="angle_line_help">जब आप मुख्य स्क्रीन पर खींचते हैं तो दिखाई देने वाली रेखा के स्वरूप को अनुकूलित करें</string>
@@ -619,7 +563,6 @@
     <string name="erase_background">पृष्ठभूमि मिटाएं</string>
     <string name="glow_radius">चमक त्रिज्या</string>
     <string name="glow_color">चमक रंग</string>
-    <string name="enable_glow">चमक सक्षम करें</string>
     <string name="line_object">रेखा वस्तु</string>
     <string name="angle_object">कोण वस्तु</string>
     <string name="start_object">ऑब्जेक्ट प्रारंभ करें</string>

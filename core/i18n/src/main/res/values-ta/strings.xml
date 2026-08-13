@@ -2,7 +2,6 @@
 <resources>
     <string name="accessibility_service_description">அறிவிப்பு நிழல், விரைவு அமைப்புகள் பேனலைத் திறக்க, அண்மைக் கால பயன்பாடுகளைத் திறக்க மற்றும் தற்போதைய செயல்பாட்டைச் சரிபார்க்க DragonLauncher ஐ அனுமதிக்கிறது (சைகை வழிசெலுத்தலை இழக்காமல் டிராகனை இயல்புநிலை துவக்கியாக அமைக்க முடியாத xiaomi பயனர்களுக்கு</string>
     <string name="help">உதவி</string>
-    <string name="back">பின்</string>
     <string name="reset_default_settings">இயல்புநிலை அமைப்புகளை மீட்டமைக்கவும்</string>
     <string name="reset_settings_in_this_tab">இந்த தாவலில் இயல்புநிலை அமைப்புகளை மீட்டமைக்கவும்</string>
     <string name="ok">சரி</string>
@@ -24,15 +23,7 @@
     <string name="extension_manual_install_title">கைமுறை நிறுவல்</string>
     <string name="extension_manual_install_desc">உங்களிடம் நிறுவல் நீட்டிப்பு இல்லையென்றால், APK ஐப் பதிவிறக்கி, நிறுவுவதற்கு கீழே அதைத் தேர்ந்தெடுக்கவும்.</string>
     <string name="select_apk">APKஐத் தேர்ந்தெடுக்கவும்</string>
-    <string name="language_english">ஆங்கிலம்</string>
-    <string name="language_french">பிரஞ்சு</string>
-    <string name="language_german">செர்மன்</string>
-    <string name="language_spanish">ச்பானிச்</string>
-    <string name="language_hindi">இந்தி</string>
-    <string name="language_korean">கொரிய</string>
-    <string name="language_portuguese">போர்த்துகீசியம்</string>
     <string name="system_default">கணினி இயல்புநிலை</string>
-    <string name="choose_your_app_language">உங்கள் பயன்பாட்டு மொழியைத் தேர்ந்தெடுக்கவும்</string>
     <string name="version">பதிப்பு</string>
     <string name="export_cancelled">ஏற்றுமதி ரத்து செய்யப்பட்டது</string>
     <string name="import_cancelled">இறக்குமதி ரத்து செய்யப்பட்டது</string>
@@ -65,7 +56,6 @@
     <string name="test_colors">சோதனை நிறங்கள்</string>
     <string name="exit_test_mode">சோதனை பயன்முறையிலிருந்து வெளியேறு</string>
     <string name="exit_test_mode_message">உங்கள் வண்ண மாற்றங்களைச் சேமிக்க விரும்புகிறீர்களா அல்லது அவற்றை நிராகரிக்க விரும்புகிறீர்களா?</string>
-    <string name="back_to_colors_settings">நிறங்கள் அமைப்புகளுக்குத் திரும்பு</string>
     <string name="dark_theme">இருண்ட கருப்பொருள்</string>
     <string name="amoled_theme">AMOLED கருப்பொருள்</string>
     <string name="system_theme">கணினி கருப்பொருள்</string>
@@ -82,7 +72,6 @@
     <string name="set_default_launcher">இயல்புநிலை துவக்கியாக அமைக்கவும்</string>
     <string name="close">மூடு</string>
     <string name="dragging_distance_selection">தூரத் தேர்வை இழுத்தல்</string>
-    <string name="circle">வட்டம் இழுக்கும் தூரம்</string>
     <string name="cancel_zone">மண்டல இழுவையை நீக்கறல்</string>
     <string name="android_settings">ஆண்ட்ராய்டு அமைப்புகள்</string>
     <string name="changelogs">சேஞ்ச்லாக்ச்</string>
@@ -94,7 +83,6 @@
     <string name="drawer_actions">டிராயர் செயல்கள்</string>
     <string name="close_app_drawer">அலமாரியை மூடு</string>
     <string name="font_selector">எழுத்துரு தேர்வி</string>
-    <string name="font_selector_desc">முழு பயன்பாட்டிற்கும் ஒரு எழுத்துருவைத் தேர்ந்தெடுக்கவும். நீங்கள் சொந்தமாக இறக்குமதி செய்யலாம் அல்லது பட்டியலைப் பயன்படுத்தலாம்.</string>
     <string name="font_manage_help">எழுத்துருக்களை இங்கே நிர்வகிக்கவும். உங்கள் சொந்த TTF/OTF கோப்புகளை நீங்கள் இறக்குமதி செய்யலாம் அல்லது Google எழுத்துருக்கள் பட்டியலில் இருந்து பதிவிறக்கம் செய்யலாம்.</string>
     <string name="font_catalog">பட்டியல்</string>
     <string name="font_import">இறக்குமதி</string>
@@ -145,14 +133,11 @@
     <string name="configure_your_apps">அமைப்புகளில் உங்கள் ஆப்ச் மற்றும் சார்ட்கட்களை உள்ளமைக்கவும்</string>
     <string name="theme_selector">கருப்பொருள் தேர்வாளர்</string>
     <string name="everything_ready">எல்லாம் தயார்!</string>
-    <string name="home">வீடு</string>
     <string name="edit_point">திருத்த புள்ளி</string>
     <string name="choose_action">செயலைத் தேர்ந்தெடுக்கவும்</string>
     <string name="automatic_backups">தானியங்கி காப்புப்பிரதிகள்</string>
-    <string name="change">மாற்றம்</string>
     <string name="remove">அகற்று</string>
     <string name="trigger_backup">தூண்டுதல் காப்புப்பிரதி</string>
-    <string name="last_backup">கடைசி காப்புப்பிரதி</string>
     <string name="auto_backup_stores">தானியங்கு காப்பு கடைகள்</string>
     <string name="recent_apps">அண்மைக் கால பயன்பாடுகள்</string>
     <string name="open_recent_apps_color">அண்மைக் கால பயன்பாடுகளின் நிறத்தைத் திறக்கவும்</string>
@@ -214,7 +199,6 @@
     <string name="widgets">நிரல்பலகை</string>
     <string name="edit">தொகு</string>
     <string name="delete_widget">விட்செட்டை நீக்கு</string>
-    <string name="add_point">புள்ளியைச் சேர்க்கவும்</string>
     <string name="remove_point">புள்ளியை அகற்று</string>
     <string name="copy_point">நகல் புள்ளி</string>
     <string name="ghosted">பேய் பிடித்தது</string>
@@ -235,9 +219,6 @@
     <string name="background_selected">பின்னணி தேர்ந்தெடுக்கப்பட்டது</string>
     <string name="custom_action_color">தனிப்பயன் செயல் வண்ணம்</string>
     <string name="icon_editor">படவுரு எடிட்டர்</string>
-    <string name="pick_image">படத்தை தேர்ந்தெடு</string>
-    <string name="pick_from_icon_pack">படவுரு பேக்கிலிருந்து தேர்ந்தெடுக்கவும்</string>
-    <string name="no_custom_icon">தனிப்பயன் படவுரு இல்லை</string>
     <string name="no_search_match">தேடல் பொருத்தம் இல்லை</string>
     <string name="size">அளவு</string>
     <string name="rotation">சுழற்சி</string>
@@ -249,10 +230,7 @@
     <string name="select_app">பயன்பாட்டைத் தேர்ந்தெடுக்கவும்</string>
     <string name="enter_url">முகவரி ஐ உள்ளிடவும்</string>
     <string name="invalid_url">தவறான முகவரி</string>
-    <string name="unselected_action">தேர்வு செய்யப்படாத செயல்</string>
-    <string name="selected_action">தேர்ந்தெடுக்கப்பட்ட செயல்</string>
     <string name="haptic_feedback">ஆப்டிக் பின்னூட்டம்</string>
-    <string name="text_emoji">உரை / ஈமோசி</string>
     <string name="rgb_loading_settings">RGB ஏற்றுதல் அமைப்புகள்</string>
     <string name="rgb_line_selector">RGB வரி தேர்வி</string>
     <string name="show_app_launch_preview">ஆப்சின் துவக்க முன்னோட்டத்தைக் காட்டு</string>
@@ -265,23 +243,16 @@
     <string name="set_wallpaper">வால்பேப்பரை அமைக்கவும்</string>
     <string name="manage_nests">கூடு மேலாண்மை</string>
     <string name="copy">நகலெடு</string>
-    <string name="edit_nests">கூடுகளைத் திருத்தவும்</string>
     <string name="pick_a_nest">ஒரு கூட்டைத் தேர்ந்தெடுக்கவும்</string>
     <string name="create_new_nest">புதிய கூட்டை உருவாக்கவும்</string>
-    <string name="copy_id">அடையாலத்தை நகல்</string>
     <string name="open_burger_menu">பர்கர் மெனுவைத் திறக்கவும்</string>
     <string name="selected_text">தேர்ந்தெடுக்கப்பட்டது</string>
     <string name="unselected">தேர்ந்தெடுக்கப்படவில்லை</string>
-    <string name="general_style">பொது நடை</string>
-    <string name="individual_style">தனிப்பட்ட பாணி</string>
     <string name="inner_padding">உள் திணிப்பு</string>
-    <string name="plain_color">வெற்று நிறம்</string>
     <string name="tint">சாயல்</string>
-    <string name="icon_pack_tint">படவுரு பேக் டின்ட்</string>
     <string name="show_app_icon_start_drag_position">தொடக்க இழுவை நிலையில் பயன்பாட்டு ஐகானைக் காட்டு</string>
     <string name="make_all_colors_identical">அனைத்து வண்ணங்களையும் ஒரே மாதிரியாக மாற்றவும்</string>
     <string name="apply">இடு</string>
-    <string name="reload_point_icons">புள்ளிகள் ஐகான்களை மீண்டும் ஏற்றவும்</string>
     <string name="center_selected_widget">மையத்தில் தேர்ந்தெடுக்கப்பட்ட விட்செட்</string>
     <string name="reset_widget">விட்செட்டை மீட்டமைக்கவும்</string>
     <string name="select_previous_widget">முந்தைய விட்செட்டைத் தேர்ந்தெடுக்கவும்</string>
@@ -290,7 +261,6 @@
     <string name="move_selected_widget_down">தேர்ந்தெடுக்கப்பட்ட விட்செட்டை கீழே நகர்த்தவும்</string>
     <string name="enable_scale_snap">அளவுகோல் ச்னாப்பை இயக்கு</string>
     <string name="home_action">முகப்பு நடவடிக்கை</string>
-    <string name="drawer_home_action">அலமாரி முகப்பு நடவடிக்கை</string>
 
     <string name="fullscreen_description">மேல் பட்டை மற்றும் வழிசெலுத்தல் பொத்தான்கள் / சைகை பொத்தானைக் காட்டவும் அல்லது காட்டவும்</string>
     <string name="rgb_loading_description">3 வினாடிகள் கீழே வைத்திருக்கும் போது, அமைப்புகளை உள்ளிடும்போது, ஏற்றுதல் வட்டத்தில் RBG சாய்வு காட்டவும்</string>
@@ -300,10 +270,8 @@
     <string name="show_app_angle_preview_description">கோட்டில் கோணக் காட்டியைக் காட்டவும்</string>
     <string name="show_app_icon_start_drag_position_description">நீங்கள் நட்சத்திரமிட்ட இடத்தின் மையத்தில் தற்போதைய தேர்ந்தெடுக்கப்பட்ட பயன்பாட்டை இழுத்து காண்பிக்கவும்</string>
     <string name="line_preview_snap_to_action_description">வரி மாதிரிக்காட்சியை நகர்த்துவதற்கு இலவசம் இல்லை, ஒன்று இருக்கும்போது அது தேர்ந்தெடுக்கப்பட்ட செயலுக்குச் செல்லும்</string>
-    <string name="min_angle_to_activate">செயல்படுத்துவதற்கான குறைந்தபட்ச கோணம்</string>
     <string name="app_label_overlay_size">ஆப் சிட்டை மேலடுக்கு அளவு</string>
     <string name="app_icon_overlay_size">பயன்பாட்டு படவுரு மேலடுக்கு அளவு</string>
-    <string name="next">அடுத்தது</string>
     <string name="loading_themes">தீம்களை ஏற்றுகிறது…</string>
     <string name="already_default_launcher">ஏற்கனவே இயல்புநிலை துவக்கி</string>
     <string name="open_default_launcher_settings">இயல்புநிலை துவக்கி அமைப்புகளைத் திறக்கவும்</string>
@@ -316,7 +284,6 @@
     <string name="app_aliases">மாற்றுப்பெயர்கள்</string>
     <string name="edit_alias">மாற்றுப் பெயரைத் திருத்து</string>
     <string name="alias">மாற்றுப்பெயர்</string>
-    <string name="add_alias">மாற்றுப்பெயரைச் சேர்க்கவும்</string>
     <string name="create_alias">மாற்றுப்பெயரை உருவாக்கவும்</string>
     <string name="scroll_up_action">செயலை மேலே உருட்டவும்</string>
     <string name="scroll_down_action">செயலை கீழே உருட்டவும்</string>
@@ -361,8 +328,6 @@
     <string name="reminder_mode_description">இடைநிறுத்தப்பட்ட பயன்பாட்டில் அதிக நேரம் இருக்கும் போது அவ்வப்போது நினைவூட்டல்களைப் பெறுங்கள்</string>
     <string name="reminder_interval">நினைவூட்டல் இடைவெளி</string>
     <string name="reminder_interval_description">ஒவ்வொரு %d நிமிடங்களுக்கும் எனக்கு நினைவூட்டு</string>
-    <string name="reminder_mode_notification">அறிவிப்பு</string>
-    <string name="reminder_mode_overlay">திரையில் மேல்தோன்றல்</string>
     <string name="overlay_permission_required">மேலடுக்கு இசைவு</string>
     <string name="overlay_permission_description">பிற பயன்பாடுகளில் நினைவூட்டல்களைக் காட்ட, டிராகன் துவக்கிக்கு பிற பயன்பாடுகளின் மேல் காட்சி இசைவு தேவை.</string>
     <string name="popup_display_title">மேல்தோன்றல் உள்ளடக்கம்</string>
@@ -459,7 +424,6 @@
     <string name="surface_container_low_color">மேற்பரப்பு கொள்கலன் குறைந்த</string>
     <string name="surface_container_lowest_color">மிகக் குறைந்த மேற்பரப்பு கொள்கலன்</string>
     <string name="surface_dim_color">மேற்பரப்பு மங்கலானது</string>
-    <string name="fixed_colors_section">நிலையான நிறங்கள்</string>
     <string name="primary_fixed_color">முதன்மை நிலையானது</string>
     <string name="primary_fixed_dim_color">முதன்மை நிலையான மங்கல்</string>
     <string name="on_primary_fixed_color">முதன்மை நிலையானது</string>
@@ -468,13 +432,10 @@
     <string name="secondary_fixed_dim_color">இரண்டாம் நிலை நிலையான மங்கல்</string>
     <string name="on_secondary_fixed_color">இரண்டாம் நிலை நிலையானது</string>
     <string name="on_secondary_fixed_variant_color">இரண்டாம் நிலை நிலையான மாறுபாடு</string>
-    <string name="tertiary_fixed_color">மூன்றாம் நிலை நிலையானது</string>
-    <string name="tertiary_fixed_dim_color">மூன்றாம் நிலை நிலையான மங்கல்</string>
     <string name="on_tertiary_fixed_color">மூன்றாம் நிலை நிலையானது</string>
     <string name="on_tertiary_fixed_variant_color">மூன்றாம் நிலை நிலையான மாறுபாட்டில்</string>
     <string name="custom_colors">விருப்ப நிறங்கள்</string>
     <string name="normal_colors">சாதாரண நிறங்கள்</string>
-    <string name="source">மூலம்</string>
     <string name="reset_all_points">அனைத்து புள்ளிகளையும் மீட்டமைக்கவும்</string>
     <string name="reset_all_points_desc">உங்கள் செயல்கள் அனைத்தும் மீட்டமைக்கப்படும், இதைச் செயல்தவிர்க்க முடியாது!</string>
     <string name="use_categories">வகைகளைப் பயன்படுத்தவும்</string>
@@ -488,11 +449,9 @@
     <string name="icons_spacing_horizontal_desc">கிடைமட்ட சின்னங்கள் திணிப்பு</string>
     <string name="category_settings">வகை அமைப்புகள்</string>
     <string name="expanded_chevron_indicator">விரிவாக்கப்பட்ட செவ்ரான் காட்டி</string>
-    <string name="category_grid_width">வகை கட்டம் அகலம்</string>
     <string name="grid_settings">கட்டம் அமைப்புகள்</string>
     <string name="category_cells">வகை செல்கள்</string>
     <string name="multi_select_count">%d தேர்ந்தெடுக்கப்பட்டது</string>
-    <string name="add_all_auto">வட்டத்தில் தானியங்கு இடம்</string>
     <string name="add_all_manual">ஒவ்வொன்றாக வைக்கவும்</string>
     <string name="place_app_where">%sஐ எங்கு வைக்க விரும்புகிறீர்கள்?</string>
     <string name="tap_circle_to_place">பயன்பாட்டை வைக்க வட்டத்தில் தட்டவும்</string>
@@ -520,9 +479,7 @@
     <string name="select_default_workspace">இயல்புநிலை பணியிடத்தைத் தேர்ந்தெடுக்கவும்</string>
     <string name="select_workspace_hint">முன்னிருப்பாக எந்த பணியிடத்தைத் திறக்க வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும். டிராயரில் இடது அல்லது வலதுபுறமாக ச்வைப் செய்வதன் மூலம் நீங்கள் எப்போதும் மாறலாம்.</string>
     <string name="workspace_default">இயல்புநிலை</string>
-    <string name="pinned_shortcut_added">%s குறுக்குவழி உங்கள் வட்டங்களில் சேர்க்கப்பட்டது</string>
     <string name="pinned_shortcut_failed">குறுக்குவழியைச் சேர்க்க முடியவில்லை</string>
-    <string name="pinned_shortcut_already_exists">%s குறுக்குவழி ஏற்கனவே உங்கள் வட்டங்களில் உள்ளது</string>
     <string name="pinned_shortcuts">குறுக்குவழிகள்</string>
     <string name="no_pinned_shortcuts">குறுக்குவழிகள் இல்லை</string>
     <string name="select_shortcut_action_title">%1$sக்கான செயலைத் தேர்ந்தெடுக்கவும்</string>
@@ -557,16 +514,12 @@
     <string name="private_space_title">தனிப்பட்ட இடம்</string>
     <string name="private_space_locked">தனிப்பட்ட இடம் பூட்டப்பட்டுள்ளது</string>
     <string name="private_space_authenticating">அங்கீகரிக்கிறது…</string>
-    <string name="private_space_manage_instructions">ஆப்சைச் சேர்க்க அல்லது அகற்ற அல்லது இந்தச் சுயவிவரத்தை நீக்க, ஆண்ட்ராய்டு அமைப்புகளைப் பயன்படுத்தவும்.</string>
-    <string name="samsung_secure_folder_settings">சாம்சங் பாதுகாப்பான கோப்புறை</string>
     <string name="app_info_name">பெயர் = %1$s</string>
     <string name="app_info_package_name">தொகுப்பு பெயர் = %1$s</string>
-    <string name="app_info_is_enabled">இயக்கப்பட்டது = %1$s</string>
     <string name="app_info_is_system">isSystem = %1$s</string>
     <string name="app_info_is_work_profile">isWorkProfile = %1$s</string>
     <string name="app_info_is_private_profile">isPrivateProfile = %1$s</string>
     <string name="app_info_is_launchable">isLaunchable = %1$s</string>
-    <string name="app_info_user_id">userId = %1$s</string>
     <string name="app_info_cache_key">தற்காலிக சேமிப்பு விசை = %1$s</string>
     <string name="no_apps">பயன்பாடுகள் இல்லை</string>
     <string name="activate_debug_mode">பிழைத்திருத்த பயன்முறையை இயக்கவும்</string>
@@ -587,8 +540,6 @@
     <string name="are_you_sure">நீங்கள் உறுதியாக இருக்கிறீர்களா?</string>
     <string name="store_reset">கடைகள் மீட்டமைக்கப்பட்டது</string>
     <string name="debug_infos">பிழைத்திருத்த செய்தி</string>
-    <string name="private_space_debug_info">தனிப்பட்ட விண்வெளி பிழைத்திருத்தத் செய்தி</string>
-    <string name="private_space_debug_info_desc">எல்லாவற்றின் மேல் தனிப்பட்ட விண்வெளி நிலை பிழைத்திருத்தத் தகவலைக் காட்டவும்</string>
     <string name="super_warning_mode">சூப்பர் முன்னறிவிப்பு முறை</string>
     <string name="super_warning_mode_desc">தவறான பின்னை உள்ளிடும்போது வேடிக்கையான ஒன்றைச் செய்யுங்கள்</string>
     <string name="super_warning_mode_sound">சூப்பர் முன்னறிவிப்பு முறை + ஒலி</string>
@@ -611,8 +562,6 @@
     <string name="reload">ஏற்றவும்</string>
     <string name="select_icon">ஐகானைத் தேர்ந்தெடுக்கவும்</string>
     <string name="max_notification_icons">அதிகபட்ச அறிவிப்பு சின்னங்கள்</string>
-    <string name="use_differential_loading_private_space">வேறுபட்ட ஏற்றுதல் தனிப்பட்ட இடத்தைப் பயன்படுத்தவும்</string>
-    <string name="use_differential_loading_private_space_desc">தனிப்பட்ட பயன்பாடுகள் பயனர் பணியிடத்தில் தோன்றும் போது இதை மாற்றவும், இல்லையெனில் செயல்திறன்களுக்காக அதைத் தேர்வு செய்யாமல் வைக்கவும்</string>
     <string name="edit_border_shape">பார்டர் வடிவத்தைத் திருத்து</string>
     <string name="hold_settings">அமைப்புகளை வைத்திருங்கள்</string>
     <string name="hold_to_activate_tolerance">சகிப்புத்தன்மையை செயல்படுத்த அழுத்திப் பிடிக்கவும்</string>
@@ -624,11 +573,6 @@
     <string name="spacer">ச்பேசர்</string>
     <string name="show_percentage">சதவீதத்தைக் காட்டு</string>
     <string name="show_percentage_desc">பேட்டரி சதவீதத்தை எளிய உரையில் காட்டவும்</string>
-    <string name="set_status_bar_template">நிலைப் பட்டி டெம்ப்ளேட்டை அமைக்கவும் (என்னுடையது) எச்சரிக்கையைக் சொடுக்கு செய்வதன் மூலம் உங்கள் தற்போதைய அமைப்பு அழிக்கப்படும்!</string>
-    <string name="notch_mode">பயன்முறை: நாட்ச் (நாட்ச் மீது ச்பேசரைப் பயன்படுத்துகிறது)</string>
-    <string name="google_lockdown_warning">"2026/2027 முதல், சான்றளிக்கப்பட்ட ஆண்ட்ராய்டு சாதனங்களில் உள்ள அனைத்து ஆப்சும் உருவாக்குபவர் தனிப்பட்ட அடையாள விவரங்களை நேரடியாக கூகுளிடம் சமர்ப்பிக்க வேண்டும் என்று கூகுள் அறிவித்துள்ளது. இந்த ஆப்சின் உருவாக்குபவர்கள் இந்தத் தேவையை ஏற்காததால், அதற்குப் பிறகு சான்றளிக்கப்பட்ட ஆண்ட்ராய்டு சாதனங்களில் இந்தப் பயன்பாடு செயல்படாது. "</string>
-    <string name="dismiss">நிராகரி</string>
-    <string name="nest_radius">கூடு ஆரம்</string>
     <string name="edit_nest">கூடு திருத்தவும்</string>
     <string name="angle_line">கோணக் கோடு</string>
     <string name="angle_line_help">முதன்மையான திரையில் இழுக்கும்போது தோன்றும் கோட்டின் தோற்றத்தைத் தனிப்பயனாக்கவும்</string>
@@ -641,7 +585,6 @@
     <string name="erase_background">பின்னணியை அழிக்கவும்</string>
     <string name="glow_radius">ஒளிரும் ஆரம்</string>
     <string name="glow_color">ஒளிரும் நிறம்</string>
-    <string name="enable_glow">பளபளப்பை இயக்கு</string>
     <string name="line_object">வரி பொருள்</string>
     <string name="angle_object">கோண பொருள்</string>
     <string name="start_object">தொடக்க பொருள்</string>
@@ -679,13 +622,6 @@
     <string name="undo_all">அனைத்தையும் செயல்தவிர்</string>
     <string name="redo">மீண்டும்செய்</string>
     <string name="redo_all">அனைத்தையும் மீண்டும் வெற்றி</string>
-    <string name="move_point_clockwise">புள்ளியை கடிகார திசையில் நகர்த்தவும்</string>
-    <string name="move_point_anticlockwise">புள்ளியை எதிரெதிர் திசையில் நகர்த்தவும்</string>
-    <string name="show_nest_preview">கூடு மாதிரிக்காட்சியைக் காட்டு</string>
-    <string name="it_is_using_max_depth_equals_one">இது maxDepth = 1 ஐப் பயன்படுத்துகிறது</string>
-    <string name="general">பொது</string>
-    <string name="action">செயல்</string>
-    <string name="collapse">சுருக்கு</string>
     <string name="haptic_feedback_editor">ஆப்டிக் பின்னூட்ட ஆசிரியர்</string>
     <string name="vibration">அதிர்வு</string>
     <string name="delay">சுணக்கம்</string>
@@ -704,7 +640,6 @@
     <string name="haptic_preset_long_press">உறுதிப்படுத்த நீண்ட நேரம் அழுத்தவும்</string>
     <string name="presets">முன்னமைவுகள்</string>
     <string name="steps">படிகள்</string>
-    <string name="you_can_edit_haptic_feedback_on_nest_settings">நெச்ட் அமைப்புகளில் ஆப்டிக் கருத்தைத் திருத்தலாம்</string>
     <string name="edit_nest_help">கூட்டின் அளவு, இழுத்துச் செல்லும் தூரங்கள், ஆப்டிக் பின்னூட்டங்கள் மற்றும் பிற பயனுள்ள அமைப்புகளைத் தனிப்பயனாக்குங்கள்</string>
     <string name="use_custom_color_channels">தனிப்பயன் வண்ண சேனல்களைப் பயன்படுத்தவும்</string>
     <string name="use_custom_color_channels_desc">என்னுடையதைப் பயன்படுத்த, சுவிட்சுகள் போன்ற பொருள் பொருள்களுக்குப் பயன்படுத்தப்படும் இயல்புநிலை வண்ண சேனல்களை மேலெழுதவும்</string>
@@ -713,7 +648,6 @@
     <string name="rotation_per_second_desc">ஒரு நொடியில் அது தன்னைத்தானே ஆன் செய்து கொள்ளும்</string>
     <string name="enable_backup">காப்புப்பிரதியை இயக்கு</string>
     <string name="choose_a_auto_backup_file">தானியங்கு காப்புப் பிரதி கோப்பைத் தேர்ந்தெடுக்கவும்</string>
-    <string name="show_sub_nest_size_slider">துணை கூடுகளின் அளவு ச்லைடரைக் காட்டு</string>
     <string name="minus_one_means_random">-1 என்பது தொடக்கத்தில் தற்செயல் என்று பொருள்</string>
     <string name="search_bar">தேடல் பட்டி</string>
     <string name="toolbars_order">கருவிப்பட்டிகளின் வரிசை</string>
@@ -740,7 +674,6 @@
     <string name="enable_snap_move">ச்னாப் நகர்வை இயக்கு</string>
     <string name="off_screen_timeout">ஆஃப்-ச்கிரீன் டைம்அவுட் (கள்)</string>
     <string name="off_screen_timeout_desc">நீங்கள் மற்றொரு திரையில் இருக்கும்போது முகப்புத் திரைக்குத் திரும்புவதற்கு முன்பு ஆப்ச் எவ்வளவு நேரம் காத்திருக்கிறது. காப்புப்பிரதி (நீங்கள் கோப்பைத் தேர்ந்தெடுப்பதால்) போன்ற சில குறிப்பிட்ட திரைகளுக்குப் பொருந்தாது. -1 என்றால் திரும்ப வராது</string>
-    <string name="paste">ஒட்டவும்</string>
     <string name="refresh">புதுப்பிப்பு</string>
     <string name="crash">பயன்பாடு செயலிழந்தது!</string>
     <string name="access_app">பயன்பாட்டை அணுகவும் (நீங்கள் மீண்டும் செயலிழப்பை சந்திக்கலாம்)</string>
@@ -771,7 +704,6 @@
     <string name="select_settings_to_import">இறக்குமதி செய்ய அமைப்புகளைத் தேர்ந்தெடுக்கவும்</string>
     <string name="edit_hold_to_activate_elements">உறுப்புகளைச் செயல்படுத்த, ஓல்டைத் திருத்தவும்</string>
     <string name="edit_hold_to_activate_elements_desc">3 வினாடிகள் வைத்திருக்கும் போது தோன்றும் செயல்களைத் திருத்தவும். 1 மட்டும் தானாக திருப்பி விடப்படும்</string>
-    <string name="less">குறைவாக</string>
     <string name="warning">எச்சரிக்கை!</string>
     <string name="this_is_a_beta_version">இது ஒரு பீட்டா பதிப்பாகும், அதாவது இதில் நிலையற்ற நற்பொருத்தங்கள் மற்றும் பல பிழைகள் இருக்கலாம். ஏதேனும் கண்டால் தெரிவிக்கவும்! இது உண்மையில் எனக்கு உதவுகிறது</string>
     <string name="this_feature_is_in_beta">இந்த நற்பொருத்தம் பீட்டாவில் உள்ளது, இது உடைந்து போகலாம் மற்றும் முழுமையடையாமல் இருக்கலாம், இதை மேம்படுத்த எனக்கு உதவ ஏதேனும் பிழைகள் அல்லது பரிந்துரைகள் இருந்தால் தெரிவிக்கவும்!</string>
@@ -784,8 +716,6 @@
     <string name="disable">முடக்கு</string>
     <string name="disabled">முடக்கப்பட்டது</string>
     <string name="live_nest">லைவ் நெச்ட்</string>
-    <string name="live_nest_enabled">லைவ் நெச்ட் இயக்கப்பட்டது</string>
-    <string name="live_nest_disabled">Live Nest முடக்கப்பட்டது</string>
     <string name="live_nest_target_nest">இலக்கு கூடு</string>
     <string name="live_nest_hold_delay">தாமதத்தை நிறுத்து (மிவி)</string>
     <string name="live_nest_scale">கூடு அளவு</string>
@@ -804,9 +734,7 @@
     <string name="cycle_actions_delay">இந்த நிலையை அடைய கூடுதல் பிடி (மிவி)</string>
     <string name="cycle_actions_loop">லூப்</string>
     <string name="cycle_actions_loop_desc">கடைசி கட்டத்திற்குப் பிறகு, \"லூப் ஓவர்\" இல் காத்திருந்து, சுழற்சியை மீண்டும் செய்யவும்.</string>
-    <string name="cycle_actions_loop_over">லூப் ஓவர்</string>
     <string name="cycle_actions_loop_delay">லூப் ஓவர் நேரந்தவறுகை (மிவி)</string>
-    <string name="cycle_actions_stage_default_delay">இயல்பு நிலை நேரந்தவறுகை (மிவி)</string>
     <string name="live_nests_depth_desc">ஒரே நேரத்தில் எத்தனை துணை நேரடி கூடுகளை வரையலாம்</string>
     <string name="live_nest_depth">நேரடி கூடுகளின் ஆழம்</string>
     <string name="enter_adb_command">ADB கட்டளையை உள்ளிடவும்</string>
@@ -817,17 +745,6 @@
     <string name="kill_launcher">கில் லாஞ்சர்</string>
     <string name="multiply_or_subtract_opacity_in_live_nests">நேரடி கூடுகளில் ஒளிபுகாநிலையை பெருக்கவும் அல்லது கழிக்கவும்</string>
     <string name="multiply_or_subtract_opacity_in_live_nests_desc">ஆஃப் செய்யும்போது, அது தூய்மையான uiயை வழங்க ஒளிபுகாநிலையைப் பெருக்குகிறது, மேலும் ஆன் செய்யும்போது, 0 ஒளிபுகாநிலையை வேகமாக அடையவும், இடைமுகம் ஒழுங்கீனத்தைத் தவிர்க்க குறைந்த கூடுகளை மறைக்கவும் அதைக் கழிக்கிறது.</string>
-    <string name="icon">அடையாளம்</string>
-    <string name="shapes">வடிவங்கள்</string>
-    <string name="reset_default_point">இயல்புநிலை புள்ளியை மீட்டமைக்கவும்</string>
-    <string name="reset_point">புள்ளியை மீட்டமைக்கவும்</string>
-    <string name="reset_default_point_desc">இது அனைத்து இயல்புநிலை புள்ளி அமைப்புகளையும் மீட்டமைக்கும், மேலும் தனிப்பயன் அளவுருக்கள் இல்லாத ஒவ்வொரு புள்ளிகளையும் பாதிக்கும்</string>
-    <string name="reset_point_desc">இது இந்த புள்ளியை மீட்டமைக்கும்</string>
-    <string name="default_point_help_text">இயல்புநிலையாக ஒவ்வொரு புள்ளிகளுக்கும் மதிப்பைத் திருத்தவும், ஒவ்வொரு புள்ளிக்கும் நீங்கள் கைமுறையாக மேலெழுதலாம்</string>
-    <string name="edit_point_help_desc">ஒரு குறிப்பிட்ட புள்ளியைத் திருத்தவும், இயல்புநிலை புள்ளி அமைப்புகளைத் திருத்துவதன் மூலம் அவற்றை ஒரே நேரத்தில் திருத்தலாம் (மேலே கூடுதல் மெனு)</string>
-    <string name="rotation_start_angle">கோண சுழற்சியைத் தொடங்கவும்</string>
-    <string name="rotation_start_angle_desc">இது மிகவும் தன்வய விளக்கமளிக்கும் என்று நான் நினைக்கிறேன்</string>
-    <string name="resolution">பகுத்தல்</string>
     <string name="align_start">தொடங்கு</string>
     <string name="align_center">நடுவண்</string>
     <string name="align_end">முடிவு</string>
@@ -841,7 +758,6 @@
     <string name="reset_rotation">சுழற்சியை மீட்டமைக்கவும்</string>
     <string name="reset_zoom">பெரிதாக்கு மீட்டமைக்கவும்</string>
     <string name="edit_workspace">பணியிடத்தைத் திருத்தவும்</string>
-    <string name="show_advanced_edit_tools">மேம்பட்ட திருத்தக் கருவிகளைக் காட்டு</string>
     <string name="random">சீரற்ற</string>
     <string name="special_options">சிறப்பு விருப்பங்கள்</string>
     <string name="colors_and_icons">நிறங்கள் மற்றும் சின்னங்கள்</string>

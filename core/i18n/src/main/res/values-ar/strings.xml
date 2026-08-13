@@ -2,7 +2,6 @@
 <resources>
     <string name="accessibility_service_description">يسمح لـ مشغل التنين بفتح ستارة الإشعارات، ولوحة الإعدادات السريعة، وفتح التطبيقات الحديثة، والتحقق من النشاط الحالي (لمستخدمي شاومي الذين لا يمكنهم تعيين التنين كمشغل افتراضي دون فقدان التنقل بالإيماءات)</string>
     <string name="help">مساعدة</string>
-    <string name="back">عودة</string>
     <string name="reset_default_settings">إعادة ضبط الإعدادات الافتراضية</string>
     <string name="reset_settings_in_this_tab">إعادة ضبط الإعدادات الافتراضية في هذا التبويب</string>
     <string name="ok">موافق</string>
@@ -24,15 +23,7 @@
     <string name="extension_manual_install_title">تثبيت يدوي</string>
     <string name="extension_manual_install_desc">إذا لم يكن لديك إضافة تثبيت، فقم بتنزيل ملف APK وحدده أدناه للتثبيت.</string>
     <string name="select_apk">حدد ملف APK</string>
-    <string name="language_english">الإنجليزية</string>
-    <string name="language_french">الفرنسية</string>
-    <string name="language_german">الألمانية</string>
-    <string name="language_spanish">الإسبانية</string>
-    <string name="language_hindi">الهندية</string>
-    <string name="language_korean">الكورية</string>
-    <string name="language_portuguese">البرتغالية</string>
     <string name="system_default">افتراضي النظام</string>
-    <string name="choose_your_app_language">اختر لغة التطبيق</string>
     <string name="version">الإصدار</string>
     <string name="export_cancelled">تم إلغاء التصدير</string>
     <string name="import_cancelled">تم إلغاء الاستيراد</string>
@@ -65,7 +56,6 @@
     <string name="test_colors">اختبار الألوان</string>
     <string name="exit_test_mode">الخروج من وضع الاختبار</string>
     <string name="exit_test_mode_message">هل تريد حفظ تغييرات الألوان أم تجاهلها؟</string>
-    <string name="back_to_colors_settings">العودة إلى إعدادات الألوان</string>
     <string name="dark_theme">المظهر الداكن</string>
     <string name="amoled_theme">مظهر AMOLED</string>
     <string name="system_theme">مظهر النظام</string>
@@ -82,7 +72,6 @@
     <string name="set_default_launcher">تعيين كمشغل افتراضي</string>
     <string name="close">إغلاق</string>
     <string name="dragging_distance_selection">تحديد مسافة السحب</string>
-    <string name="circle">مسافة سحب الدائرة</string>
     <string name="cancel_zone">سحب منطقة الإلغاء</string>
     <string name="android_settings">إعدادات أندرويد</string>
     <string name="changelogs">سجلات التغيير</string>
@@ -94,7 +83,6 @@
     <string name="drawer_actions">إجراءات الدرج</string>
     <string name="close_app_drawer">إغلاق الدرج</string>
     <string name="font_selector">محدد الخطوط</string>
-    <string name="font_selector_desc">اختر خطاً للتطبيق بأكمله. يمكنك استيراد خطك الخاص أو استخدام الكتالوج.</string>
     <string name="font_manage_help">إدارة الخطوط هنا. يمكنك استيراد ملفات TTF/OTF الخاصة بك أو التنزيل من كتالوج خطوط جوجل.</string>
     <string name="font_catalog">الكتالوج</string>
     <string name="font_import">استيراد</string>
@@ -117,7 +105,6 @@
     <string name="select_settings_to_import">حدد الإعدادات للاستيراد</string>
     <string name="edit_hold_to_activate_elements">تحرير عناصر الضغط للتفعيل</string>
     <string name="edit_hold_to_activate_elements_desc">تحرير الإجراءات التي تظهر عند الضغط لمدة 3 ثوانٍ. وجود إجراء واحد فقط يعني إعادة توجيه تلقائية</string>
-    <string name="less">أقل</string>
     <string name="warning">تحذير!</string>
     <string name="this_is_a_beta_version">هذه نسخة تجريبية (بيتا)، مما يعني أنها قد تحتوي على ميزات غير مستقرة والعديد من الأخطاء. يرجى الإبلاغ عنها إذا وجدت أي منها! هذا يساعدني حقاً</string>
     <string name="this_feature_is_in_beta">هذه الميزة في المرحلة التجريبية، قد تتعطل وليست مكتملة، أبلغني بأي أخطاء أو اقتراحات لمساعدتي في تحسينها!</string>
@@ -130,8 +117,6 @@
     <string name="disable">تعطيل</string>
     <string name="disabled">معطل</string>
     <string name="live_nest">العش المباشر</string>
-    <string name="live_nest_enabled">العش المباشر مفعل</string>
-    <string name="live_nest_disabled">العش المباشر معطل</string>
     <string name="live_nest_target_nest">العش المستهدف</string>
     <string name="live_nest_hold_delay">تأخير الانتظار (ملي ثانية)</string>
     <string name="live_nest_scale">مقياس العش</string>
@@ -150,9 +135,7 @@
     <string name="cycle_actions_delay">انتظار إضافي للوصول لهذه المرحلة (ملي ثانية)</string>
     <string name="cycle_actions_loop">تكرار</string>
     <string name="cycle_actions_loop_desc">بعد المرحلة الأخيرة، انتظر في \"تكرار الكل\"، ثم كرر الدورة.</string>
-    <string name="cycle_actions_loop_over">تكرار الكل</string>
     <string name="cycle_actions_loop_delay">تأخير تكرار الكل (ملي ثانية)</string>
-    <string name="cycle_actions_stage_default_delay">تأخير المرحلة الافتراضي (ملي ثانية)</string>
     <string name="live_nests_depth_desc">كم عدد الأعشاش المباشرة الفرعية التي يمكن رسمها في وقت واحد</string>
     <string name="live_nest_depth">عمق الأعشاش المباشرة</string>
     <string name="enter_adb_command">أدخل أمر ADB</string>
@@ -163,17 +146,6 @@
     <string name="kill_launcher">إغلاق المشغل</string>
     <string name="multiply_or_subtract_opacity_in_live_nests">ضرب أو طرح الشفافية في الأعشاش المباشرة</string>
     <string name="multiply_or_subtract_opacity_in_live_nests_desc">عند الإيقاف، يقوم بضرب الشفافية لإعطاء واجهة نظيفة، وعند التشغيل، يقوم بطرحها للوصول أسرع لشفافية 0 وإخفاء الأعشاش السفلية لتجنب فوضى الواجهة</string>
-    <string name="icon">أيقونة</string>
-    <string name="shapes">أشكال</string>
-    <string name="reset_default_point">إعادة ضبط النقطة الافتراضية</string>
-    <string name="reset_point">إعادة ضبط النقطة</string>
-    <string name="reset_default_point_desc">سيؤدي هذا إلى إعادة ضبط جميع إعدادات النقاط الافتراضية، وسيؤثر على كل النقاط التي ليس لها معلمات مخصصة</string>
-    <string name="reset_point_desc">سيؤدي هذا إلى إعادة ضبط هذه النقطة</string>
-    <string name="default_point_help_text">تحرير القيمة لكل النقاط افتراضياً، يمكنك تجاوزها يدوياً لكل نقطة</string>
-    <string name="edit_point_help_desc">تحرير نقطة محددة، يمكنك تحريرها جميعاً مرة واحدة عن طريق تحرير إعدادات النقاط الافتراضية (قائمة المزيد في الأعلى)</string>
-    <string name="rotation_start_angle">زاوية بدء التدوير</string>
-    <string name="rotation_start_angle_desc">أعتقد أنها تشرح نفسها بنفسها</string>
-    <string name="resolution">الدقة</string>
     <string name="align_start">البداية</string>
     <string name="align_center">المركز</string>
     <string name="align_end">النهاية</string>
@@ -187,7 +159,6 @@
     <string name="reset_rotation">إعادة ضبط التدوير</string>
     <string name="reset_zoom">إعادة ضبط التكبير</string>
     <string name="edit_workspace">تحرير مساحة العمل</string>
-    <string name="show_advanced_edit_tools">إظهار أدوات التحرير المتقدمة</string>
     <string name="random">عشوائي</string>
     <string name="special_options">خيارات خاصة</string>
     <string name="colors_and_icons">الألوان والأيقونات</string>
@@ -248,14 +219,11 @@
     <string name="configure_your_apps">قم بتهيئة تطبيقاتك واختصاراتك في الإعدادات</string>
     <string name="theme_selector">محدد السمات</string>
     <string name="everything_ready">كل شيء جاهز!</string>
-    <string name="home">الرئيسية</string>
     <string name="edit_point">تحرير النقطة</string>
     <string name="choose_action">اختر الإجراء</string>
     <string name="automatic_backups">نسخ احتياطي تلقائي</string>
-    <string name="change">تغيير</string>
     <string name="remove">إزالة</string>
     <string name="trigger_backup">بدء النسخ الاحتياطي</string>
-    <string name="last_backup">آخر نسخة احتياطية</string>
     <string name="auto_backup_stores">مخازن النسخ الاحتياطي التلقائي</string>
     <string name="recent_apps">التطبيقات الحديثة</string>
     <string name="open_recent_apps_color">لون فتح التطبيقات الحديثة</string>
@@ -317,7 +285,6 @@
     <string name="widgets">الأدوات المصغرة</string>
     <string name="edit">تحرير</string>
     <string name="delete_widget">حذف الأداة المصغرة</string>
-    <string name="add_point">إضافة نقطة</string>
     <string name="remove_point">إزالة نقطة</string>
     <string name="copy_point">نسخ النقطة</string>
     <string name="ghosted">شبحية</string>
@@ -338,9 +305,6 @@
     <string name="background_selected">الخلفية المحددة</string>
     <string name="custom_action_color">لون إجراء مخصص</string>
     <string name="icon_editor">محرر الأيقونات</string>
-    <string name="pick_image">اختر صورة</string>
-    <string name="pick_from_icon_pack">اختر من حزمة أيقونات</string>
-    <string name="no_custom_icon">لا توجد أيقونة مخصصة</string>
     <string name="no_search_match">لا توجد نتائج مطابقة للبحث</string>
     <string name="size">الحجم</string>
     <string name="rotation">التدوير</string>
@@ -352,10 +316,7 @@
     <string name="select_app">حدد التطبيق</string>
     <string name="enter_url">أدخل الرابط</string>
     <string name="invalid_url">رابط غير صالح</string>
-    <string name="unselected_action">إجراء غير محدد</string>
-    <string name="selected_action">إجراء محدد</string>
     <string name="haptic_feedback">ردود فعل لمسية</string>
-    <string name="text_emoji">نص / إيموجي</string>
     <string name="rgb_loading_settings">إعدادات تحميل RGB</string>
     <string name="rgb_line_selector">محدد خط RGB</string>
     <string name="show_app_launch_preview">إظهار معاينة تشغيل التطبيق</string>
@@ -368,23 +329,16 @@
     <string name="set_wallpaper">تعيين خلفية الشاشة</string>
     <string name="manage_nests">إدارة الأعشاش</string>
     <string name="copy">نسخ</string>
-    <string name="edit_nests">تحرير الأعشاش</string>
     <string name="pick_a_nest">انتقِ عشًا</string>
     <string name="create_new_nest">إنشاء عش جديد</string>
-    <string name="copy_id">نسخ المعرف</string>
     <string name="open_burger_menu">فتح قائمة الهمبرغر</string>
     <string name="selected_text">محدد</string>
     <string name="unselected">غير محدد</string>
-    <string name="general_style">النمط العام</string>
-    <string name="individual_style">النمط الفردي</string>
     <string name="inner_padding">الهامش الداخلي</string>
-    <string name="plain_color">لون سادة</string>
     <string name="tint">تظليل</string>
-    <string name="icon_pack_tint">تظليل حزمة الأيقونات</string>
     <string name="show_app_icon_start_drag_position">إظهار أيقونة التطبيق في موضع بدء السحب</string>
     <string name="make_all_colors_identical">جعل جميع الألوان متطابقة</string>
     <string name="apply">تطبيق</string>
-    <string name="reload_point_icons">إعادة تحميل أيقونات النقاط</string>
     <string name="center_selected_widget">توسيط الأداة المصغرة المحددة</string>
     <string name="reset_widget">إعادة ضبط الأداة المصغرة</string>
     <string name="select_previous_widget">تحديد الأداة المصغرة السابقة</string>
@@ -393,7 +347,6 @@
     <string name="move_selected_widget_down">تحريك الأداة المصغرة المحددة للأسفل</string>
     <string name="enable_scale_snap">تفعيل محاذاة المقياس</string>
     <string name="home_action">إجراء الرئيسية</string>
-    <string name="drawer_home_action">إجراء الرئيسية في الدرج</string>
 
     <string name="fullscreen_description">عرض أو عدم عرض الشريط العلوي وأزرار التنقل / زر الإيماءات</string>
     <string name="rgb_loading_description">إظهار تدرج RGB على دائرة التحميل عند الدخول للإعدادات، أثناء الضغط لمدة 3 ثوانٍ</string>
@@ -403,10 +356,8 @@
     <string name="show_app_angle_preview_description">عرض مؤشر الزاوية على الخط</string>
     <string name="show_app_icon_start_drag_position_description">عرض التطبيق المحدد حالياً في مركز المكان الذي بدأت منه السحب</string>
     <string name="line_preview_snap_to_action_description">معاينة الخط ليست حرة الحركة، بل تنجذب إلى الإجراء المحدد عند وجوده</string>
-    <string name="min_angle_to_activate">أدنى زاوية للتفعيل</string>
     <string name="app_label_overlay_size">حجم تراكب اسم التطبيق</string>
     <string name="app_icon_overlay_size">حجم تراكب أيقونة التطبيق</string>
-    <string name="next">التالي</string>
     <string name="loading_themes">جاري تحميل السمات…</string>
     <string name="already_default_launcher">هو المشغل الافتراضي بالفعل</string>
     <string name="open_default_launcher_settings">فتح إعدادات المشغل الافتراضي</string>
@@ -419,7 +370,6 @@
     <string name="app_aliases">الأسماء المستعارة</string>
     <string name="edit_alias">تحرير الاسم المستعار</string>
     <string name="alias">الاسم المستعار</string>
-    <string name="add_alias">إضافة اسم مستعار</string>
     <string name="create_alias">إنشاء اسم مستعار</string>
     <string name="scroll_up_action">إجراء التمرير للأعلى</string>
     <string name="scroll_down_action">إجراء التمرير للأسفل</string>
@@ -464,8 +414,6 @@
     <string name="reminder_mode_description">تلقي تذكيرات دورية عندما تبقى لفترة طويلة في تطبيق موقوف</string>
     <string name="reminder_interval">فاصل التذكير</string>
     <string name="reminder_interval_description">ذكرني كل %d دقائق</string>
-    <string name="reminder_mode_notification">إشعار</string>
-    <string name="reminder_mode_overlay">نافذة منبثقة على الشاشة</string>
     <string name="overlay_permission_required">إذن التراكب</string>
     <string name="overlay_permission_description">لعرض التذكيرات فوق التطبيقات الأخرى، يحتاج مشغل التنين إلى إذن \"العرض فوق التطبيقات الأخرى\".</string>
     <string name="popup_display_title">محتوى النافذة المنبثقة</string>
@@ -562,7 +510,6 @@
     <string name="surface_container_low_color">حاوية السطح المنخفضة</string>
     <string name="surface_container_lowest_color">حاوية السطح الأدنى</string>
     <string name="surface_dim_color">السطح المعتم</string>
-    <string name="fixed_colors_section">الألوان الثابتة</string>
     <string name="primary_fixed_color">الأساسي الثابت</string>
     <string name="primary_fixed_dim_color">الأساسي الثابت المعتم</string>
     <string name="on_primary_fixed_color">فوق الأساسي الثابت</string>
@@ -571,13 +518,10 @@
     <string name="secondary_fixed_dim_color">الثانوي الثابت المعتم</string>
     <string name="on_secondary_fixed_color">فوق الثانوي الثابت</string>
     <string name="on_secondary_fixed_variant_color">فوق بديل الثانوي الثابت</string>
-    <string name="tertiary_fixed_color">الثلاثي الثابت</string>
-    <string name="tertiary_fixed_dim_color">الثلاثي الثابت المعتم</string>
     <string name="on_tertiary_fixed_color">فوق الثلاثي الثابت</string>
     <string name="on_tertiary_fixed_variant_color">فوق بديل الثلاثي الثابت</string>
     <string name="custom_colors">ألوان مخصصة</string>
     <string name="normal_colors">ألوان عادية</string>
-    <string name="source">المصدر</string>
     <string name="reset_all_points">إعادة ضبط جميع النقاط</string>
     <string name="reset_all_points_desc">سيتم إعادة ضبط جميع إجراءاتك، لا يمكن التراجع عن هذا!</string>
     <string name="use_categories">استخدام الفئات</string>
@@ -591,11 +535,9 @@
     <string name="icons_spacing_horizontal_desc">هامش الأيقونات الأفقي</string>
     <string name="category_settings">إعدادات الفئات</string>
     <string name="expanded_chevron_indicator">مؤشر السهم الموسع</string>
-    <string name="category_grid_width">عرض شبكة الفئات</string>
     <string name="grid_settings">إعدادات الشبكة</string>
     <string name="category_cells">خلايا الفئة</string>
     <string name="multi_select_count">%d محدد</string>
-    <string name="add_all_auto">وضع تلقائي على الدائرة</string>
     <string name="add_all_manual">وضع واحدة تلو الأخرى</string>
     <string name="place_app_where">أين تريد وضع %s؟</string>
     <string name="tap_circle_to_place">اضغط على الدائرة لوضع التطبيق</string>
@@ -623,9 +565,7 @@
     <string name="select_default_workspace">حدد مساحة العمل الافتراضية</string>
     <string name="select_workspace_hint">اختر مساحة العمل التي تفتح افتراضياً. يمكنك دائماً التبديل عن طريق السحب لليسار أو اليمين في الدرج.</string>
     <string name="workspace_default">الافتراضية</string>
-    <string name="pinned_shortcut_added">تم إضافة الاختصار \"%s\" إلى دوائرك</string>
     <string name="pinned_shortcut_failed">فشل إضافة الاختصار</string>
-    <string name="pinned_shortcut_already_exists">الاختصار \"%s\" موجود بالفعل في دوائرك</string>
     <string name="pinned_shortcuts">الاختصارات</string>
     <string name="no_pinned_shortcuts">لا توجد اختصارات متاحة</string>
     <string name="select_shortcut_action_title">حدد إجراءً لـ %1$s</string>
@@ -660,16 +600,12 @@
     <string name="private_space_title">المساحة الخاصة</string>
     <string name="private_space_locked">المساحة الخاصة مقفولة</string>
     <string name="private_space_authenticating">جاري المصادقة…</string>
-    <string name="private_space_manage_instructions">لإضافة أو إزالة تطبيقات، أو حذف هذا الملف الشخصي، استخدم إعدادات أندرويد.</string>
-    <string name="samsung_secure_folder_settings">مجلد سامسونج الآمن</string>
     <string name="app_info_name">الاسم = %1$s</string>
     <string name="app_info_package_name">اسم الحزمة = %1$s</string>
-    <string name="app_info_is_enabled">مفعل = %1$s</string>
     <string name="app_info_is_system">نظام = %1$s</string>
     <string name="app_info_is_work_profile">ملف عمل = %1$s</string>
     <string name="app_info_is_private_profile">ملف خاص = %1$s</string>
     <string name="app_info_is_launchable">قابل للتشغيل = %1$s</string>
-    <string name="app_info_user_id">معرف المستخدم = %1$s</string>
     <string name="app_info_cache_key">مفتاح التخزين المؤقت = %1$s</string>
     <string name="no_apps">لا توجد تطبيقات</string>
     <string name="activate_debug_mode">تفعيل وضع تصحيح الأخطاء</string>
@@ -690,8 +626,6 @@
     <string name="are_you_sure">هل أنت متأكد؟</string>
     <string name="store_reset">إعادة ضبط المخازن</string>
     <string name="debug_infos">معلومات التصحيح</string>
-    <string name="private_space_debug_info">معلومات تصحيح المساحة الخاصة</string>
-    <string name="private_space_debug_info_desc">عرض معلومات تصحيح حالة المساحة الخاصة فوق كل شيء</string>
     <string name="super_warning_mode">وضع التحذير الفائق</string>
     <string name="super_warning_mode_desc">القيام بشيء مضحك عند إدخال رمز سري خاطئ</string>
     <string name="super_warning_mode_sound">وضع التحذير الفائق + صوت</string>
@@ -714,8 +648,6 @@
     <string name="reload">إعادة تحميل</string>
     <string name="select_icon">حدد الأيقونة</string>
     <string name="max_notification_icons">أقصى عدد لأيقونات الإشعارات</string>
-    <string name="use_differential_loading_private_space">استخدام التحميل التفاضلي للمساحة الخاصة</string>
-    <string name="use_differential_loading_private_space_desc">قم بتفعيل هذا عندما تظهر التطبيقات الخاصة في مساحة عمل المستخدم، وإلا اتركه غير محدد للأداء</string>
     <string name="edit_border_shape">تحرير شكل الحدود</string>
     <string name="hold_settings">إعدادات الانتظار</string>
     <string name="hold_to_activate_tolerance">سماحية الانتظار للتفعيل</string>
@@ -727,11 +659,6 @@
     <string name="spacer">فاصل</string>
     <string name="show_percentage">إظهار النسبة المئوية</string>
     <string name="show_percentage_desc">عرض نسبة البطارية بنص صريح</string>
-    <string name="set_status_bar_template">تعيين قالب شريط الحالة (الخاص بي) تحذير: النقر هنا يمسح إعداداتك الحالية!</string>
-    <string name="notch_mode">الوضع: نتوء الشاشة (يضع فاصلاً عند النتوء)</string>
-    <string name="google_lockdown_warning">"أعلنت جوجل أنه بدءاً من عام 2026/2027، ستتطلب جميع التطبيقات على أجهزة أندرويد المعتمدة من المطور تقديم تفاصيل الهوية الشخصية مباشرة إلى جوجل. وبما أن مطوري هذا التطبيق لا يوافقون على هذا المتطلب، فلن يعمل هذا التطبيق بعد ذلك الوقت على أجهزة أندرويد المعتمدة. "</string>
-    <string name="dismiss">تجاهل</string>
-    <string name="nest_radius">نصف قطر العش</string>
     <string name="edit_nest">تحرير العش</string>
     <string name="angle_line">خط الزاوية</string>
     <string name="angle_line_help">تخصيص مظهر الخط الذي يظهر عند السحب على الشاشة الرئيسية</string>
@@ -744,7 +671,6 @@
     <string name="erase_background">مسح الخلفية</string>
     <string name="glow_radius">نصف قطر التوهج</string>
     <string name="glow_color">لون التوهج</string>
-    <string name="enable_glow">تفعيل التوهج</string>
     <string name="line_object">كائن الخط</string>
     <string name="angle_object">كائن الزاوية</string>
     <string name="start_object">كائن البداية</string>
@@ -782,13 +708,6 @@
     <string name="undo_all">تراجع عن الكل</string>
     <string name="redo">إعادة</string>
     <string name="redo_all">إعادة الكل</string>
-    <string name="move_point_clockwise">تحريك النقطة باتجاه عقارب الساعة</string>
-    <string name="move_point_anticlockwise">تحريك النقطة عكس عقارب الساعة</string>
-    <string name="show_nest_preview">إظهار معاينة العش</string>
-    <string name="it_is_using_max_depth_equals_one">يستخدم أقصى عمق = 1</string>
-    <string name="general">عام</string>
-    <string name="action">إجراء</string>
-    <string name="collapse">طي</string>
     <string name="haptic_feedback_editor">محرر الردود اللمسية</string>
     <string name="vibration">اهتزاز</string>
     <string name="delay">تأخير</string>
@@ -807,7 +726,6 @@
     <string name="haptic_preset_long_press">تأكيد ضغط مطول</string>
     <string name="presets">الإعدادات المسبقة</string>
     <string name="steps">الخطوات</string>
-    <string name="you_can_edit_haptic_feedback_on_nest_settings">يمكنك تحرير الردود اللمسية في إعدادات العش</string>
     <string name="edit_nest_help">تخصيص حجم العش، مسافات السحب، الردود اللمسية، وإعدادات مفيدة أخرى</string>
     <string name="use_custom_color_channels">استخدام قنوات ألوان مخصصة</string>
     <string name="use_custom_color_channels_desc">تجاوز قنوات الألوان الافتراضية المستخدمة لعناصر Material، مثل المفاتيح، لاستخدام قنواتي الخاصة</string>
@@ -816,7 +734,6 @@
     <string name="rotation_per_second_desc">كم عدد الدورات التي يقوم بها حول نفسه في ثانية واحدة</string>
     <string name="enable_backup">تفعيل النسخ الاحتياطي</string>
     <string name="choose_a_auto_backup_file">اختر ملف نسخ احتياطي تلقائي</string>
-    <string name="show_sub_nest_size_slider">إظهار شريط تمرير حجم الأعشاش الفرعية</string>
     <string name="minus_one_means_random">-1 تعني عشوائي عند البدء</string>
     <string name="search_bar">شريط البحث</string>
     <string name="toolbars_order">ترتيب أشرطة الأدوات</string>
@@ -843,7 +760,6 @@
     <string name="enable_snap_move">تفعيل محاذاة الحركة</string>
     <string name="off_screen_timeout">مهلة الخروج من الشاشة (ثانية)</string>
     <string name="off_screen_timeout_desc">كم من الوقت ينتظر التطبيق قبل العودة إلى الشاشة الرئيسية عندما تكون في شاشة أخرى. لا ينطبق على بعض الشاشات المحددة، مثل النسخ الاحتياطي (لأنك تختار ملفاً). -1 تعني عدم العودة</string>
-    <string name="paste">لصق</string>
     <string name="refresh">تحديث</string>
     <string name="crash">تعطل التطبيق!</string>
     <string name="access_app">الدخول للتطبيق (قد تواجه تعطلاً مرة أخرى)</string>

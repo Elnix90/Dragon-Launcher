@@ -2,7 +2,6 @@
     <string name="app_name" translatable="false">Dragon Launcher</string>
     <string name="accessibility_service_description">Allows DragonLauncher to open the notification shade, quick settings panel, open recent apps and check for current activity (for xiaomi users that cannot set Dragon as default launcher without losing gesture navigation</string>
     <string name="help">Help</string>
-    <string name="back">Back</string>
     <string name="reset_default_settings">Reset default settings</string>
     <string name="reset_settings_in_this_tab">Reset default settings in this tab</string>
     <string name="ok">OK</string>
@@ -24,15 +23,7 @@
     <string name="extension_manual_install_title">Manual Installation</string>
     <string name="extension_manual_install_desc">If you don\'t have an installation extension, download the APK and select it below to install.</string>
     <string name="select_apk">Select APK</string>
-    <string name="language_english">English</string>
-    <string name="language_french">French</string>
-    <string name="language_german">German</string>
-    <string name="language_spanish">Spanish</string>
-    <string name="language_hindi">Hindi</string>
-    <string name="language_korean">Korean</string>
-    <string name="language_portuguese">Portuguese</string>
     <string name="system_default">System Default</string>
-    <string name="choose_your_app_language">Choose your app language</string>
     <string name="version">Version %1$s</string>
     <string name="export_cancelled">Export Cancelled</string>
     <string name="import_cancelled">Import Cancelled</string>
@@ -66,7 +57,6 @@
     <string name="test_colors">Test Colors</string>
     <string name="exit_test_mode">Exit Test Mode</string>
     <string name="exit_test_mode_message">Do you want to save your color changes or discard them?</string>
-    <string name="back_to_colors_settings">Back to Colors Settings</string>
     <string name="dark_theme">Dark Theme</string>
     <string name="amoled_theme">AMOLED Theme</string>
     <string name="system_theme">System Theme</string>
@@ -83,7 +73,6 @@
     <string name="set_default_launcher">Set as default launcher</string>
     <string name="close">Close</string>
     <string name="dragging_distance_selection">Dragging Distance Selection</string>
-    <string name="circle">Circle Drag Distance</string>
     <string name="cancel_zone">Cancel Zone Drag</string>
     <string name="preview_scale_factor">Preview Scale Factor</string>
     <string name="preview_scale_factor_desc">How much the nest is scales when displaying a preview of it (when it\'s a sub nest in the current nest)</string>
@@ -98,7 +87,6 @@
     <string name="drawer_actions">Drawer Actions</string>
     <string name="close_app_drawer">Close Drawer</string>
     <string name="font_selector">Font Selector</string>
-    <string name="font_selector_desc">Choose a font for the entire app. You can import your own or use the catalog.</string>
     <string name="font_manage_help">Manage fonts here. You can import your own TTF/OTF files or download from the Google Fonts catalog.</string>
     <string name="font_catalog">Catalog</string>
     <string name="font_import">Import</string>
@@ -150,14 +138,11 @@
     <string name="configure_your_apps">Configure your apps and shortcuts in settings</string>
     <string name="theme_selector">Theme selector</string>
     <string name="everything_ready">Everything Ready!</string>
-    <string name="home">Home</string>
     <string name="edit_point">Edit Point</string>
     <string name="choose_action">Choose Action</string>
     <string name="automatic_backups">Automatic backups</string>
-    <string name="change">Change</string>
     <string name="remove">Remove</string>
     <string name="trigger_backup">Trigger Backup</string>
-    <string name="last_backup">Last backup</string>
     <string name="auto_backup_stores">Automatic Backup Stores</string>
     <string name="recent_apps">Recent apps</string>
     <string name="open_recent_apps_color">Open Recent Apps Color</string>
@@ -223,7 +208,6 @@
     <string name="edit">Edit</string>
     <string name="widgets_tab_help">Manage your workspace widgets and floating apps: add, reorder, resize, and position them.\n Ghosted means the widget is not clickable\nForeground means the drag gestures aren\'t registered on the widget\nYou may try a combinaison of these two to achieve the configuration you like</string>
     <string name="delete_widget">Delete widget</string>
-    <string name="add_point">Add Point</string>
     <string name="remove_point">Remove Point</string>
     <string name="copy_point">Copy Point</string>
     <string name="ghosted">Ghosted</string>
@@ -244,9 +228,6 @@
     <string name="background_selected">Background Selected</string>
     <string name="custom_action_color">Custom Action Color</string>
     <string name="icon_editor">Icon Editor</string>
-    <string name="pick_image">Pick image</string>
-    <string name="pick_from_icon_pack">Pick from icon pack</string>
-    <string name="no_custom_icon">No custom icon</string>
     <string name="no_search_match">No search match</string>
     <string name="size">Size</string>
     <string name="shape_scale">Scale: %1$.2f</string>
@@ -260,10 +241,7 @@
     <string name="select_app">Select App</string>
     <string name="enter_url">Enter URL</string>
     <string name="invalid_url">Invalid URL</string>
-    <string name="unselected_action">Unselected Action</string>
-    <string name="selected_action">Selected Action</string>
     <string name="haptic_feedback">Haptic feedback</string>
-    <string name="text_emoji">Text / Emoji</string>
     <string name="rgb_loading_settings">RGB loading settings</string>
     <string name="rgb_line_selector">RGB line selector</string>
     <string name="show_app_launch_preview">Show App launch preview</string>
@@ -276,23 +254,16 @@
     <string name="set_wallpaper">Set Wallpaper</string>
     <string name="manage_nests">Nests Management</string>
     <string name="copy">Copy</string>
-    <string name="edit_nests">Edit Nests</string>
     <string name="pick_a_nest">Pick A Nest</string>
     <string name="create_new_nest">Create New Nest</string>
-    <string name="copy_id">Copy Id</string>
     <string name="open_burger_menu">Open Burger Menu</string>
     <string name="selected_text">Selected</string>
     <string name="unselected">Unselected</string>
-    <string name="general_style">General style</string>
-    <string name="individual_style">Individual style</string>
     <string name="inner_padding">Inner Padding</string>
-    <string name="plain_color">Plain Color</string>
     <string name="tint">Tint</string>
-    <string name="icon_pack_tint">Icon Pack Tint</string>
     <string name="show_app_icon_start_drag_position">Show app icon in start drag position</string>
     <string name="make_all_colors_identical">Make all colors identical</string>
     <string name="apply">Apply</string>
-    <string name="reload_point_icons">Reload points icons</string>
     <string name="center_selected_widget">Center Selected Widget</string>
     <string name="reset_widget">Reset Widget</string>
     <string name="select_previous_widget">Select previous widget</string>
@@ -301,7 +272,6 @@
     <string name="move_selected_widget_down">Move selected widget down</string>
     <string name="enable_scale_snap">Enable scale snap</string>
     <string name="home_action">Home Action</string>
-    <string name="drawer_home_action">Drawer Home action</string>
     <string name="wallpaper_dim_amount_main">Wallpaper dim amount (Main Screen)</string>
     <string name="wallpaper_dim_amount_drawer">Wallpaper dim amount (Drawer)</string>
     <string name="wallpaper_dim">Wallpaper dim</string>
@@ -314,10 +284,8 @@
     <string name="show_app_angle_preview_description">Display the angle indicator on the line</string>
     <string name="show_app_icon_start_drag_position_description">Display the current selected app in the center of where you starred to drag</string>
     <string name="line_preview_snap_to_action_description">The line preview isn\'t free to move, it snaps to the selected action when there\'s one</string>
-    <string name="min_angle_to_activate">Min Angle to activate</string>
     <string name="app_label_overlay_size">App label overlay size</string>
     <string name="app_icon_overlay_size">App Icon overlay size</string>
-    <string name="next">Next</string>
     <string name="loading_themes">Loading themes…</string>
     <string name="already_default_launcher">Already Default Launcher</string>
     <string name="open_default_launcher_settings">Open Default Launcher Settings</string>
@@ -330,7 +298,6 @@
     <string name="app_aliases">Aliases</string>
     <string name="edit_alias">Edit alias</string>
     <string name="alias">Alias</string>
-    <string name="add_alias">Add alias</string>
     <string name="create_alias">Create Alias</string>
     <string name="scroll_up_action">Scroll up action</string>
     <string name="scroll_down_action">Scroll down action</string>
@@ -338,8 +305,6 @@
     <string name="auto_launch_single_match_desc">When only one app is visible in the drawer, it\'ll be automatically launched</string>
     <string name="auto_show_keyboard">Auto show keyboard</string>
     <string name="auto_show_keyboard_desc">Open the keyboard upon entering the drawer</string>
-    <string name="auto_ask_to_unlock_profile">Auto ask to unlock profile</string>
-    <string name="auto_ask_to_unlock_profile_desc">When the selected workspace points to a locked profile, it asks automatically to unlock it</string>
     <string name="tap_empty_space_action">Tap empty space action</string>
     <string name="close_kb">Close Keyboard</string>
     <string name="open_kb">Open keyboard</string>
@@ -383,8 +348,6 @@
     <string name="reminder_mode_description">Receive periodic reminders when you stay too long on a paused app</string>
     <string name="reminder_interval">Reminder interval</string>
     <string name="reminder_interval_description">Remind me every … minutes</string>
-    <string name="reminder_mode_notification">Notification</string>
-    <string name="reminder_mode_overlay">On-screen popup</string>
     <string name="overlay_permission_required">Overlay Permission</string>
     <string name="overlay_permission_description">To display reminders over other apps, Dragon Launcher needs the "Display over other apps" permission.</string>
 
@@ -500,7 +463,6 @@
     <string name="surface_container_lowest_color">Surface Container Lowest</string>
     <string name="surface_dim_color">Surface Dim</string>
 
-    <string name="fixed_colors_section">Fixed Colors</string>
     <string name="primary_fixed_color">Primary Fixed</string>
     <string name="primary_fixed_dim_color">Primary Fixed Dim</string>
     <string name="on_primary_fixed_color">On Primary Fixed</string>
@@ -509,13 +471,10 @@
     <string name="secondary_fixed_dim_color">Secondary Fixed Dim</string>
     <string name="on_secondary_fixed_color">On Secondary Fixed</string>
     <string name="on_secondary_fixed_variant_color">On Secondary Fixed Variant</string>
-    <string name="tertiary_fixed_color">Tertiary Fixed</string>
-    <string name="tertiary_fixed_dim_color">Tertiary Fixed Dim</string>
     <string name="on_tertiary_fixed_color">On Tertiary Fixed</string>
     <string name="on_tertiary_fixed_variant_color">On Tertiary Fixed Variant</string>
     <string name="custom_colors">Custom Colors</string>
     <string name="normal_colors">Normal Colors</string>
-    <string name="source">Source</string>
     <string name="reset_all_points">Reset All points</string>
     <string name="reset_all_points_desc">All your actions will be reset, this can\'t be undone!</string>
     <string name="use_categories">Use Categories</string>
@@ -530,13 +489,11 @@
     <string name="icons_spacing_horizontal_desc">Horizontal icons padding</string>
     <string name="category_settings">Category settings</string>
     <string name="expanded_chevron_indicator">Expanded chevron indicator</string>
-    <string name="category_grid_width">Category grid width</string>
     <string name="grid_settings">Grid Settings</string>
     <string name="category_cells">Category cells</string>
 
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d selected</string>
-    <string name="add_all_auto">Auto place on circle</string>
     <string name="add_all_manual">Place one by one</string>
     <string name="place_app_where">Where do you want to place %s?</string>
     <string name="tap_circle_to_place">Tap on the circle to place the app</string>
@@ -563,7 +520,6 @@
     <string name="biometric_prompt_title">Unlock Dragon Settings</string>
     <string name="biometric_prompt_subtitle">Authenticate to access settings</string>
     <string name="device_credentials_not_available">No device lock screen set up</string>
-    <string name="could_not_find_activity">Could not find activity to unlock</string>
     <string name="authentication_failed">Authentication failed</string>
     <string name="authentication_error">Authentication error: %s</string>
 
@@ -573,9 +529,7 @@
     <string name="workspace_default">Default</string>
 
     <!--  ─────────────  Pinned Shortcuts  ─────────────  -->
-    <string name="pinned_shortcut_added">Shortcut "%s" added to your circles</string>
     <string name="pinned_shortcut_failed">Failed to add shortcut</string>
-    <string name="pinned_shortcut_already_exists">"%s" shortcut is already on your circles</string>
     <string name="pinned_shortcuts">Shortcuts</string>
     <string name="no_pinned_shortcuts">No shortcuts available</string>
     <string name="select_shortcut_action_title">Select action for %1$s</string>
@@ -613,16 +567,12 @@
     <string name="private_space_title">Private Space</string>
     <string name="private_space_locked">Private Space locked</string>
     <string name="private_space_authenticating">Authenticating…</string>
-    <string name="private_space_manage_instructions">To add or remove apps, or delete this profile, use Android Settings.</string>
-    <string name="samsung_secure_folder_settings">Samsung Secure Folder</string>
     <string name="app_info_name">name = %1$s</string>
     <string name="app_info_package_name">packageName = %1$s</string>
-    <string name="app_info_is_enabled">isEnabled = %1$s</string>
     <string name="app_info_is_system">isSystem = %1$s</string>
     <string name="app_info_is_work_profile">isWork = %1$s</string>
     <string name="app_info_is_private_profile">isPrivate = %1$s</string>
     <string name="app_info_is_launchable">isLaunchable = %1$s</string>
-    <string name="app_info_user_id">userId = %1$s</string>
     <string name="app_info_cache_key">Cache key = %1$s</string>
     <string name="app_info_installer_package">Installer package key = %1$s</string>
     <string name="no_apps">No apps</string>
@@ -653,8 +603,6 @@
     <string name="store_reset">Stores reset</string>
     <string name="debug_infos">Debug Infos</string>
 
-    <string name="private_space_debug_info">Private space debug info</string>
-    <string name="private_space_debug_info_desc">Display private space state debug infos on top of everything</string>
     <string name="super_warning_mode">Super Warning mode</string>
     <string name="super_warning_mode_desc">Do something funny when you enter a wrong pin</string>
 
@@ -684,8 +632,6 @@
     <string name="select_icon">Select Icon</string>
 
     <string name="max_notification_icons">Max notification icons</string>
-    <string name="use_differential_loading_private_space">Use Differential loading private space</string>
-    <string name="use_differential_loading_private_space_desc">Toggle this when private apps appear in the user workspace, otherwise keep it unchecked for performances</string>
     <string name="edit_border_shape">Edit border shape</string>
     <string name="hold_settings">Hold settings</string>
     <string name="hold_to_activate_tolerance">Hold to activate tolerance</string>
@@ -697,11 +643,6 @@
     <string name="spacer">Spacer</string>
     <string name="show_percentage">Show percentage</string>
     <string name="show_percentage_desc">Display the battery percentage in plain text</string>
-    <string name="set_status_bar_template">Set status bar template (mine) warning clicking this erases your current setup!</string>
-    <string name="notch_mode">Mode: Notch (Applies a spacer on the notch)</string>
-    <string name="google_lockdown_warning">"Google has announced that, starting in 2026/2027, all apps on certified Android devices will require the developer to submit personal identity details directly to Google. Since the developers of this app do not agree to this requirement, this app will no longer work on certified Android devices after that time. "</string>
-    <string name="dismiss">Dismiss</string>
-    <string name="nest_radius">Nest Radius</string>
     <string name="edit_nest">Edit nest</string>
     <string name="edit_default_nest">Edit Default Nest</string>
     <string name="edit_nest_arg">Edit nest %1$d</string>
@@ -718,7 +659,6 @@
     <string name="glow_radius">Glow Radius</string>
     <string name="zero_means_no_glow">0 means no glow</string>
     <string name="glow_color">Glow color</string>
-    <string name="enable_glow">Enable glow</string>
     <string name="line_object">Line object</string>
     <string name="angle_object">Angle object</string>
     <string name="start_object">Start Object</string>
@@ -762,13 +702,6 @@
     <string name="undo_all">Undo All</string>
     <string name="redo">Redo</string>
     <string name="redo_all">Redo All</string>
-    <string name="move_point_clockwise">Move point clockwise</string>
-    <string name="move_point_anticlockwise">Move point anticlockwise</string>
-    <string name="show_nest_preview">Show nest preview</string>
-    <string name="it_is_using_max_depth_equals_one">It is using maxDepth = 1</string>
-    <string name="general">General</string>
-    <string name="action">Action</string>
-    <string name="collapse">Collapse</string>
     <string name="haptic_feedback_editor">Haptic Feedback Editor</string>
     <string name="vibration">Vibration</string>
     <string name="delay">Delay</string>
@@ -787,7 +720,6 @@
     <string name="haptic_preset_long_press">Long press confirm</string>
     <string name="presets">Presets</string>
     <string name="steps">Steps</string>
-    <string name="you_can_edit_haptic_feedback_on_nest_settings">You can edit haptic feedback on nest settings</string>
     <string name="edit_nest_help">Customize the size of the nest, the dragging distances, the haptic feedbacks, and other useful settings</string>
     <string name="reset_nest">Reset this nest to it\'s default state?</string>
     <string name="reset_nest_desc">You\'ll lose all custom values you changed!</string>
@@ -798,7 +730,6 @@
     <string name="rotation_per_second_desc">How many turns on itself it does in one second</string>
     <string name="enable_backup">Enable backup</string>
     <string name="choose_a_auto_backup_file">Choose a auto backup file</string>
-    <string name="show_sub_nest_size_slider">Show sub-nests size slider</string>
     <string name="minus_one_means_random">-1 means random on start</string>
     <string name="search_bar">Search Bar</string>
     <string name="toolbars_order">Toolbars order</string>
@@ -831,7 +762,6 @@
     <string name="points_cell_size_desc">The size of the virtual grid that is used to snap points</string>
     <string name="off_screen_timeout">Off-screen timeout (s)</string>
     <string name="off_screen_timeout_desc">How long the app waits before returning to home screen when you\'re in another screen. Doesn\'t apply to some specified screens, such as backup (because you pick a file). -1 means no return</string>
-    <string name="paste">Paste</string>
     <string name="refresh">Refresh</string>
     <string name="crash">App Crashed!</string>
     <string name="access_app">Access app (you may experience crash again)</string>
@@ -862,7 +792,6 @@
     <string name="select_settings_to_import">Select settings to import</string>
     <string name="edit_hold_to_activate_elements">Edit hold to activate elements</string>
     <string name="edit_hold_to_activate_elements_desc">Edit the actions that pops up when holding 3 sec. Only 1 mean auto redirect</string>
-    <string name="less">Less</string>
     <string name="warning">Warning!</string>
     <string name="this_is_a_beta_version">This is a beta version, which means it may contain unstable features and many bugs. Please report them if you found any! It really helps me </string>
     <string name="this_feature_is_in_beta">This feature is in beta, it may break and is not complete, report me any bugs or suggestions to help me improve it!</string>
@@ -878,8 +807,6 @@
 
     <!--  Live Nest  -->
     <string name="live_nest">Live Nest</string>
-    <string name="live_nest_enabled">Live Nest enabled</string>
-    <string name="live_nest_disabled">Live Nest disabled</string>
     <string name="live_nest_target_nest">Target Nest</string>
     <string name="live_nest_hold_delay">Hold delay (ms)</string>
     <string name="live_nest_scale">Nest scale</string>
@@ -901,9 +828,7 @@
     <string name="cycle_actions_delay">Extra hold to reach this stage (ms)</string>
     <string name="cycle_actions_loop">Loop</string>
     <string name="cycle_actions_loop_desc">After the last stage, wait in “Loop Over”, then repeat the cycle.</string>
-    <string name="cycle_actions_loop_over">Loop Over</string>
     <string name="cycle_actions_loop_delay">Loop Over delay (ms)</string>
-    <string name="cycle_actions_stage_default_delay">Default Stage delay (ms)</string>
     <string name="live_nests_depth_desc">How many sub live nests can be drawn at once</string>
     <string name="live_nest_depth">Live nests depth</string>
     <string name="enter_adb_command">Enter ADB Command</string>
@@ -914,17 +839,6 @@
     <string name="kill_launcher">Kill Launcher</string>
     <string name="multiply_or_subtract_opacity_in_live_nests">Multiply or subtract opacity in live nests</string>
     <string name="multiply_or_subtract_opacity_in_live_nests_desc">When off, it multiplies opacity to give clean ui, and when on, it subtract it, to reach faster the 0 opacity and hide lower nests to avoid ui cluttering</string>
-    <string name="icon">icon</string>
-    <string name="shapes">shapes</string>
-    <string name="reset_default_point">Reset default point</string>
-    <string name="reset_point">Reset point</string>
-    <string name="reset_default_point_desc">This will reset all default points settings, and will affect every points that haven\'t custom paramèters</string>
-    <string name="reset_point_desc">This will reset this point</string>
-    <string name="default_point_help_text">Edit the value for every points by default, you can manually override for each point</string>
-    <string name="edit_point_help_desc">edit a specific point,you can edit them all at once by editing the default points settings (More menu on top)</string>
-    <string name="rotation_start_angle">Start angle rotation</string>
-    <string name="rotation_start_angle_desc">I guess it pretty much self-explanatory</string>
-    <string name="resolution">Resolution</string>
     <string name="align_start">Start</string>
     <string name="align_center">Center</string>
     <string name="align_end">End</string>
@@ -942,7 +856,6 @@
     <string name="reset_rotation">Reset rotation</string>
     <string name="reset_zoom">Reset zoom</string>
     <string name="edit_workspace">Edit Workspace</string>
-    <string name="show_advanced_edit_tools">Show Advanced Edit Tools</string>
     <string name="random">Random</string>
     <string name="special_options">Special Options</string>
     <string name="colors_and_icons">Colors and Icons</string>
@@ -970,16 +883,13 @@
     <string name="warning_worldwide">Every app and every device, worldwide, with no opt-out.</string>
     <string name="profile_work_profile_state_locked">Work apps are paused</string>
     <string name="profile_work_profile_action_unlock">Unpause</string>
-    <string name="profile_work_profile_action_lock">Pause work apps</string>
     <string name="profile_private_profile_state_locked">Private space is locked</string>
     <string name="profile_private_profile_action_unlock">Unlock</string>
-    <string name="profile_private_profile_action_lock">Lock private space</string>
     <string name="left_drawer_width">Left drawer width</string>
     <string name="right_drawer_width">Right drawer width</string>
     <string name="icon_picker_filter_all_packs">All icon packs</string>
     <string name="icon_picker_default_icon">Default</string>
     <string name="icon_picker_suggestions">Suggestions</string>
-    <string name="icon_picker_search_icon">Search in icon packs</string>
     <string name="top_padding_desc">How large the safe zone at top is</string>
     <string name="bottom_padding_desc">How large the safe zone at the bottom is</string>
     <string name="left_padding_desc">How large the safe zone on the left is</string>
@@ -1022,14 +932,12 @@
     <string name="force_themed_icons_desc">Apply the themed icons even for those who aren\'t normally compatible</string>
     <string name="adaptify_icons_desc">I have no idea what this option does but it was there when I copied some icons logic</string>
     <string name="icons_tint">The tint that is applied to icons</string>
-    <string name="icons_tint_desc">Works better with some icon packs that are monochrome</string>
     <string name="only_tint_icon_packs">Only tint Icon Packs</string>
     <string name="only_tint_icon_packs_desc">Tinted app icons with no packs can be ugly if they don\'t have a transparent layer</string>
     <string name="use_icon_tint">Use Icon tint</string>
     <string name="use_icon_tint_desc">Whether to enable or not the icon tint</string>
     <string name="no_profile_found">No profile found in phone</string>
     <string name="need_to_be_default_launcher_to_access_profile">Dragon needs to be the default launcher in order to access this profile</string>
-    <string name="cannot_delete_nest_0">Cannot delete nest 0 (main nest)</string>
     <string name="show_all_actions_on_current_shape">Show all actions in current shape</string>
     <string name="show_all_actions_on_current_shape_desc">When you use intersection shapes, all points on the current selected one will be showed</string>
     <string name="open_nest">Open Nest</string>
@@ -1044,8 +952,6 @@
         <item quantity="one">point selected</item>
         <item quantity="other">points selected</item>
     </plurals>
-    <string name="see_selected_points">See selected points</string>
-    <string name="point_not_found">Point not found</string>
     <string name="selected_points">Selected points</string>
     <string name="animation_when_snapping">Animation when snapping</string>
     <string name="animation_when_snapping_desc">Use expressive animation to animate the snapping</string>
