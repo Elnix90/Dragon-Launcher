@@ -483,6 +483,7 @@ public class AppTimerService : Service() {
 
         val broadIntent = Intent(SHOW_LAUNCHER).apply {
             putExtra(EXTRA_APP_NAME, appName)
+            setPackage(this.`package`)
         }
         sendBroadcast(broadIntent)
 
