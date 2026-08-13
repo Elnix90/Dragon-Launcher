@@ -8,6 +8,7 @@ import io.github.elnix90.core.stores.MapSettingsStore
 import io.github.elnix90.core.stores.SettingsStore
 import io.github.elnix90.logging.BACKUP_TAG
 import io.github.elnix90.logging.logD
+import io.github.elnix90.logging.logW
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.elnix.dragonlauncher.settings.AllStores
@@ -108,6 +109,7 @@ public class LegacyBackupJsonMigrator {
 
                 if (oldData == null || oldData == JSONObject.NULL) {
                     skipped.add(mapping.oldBackupKey)
+                    logW(BACKUP_TAG) { "Skipping ${mapping.oldBackupKey} (empty json)"}
                     continue
                 }
 
@@ -118,7 +120,7 @@ public class LegacyBackupJsonMigrator {
                             val targetStore = newStores[newKey]
                             if (targetStore != null) {
                                 writeToStore(ctx, targetStore, extractedValue)
-                                migrated.add("${mapping.oldBackupKey}->$newKey")
+                                migrated.add("${mapping.oldBackupKey} -> $newKey")
                             }
                         }
                     }
@@ -127,12 +129,14 @@ public class LegacyBackupJsonMigrator {
 
                 val newBackupKey = mapping.newBackupKey ?: run {
                     skipped.add(mapping.oldBackupKey)
+                    logW(BACKUP_TAG) { "Skipping ${mapping.oldBackupKey} (no new backup key)"}
                     continue
                 }
 
                 val targetStore = newStores[newBackupKey]
                 if (targetStore == null) {
                     skipped.add(mapping.oldBackupKey)
+                    logW(BACKUP_TAG) { "Skipping ${mapping.oldBackupKey} (no target store for '$newBackupKey')"}
                     continue
                 }
 

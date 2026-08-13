@@ -6,6 +6,7 @@ import io.github.elnix90.logging.BACKUP_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logI
+import io.github.elnix90.logging.logW
 import org.json.JSONObject
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -94,7 +95,7 @@ public class SettingsMigrationService @Inject constructor(
             logD(BACKUP_TAG) { "Skipped: ${result.skippedStores.joinToString()}" }
         }
         if (result.errors.isNotEmpty()) {
-            logD(BACKUP_TAG) { "Errors: ${result.errors.joinToString()}" }
+            logW(BACKUP_TAG) { "Errors: ${result.errors.joinToString()}" }
         }
     }
 
@@ -111,9 +112,7 @@ public class SettingsMigrationService @Inject constructor(
     public suspend fun migrateFromBackupJson(
         ctx: Context,
         legacyJson: String
-    ): MigrationResult {
-        return backupJsonMigrator.migrateFromJson(ctx, legacyJson)
-    }
+    ): MigrationResult = backupJsonMigrator.migrateFromJson(ctx, legacyJson)
 
     /**
      * Checks whether the given JSON string represents a legacy 3.2.2 backup

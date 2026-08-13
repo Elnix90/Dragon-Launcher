@@ -48,7 +48,7 @@ fun ImportBackupButton(
         }
     )
 
-    legacyJsonString?.let {json ->
+    legacyJsonString?.let { json ->
         MigrationDialog(
             migrate = { backupViewModel.migrateFromLegacyBackup(json) },
             onDismiss = { legacyJsonString = null },
