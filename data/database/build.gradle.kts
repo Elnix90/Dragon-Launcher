@@ -6,7 +6,11 @@ plugins {
 
 android {
     namespace = "org.elnix.dragonlauncher.database"
+}
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+    arg("room.incremental", "true")
 }
 
 dependencies {
