@@ -28,6 +28,7 @@ import org.elnix.dragonlauncher.base.utils.ConnectivityUtils.isHotspotEnabled
 import org.elnix.dragonlauncher.base.utils.ConnectivityUtils.isVpnEnabled
 import org.elnix.dragonlauncher.base.utils.ConnectivityUtils.isWifiEnabled
 import org.elnix.dragonlauncher.i18n.R
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun StatusBarConnectivity(
@@ -70,7 +71,7 @@ fun StatusBarConnectivity(
         LaunchedEffect(element.updateFrequency) {
             while (true) {
                 connectivityState = readConnectivityState(ctx, connectivityState)
-                delay(element.updateFrequency * 1000L)
+                delay((element.updateFrequency * 1000L).milliseconds)
             }
         }
     }

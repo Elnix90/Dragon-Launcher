@@ -25,6 +25,7 @@ import org.elnix.dragonlauncher.i18n.R
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun StatusBarNextAlarm(
@@ -49,7 +50,7 @@ fun StatusBarNextAlarm(
     LaunchedEffect(Unit) {
         while (true) {
             nextAlarm = getNextAlarm(ctx, dateFormat)
-            delay(60_000L)
+            delay(60_000L.milliseconds)
         }
     }
 

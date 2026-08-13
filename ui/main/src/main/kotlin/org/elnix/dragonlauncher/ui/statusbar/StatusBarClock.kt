@@ -13,17 +13,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import io.github.elnix90.logging.STATUS_BAR_TAG
+import io.github.elnix90.logging.logE
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.base.utils.DateUtils.openAlarmApp
 import org.elnix.dragonlauncher.base.utils.DateUtils.openCalendar
-import io.github.elnix90.logging.STATUS_BAR_TAG
-import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun StatusBarDate(
@@ -54,7 +55,7 @@ fun StatusBarDate(
             // Wait until the next day starts
             val nextDay = now.plusDays(1).atStartOfDay()
             val delayMillis = java.time.Duration.between(java.time.LocalDateTime.now(), nextDay).toMillis()
-            delay(delayMillis.coerceAtLeast(60_000L)) // Check at least every minute to be safe
+            delay(delayMillis.coerceAtLeast(60_000L).milliseconds) // Check at least every minute to be safe
         }
     }
 
@@ -112,7 +113,7 @@ fun StatusBarTime(
     LaunchedEffect(updateInterval) {
         while (true) {
             time = LocalTime.now()
-            delay(updateInterval)
+            delay(updateInterval.milliseconds)
         }
     }
 
