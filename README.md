@@ -107,12 +107,13 @@ Dragon Launcher is a launcher: some of the permissions below are required by And
 ## Screenshots
 
 <p align="center">
-    <img src="assets/images/demo1.gif" alt="App demo animation 1" width="30%">
-    <img src="assets/images/demo2.gif" alt="App demo animation 2" width="30%">
-    <img src="assets/images/demo3.gif" alt="App demo animation 3" width="30%">
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/images/demo1.gif" alt="App demo animation 1" width="30%">
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/images/demo2.gif" alt="App demo animation 2" width="30%">
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/images/demo3.gif" alt="App demo animation 3" width="30%">
 </p>
 
 <p align="center">
+  <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/fastlane/metadata/android/en-US/images/phoneScreenshots/0.jpg" width="22%" alt="App Screenshot 0"/>
   <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/fastlane/metadata/android/en-US/images/phoneScreenshots/1.jpg" width="22%" alt="App Screenshot 1"/>
   <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/fastlane/metadata/android/en-US/images/phoneScreenshots/2.jpg" width="22%" alt="App Screenshot 2"/>
   <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/fastlane/metadata/android/en-US/images/phoneScreenshots/3.jpg" width="22%" alt="App Screenshot 3"/>
@@ -126,8 +127,6 @@ Dragon Launcher is a launcher: some of the permissions below are required by And
   <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/fastlane/metadata/android/en-US/images/phoneScreenshots/11.jpg" width="22%" alt="App Screenshot 11"/>
   <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/fastlane/metadata/android/en-US/images/phoneScreenshots/12.jpg" width="22%" alt="App Screenshot 12"/>
   <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/fastlane/metadata/android/en-US/images/phoneScreenshots/13.jpg" width="22%" alt="App Screenshot 13"/>
-  <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/fastlane/metadata/android/en-US/images/phoneScreenshots/14.jpg" width="22%" alt="App Screenshot 14"/>
-  <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/fastlane/metadata/android/en-US/images/phoneScreenshots/15.jpg" width="22%" alt="App Screenshot 15"/>
 </p>
 
 
@@ -145,7 +144,7 @@ Dragon Launcher is a launcher: some of the permissions below are required by And
 </p>
 
  <details>
-    <summary>More</summary>
+    <summary>More screenshots</summary>
     <p align="center">
         <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/infamous.webp" width="22%" alt="infamous Screenshot"/>
         <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/m0n0lith.webp" width="22%" alt="m0n0lith Screenshot"/>
