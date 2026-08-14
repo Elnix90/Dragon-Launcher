@@ -134,6 +134,10 @@ Dragon Launcher is a launcher: some of the permissions below are required by And
 
 <p align="center">
     <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/elnix.webp" width="22%" alt="Elnix Screenshot"/>
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/red__velvet_demo.gif" width="22%" alt="rev__velvet Screenshot"/>
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/ridwan.png" width="22%" alt="ridwan Screenshot"/>
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/unknown_user_1.jpg" width="22%" alt="Unknown user Screenshot"/>
+    <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/akiraakemi.png" width="22%" alt="akiraakemi Screenshot"/>
     <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/elnix2.jpg" width="22%" alt="Elnix Screenshot 2"/>
     <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/speedhog.jpg" width="22%" alt="speedhog Screenshot"/>
     <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/oniyon.jpg" width="22%" alt="oniyon Screenshot"/>
