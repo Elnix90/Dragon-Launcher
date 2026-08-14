@@ -68,7 +68,7 @@ import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine
 import org.elnix.dragonlauncher.ui.helpers.customobjects.resolveRotation
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson
-import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberAngleLineObjects
+import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.LocalAngleLineObjects
 import org.elnix.dragonlauncher.ui.remembers.rememberSweepAngle
 
 @Composable
@@ -77,6 +77,7 @@ fun AngleLineTab() {
     val navigator = LocalNavigator.current
     val density = LocalDensity.current
     val extraColors = LocalExtraColors.current
+    val lineObjects = LocalAngleLineObjects.current
     val scope = rememberCoroutineScope()
 
     val backgroundColor = MaterialTheme.colorScheme.background
@@ -88,12 +89,10 @@ fun AngleLineTab() {
     val showEndObjectPreview by AngleLineSettingsStore.showEndObjectPreview.asState()
     val rgbLine by AngleLineSettingsStore.rgbLine.asState()
 
-    val lineObjects = rememberAngleLineObjects()
-
-    var mutableLineObject by remember { mutableStateOf(lineObjects.line) }
-    var mutableAngleLineObject by remember { mutableStateOf(lineObjects.angleLine) }
-    var mutableStartObject by remember { mutableStateOf(lineObjects.startLine) }
-    var mutableEndObject by remember { mutableStateOf(lineObjects.endLine) }
+    var mutableLineObject by remember(lineObjects.line) { mutableStateOf(lineObjects.line) }
+    var mutableAngleLineObject by remember(lineObjects.line) { mutableStateOf(lineObjects.angleLine) }
+    var mutableStartObject by remember(lineObjects.line) { mutableStateOf(lineObjects.startLine) }
+    var mutableEndObject by remember(lineObjects.line) { mutableStateOf(lineObjects.endLine) }
 
     var currentEditObject by remember { mutableStateOf(AngleObject.Line) }
 
@@ -160,21 +159,30 @@ fun AngleLineTab() {
         title = stringResource(R.string.angle_line),
         onBack = {
             scope.launch {
-                if (mutableEndObject != defaultLineCustomObject) {
+                if (mutableLineObject != defaultLineCustomObject) {
                     LineObjectSettingStore.jsonSetting.set(ctx, CustomObjectJson.encode(mutableLineObject))
+                } else {
+                    LineObjectSettingStore.jsonSetting.reset(ctx)
                 }
 
                 if (mutableAngleLineObject != defaultAngleCustomObject) {
                     AngleObjectSettingStore.jsonSetting.set(ctx, CustomObjectJson.encode(mutableAngleLineObject))
+                } else {
+                    AngleObjectSettingStore.jsonSetting.reset(ctx)
                 }
 
                 if (mutableStartObject != defaultStartCustomObject) {
                     StartObjectSettingStore.jsonSetting.set(ctx, CustomObjectJson.encode(mutableStartObject))
+                } else {
+                    StartObjectSettingStore.jsonSetting.reset(ctx)
                 }
 
                 if (mutableEndObject != defaultEndCustomObject) {
                     EndObjectSettingStore.jsonSetting.set(ctx, CustomObjectJson.encode(mutableEndObject))
+                } else {
+                    EndObjectSettingStore.jsonSetting.reset(ctx)
                 }
+
                 navigator.onBack()
             }
         },

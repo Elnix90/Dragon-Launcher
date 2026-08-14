@@ -32,7 +32,6 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.ktx.cleanString
-import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
@@ -42,11 +41,7 @@ import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.components.PointPreviewTitle
-import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
-import org.elnix.dragonlauncher.ui.composition.LocalEndLineObject
-import org.elnix.dragonlauncher.ui.composition.LocalLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
-import org.elnix.dragonlauncher.ui.composition.LocalStartLineObject
 import org.elnix.dragonlauncher.ui.dialogs.rememberLineObjectsOrder
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.PointerLocation
@@ -54,6 +49,7 @@ import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine
 import org.elnix.dragonlauncher.ui.helpers.customobjects.resolveRotation
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
 import org.elnix.dragonlauncher.ui.helpers.swipe.rememberDrawParams
+import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.LocalAngleLineObjects
 import org.elnix.dragonlauncher.ui.remembers.LiveNestState
 import org.elnix.dragonlauncher.ui.remembers.rememberCustomText
 import org.elnix.dragonlauncher.ui.remembers.rememberCycleActionsController
@@ -62,7 +58,6 @@ import org.elnix.dragonlauncher.ui.remembers.rememberLiveNestControllerStack
 
 @Composable
 fun MainScreenOverlay(
-    iconsViewModel: IconsViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel(),
     start: Offset?,
     current: Offset?,
@@ -78,10 +73,11 @@ fun MainScreenOverlay(
 
     val disableHapticFeedbackGlobally = LocalDisableHapticFeedbackGlobally.current
 
-    val lineObject = LocalLineObject.current
-    val angleLineObject = LocalAngleLineObject.current
-    val startObject = LocalStartLineObject.current
-    val endObject = LocalEndLineObject.current
+    val lineObjects = LocalAngleLineObjects.current
+    val lineObject = lineObjects.line
+    val angleLineObject = lineObjects.angleLine
+    val startObject = lineObjects.startLine
+    val endObject = lineObjects.endLine
 
     val rgbLine by AngleLineSettingsStore.rgbLine.asState()
 

@@ -74,9 +74,7 @@ fun SettingsScaffold(
 
 
     val navigator = LocalNavigator.current
-    val handleBack = onBack ?: {
-        navigator.onBack()
-    }
+    val handleBack = onBack ?: { navigator.onBack() }
     BackHandler(onBack = handleBack)
 
     Scaffold(

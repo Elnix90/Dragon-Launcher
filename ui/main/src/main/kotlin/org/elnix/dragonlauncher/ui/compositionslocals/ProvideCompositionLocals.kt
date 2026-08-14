@@ -21,17 +21,14 @@ import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
-import org.elnix.dragonlauncher.ui.composition.LocalAngleLineObject
-import org.elnix.dragonlauncher.ui.composition.LocalEndLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
-import org.elnix.dragonlauncher.ui.composition.LocalLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 import org.elnix.dragonlauncher.ui.composition.LocalShowLabelsInAddPointDialog
-import org.elnix.dragonlauncher.ui.composition.LocalStartLineObject
 import org.elnix.dragonlauncher.ui.composition.LocalStatusBarElements
 import org.elnix.dragonlauncher.ui.composition.LocalTextMeasurer
 import org.elnix.dragonlauncher.ui.dialogs.rememberMainScreenLayerOrder
+import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.LocalAngleLineObjects
 import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberAngleLineObjects
 import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.rememberHoldCustomObject
 
@@ -76,11 +73,7 @@ fun ProvideGlobalCompositionLocals(
 
         LocalStatusBarElements provides elements,
 
-        LocalLineObject provides lineObjects.line,
-
-        LocalAngleLineObject provides lineObjects.angleLine,
-        LocalStartLineObject provides lineObjects.startLine,
-        LocalEndLineObject provides lineObjects.endLine,
+        LocalAngleLineObjects provides lineObjects,
         LocalHoldCustomObject provides holdCustomObject,
 
         LocalMainScreenLayers provides layersOrder,

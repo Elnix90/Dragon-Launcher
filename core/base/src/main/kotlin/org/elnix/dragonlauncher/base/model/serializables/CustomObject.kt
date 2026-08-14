@@ -74,7 +74,7 @@ public data class CustomObject(
                 radius = 10.dp
             ),
             shape = IconShape.Circle,
-            size = Dp.Unspecified, // Unused for line (only stroke)
+            size = 0.dp, // Unused for line (only stroke)
             rotation = 0, // No rotation for line, (it's nullable, but I use nul here to indicate that the rotation isn't available)
 
             eraseBackground = false,

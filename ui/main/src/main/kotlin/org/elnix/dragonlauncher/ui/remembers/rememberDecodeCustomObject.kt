@@ -1,7 +1,9 @@
 package org.elnix.dragonlauncher.ui.remembers
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.State
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -106,5 +108,9 @@ object CustomObjectJson : DragonJson<CustomObject>() {
         ) {
             logE(ANGLE_LINE_TAG, it) { "Error decoding endLineObject" }
         }
+    }
+
+    val LocalAngleLineObjects: ProvidableCompositionLocal<AngleLineObjects> = compositionLocalOf {
+        error("No LocalAngleLineObjects provided")
     }
 }
