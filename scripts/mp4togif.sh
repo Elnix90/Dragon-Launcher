@@ -19,7 +19,7 @@ output_file="${2:-}"
 [[ -f "$input_file" ]] || die "'$input_file' is not a file"
 
 # Validate input is a video file
-if ! ffprobe -v error -select_streams v:0 -show_entries stream=codec_type -of csv=p=0 "$input_file" 2>/dev/null | grep -q "^video$"; then
+if ! ffprobe -v error -select_streams v:0 -show_entries stream=codec_type -of csv=p=0 "$input_file" 2>/dev/null | grep -q "^video"; then
   die "'$input_file' is not a valid video file"
 fi
 
