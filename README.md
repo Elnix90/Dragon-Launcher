@@ -49,55 +49,43 @@ The reason is likely that Dragon asks for _sensitive permissions_ - normal, that
 # 🎉 Thank you very much to the stargazers !
 ---
 
-## Features
-
 ### The main Idea of this launcher is to launch your apps via gestures.
 
 * You can customize your list of fast access apps easily in the settings
 * Use the app drawer to pick an app and browse apps
 
-### Gestures & Actions
+## Permissions
 
-* Configurable swipe actions
-* Drawer enter key actions
-* Fast access app launching
-* Gesture-first navigation with minimal UI clutter
+Dragon Launcher is a launcher: some of the permissions below are required by Android itself for core launcher duties (listing apps, setting the wallpaper, reacting to boot). This is the full list of permissions declared in the app manifests and why each one is used. None of them are used to collect or transmit data — the app has **no internet access** and does not even declare the `INTERNET` permission.
 
-### App Drawer
-
-* Swipe-down to close drawer
-* Configurable enter key behavior
-* App shortcuts support (when provided by apps)
-* Tap or long-press for quick actions
-
-### Status Bar
-
-* **Fully customizable**
-* Optional visibility per user preference
-* Custom time and date formatting
-* Next alarm display
-* Visual integration with launcher theme
-
-### Appearance
-
-* Deep customization features
-* Customize each colors separately for every little action / surface
-* Change wallpaper, apply blur, separate wallpaper on drawer / main screen
-* Icon packs support
-* Widgets support, arrange freely your widgets as well as floating apps / actions from Dragon
-
-### Backup
-
-* Manual backups to phone's storage
-* Auto backup feature : auto backups on every app focus change
+| Permission                                          | Type                | Why it is used                                                                                                                      |
+|-----------------------------------------------------|---------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| `android.permission.POST_NOTIFICATIONS`             | Runtime             | Notifications from the app, e.g. Wellbeing app timers and break reminders. Also uses to display the download progress of the fonts  |
+| `android.permission.QUERY_ALL_PACKAGES`             | Install             | List every installed app to power the app drawer, app/app-shortcut/widget pickers and icons.                                        |
+| `android.permission.ACCESS_NETWORK_STATE`           | Install             | Show network connectivity (Wi-Fi / mobile data) in the status bar.                                                                  |
+| `android.permission.READ_BASIC_PHONE_STATE`         | Install (app op)    | Basic phone state only, to display the mobile data / hotspot type in the status bar.                                                |
+| `android.permission.VIBRATE`                        | Install             | Haptic feedback on gestures and interactions.                                                                                       |
+| `android.permission.SET_WALLPAPER`                  | Install             | Set the home screen wallpaper from the launcher.                                                                                    |
+| `android.permission.RECEIVE_BOOT_COMPLETED`         | Install             | Restore the launcher and restart services after the device reboots.                                                                 |
+| `android.permission.EXPAND_STATUS_BAR`              | Install (signature) | Expand the notification shade / quick settings from a swipe action.                                                                 |
+| `android.permission.REQUEST_INSTALL_PACKAGES`       | Special access      | Install APK files opened through a launcher action.                                                                                 |
+| `android.permission.REQUEST_DELETE_PACKAGES`        | Install             | Offer to uninstall an app from the launcher (the system asks for confirmation).                                                     |
+| `android.permission.BIND_APPWIDGET`                 | Install             | Bind widgets to the home screen.                                                                                                    |
+| `com.android.alarm.permission.SET_ALARM`            | Install             | Start the system alarm-clock flow from an action.                                                                                   |
+| `android.permission.SCHEDULE_EXACT_ALARM`           | Special access      | Schedule exact alarms for Wellbeing timers.                                                                                         |
+| `android.permission.FOREGROUND_SERVICE`             | Install             | Run foreground services (Wellbeing timers, overlay reminders).                                                                      |
+| `android.permission.FOREGROUND_SERVICE_SPECIAL_USE` | Install             | Foreground service type `specialUse` for the timer overlay.                                                                         |
+| `android.permission.SYSTEM_ALERT_WINDOW`            | Special access      | Show the Wellbeing "time to stop" popup over other apps.                                                                            |
+| `android.permission.PACKAGE_USAGE_STATS`            | Special access      | Optional: usage statistics for the Wellbeing feature.                                                                               |
+| `android.permission.KILL_BACKGROUND_PROCESSES`      | Install             | Stop a tracked app when its timer expires (Wellbeing).                                                                              |
+| `android.permission.INTERACT_ACROSS_USERS`          | Install (signature) | Interact with the work profile / other Android users.                                                                               |
+| `android.permission.INTERACT_ACROSS_USERS_FULL`     | Install (signature) | Full cross-user access (work profile, private space).                                                                               |
+| `android.permission.ACCESS_HIDDEN_PROFILES`         | Install             | Android 15+: access apps in Private Space and other hidden profiles.                                                                |
 
 ## Privacy & security
 
 * **No** data collection
-* Dragon Launcher has not even access to internet -> it cannot steal your data
-* No intrusive permissions requested for the app to work
-  - `android.permission.SYSTEM_ALERT_WINDOW` is used by the Wellbeing Feature, to display over other apps a popup telling the user when to stop using the app (social media or other)
-  - `android.permission.READ_PHONE_STATE` is used by the status bar to get info about the connectivity states, wifi, bluetooth, data... even hotspot.
+* Dragon Launcher has no access to the internet -> it cannot steal your data
 * Uses Accessibility permissions (optionally) to:
     1. Expand notifications panel (needed by android)
         - Uses accessibility to expand the notifications panel
@@ -109,15 +97,9 @@ The reason is likely that Dragon asks for _sensitive permissions_ - normal, that
     3. Open recent apps (needed by Android)
         - You can choose to open the recent apps, just like when you click on the Square button, or do the recent apps
           gesture
-    4. Auto launch Dragon on system launcher detected (used by some Xiaomi users that cannot set another default
-       launcher without loosing the gesture navigation)
+    4. Auto launch Dragon on system launcher detected (used by some Xiaomi users that cannot set another default launcher without losing the gesture navigation)
         - It will launch Dragon Launcher when the accessibility detects that you entered your system launcher, for a
           default launcher-like experience when it cannot be set as android default (configurable in debug settings)
-* Can set the Launcher as device admin
-    * used for some OEMs to prevent it from killing the app, especially on Xiaomi/HyperOS devices that have really
-      strong battery optimization features
-    * used also for users that need the previous auto launch on system launcher, to prevent the accessibility services
-      to be killed
 * All data stored locally (you can backup manually or use the auto backup feature)
 
 ---
