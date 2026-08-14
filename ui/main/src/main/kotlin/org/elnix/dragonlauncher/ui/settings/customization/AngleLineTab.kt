@@ -90,9 +90,9 @@ fun AngleLineTab() {
     val rgbLine by AngleLineSettingsStore.rgbLine.asState()
 
     var mutableLineObject by remember(lineObjects.line) { mutableStateOf(lineObjects.line) }
-    var mutableAngleLineObject by remember(lineObjects.line) { mutableStateOf(lineObjects.angleLine) }
-    var mutableStartObject by remember(lineObjects.line) { mutableStateOf(lineObjects.startLine) }
-    var mutableEndObject by remember(lineObjects.line) { mutableStateOf(lineObjects.endLine) }
+    var mutableAngleLineObject by remember(lineObjects.angleLine) { mutableStateOf(lineObjects.angleLine) }
+    var mutableStartObject by remember(lineObjects.startLine) { mutableStateOf(lineObjects.startLine) }
+    var mutableEndObject by remember(lineObjects.endLine) { mutableStateOf(lineObjects.endLine) }
 
     var currentEditObject by remember { mutableStateOf(AngleObject.Line) }
 
