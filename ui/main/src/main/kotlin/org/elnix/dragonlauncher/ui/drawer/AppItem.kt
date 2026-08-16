@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.ui.drawer
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -53,45 +54,47 @@ fun AppItemHorizontal(
         HorizontalAlignment.End -> Arrangement.End
     }
 
-    Row(
-        horizontalArrangement = alignment,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.large)
-            .conditional(selected) {
-                background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
+    Box {
+        Row(
+            horizontalArrangement = alignment,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.large)
+                .conditional(selected) {
+                    background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
+                }
+                .combinedClickable(
+                    onLongClick = {
+                        if (longPressPopup) showLongPressPopup = true
+                        else onLongClick?.invoke(app)
+                    },
+                    onClick = { onClick?.invoke(app) }
+                )
+                .padding(5.dp)
+        ) {
+
+            if (drawerSettings.showAppIconsInDrawer) {
+                AppIcon(app, drawerSettings.iconSize)
             }
-            .combinedClickable(
-                onLongClick = {
-                    if (longPressPopup) showLongPressPopup = true
-                    else onLongClick?.invoke(app)
-                },
-                onClick = { onClick?.invoke(app) }
-            )
-            .padding(5.dp)
-    ) {
 
-        if (drawerSettings.showAppIconsInDrawer) {
-            AppIcon(app, drawerSettings.iconSize)
+            if (drawerSettings.showAppLabelsInDrawer) {
+                Spacer(drawerSettings.iconsSpacingHorizontal)
+                Text(
+                    text = app.label,
+                    color = drawerSettings.labelTextColor.specifiedOrNull() ?: MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.labelSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
-
-        if (drawerSettings.showAppLabelsInDrawer) {
-            Spacer(drawerSettings.iconsSpacingHorizontal)
-            Text(
-                text = app.label,
-                color = drawerSettings.labelTextColor.specifiedOrNull() ?: MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.labelSmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+        DragonDropDownMenu(
+            expanded = showLongPressPopup,
+            onDismissRequest = { showLongPressPopup = false }
+        ) {
+            AppLongPressPopup(app) { showLongPressPopup = false }
         }
-    }
-    DragonDropDownMenu(
-        expanded = showLongPressPopup,
-        onDismissRequest = { showLongPressPopup = false }
-    ) {
-        AppLongPressPopup(app) { showLongPressPopup = false }
     }
 }
 
@@ -112,42 +115,44 @@ fun AppItemGrid(
     var showLongPressPopup by remember { mutableStateOf(false) }
 
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(drawerSettings.iconsSpacingVertical),
-        modifier = Modifier
-            .clip(MaterialTheme.shapes.large)
-            .conditional(selected) {
-                background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
+    Box {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(drawerSettings.iconsSpacingVertical),
+            modifier = Modifier
+                .clip(MaterialTheme.shapes.large)
+                .conditional(selected) {
+                    background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
+                }
+                .combinedClickable(
+                    onLongClick = {
+                        if (longPressPopup) showLongPressPopup = true
+                        else onLongClick?.invoke(app)
+                    },
+                    onClick = { onClick?.invoke(app) }
+                )
+                .padding(5.dp)
+        ) {
+            if (drawerSettings.showAppIconsInDrawer) {
+                AppIcon(app, drawerSettings.iconSize)
             }
-            .combinedClickable(
-                onLongClick = {
-                    if (longPressPopup) showLongPressPopup = true
-                    else onLongClick?.invoke(app)
-                },
-                onClick = { onClick?.invoke(app) }
-            )
-            .padding(5.dp)
-    ) {
-        if (drawerSettings.showAppIconsInDrawer) {
-            AppIcon(app, drawerSettings.iconSize)
+
+            if (drawerSettings.showAppLabelsInDrawer) {
+                Text(
+                    text = app.label,
+                    color = drawerSettings.labelTextColor.specifiedOrNull() ?: MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.labelSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
 
-        if (drawerSettings.showAppLabelsInDrawer) {
-            Text(
-                text = app.label,
-                color = drawerSettings.labelTextColor.specifiedOrNull() ?: MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.labelSmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+        DragonDropDownMenu(
+            expanded = showLongPressPopup,
+            onDismissRequest = { showLongPressPopup = false }
+        ) {
+            AppLongPressPopup(app) { showLongPressPopup = false }
         }
-    }
-
-    DragonDropDownMenu(
-        expanded = showLongPressPopup,
-        onDismissRequest = { showLongPressPopup = false }
-    ) {
-        AppLongPressPopup(app) { showLongPressPopup = false }
     }
 }
