@@ -774,7 +774,7 @@
     <string name="package_search">应用底层 Package 命名全局检索</string>
     <string name="test_overlays">压力演练演习悬浮顶层浮窗组件</string>
     <string name="risky">前方高能高危！不建议盲目倒腾</string>
-    <string name="pin_code_warning_titls">极重要安全警告：存在潜在的全盘数据付诸东流风险</string>
+    <string name="pin_code_warning_title">极重要安全警告：存在潜在的全盘数据付诸东流风险</string>
     <string name="pin_code_warning_desc">请务必将设定的 PIN 密码烂熟于心！一旦不慎遗忘，没有任何找回机制，届时您将别无选择，只能被迫移步前往安卓系统应用信息详情菜单中，将该启动器的所有底层AppData和设置全盘抹除清空，方可重新进入桌面</string>
     <string name="do_something">执行某些动作</string>
     <string name="warning_title">极其严正的数字主权警告</string>

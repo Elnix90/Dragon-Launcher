@@ -277,7 +277,7 @@
     <string name="wallpaper_dim">Wallpaper dim</string>
     <string name="fullscreen_description">Display or not the top bar and the navigation buttons / gesture button</string>
     <string name="rgb_loading_description">Show a RBG gradient on the loading circle upon entering settings, while holding down for 3 seconds</string>
-    <string name="rgb_line_selector_description">Show the action selector (the line that follows your finger) in a RGB gradient depending no the angle</string>
+    <string name="rgb_line_selector_description">Show the action selector (the line that follows your finger) in an RGB gradient depending on no the angle</string>
     <string name="show_launching_app_label_description">Whether the app / action label is visible when an action is selected in the top of the screen</string>
     <string name="show_launching_app_icon_description">Whether to display the app / action icon when an action is selected on top of the screen</string>
     <string name="show_app_line_preview_desc">Whether to display the trail that goes from the start dragging position to the finger</string>
@@ -329,7 +329,7 @@
 
     <!--  ─────────────  Digital Pause Screen  ─────────────  -->
     <string name="pause_breathe_1">Take a moment to breathe…</string>
-    <string name="pause_breathe_2">Be present in this moment…</string>
+    <string name="pause_breathe_2">Be present at this moment…</string>
     <string name="pause_breathe_3">Is this what you really need right now?</string>
     <string name="pause_breathe_4">Your attention is precious…</string>
     <string name="pause_breathe_5">Reconnect with the present…</string>
@@ -400,7 +400,7 @@
     <string name="edit_icons_shape_desc">Customize the shape on the icons in the drawer and the rest of the app</string>
     <string name="random_shape">Random Shape</string>
     <string name="grid_size">Grid Size</string>
-    <string name="grid_size_desc">The number of app icons in the width on the drawer</string>
+    <string name="grid_size_desc">The number of app in the width on the drawer</string>
 
     <string name="icons_spacing_vertical">icons Spacing vertical</string>
     <string name="icons_spacing_horizontal">icons Spacing horizontal</string>
@@ -680,8 +680,8 @@
     <string name="invert">Invert</string>
     <string name="advanced">Advanced</string>
     <string name="yoann_desc">Important contributor (Extensions, performances, widgets)</string>
-    <string name="lucky_desc">Imortant contributor (Digital wellbeing and reminders)</string>
-    <string name="federico_desc">Imortant contributor (Widgets screen features and translations)</string>
+    <string name="lucky_desc">Important contributor (Digital wellbeing and reminders)</string>
+    <string name="federico_desc">Important contributor (Widgets screen features and translations)</string>
     <string name="copied_to_clipboard">Copied to clipboard!</string>
     <string name="permission_tab_help">Control the app permissions, and different access it has to external extensions</string>
     <string name="special_system_access">Special system access</string>
@@ -695,7 +695,7 @@
     <string name="android_permissions">Android Permissions</string>
     <string name="manage_in_system_settings">Manage in system settings.</string>
     <string name="snap_points_angle">Snap Points angle</string>
-    <string name="snap_points_angle_desc">Give a rounded angle to the points, such as snapping to 0° when close to 0°</string>
+    <string name="snap_points_angle_desc">Give a rounded angle to the points, such as snapping to 0° when close to 0° (multiple od 15°)</string>
     <string name="snap_points">Snap Points</string>
     <string name="snap_points_desc">Snap the Points to a virtual grid, configurable</string>
     <string name="undo">Undo</string>
@@ -725,11 +725,11 @@
     <string name="reset_nest_desc">You\'ll lose all custom values you changed!</string>
     <string name="use_custom_color_channels">Use custom color channels</string>
     <string name="use_custom_color_channels_desc">Override the default color channels used for the material objects, such as switches, to use mine</string>
-    <string name="hold_settings_help">The settings related to the arc that spawns when you hold for long enough on the  main screen, You cannot fully disable it, otherwise, you could loose the last door that can lead you to settings, if you did shit, and so be forced to reset the app.</string>
+    <string name="hold_settings_help">The settings related to the arc that spawns when you hold for long enough on the  main screen, You cannot fully disable it, otherwise, you could lose the last door that can lead you to settings, if you did shit, and so be forced to reset the app.</string>
     <string name="rotation_per_second">Rotations/second</string>
     <string name="rotation_per_second_desc">How many turns on itself it does in one second</string>
     <string name="enable_backup">Enable backup</string>
-    <string name="choose_a_auto_backup_file">Choose a auto backup file</string>
+    <string name="choose_a_auto_backup_file">Choose an auto backup file</string>
     <string name="minus_one_means_random">-1 means random on start</string>
     <string name="search_bar">Search Bar</string>
     <string name="toolbars_order">Toolbars order</string>
@@ -767,7 +767,7 @@
     <string name="access_app">Access app (you may experience crash again)</string>
     <string name="shizuku_unavailable">Shizuku is unavailable</string>
     <string name="shizuku_unavailable_message">Shizuku is not installed or properly configured on your device</string>
-    <string name="shizuku">Shizuku</string>
+    <string name="shizuku" translatable="false">Shizuku</string>
     <string name="run_adb_command">Run ADB command</string>
     <string name="toggle_bluetooth">Toggle Bluetooth</string>
     <string name="toggle_mobile_data">Toggle Mobile Data</string>
@@ -833,12 +833,12 @@
     <string name="live_nest_depth">Live nests depth</string>
     <string name="enter_adb_command">Enter ADB Command</string>
     <string name="command_output">Command output</string>
-    <string name="adb_command_leave_empty_notice">💡 Leave empty to be promted for the command when running it</string>
+    <string name="adb_command_leave_empty_notice">💡 Leave empty to be prompted for the command when running it</string>
     <string name="dragon_launcher_headline">A new way to make your interface yours</string>
     <string name="other">Other</string>
     <string name="kill_launcher">Kill Launcher</string>
     <string name="multiply_or_subtract_opacity_in_live_nests">Multiply or subtract opacity in live nests</string>
-    <string name="multiply_or_subtract_opacity_in_live_nests_desc">When off, it multiplies opacity to give clean ui, and when on, it subtract it, to reach faster the 0 opacity and hide lower nests to avoid ui cluttering</string>
+    <string name="multiply_or_subtract_opacity_in_live_nests_desc">When off, it multiplies opacity to give clean ui, and when on, it subtracts it, to reach faster the 0 opacity and hide lower nests to avoid ui cluttering</string>
     <string name="align_start">Start</string>
     <string name="align_center">Center</string>
     <string name="align_end">End</string>
@@ -873,7 +873,7 @@
     <string name="package_search">Package Search</string>
     <string name="test_overlays">Test overlays</string>
     <string name="risky">Risky</string>
-    <string name="pin_code_warning_titls">Warning: Potential data loss</string>
+    <string name="pin_code_warning_title">Warning: Potential data loss</string>
     <string name="pin_code_warning_desc">To reset in case you forget it, you have no choice but to reset all app settings via android app info menu</string>
     <string name="do_something">Do something</string>
     <string name="warning_title">Important Warning</string>
@@ -900,11 +900,11 @@
     <string name="force_app_language_selector">Force app language selector</string>
     <string name="force_app_language_selector_desc">Don\'t use the android language selector when available, always uses the app\'s native</string>
     <string name="hide_beta_version_warning">Hide beta version warning</string>
-    <string name="hide_beta_version_warning_desc">Hides the beta version warning in top of the adv settings screen</string>
+    <string name="hide_beta_version_warning_desc">Hides the beta version warning in top of the settings screen</string>
     <string name="show_set_default_launcher_banner">Show set default launcher banner</string>
     <string name="show_set_default_launcher_banner_desc">If disabled, it won\'t appear if Dragon isn\'t the default launcher</string>
     <string name="show_fps">Show FPS</string>
-    <string name="show_fps_desc">Display a FPS graph on top of everything</string>
+    <string name="show_fps_desc">Display an FPS graph on top of everything</string>
     <string name="filter_tag">Filter tag</string>
     <string name="enable_logging">Enable logging</string>
     <string name="enable_logging.desc">Store all logs in app storage, and can be copied or exported</string>
@@ -914,12 +914,12 @@
     <string name="show_kill_launcher_action_desc">If false, the kill launcher action is hidden</string>
     <string name="files_log_level">Files log level</string>
     <string name="snackbar_log_level">snackbar_log_level</string>
-    <string name="snackbar_log_level_desc">e</string>
-    <string name="files_log_level_desc">e</string>
+    <string name="snackbar_log_level_desc" translatable="false">e</string>
+    <string name="files_log_level_desc" translatable="false">e</string>
     <string name="recently_used_apps_count_desc">How many recent apps show up in the drawer</string>
     <string name="themed_icons">Themed icons</string>
     <string name="force_themed">Force themed</string>
-    <string name="adaptify">Adaptify</string>
+    <string name="adaptify" translatable="false">Adaptify</string>
     <string name="do_not_remind_me_again_pin_lock">Do not remind me again Pin Lock</string>
     <string name="do_not_remind_me_again_pin_lock_desc">Whether to show the pin code warning when setting a pin</string>
     <string name="left_padding_status_bar_desc">Left blank space on the status bar</string>
@@ -930,7 +930,7 @@
     <string name="profile">Profile</string>
     <string name="themed_icons_desc">Whether or not to use material themed icons</string>
     <string name="force_themed_icons_desc">Apply the themed icons even for those who aren\'t normally compatible</string>
-    <string name="adaptify_icons_desc">I have no idea what this option does but it was there when I copied some icons logic</string>
+    <string name="adaptify_icons_desc">I have no idea what this option does, but it was there when I copied some icons logic</string>
     <string name="icons_tint">The tint that is applied to icons</string>
     <string name="only_tint_icon_packs">Only tint Icon Packs</string>
     <string name="only_tint_icon_packs_desc">Tinted app icons with no packs can be ugly if they don\'t have a transparent layer</string>
@@ -942,7 +942,7 @@
     <string name="show_all_actions_on_current_shape_desc">When you use intersection shapes, all points on the current selected one will be showed</string>
     <string name="open_nest">Open Nest</string>
     <string name="delete_nest">Delete Nest</string>
-    <string name="nest_debug_overlay">Nest debug overlay</string>
+    <string name="nest_debug_overlay" translatable="false">Nest debug overlay</string>
     <string name="nest_debug_overlay_desc">Adds some visual debug features in the drawing of nests</string>
     <string name="auto_merge">Auto merge</string>
     <string name="auto_merge_desc">Can trigger actions when hovering a point with another, such as merging them to a new Nest</string>
@@ -982,9 +982,7 @@
     <string name="app_label_icon_overlay_top_padding_desc">How much padding is applied on top for the top overlay</string>
     <string name="self_explanatory">Self-explanatory</string>
     <string name="dangerous_actions">Dangerous Actions</string>
-    <string name="caches_debug_overlay">Caches debug overlay</string>
-    <string name="caches_debug_overlay_desc">Display an overlay with the real time size of certain caches</string>
-    <string name="start_ang_angle_share_same_random_angle_desc">The angle object and the start will have the same random angle, to have clean drawing whan they are the same shape</string>
+    <string name="start_ang_angle_share_same_random_angle_desc">The angle object and the start will have the same random angle, to have clean drawing when they are the same shape</string>
     <string name="start_ang_angle_share_same_random_angle">Angle and start share the same angle</string>
     <string name="align_with_angle">Align with angle</string>
     <string name="align_with_angle_desc">Used to rotate the shape according to the drag angle, might be used to get clean results</string>
@@ -1030,7 +1028,7 @@
     <string name="draw_pattern">Draw pattern</string>
     <string name="set_pattern">Set pattern</string>
     <string name="confirm_pattern">Confirm Pattern</string>
-    <string name="pattern_size_desc">The number on dots in each row/column (its always a square)</string>
+    <string name="pattern_size_desc">The number on dots in each row/column (it\'s always a square)</string>
     <string name="pattern_size">Pattern Size</string>
     <string name="export_apk">Export APK</string>
     <string name="allow_free_points">Allow free points</string>
@@ -1042,12 +1040,12 @@
     <string name="migrating_settings">Migrating settings…</string>
     <string name="migrate_from_322">Migrate from version 3.3.2</string>
     <string name="migrate_from_322_desc">Your backup seems to come from the version 3.2.2 and needs to be migrated to the new version. Would you like to proceed?</string>
-    <string name="migrate_from_322_desc_forced">Welcome to this new version of Dragon, to continue your settings will perform an autonomous migration to the new system.</string>
+    <string name="migrate_from_322_desc_forced">Welcome to this new version of Dragon! To continue, your settings will perform an autonomous migration to the new system. It is recommended to keep the old backup file in case of issues. If anything fails, please address me (Elnix90) immediately via any mean you\'d like (in \"about\" section in settings) to report me the issue and let me fix it ASAP</string>
     <string name="migrating_settings_desc">Converting your backup from 3.2.2 to 4.0.0 format. Please wait.</string>
     <string name="migrating_settings_desc_kidding">Just kidding, it doesn\'t take that long :)</string>
     <string name="migration_complete">Migration completed</string>
     <string name="migration_had_issues">Migration had issues</string>
-    <string name="buy_me_a_coffee">Buy me a coffee</string>
+    <string name="buy_me_a_coffee" translatable="false">Buy me a coffee</string>
     <string name="render_foreground">Render Foreground</string>
     <string name="render_foreground_desc">Whether or not to render the foreground layer of the icons</string>
     <string name="render_background">Render Background</string>

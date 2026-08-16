@@ -774,7 +774,7 @@
     <string name="package_search">தொகுப்பு தேடல்</string>
     <string name="test_overlays">சோதனை மேலடுக்குகள்</string>
     <string name="risky">அபாயகரமானது</string>
-    <string name="pin_code_warning_titls">எச்சரிக்கை: சாத்தியமான தரவு இழப்பு</string>
+    <string name="pin_code_warning_title">எச்சரிக்கை: சாத்தியமான தரவு இழப்பு</string>
     <string name="pin_code_warning_desc">நீங்கள் அதை மறந்துவிட்டால் மீட்டமைக்க, ஆண்ட்ராய்டு பயன்பாட்டுத் செய்தி பட்டியல் வழியாக எல்லா பயன்பாட்டு அமைப்புகளையும் மீட்டமைப்பதைத் தவிர வேறு வழியில்லை.</string>
     <string name="do_something">ஏதாவது வெற்றி</string>
     <string name="warning_title">முக்கியமான முன்னறிவிப்பு</string>

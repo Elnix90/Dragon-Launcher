@@ -175,7 +175,7 @@
     <string name="package_search">البحث عن الحزم</string>
     <string name="test_overlays">اختبار التراكبات</string>
     <string name="risky">مخاطرة</string>
-    <string name="pin_code_warning_titls">تحذير: فقدان محتمل للبيانات</string>
+    <string name="pin_code_warning_title">تحذير: فقدان محتمل للبيانات</string>
     <string name="pin_code_warning_desc">لإعادة الضبط في حال نسيانه، ليس أمامك خيار سوى إعادة ضبط جميع إعدادات التطبيق عبر قائمة معلومات التطبيق في أندرويد</string>
     <string name="do_something">افعل شيئاً</string>
     <string name="warning_title">تحذير هام</string>

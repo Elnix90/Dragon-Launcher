@@ -766,7 +766,7 @@
     <string name="object_properties">Propiedades de Objeto</string>
     <string name="security">Seguridad</string>
     <string name="risky">Arriesgado</string>
-    <string name="pin_code_warning_titls">Aviso: Pérdida de datos potencial</string>
+    <string name="pin_code_warning_title">Aviso: Pérdida de datos potencial</string>
     <string name="do_something">Haga algo</string>
     <string name="warning_title">Aviso Importante</string>
     <string name="warning_subtitle">Su foto es acerca de la detención siendo suya.</string>

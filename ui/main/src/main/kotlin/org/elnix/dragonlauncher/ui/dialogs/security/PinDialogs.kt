@@ -210,7 +210,7 @@ fun PinSetup(
 
     if (showWarningDialog) {
         UserValidation(
-            title = stringResource(R.string.pin_code_warning_titls),
+            title = stringResource(R.string.pin_code_warning_title),
             message = stringResource(R.string.pin_code_warning_desc),
             doNotRemindMeAgain = {
               scope.launch {
