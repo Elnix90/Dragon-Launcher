@@ -252,7 +252,9 @@ internal object OldToNewStoreMapping {
         ),
         "backup" to StoreMapping(
             oldBackupKey = "backup",
-            newBackupKey = "backup"
+            newBackupKey = "backup",
+            // Skips the auto backup uri so that it won't overwrite the auto backup if anything goes wrong
+            skipKeys = setOf("autoBackupUri")
         ),
         "widgets" to StoreMapping(
             oldBackupKey = "widgets",
