@@ -43,8 +43,10 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.animation.barsContentTransform
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import java.text.NumberFormat
+import java.text.ParseException
 import java.util.Locale.getDefault
 import kotlin.math.roundToInt
+
 
 /**
  * Internal slider implementation shared by all SliderWithLabel overloads.
@@ -92,33 +94,50 @@ private fun SliderWithLabelInternal(
     val interactionSource = remember { MutableInteractionSource() }
     val formatter = remember { NumberFormat.getInstance(getDefault()) }
 
-    var editingText by remember(valueText) { mutableStateOf(valueText) }
+    var editingText by remember { mutableStateOf(valueText) }
     var isEditing by remember { mutableStateOf(false) }
     var isError by remember { mutableStateOf(false) }
 
     val currentOnChange by rememberUpdatedState(onChange)
     val currentOnDragStateChange by rememberUpdatedState(onDragStateChange)
 
+    // Sync the text with external value changes (slider drag, programmatic updates).
+    // The state must NOT be re-created on valueText change: the focus-interaction
+    // collector below captures `onDone` once, and re-creating the state would make it
+    // read an orphaned/stale value after the first commit.
+    LaunchedEffect(valueText) {
+        if (!isEditing) editingText = valueText
+    }
+
     fun onDone() {
         try {
-            val parsedNumber = formatter.parse(editingText.trim())?.toFloat() ?: throw NumberFormatException("Empty input")
+            val editingTrimmed = editingText.trim()
+            if (editingTrimmed.isEmpty()) throw NumberFormatException("Empty input")
+
+            val parsedNumber = formatter.parse(editingText.trim())?.toFloat() ?: throw ParseException("Empty input", 0)
 
             val newValue = parsedNumber.coerceIn(valueRange)
 
             currentOnDragStateChange?.invoke(true)
             currentOnChange(newValue)
             currentOnDragStateChange?.invoke(false)
-        } catch (_: Exception) {
+
+        } catch (_: ParseException) {
             isError = true
             ctx.showToast("Failed to parse number")
-            // Ignore malformed input - slider keeps its current value
+        } catch (_: NumberFormatException) {
+            isError = true
+            ctx.showToast("Empty input")
+        } catch (_: Exception) {
+            isError = true
+            ctx.showToast("Unknown error")
         }
+
         focusManager.clearFocus()
     }
 
-    BackHandler(isEditing) {
-        onDone()
-    }
+
+    BackHandler(isEditing, onBack = ::onDone)
 
     LaunchedEffect(interactionSource) {
         interactionSource.interactions.collect { interaction ->
@@ -160,8 +179,8 @@ private fun SliderWithLabelInternal(
                 enabled = enabled,
                 interactionSource = interactionSource,
                 value = editingText,
-                onValueChange = {
-                    editingText = it
+                onValueChange = { newValue ->
+                    editingText = newValue
                     isError = false
                 },
                 textStyle = TextStyle(
@@ -365,7 +384,7 @@ fun SliderWithLabel(
  * @param onChange Callback invoked when the value changes
  */
 @Composable
-fun  SliderWithLabel(
+fun SliderWithLabel(
     modifier: Modifier = Modifier,
     label: String,
     description: String? = null,
