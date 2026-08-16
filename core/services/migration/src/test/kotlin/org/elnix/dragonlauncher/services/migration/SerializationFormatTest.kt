@@ -24,7 +24,6 @@ class SerializationFormatTest {
 
         val ws = Workspace(
             id = "user",
-            name = "User",
             type = WorkspaceType.User,
             appIds = setOf(CacheKey("org.elnix.dragonlauncher", 0)),
             removedAppIds = setOf(CacheKey("org.elnix.dragonlauncher", 0)),
