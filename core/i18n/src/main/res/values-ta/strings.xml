@@ -261,7 +261,6 @@
     <string name="move_selected_widget_down">தேர்ந்தெடுக்கப்பட்ட விட்செட்டை கீழே நகர்த்தவும்</string>
     <string name="enable_scale_snap">அளவுகோல் ச்னாப்பை இயக்கு</string>
     <string name="home_action">முகப்பு நடவடிக்கை</string>
-
     <string name="fullscreen_description">மேல் பட்டை மற்றும் வழிசெலுத்தல் பொத்தான்கள் / சைகை பொத்தானைக் காட்டவும் அல்லது காட்டவும்</string>
     <string name="rgb_loading_description">3 வினாடிகள் கீழே வைத்திருக்கும் போது, அமைப்புகளை உள்ளிடும்போது, ஏற்றுதல் வட்டத்தில் RBG சாய்வு காட்டவும்</string>
     <string name="rgb_line_selector_description">ஆக்சன் செலக்டரை (உங்கள் விரலைப் பின்தொடரும் கோடு) கோணத்தைப் பொறுத்து RGB சாய்வில் காட்டவும்</string>
@@ -372,7 +371,6 @@
     <string name="edit_icons_shape_desc">டிராயரில் உள்ள ஐகான்களிலும், ஆப்சின் மற்ற பகுதிகளிலும் வடிவத்தைத் தனிப்பயனாக்கவும்</string>
     <string name="random_shape">சீரற்ற வடிவம்</string>
     <string name="grid_size">கட்ட அளவு</string>
-
     <string name="icons_spacing_vertical">ஐகான்கள் செங்குத்து இடைவெளி</string>
     <string name="icons_spacing_horizontal">சின்னங்கள் கிடைமட்ட இடைவெளி</string>
     <string name="depth">ஆழம்</string>
@@ -444,7 +442,6 @@
     <string name="show_app_icons_in_drawer_desc">பயன்பாட்டு ஐகான்களைக் காட்டவும் அல்லது அது கட்டம் அல்ல</string>
     <string name="show_app_labels_in_drawer">டிராயரில் பயன்பாட்டு லேபிள்களைக் காட்டு</string>
     <string name="show_app_labels_in_drawer_desc">பயன்பாட்டின் பெயர்களை அவற்றின் ஐகான்களுடன் காட்டவும் அல்லது காட்டவும்</string>
-
     <string name="icons_spacing_vertical_desc">செங்குத்து சின்னங்கள் திணிப்பு</string>
     <string name="icons_spacing_horizontal_desc">கிடைமட்ட சின்னங்கள் திணிப்பு</string>
     <string name="category_settings">வகை அமைப்புகள்</string>
@@ -605,7 +602,6 @@
     <string name="yoann_desc">முக்கிய பங்களிப்பாளர் (நீட்டிப்புகள், செயல்திறன், விட்செட்டுகள்)</string>
     <string name="lucky_desc">முக்கிய பங்களிப்பாளர் (டிசிட்டல் நல்வாழ்வு மற்றும் நினைவூட்டல்கள்)</string>
     <string name="federico_desc">முக்கியமான பங்களிப்பாளர் (விட்செட்ச் திரை நற்பொருத்தங்கள் மற்றும் மொழிபெயர்ப்பு)</string>
-
     <string name="permission_tab_help">பயன்பாட்டு அனுமதிகளைக் கட்டுப்படுத்தவும், வெளிப்புற நீட்டிப்புகளுக்கு வெவ்வேறு அணுகல் உள்ளது</string>
     <string name="special_system_access">சிறப்பு அமைப்பு அணுகல்</string>
     <string name="notification_access">அறிவிப்பு அணுகல்</string>
