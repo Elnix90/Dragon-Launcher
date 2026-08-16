@@ -1,0 +1,11 @@
+4.0.0 (Caterpillar)
+2026-08-16
+[NEW]
+* Complete app refactor
+* Completely reworked EVERYTHING
+* Points are now driven by their Vectors, not the circle and angle anymore.
+[IMPROVED]
+* Completely reworked icons system. It's now complete and hardened
+* Completely reworked all the UI
+[FIXED]
+* Fixed most of the issues the app had. almost all the previous code has changed.
