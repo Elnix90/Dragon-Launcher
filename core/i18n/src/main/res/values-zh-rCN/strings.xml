@@ -261,7 +261,6 @@
     <string name="move_selected_widget_down">向下移动选中部件</string>
     <string name="enable_scale_snap">启用缩放吸附</string>
     <string name="home_action">主页键动作</string>
-
     <string name="fullscreen_description">是否在顶部状态栏和导航栏/手势提示条处进行全屏隐藏</string>
     <string name="rgb_loading_description">进入设置长按 3 秒时，在加载圆圈上显示 RGB 渐变特效</string>
     <string name="rgb_line_selector_description">根据手指拖动的角度，以 RGB 渐变色显示动作选择线（随手指移动的线条）</string>
@@ -372,7 +371,6 @@
     <string name="edit_icons_shape_desc">自定义抽屉及应用其余部分中图标的裁剪形状</string>
     <string name="random_shape">随机形状</string>
     <string name="grid_size">网格大小</string>
-
     <string name="icons_spacing_vertical">图标垂直间距</string>
     <string name="icons_spacing_horizontal">图标水平间距</string>
     <string name="depth">最大渲染深度</string>
@@ -444,7 +442,6 @@
     <string name="show_app_icons_in_drawer_desc">决定是否在网格列表中渲染应用图标</string>
     <string name="show_app_labels_in_drawer">在抽屉中显示应用名称标签</string>
     <string name="show_app_labels_in_drawer_desc">决定是否在图标旁显示对应的应用名称</string>
-
     <string name="icons_spacing_vertical_desc">图标垂直外边距</string>
     <string name="icons_spacing_horizontal_desc">图标水平外边距</string>
     <string name="category_settings">分类设置</string>
@@ -605,7 +602,6 @@
     <string name="yoann_desc">重要开源贡献者（主导：扩展生态、全局性能调优、桌面小部件架构设计）</string>
     <string name="lucky_desc">重要开源贡献者（主导：数字健康模块、正念呼吸与防分心使用提醒）</string>
     <string name="federico_desc">重要开源贡献者（主导：独立部件版面交互特性开发与多国语言翻译工作）</string>
-
     <string name="permission_tab_help">集中统筹本应用的各项系统关键权限，以及核查本软件对外部扩展模块的互联调用安全凭证</string>
     <string name="special_system_access">系统特殊高级访问权限</string>
     <string name="notification_access">通知栏读取读取控制权 (Notification Access)</string>
