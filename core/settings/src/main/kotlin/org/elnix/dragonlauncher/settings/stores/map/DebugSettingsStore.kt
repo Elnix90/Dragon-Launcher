@@ -37,19 +37,11 @@ public object DebugSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val cachesDebugOverlay: BooleanSettingObject = boolean(
-        title = R.string.caches_debug_overlay,
-        description = R.string.caches_debug_overlay_desc,
-        default = false
-    )
-
-    @SettingKey
     public val nestDebugInfo: BooleanSettingObject = boolean(
         title = R.string.nest_debug_info,
         description = R.string.nest_debug_info_desc,
         default = false
     )
-
 
     @SettingKey
     public val settingsDebugInfo: BooleanSettingObject = boolean(
