@@ -1,8 +1,8 @@
 <div align="center">
 
-# [![Keep Android Open](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.cybernews.com%2Fimages%2Ffeatured-big%2F2025%2F10%2Fkeep-android-open.jpg&f=1&nofb=1&ipt=6735a2941b603358cc56f61e6fc5996b512212d6b43a4b4b3004f95e2a6e7315)](https://keepandroidopen.org/)
-
 # [KEEP ANDROID OPEN](https://keepandroidopen.org/)
+
+# [![Keep Android Open](https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/keep-android-open.jpg)](https://keepandroidopen.org/)
 
 ---
 
@@ -163,13 +163,6 @@ Dragon Launcher is a launcher: some of the permissions below are required by And
         <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/federico.webp" width="22%" alt="federico Screenshot"/>
     </p>
 </details>
-
-## Usage
-
-* **Long click 3 seconds to access settings**
-* Tap or long-press apps to quickly launch, view options, or uninstall on drawer
-* Customize gestures and visual settings via the Settings menu.
-* Change background for main screen / drawer, add blur to it
 
 ---
 ## Signing
