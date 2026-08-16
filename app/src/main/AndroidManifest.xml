@@ -99,9 +99,9 @@
             android:enableOnBackInvokedCallback="true"
             android:exported="true"
             android:launchMode="singleTask"
+            android:resizeableActivity="true"
             android:resumeWhilePausing="true"
             android:stateNotNeeded="true"
-            android:resizeableActivity="true"
             android:taskAffinity=""
             android:theme="@style/DragonLauncherTheme"
             android:windowSoftInputMode="stateHidden|adjustResize">
@@ -138,7 +138,6 @@
             android:name="org.elnix.dragonlauncher.timer.AppTimerService"
             android:exported="false"
             android:foregroundServiceType="specialUse" />
-
 
 
         <provider
