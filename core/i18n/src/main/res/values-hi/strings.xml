@@ -239,7 +239,6 @@
     <string name="move_selected_widget_down">चयनित विजेट को नीचे ले जाएँ</string>
     <string name="enable_scale_snap">स्केल स्नैप सक्षम करें</string>
     <string name="home_action">होम एक्शन</string>
-
     <string name="fullscreen_description">शीर्ष पट्टी और नेविगेशन बटन/जेस्चर बटन प्रदर्शित करें या नहीं</string>
     <string name="rgb_loading_description">सेटिंग्स में प्रवेश करने पर, 3 सेकंड के लिए दबाए रखते हुए, लोडिंग सर्कल पर एक आरबीजी ग्रेडिएंट दिखाएं</string>
     <string name="rgb_line_selector_description">कोण के आधार पर आरजीबी ग्रेडिएंट में क्रिया चयनकर्ता (वह रेखा जो आपकी उंगली का अनुसरण करती है) दिखाएं</string>
@@ -351,7 +350,6 @@
     <string name="edit_icons_shape_desc">ड्रॉअर और ऐप के बाकी हिस्सों में आइकन पर आकृति को अनुकूलित करें</string>
     <string name="random_shape">यादृच्छिक आकार</string>
     <string name="grid_size">ग्रिड का आकार</string>
-
     <string name="icons_spacing_vertical">प्रतीक लंबवत रिक्ति</string>
     <string name="icons_spacing_horizontal">चिह्न क्षैतिज रिक्ति</string>
     <string name="depth">गहराई</string>
@@ -424,7 +422,6 @@
     <string name="show_app_icons_in_drawer_desc">ऐप आइकन प्रदर्शित करें या ग्रिड नहीं</string>
     <string name="show_app_labels_in_drawer">दराज में ऐप लेबल दिखाएं</string>
     <string name="show_app_labels_in_drawer_desc">ऐप के नाम उनके आइकन के साथ प्रदर्शित करें या नहीं</string>
-
     <string name="icons_spacing_vertical_desc">लंबवत चिह्न पैडिंग</string>
     <string name="icons_spacing_horizontal_desc">क्षैतिज चिह्न पैडिंग</string>
     <string name="category_settings">श्रेणी सेटिंग</string>
