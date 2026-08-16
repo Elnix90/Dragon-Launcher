@@ -9,26 +9,24 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core)
-    implementation(libs.androidx.datastore.preferences)
-    implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.datastore.core)
     implementation(libs.timber)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.serialization.core)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui.unit)
 
     api(libs.androidx.datastore.preferences.core)
-    api(libs.kotlinx.coroutines.core)
+    api(libs.androidx.ui.graphics)
+    api(libs.settings.core)
 
     // My plugin 🤎
-    implementation(libs.settings.core)
-    implementation(libs.settings.runtime)
     implementation(libs.settings.annotations)
 
     implementation(libs.dragon.logging)
 
     implementation(project(":core:ktx"))
-    implementation(project(":core:base"))
+    api(project(":core:base"))
     implementation(project(":core:i18n"))
     api(project(":core:enumsui"))
 }

@@ -9,13 +9,23 @@ android {
 }
 
 dependencies {
-    implementation(libs.bundles.kotlin)
-    implementation(libs.androidx.core)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlin.reflect)
     implementation(libs.dragon.logging)
+    implementation(libs.core)
+    implementation(libs.androidx.annotation)
+    implementation(libs.hilt.core)
+    implementation(libs.javax.inject)
+    implementation(libs.timber)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-    implementation(project(":core:base"))
+    api(libs.dagger)
+    api(libs.kotlinx.coroutines.core)
+
+    runtimeOnly(libs.kotlinx.coroutines.android)
+
+    api(project(":core:base"))
     implementation(project(":core:ktx"))
-    implementation(project(":core:permissions"))
+    api(project(":core:permissions"))
 }

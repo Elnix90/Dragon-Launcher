@@ -8,22 +8,32 @@ android {
 }
 
 dependencies {
-    implementation(libs.bundles.kotlin)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlin.reflect)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.serialization.core)
 
-    implementation(libs.androidx.core)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.bundles.androidx.lifecycle)
-
-    implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.runtime.annotation)
-    implementation(libs.androidx.compose.ui.unit)
     implementation(libs.androidx.ui)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.dragon.logging)
 
-    testImplementation(libs.bundles.test)
+    implementation(libs.core)
+    implementation(libs.androidx.annotation)
+    implementation(libs.androidx.compose.ui.util)
+    implementation(libs.timber)
+
+    api(libs.androidx.fragment)
+    api(libs.androidx.ui.graphics)
+    api(libs.androidx.compose.runtime)
+    api(libs.androidx.compose.ui.unit)
+
+    runtimeOnly(libs.kotlinx.coroutines.android)
+
+    testImplementation(libs.junit)
     testImplementation(libs.androidx.compose.ui.geometry)
-    testImplementation(libs.kotlinx.coroutines.core)
+    testImplementation(libs.androidx.ui.graphics)
+    testRuntimeOnly(libs.androidx.test.core)
 
     testDebugImplementation(libs.robolectric)
 }

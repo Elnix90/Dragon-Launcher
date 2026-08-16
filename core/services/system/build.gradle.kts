@@ -8,17 +8,16 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core)
+    implementation(libs.core)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.dragon.logging)
     implementation(libs.settings.core)
-    implementation(libs.settings.runtime)
     implementation(libs.timber)
 
     api(libs.kotlinx.coroutines.core)
 
-    api(project(":core:ktx"))
-    api(project(":core:base"))
+    implementation(project(":core:ktx"))
     implementation(project(":core:settings"))
+    api(project(":core:base"))
 }

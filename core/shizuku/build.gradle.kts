@@ -8,10 +8,9 @@ android {
 
 dependencies {
     implementation(libs.shizuku.api)
-    implementation(libs.shizuku.provider)
+
     implementation(libs.dragon.logging)
+    implementation(libs.timber)
 
     api(libs.kotlinx.coroutines.core)
-
-    implementation(project(":core:base"))
 }

@@ -8,18 +8,23 @@ android {
 }
 
 dependencies {
-    implementation(libs.bundles.kotlin)
-    implementation(libs.bundles.androidx.lifecycle)
-    implementation(libs.androidx.core)
-    implementation(libs.androidx.appcompat)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlin.reflect)
+    api(libs.kotlinx.collections.immutable)
+    implementation(libs.jakarta.inject)
+    implementation(libs.hilt.core)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-    implementation(project(":core:ktx"))
-    implementation(project(":core:i18n"))
-    implementation(project(":core:base"))
-    implementation(project(":core:profiles"))
-    implementation(project(":data:appoverrides"))
-    implementation(project(":core:services:compat"))
+    api(libs.dagger)
+    api(libs.kotlinx.coroutines.core)
+
+    runtimeOnly(libs.kotlinx.coroutines.android)
+
+    api(project(":core:i18n"))
+    api(project(":core:base"))
+    api(project(":core:profiles"))
+    api(project(":data:appoverrides"))
+    api(project(":core:services:compat"))
 }

@@ -9,15 +9,22 @@ android {
 }
 
 dependencies {
-    implementation(libs.bundles.kotlin)
-    implementation(libs.androidx.core)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlin.reflect)
     implementation(libs.androidx.appcompat)
     implementation(libs.dragon.logging)
+    implementation(libs.core)
+    implementation(libs.javax.inject)
+    implementation(libs.timber)
     implementation(libs.hilt.android)
     implementation(libs.hilt.core)
 
     ksp(libs.hilt.compiler)
 
+    api(libs.dagger)
+    api(libs.kotlinx.coroutines.core)
+
+    runtimeOnly(libs.kotlinx.coroutines.android)
+
     implementation(project(":core:ktx"))
-    implementation(project(":core:base"))
 }

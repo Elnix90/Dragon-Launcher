@@ -9,24 +9,31 @@ android {
 }
 
 dependencies {
-    implementation(libs.bundles.kotlin)
-    implementation(libs.androidx.core)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.bundles.androidx.lifecycle)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlin.reflect)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.dragon.logging)
     implementation(libs.settings.core)
-    implementation(libs.settings.runtime)
+    implementation(libs.androidx.compose.ui.unit)
+    implementation(libs.androidx.datastore.core)
+    implementation(libs.androidx.datastore.preferences.core)
+    implementation(libs.timber)
 
-    implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-    implementation(project(":core:ktx"))
-    implementation(project(":data:applications"))
-    implementation(project(":data:notifications"))
-    implementation(project(":core:permissions"))
+    api(libs.dagger)
+    api(libs.javax.inject)
+    api(libs.hilt.android)
+
+    runtimeOnly(libs.kotlinx.coroutines.android)
+    runtimeOnly(project(":data:notifications"))
+
     implementation(project(":core:settings"))
-    implementation(project(":core:base"))
 
     testImplementation(libs.junit)
     testImplementation(libs.json)
+    testImplementation(libs.kotlinx.serialization.core)
+    testImplementation(libs.androidx.compose.ui.unit)
+    testImplementation(project(":core:base"))
 }

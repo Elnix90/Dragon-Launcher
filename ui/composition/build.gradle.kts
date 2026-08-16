@@ -16,8 +16,10 @@ android {
 
 dependencies {
     api(libs.androidx.compose.runtime)
-    implementation(libs.androidx.compose.ui.text)
+    api(libs.androidx.compose.ui.text)
+
+    runtimeOnly(libs.androidx.roomruntime)
+    runtimeOnly(project(":data:notifications"))
 
     api(project(":core:base"))
-    api(project(":core:models"))
 }

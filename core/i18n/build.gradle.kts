@@ -9,10 +9,13 @@ android {
 
 dependencies {
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.core)
-    implementation(libs.commons.text) {
-        exclude(group = "javax.script")
-    }
+    implementation(libs.commons.lang3)
     implementation(libs.hilt.android)
+    implementation(libs.hilt.core)
+    implementation(libs.javax.inject)
+
     ksp(libs.hilt.compiler)
+
+    api(libs.dagger)
+    runtimeOnly(libs.dagger.lint.aar)
 }
