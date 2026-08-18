@@ -41,7 +41,7 @@ fun StatusBarNextAlarm(
     val dateFormat = remember(formatter) {
         try {
             DateTimeFormatter.ofPattern(formatter)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             println("⚠️ Invalid time format '$formatter'")
             DateTimeFormatter.ofPattern("HH:mm")
         }
@@ -95,7 +95,7 @@ private fun getNextAlarm(ctx: Context, formatter: DateTimeFormatter): NextAlarmI
             label = ctx.getString(R.string.next_alarm_at, formatted)
         )
 
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         println("Alarm read failed")
         null
     }
