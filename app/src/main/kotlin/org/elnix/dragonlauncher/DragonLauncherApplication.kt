@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.elnix.dragonlauncher.settings.AllStores
 import org.elnix.dragonlauncher.settings.stores.map.LanguageSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import timber.log.Timber
 
 @HiltAndroidApp
@@ -30,9 +31,8 @@ class DragonLauncherApplication : Application() {
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             Log.e("DragonCrash", "FATAL CRASH on thread ${thread.name}: ${throwable.message}", throwable)
 
-
             runBlocking {
-                org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore.lastCrashStackTrace.set(
+                PrivateSettingsStore.lastCrashStackTrace.set(
                     this@DragonLauncherApplication,
                     throwable.stackTraceToString()
                 )

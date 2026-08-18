@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.models
 
 import android.app.Application
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
@@ -20,6 +21,7 @@ import java.io.File
 import java.util.concurrent.ConcurrentLinkedQueue
 import javax.inject.Inject
 
+@Stable
 @HiltViewModel
 public class DragonLogViewModel @Inject constructor(
     application: Application
@@ -40,19 +42,25 @@ public class DragonLogViewModel @Inject constructor(
         viewModelScope.launch {
             fileTree = FileLoggingTree(application.applicationContext, ::onHighPriorityLog)
 
-            DebugSettingsStore.snackBarLogLevel.flow(application.applicationContext).collect {
-                fileTree?.snackBarLogLevel = it
-            }
-
-            DebugSettingsStore.filesLogLevel.flow(application.applicationContext).collect {
-                fileTree?.filesLogsLevel = it
-            }
-
-            DebugSettingsStore.filterTag.flow(application.applicationContext).collect {
-                fileTree?.filterTag = it
-            }
-
             updateLoggingState()
+
+            launch {
+                DebugSettingsStore.snackBarLogLevel.flow(application.applicationContext).collect {
+                    fileTree?.snackBarLogLevel = it
+                }
+            }
+
+            launch {
+                DebugSettingsStore.filesLogLevel.flow(application.applicationContext).collect {
+                    fileTree?.filesLogsLevel = it
+                }
+            }
+
+            launch {
+                DebugSettingsStore.filterTag.flow(application.applicationContext).collect {
+                    fileTree?.filterTag = it
+                }
+            }
         }
         viewModelInitialized()
     }
@@ -77,27 +85,6 @@ public class DragonLogViewModel @Inject constructor(
             updateLoggingState()
         }
     }
-
-//    public fun updateSnackBarLogLevel(newLevel: Int) {
-//        fileTree?.snackBarLogLevel = newLevel
-//        viewModelScope.launch {
-//            DebugSettingsStore.snackBarLogLevel.set(application.applicationContext, newLevel)
-//        }
-//    }
-//
-//    public fun updateFilesLogLevel(newLevel: Int) {
-//        fileTree?.filesLogsLevel = newLevel
-//        viewModelScope.launch {
-//            DebugSettingsStore.filesLogLevel.set(application.applicationContext, newLevel)
-//        }
-//    }
-//
-//    public fun updateFilterTag(newTag: String) {
-//        fileTree?.filterTag = newTag
-//        viewModelScope.launch {
-//            DebugSettingsStore.filterTag.set(application.applicationContext, newTag)
-//        }
-//    }
 
     private suspend fun updateLoggingState() {
         val tree = fileTree ?: return
