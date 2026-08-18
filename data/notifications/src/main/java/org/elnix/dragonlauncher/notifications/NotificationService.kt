@@ -3,6 +3,8 @@ package org.elnix.dragonlauncher.notifications
 import android.content.Intent
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import dagger.hilt.android.AndroidEntryPoint
+import jakarta.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -12,10 +14,14 @@ import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.permissions.PermissionsManager
 import java.lang.ref.WeakReference
 
-public class NotificationService(
-    private val notificationRepository: NotificationRepository,
-    private val permissionsManager: PermissionsManager
-) : NotificationListenerService() {
+@AndroidEntryPoint
+public class NotificationService : NotificationListenerService() {
+
+    @Inject
+    public lateinit var notificationRepository: NotificationRepository
+
+    @Inject
+    public lateinit var permissionsManager: PermissionsManager
 
     private val scope = CoroutineScope(Job() + Dispatchers.Default)
 
@@ -92,7 +98,7 @@ public class NotificationService(
 
     public companion object {
         private var instance: WeakReference<NotificationService>? = null
-        internal fun getInstance(): NotificationService? {
+        public fun getInstance(): NotificationService? {
             return instance?.get()
         }
     }

@@ -40,8 +40,7 @@ public class DrawerViewModel @Inject constructor(
     private val permissionsManager: PermissionsManager,
     private val iconPackManager: IconPackManager,
     public val appOverrideManager: AppOverridesManager,
-    public val workspaceManager: WorkspacesManager,
-    notificationService: NotificationService
+    public val workspaceManager: WorkspacesManager
 ) : ViewModel() {
 
     public val allApps: StateFlow<List<Application>> = appsRepository.getAllApps().stateIn(
@@ -56,7 +55,8 @@ public class DrawerViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
 
-    public val notifications: Array<out StatusBarNotification?>? = notificationService.activeNotifications
+    public val notifications: Array<out StatusBarNotification?>?
+        get() = NotificationService.getInstance()?.activeNotifications
 
     public fun isAppInstalled(packageName: String): StateFlow<Boolean> = allApps.map { apps ->
         apps.any { it.packageName == packageName }
