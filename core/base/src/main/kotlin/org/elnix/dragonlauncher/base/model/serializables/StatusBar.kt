@@ -2,6 +2,7 @@
 
 package org.elnix.dragonlauncher.base.model.serializables
 
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.SerialName
@@ -9,10 +10,13 @@ import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.DragonJson
 import org.elnix.dragonlauncher.base.model.serializables.serializers.DpSerializer
 
+@Stable
 @Serializable
 @SerialName("StatusBar")
 public sealed class StatusBar {
 
+    @Stable
+    @Stable
     @Serializable
     @SerialName("Time")
     public data class Time(
@@ -23,6 +27,7 @@ public sealed class StatusBar {
         val colorHex: String? = null
     ) : StatusBar()
 
+    @Stable
     @Serializable
     @SerialName("Date")
     public data class Date(
@@ -33,6 +38,7 @@ public sealed class StatusBar {
         val colorHex: String? = null
     ) : StatusBar()
 
+    @Stable
     @Serializable
     @SerialName("Bandwidth")
     public data class Bandwidth(
@@ -41,6 +47,7 @@ public sealed class StatusBar {
         val colorHex: String? = null
     ) : StatusBar()
 
+    @Stable
     @Serializable
     @SerialName("Notifications")
     public data class Notifications(
@@ -54,6 +61,7 @@ public sealed class StatusBar {
         }
     }
 
+    @Stable
     @Serializable
     @SerialName("Connectivity")
     public data class Connectivity(
@@ -82,6 +90,7 @@ public sealed class StatusBar {
         }
     }
 
+    @Stable
     @Serializable
     @SerialName("Spacer")
     public data class Spacer(
@@ -99,6 +108,7 @@ public sealed class StatusBar {
         }
     }
 
+    @Stable
     @Serializable
     @SerialName("Battery")
     public data class Battery(
@@ -108,6 +118,7 @@ public sealed class StatusBar {
         val colorHex: String? = null
     ) : StatusBar()
 
+    @Stable
     @Serializable
     @SerialName("NextAlarm")
     public data class NextAlarm(
