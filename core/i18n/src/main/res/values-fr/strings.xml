@@ -247,7 +247,6 @@
     <string name="move_selected_widget_down">Déplacer le widget sélectionné vers le bas</string>
     <string name="enable_scale_snap">Activer l\'accrochage à l\'échelle</string>
     <string name="home_action">Action à domicile</string>
-
     <string name="wallpaper_dim">Intensité de voile</string>
     <string name="fullscreen_description">Afficher ou non la barre supérieure et les boutons de navigation/bouton geste</string>
     <string name="rgb_loading_description">Afficher un dégradé RBG sur le cercle de chargement lors de la saisie des paramètres, tout en maintenant enfoncé pendant 3 secondes</string>
@@ -363,7 +362,6 @@
     <string name="edit_icons_shape_desc">Personnalisez la forme sur les icônes du tiroir et le reste de l’application</string>
     <string name="random_shape">Forme aléatoire</string>
     <string name="grid_size">Taille de la grille</string>
-
     <string name="grid_size_desc">Le nombre d\'application dans le largeur</string>
     <string name="icons_spacing_vertical">icônes Verticale d’espacement</string>
     <string name="icons_spacing_horizontal">icônes Espacement horizontal</string>
@@ -437,7 +435,6 @@
     <string name="show_app_icons_in_drawer_desc">Afficher les icônes de l’application ou pas sur la grille</string>
     <string name="show_app_labels_in_drawer">Afficher les libelles de l’application dans le tiroir</string>
     <string name="show_app_labels_in_drawer_desc">Affichez ou non les noms des applications sur leurs icônes</string>
-
     <string name="icon_size_desc">La taille des icones, essayez de jouer avec les autres paramètre pour obtenr quelque chose que vous aimez</string>
     <string name="icons_spacing_vertical_desc">Rembourrage vertical des icônes</string>
     <string name="icons_spacing_horizontal_desc">Rembourrage d’icônes horizontales</string>
@@ -630,7 +627,6 @@
     <string name="advanced">Avancé</string>
     <string name="yoann_desc">Contributeur majeur (extensions, performances, widgets)</string>
     <string name="lucky_desc">Contributeur majeur (Bien-être numérique et rappels)</string>
-
     <string name="snap_points_angle_desc">Arroundis l\'angle des points à une valeur multiple de 15°</string>
     <string name="snap_points">Accroche les points aux angles</string>
     <string name="snap_points_desc">Colle les points sur une grille virtuelle de taille configurable</string>

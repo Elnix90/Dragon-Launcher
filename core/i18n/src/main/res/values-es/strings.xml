@@ -239,7 +239,6 @@
     <string name="move_selected_widget_down">Mover el widget seleccionado hacia abajo</string>
     <string name="enable_scale_snap">Habilitar ajuste de escala</string>
     <string name="home_action">Inicio Acción</string>
-
     <string name="fullscreen_description">Mostrar o no la barra superior y los botones de navegación/botón de gestos</string>
     <string name="rgb_loading_description">Muestra un degradado RBG en el círculo de carga al ingresar a los ajustes mientras mantienes presionado durante 3 segundos</string>
     <string name="rgb_line_selector_description">Muestra el selector de acción (la línea que sigue a tu dedo) en un degradado RGB dependiendo del ángulo</string>
@@ -354,7 +353,6 @@
     <string name="edit_icons_shape_desc">Personaliza la forma de los iconos del cajón y del resto de la aplicación</string>
     <string name="random_shape">Forma aleatoria</string>
     <string name="grid_size">Tamaño de cuadrícula</string>
-
     <string name="icons_spacing_vertical">iconos Espaciado vertical</string>
     <string name="icons_spacing_horizontal">iconos Espaciado horizontal</string>
     <string name="depth">Profundidad</string>
@@ -427,7 +425,6 @@
     <string name="show_app_icons_in_drawer_desc">Mostrar los íconos de la aplicación o no en la cuadrícula</string>
     <string name="show_app_labels_in_drawer">Mostrar etiquetas de aplicaciones en el cajón</string>
     <string name="show_app_labels_in_drawer_desc">Mostrar o no los nombres de las aplicaciones junto con sus íconos</string>
-
     <string name="icons_spacing_vertical_desc">Relleno de iconos verticales</string>
     <string name="icons_spacing_horizontal_desc">Relleno de iconos horizontales</string>
     <string name="category_settings">Ajustes de categoría</string>
@@ -605,7 +602,6 @@
     <string name="advanced">Avanzado</string>
     <string name="yoann_desc">Colaborar importante (extensiones, mejoras, widgets)</string>
     <string name="lucky_desc">Colaborador importante (bienestar digital y recordatorios)</string>
-
     <string name="permission_tab_help">Controlar los permisos de la aplicación y el acceso a extensiones externas</string>
     <string name="special_system_access">Acceso especial al sistema</string>
     <string name="notification_access">Acceso a notificaciones</string>
