@@ -1,0 +1,6 @@
+4.0.1 (Caterpillar)
+2026-08-18
+[FIXED]
+* Crash due to accessibility service malfunctioning
+* Crash due to Notification service malfunctioning
+* In app logs, they are now completely opérationnels
