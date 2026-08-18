@@ -16,7 +16,6 @@ import org.elnix.dragonlauncher.base.model.serializables.serializers.DpSerialize
 public sealed class StatusBar {
 
     @Stable
-    @Stable
     @Serializable
     @SerialName("Time")
     public data class Time(
