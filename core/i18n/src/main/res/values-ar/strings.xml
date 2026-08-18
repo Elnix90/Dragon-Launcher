@@ -347,7 +347,6 @@
     <string name="move_selected_widget_down">تحريك الأداة المصغرة المحددة للأسفل</string>
     <string name="enable_scale_snap">تفعيل محاذاة المقياس</string>
     <string name="home_action">إجراء الرئيسية</string>
-
     <string name="fullscreen_description">عرض أو عدم عرض الشريط العلوي وأزرار التنقل / زر الإيماءات</string>
     <string name="rgb_loading_description">إظهار تدرج RGB على دائرة التحميل عند الدخول للإعدادات، أثناء الضغط لمدة 3 ثوانٍ</string>
     <string name="rgb_line_selector_description">إظهار محدد الإجراء (الخط الذي يتبع إصبعك) بتدرج RGB اعتماداً على الزاوية</string>
@@ -458,7 +457,6 @@
     <string name="edit_icons_shape_desc">تخصيص شكل الأيقونات في الدرج وبقية التطبيق</string>
     <string name="random_shape">شكل عشوائي</string>
     <string name="grid_size">حجم الشبكة</string>
-
     <string name="icons_spacing_vertical">تباعد الأيقونات الرأسي</string>
     <string name="icons_spacing_horizontal">تباعد الأيقونات الأفقي</string>
     <string name="depth">العمق</string>
@@ -530,7 +528,6 @@
     <string name="show_app_icons_in_drawer_desc">عرض أيقونات التطبيقات أو عدم عرضها في الشبكة</string>
     <string name="show_app_labels_in_drawer">إظهار أسماء التطبيقات في الدرج</string>
     <string name="show_app_labels_in_drawer_desc">عرض أو عدم عرض أسماء التطبيقات بجانب أيقوناتها</string>
-
     <string name="icons_spacing_vertical_desc">هامش الأيقونات الرأسي</string>
     <string name="icons_spacing_horizontal_desc">هامش الأيقونات الأفقي</string>
     <string name="category_settings">إعدادات الفئات</string>
@@ -691,7 +688,6 @@
     <string name="yoann_desc">مساهم مهم (الإضافات، الأداء، الأدوات المصغرة)</string>
     <string name="lucky_desc">مساهم مهم (الرفاهية الرقمية والتذكيرات)</string>
     <string name="federico_desc">مساهم مهم (ميزات شاشة الأدوات المصغرة والترجمات)</string>
-
     <string name="permission_tab_help">التحكم في أذونات التطبيق، والوصول المختلف للإضافات الخارجية</string>
     <string name="special_system_access">وصول خاص للنظام</string>
     <string name="notification_access">الوصول إلى الإشعارات</string>

@@ -241,7 +241,6 @@
     <string name="move_selected_widget_down">Ausgewähltes Widget nach unten verschieben</string>
     <string name="enable_scale_snap">Skalenfang aktivieren</string>
     <string name="home_action">Home-Aktion</string>
-
     <string name="fullscreen_description">Die obere Leiste und die Navigationsschaltflächen/Gestenschaltflächen anzeigen oder nicht</string>
     <string name="rgb_loading_description">Zeigen Sie beim Eingeben der Einstellungen einen RBG-Gradienten auf dem Ladekreis an, während Sie die Taste 3 Sekunden lang gedrückt halten</string>
     <string name="rgb_line_selector_description">Zeigen Sie den Aktionswähler (die Linie, die Ihrem Finger folgt) je nach Winkel in einem RGB-Verlauf an</string>
@@ -354,7 +353,6 @@
     <string name="edit_icons_shape_desc">Passen Sie die Form der Symbole in der Schublade und im Rest der App an</string>
     <string name="random_shape">Zufällige Form</string>
     <string name="grid_size">Rastergröße</string>
-
     <string name="icons_spacing_vertical">Symbole Abstand vertikal</string>
     <string name="icons_spacing_horizontal">Symbole Abstand horizontal</string>
     <string name="depth">Tiefe</string>
@@ -427,7 +425,6 @@
     <string name="show_app_icons_in_drawer_desc">Zeigen Sie die App-Symbole an oder nicht im Raster</string>
     <string name="show_app_labels_in_drawer">App-Labels in der Schublade anzeigen</string>
     <string name="show_app_labels_in_drawer_desc">Zeigen Sie die App-Namen entlang ihrer Symbole an oder nicht</string>
-
     <string name="icons_spacing_vertical_desc">Vertikale Symbolauffüllung</string>
     <string name="icons_spacing_horizontal_desc">Horizontale Symbolauffüllung</string>
     <string name="category_settings">Kategorieeinstellungen</string>
@@ -587,7 +584,6 @@
     <string name="select_all">Alles auswählen</string>
     <string name="invert">Invertieren</string>
     <string name="advanced">Fortgeschritten</string>
-
     <string name="notification_access">Benachrichtigungsberechtigung</string>
     <string name="install_from_unknown_source_permission">Von unbekannter Quelle installieren (APK)</string>
     <string name="android_permissions">Android Berechtigungen</string>
