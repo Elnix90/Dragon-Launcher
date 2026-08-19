@@ -376,9 +376,12 @@ fun AngleLineTab() {
     if (showOrderDialog) {
         AngleLineObjectsOrderDialog(
             order = order,
-            onChange = {
-                orderMutable = it
+            onChange = { orderMutable = it }
+        ) {
+            scope.launch {
+                AngleLineSettingsStore.angleLineObjectsOrder.set(ctx, orderMutable.joinToString(","))
+                showOrderDialog = false
             }
-        ) { showOrderDialog = false }
+        }
     }
 }
