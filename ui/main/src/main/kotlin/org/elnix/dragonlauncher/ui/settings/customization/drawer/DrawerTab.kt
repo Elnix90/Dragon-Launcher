@@ -124,7 +124,8 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
 
         DragonSettingsGroup(R.string.behavior) {
             Setting(DrawerSettingsStore.autoOpenSingleMatch)
-            Setting(DrawerSettingsStore.disableAutoLaunchOnSpaceFirstChar, enabled = autoOpenSingleMatch)
+            Setting(DrawerSettingsStore.disableAutoLaunchWhenFirstCharIs, enabled = autoOpenSingleMatch)
+            Setting(DrawerSettingsStore.searchAllWorkspacesOnlyWhenFirstCharIs)
             Setting(DrawerSettingsStore.autoShowKeyboardOnDrawer)
             Setting(DrawerSettingsStore.autoAskToUnlockProfile)
         }

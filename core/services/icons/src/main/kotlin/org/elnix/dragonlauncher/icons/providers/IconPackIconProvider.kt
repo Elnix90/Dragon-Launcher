@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.LauncherApps
 import androidx.core.content.getSystemService
-import io.github.elnix90.logging.ICONS_TAG
+import org.elnix.dragonlauncher.ICONS_TAG
 import io.github.elnix90.logging.logD
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

@@ -14,9 +14,9 @@ import android.os.Process.myUserHandle
 import android.os.UserManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import io.github.elnix90.logging.APPS_TAG
-import io.github.elnix90.logging.ICONS_TAG
-import io.github.elnix90.logging.PM_COMPAT_TAG
+import org.elnix.dragonlauncher.APPS_TAG
+import org.elnix.dragonlauncher.ICONS_TAG
+import org.elnix.dragonlauncher.PM_COMPAT_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.base.util.ImageUtils.loadDrawableAsBitmap

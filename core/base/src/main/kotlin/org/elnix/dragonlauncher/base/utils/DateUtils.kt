@@ -15,7 +15,7 @@ import kotlinx.datetime.toLocalDateTime
 import org.elnix.dragonlauncher.base.Constants.PackageNameLists.knownClockPackages
 import org.elnix.dragonlauncher.base.model.models.DateTimeFormats
 import org.elnix.dragonlauncher.base.utils.DateUtils.defaultDateTimeFormatter
-import io.github.elnix90.logging.TAG
+import org.elnix.dragonlauncher.TAG
 import io.github.elnix90.logging.logD
 import java.time.LocalDate
 import java.time.LocalTime

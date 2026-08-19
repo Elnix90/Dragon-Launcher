@@ -13,6 +13,8 @@ dependencies {
     api(libs.kotlinx.collections.immutable)
     implementation(libs.jakarta.inject)
     implementation(libs.hilt.core)
+    api(libs.settings.core)
+    implementation(libs.dragon.logging)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
@@ -25,6 +27,8 @@ dependencies {
     api(project(":core:i18n"))
     api(project(":core:base"))
     api(project(":core:profiles"))
+    api(project(":core:settings"))
     api(project(":data:appoverrides"))
+    api(project(":data:workspaces"))
     api(project(":core:services:compat"))
 }

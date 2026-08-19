@@ -8,7 +8,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.text.rememberTextMeasurer
-import io.github.elnix90.logging.ICONS_TAG
+import org.elnix.dragonlauncher.ICONS_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar

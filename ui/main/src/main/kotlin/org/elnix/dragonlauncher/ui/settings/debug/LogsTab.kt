@@ -14,38 +14,33 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-import io.github.elnix90.logging.LOGS_TAG
+import org.elnix.dragonlauncher.LOGS_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logLevelName
 import io.github.elnix90.runtime.asState
-import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
@@ -65,10 +60,7 @@ import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.DragonLogViewModel
 import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
-import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.animation.Icon
-import org.elnix.dragonlauncher.ui.base.animation.rememberAnimatedIcon
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
@@ -87,13 +79,13 @@ import java.io.File
 fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
     val ctx = LocalContext.current
     val navigator = LocalNavigator.current
-    val scope = rememberCoroutineScope()
+//    val scope = rememberCoroutineScope()
 
 
     val enableLogging by DebugSettingsStore.enableLogging.asState()
-    val filterTag by DebugSettingsStore.filterTag.asState()
+//    val filterTag by DebugSettingsStore.filterTag.asState()
 
-    var tempFilterTag by remember(filterTag) { mutableStateOf(filterTag) }
+//    var tempFilterTag by remember(filterTag) { mutableStateOf(filterTag) }
 
     var refreshTrigger by remember { mutableIntStateOf(0) }
     val logFiles by produceState(initialValue = emptyList(), ctx, refreshTrigger) {
@@ -254,30 +246,31 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
                         customDesc = { it.logLevelName }
                     )
 
-                    val animatedIcon = rememberAnimatedIcon()
-                    TextField(
-                        value = tempFilterTag,
-                        onValueChange = { tempFilterTag = it },
-                        placeholder = { Text(stringResource(R.string.filter_tag)) },
-                        colors = AppObjectsColors.outlinedTextFieldColors(
-                            removeBorder = true
-                        ),
-                        shape = CircleShape,
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .fillMaxWidth(1f),
-                        trailingIcon = {
-                            animatedIcon.Icon(
-                                defaultIcon = R.drawable.save,
-                                enabled = tempFilterTag != filterTag
-                            ) {
-                                scope.launch {
-                                    DebugSettingsStore.filterTag.set(ctx, tempFilterTag)
-                                    animatedIcon.setSuccess()
-                                }
-                            }
-                        }
-                    )
+                    Setting(DebugSettingsStore.filterTag)
+//                    val animatedIcon = rememberAnimatedIcon()
+//                    TextField(
+//                        value = tempFilterTag,
+//                        onValueChange = { tempFilterTag = it },
+//                        placeholder = { Text(stringResource(R.string.filter_tag)) },
+//                        colors = AppObjectsColors.outlinedTextFieldColors(
+//                            removeBorder = true
+//                        ),
+//                        shape = CircleShape,
+//                        modifier = Modifier
+//                            .padding(10.dp)
+//                            .fillMaxWidth(1f),
+//                        trailingIcon = {
+//                            animatedIcon.Icon(
+//                                defaultIcon = R.drawable.save,
+//                                enabled = tempFilterTag != filterTag
+//                            ) {
+//                                scope.launch {
+//                                    DebugSettingsStore.filterTag.set(ctx, tempFilterTag)
+//                                    animatedIcon.setSuccess()
+//                                }
+//                            }
+//                        }
+//                    )
                 }
 
                 DragonButton(

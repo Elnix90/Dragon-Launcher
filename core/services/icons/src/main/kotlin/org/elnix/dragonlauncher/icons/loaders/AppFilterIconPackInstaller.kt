@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.XmlResourceParser
-import io.github.elnix90.logging.ICONS_TAG
+import org.elnix.dragonlauncher.ICONS_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.Dispatchers

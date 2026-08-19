@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
-import io.github.elnix90.logging.IMAGE_TAG
+import org.elnix.dragonlauncher.IMAGE_TAG
 import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.base.model.serializables.CustomIconProperties
 import org.elnix.dragonlauncher.base.model.serializables.IconShape

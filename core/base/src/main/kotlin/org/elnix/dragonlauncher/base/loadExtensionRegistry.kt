@@ -1,7 +1,7 @@
 package org.elnix.dragonlauncher.base
 
 import android.content.Context
-import io.github.elnix90.logging.EXTENSION_MANAGER_TAG
+import org.elnix.dragonlauncher.EXTENSION_MANAGER_TAG
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

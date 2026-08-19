@@ -6,7 +6,7 @@ import io.github.elnix90.core.stores.JsonArraySettingsStore
 import io.github.elnix90.core.stores.JsonObjectSettingsStore
 import io.github.elnix90.core.stores.MapSettingsStore
 import io.github.elnix90.core.stores.SettingsStore
-import io.github.elnix90.logging.BACKUP_TAG
+import org.elnix.dragonlauncher.BACKUP_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logW
 import kotlinx.coroutines.Dispatchers

@@ -30,8 +30,6 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import io.github.elnix90.logging.TAG
-import io.github.elnix90.logging.WIDGET_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logI
@@ -42,6 +40,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
+import org.elnix.dragonlauncher.TAG
+import org.elnix.dragonlauncher.WIDGET_TAG
 import org.elnix.dragonlauncher.base.WidgetHostProvider
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.i18n.R

@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.base.model.serializables.serializers
 import android.os.Parcel
 import android.os.Process
 import android.os.UserHandle
-import io.github.elnix90.logging.PROFILES_TAG
+import org.elnix.dragonlauncher.PROFILES_TAG
 import io.github.elnix90.logging.logE
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind

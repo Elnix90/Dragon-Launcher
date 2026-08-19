@@ -40,10 +40,17 @@ public object DrawerSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val disableAutoLaunchOnSpaceFirstChar: BooleanSettingObject = boolean(
-        title = R.string.disable_auto_launch_on_space_first_char,
-        description = R.string.disable_auto_launch_on_space_first_char_desc,
-        default = true
+    public val disableAutoLaunchWhenFirstCharIs: StringSettingObject = string(
+        title = R.string.disable_auto_launch_when_first_char_is,
+        description = R.string.pick_a_character,
+        default = " "
+    )
+
+    @SettingKey
+    public val searchAllWorkspacesOnlyWhenFirstCharIs: StringSettingObject = string(
+        title = R.string.search_all_workspaces_when_first_char_is,
+        description = R.string.pick_a_character,
+        default = "."
     )
 
     @SettingKey

@@ -8,15 +8,12 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.models.IconSettings
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
-import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar
 import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
-import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
@@ -36,7 +33,7 @@ data class DrawerSettings(
     val iconSettings: IconSettings,
     val autoAskToUnlockProfile: Boolean,
     val autoOpenSingleMatch: Boolean,
-    val disableAutoLaunchOnSpaceFirstChar: Boolean,
+    val disableAutoLaunchWhenFirstCharIs: String,
     val tapEmptySpaceAction: DrawerActions,
     val drawerEnterAction: DrawerActions,
     val drawerBackAction: DrawerActions,
@@ -51,12 +48,10 @@ data class DrawerSettings(
 )
 
 val LocalDrawerSettings: ProvidableCompositionLocal<DrawerSettings> = compositionLocalOf { error("No DrawerSettings provided") }
-val LocalActiveWorkspaces: ProvidableCompositionLocal<List<Workspace>> = compositionLocalOf { error("No ActiveWorkspaces provided") }
 
 @Composable
 fun ProvideDrawerSettings(
     iconsViewModel: IconsViewModel = activityViewModel(),
-    drawerViewModel: DrawerViewModel = activityViewModel(),
     content: @Composable () -> Unit
 ) {
     val iconSize by DrawerSettingsStore.iconSize.asState()
@@ -73,7 +68,7 @@ fun ProvideDrawerSettings(
     val iconSettings by iconsViewModel.iconSettings.collectAsState()
     val autoAskToUnlockProfile by DrawerSettingsStore.autoAskToUnlockProfile.asState()
     val autoOpenSingleMatch by DrawerSettingsStore.autoOpenSingleMatch.asState()
-    val disableAutoLaunchOnSpaceFirstChar by DrawerSettingsStore.disableAutoLaunchOnSpaceFirstChar.asState()
+    val disableAutoLaunchWhenFirstCharIs by DrawerSettingsStore.disableAutoLaunchWhenFirstCharIs.asState()
     val tapEmptySpaceAction by DrawerSettingsStore.tapEmptySpaceAction.asState()
     val drawerEnterAction by DrawerSettingsStore.drawerEnterAction.asState()
     val drawerBackAction by DrawerSettingsStore.drawerBackAction.asState()
@@ -86,7 +81,6 @@ fun ProvideDrawerSettings(
     val autoShowKeyboard by DrawerSettingsStore.autoShowKeyboardOnDrawer.asState()
     val toolbarsOrder by DrawerSettingsStore.toolbarsOrder.asState()
 
-    val activeWorkspaces by drawerViewModel.activeWorkspaces.collectAsStateWithLifecycle()
 
     CompositionLocalProvider(
         LocalDrawerSettings provides DrawerSettings(
@@ -104,7 +98,7 @@ fun ProvideDrawerSettings(
             iconSettings = iconSettings,
             autoAskToUnlockProfile = autoAskToUnlockProfile,
             autoOpenSingleMatch = autoOpenSingleMatch,
-            disableAutoLaunchOnSpaceFirstChar = disableAutoLaunchOnSpaceFirstChar,
+            disableAutoLaunchWhenFirstCharIs = disableAutoLaunchWhenFirstCharIs,
             tapEmptySpaceAction = tapEmptySpaceAction,
             drawerEnterAction = drawerEnterAction,
             drawerBackAction = drawerBackAction,
@@ -117,7 +111,6 @@ fun ProvideDrawerSettings(
             autoShowKeyboard = autoShowKeyboard,
             toolbarsOrder = toolbarsOrder
         ),
-        LocalActiveWorkspaces provides activeWorkspaces,
         content = content
     )
 }

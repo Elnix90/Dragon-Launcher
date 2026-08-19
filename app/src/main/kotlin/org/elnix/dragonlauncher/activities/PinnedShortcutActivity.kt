@@ -4,7 +4,7 @@ import android.content.pm.LauncherApps
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
-import io.github.elnix90.logging.PINNED_SHORTCUTS
+import org.elnix.dragonlauncher.PINNED_SHORTCUTS
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logW
 import kotlinx.coroutines.launch

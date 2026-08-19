@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.LauncherApps
 import android.content.pm.ShortcutInfo
 import io.github.elnix90.logging.logE
+import org.elnix.dragonlauncher.JSON_TAG
 import org.elnix.dragonlauncher.base.model.serializables.Action
 
 
@@ -42,7 +43,7 @@ public fun deserialize(serialized: Action.LaunchShortcut, ctx: Context): Shortcu
             }
         }
     } catch (e: SecurityException) {
-        logE(io.github.elnix90.logging.JSON_TAG, e) { "Failed to deserialize shortcut: $serialized" }
+        logE(JSON_TAG, e) { "Failed to deserialize shortcut: $serialized" }
         return null
     }
 }

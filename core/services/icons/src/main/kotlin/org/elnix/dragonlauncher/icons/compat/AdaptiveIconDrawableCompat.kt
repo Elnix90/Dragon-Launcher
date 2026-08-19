@@ -9,7 +9,7 @@ import android.util.AttributeSet
 import android.util.Xml
 import android.view.InflateException
 import androidx.core.content.res.ResourcesCompat
-import io.github.elnix90.logging.ICONS_TAG
+import org.elnix.dragonlauncher.ICONS_TAG
 import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.base.icons.ClockLayer
 import org.elnix.dragonlauncher.base.icons.ClockSublayer

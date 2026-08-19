@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.elnix90.logging.TAG
+import org.elnix.dragonlauncher.TAG
 import io.github.elnix90.logging.logD
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay

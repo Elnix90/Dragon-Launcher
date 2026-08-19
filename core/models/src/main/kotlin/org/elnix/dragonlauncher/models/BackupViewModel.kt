@@ -7,8 +7,8 @@ import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.elnix90.core.SettingsBackupManager.exportSettings
-import io.github.elnix90.logging.BACKUP_TAG
-import io.github.elnix90.logging.SETTINGS_TAG
+import org.elnix.dragonlauncher.BACKUP_TAG
+import org.elnix.dragonlauncher.SETTINGS_TAG
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logI
 import io.github.elnix90.logging.logV

@@ -27,8 +27,8 @@ import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
-import io.github.elnix90.logging.SECURITY_SERVICE
-import io.github.elnix90.logging.TAG
+import org.elnix.dragonlauncher.SECURITY_SERVICE
+import org.elnix.dragonlauncher.TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import java.security.MessageDigest

@@ -586,8 +586,8 @@
     <string name="angle_object">கோண பொருள்</string>
     <string name="start_object">தொடக்க பொருள்</string>
     <string name="end_object">இறுதி பொருள்</string>
-    <string name="disable_auto_launch_on_space_first_char">ச்பேச் ஃபர்ச்ட் சார்சில் தானாக ஏவுதலை முடக்கு</string>
-    <string name="disable_auto_launch_on_space_first_char_desc">தேடுவதற்கு முன் ச்பேசை அழுத்தினால், தானியங்கு வெளியீடு செயல்படாது</string>
+
+
     <string name="configure_draw_order">டிரா ஆர்டரை உள்ளமைக்கவும்</string>
     <string name="debug_mode_already_enabled">பிழைத்திருத்த பயன்முறை ஏற்கனவே இயக்கப்பட்டுள்ளது</string>
     <string name="not_supported_in_this_android_version">இந்த ஆண்ட்ராய்டு பதிப்பில் ஆதரிக்கப்படவில்லை</string>

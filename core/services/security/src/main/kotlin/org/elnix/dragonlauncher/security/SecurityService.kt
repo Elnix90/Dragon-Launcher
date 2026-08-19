@@ -7,7 +7,7 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import io.github.elnix90.logging.SECURITY_SERVICE
+import org.elnix.dragonlauncher.SECURITY_SERVICE
 import io.github.elnix90.logging.logD
 import org.elnix.dragonlauncher.i18n.R
 import java.security.MessageDigest

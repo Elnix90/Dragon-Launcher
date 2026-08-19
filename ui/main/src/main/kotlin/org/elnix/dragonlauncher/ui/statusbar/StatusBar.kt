@@ -53,7 +53,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
-import io.github.elnix90.logging.STATUS_BAR_TAG
+import org.elnix.dragonlauncher.STATUS_BAR_TAG
 import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch

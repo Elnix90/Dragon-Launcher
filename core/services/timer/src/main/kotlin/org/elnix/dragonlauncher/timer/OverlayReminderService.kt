@@ -26,7 +26,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.graphics.toColorInt
-import io.github.elnix90.logging.OVERLAY_REMINDER_TAG
+import org.elnix.dragonlauncher.OVERLAY_REMINDER_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logW

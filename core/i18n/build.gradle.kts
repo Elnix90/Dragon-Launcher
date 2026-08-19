@@ -13,6 +13,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.core)
     implementation(libs.javax.inject)
+    implementation(libs.dragon.logging)
 
     ksp(libs.hilt.compiler)
 

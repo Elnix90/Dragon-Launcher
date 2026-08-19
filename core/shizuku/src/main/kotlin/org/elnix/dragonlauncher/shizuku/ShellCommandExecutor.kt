@@ -1,6 +1,6 @@
 package org.elnix.dragonlauncher.shizuku
 
-import io.github.elnix90.logging.SHIZUKU_TAG
+import org.elnix.dragonlauncher.SHIZUKU_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logW

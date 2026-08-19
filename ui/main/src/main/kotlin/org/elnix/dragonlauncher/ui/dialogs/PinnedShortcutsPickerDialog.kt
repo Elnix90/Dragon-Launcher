@@ -37,7 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.github.elnix90.logging.PINNED_SHORTCUTS
+import org.elnix.dragonlauncher.PINNED_SHORTCUTS
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.base.model.serializables.Action

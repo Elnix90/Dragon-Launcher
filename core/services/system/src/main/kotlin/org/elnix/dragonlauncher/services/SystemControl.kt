@@ -8,7 +8,7 @@ import android.provider.Settings
 import androidx.annotation.RequiresApi
 import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.ktx.showToast
-import io.github.elnix90.logging.ACCESSIBILITY_TAG
+import org.elnix.dragonlauncher.ACCESSIBILITY_TAG
 
 public object SystemControl {
 

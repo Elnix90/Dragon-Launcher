@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
-import io.github.elnix90.logging.PERMISSIONS_TAG
+import org.elnix.dragonlauncher.PERMISSIONS_TAG
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

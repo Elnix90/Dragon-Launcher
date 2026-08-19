@@ -32,7 +32,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import `in`.hridayan.shapeindicators.ShapeIndicatorDefaults
 import `in`.hridayan.shapeindicators.ShapeIndicatorRow
-import io.github.elnix90.logging.WELCOME_TAG
+import org.elnix.dragonlauncher.WELCOME_TAG
 import io.github.elnix90.logging.logD
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute

@@ -23,7 +23,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import org.elnix.dragonlauncher.base.utils.ConnectivityUtils.isDefaultLauncher
 import org.elnix.dragonlauncher.ktx.showToast
-import io.github.elnix90.logging.STATUS_BAR_TAG
+import org.elnix.dragonlauncher.STATUS_BAR_TAG
 import io.github.elnix90.logging.logE
 
 public object ConnectivityUtils {

@@ -1,6 +1,6 @@
 package org.elnix.dragonlauncher.base.model
 
-import io.github.elnix90.logging.JSON_TAG
+import org.elnix.dragonlauncher.JSON_TAG
 import io.github.elnix90.logging.logE
 import kotlinx.serialization.json.Json
 

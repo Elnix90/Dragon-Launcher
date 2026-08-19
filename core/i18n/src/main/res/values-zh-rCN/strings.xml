@@ -586,8 +586,8 @@
     <string name="angle_object">角度指示实体样式</string>
     <string name="start_object">起点物件形状</string>
     <string name="end_object">终点物件形状</string>
-    <string name="disable_auto_launch_on_space_first_char">首字符为空格时阻断单匹配直启</string>
-    <string name="disable_auto_launch_on_space_first_char_desc">如果您在抽屉搜索框第一个字符先敲了空格，那么哪怕后续完美过滤只剩下一个应用，也不会再霸道地自动打开它</string>
+
+
     <string name="configure_draw_order">配置元素图层渲染覆盖顺序</string>
     <string name="debug_mode_already_enabled">调试模式早已处于激活状态，无需重复点击</string>
     <string name="not_supported_in_this_android_version">您当前的 Android 系统底层版本不支持此特色功能</string>

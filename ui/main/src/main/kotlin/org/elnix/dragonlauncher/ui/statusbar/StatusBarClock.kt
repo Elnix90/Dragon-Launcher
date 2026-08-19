@@ -13,7 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import io.github.elnix90.logging.STATUS_BAR_TAG
+import org.elnix.dragonlauncher.STATUS_BAR_TAG
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.serializables.Action

@@ -71,7 +71,7 @@ public class DrawerViewModel @Inject constructor(
     public fun findOne(packageName: String, userHandle: UserHandle): Flow<Application?> = appsRepository.findOne(packageName, userHandle)
 
     public fun search(
-        workspace: Workspace?,
+        workspace: Workspace,
         getOnlyAdded: Boolean = false,
         getOnlyRemoved: Boolean = false
     ): StateFlow<List<Application>> = appsRepository.search(

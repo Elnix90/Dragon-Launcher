@@ -42,8 +42,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.core.SettingsBackupManager
-import io.github.elnix90.logging.BACKUP_TAG
-import io.github.elnix90.logging.THEMES_TAG
+import org.elnix.dragonlauncher.BACKUP_TAG
+import org.elnix.dragonlauncher.THEMES_TAG
 import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch

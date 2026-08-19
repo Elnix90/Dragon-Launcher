@@ -14,7 +14,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.expandQuickActionsDrawer
 import org.elnix.dragonlauncher.ktx.hasUriReadPermission
 import org.elnix.dragonlauncher.ktx.showToast
-import io.github.elnix90.logging.TAG
+import org.elnix.dragonlauncher.TAG
 import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.models.DrawerViewModel

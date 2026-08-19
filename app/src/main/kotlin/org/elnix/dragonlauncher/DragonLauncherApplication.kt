@@ -9,7 +9,6 @@ import dagger.hilt.android.HiltAndroidApp
 import io.github.elnix90.core.stores.JsonArraySettingsStore
 import io.github.elnix90.core.stores.JsonObjectSettingsStore
 import io.github.elnix90.core.stores.MapSettingsStore
-import io.github.elnix90.logging.SETTINGS_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logI
 import kotlinx.coroutines.CoroutineScope

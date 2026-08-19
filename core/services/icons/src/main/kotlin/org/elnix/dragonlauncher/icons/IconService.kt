@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
-import io.github.elnix90.logging.ICONS_TAG
+import org.elnix.dragonlauncher.ICONS_TAG
 import io.github.elnix90.logging.logW
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

@@ -1,6 +1,6 @@
 package org.elnix.dragonlauncher.base
 
-import io.github.elnix90.logging.ICONS_TAG
+import org.elnix.dragonlauncher.ICONS_TAG
 import io.github.elnix90.logging.logD
 import java.util.Collections
 import java.util.UUID

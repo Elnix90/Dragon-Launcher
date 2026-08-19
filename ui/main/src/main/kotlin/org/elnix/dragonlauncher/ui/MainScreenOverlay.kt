@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
-import io.github.elnix90.logging.SWIPE_TAG
+import org.elnix.dragonlauncher.SWIPE_TAG
 import io.github.elnix90.logging.logI
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch

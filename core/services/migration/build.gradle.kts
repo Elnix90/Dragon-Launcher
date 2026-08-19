@@ -28,7 +28,7 @@ dependencies {
 
     runtimeOnly(libs.kotlinx.coroutines.android)
     runtimeOnly(project(":data:notifications"))
-
+    api(project(":core:i18n"))
     implementation(project(":core:settings"))
 
     testImplementation(libs.junit)

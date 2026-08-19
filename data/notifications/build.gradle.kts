@@ -24,5 +24,6 @@ dependencies {
 
     runtimeOnly(libs.kotlinx.coroutines.android)
 
+    api(project(":core:i18n"))
     api(project(":core:permissions"))
 }

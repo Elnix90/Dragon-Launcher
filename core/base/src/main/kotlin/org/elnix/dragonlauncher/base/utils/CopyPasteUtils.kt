@@ -9,7 +9,7 @@ import android.widget.Toast
 import androidx.core.content.FileProvider
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
-import io.github.elnix90.logging.CONTEXT_TAG
+import org.elnix.dragonlauncher.CONTEXT_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logW

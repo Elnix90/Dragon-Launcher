@@ -6,7 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.elnix90.logging.INIT_TAG
+import org.elnix.dragonlauncher.INIT_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logI
 import kotlinx.coroutines.launch

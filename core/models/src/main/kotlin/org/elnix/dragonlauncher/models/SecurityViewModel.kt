@@ -7,7 +7,7 @@ import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import androidx.navigation3.runtime.NavKey
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.elnix90.logging.SECURITY_SERVICE
+import org.elnix.dragonlauncher.SECURITY_SERVICE
 import io.github.elnix90.logging.logD
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first

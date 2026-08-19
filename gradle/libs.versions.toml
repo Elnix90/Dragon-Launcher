@@ -61,9 +61,10 @@ json = "20260814"
 
 dependency-analysis = "3.18.0"
 
-logging = "1.0.2"
-settings = "1.2.0"
 
+# Those are my libraries, you can find them on my GitHub
+logging = "1.0.3"
+settings = "1.2.1"
 compose-lock = "1.2.1"
 
 [libraries]

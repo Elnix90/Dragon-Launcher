@@ -121,6 +121,7 @@ public object DebugSettingsStore : MapSettingsStore() {
     @SettingKey
     public val filterTag: StringSettingObject = string(
         title = R.string.filter_tag,
+        description = R.string.pick_a_character,
         default = ""
     )
 

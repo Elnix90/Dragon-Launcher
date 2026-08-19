@@ -665,15 +665,12 @@
     <string name="end_object">End Object</string>
     <string name="show_all_actions_in_current_nest">Show all actions in current nest</string>
     <string name="show_all_actions_in_current_nest_desc">Display all and points of the current nest while dragging</string>
-    <string name="disable_auto_launch_on_space_first_char">Disable auto launch on space first char</string>
-    <string name="disable_auto_launch_on_space_first_char_desc">When you press space before searching, the auto launch wont activate</string>
     <string name="configure_draw_order">Configure Draw Order</string>
     <string name="debug_mode_already_enabled">Debug Mode is already enabled</string>
     <string name="not_supported_in_this_android_version">Not supported in this Android version</string>
     <string name="please_enable_accessibility_services_to_use_that_feature">Please enable accessibility service to use that feature</string>
     <string name="backup_location">Backup Location</string>
     <string name="backup_location_desc">Tap to select destination</string>
-
     <string name="backup_triggered">Backup triggered manually</string>
     <string name="auto_backup_desc">Automate backup generation to local storage</string>
     <string name="select_all">Select All</string>
@@ -1052,7 +1049,10 @@
     <string name="render_background_desc">Whether or not to render the background layer of the icons</string>
     <string name="icons_settings">Icons Settings</string>
     <string name="drawer_label_color">Label color</string>
-    <string name="drawer_label_color_desc">The colr of the app names in the drawer. defaults to the onBackground color</string>
+    <string name="drawer_label_color_desc">The color of the app names in the drawer. defaults to the onBackground color</string>
     <string name="points_screens_transparency">Points screens transparency</string>
     <string name="points_screens_transparency_desc">The transparency of all screens that display points of swipe related stuff, so that you can see your wallpaper through and better customize</string>
+    <string name="search_all_workspaces_when_first_char_is">Search all Workspaces when first char is:</string>
+    <string name="disable_auto_launch_when_first_char_is">Disable auto launch when first char is:</string>
+    <string name="pick_a_character">Pick a character</string>
 </resources>

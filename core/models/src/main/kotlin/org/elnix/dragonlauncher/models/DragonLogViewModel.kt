@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.elnix90.core.objects.BooleanSettingObject
 import io.github.elnix90.logging.FileLoggingTree
-import io.github.elnix90.logging.LOGS_TAG
+import org.elnix.dragonlauncher.LOGS_TAG
 import io.github.elnix90.logging.LogAlert
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.flow.MutableStateFlow

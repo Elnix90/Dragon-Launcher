@@ -98,7 +98,6 @@ import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
-import org.elnix.dragonlauncher.ui.compositionslocals.LocalActiveWorkspaces
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalDrawerSettings
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.helpers.wallpaper.WallpaperDim
@@ -147,7 +146,7 @@ fun AppDrawerScreen(
     }
 
 
-    val activeWorkspaces= LocalActiveWorkspaces.current
+    val activeWorkspaces by drawerViewModel.activeWorkspaces.collectAsStateWithLifecycle()
     val selectedWorkspaceId by drawerViewModel.selectedWorkspaceId.collectAsStateWithLifecycle()
 
     val initialIndex = activeWorkspaces.indexOfFirst { it.id == selectedWorkspaceId }
@@ -476,7 +475,7 @@ fun AppDrawerScreen(
                     drawerSettings.autoOpenSingleMatch &&
                             apps.size == 1 &&
                             searchQuery.isNotEmpty() &&
-                            !(drawerSettings.disableAutoLaunchOnSpaceFirstChar && searchQuery.first() == ' ')
+                            !(drawerSettings.disableAutoLaunchWhenFirstCharIs.isNotEmpty() && searchQuery.first() == drawerSettings.disableAutoLaunchWhenFirstCharIs.first())
 
                 if (haveToLaunchFirstApp || autoLaunch && apps.isNotEmpty()) {
                     onLaunchAction(apps.first().action)

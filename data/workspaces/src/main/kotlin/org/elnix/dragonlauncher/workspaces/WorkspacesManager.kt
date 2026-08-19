@@ -1,7 +1,7 @@
 package org.elnix.dragonlauncher.workspaces
 
 import android.content.Context
-import io.github.elnix90.logging.WORKSPACES_TAG
+import org.elnix.dragonlauncher.WORKSPACES_TAG
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

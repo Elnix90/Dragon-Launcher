@@ -27,5 +27,6 @@ dependencies {
     runtimeOnly(libs.kotlinx.coroutines.android)
 
     api(project(":core:base"))
+    api(project(":core:i18n"))
     implementation(project(":core:settings"))
 }

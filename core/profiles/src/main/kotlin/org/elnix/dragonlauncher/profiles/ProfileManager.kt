@@ -12,7 +12,7 @@ import android.os.UserManager.USER_TYPE_PROFILE_MANAGED
 import android.os.UserManager.USER_TYPE_PROFILE_PRIVATE
 import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
-import io.github.elnix90.logging.PROFILES_TAG
+import org.elnix.dragonlauncher.PROFILES_TAG
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logI
 import kotlinx.coroutines.CoroutineScope

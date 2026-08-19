@@ -13,11 +13,14 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.launch
@@ -43,13 +46,15 @@ import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.User
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.Work
 import org.elnix.dragonlauncher.compat.PackageManagerCompat
 import org.elnix.dragonlauncher.profiles.ProfileManager
+import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
+import org.elnix.dragonlauncher.workspaces.WorkspacesManager
 
 public interface AppRepository {
     public fun findOne(packageName: String, user: UserHandle): Flow<Application?>
     public fun getAllApps(): Flow<ImmutableList<Application>>
     public fun search(
         query: String,
-        workspace: Workspace?, // Null means all of them
+        workspace: Workspace,
         getOnlyAdded: Boolean = false,
         getOnlyRemoved: Boolean = false
     ): Flow<ImmutableList<Application>>
@@ -67,6 +72,7 @@ internal class AppRepositoryImpl(
     private val profileManager: ProfileManager,
     private val packageManagerCompat: PackageManagerCompat,
     private val appOverridesManager: AppOverridesManager,
+    private val workspacesManager: WorkspacesManager,
     private val stringNormalizer: StringNormalizer,
 ) : AppRepository {
     private val scope = CoroutineScope(Dispatchers.Default + Job())
@@ -232,9 +238,9 @@ internal class AppRepositoryImpl(
         packageName: String,
         user: UserHandle,
     ): Flow<Application?> {
-        return installedApps.map { apps ->
+        return getAllApps().map { apps ->
             apps.firstOrNull {
-                it.componentName.packageName == packageName && it.user == user
+                it.packageName == packageName && it.user == user
             }
         }
         // TODO add custom label
@@ -244,7 +250,7 @@ internal class AppRepositoryImpl(
         // Resolve the stored profile to the live one, as the persisted userHandle
         // may have been serialized incorrectly (e.g. by older versions).
         val profile = profileManager.resolveProfile(action.profile) ?: return null
-        return installedApps
+        return getAllApps()
             .first()
             .firstOrNull {
                 it.packageName == action.packageName && it.profile == profile
@@ -254,9 +260,9 @@ internal class AppRepositoryImpl(
     /**
      * Returns a filtered and sorted list of apps for the specified workspace as a reactive Flow.
      *
-     * @param workspace The target workspace configuration defining app filtering rules
-     * @param getOnlyAdded If true, returns ONLY apps explicitly added to this workspace [default: false]
-     * @param getOnlyRemoved If true, returns ONLY apps hidden/removed from this workspace [default: false]
+     * @param workspaces The target workspaces to search in
+     * @param getOnlyAdded If true, returns ONLY apps explicitly added to this workspace
+     * @param getOnlyRemoved If true, returns ONLY apps hidden/removed from this workspace
      * @return Flow of filtered, sorted, and resolved [Application] list
      *
      * @throws IllegalArgumentException if both [getOnlyAdded] and [getOnlyRemoved] are true
@@ -264,7 +270,7 @@ internal class AppRepositoryImpl(
      * @see WorkspaceType for base filtering behavior
      */
     private fun appsForWorkspace(
-        workspace: Workspace?,
+        workspaces: Array<Workspace>,
         getOnlyAdded: Boolean,
         getOnlyRemoved: Boolean
     ): Flow<List<Application>> {
@@ -272,79 +278,113 @@ internal class AppRepositoryImpl(
             "Cannot ask for only added AND only removed at the same time"
         }
 
-        return installedApps.map { apps ->
-            if (workspace == null) return@map apps
+        return getAllApps().map { apps ->
+            val allFinal = mutableSetOf<Application>()
 
-            val appIds = workspace.appIds ?: emptySet()
-            val removedAppIds = workspace.removedAppIds ?: emptySet()
+            for (workspace in workspaces) {
 
-            when {
-                getOnlyAdded -> apps.filter { it.key in appIds }
-                getOnlyRemoved -> apps.filter { it.key in removedAppIds }
-                else -> {
-                    val base = when (workspace.type) {
-                        All -> apps
-                        Custom -> emptyList()
-                        User -> apps.filter { !it.isWork && !it.isPrivate && it.isLaunchable }
-                        System -> apps.filter { it.isSystem }
-                        Work -> apps.filter { it.isWork && it.isLaunchable }
-                        Private -> {
-                            apps.filter { it.isPrivate && it.isLaunchable }
+                val appIds = workspace.appIds ?: emptySet()
+                val removedAppIds = workspace.removedAppIds ?: emptySet()
+
+                when {
+                    getOnlyAdded -> apps.filter { it.key in appIds }
+                    getOnlyRemoved -> apps.filter { it.key in removedAppIds }
+                    else -> {
+                        val base = when (workspace.type) {
+                            All -> apps
+                            Custom -> emptyList()
+                            User -> apps.filter { !it.isWork && !it.isPrivate && it.isLaunchable }
+                            System -> apps.filter { it.isSystem }
+                            Work -> apps.filter { it.isWork && it.isLaunchable }
+                            Private -> {
+                                apps.filter { it.isPrivate && it.isLaunchable }
+                            }
                         }
+
+                        val added = apps.filter { it.key in appIds }
+
+
+                        // Use the base list, and add the filtered manually-added apps, then remove explicitly removed ones
+                         val workspaceFiltered = (base + added)
+                            .distinctBy { it.key }
+                            .filter { it.key !in removedAppIds }
+                            .sortedBy { it.label.lowercase() }
+
+                        allFinal.addAll(workspaceFiltered)
                     }
-
-                    val added = apps.filter { it.key in appIds }
-
-
-                    // Use the base list, and add the filtered manually-added apps, then remove explicitly removed ones
-                    (base + added)
-                        .distinctBy { it.key }
-                        .filter { it.key !in removedAppIds }
-                        .sortedBy { it.label.lowercase() }
                 }
             }
+            allFinal.toList()
         }
     }
 
+    private val searchAllWorkspacesOnlyWhenFirstCharIs = DrawerSettingsStore.searchAllWorkspacesOnlyWhenFirstCharIs.flow(ctx)
+    private val disableAutoLaunchWhenFirstCharIs = DrawerSettingsStore.disableAutoLaunchWhenFirstCharIs.flow(ctx)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun search(
         query: String,
-        workspace: Workspace?, // Null means all of them
+        workspace: Workspace,
         getOnlyAdded: Boolean,
         getOnlyRemoved: Boolean
     ): Flow<ImmutableList<Application>> {
 
-        val normalizedQuery = stringNormalizer.normalize(query)
 
-        return appsForWorkspace(workspace, getOnlyAdded, getOnlyRemoved).map { apps ->
+        return combine(
+            searchAllWorkspacesOnlyWhenFirstCharIs,
+            disableAutoLaunchWhenFirstCharIs,
+            workspacesManager.workspaces.flow) { workspaceFirstChar, disableFirstChar,  workspaces ->
 
-            val normalizerId = stringNormalizer.id
-            val appResults = mutableListOf<Application>()
+            val workspaces = if (workspaceFirstChar.isNotEmpty() && query.isNotEmpty() && workspaceFirstChar.first() == query.first()) {
+                workspaces.filter { it.enabled }.toTypedArray()
+            } else arrayOf(workspace)
 
-            if (query.isEmpty()) {
-                appResults.addAll(apps)
-            } else {
-                appResults.addAll(apps.mapNotNull { app ->
-                    val cachedLabel = app.cachedNormalizerResult
-                    val score = ResultScore.from(
-                        query = normalizedQuery,
-                        primaryFields = listOf(
-                            if (cachedLabel?.first == normalizerId) {
-                                cachedLabel.second
-                            } else {
-                                stringNormalizer.normalize(app.label).also {
-                                    app.cachedNormalizerResult = normalizerId to it
-                                }
-                            }
-                        ),
-                        secondaryFields = appOverridesManager.getAliasesForApp(app).first()
-                    )
-                    if (score.score < 0.8f) return@mapNotNull null
-                    app
-                })
+            var normalizedQuery = stringNormalizer.normalize(query)
+
+            if (workspaceFirstChar.isNotEmpty() && normalizedQuery.startsWith(workspaceFirstChar)) {
+                normalizedQuery = normalizedQuery.drop(1)
             }
-            appResults.sort()
-            appResults.toImmutableList()
-        }.withCustomLabels(appOverridesManager)
+
+            if (disableFirstChar.isNotEmpty() && normalizedQuery.startsWith(disableFirstChar)) {
+                normalizedQuery = normalizedQuery.drop(1)
+            }
+
+            workspaces to normalizedQuery
+
+        }.flatMapLatest { pair ->
+            val workspace = pair.first
+            val normalizedQuery = pair.second
+
+            appsForWorkspace(workspace, getOnlyAdded, getOnlyRemoved).map { apps ->
+                val normalizerId = stringNormalizer.id
+                val appResults = mutableListOf<Application>()
+
+                if (query.isEmpty()) {
+                    appResults.addAll(apps)
+                } else {
+                    appResults.addAll(apps.mapNotNull { app ->
+                        val cachedLabel = app.cachedNormalizerResult
+                        val score = ResultScore.from(
+                            query = normalizedQuery,
+                            primaryFields = listOf(
+                                if (cachedLabel?.first == normalizerId) {
+                                    cachedLabel.second
+                                } else {
+                                    stringNormalizer.normalize(app.label).also {
+                                        app.cachedNormalizerResult = normalizerId to it
+                                    }
+                                }
+                            ),
+                            secondaryFields = appOverridesManager.getAliasesForApp(app).first()
+                        )
+                        if (score.score < 0.8f) return@mapNotNull null
+                        app
+                    })
+                }
+                appResults.sort()
+                appResults.toImmutableList()
+            }.withCustomLabels(appOverridesManager)
+        }
     }
 
     override fun queryAppShortcuts(packageName: String): List<ShortcutInfo> =

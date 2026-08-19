@@ -10,7 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import io.github.elnix90.core.SettingsBackupManager
 import io.github.elnix90.core.stores.SettingsStore
-import io.github.elnix90.logging.BACKUP_TAG
+import org.elnix.dragonlauncher.BACKUP_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.launch

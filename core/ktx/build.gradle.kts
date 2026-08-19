@@ -36,4 +36,5 @@ dependencies {
     testRuntimeOnly(libs.androidx.test.core)
 
     testDebugImplementation(libs.robolectric)
+    api(project(":core:i18n"))
 }

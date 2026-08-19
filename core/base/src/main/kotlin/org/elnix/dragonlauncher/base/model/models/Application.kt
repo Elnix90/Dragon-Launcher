@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
-import io.github.elnix90.logging.APP_LAUNCH_TAG
+import org.elnix.dragonlauncher.APP_LAUNCH_TAG
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

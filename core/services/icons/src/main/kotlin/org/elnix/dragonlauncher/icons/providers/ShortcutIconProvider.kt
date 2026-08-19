@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.icons.providers
 import android.content.Context
 import android.content.pm.LauncherApps
 import android.graphics.drawable.AdaptiveIconDrawable
-import io.github.elnix90.logging.ICONS_TAG
+import org.elnix.dragonlauncher.ICONS_TAG
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

@@ -7,7 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
 import androidx.compose.runtime.mutableStateOf
-import io.github.elnix90.logging.ACCESSIBILITY_TAG
+import org.elnix.dragonlauncher.ACCESSIBILITY_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logW
 import kotlinx.coroutines.CoroutineScope

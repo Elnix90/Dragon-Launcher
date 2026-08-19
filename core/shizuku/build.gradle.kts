@@ -13,4 +13,5 @@ dependencies {
     implementation(libs.timber)
 
     api(libs.kotlinx.coroutines.core)
+    api(project(":core:i18n"))
 }

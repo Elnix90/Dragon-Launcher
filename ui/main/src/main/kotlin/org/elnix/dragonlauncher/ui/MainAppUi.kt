@@ -40,9 +40,9 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import io.github.elnix90.logging.SECURITY_SERVICE
-import io.github.elnix90.logging.SHIZUKU_TAG
-import io.github.elnix90.logging.TAG
+import org.elnix.dragonlauncher.SECURITY_SERVICE
+import org.elnix.dragonlauncher.SHIZUKU_TAG
+import org.elnix.dragonlauncher.TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState

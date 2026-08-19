@@ -29,7 +29,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.logging.ANGLE_LINE_TAG
+import org.elnix.dragonlauncher.ANGLE_LINE_TAG
 import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.models.AngleLineObjects

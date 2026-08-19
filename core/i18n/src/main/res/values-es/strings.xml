@@ -567,8 +567,8 @@
     <string name="angle_object">Objeto angular</string>
     <string name="start_object">Objeto de inicio</string>
     <string name="end_object">Objetivo final</string>
-    <string name="disable_auto_launch_on_space_first_char">Desactiva el lanzamiento automático en el primer personaje espacial</string>
-    <string name="disable_auto_launch_on_space_first_char_desc">Cuando pulsas espacio antes de buscar, el lanzamiento automático no se activa</string>
+
+
     <string name="configure_draw_order">Configurar el orden de dibujo</string>
     <string name="debug_mode_already_enabled">El modo Depuración ya está activado</string>
     <string name="not_supported_in_this_android_version">No soportado en esta versión de Android</string>

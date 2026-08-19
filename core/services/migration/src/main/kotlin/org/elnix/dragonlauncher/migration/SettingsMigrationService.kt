@@ -2,7 +2,7 @@ package org.elnix.dragonlauncher.migration
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
-import io.github.elnix90.logging.BACKUP_TAG
+import org.elnix.dragonlauncher.BACKUP_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logI
