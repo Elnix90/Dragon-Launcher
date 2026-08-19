@@ -61,6 +61,13 @@ public object UiSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
+    public val multiSelectPoints: BooleanSettingObject = boolean(
+        title = R.string.multi_select_points,
+        description = R.string.multi_select_points_desc,
+        default = false,
+    )
+
+    @SettingKey
     public val fullScreen: BooleanSettingObject = boolean(
         title = R.string.fullscreen_app,
         description = R.string.fullscreen_description,

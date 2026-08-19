@@ -176,6 +176,7 @@ fun PointsSettingsScreen(
     val allowFreePoints by UiSettingsStore.allowFreePoints.asState()
     val autoSeparatePoints by UiSettingsStore.autoSeparatePoints.asState()
     val autoMerge by UiSettingsStore.autoMerge.asState()
+    val multiSelectPoints by UiSettingsStore.multiSelectPoints.asState()
 
     val cellSizeDp by UiSettingsStore.pointsCellSizeDp.asState()
     val cellSizePx = cellSizeDp.px
@@ -369,7 +370,13 @@ fun PointsSettingsScreen(
 
 
     fun select(id: Int) {
-        pointsService.select(id)
+        if (multiSelectPoints) {
+            pointsService.select(id)
+        } else {
+            pointsService.selectOnyOne(id)
+            selectedPointTempOffset.clear()
+        }
+
         val point = pointsService.findPointById(id) ?: return
         selectedPointTempOffset[id] = TempPos(
             shapeId = mutableStateOf(point.shapeId),
@@ -1082,6 +1089,7 @@ fun PointsSettingsScreen(
                 DragonSettingsGroup(R.string.move_around_mode) {
                     Setting(UiSettingsStore.snapPointsAngle)
                     Setting(UiSettingsStore.autoMerge)
+                    Setting(UiSettingsStore.multiSelectPoints)
 //                    Setting(UiSettingsStore.autoSeparatePoints)
                 }
 

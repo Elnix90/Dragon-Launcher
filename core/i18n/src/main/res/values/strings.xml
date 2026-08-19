@@ -1055,4 +1055,6 @@
     <string name="search_all_workspaces_when_first_char_is">Search all Workspaces when first char is:</string>
     <string name="disable_auto_launch_when_first_char_is">Disable auto launch when first char is:</string>
     <string name="pick_a_character">Pick a character</string>
+    <string name="multi_select_points">Multi select points</string>
+    <string name="multi_select_points_desc">Whether to allow or not the multi select of points in the edit screen</string>
 </resources>
