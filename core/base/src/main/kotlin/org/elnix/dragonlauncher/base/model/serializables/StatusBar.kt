@@ -102,7 +102,7 @@ public sealed class StatusBar {
         }
 
         public companion object {
-            public val defaultWidth: Dp = Dp.Unspecified
+            public val defaultWidth: Dp = 0.dp
             public val defaultSpacerMode: SpacerMode = SpacerMode.Cutout
         }
     }
