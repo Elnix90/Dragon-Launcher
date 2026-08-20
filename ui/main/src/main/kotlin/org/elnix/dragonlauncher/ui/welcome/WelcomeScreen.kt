@@ -32,9 +32,9 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import `in`.hridayan.shapeindicators.ShapeIndicatorDefaults
 import `in`.hridayan.shapeindicators.ShapeIndicatorRow
-import org.elnix.dragonlauncher.WELCOME_TAG
 import io.github.elnix90.logging.logD
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.WELCOME_TAG
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.InitializationViewModel
@@ -134,9 +134,8 @@ fun WelcomeScreen(
 
                             // Initialize only when exiting from the welcome screen, to avoid the initialization layer to override points/nests
                             initializationViewModel.checkLauncherInitialization()
-
                             navigator.popBackMainScreen()
-                            navigator.navigate(NavigationRoute.PointsSettings(0))
+                            navigator.go(NavigationRoute.PointsSettings())
                         },
                         onEnterApp = {
                             setHasSeen()

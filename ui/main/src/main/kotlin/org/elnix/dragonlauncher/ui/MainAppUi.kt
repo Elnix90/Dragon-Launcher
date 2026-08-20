@@ -40,14 +40,14 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import org.elnix.dragonlauncher.SECURITY_SERVICE
-import org.elnix.dragonlauncher.SHIZUKU_TAG
-import org.elnix.dragonlauncher.TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.SECURITY_SERVICE
+import org.elnix.dragonlauncher.SHIZUKU_TAG
+import org.elnix.dragonlauncher.TAG
 import org.elnix.dragonlauncher.base.Constants.PackageNames.SHIZUKU_PACKAGE_NAME
 import org.elnix.dragonlauncher.base.Constants.URLs.URL_SHIZUKU_SITE
 import org.elnix.dragonlauncher.base.model.serializables.Action
@@ -380,8 +380,6 @@ fun MainAppUi(
     LaunchedEffect(hasSeenWelcome) {
         if (hasSeenWelcome == false) {
             navigator.navigate(NavigationRoute.Welcome)
-        } else if (hasSeenWelcome == true) {
-            navigator.popBackMainScreen()
         }
     }
 
