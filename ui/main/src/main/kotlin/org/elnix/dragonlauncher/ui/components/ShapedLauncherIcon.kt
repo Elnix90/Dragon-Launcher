@@ -95,7 +95,7 @@ fun ShapedLauncherIcon(
         mutableStateOf(currentIcon?.getCachedBitmap(sizePxInt, iconSettings))
     }
 
-    LaunchedEffect(currentIcon, iconSettings) {
+    LaunchedEffect(currentIcon, iconSettings, sizePxInt) {
         currentBitmap = currentIcon?.render(sizePxInt, iconSettings)
     }
 
@@ -116,12 +116,9 @@ fun ShapedLauncherIcon(
         ) {
             val bmp = currentBitmap
             val ic = currentIcon
+
             if (bmp != null && ic != null) {
-                Canvas(
-                    modifier = Modifier
-                        .requiredSize(size)
-//                        .scale(maxIconSize / defaultIconSize, TransformOrigin.Center)
-                ) {
+                Canvas(modifier = Modifier.requiredSize(size)) {
                     val brush = BitmapShaderBrush(bmp)
                     if (ic.backgroundLayer is TransparentLayer) {
                         drawRect(brush)
