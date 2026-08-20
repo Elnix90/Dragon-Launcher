@@ -242,8 +242,7 @@ fun AppGrid(
                 verticalArrangement = Arrangement.spacedBy(iconsSpacingVertical),
                 horizontalArrangement = Arrangement.spacedBy(iconsSpacingHorizontal)
             ) {
-                items(visibleApps, key = { it.key.cacheKey }) { app ->
-
+                items(items = visibleApps, key = { it.key.cacheKey }) { app ->
                     AppItemGrid(
                         app = app,
                         selected = app in selectedPackages,

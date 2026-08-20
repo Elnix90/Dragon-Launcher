@@ -98,7 +98,7 @@ fun IconPackListContent(
                 onClick = { onPackClick(pack) }
             ) {
                 if (packApp != null) {
-                    AppIcon(packApp!!, maxSize = 50.dp)
+                    AppIcon(packApp!!, size = 50.dp)
                 } else {
                     Icon(
                         painter = painterResource(R.drawable.palette),

@@ -60,7 +60,7 @@ fun IconsTab(
                 items = apps,
                 modifier = Modifier.height(70.dp),
             ) { app ->
-                AppIcon(app, maxSize = 56.dp)
+                AppIcon(app, size = 56.dp)
             }
         }
     ) {

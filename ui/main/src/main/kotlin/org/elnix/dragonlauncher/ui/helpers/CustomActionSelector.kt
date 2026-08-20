@@ -99,7 +99,7 @@ private fun ActionSelectorImpl(
                                 app?.let {
                                     AppIcon(
                                         app = it,
-                                        maxSize = 30.dp
+                                        size = 30.dp
                                     )
                                 }
                             }

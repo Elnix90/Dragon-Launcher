@@ -156,7 +156,7 @@ fun AppShortcutPickerDialog(
                             .padding(8.dp)
                     ) {
 
-                        AppIcon(app, maxSize = 30.dp)
+                        AppIcon(app, size = 30.dp)
                         Spacer(8.dp)
 
                         Text(

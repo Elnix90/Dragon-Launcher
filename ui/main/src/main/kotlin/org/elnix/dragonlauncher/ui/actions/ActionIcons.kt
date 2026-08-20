@@ -36,7 +36,7 @@ fun FinalPointIcon(
             if (app != null) {
                 AppIcon(
                     app = app!!,
-                    maxSize = pointSize,
+                    size = pointSize,
                     modifier = modifier
                 )
             }
@@ -59,7 +59,7 @@ fun FinalPointIcon(
 @Composable
 fun AppIcon(
     app: Application,
-    maxSize: Dp,
+    size: Dp,
     modifier: Modifier = Modifier,
     iconsViewModel: IconsViewModel = activityViewModel(),
 ) {
@@ -68,7 +68,7 @@ fun AppIcon(
 
     ShapedLauncherIcon(
         modifier = modifier,
-        size = maxSize,
+        size = size,
         icon = { icon },
         badge = { badge }
     )

@@ -218,7 +218,7 @@ fun AppLongPressPopup(
                 onClick = { appLaunchViewModel.requestAppLaunch(app) },
                 shape = MenuDefaults.leadingItemShape,
                 text = { Text(app.label) },
-                leadingIcon = { AppIcon(app, maxSize = 35.dp) }
+                leadingIcon = { AppIcon(app, size = 35.dp) }
             )
 
             entries.fastForEachIndexed { index, option ->

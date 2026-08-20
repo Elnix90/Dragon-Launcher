@@ -120,6 +120,7 @@ fun AppItemGrid(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(drawerSettings.iconsSpacingVertical),
             modifier = Modifier
+                .fillMaxWidth()
                 .clip(MaterialTheme.shapes.large)
                 .conditional(selected) {
                     background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
