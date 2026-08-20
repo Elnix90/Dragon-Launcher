@@ -51,7 +51,6 @@ import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.ProfilesViewModel
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -84,13 +83,13 @@ fun AppPickerDialog(
         }
     }
 
-    val workspaceState by drawerViewModel.workspaceManager.workspaces.asState()
+    val workspaces by drawerViewModel.activeWorkspaces.collectAsState()
     val selectedWorkspaceId by drawerViewModel.selectedWorkspaceId.collectAsState()
 
-    val initialIndex = workspaceState.indexOfFirst { it.id == selectedWorkspaceId }
+    val initialIndex = workspaces.indexOfFirst { it.id == selectedWorkspaceId }
     val pagerState = rememberPagerState(
-        initialPage = initialIndex.coerceIn(0, (workspaceState.size - 1).coerceAtLeast(0)),
-        pageCount = { workspaceState.size }
+        initialPage = initialIndex.coerceIn(0, (workspaces.size - 1).coerceAtLeast(0)),
+        pageCount = { workspaces.size }
     )
 
     val scope = rememberCoroutineScope()
@@ -192,7 +191,7 @@ fun AppPickerDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    itemsIndexed(workspaceState) { index, workspace ->
+                    itemsIndexed(workspaces) { index, workspace ->
                         val selected = pagerState.currentPage == index
 
                         val animatedColor by animateColorAsState(
@@ -261,7 +260,7 @@ fun AppPickerDialog(
 
             HorizontalPager(pagerState) { pageIndex ->
 
-                val workspace = workspaceState[pageIndex]
+                val workspace = workspaces[pageIndex]
 
                 val workspaceProfileType = when (workspace.type) {
                     WorkspaceType.Work -> Profile.Type.Work
