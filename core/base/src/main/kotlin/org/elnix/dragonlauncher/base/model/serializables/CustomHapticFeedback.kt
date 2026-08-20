@@ -63,6 +63,9 @@ public value class CustomHapticFeedback(
     public suspend fun perform(ctx: Context) {
         haptics.forEach { (vibrationOrSilent, duration) ->
             if (vibrationOrSilent) {
+
+                // I need to use the custom vibrate because its handled anyway by the DisableHapticFeedbackGlobally
+                @Suppress("DEPRECATION")
                 ctx.vibrate(duration.toLong())
             }
             delay(duration.milliseconds)

@@ -289,6 +289,7 @@ private fun PinPrompt(
                 if (vibrateOnError) {
                     // Forcefully vibrate using the low-level API to not rely on the phone settings.
                     // This will ALWAYS vibrate,no matter what the user settings are 😈
+                    @Suppress("DEPRECATION")
                     ctx.vibrate(500L)
                 }
 

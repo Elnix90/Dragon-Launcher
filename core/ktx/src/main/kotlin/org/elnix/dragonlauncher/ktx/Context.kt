@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.ktx
 
 import android.Manifest
-import android.app.Activity
 import android.app.SearchManager
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -19,18 +18,15 @@ import android.os.VibratorManager
 import android.provider.DocumentsContract
 import android.provider.OpenableColumns
 import android.provider.Settings
-import android.view.View
-import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
-import org.elnix.dragonlauncher.SECURITY_SERVICE
-import org.elnix.dragonlauncher.TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
+import org.elnix.dragonlauncher.SECURITY_SERVICE
+import org.elnix.dragonlauncher.TAG
 import java.security.MessageDigest
 
 
@@ -266,41 +262,13 @@ public data class InstallSourceInfoCompat(
 
 
 /**
- * Hides the soft keyboard from the screen.
- */
-public fun Context.hideKeyboard() {
-    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-    val view = (this as? Activity)?.currentFocus ?: View(this)
-    imm?.hideSoftInputFromWindow(view.windowToken, 0)
-}
-
-/**
- * Disables soft keyboard input based on user preference.
- */
-public fun Context.disableKeyboard(disableSoftKey: Boolean) {
-    val activity = this as? Activity ?: return
-    val view = activity.currentFocus ?: View(this)
-
-    val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-
-    if (disableSoftKey) {
-        imm?.hideSoftInputFromWindow(view.windowToken, 0)
-        activity.window.setFlags(
-            WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM,
-            WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
-        )
-    } else {
-        activity.window.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
-    }
-}
-
-/**
  * Vibrates the device for the given duration using the appropriate API for the current SDK level.
  *
  * @receiver [Context] The context used to retrieve the [Vibrator] or [VibratorManager] system service.
  * @param milliseconds Duration of the vibration in milliseconds.
  */
 @RequiresPermission(Manifest.permission.VIBRATE)
+@Deprecated("Prefer using LocalHapticFeedback instead of this low level api that doesn't account for the user preferences about haptic feedback")
 public fun Context.vibrate(milliseconds: Long) {
     val vibrator = if (Build.VERSION.SDK_INT >= 31) {
         val manager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
