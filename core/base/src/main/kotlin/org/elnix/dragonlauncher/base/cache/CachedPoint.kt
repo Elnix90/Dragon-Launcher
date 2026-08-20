@@ -25,7 +25,8 @@ public data class StablePointValues(
     val innerPaddingPx: Float,
     val borderRadii: Float,
     val iconSize: Size,
-    val imageBitmap: ImageBitmap?
+    val imageBitmap: ImageBitmap?,
+    val badgeBitmap: ImageBitmap?
 )
 
 

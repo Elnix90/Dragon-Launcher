@@ -246,6 +246,15 @@ internal class AppRepositoryImpl(
         // TODO add custom label
     }
 
+    /**
+     * Retrieve the actual app from a [Action.LaunchApp].
+     *
+     * This function does not return a flow, but is an instant suspend collector.
+     * The package name and the profile are compared and both must match
+     *
+     * @param action the requested action to convert to application
+     * @return the found corresponding application or null if none matches
+     */
     override suspend fun fromAction(action: Action.LaunchApp): Application? {
         // Resolve the stored profile to the live one, as the persisted userHandle
         // may have been serialized incorrectly (e.g. by older versions).

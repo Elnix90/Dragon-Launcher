@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.Density
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -13,9 +14,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.elnix.dragonlauncher.applications.AppRepository
+import org.elnix.dragonlauncher.badges.Badge
+import org.elnix.dragonlauncher.badges.BadgeIcon
+import org.elnix.dragonlauncher.badges.BadgeService
 import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.cache.StablePointValues
@@ -23,8 +29,11 @@ import org.elnix.dragonlauncher.base.icons.DynamicLauncherIcon
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.model.models.IconSettings
+import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
+import org.elnix.dragonlauncher.base.util.ImageUtils
+import org.elnix.dragonlauncher.base.util.ImageUtils.loadDrawableResAsImageBitmap
 import org.elnix.dragonlauncher.colors.ColorService
 import org.elnix.dragonlauncher.icons.IconService
 import org.elnix.dragonlauncher.icons.IconSettingsRepository
@@ -63,6 +72,8 @@ public class PointsViewModel @Inject constructor(
     application: Application,
     private val colorService: ColorService,
     private val iconService: IconService,
+    private val badgeService: BadgeService,
+    private val appRepository: AppRepository,
     private val iconSettingsRepository: IconSettingsRepository,
     public val pointsService: PointsService,
     public val nestsNavigationService: NestsNavigationService
@@ -174,20 +185,32 @@ public class PointsViewModel @Inject constructor(
             .mapNotNull { pointsService.findPointById(pointId) }
             .distinctUntilChanged()
             .collectLatest { currentPoint ->
+
+                val badgeFlow = if (currentPoint.action is Action.LaunchApp) {
+                    val app = appRepository.fromAction(currentPoint.action as Action.LaunchApp)
+                    app?.let {
+                        badgeService.getBadge(app)
+                    } ?: flowOf(null)
+                } else {
+                    flowOf(null)
+                }
+
                 combine(
                     iconSettingsRepository.settings,
                     pointsService.defaultPoint.flow,
                     iconService.getPointIcon(currentPoint).distinctUntilChanged(),
-                    colorService.extraColors
+                    badgeFlow
                 ) { flows ->
                     val settings = flows[0] as IconSettings
                     val defaultPoint = flows[1] as Point
                     val icon = flows[2] as LauncherIcon?
+                    val badge = flows[3] as Badge?
 
                     computeStableValues(
                         point = currentPoint,
                         defaultPoint = defaultPoint,
                         icon = icon,
+                        badge = badge,
                         settings = settings
                     )
                 }.collect { values ->
@@ -208,6 +231,7 @@ public class PointsViewModel @Inject constructor(
         point: Point,
         defaultPoint: Point,
         icon: LauncherIcon?,
+        badge: Badge?,
         settings: IconSettings
     ): StablePointValues = withContext(Dispatchers.Default) {
         val sizePx = with(density) { point.getSize(defaultPoint, false).toPx() }
@@ -215,13 +239,15 @@ public class PointsViewModel @Inject constructor(
         val borderRadii = (sizePx / 2 + innerPaddingPx).coerceAtLeast(0f)
 
         val imageBitmap = renderPointIcon(icon, point, defaultPoint, settings)
+        val badgeBitmap = renderBadgeIcon(badge, point, defaultPoint)
 
         StablePointValues(
             sizePx = sizePx.coerceAtLeast(1f),
             innerPaddingPx = innerPaddingPx,
             borderRadii = borderRadii,
             iconSize = Size(borderRadii * 2f, borderRadii * 2f),
-            imageBitmap = imageBitmap
+            imageBitmap = imageBitmap,
+            badgeBitmap = badgeBitmap
         )
     }
 
@@ -253,6 +279,40 @@ public class PointsViewModel @Inject constructor(
             is StaticLauncherIcon -> icon.render(size, settings).asImageBitmap()
 
             null -> null
+        }
+    }
+
+
+    /**
+     * Renders a [Badge] into an [ImageBitmap]
+     * using the current theme colors.
+     *
+     * The function only take the [badge icon][Badge.icon] in account, it ignores [badge number][Badge.number] and [badge progress][Badge.progress]. Both ignored values comes from [Kvaesitso](https://github.com/MM2-0/Kvaesitso) but are now dead code I don't want to remove
+     *
+     * @param badge the launcher icon to render, or null
+     * @param defaultPoint the default point configuration (used for badge size)
+     * @return the rendered bitmap, or null if [badge] is null
+     */
+    private fun renderBadgeIcon(
+        badge: Badge?,
+        point: Point,
+        defaultPoint: Point
+    ): ImageBitmap? {
+        if (badge?.icon == null) return null
+
+        // The same size as the point icon but divided by 3 (... * 2 * 0.33) -> (... * 0.66)
+        val size = (point.getSize(defaultPoint, false).value * density.density * 0.66f).toInt()
+
+        return when (val badgeIcon = badge.icon) {
+            is BadgeIcon.Vector -> {
+                application.loadDrawableResAsImageBitmap(badgeIcon.iconRes, size, size)
+            }
+
+            is BadgeIcon.Drawable -> {
+                ImageUtils.loadDrawableAsBitmap(badgeIcon.drawable, size, size).asImageBitmap()
+            }
+
+            else -> null
         }
     }
 

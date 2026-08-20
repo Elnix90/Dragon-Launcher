@@ -2,22 +2,14 @@ package org.elnix.dragonlauncher.base.util
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Path
 import android.graphics.drawable.AdaptiveIconDrawable
 import android.graphics.drawable.Drawable
-import android.net.Uri
-import android.renderscript.Allocation
-import android.renderscript.Element
-import android.renderscript.RenderScript
-import android.renderscript.ScriptIntrinsicBlur
-import android.util.Base64
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
@@ -25,27 +17,22 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
-import androidx.core.graphics.scale
-import org.elnix.dragonlauncher.IMAGE_TAG
-import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.base.model.serializables.CustomIconProperties
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.resolveShape
-import java.io.ByteArrayOutputStream
 
 public object ImageUtils {
 
-    public fun loadBitmap(ctx: Context, uri: Uri): Bitmap {
-        ctx.contentResolver.openInputStream(uri).use {
-            return BitmapFactory.decodeStream(it!!)
-        }
-    }
+//    public fun loadBitmap(ctx: Context, uri: Uri): Bitmap {
+//        ctx.contentResolver.openInputStream(uri).use {
+//            return BitmapFactory.decodeStream(it!!)
+//        }
+//    }
 
     public fun loadDrawableAsBitmap(
         drawable: Drawable,
         width: Int,
-        height: Int,
-//        tint: Int? = null
+        height: Int
     ): Bitmap {
         val bitmap = createBitmap(width, height)
         val canvas = Canvas(bitmap)
@@ -86,92 +73,92 @@ public object ImageUtils {
         return bitmap
     }
 
-    public fun cropCenterSquare(src: Bitmap): Bitmap {
-        val size = minOf(src.width, src.height)
-        val left = (src.width - size) / 2
-        val top = (src.height - size) / 2
+//    public fun cropCenterSquare(src: Bitmap): Bitmap {
+//        val size = minOf(src.width, src.height)
+//        val left = (src.width - size) / 2
+//        val top = (src.height - size) / 2
+//
+//        return Bitmap.createBitmap(src, left, top, size, size)
+//    }
 
-        return Bitmap.createBitmap(src, left, top, size, size)
-    }
-
-    public fun resize(src: Bitmap, size: Int): Bitmap =
-        src.scale(size, size)
-
-
-    public fun base64ToImageBitmap(base64: String?): ImageBitmap? {
-        return try {
-            base64?.let {
-                val bytes = Base64.decode(it, Base64.DEFAULT)
-                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                bitmap?.asImageBitmap()
-            }
-        } catch (_: Exception) {
-            null
-        }
-    }
-
-    private fun bitmapToBase64(bitmap: Bitmap): String? {
-        return try {
-            val output = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, output)
-            Base64.encodeToString(output.toByteArray(), Base64.NO_WRAP)
-        } catch (e: Exception) {
-            logE(IMAGE_TAG, e) { e.toString() }
-            null
-        }
-    }
-
-    public fun uriToBase64(ctx: Context, uri: Uri): String? {
-        return try {
-            val bmp = loadBitmap(ctx, uri)
-                .let(ImageUtils::cropCenterSquare)
-                .let { resize(it, 256) }
-
-            bitmapToBase64(bmp)
-        } catch (e: Exception) {
-            logE(IMAGE_TAG, e) { e.toString() }
-            null
-        }
-    }
-
-    public fun imageBitmapToBase64(imageBitmap: ImageBitmap): String? {
-        return try {
-            val androidBitmap = imageBitmap.asAndroidBitmap()
-            bitmapToBase64(androidBitmap)
-        } catch (e: Exception) {
-            logE(IMAGE_TAG, e) { e.toString() }
-            null
-        }
-    }
+//    public fun resize(src: Bitmap, size: Int): Bitmap =
+//        src.scale(size, size)
 
 
-    public fun blurBitmap(ctx: Context, bitmap: Bitmap, radius: Float): Bitmap {
-        if (radius <= 0f) return bitmap
+//    public fun base64ToImageBitmap(base64: String?): ImageBitmap? {
+//        return try {
+//            base64?.let {
+//                val bytes = Base64.decode(it, Base64.DEFAULT)
+//                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+//                bitmap?.asImageBitmap()
+//            }
+//        } catch (_: Exception) {
+//            null
+//        }
+//    }
 
-        val scaleFactor = (25f - radius) / 25f.coerceAtLeast(0.1f)
-        val scaledWidth = (bitmap.width * scaleFactor).toInt().coerceAtLeast(100)
-        val scaledHeight = (bitmap.height * scaleFactor).toInt().coerceAtLeast(100)
+//    private fun bitmapToBase64(bitmap: Bitmap): String? {
+//        return try {
+//            val output = ByteArrayOutputStream()
+//            bitmap.compress(Bitmap.CompressFormat.PNG, 100, output)
+//            Base64.encodeToString(output.toByteArray(), Base64.NO_WRAP)
+//        } catch (e: Exception) {
+//            logE(IMAGE_TAG, e) { e.toString() }
+//            null
+//        }
+//    }
 
-        val scaledBitmap = bitmap.scale(scaledWidth, scaledHeight, false)
-        val output = createBitmap(scaledWidth, scaledHeight)
+//    public fun uriToBase64(ctx: Context, uri: Uri): String? {
+//        return try {
+//            val bmp = loadBitmap(ctx, uri)
+//                .let(ImageUtils::cropCenterSquare)
+//                .let { resize(it, 256) }
+//
+//            bitmapToBase64(bmp)
+//        } catch (e: Exception) {
+//            logE(IMAGE_TAG, e) { e.toString() }
+//            null
+//        }
+//    }
 
-        val rs = RenderScript.create(ctx)
-        val input = Allocation.createFromBitmap(rs, scaledBitmap)
-        val outputAlloc = Allocation.createFromBitmap(rs, output)
+//    public fun imageBitmapToBase64(imageBitmap: ImageBitmap): String? {
+//        return try {
+//            val androidBitmap = imageBitmap.asAndroidBitmap()
+//            bitmapToBase64(androidBitmap)
+//        } catch (e: Exception) {
+//            logE(IMAGE_TAG, e) { e.toString() }
+//            null
+//        }
+//    }
 
-        val blur = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs))
-        blur.setRadius(radius.coerceIn(1f, 25f))
-        blur.setInput(input)
-        blur.forEach(outputAlloc)
-        outputAlloc.copyTo(output)
 
-        rs.destroy()
-        input.destroy()
-        outputAlloc.destroy()
-        scaledBitmap.recycle()
-
-        return output
-    }
+//    public fun blurBitmap(ctx: Context, bitmap: Bitmap, radius: Float): Bitmap {
+//        if (radius <= 0f) return bitmap
+//
+//        val scaleFactor = (25f - radius) / 25f.coerceAtLeast(0.1f)
+//        val scaledWidth = (bitmap.width * scaleFactor).toInt().coerceAtLeast(100)
+//        val scaledHeight = (bitmap.height * scaleFactor).toInt().coerceAtLeast(100)
+//
+//        val scaledBitmap = bitmap.scale(scaledWidth, scaledHeight, false)
+//        val output = createBitmap(scaledWidth, scaledHeight)
+//
+//        val rs = RenderScript.create(ctx)
+//        val input = Allocation.createFromBitmap(rs, scaledBitmap)
+//        val outputAlloc = Allocation.createFromBitmap(rs, output)
+//
+//        val blur = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs))
+//        blur.setRadius(radius.coerceIn(1f, 25f))
+//        blur.setInput(input)
+//        blur.forEach(outputAlloc)
+//        outputAlloc.copyTo(output)
+//
+//        rs.destroy()
+//        input.destroy()
+//        outputAlloc.destroy()
+//        scaledBitmap.recycle()
+//
+//        return output
+//    }
 
 //
 //    public fun textToBitmap(

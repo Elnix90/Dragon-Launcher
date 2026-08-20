@@ -2,11 +2,13 @@ package org.elnix.dragonlauncher.ui.helpers.swipe
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import org.elnix.dragonlauncher.base.cache.DrawPathCache
 import org.elnix.dragonlauncher.base.cache.PointStableCache
@@ -16,6 +18,7 @@ import org.elnix.dragonlauncher.ktx.rect
 import org.elnix.dragonlauncher.ktx.toPath
 import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowDrawOrder
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
+import kotlin.math.roundToInt
 
 
 @Suppress("FunctionName")
@@ -26,6 +29,7 @@ fun DrawScope.PointBg(
     drawParams: DrawParams
 ) {
     val extraColors = drawParams.extraColors
+    val colorScheme = drawParams.colorScheme
     val defaultPoint = drawParams.pointsService.defaultPoint.value
     val cached = PointStableCache[point.id] ?: run {
         missingPoint(drawParams, center)
@@ -33,6 +37,7 @@ fun DrawScope.PointBg(
     }
 
     val iconBitmap = cached.imageBitmap
+    val badgeBitmap = cached.badgeBitmap
     val iconSize = cached.iconSize
     val sizePx = cached.sizePx
 
@@ -89,7 +94,37 @@ fun DrawScope.PointBg(
             clipPath(iconPath) {
                 drawImage(
                     image = iconBitmap,
-                    dstSize = IntSize(sizePx.toInt(), sizePx.toInt())
+                    dstSize = IntSize.rect(sizePx.roundToInt())
+                )
+            }
+
+            if (badgeBitmap != null) {
+                val badgeDiameter = sizePx / 3f
+                val badgeRadius = badgeDiameter / 2f
+
+                val badgeCenter = Offset.rect(sizePx - badgeRadius)
+
+                drawCircle(
+                    color = colorScheme.tertiary,
+                    radius = badgeRadius,
+                    center = badgeCenter
+                )
+
+                val scale = badgeDiameter / badgeBitmap.width
+                val scaledWidth = badgeBitmap.width * scale
+                val scaledHeight = badgeBitmap.height * scale
+
+                drawImage(
+                    image = badgeBitmap,
+                    dstOffset = IntOffset(
+                        x = (badgeCenter.x - scaledWidth / 2f).roundToInt(),
+                        y = (badgeCenter.y - scaledHeight / 2f).roundToInt()
+                    ),
+                    dstSize = IntSize(
+                        width = scaledWidth.roundToInt(),
+                        height = scaledHeight.roundToInt()
+                    ),
+                    colorFilter = ColorFilter.tint(colorScheme.onTertiary)
                 )
             }
         }

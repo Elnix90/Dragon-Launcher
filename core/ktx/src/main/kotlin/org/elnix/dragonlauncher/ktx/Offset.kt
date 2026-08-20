@@ -3,6 +3,7 @@
 package org.elnix.dragonlauncher.ktx
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.util.fastRoundToInt
 import kotlin.math.atan2
@@ -20,7 +21,7 @@ public inline infix fun Offset.distanceTo(b: Offset): Float =
  * Use this to avoid computing the square root when you only need to compare offsets lengths together
  */
 public inline infix fun Offset.distanceSquaredTo(other: Offset): Float =
-    (other.x - x).pow(2) +  (other.y - y).pow(2)
+    (other.x - x).pow(2) + (other.y - y).pow(2)
 
 
 public fun angle360FromOffset(center: Offset, offset: Offset): Float {
@@ -142,6 +143,28 @@ public fun Offset.isInsideActiveZone(
         y <= size.height - bottom
 
 
-
+/**
+ * Outputs a receiver [Offset] to a string, well formatted and human-readable in the `"x ; y"` format:
+ *
+ * @return the formatter string
+ */
 public fun Offset.cleanString(): String =
     "${x.fastRoundToInt()} ; ${y.fastRoundToInt()}"
+
+/**
+ * Quick ktx to create a [Offset] whose [x][Offset.x] and [y][Offset.y] values are equals
+ *
+ * @param size value given to [x][Offset.x] and [y][Offset.y]
+ * @return the newly created offset
+ */
+public inline fun Offset.Companion.rect(size: Float): Offset =
+    Offset(size, size)
+
+/**
+ * Quick ktx to create a [IntOffset] whose [x][IntOffset.x] and [y][IntOffset.y] values are equals
+ *
+ * @param size value given to [x][IntOffset.x] and [y][IntOffset.y]
+ * @return the newly created offset
+ */
+public inline fun IntOffset.Companion.rect(size: Int): IntOffset =
+    IntOffset(size, size)
