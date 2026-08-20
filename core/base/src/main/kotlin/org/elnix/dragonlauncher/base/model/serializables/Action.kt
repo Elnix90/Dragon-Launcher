@@ -113,7 +113,7 @@ public sealed class Action {
         override val resId: Int = R.string.app_drawer
 
         public companion object {
-            public val dummy: OpenAppDrawer = OpenAppDrawer("")
+            public val dummy: OpenAppDrawer = OpenAppDrawer("Pick")
         }
     }
 

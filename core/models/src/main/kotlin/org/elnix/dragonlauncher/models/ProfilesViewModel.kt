@@ -3,6 +3,7 @@
 package org.elnix.dragonlauncher.models
 
 import android.app.Application
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +22,7 @@ import org.elnix.dragonlauncher.permissions.PermissionsManager
 import org.elnix.dragonlauncher.profiles.ProfileManager
 import javax.inject.Inject
 
+@Stable
 @HiltViewModel
 public class ProfilesViewModel @Inject constructor(
     application: Application,

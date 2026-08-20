@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.models
 
 import android.app.Application
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -66,6 +67,7 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
  *
  * Exposes [PointsService] and [NestsNavigationService] for direct UI consumption.
  */
+@Stable
 @OptIn(ExperimentalAtomicApi::class)
 @HiltViewModel
 public class PointsViewModel @Inject constructor(

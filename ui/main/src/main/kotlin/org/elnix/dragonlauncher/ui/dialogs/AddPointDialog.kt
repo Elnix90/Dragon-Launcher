@@ -69,9 +69,9 @@ fun AddPointDialog(
     drawerViewModel: DrawerViewModel = activityViewModel(),
     onDismiss: () -> Unit,
     onActionSelected: ((Action) -> Unit)? = null,
-    onActionsSelected: ((action: List<Action>) -> Unit)? = null
+    onMultipleActionsSelected: ((action: List<Action>) -> Unit)? = null
 ) {
-    require((onActionSelected != null) xor (onActionsSelected != null)) {
+    require((onActionSelected != null) xor (onMultipleActionsSelected != null)) {
         "You can either use onActionSelected or onMultipleActionsSelected but not both at the same time"
     }
 
@@ -109,8 +109,8 @@ fun AddPointDialog(
 
 
     fun onActionPicked(action: Action) {
-        if (onActionsSelected != null) {
-            onActionsSelected(listOf(action))
+        if (onMultipleActionsSelected != null) {
+            onMultipleActionsSelected(listOf(action))
         } else {
             onActionSelected!!(action)
         }
@@ -243,7 +243,7 @@ fun AddPointDialog(
 
     if (showAppPicker) {
         AppPickerDialog(
-            multiSelectEnabled = onActionsSelected != null,
+            multiSelectEnabled = onMultipleActionsSelected != null,
             onDismiss = { showAppPicker = false },
             onAppSelected = { app ->
 
@@ -274,12 +274,12 @@ fun AddPointDialog(
                     onActionPicked(app.toLaunchApp())
                 }
             },
-            onMultipleAppsSelected = if (onActionsSelected != null) {
+            onMultipleAppsSelected = if (onMultipleActionsSelected != null) {
                 { apps ->
                     val actions = apps.map {
                         Action.LaunchApp(it.packageName, it.profile)
                     }
-                    onActionsSelected(actions)
+                    onMultipleActionsSelected(actions)
                     showAppPicker = false
                 }
             } else null
@@ -395,7 +395,10 @@ fun AddPointDialog(
     if (showWorkspacePicker) {
         WorkspacePickerDialog(
             onDismiss = { showWorkspacePicker = false },
-            onActionPicked = { onActionPicked(it) }
+            onActionPicked = {
+                onActionPicked(it)
+                showWorkspacePicker = false
+            }
         )
     }
 

@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.models
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +16,7 @@ import org.elnix.dragonlauncher.shizuku.ShizukuPermissionHandler
 import javax.inject.Inject
 
 
+@Stable
 @HiltViewModel
 public class ShizukuViewModel @Inject constructor() : ViewModel() {
     private val shellCommandExecutor = ShellCommandExecutor()

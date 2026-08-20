@@ -64,8 +64,7 @@ fun WorkspaceDetailScreen(
     val apps by drawerViewModel
         .search(
             workspace = workspace,
-            getOnlyAdded = selectedView == WorkspaceViewMode.Added,
-            getOnlyRemoved =  selectedView == WorkspaceViewMode.Removed
+            workspaceViewMode = selectedView
         )
         .collectAsState(initial = emptyList())
 

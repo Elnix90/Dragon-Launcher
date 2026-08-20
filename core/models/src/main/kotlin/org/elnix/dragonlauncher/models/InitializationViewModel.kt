@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.models
 
 import android.app.Application
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
@@ -24,6 +25,7 @@ import javax.inject.Inject
  * Responsible (in the future) for initializing settings and more specifically the default poins in each circle and nests.
  * I don't know the correct architecture I should use, but I invite contributors to come to me to talk about that. RN I pasted the actual initialization code I used since the beginning
  */
+@Stable
 @HiltViewModel
 public class InitializationViewModel @Inject constructor(
     application: Application,

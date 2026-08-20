@@ -1,8 +1,10 @@
 package org.elnix.dragonlauncher.base.model.serializables
 
+import androidx.compose.runtime.Stable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Stable
 @Serializable
 @SerialName("Workspace")
 public data class Workspace(

@@ -2,11 +2,11 @@ package org.elnix.dragonlauncher.models
 
 import android.content.pm.LauncherApps
 import android.os.Bundle
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.elnix.dragonlauncher.APP_LAUNCH_TAG
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logI
 import io.github.elnix90.logging.logW
@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import org.elnix.dragonlauncher.APP_LAUNCH_TAG
 import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.models.Application
@@ -36,6 +37,7 @@ import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.milliseconds
 
 
+@Stable
 @HiltViewModel
 public class AppLaunchViewModel @Inject constructor(
     application: android.app.Application,

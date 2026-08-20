@@ -1,16 +1,17 @@
 package org.elnix.dragonlauncher.models
 
 import android.app.Application
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.elnix.dragonlauncher.TAG
 import io.github.elnix90.logging.logD
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.TAG
 import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import javax.inject.Inject
@@ -20,6 +21,7 @@ private const val HOME_REENTER_WINDOW_MS = 80L
 private const val BLOCK_DELAY = 100L
 
 
+@Stable
 @HiltViewModel
 public class AppLifecycleViewModel @Inject constructor(
     application: Application

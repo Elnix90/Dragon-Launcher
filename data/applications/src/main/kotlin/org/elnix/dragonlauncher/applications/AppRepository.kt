@@ -45,6 +45,7 @@ import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.System
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.User
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.Work
 import org.elnix.dragonlauncher.compat.PackageManagerCompat
+import org.elnix.dragonlauncher.enumsui.select.WorkspaceViewMode
 import org.elnix.dragonlauncher.profiles.ProfileManager
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.workspaces.WorkspacesManager
@@ -55,8 +56,7 @@ public interface AppRepository {
     public fun search(
         query: String,
         workspace: Workspace,
-        getOnlyAdded: Boolean = false,
-        getOnlyRemoved: Boolean = false
+        workspaceViewMode: WorkspaceViewMode
     ): Flow<ImmutableList<Application>>
 
     public suspend fun refreshApps()
@@ -280,12 +280,9 @@ internal class AppRepositoryImpl(
      */
     private fun appsForWorkspace(
         workspaces: Array<Workspace>,
-        getOnlyAdded: Boolean,
-        getOnlyRemoved: Boolean
+        workspaceViewMode: WorkspaceViewMode
     ): Flow<List<Application>> {
-        require(!(getOnlyAdded && getOnlyRemoved)) {
-            "Cannot ask for only added AND only removed at the same time"
-        }
+
 
         return getAllApps().map { apps ->
             val allFinal = mutableSetOf<Application>()
@@ -295,10 +292,10 @@ internal class AppRepositoryImpl(
                 val appIds = workspace.appIds ?: emptySet()
                 val removedAppIds = workspace.removedAppIds ?: emptySet()
 
-                when {
-                    getOnlyAdded -> apps.filter { it.key in appIds }
-                    getOnlyRemoved -> apps.filter { it.key in removedAppIds }
-                    else -> {
+                when(workspaceViewMode) {
+                    WorkspaceViewMode.Added -> apps.filter { it.key in appIds }
+                    WorkspaceViewMode.Removed -> apps.filter { it.key in removedAppIds }
+                    WorkspaceViewMode.Default -> {
                         val base = when (workspace.type) {
                             All -> apps
                             Custom -> emptyList()
@@ -334,8 +331,7 @@ internal class AppRepositoryImpl(
     override fun search(
         query: String,
         workspace: Workspace,
-        getOnlyAdded: Boolean,
-        getOnlyRemoved: Boolean
+        workspaceViewMode: WorkspaceViewMode
     ): Flow<ImmutableList<Application>> {
 
 
@@ -364,7 +360,7 @@ internal class AppRepositoryImpl(
             val workspace = pair.first
             val normalizedQuery = pair.second
 
-            appsForWorkspace(workspace, getOnlyAdded, getOnlyRemoved).map { apps ->
+            appsForWorkspace(workspace, workspaceViewMode).map { apps ->
                 val normalizerId = stringNormalizer.id
                 val appResults = mutableListOf<Application>()
 

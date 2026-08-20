@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.models
 
 import androidx.compose.material3.Typography
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.text.font.FontFamily
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +15,7 @@ import org.elnix.dragonlauncher.fonts.FontService
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import javax.inject.Inject
 
+@Stable
 @HiltViewModel
 public class FontViewModel @Inject constructor(
     fontService: FontService

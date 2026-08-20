@@ -1204,7 +1204,7 @@ fun PointsSettingsScreen(
             onDismiss = {
                 showAddDialog = false
             },
-            onActionsSelected = { actions ->
+            onMultipleActionsSelected = { actions ->
                 toggleDragAroundMode(false)
                 manualPlacementQueue = actions
                 showAddDialog = false

@@ -3,6 +3,7 @@ package org.elnix.dragonlauncher.models
 import android.app.Application
 import android.appwidget.AppWidgetProviderInfo
 import android.util.DisplayMetrics
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
@@ -24,6 +25,7 @@ import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore.widgetsCellS
 import javax.inject.Inject
 import kotlin.random.Random
 
+@Stable
 @HiltViewModel
 public class WidgetsViewModel @Inject constructor(
     application: Application

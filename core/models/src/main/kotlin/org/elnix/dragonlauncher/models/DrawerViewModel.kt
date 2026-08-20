@@ -6,6 +6,7 @@ import android.content.pm.ShortcutInfo
 import android.os.UserHandle
 import android.service.notification.StatusBarNotification
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,6 +23,7 @@ import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Workspace
+import org.elnix.dragonlauncher.enumsui.select.WorkspaceViewMode
 import org.elnix.dragonlauncher.icons.IconPack
 import org.elnix.dragonlauncher.icons.IconPackManager
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized
@@ -33,6 +35,7 @@ import org.elnix.dragonlauncher.workspaces.WorkspacesManager
 import javax.inject.Inject
 
 
+@Stable
 @HiltViewModel
 public class DrawerViewModel @Inject constructor(
     private val appsRepository: AppRepository,
@@ -72,13 +75,11 @@ public class DrawerViewModel @Inject constructor(
 
     public fun search(
         workspace: Workspace,
-        getOnlyAdded: Boolean = false,
-        getOnlyRemoved: Boolean = false
+        workspaceViewMode: WorkspaceViewMode = WorkspaceViewMode.Default
     ): StateFlow<List<Application>> = appsRepository.search(
         searchQuery.value.trim(),
         workspace = workspace,
-        getOnlyAdded = getOnlyAdded,
-        getOnlyRemoved = getOnlyRemoved,
+        workspaceViewMode = workspaceViewMode
     ).stateIn(
         viewModelScope,
         SharingStarted.Eagerly,

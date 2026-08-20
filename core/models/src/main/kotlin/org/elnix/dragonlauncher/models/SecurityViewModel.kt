@@ -1,17 +1,18 @@
 package org.elnix.dragonlauncher.models
 
 import android.app.Application
+import androidx.compose.runtime.Stable
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import androidx.navigation3.runtime.NavKey
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.elnix.dragonlauncher.SECURITY_SERVICE
 import io.github.elnix90.logging.logD
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.SECURITY_SERVICE
 import org.elnix.dragonlauncher.base.Constants.Signatures.DRAGON_LAUNCHER_SIGNATURE_HASH
 import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
@@ -28,6 +29,7 @@ import org.elnix.dragonlauncher.security.SecurityService
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import javax.inject.Inject
 
+@Stable
 @HiltViewModel
 public class SecurityViewModel @Inject constructor(
     application: Application,

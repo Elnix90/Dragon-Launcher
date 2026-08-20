@@ -2,6 +2,7 @@
 
 package org.elnix.dragonlauncher.models
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +25,7 @@ import org.elnix.dragonlauncher.models.utils.viewModelInitialized
 import javax.inject.Inject
 
 
+@Stable
 @HiltViewModel
 public class IconsViewModel @Inject constructor(
     private val iconsService: IconService,

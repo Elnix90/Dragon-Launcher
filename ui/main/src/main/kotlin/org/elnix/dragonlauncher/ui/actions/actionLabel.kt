@@ -59,9 +59,8 @@ fun actionLabel(
 
         is Action.OpenUrl -> action.url
 
-
+        is Action.OpenAppDrawer -> "${stringResource(R.string.app_drawer)} (${action.workspaceId})"
         is Action.OpenDragonLauncherSettings -> "${stringResource(R.string.dragon_launcher_settings)} (${stringResource(action.route.resId)})"
-
 
         is Action.OpenFile ->
             ctx.getFilePathFromUri(action.uri.toUri())

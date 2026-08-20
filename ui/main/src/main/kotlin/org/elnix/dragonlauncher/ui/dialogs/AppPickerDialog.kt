@@ -70,12 +70,13 @@ fun AppPickerDialog(
     onAppSelected: (Application) -> Unit,
     onMultipleAppsSelected: ((List<Application>) -> Unit)? = null
 ) {
-    // Auto Show keyboard logic
     val focusRequester = remember { FocusRequester() }
+    val scope = rememberCoroutineScope()
 
     var searchQuery by drawerViewModel.searchQuery
     var isSearchBarEnabled by remember { mutableStateOf(false) }
 
+    // Auto Show keyboard logic
     LaunchedEffect(isSearchBarEnabled) {
         if (isSearchBarEnabled) {
             yield()
@@ -91,8 +92,6 @@ fun AppPickerDialog(
         initialPage = initialIndex.coerceIn(0, (workspaces.size - 1).coerceAtLeast(0)),
         pageCount = { workspaces.size }
     )
-
-    val scope = rememberCoroutineScope()
 
     // Multi-select state
     var isMultiSelectMode by remember { mutableStateOf(false) }
