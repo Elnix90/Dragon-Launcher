@@ -1,18 +1,17 @@
 package org.elnix.dragonlauncher.ui.dialogs
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
@@ -43,24 +42,26 @@ fun SettingsPagePicker(
                 items = settingsRoutes,
                 modifier = Modifier.heightIn(max = 500.dp)
             ) { route ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(MaterialTheme.shapes.large)
-                        .clickable { onSelect(route) }
-                        .padding(5.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(5.dp)
+                Card(
+                    onClick = { onSelect(route) }
                 ) {
-                    RadioButton(
-                        selected = false,
-                        onClick = null
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp, horizontal = 5.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                        RadioButton(
+                            selected = false,
+                            onClick = null
+                        )
 
-                    Text(
-                        text = stringResource(route.resId),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                        Text(
+                            text = stringResource(route.resId),
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
                 }
             }
         }
