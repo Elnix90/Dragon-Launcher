@@ -583,8 +583,6 @@
     <string name="start_object">Objet de départ</string>
     <string name="end_object">Fin de l’objet</string>
     <string name="show_all_actions_in_current_nest_desc">Afficher tout les points dans le nid actuel quand vous glissez votre doigt</string>
-
-
     <string name="configure_draw_order">Configurer l’ordre de dessin</string>
     <string name="debug_mode_already_enabled">Le mode Débogage est déjà activé</string>
     <string name="not_supported_in_this_android_version">Non pris en charge dans cette version Android</string>
