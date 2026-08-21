@@ -1,0 +1,12 @@
+4.0.2 (Caterpillar)
+2026-08-21
+[NEW]
+* Multi select points optional and defaults to false
+[IMPROVED]
+* Points picker and related pickers dialogs UI
+ [FIXED]
+* Drawer width alignment problem with long app names
+* Icon live edit preview
+* Added back point icons badges
+* Crash when adding status bar (NaN number serialization)
+* Line object order not persisting
