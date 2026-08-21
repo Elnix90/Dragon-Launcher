@@ -268,120 +268,117 @@ fun MainScreen(
             .onSizeChanged { size = it }
             .then(hold.pointerModifier)
     ) {
+        mainScreenLayers.filter { it.enabled }.forEach { layer ->
+            when (layer) {
+                is MainScreenLayer.ChargingAnimation -> {
+                    ChargingAnimation(modifier = Modifier.fillMaxSize())
+                }
 
-        mainScreenLayers.forEach { layer ->
-            if (layer.enabled) {
-                when (layer) {
-                    is MainScreenLayer.ChargingAnimation -> {
-                        ChargingAnimation(modifier = Modifier.fillMaxSize())
-                    }
+                is MainScreenLayer.CustomDim -> {
 
-                    is MainScreenLayer.CustomDim -> {
-
-                        LaunchedEffect(start) {
-                            if (start != null) {
-                                delay(layer.showAfterMs.milliseconds)
-                                showCustomDim = true
-                            } else {
-                                showCustomDim = false
-                            }
-                        }
-
-                        if (showCustomDim) {
-                            CustomDim(layer)
+                    LaunchedEffect(start) {
+                        if (start != null) {
+                            delay(layer.showAfterMs.milliseconds)
+                            showCustomDim = true
+                        } else {
+                            showCustomDim = false
                         }
                     }
 
-                    is MainScreenLayer.DragOverlay -> {
-                        MainScreenOverlay(
-                            start = start,
-                            current = current,
-                            currentNestId = nestId,
-                            onLaunch = { launchAction(it) }
-                        )
+                    if (showCustomDim) {
+                        CustomDim(layer)
                     }
+                }
 
-                    is MainScreenLayer.HoldToActivate -> {
-                        // Hold to activate
-                        HoldToActivateArc(
-                            center = hold.center,
-                            progress = hold.progress,
-                            customObject = holdCustomObject,
-                        )
+                is MainScreenLayer.DragOverlay -> {
+                    MainScreenOverlay(
+                        lineBeforeNests = layer.lineBeforeNests,
+                        start = start,
+                        current = current,
+                        currentNestId = nestId,
+                        onLaunch = { launchAction(it) }
+                    )
+                }
 
-                        if (holdOffset != null) {
+                is MainScreenLayer.HoldToActivate -> {
+                    // Hold to activate
+                    HoldToActivateArc(
+                        center = hold.center,
+                        progress = hold.progress,
+                        customObject = holdCustomObject,
+                    )
 
-                            val actions = holdMenuEntries.map {
-                                MoreOptions(
-                                    onClick = {
-                                        showDropDownMenuSettings = false
-                                        navigator.navigate(it)
-                                    },
-                                    icon = R.drawable.settings,
-                                    text = { stringResource(it.resId) }
-                                )
-                            }
+                    if (holdOffset != null) {
 
-                            val dpOffset = with(density) {
-                                DpOffset(
-                                    x = holdOffset!!.x.toDp(),
-                                    y = holdOffset!!.y.toDp()
-                                )
-                            }
+                        val actions = holdMenuEntries.map {
+                            MoreOptions(
+                                onClick = {
+                                    showDropDownMenuSettings = false
+                                    navigator.navigate(it)
+                                },
+                                icon = R.drawable.settings,
+                                text = { stringResource(it.resId) }
+                            )
+                        }
 
-                            Box(
-                                modifier = Modifier.offset(dpOffset.x, dpOffset.y)
-                            ) {
-                                BurgerListAction(
-                                    actions = actions,
-                                    isExpanded = showDropDownMenuSettings,
-                                    onDismissRequest = {
-                                        showDropDownMenuSettings = false
-                                        holdOffset = null
+                        val dpOffset = with(density) {
+                            DpOffset(
+                                x = holdOffset!!.x.toDp(),
+                                y = holdOffset!!.y.toDp()
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier.offset(dpOffset.x, dpOffset.y)
+                        ) {
+                            BurgerListAction(
+                                actions = actions,
+                                isExpanded = showDropDownMenuSettings,
+                                onDismissRequest = {
+                                    showDropDownMenuSettings = false
+                                    holdOffset = null
+                                }
+                            )
+                        }
+                    }
+                }
+
+                is MainScreenLayer.StatusBar -> {
+                    StatusBar(
+                        launchAction = { launchAction(dummySwipePoint(it)) },
+                    )
+                }
+
+                is MainScreenLayer.Widgets -> {
+                    filteredWidgetObjects.forEach { widgetObject ->
+                        key(widgetObject.id, nestId) {
+                            WidgetHostView(
+                                widget = widgetObject,
+                                cellSizePx = cellSizePx,
+                                modifier = Modifier
+                                    .offset {
+                                        IntOffset(
+                                            x = (widgetObject.x * dm.widthPixels).toInt(),
+                                            y = (widgetObject.y * dm.heightPixels).toInt()
+                                        )
                                     }
-                                )
-                            }
-                        }
-                    }
-
-                    is MainScreenLayer.StatusBar -> {
-                        StatusBar(
-                            launchAction = { launchAction(dummySwipePoint(it)) },
-                        )
-                    }
-
-                    is MainScreenLayer.Widgets -> {
-                        filteredWidgetObjects.forEach { widgetObject ->
-                            key(widgetObject.id, nestId) {
-                                WidgetHostView(
-                                    widget = widgetObject,
-                                    cellSizePx = cellSizePx,
-                                    modifier = Modifier
-                                        .offset {
-                                            IntOffset(
-                                                x = (widgetObject.x * dm.widthPixels).toInt(),
-                                                y = (widgetObject.y * dm.heightPixels).toInt()
-                                            )
-                                        }
-                                        .size(
-                                            width = (widgetObject.spanX * cellSizePx).toDp,
-                                            height = (widgetObject.spanY * cellSizePx).toDp
-                                        )
-                                        .graphicsLayer {
-                                            rotationZ = widgetObject.angle
-                                            transformOrigin = TransformOrigin.Center
-                                        },
-                                    onLaunchAction = {
-                                        launchAction(
-                                            dummySwipePoint(
-                                                action = widgetObject.action
-                                            )
-                                        )
+                                    .size(
+                                        width = (widgetObject.spanX * cellSizePx).toDp,
+                                        height = (widgetObject.spanY * cellSizePx).toDp
+                                    )
+                                    .graphicsLayer {
+                                        rotationZ = widgetObject.angle
+                                        transformOrigin = TransformOrigin.Center
                                     },
-                                    blockTouches = widgetObject.ghosted == true
-                                )
-                            }
-
+                                onLaunchAction = {
+                                    launchAction(
+                                        dummySwipePoint(
+                                            action = widgetObject.action
+                                        )
+                                    )
+                                },
+                                blockTouches = widgetObject.ghosted == true
+                            )
                         }
                     }
                 }

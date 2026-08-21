@@ -42,8 +42,13 @@ public sealed class MainScreenLayer {
     @Serializable
     @SerialName("DragOverlay")
     public data class DragOverlay(
-        val enabled: Boolean = true
-    ) : MainScreenLayer()
+        val enabled: Boolean = true,
+        val lineBeforeNests: Boolean = defaultLineBeforeNests
+    ) : MainScreenLayer() {
+        public companion object {
+            public const val defaultLineBeforeNests: Boolean = false
+        }
+    }
 
     @Immutable
     @Serializable

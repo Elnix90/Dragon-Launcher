@@ -1057,4 +1057,5 @@
     <string name="pick_a_character">Pick a character</string>
     <string name="multi_select_points">Multi select points</string>
     <string name="multi_select_points_desc">Whether to allow or not the multi select of points in the edit screen</string>
+    <string name="line_before_nests">Line before nests</string>
 </resources>

@@ -17,14 +17,15 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
-import org.elnix.dragonlauncher.SWIPE_TAG
 import io.github.elnix90.logging.logI
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.SWIPE_TAG
 import org.elnix.dragonlauncher.base.cache.PointStableCache
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
@@ -59,6 +60,7 @@ import org.elnix.dragonlauncher.ui.remembers.rememberLiveNestControllerStack
 @Composable
 fun MainScreenOverlay(
     pointsViewModel: PointsViewModel = activityViewModel(),
+    lineBeforeNests: Boolean,
     start: Offset?,
     current: Offset?,
     currentNestId: Int,
@@ -367,31 +369,7 @@ fun MainScreenOverlay(
                     val pickedRememberShapeEnd = endObject.shape.resolveShape()
                     val pickedRememberRotationEnd = endObject.resolveRotation(false, sweep, controller.liveNestCenter)
 
-                    // Main canvas, uses drawWithCache to improve drawing performances
-                    Canvas(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .graphicsLayer {
-                                alpha = liveNestOpacity
-                                compositingStrategy = CompositingStrategy.Offscreen
-                            }
-                            .drawWithCache {
-                                onDrawBehind {
-                                    iconsTrigger
-
-                                    NestOverlay(
-                                        center = liveNestCenterForDraw,
-                                        nest = nestedNestForDraw,
-                                        depth = 1,
-                                        drawParams = drawParams,
-                                        selectedAll = false,
-                                        lockedPoint = if (isDeepestController) null else controller.hostPoint
-                                    )
-                                }
-                            }
-                    ) {
-
-
+                    fun DrawScope.lineDrawing() {
                         val lineColor: Color =
                             if (rgbLine) Color.hsv(angle360, 1f, 1f)
                             else extraColors.angleLine
@@ -418,6 +396,49 @@ fun MainScreenOverlay(
                             startCustomObject = startObject,
                             endCustomObject = endObject
                         )
+                    }
+
+                    if (lineBeforeNests) {
+                        Canvas(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .graphicsLayer {
+                                    alpha = liveNestOpacity
+                                    compositingStrategy = CompositingStrategy.Offscreen
+                                }
+                        ) {
+                            lineDrawing()
+                        }
+                    }
+
+                    // Main canvas, uses drawWithCache to improve drawing performances
+                    Canvas(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .graphicsLayer {
+                                alpha = liveNestOpacity
+                                compositingStrategy = CompositingStrategy.Offscreen
+                            }
+                            .drawWithCache {
+                                onDrawBehind {
+                                    iconsTrigger
+
+                                    NestOverlay(
+                                        center = liveNestCenterForDraw,
+                                        nest = nestedNestForDraw,
+                                        depth = 1,
+                                        drawParams = drawParams,
+                                        selectedAll = false,
+                                        lockedPoint = if (isDeepestController) null else controller.hostPoint
+                                    )
+                                }
+                            }
+                    ) {
+
+
+                        if (!lineBeforeNests) {
+                            lineDrawing()
+                        }
 
                         if (!nestDebugOverlay) return@Canvas
 
