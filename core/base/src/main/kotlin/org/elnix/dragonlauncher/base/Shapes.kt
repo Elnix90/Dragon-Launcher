@@ -40,10 +40,10 @@ private object ShapesCache : DragonCache<IconShape, Shape>(100)
  * Resolve an [IconShape] element to a [Shape] using caching to avoid over computation
  */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-public fun IconShape.resolveShape(): Shape =
-    ShapesCache.getOrCompute(this) {
+public fun IconShape.resolveShape(): Shape {
+    if (this is IconShape.Random) return IconShape.allShapesWithoutRandom.random().resolveShape()
+    return ShapesCache.getOrCompute(this) {
         when (this) {
-            IconShape.Random -> IconShape.allShapesWithoutRandom.random().resolveShape()
             IconShape.PlatformDefault -> PlatformShape
             IconShape.Square -> SquareShape
             IconShape.RightSquare -> RoundedCornerShape(0)
@@ -105,6 +105,7 @@ public fun IconShape.resolveShape(): Shape =
             }.toShape()
         }
     }
+}
 
 
 /**
