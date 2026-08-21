@@ -294,7 +294,7 @@ fun MainScreenOverlay(
     val drawParams = rememberDrawParams(
         eraseColor = Color.Transparent,
         isDefaultEditing = false,
-        allowShowPointCenter = false,
+        allowShowPointCenter = true,
         pointSettingsDisplay = false,
         showCancelZone = nestDebugOverlay,
         hideShapes = false,

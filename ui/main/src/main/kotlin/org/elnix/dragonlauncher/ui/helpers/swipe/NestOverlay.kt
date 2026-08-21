@@ -95,7 +95,11 @@ fun DrawScope.NestOverlay(
 
                 val showShape = depth > 1 ||
                         isSettingDisplay ||
-                        (nest.getShowAllShapes(defaultNest, drawParams.showAllShapesInNest, drawParams.isDefaultEditing) && selectedPointsIds.isNotEmpty()) ||
+                        (nest.getShowAllShapes(
+                            defaultNest,
+                            drawParams.showAllShapesInNest,
+                            drawParams.isDefaultEditing
+                        ) && selectedPointsIds.isNotEmpty()) ||
                         (nest.getShowCurrentShape(defaultNest, drawParams.showShape, drawParams.isDefaultEditing) &&
                                 (shape.id in selectedShapes))
 
@@ -188,16 +192,17 @@ fun DrawScope.NestOverlay(
         )
     }
 
-    if (drawParams.allowShowPointInCenter) {
-        if (selectedPointsIds.size == 1) {
-            val point = filteredPoints[selectedPointsIds.first()] ?: return
-            PointIcon(
-                point = point,
-                depth = depth,
-                center = center,
-                selected = true,
-                drawParams = drawParams.copy(allowShowPointInCenter = false)
-            )
-        }
+
+    if (drawParams.showPointPreviewCenterStartPosition && selectedPointsIds.size == 1) {
+        val id = selectedPointsIds.firstOrNull() ?: return
+        val point = filteredPoints[id] ?: return
+
+        PointIcon(
+            point = point,
+            depth = depth,
+            center = center,
+            selected = true,
+            drawParams = drawParams.copy(showPointPreviewCenterStartPosition = false)
+        )
     }
 }

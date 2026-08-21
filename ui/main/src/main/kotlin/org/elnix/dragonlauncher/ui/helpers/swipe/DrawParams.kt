@@ -52,7 +52,7 @@ data class DrawParams(
     val showCurrentPoint: Boolean,
     val showAllPointsInCurrentShape: Boolean,
     val showAllPointsInCurrentNest: Boolean,
-    val allowShowPointInCenter: Boolean,
+    val showPointPreviewCenterStartPosition: Boolean,
 
     val nestDebugOverlay: Boolean,
     val showCancelZone: Boolean,
@@ -137,7 +137,7 @@ fun rememberDrawParams(
             showCurrentPoint = showCurrentPoint,
             showAllPointsInCurrentShape = showAllPointsInCurrentShape,
             showAllPointsInCurrentNest = showAllPointsInCurrentNest,
-            allowShowPointInCenter = allowShowPointCenter && showPointPreviewCenterStartPosition,
+            showPointPreviewCenterStartPosition = allowShowPointCenter && showPointPreviewCenterStartPosition,
             nestDebugOverlay = nestDebugOverlay,
             showCancelZone = showCancelZone,
             showShape = showShape,
