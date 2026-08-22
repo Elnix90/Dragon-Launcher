@@ -271,6 +271,7 @@ public class PointsViewModel @Inject constructor(
         settings: IconSettings
     ): ImageBitmap? {
         val size = (point.getSize(defaultPoint, false).value * density.density).toInt() * 2
+        if (size <= 0) return null
 
         return when (icon) {
             is DynamicLauncherIcon -> {

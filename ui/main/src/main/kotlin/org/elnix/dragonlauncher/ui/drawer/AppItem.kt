@@ -118,7 +118,7 @@ fun AppItemGrid(
     Box {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(drawerSettings.iconsSpacingVertical),
+            verticalArrangement = Arrangement.spacedBy(5.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.large)

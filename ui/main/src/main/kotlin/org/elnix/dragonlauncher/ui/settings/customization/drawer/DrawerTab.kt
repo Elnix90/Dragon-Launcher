@@ -165,7 +165,11 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
 
         DragonSettingsGroup(R.string.grid_settings) {
             Setting(DrawerSettingsStore.gridSize)
-            Setting(DrawerSettingsStore.iconSize)
+            Setting(DrawerSettingsStore.iconSize) { value ->
+                if (value == 0.dp) {
+                    stringResource(R.string.not_showed)
+                } else null
+            }
             Setting(DrawerSettingsStore.iconsSpacingHorizontal)
             Setting(DrawerSettingsStore.iconsSpacingVertical)
 

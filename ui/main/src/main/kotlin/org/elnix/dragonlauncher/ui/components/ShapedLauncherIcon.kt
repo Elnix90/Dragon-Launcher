@@ -74,6 +74,9 @@ fun ShapedLauncherIcon(
     icon: () -> LauncherIcon? = { null },
     badge: () -> Badge? = { null }
 ) {
+    val sizePxInt = size.px.toInt()
+    if (sizePxInt <= 0) return
+
     val icon = icon()
     val drawerSettings = LocalDrawerSettings.current
     val shape = drawerSettings.iconShape.resolveShape()
@@ -88,7 +91,6 @@ fun ShapedLauncherIcon(
         )
     }
 
-    val sizePxInt = size.px.toInt()
     val iconSettings = drawerSettings.iconSettings
 
     var currentBitmap by remember {

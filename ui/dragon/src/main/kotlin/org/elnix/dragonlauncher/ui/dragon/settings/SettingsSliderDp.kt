@@ -22,7 +22,7 @@ fun Setting(
     setting: DpSettingObject,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    customDesc: ((Dp) -> String)? = null,
+    customDesc: (@Composable (Dp) -> String?) = { null },
 ) {
     // Craches if this setting isn't placed inside a DragonSettingsGroup
     LocalSettingsPlacementChecker.current
@@ -39,7 +39,7 @@ fun Setting(
     SliderWithLabel(
         modifier = modifier,
         label = stringResource(setting.title!!),
-        description = customDesc?.invoke(state) ?: stringResource(setting.description!!),
+        description = customDesc.invoke(state) ?: stringResource(setting.description!!),
         value = tempState,
         valueRange = setting.allowedRange,
         enabled = enabled,

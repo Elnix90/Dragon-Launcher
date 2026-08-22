@@ -64,7 +64,7 @@ dependency-analysis = "3.18.0"
 
 # Those are my libraries, you can find them on my GitHub
 logging = "1.0.3"
-settings = "1.2.1"
+settings = "1.2.2"
 compose-lock = "1.2.1"
 
 [libraries]

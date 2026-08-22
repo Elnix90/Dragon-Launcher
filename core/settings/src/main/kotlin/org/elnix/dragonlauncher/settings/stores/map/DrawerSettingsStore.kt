@@ -181,7 +181,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val iconsSpacingHorizontal: DpSettingObject = dp(
         title = R.string.icons_spacing_horizontal,
         description = R.string.icons_spacing_horizontal_desc,
-        default = 8.dp,
+        default = 0.dp,
         allowedRange = 0.dp..50.dp
     )
 
