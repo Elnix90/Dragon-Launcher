@@ -489,10 +489,13 @@ fun ColorSelectorTab() {
             },
             title = {
                 ColorPickerRow(
-                    currentColor = applyColor,
                     description = null,
                     title = stringResource(R.string.color_mode_all),
-                ) { applyColor = it ?: Color.Black }
+                    currentColor = applyColor,
+                    defaultColor = null
+                ) {
+                    if (it != null) applyColor = it
+                }
             },
             containerColor = MaterialTheme.colorScheme.surface,
             shape = MaterialTheme.shapes.large

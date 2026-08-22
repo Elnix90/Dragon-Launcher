@@ -137,6 +137,7 @@ public data class CustomObject(
         )
 
 
+        @Stable
         public data class CustomObjectBlockProperties(
             val allowStrokeCustomization: Boolean = true,
             val allowColorCustomization: Boolean = true,

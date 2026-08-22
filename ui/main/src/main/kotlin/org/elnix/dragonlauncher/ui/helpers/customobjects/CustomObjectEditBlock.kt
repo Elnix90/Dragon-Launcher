@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
@@ -74,9 +73,11 @@ fun EditCustomObjectBlock(
                 title = stringResource(R.string.color),
                 description = null,
                 enabled = true,
-                currentColor = editObject.color ?: default.color ?: Color.Unspecified,
-                onColorPicked = { onEdit(editObject.copy(color = it)) }
-            )
+                currentColor = editObject.color ?: default.color,
+                defaultColor = null
+            ) {
+                onEdit(editObject.copy(color = it))
+            }
         }
 
         if (properties.allowGlowCustomization) {
@@ -84,18 +85,19 @@ fun EditCustomObjectBlock(
                 title = stringResource(R.string.glow_color),
                 description = null,
                 enabled = true,
-                currentColor = editObject.glow?.color ?: default.glow?.color ?: Color.Unspecified,
-                onColorPicked = { newColor ->
-                    onEdit(
-                        editObject.copy(
-                            glow = (editObject.glow
-                                ?.copy(color = newColor)
-                                ?: CustomGlow(color = newColor))
-                                .takeIf { it.isSpecified }
-                        )
+                currentColor = editObject.glow?.color ?: default.glow?.color,
+                defaultColor = null
+            ) { newColor ->
+                onEdit(
+                    editObject.copy(
+                        glow = (editObject.glow
+                            ?.copy(color = newColor)
+                            ?: CustomGlow(color = newColor))
+                            .takeIf { it.isSpecified }
                     )
-                }
-            )
+                )
+            }
+
 
             SliderWithLabel(
                 label = stringResource(R.string.glow_radius),

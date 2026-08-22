@@ -674,7 +674,7 @@ public class IconService internal constructor(
                         val ent = it.toDatabaseEntity()
                         CustomIconPackIcon(
                             iconPackPackage = it.iconPack,
-                            type = ent.type,
+                            packType = ent.type,
                             drawable = ent.drawable,
                             extras = ent.extras,
                             allowThemed = it.themed,
@@ -753,7 +753,7 @@ public class IconService internal constructor(
                         CustomIconWithPreview(
                             customIcon = CustomIconPackIcon(
                                 iconPackPackage = it.iconPack,
-                                type = ent.type,
+                                packType = ent.type,
                                 drawable = ent.drawable,
                                 extras = ent.extras,
                                 allowThemed = false,
@@ -769,7 +769,7 @@ public class IconService internal constructor(
                         CustomIconWithPreview(
                             customIcon = CustomIconPackIcon(
                                 iconPackPackage = it.iconPack,
-                                type = ent.type,
+                                packType = ent.type,
                                 drawable = ent.drawable,
                                 extras = ent.extras,
                                 allowThemed = true,

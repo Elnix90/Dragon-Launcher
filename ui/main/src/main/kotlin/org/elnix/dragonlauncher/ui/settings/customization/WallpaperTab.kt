@@ -18,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.platform.LocalContext
@@ -155,9 +154,10 @@ fun WallpaperTab() {
             ColorPickerRow(
                 title = stringResource(R.string.plain_wallpaper_color),
                 description = null,
-                currentColor = plainColor
+                currentColor = plainColor,
+                defaultColor = null
             ) {
-                plainColor = it ?: Color.Black
+                if (it != null) plainColor = it
             }
         }
 

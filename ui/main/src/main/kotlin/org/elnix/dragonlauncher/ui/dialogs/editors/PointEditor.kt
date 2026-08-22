@@ -30,7 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -107,8 +106,6 @@ fun PointEditor(
 
     var selectedView by remember { mutableStateOf(SelectedUnselectedViewMode.Unselected) }
 
-
-    val currentActionColor = editPoint.action.actionColor(extraColors)
 
     val label = editPoint.customName ?: actionLabel(editPoint.action)
     val actionColor = editPoint.action.actionColor(extraColors, editPoint.customActionColor)
@@ -714,7 +711,8 @@ fun PointEditor(
                     ColorPickerRow(
                         title = stringResource(R.string.custom_action_color),
                         description = null,
-                        currentColor = editPoint.customActionColor ?: currentActionColor,
+                        currentColor = editPoint.customActionColor,
+                        defaultColor = null
                     ) { selectedColor ->
                         editPoint = editPoint.copy(customActionColor = selectedColor)
                     }
@@ -812,7 +810,8 @@ fun PointEditor(
                             ColorPickerRow(
                                 title = stringResource(R.string.border_color_selected),
                                 description = null,
-                                currentColor = editPoint.getBorderColor(true, defaultPoint, extraColors, isDefaultEditing)
+                                currentColor = editPoint.getBorderColor(true, defaultPoint, extraColors, isDefaultEditing),
+                                defaultColor = null
                             ) { selectedColor ->
                                 editPoint = editPoint.copy(
                                     borderColorSelected = selectedColor.takeIf {
@@ -829,7 +828,8 @@ fun PointEditor(
                             ColorPickerRow(
                                 title = stringResource(R.string.background_selected),
                                 description = null,
-                                currentColor = editPoint.getBackgroundColor(true, defaultPoint, isDefaultEditing)
+                                currentColor = editPoint.getBackgroundColor(true, defaultPoint, isDefaultEditing),
+                                defaultColor = null
                             ) { selectedColor ->
                                 editPoint = editPoint.copy(
                                     backgroundColorSelected = selectedColor.takeIf {
@@ -865,16 +865,16 @@ fun PointEditor(
                                 title = stringResource(R.string.glow_color),
                                 description = null,
                                 enabled = true,
-                                currentColor = editPoint.getGlow(true, defaultPoint, isDefaultEditing).color ?: Color.Unspecified,
-                                onColorPicked = { newColor ->
-                                    editPoint = editPoint.copy(
-                                        glowSelected = (editPoint.glowSelected
-                                            ?.copy(color = newColor)
-                                            ?: CustomGlow(color = newColor))
-                                            .takeIf { it.isSpecified }
-                                    )
-                                }
-                            )
+                                currentColor = editPoint.getGlow(true, defaultPoint, isDefaultEditing).color,
+                                defaultColor = null
+                            ) { newColor ->
+                                editPoint = editPoint.copy(
+                                    glowSelected = (editPoint.glowSelected
+                                        ?.copy(color = newColor)
+                                        ?: CustomGlow(color = newColor))
+                                        .takeIf { it.isSpecified }
+                                )
+                            }
 
                             ShapeRow(
                                 selected = editPoint.getBorderShape(true, defaultPoint, isDefaultEditing),
@@ -907,7 +907,8 @@ fun PointEditor(
                             ColorPickerRow(
                                 title = stringResource(R.string.border_color),
                                 description = null,
-                                currentColor = editPoint.getBorderColor(false, defaultPoint, extraColors, isDefaultEditing)
+                                currentColor = editPoint.getBorderColor(false, defaultPoint, extraColors, isDefaultEditing),
+                                defaultColor = null
                             ) { selectedColor ->
                                 editPoint = editPoint.copy(
                                     borderColor = selectedColor.takeIf {
@@ -924,7 +925,8 @@ fun PointEditor(
                             ColorPickerRow(
                                 title = stringResource(R.string.background_color),
                                 description = null,
-                                currentColor = editPoint.getBackgroundColor(false, defaultPoint, isDefaultEditing)
+                                currentColor = editPoint.getBackgroundColor(false, defaultPoint, isDefaultEditing),
+                                defaultColor = null
                             ) { selectedColor ->
                                 editPoint = editPoint.copy(
                                     backgroundColor = selectedColor.takeIf {
@@ -960,16 +962,16 @@ fun PointEditor(
                                 title = stringResource(R.string.glow_color),
                                 description = null,
                                 enabled = true,
-                                currentColor = editPoint.getGlow(false, defaultPoint, isDefaultEditing).color ?: Color.Unspecified,
-                                onColorPicked = { newColor ->
-                                    editPoint = editPoint.copy(
-                                        glow = (editPoint.glow
-                                            ?.copy(color = newColor)
-                                            ?: CustomGlow(color = newColor))
-                                            .takeIf { it.isSpecified }
-                                    )
-                                }
-                            )
+                                currentColor = editPoint.getGlow(false, defaultPoint, isDefaultEditing).color,
+                                defaultColor = null
+                            ) { newColor ->
+                                editPoint = editPoint.copy(
+                                    glow = (editPoint.glow
+                                        ?.copy(color = newColor)
+                                        ?: CustomGlow(color = newColor))
+                                        .takeIf { it.isSpecified }
+                                )
+                            }
 
                             ShapeRow(
                                 selected = editPoint.getBorderShape(false, defaultPoint, isDefaultEditing),

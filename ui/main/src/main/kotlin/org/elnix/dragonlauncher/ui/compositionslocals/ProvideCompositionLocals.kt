@@ -8,19 +8,21 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.text.rememberTextMeasurer
-import org.elnix.dragonlauncher.ICONS_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
+import org.elnix.dragonlauncher.ICONS_TAG
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.base.model.serializables.StatusBarJson
 import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
+import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
+import org.elnix.dragonlauncher.ui.composition.LocalColorPickerMode
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
@@ -63,6 +65,8 @@ fun ProvideGlobalCompositionLocals(
 
     val nestDebugOverlay by DebugSettingsStore.nestDebugOverlay.asState()
 
+    val colorPickerMode by ColorModesSettingsStore.colorPickerMode.asState()
+
 
     /**
      * Main Composition local provider, I just for everything I can here to avoid having to import them everywhere
@@ -80,7 +84,8 @@ fun ProvideGlobalCompositionLocals(
         LocalShowLabelsInAddPointDialog provides showTooltipsOnAddPointDialog,
 
         LocalDisableHapticFeedbackGlobally provides disableHapticFeedbackGlobally,
-        LocalNestDebugOverlay provides nestDebugOverlay
+        LocalNestDebugOverlay provides nestDebugOverlay,
+        LocalColorPickerMode provides colorPickerMode
     ) {
         ProvideCurrentTime {
             ProvideDrawerSettings {

@@ -13,7 +13,7 @@ internal class CustomIconPackIconProvider(
 ) : IconProvider {
     override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
         val ent = IconEntity(
-            type = customIcon.type,
+            type = customIcon.packType,
             drawable = customIcon.drawable,
             extras = customIcon.extras,
             iconPack = customIcon.iconPackPackage,

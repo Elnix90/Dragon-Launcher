@@ -26,7 +26,8 @@ fun Setting(
         title = stringResource(settingObject.title!!),
         description = settingObject.description?.let { stringResource(it) },
         currentColor = state,
-        enabled = enabled
+        enabled = enabled,
+        defaultColor = settingObject.default
     ) {
         onPicked?.invoke(it)
         scope.launch {

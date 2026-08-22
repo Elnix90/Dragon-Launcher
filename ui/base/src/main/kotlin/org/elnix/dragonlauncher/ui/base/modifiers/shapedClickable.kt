@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.base.modifiers
 
+import androidx.annotation.IntRange
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -49,12 +50,16 @@ fun Modifier.shapedClickable(
 @Composable
 fun provideClickableShape(
     interactionSource: MutableInteractionSource,
-    isSelected: Boolean = false
+    isSelected: Boolean = false,
+    @IntRange(0, 100)
+    defaultRoundingPercent: Int = 35,
+    @IntRange(0, 100)
+    pressedRoundingPercent: Int = 20,
 ): Shape {
     val isPressed by interactionSource.collectIsPressedAsState()
 
     val shapeRound by animateIntAsState(
-        targetValue = if (isPressed || isSelected) 20 else 35,
+        targetValue = if (isPressed || isSelected) pressedRoundingPercent else defaultRoundingPercent,
         label = "shape_anim",
         animationSpec = defaultSpec()
     )

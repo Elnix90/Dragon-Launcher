@@ -4,22 +4,24 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,16 +30,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
+import org.elnix.dragonlauncher.ui.base.modifiers.provideClickableShape
 
 @Composable
 fun DefaultColorPicker(
-    initialColor: Color,
+    selectedColor: Color,
     onColorSelected: (Color) -> Unit
 ) {
-    var selectedColor by remember(initialColor) { mutableStateOf(initialColor) }
-
-
     val defaultColors = listOf(
         Color.Red,
         Color.Blue,
@@ -77,61 +76,73 @@ fun DefaultColorPicker(
         ) {
             // Display colors in 4x4 grid
             defaultColors.chunked(4).forEach { rowColors ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                val interactionSources = remember { List(4) { MutableInteractionSource() } }
+
+                ButtonGroup(
+                    overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    rowColors.forEach { color ->
+
+                    rowColors.forEachIndexed { idx, color ->
                         val isSelected = color == selectedColor
 
-                        val scale by animateFloatAsState(
-                            targetValue = if (isSelected) 1f else 0f,
-                            animationSpec = tween(durationMillis = 300),
-                            label = "Check Scale Animation"
-                        )
-
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .weight(1f)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .shapedClickable(hapticFeedback = true) {
-                                        selectedColor = color
-                                        onColorSelected(color)
-                                    }
-                                    .size(44.dp)
-                                    .clip(CircleShape)
-                                    .background(color)
-                                    .border(
-                                        width = if (isSelected) 3.dp else 1.dp,
-                                        color = if (isSelected)
-                                            MaterialTheme.colorScheme.onBackground
-                                        else
-                                            MaterialTheme.colorScheme.outline,
-                                        shape = CircleShape
-                                    )
-                            )
-
-                            Box(
-                                modifier = Modifier
-                                    .size(20.dp)
-                                    .scale(scale)
-                                    .clip(CircleShape)
-                                    .background(color = MaterialTheme.colorScheme.primaryContainer)
-                            ) {
-                                Icon(
-                                    modifier = Modifier
-                                        .size(16.dp)
-                                        .align(Alignment.Center),
-                                    painter = painterResource(R.drawable.check),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        customItem(
+                            buttonGroupContent = {
+                                val scale by animateFloatAsState(
+                                    targetValue = if (isSelected) 1f else 0f,
+                                    animationSpec = tween(durationMillis = 300),
+                                    label = "Check Scale Animation"
                                 )
-                            }
-                        }
+
+                                val shape = provideClickableShape(
+                                    interactionSource = interactionSources[idx],
+                                    isSelected = isSelected,
+                                    defaultRoundingPercent = 50,
+                                    pressedRoundingPercent = 20,
+                                )
+
+                                Box(
+                                    modifier = Modifier
+                                        .clickable(
+                                            interactionSource = interactionSources[idx]
+                                        ) {
+                                            onColorSelected(color)
+                                        }
+                                        .weight(1f)
+                                        .animateWidth(interactionSources[idx])
+                                        .height(50.dp)
+                                        .clip(shape)
+                                        .background(color)
+                                        .border(
+                                            width = if (isSelected) 3.dp else 1.dp,
+                                            color = if (isSelected)
+                                                MaterialTheme.colorScheme.onBackground
+                                            else
+                                                MaterialTheme.colorScheme.outline,
+                                            shape = shape
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(20.dp)
+                                            .scale(scale)
+                                            .clip(CircleShape)
+                                            .background(color = MaterialTheme.colorScheme.primaryContainer)
+                                    ) {
+                                        Icon(
+                                            modifier = Modifier
+                                                .size(16.dp)
+                                                .align(Alignment.Center),
+                                            painter = painterResource(R.drawable.check),
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                        )
+                                    }
+                                }
+                            },
+                            menuContent = {}
+                        )
                     }
                 }
             }

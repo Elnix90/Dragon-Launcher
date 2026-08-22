@@ -18,7 +18,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -229,7 +228,8 @@ private fun IconEditorImpl(
                     ColorPickerRow(
                         title = stringResource(R.string.tint),
                         description = null,
-                        currentColor = editProperties.tint ?: Color.Unspecified
+                        currentColor = editProperties.tint,
+                        defaultColor = null
                     ) {
                         editProperties = editProperties.copy(tint = it)
                     }

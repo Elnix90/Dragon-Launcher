@@ -1,6 +1,8 @@
 package org.elnix.dragonlauncher.ui.dragon.colors
 
 import android.content.Context
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -37,7 +39,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
-import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.pasteClipboard
@@ -50,14 +51,26 @@ import org.elnix.dragonlauncher.ktx.toHexWithAlpha
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.composition.LocalColorPickerMode
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
+import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
+/**
+ * Color picker row
+ *
+ * Uses internally a Compose state derived by the current color to mutate it inside the color picker sheet.
+ * When the sheet is dismissed, the [onColorPicked] is called
+ *
+ * @param currentColor the current color saved in settings
+ * @param defaultColor the default color
+ * @param onColorPicked when the user saves a color and validate
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ColorPickerRow(
@@ -65,14 +78,14 @@ fun ColorPickerRow(
     description: String?,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    currentColor: Color,
+    currentColor: Color?,
+    defaultColor: Color?,
     onColorPicked: (Color?) -> Unit
 ) {
     var showPicker by remember { mutableStateOf(false) }
-    var actualColor by remember(currentColor) { mutableStateOf(currentColor) }
 
-    val savedMode by ColorModesSettingsStore.colorPickerMode.asState()
-    val initialPage = remember(savedMode) { ColorPickerMode.entries.indexOf(savedMode) }
+    val currentColorNotNull = currentColor ?: Color.Unspecified
+    var actualColor by remember(currentColorNotNull) { mutableStateOf(currentColorNotNull) }
 
     Row(
         modifier = modifier
@@ -96,15 +109,17 @@ fun ColorPickerRow(
 
             ColorPickerButton(
                 button = ColorModesSettingsStore.colorPickerButtonOne,
-                currentColor = currentColor,
                 enabled = enabled,
+                currentColor = currentColor,
+                defaultColor = defaultColor,
                 onColorPicked = onColorPicked
             )
 
             ColorPickerButton(
                 button = ColorModesSettingsStore.colorPickerButtonTwo,
-                currentColor = currentColor,
                 enabled = enabled,
+                currentColor = currentColor,
+                defaultColor = defaultColor,
                 onColorPicked = onColorPicked
             )
 
@@ -113,7 +128,7 @@ fun ColorPickerRow(
             Box(
                 modifier = Modifier
                     .size(40.dp)
-                    .background(currentColor, shape = CircleShape)
+                    .background(currentColorNotNull, shape = CircleShape)
                     .border(
                         1.dp,
                         MaterialTheme.colorScheme.outline,
@@ -137,32 +152,29 @@ fun ColorPickerRow(
                     .verticalScroll(rememberScrollState())
                     .padding(bottom = 16.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = title,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.titleMediumEmphasized
-                    )
-
-                    Spacer()
-
-                    MultiSelectConnectedButtonRow(
-                        entries = ColorActions.entries
-                    ) {
-                        when (it) {
-                            ColorActions.Reset -> onColorPicked(null)
-                            ColorActions.Random -> actualColor = randomColor()
+                DialogTitle(
+                    text = title,
+                    trailingIcon = {
+                        MultiSelectConnectedButtonRow(
+                            entries = ColorActions.entries,
+                            enabled = {
+                                when (it) {
+                                    ColorActions.Reset -> actualColor != defaultColor
+                                    ColorActions.Random -> true
+                                }
+                            }
+                        ) {
+                            actualColor = when (it) {
+                                ColorActions.Reset -> defaultColor ?: Color.Unspecified
+                                ColorActions.Random -> randomColor()
+                            }
                         }
                     }
-                }
+                )
 
                 ColorPicker(
-                    initialColor = currentColor,
+                    initialColor = currentColorNotNull,
                     color = actualColor,
-                    initialPage = initialPage,
                     onColorSelected = { actualColor = it }
                 )
             }
@@ -175,15 +187,14 @@ fun ColorPickerRow(
 private fun ColorPicker(
     initialColor: Color,
     color: Color,
-    initialPage: Int,
     onColorSelected: (Color) -> Unit
 ) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val pickerModes = ColorPickerMode.entries
-    // Synchronize pager state with stored mode
-    val pagerState = rememberPagerState(initialPage = initialPage) { pickerModes.size }
+    val colorPickerMode = LocalColorPickerMode.current
+    val initialPage = remember { ColorPickerMode.entries.indexOf(colorPickerMode) }
+    val pagerState = rememberPagerState(initialPage = initialPage) { ColorPickerMode.entries.size }
 
     var hexText by remember { mutableStateOf(color.toHexWithAlpha) }
 
@@ -191,7 +202,7 @@ private fun ColorPicker(
         hexText = color.toHexWithAlpha
     }
 
-    val currentMode = pickerModes[pagerState.currentPage]
+    val currentMode = ColorPickerMode.entries[pagerState.currentPage]
     // Save the current page as mode whenever changed
     LaunchedEffect(currentMode) {
         ColorModesSettingsStore.colorPickerMode.set(ctx, currentMode)
@@ -200,7 +211,7 @@ private fun ColorPicker(
     Column(modifier = Modifier.fillMaxWidth()) {
 
         SingleSelectConnectedButtonRow(
-            entries = pickerModes,
+            entries = ColorPickerMode.entries,
             checked = { currentMode == it },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -209,12 +220,24 @@ private fun ColorPicker(
 
         Spacer(5.dp)
 
+        val displayedColor by animateColorAsState(
+            targetValue = color,
+            animationSpec = tween(durationMillis = 200)
+        )
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(60.dp)
-                .background(color)
-                .border(1.dp, MaterialTheme.colorScheme.outline),
+                .background(
+                    color = displayedColor,
+                    shape = MaterialTheme.shapes.medium
+                )
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outline,
+                    shape = MaterialTheme.shapes.medium
+                ),
             contentAlignment = Alignment.Center
         ) {
             Row(
@@ -279,9 +302,9 @@ private fun ColorPicker(
             state = pagerState,
             modifier = Modifier.height(380.dp)
         ) { page ->
-            when (pickerModes[page]) {
+            when (ColorPickerMode.entries[page]) {
                 ColorPickerMode.Default -> DefaultColorPicker(
-                    initialColor = color,
+                    selectedColor = color,
                     onColorSelected = onColorSelected
                 )
 

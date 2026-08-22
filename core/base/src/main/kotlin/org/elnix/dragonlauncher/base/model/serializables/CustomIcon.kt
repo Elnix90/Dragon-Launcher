@@ -45,7 +45,7 @@ public sealed class CustomIcon {
 @SerialName("CustomIconPackIcon")
 public data class CustomIconPackIcon(
     val iconPackPackage: String,
-    val type: String,
+    val packType: String,
     val drawable: String?,
     val extras: String?,
     val allowThemed: Boolean,
