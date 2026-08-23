@@ -163,6 +163,7 @@ fun WidgetsTab(
             if (selected != null) {
                 selected = null
             } else {
+                widgetsViewModel.save()
                 navigator.onBack()
             }
         },
