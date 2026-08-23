@@ -67,9 +67,10 @@ public class WidgetsViewModel @Inject constructor(
     )
 
 
-    public fun save() {
+    public fun save(onSuccess: () -> Unit) {
         viewModelScope.launch {
             WidgetsSettingsStore.jsonSetting.set(application.applicationContext, WidgetsJson.encode(snapshotWidgets()))
+            onSuccess()
         }
     }
 

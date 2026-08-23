@@ -163,7 +163,7 @@ fun WidgetsTab(
             if (selected != null) {
                 selected = null
             } else {
-                navigator.onBack()
+                widgetsViewModel.save { navigator.onBack() }
             }
         },
         helpText = stringResource(R.string.widgets_tab_help),
