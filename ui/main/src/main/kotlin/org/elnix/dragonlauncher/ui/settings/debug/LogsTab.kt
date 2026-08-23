@@ -247,30 +247,6 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
                     )
 
                     Setting(DebugSettingsStore.filterTag, singleChar = false)
-//                    val animatedIcon = rememberAnimatedIcon()
-//                    TextField(
-//                        value = tempFilterTag,
-//                        onValueChange = { tempFilterTag = it },
-//                        placeholder = { Text(stringResource(R.string.filter_tag)) },
-//                        colors = AppObjectsColors.outlinedTextFieldColors(
-//                            removeBorder = true
-//                        ),
-//                        shape = CircleShape,
-//                        modifier = Modifier
-//                            .padding(10.dp)
-//                            .fillMaxWidth(1f),
-//                        trailingIcon = {
-//                            animatedIcon.Icon(
-//                                defaultIcon = R.drawable.save,
-//                                enabled = tempFilterTag != filterTag
-//                            ) {
-//                                scope.launch {
-//                                    DebugSettingsStore.filterTag.set(ctx, tempFilterTag)
-//                                    animatedIcon.setSuccess()
-//                                }
-//                            }
-//                        }
-//                    )
                 }
 
                 DragonButton(
