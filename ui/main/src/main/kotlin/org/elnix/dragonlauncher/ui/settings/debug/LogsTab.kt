@@ -246,7 +246,7 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
                         customDesc = { it.logLevelName }
                     )
 
-                    Setting(DebugSettingsStore.filterTag)
+                    Setting(DebugSettingsStore.filterTag, singleChar = false)
 //                    val animatedIcon = rememberAnimatedIcon()
 //                    TextField(
 //                        value = tempFilterTag,
