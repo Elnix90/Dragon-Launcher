@@ -9,6 +9,7 @@ import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
 import android.os.UserHandle
+import io.github.elnix90.logging.logWtf
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
@@ -270,58 +271,49 @@ internal class AppRepositoryImpl(
      * Returns a filtered and sorted list of apps for the specified workspace as a reactive Flow.
      *
      * @param workspaces The target workspaces to search in
-     * @param getOnlyAdded If true, returns ONLY apps explicitly added to this workspace
-     * @param getOnlyRemoved If true, returns ONLY apps hidden/removed from this workspace
+     * @param workspaceViewMode To pick what kind of apps are shown (All, Only Added or Only Removed), used in the Workspace details screen.
      * @return Flow of filtered, sorted, and resolved [Application] list
-     *
-     * @throws IllegalArgumentException if both [getOnlyAdded] and [getOnlyRemoved] are true
      *
      * @see WorkspaceType for base filtering behavior
      */
-    private fun appsForWorkspace(
+    private fun appsForWorkspaces(
         workspaces: Array<Workspace>,
         workspaceViewMode: WorkspaceViewMode
-    ): Flow<List<Application>> {
+    ): Flow<List<Application>> = getAllApps().map { apps ->
+        val allFinal = mutableSetOf<Application>()
 
+        for (workspace in workspaces) {
 
-        return getAllApps().map { apps ->
-            val allFinal = mutableSetOf<Application>()
+            val appIds = workspace.appIds ?: emptySet()
+            val removedAppIds = workspace.removedAppIds ?: emptySet()
 
-            for (workspace in workspaces) {
-
-                val appIds = workspace.appIds ?: emptySet()
-                val removedAppIds = workspace.removedAppIds ?: emptySet()
-
-                when(workspaceViewMode) {
-                    WorkspaceViewMode.Added -> apps.filter { it.key in appIds }
-                    WorkspaceViewMode.Removed -> apps.filter { it.key in removedAppIds }
-                    WorkspaceViewMode.Default -> {
-                        val base = when (workspace.type) {
-                            All -> apps
-                            Custom -> emptyList()
-                            User -> apps.filter { !it.isWork && !it.isPrivate && it.isLaunchable }
-                            System -> apps.filter { it.isSystem }
-                            Work -> apps.filter { it.isWork && it.isLaunchable }
-                            Private -> {
-                                apps.filter { it.isPrivate && it.isLaunchable }
-                            }
+            val workspaceFiltered = when (workspaceViewMode) {
+                WorkspaceViewMode.Added -> apps.filter { it.key in appIds }
+                WorkspaceViewMode.Removed -> apps.filter { it.key in removedAppIds }
+                WorkspaceViewMode.Default -> {
+                    val base = when (workspace.type) {
+                        All -> apps
+                        Custom -> emptyList()
+                        User -> apps.filter { !it.isWork && !it.isPrivate && it.isLaunchable }
+                        System -> apps.filter { it.isSystem }
+                        Work -> apps.filter { it.isWork && it.isLaunchable }
+                        Private -> {
+                            apps.filter { it.isPrivate && it.isLaunchable }
                         }
-
-                        val added = apps.filter { it.key in appIds }
-
-
-                        // Use the base list, and add the filtered manually-added apps, then remove explicitly removed ones
-                         val workspaceFiltered = (base + added)
-                            .distinctBy { it.key }
-                            .filter { it.key !in removedAppIds }
-                            .sortedBy { it.label.lowercase() }
-
-                        allFinal.addAll(workspaceFiltered)
                     }
+
+                    val added = apps.filter { it.key in appIds }
+
+                    // Use the base list, and add the filtered manually-added apps, then remove explicitly removed ones
+                    (base + added)
+                        .distinctBy { it.key }
+                        .filter { it.key !in removedAppIds }
+                        .sortedBy { it.label.lowercase() }
                 }
             }
-            allFinal.toList()
+            allFinal.addAll(workspaceFiltered)
         }
+        allFinal.toList()
     }
 
     private val searchAllWorkspacesOnlyWhenFirstCharIs = DrawerSettingsStore.searchAllWorkspacesOnlyWhenFirstCharIs.flow(ctx)
@@ -338,7 +330,8 @@ internal class AppRepositoryImpl(
         return combine(
             searchAllWorkspacesOnlyWhenFirstCharIs,
             disableAutoLaunchWhenFirstCharIs,
-            workspacesManager.workspaces.flow) { workspaceFirstChar, disableFirstChar,  workspaces ->
+            workspacesManager.workspaces.flow
+        ) { workspaceFirstChar, disableFirstChar, workspaces ->
 
             val workspaces = if (workspaceFirstChar.isNotEmpty() && query.isNotEmpty() && workspaceFirstChar.first() == query.first()) {
                 workspaces.filter { it.enabled }.toTypedArray()
@@ -360,9 +353,11 @@ internal class AppRepositoryImpl(
             val workspace = pair.first
             val normalizedQuery = pair.second
 
-            appsForWorkspace(workspace, workspaceViewMode).map { apps ->
+            appsForWorkspaces(workspace, workspaceViewMode).map { apps ->
                 val normalizerId = stringNormalizer.id
                 val appResults = mutableListOf<Application>()
+
+                logWtf { "GOT ${apps.size} APPS: ${apps.map { it.key }}" }
 
                 if (query.isEmpty()) {
                     appResults.addAll(apps)
