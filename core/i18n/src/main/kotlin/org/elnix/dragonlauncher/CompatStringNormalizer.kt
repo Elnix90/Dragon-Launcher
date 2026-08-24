@@ -1,6 +1,6 @@
 package org.elnix.dragonlauncher
 
-import org.apache.commons.lang3.StringUtils
+import java.text.Normalizer
 import java.util.Locale
 
 /**
@@ -11,7 +11,14 @@ internal class CompatStringNormalizer: StringNormalizer  {
     override val id: String = "null"
 
     override fun normalize(input: String): String {
-        return StringUtils.stripAccents(input.lowercase(Locale.getDefault()))
+        val nfd = Normalizer.normalize(input.lowercase(Locale.getDefault()), Normalizer.Form.NFD)
+
+        // strip accents (keep Japanese voiced mark and semi-voicing mark)
+        val stripped = nfd.replace(Regex("[\\p{M}&&[^\\u3099\\u309A]]"), "")
+        // The result is similar to StringUtils.stripAccents
+        val nfc = Normalizer.normalize(stripped, Normalizer.Form.NFC);
+
+        return nfc
             .replace("æ", "ae")
             .replace("œ", "oe")
             .replace("ß", "ss")
