@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="accessibility_service_description">Permite que o DragonLauncher abra a sombra de notificações, o painel de configurações rápidas, abra aplicativos recentes e verifique a atividade atual (para usuários da xiaomi que não podem definir o Dragon como launcher padrão sem perder a navegação por gestos</string>
     <string name="help">Ajuda</string>
@@ -231,7 +232,6 @@
     <string name="inner_padding">Preenchimento interno</string>
     <string name="tint">Matiz</string>
     <string name="show_app_icon_start_drag_position">Mostrar ícone do aplicativo na posição inicial de arrastar</string>
-
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d selecionado(s)</string>
     <string name="add_all_manual">Colocar um por um</string>
@@ -239,7 +239,6 @@
     <string name="tap_circle_to_place">Toque no círculo para colocar o app</string>
     <string name="multi_select_drawer_hint">💡 Pressione longamente um app para selecionar vários de uma vez</string>
     <string name="deselect_all">Desmarcar todos</string>
-
     <!--  ─────────────  Lock Settings  ─────────────  -->
     <string name="lock_settings_description">Proteja as configurações do launcher com um método de segurança</string>
     <string name="lock_method">Método de bloqueio</string>
@@ -258,17 +257,14 @@
     <string name="device_credentials_not_available">Nenhuma tela de bloqueio configurada</string>
     <string name="authentication_failed">Falha na autenticação</string>
     <string name="authentication_error">Erro de autenticação: %s</string>
-
     <!--  ─────────────  Drawer Workspace Selection  ─────────────  -->
     <string name="select_default_workspace">Selecionar workspace padrão</string>
     <string name="select_workspace_hint">Escolha qual workspace abre por padrão. Você pode sempre mudar deslizando para a esquerda ou direita na gaveta.</string>
     <string name="workspace_default">Padrão</string>
-
     <!--  ─────────────  Pinned Shortcuts  ─────────────  -->
     <string name="pinned_shortcut_failed">Falha ao adicionar atalho fixado</string>
     <string name="pinned_shortcuts">Atalhos fixados</string>
     <string name="no_pinned_shortcuts">Nenhum atalho fixado disponível</string>
-
     <!--  ─────────────  Recently Used Apps  ─────────────  -->
     <string name="recently_used_apps">Apps usados recentemente</string>
     <string name="show_recently_used_apps">Mostrar apps recentes</string>
