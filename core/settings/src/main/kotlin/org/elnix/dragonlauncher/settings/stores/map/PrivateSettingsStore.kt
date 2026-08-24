@@ -30,6 +30,15 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
     public val showSetDefaultLauncherBanner: BooleanSettingObject = boolean(
         title = R.string.show_set_default_launcher_banner,
         description = R.string.show_set_default_launcher_banner_desc,
+        icon = R.drawable.question_mark,
+        default = true
+    )
+
+    @SettingKey
+    public val showReselectBackupBanner: BooleanSettingObject = boolean(
+        title = R.string.show_reselect_backup_banner,
+        description = R.string.show_set_default_launcher_banner_desc,
+        icon = R.drawable.question_mark,
         default = true
     )
 
@@ -37,6 +46,7 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
     public val hideBetaVersionWarning: BooleanSettingObject = boolean(
         title = R.string.hide_beta_version_warning,
         description = R.string.hide_beta_version_warning_desc,
+        icon = R.drawable.warning,
         default = false
     )
 
@@ -72,6 +82,7 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
     public val patternSize: IntSettingObject = int(
         title = R.string.pattern_size,
         description = R.string.pattern_size_desc,
+        icon = R.drawable.apps,
         default = 3,
         allowedRange = 2..10
     )

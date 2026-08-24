@@ -2,54 +2,48 @@ package org.elnix.dragonlauncher.ui.helpers.settings
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
-import org.elnix.dragonlauncher.i18n.R
+import androidx.graphics.shapes.RoundedPolygon
+import org.elnix.dragonlauncher.base.model.models.SocialLink
+import org.elnix.dragonlauncher.ui.base.components.BoxedIcon
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun ContributorItem(
+fun DragonGroupScope.ContributorItem(
     name: String,
+    shape: RoundedPolygon,
     @DrawableRes imageRes: Int,
     description: String? = null,
-    githubUrl: String
+    vararg socialLinks: SocialLink
 ) {
-    val ctx = LocalContext.current
     val uriHandler = LocalUriHandler.current
+
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .combinedClickable(
-                onLongClick = { ctx.copyToClipboard(githubUrl) },
-                onClick = { uriHandler.openUri(githubUrl) }
-            )
-            .padding(16.dp),
+        modifier = Modifier.dragonSettingGroup(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         Image(
-            painter = painterResource(id = imageRes),
+            painter = painterResource(imageRes),
             contentDescription = "$name profile picture",
             modifier = Modifier
                 .size(48.dp)
-                .clip(CircleShape),
+                .clip(shape.toShape()),
             contentScale = ContentScale.Fit
         )
 
@@ -60,10 +54,10 @@ fun ContributorItem(
                 .weight(1f)
         )
 
-        Icon(
-            painter = painterResource(R.drawable.open_in_new),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary
-        )
+        socialLinks.forEach {
+            BoxedIcon(it.icon) {
+                uriHandler.openUri(it.url)
+            }
+        }
     }
 }

@@ -7,14 +7,12 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.TextField
@@ -57,7 +55,6 @@ import kotlin.math.roundToInt
  * - Step calculation
  * - Value formatting
  *
- * @param modifier Modifier applied to the root column
  * @param label Optional label displayed above the slider
  * @param value Current slider value as Float
  * @param valueRange Allowed slider range
@@ -72,8 +69,7 @@ import kotlin.math.roundToInt
  * @param onChange Callback invoked when slider value changes
  */
 @Composable
-private fun SliderWithLabelInternal(
-    modifier: Modifier,
+private fun DragonGroupScope.SliderWithLabelInternal(
     label: String,
     description: String? = null,
     value: Float,
@@ -155,9 +151,7 @@ private fun SliderWithLabelInternal(
     }
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(10.dp),
+        modifier = Modifier.dragonSettingGroup(enabled),
         verticalArrangement = Arrangement.spacedBy(5.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -200,9 +194,8 @@ private fun SliderWithLabelInternal(
                                     onClick = {
                                         focusManager.clearFocus()
                                     },
-                                    colors = IconButtonDefaults.iconButtonColors(),
                                     icon = R.drawable.check,
-                                    contentDescription = "Validate"
+                                    contentDescription = R.string.ok
                                 )
                             }
 
@@ -231,7 +224,7 @@ private fun SliderWithLabelInternal(
                     onDone = { focusManager.clearFocus() }
                 ),
                 shape = CircleShape,
-                modifier = modifier
+                modifier = Modifier
                     .width(120.dp)
                     .height(50.dp)
             )
@@ -262,7 +255,6 @@ private fun SliderWithLabelInternal(
  * without rounding issues. Internally, the slider uses Float values, but
  * step count and conversion ensure perfect integer snapping.
  *
- * @param modifier Modifier applied to the slider container
  * @param label Optional label displayed above the slider
  * @param value Current integer value
  * @param valueRange Allowed integer range (inclusive)
@@ -275,8 +267,7 @@ private fun SliderWithLabelInternal(
  * @param onChange Callback invoked when the value changes
  */
 @Composable
-fun SliderWithLabel(
-    modifier: Modifier = Modifier,
+fun DragonGroupScope.SliderWithLabel(
     label: String,
     description: String? = null,
     value: Int,
@@ -299,7 +290,6 @@ fun SliderWithLabel(
     }
 
     SliderWithLabelInternal(
-        modifier = modifier,
         label = label,
         description = description,
         value = value.toFloat(),
@@ -324,7 +314,6 @@ fun SliderWithLabel(
  * discrete behavior. The displayed value is formatted to the requested
  * number of decimal places.
  *
- * @param modifier Modifier applied to the slider container
  * @param label Optional label displayed above the slider
  * @param value Current float value
  * @param valueRange Allowed float range
@@ -336,8 +325,7 @@ fun SliderWithLabel(
  * @param onChange Callback invoked when the value changes
  */
 @Composable
-fun SliderWithLabel(
-    modifier: Modifier = Modifier,
+fun DragonGroupScope.SliderWithLabel(
     label: String,
     description: String? = null,
     value: Float,
@@ -354,7 +342,6 @@ fun SliderWithLabel(
     }
 
     SliderWithLabelInternal(
-        modifier = modifier,
         label = label,
         description = description,
         value = value,
@@ -372,7 +359,6 @@ fun SliderWithLabel(
 /**
  * SliderWithLabel overload for Dp values.
  *
- * @param modifier Modifier applied to the slider container
  * @param label Optional label displayed above the slider
  * @param value Current Dp value
  * @param valueRange Allowed Dp range
@@ -384,8 +370,7 @@ fun SliderWithLabel(
  * @param onChange Callback invoked when the value changes
  */
 @Composable
-fun SliderWithLabel(
-    modifier: Modifier = Modifier,
+fun DragonGroupScope.SliderWithLabel(
     label: String,
     description: String? = null,
     value: Dp,
@@ -404,7 +389,6 @@ fun SliderWithLabel(
     val floatValueRange = valueRange.start.value..valueRange.endInclusive.value
 
     SliderWithLabelInternal(
-        modifier = modifier,
         label = label,
         description = description,
         value = value.value,

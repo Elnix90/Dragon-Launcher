@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,46 +16,36 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 
 @Composable
-fun ShapeRow(
+fun DragonGroupScope.ShapeRow(
     selected: IconShape,
-    modifier: Modifier = Modifier,
     title: String = stringResource(R.string.edit_icons_shape),
     resetEnabled: Boolean,
     onReset: () -> Unit,
     onClick: () -> Unit
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(10.dp),
+        modifier = Modifier
+            .dragonSettingGroup() {
+                clickable(onClick = onClick)
+            },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(15.dp),
+        ShapePreview(
+            iconShape = selected,
+            modifier = Modifier.size(60.dp)
+        )
+        TextWithDescription(
+            text = title,
+            description = stringResource(R.string.edit_icons_shape_desc),
             modifier = Modifier.weight(1f)
-        ) {
-
-            ShapePreview(
-                iconShape = selected,
-                modifier = Modifier.size(60.dp)
-            )
-
-            TextWithDescription(
-                text = title,
-                description = stringResource(R.string.edit_icons_shape_desc),
-                modifier = Modifier.weight(1f)
-            )
-        }
-
+        )
         ResetIcon(resetEnabled, onReset)
     }
 }

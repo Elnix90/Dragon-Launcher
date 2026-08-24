@@ -7,8 +7,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +22,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.WallpaperHelper
@@ -114,9 +111,6 @@ fun WallpaperTab() {
     ) {
         DragonSettingsGroup(R.string.custom_wallpaper) {
             DragonButton(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth(),
                 onClick = {
                     val intent = Intent(Intent.ACTION_SET_WALLPAPER)
                     ctx.startActivity(
@@ -135,10 +129,7 @@ fun WallpaperTab() {
         }
 
         DragonSettingsGroup(R.string.plain_wallpaper) {
-            DragonButton(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth(),
+            this.DragonButton(
                 onClick = {
                     originalBitmap =
                         wallpaperHelper.createPlainWallpaperBitmap(ctx, plainColor)
@@ -155,7 +146,7 @@ fun WallpaperTab() {
                 title = stringResource(R.string.plain_wallpaper_color),
                 description = null,
                 currentColor = plainColor,
-                defaultColor = null
+                defaultColor = null,
             ) {
                 if (it != null) plainColor = it
             }

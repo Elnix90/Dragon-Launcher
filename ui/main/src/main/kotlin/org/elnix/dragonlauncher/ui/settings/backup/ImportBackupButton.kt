@@ -20,7 +20,7 @@ import org.elnix.dragonlauncher.models.BackupViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.dialogs.ImportSettingsDialog
+import org.elnix.dragonlauncher.ui.dialogs.importexport.ImportSettingsDialog
 import org.elnix.dragonlauncher.ui.dialogs.MigrationDialog
 import org.elnix.dragonlauncher.ui.remembers.rememberSettingsImportLauncher
 import org.json.JSONObject

@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
-import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 
@@ -97,8 +96,8 @@ fun BetaVersionWarning(
                             }
                         },
                         icon = R.drawable.close,
-                        contentDescription = stringResource(R.string.close),
-                        colors = AppObjectsColors.cancelIconButtonColors()
+                        contentDescription = R.string.close,
+                        isCancel = true,
                     )
                 }
             }

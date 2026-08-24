@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.AllStores
-import org.elnix.dragonlauncher.ui.dialogs.ExportSettingsDialog
+import org.elnix.dragonlauncher.ui.dialogs.importexport.DebugJsonStoresDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.helpers.MonospaceScrollableText
@@ -70,7 +70,6 @@ fun SettingsDebugTab() {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(5.dp)
             ) {
-
                 DragonButton(
                     onClick = { showStoresDialog = true }
                 ) {
@@ -82,19 +81,19 @@ fun SettingsDebugTab() {
                 DragonIconButton(
                     onClick = { forceAllKeys = !forceAllKeys },
                     icon = if (forceAllKeys) R.drawable.add_circle else R.drawable.remove_circle,
-                    contentDescription = "Force all keys"
+                    contentDescription = R.string.copy // Flemme d'ajouter un string
                 )
 
                 DragonIconButton(
                     onClick = { settingsJson?.let { ctx.copyToClipboard(it.toString(2)) } },
                     icon = R.drawable.copy,
-                    contentDescription = "Copy"
+                    contentDescription = R.string.copy
                 )
 
                 DragonIconButton(
                     onClick = ::loadSettings,
                     icon = R.drawable.refresh,
-                    contentDescription = "Load settings"
+                    contentDescription = R.string.loading // here too
                 )
             }
         }
@@ -103,10 +102,9 @@ fun SettingsDebugTab() {
     }
 
     if (showStoresDialog) {
-        ExportSettingsDialog(
+        DebugJsonStoresDialog(
             onDismiss = { showStoresDialog = false },
             defaultStores = selectedStores,
-            availableStores = AllStores
         ) {
             selectedStores = it
             showStoresDialog = false

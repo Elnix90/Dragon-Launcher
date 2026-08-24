@@ -41,6 +41,7 @@ import org.elnix.dragonlauncher.ui.components.IntersectionShapePreview
 import org.elnix.dragonlauncher.ui.components.NestNameEditor
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
@@ -154,84 +155,86 @@ fun NestEditor(
 
             HorizontalDivider(Modifier.padding(10.dp))
 
-            if (!isDefaultEditing) {
-                NestNameEditor(
-                    editNest, Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth()
-                ) {
-                    editNest = editNest.copy(name = it)
+            DragonSettingsGroup {
+                if (!isDefaultEditing) {
+                    NestNameEditor(
+                        editNest, Modifier
+                            .padding(10.dp)
+                            .fillMaxWidth()
+                    ) {
+                        editNest = editNest.copy(name = it)
+                    }
                 }
+                val showAllPointsInCurrentShape by UiSettingsStore.showAllPointsInCurrentShape.asState()
+
+                SliderWithLabel(
+                    label = stringResource(R.string.cancel_zone),
+                    description = stringResource(R.string.cancel_zone_desc),
+                    value = if (isDefaultEditing) editNest.getCancelZone(defaultNest, true) else tempCancelZone,
+                    valueRange = 0.dp..300.dp,
+                    resetEnabled = editNest.cancelZone != null,
+                    onReset = {
+                        onUpdateCancelZone(null)
+                        editNest = editNest.copy(cancelZone = null)
+                    },
+                    onChange = {
+                        onUpdateCancelZone(it)
+                        editNest = editNest.copy(cancelZone = it)
+                    }
+                )
+
+                SwitchRow(
+                    state = editNest.getShowAllPointsInCurrentShape(defaultNest, showAllPointsInCurrentShape, isDefaultEditing),
+                    title = R.string.show_all_actions_on_current_shape,
+                    description = R.string.show_all_actions_on_current_shape_desc,
+                    resetEnabled = editNest.showAllPointsInCurrentShape != null,
+                    onReset = { editNest = editNest.copy(showAllPointsInCurrentShape = null) }
+                ) { value -> editNest = editNest.copy(showAllPointsInCurrentShape = value) }
+
+                val showAllPointsInCurrentNest by UiSettingsStore.showAllPointsInCurrentNest.asState()
+                SwitchRow(
+                    state = editNest.getShowAllPointsInCurrentNest(defaultNest, showAllPointsInCurrentNest, isDefaultEditing),
+                    title = R.string.show_all_actions_in_current_nest,
+                    description = R.string.show_all_actions_in_current_nest_desc,
+                    resetEnabled = editNest.showAllPointsInCurrentNest != null,
+                    onReset = { editNest = editNest.copy(showAllPointsInCurrentNest = null) }
+                ) { value -> editNest = editNest.copy(showAllPointsInCurrentNest = value) }
+
+                val showCurrentShape by UiSettingsStore.showCurrentShape.asState()
+                SwitchRow(
+                    state = editNest.getShowCurrentShape(defaultNest, showCurrentShape, isDefaultEditing),
+                    title = R.string.show_shape,
+                    description = R.string.show_shape_desc,
+                    resetEnabled = editNest.showCurrentShape != null,
+                    onReset = { editNest = editNest.copy(showCurrentShape = null) }
+                ) { value -> editNest = editNest.copy(showCurrentShape = value) }
+
+                val showAllShapesInNest by UiSettingsStore.showAllShapesInNest.asState()
+                SwitchRow(
+                    state = editNest.getShowAllShapes(defaultNest, showAllShapesInNest, isDefaultEditing),
+                    title = R.string.show_all_shapes,
+                    description = R.string.show_all_shapes_desc,
+                    resetEnabled = editNest.showAllShapes != null,
+                    onReset = {
+                        editNest = editNest.copy(showAllShapes = null)
+                    }
+                ) { value ->
+                    editNest = editNest.copy(showAllShapes = value)
+                }
+
+
+                SliderWithLabel(
+                    label = stringResource(R.string.preview_scale_factor),
+                    description = stringResource(R.string.preview_scale_factor_desc),
+                    value = editNest.getPreviewScaleFactor(defaultNest, isDefaultEditing),
+                    valueRange = 0f..5f,
+                    resetEnabled = editNest.previewScaleFactor != null,
+                    onReset = { editNest = editNest.copy(previewScaleFactor = null) },
+                    onChange = {
+                        editNest = editNest.copy(previewScaleFactor = it)
+                    }
+                )
             }
-            val showAllPointsInCurrentShape by UiSettingsStore.showAllPointsInCurrentShape.asState()
-
-            SliderWithLabel(
-                label = stringResource(R.string.cancel_zone),
-                description = stringResource(R.string.cancel_zone_desc),
-                value = if (isDefaultEditing) editNest.getCancelZone(defaultNest, true) else tempCancelZone,
-                valueRange = 0.dp..300.dp,
-                resetEnabled = editNest.cancelZone != null,
-                onReset = {
-                    onUpdateCancelZone(null)
-                    editNest = editNest.copy(cancelZone = null)
-                },
-                onChange = {
-                    onUpdateCancelZone(it)
-                    editNest = editNest.copy(cancelZone = it)
-                }
-            )
-
-            SwitchRow(
-                state = editNest.getShowAllPointsInCurrentShape(defaultNest, showAllPointsInCurrentShape, isDefaultEditing),
-                title = stringResource(R.string.show_all_actions_on_current_shape),
-                description = stringResource(R.string.show_all_actions_on_current_shape_desc),
-                resetEnabled = editNest.showAllPointsInCurrentShape != null,
-                onReset = { editNest = editNest.copy(showAllPointsInCurrentShape = null) }
-            ) { value -> editNest = editNest.copy(showAllPointsInCurrentShape = value) }
-
-            val showAllPointsInCurrentNest by UiSettingsStore.showAllPointsInCurrentNest.asState()
-            SwitchRow(
-                state = editNest.getShowAllPointsInCurrentNest(defaultNest, showAllPointsInCurrentNest, isDefaultEditing),
-                title = stringResource(R.string.show_all_actions_in_current_nest),
-                description = stringResource(R.string.show_all_actions_in_current_nest_desc),
-                resetEnabled = editNest.showAllPointsInCurrentNest != null,
-                onReset = { editNest = editNest.copy(showAllPointsInCurrentNest = null) }
-            ) { value -> editNest = editNest.copy(showAllPointsInCurrentNest = value) }
-
-            val showCurrentShape by UiSettingsStore.showCurrentShape.asState()
-            SwitchRow(
-                state = editNest.getShowCurrentShape(defaultNest, showCurrentShape, isDefaultEditing),
-                title = stringResource(R.string.show_shape),
-                description = stringResource(R.string.show_shape_desc),
-                resetEnabled = editNest.showCurrentShape != null,
-                onReset = { editNest = editNest.copy(showCurrentShape = null) }
-            ) { value -> editNest = editNest.copy(showCurrentShape = value) }
-
-            val showAllShapesInNest by UiSettingsStore.showAllShapesInNest.asState()
-            SwitchRow(
-                state = editNest.getShowAllShapes(defaultNest, showAllShapesInNest, isDefaultEditing),
-                title = stringResource(R.string.show_all_shapes),
-                description = stringResource(R.string.show_all_shapes_desc),
-                resetEnabled = editNest.showAllShapes != null,
-                onReset = {
-                    editNest = editNest.copy(showAllShapes = null)
-                }
-            ) { value ->
-                editNest = editNest.copy(showAllShapes = value)
-            }
-
-
-            SliderWithLabel(
-                label = stringResource(R.string.preview_scale_factor),
-                description = stringResource(R.string.preview_scale_factor_desc),
-                value = editNest.getPreviewScaleFactor(defaultNest, isDefaultEditing),
-                valueRange = 0f..5f,
-                resetEnabled = editNest.previewScaleFactor != null,
-                onReset = { editNest = editNest.copy(previewScaleFactor = null) },
-                onChange = {
-                    editNest = editNest.copy(previewScaleFactor = it)
-                }
-            )
         }
     }
 

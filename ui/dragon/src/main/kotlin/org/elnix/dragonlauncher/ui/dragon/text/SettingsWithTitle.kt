@@ -11,12 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun SettingsWithTitle(
-    title: Int?,
+    title: String?,
     trailingIcon: (@Composable RowScope.() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
@@ -24,13 +23,13 @@ fun SettingsWithTitle(
         if (title != null) {
             Row(
                 modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp, top = 5.dp, bottom = 2.dp)
+                    .padding(start = 10.dp, end = 16.dp, top = 5.dp, bottom = 2.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = stringResource(id = title),
+                    text = title,
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.titleMediumEmphasized
                 )

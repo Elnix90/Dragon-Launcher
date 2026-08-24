@@ -23,12 +23,12 @@ fun TextWithDescription(
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.labelMedium
+            style = MaterialTheme.typography.titleMedium
         )
         if (description != null) {
             Text(
                 text = description,
-                style = MaterialTheme.typography.labelSmall
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }

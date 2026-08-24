@@ -49,7 +49,6 @@ import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.ProfilesViewModel
-import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
@@ -136,9 +135,8 @@ fun AppPickerDialog(
 
                             AnimatedVisibility(isMultiSelectMode) {
                                 DragonIconButton(
-                                    colors = AppObjectsColors.iconButtonColors(),
                                     icon = R.drawable.deselect,
-                                    contentDescription = stringResource(R.string.deselect_all),
+                                    contentDescription = R.string.deselect_all,
                                 ) {
                                     isMultiSelectMode = false
                                     selectedApps.clear()
@@ -146,15 +144,13 @@ fun AppPickerDialog(
                             }
 
                             DragonIconButton(
-                                colors = AppObjectsColors.iconButtonColors(),
                                 icon = R.drawable.search,
-                                contentDescription = stringResource(R.string.search_apps)
+                                contentDescription = R.string.search_apps
                             ) { isSearchBarEnabled = true }
 
                             DragonIconButton(
-                                colors = AppObjectsColors.iconButtonColors(),
                                 icon = R.drawable.reload,
-                                contentDescription = stringResource(R.string.reload_apps)
+                                contentDescription = R.string.reload_apps
                             ) { scope.launch { drawerViewModel.reloadApps() } }
                         }
                     } else {

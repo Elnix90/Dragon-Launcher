@@ -54,8 +54,7 @@ public data class Profile(
     }
 
     public companion object {
-        public fun fromContext(ctx: Context): Profile {
-            val userHandle = Process.myUserHandle()
+        public fun fromUserHandle(ctx: Context, userHandle: UserHandle): Profile {
             val serial = userHandle.getSerialNumber(ctx)
             return Profile(Type.Personal, userHandle, serial)
         }

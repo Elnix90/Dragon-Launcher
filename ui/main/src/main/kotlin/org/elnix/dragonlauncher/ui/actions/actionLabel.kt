@@ -27,7 +27,7 @@ fun actionLabel(
     return when (action) {
 
         is Action.LaunchApp -> {
-            val app by drawerViewModel.findOne(action.packageName, action.profile.userHandle).collectAsState(null)
+            val app by drawerViewModel.findOne(action).collectAsState(null)
             app?.label ?: action.packageName
         }
 

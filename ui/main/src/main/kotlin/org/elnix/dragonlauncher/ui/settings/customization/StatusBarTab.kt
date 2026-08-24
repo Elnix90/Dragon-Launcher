@@ -46,8 +46,8 @@ fun StatusBarTab() {
     ) {
         DragonSettingsGroup(R.string.show_status_bar) {
             SwitchRow(
-                title = stringResource(R.string.show_status_bar),
-                description = stringResource(R.string.show_status_bar_desc),
+                title = R.string.show_status_bar,
+                description = R.string.show_status_bar_desc,
                 state = showStatusBar
             ) {
                 scope.launch {

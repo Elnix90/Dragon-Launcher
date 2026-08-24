@@ -160,6 +160,7 @@ fun IconPicker(
             }
         } else {
             item(span = { GridItemSpan(columns) }) {
+                // I am not touching that thing
                 Button(
                     onClick = { showIconPackFilter = !showIconPackFilter },
                     modifier = Modifier

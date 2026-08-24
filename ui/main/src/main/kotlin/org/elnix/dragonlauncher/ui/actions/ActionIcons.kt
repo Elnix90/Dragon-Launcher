@@ -32,7 +32,7 @@ fun FinalPointIcon(
     when (val action = point.action) {
 
         is Action.LaunchApp -> {
-            val app by drawerViewModel.findOne(action.packageName, action.profile.userHandle).collectAsState(null)
+            val app by drawerViewModel.findOne(action).collectAsState(null)
             if (app != null) {
                 AppIcon(
                     app = app!!,

@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -26,9 +24,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionMode
@@ -38,11 +38,11 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExpandableSection(
+fun DragonGroupScope.ExpandableSection(
     state: ExpandableSectionState,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val enabled = state.enabled()
+    val enabled = state.enabled
     val expanded = state.isExpanded() && enabled
 
     val rotationDegrees = animateFloatAsState(
@@ -51,17 +51,24 @@ fun ExpandableSection(
     )
 
     val backgroundColor by animateColorAsState(
-        (if (expanded) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface).semiTransparentIfDisabled(enabled)
+        targetValue = when {
+            !enabled -> MaterialTheme.colorScheme.surfaceVariant.alphaMultiplier(0.5f)
+            expanded -> MaterialTheme.colorScheme.surfaceVariant
+            else -> MaterialTheme.colorScheme.surface
+        }.semiTransparentIfDisabled(enabled)
     )
 
     val contentColor = contentColorFor(backgroundColor)
 
     Column(
-        modifier = Modifier.conditional(!expanded && enabled) {
-            clickable {
-                state.toggle()
+        modifier = Modifier
+            .dragonSettingGroup(enabled = enabled) {
+                conditional(!expanded && enabled) {
+                    clickable {
+                        state.toggle()
+                    }
+                }
             }
-        }
     ) {
         Row(
             modifier = Modifier
@@ -69,22 +76,21 @@ fun ExpandableSection(
                     clickable {
                         state.toggle()
                     }
-                }
-                .fillMaxWidth()
-                .padding(16.dp),
+                },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             TextWithDescription(
-                text = state.title,
-                description = state.description,
-                modifier = Modifier.weight(1f)
+                text = stringResource(state.title),
+                description = if (state.description != null) stringResource(state.description) else null,
+                modifier = Modifier.weight(1f),
+                enabled = enabled
             )
 
             Icon(
                 painter = painterResource(R.drawable.arrow_drop_down),
                 contentDescription = stringResource(R.string.expanded_chevron_indicator),
-                tint = contentColor,
+                tint = contentColor.semiTransparentIfDisabled(enabled),
                 modifier = Modifier
                     .size(30.dp)
                     .rotate(rotationDegrees.value)
@@ -110,8 +116,7 @@ fun ExpandableSection(
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(5.dp),
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
+                modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
                 content()
             }

@@ -9,16 +9,17 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.modifiers.provideClickableShape
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DefaultColorPicker(
     selectedColor: Color,
@@ -66,9 +68,7 @@ fun DefaultColorPicker(
 
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(5.dp)
+        modifier = Modifier.padding(5.dp)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -97,8 +97,8 @@ fun DefaultColorPicker(
                                 val shape = provideClickableShape(
                                     interactionSource = interactionSources[idx],
                                     isSelected = isSelected,
-                                    defaultRoundingPercent = 50,
-                                    pressedRoundingPercent = 20,
+//                                    defaultShape = MaterialShapes.Bun,
+//                                    pressedShape = MaterialShapes.Cookie7Sided
                                 )
 
                                 Box(
@@ -125,9 +125,9 @@ fun DefaultColorPicker(
                                 ) {
                                     Box(
                                         modifier = Modifier
-                                            .size(20.dp)
+                                            .size(25.dp)
                                             .scale(scale)
-                                            .clip(CircleShape)
+                                            .clip(MaterialShapes.Cookie7Sided.toShape())
                                             .background(color = MaterialTheme.colorScheme.primaryContainer)
                                     ) {
                                         Icon(

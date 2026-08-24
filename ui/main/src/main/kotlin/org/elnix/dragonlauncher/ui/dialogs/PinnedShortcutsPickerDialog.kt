@@ -1,9 +1,6 @@
 package org.elnix.dragonlauncher.ui.dialogs
 
-import android.annotation.SuppressLint
-import android.content.pm.LauncherApps
 import android.content.pm.ShortcutInfo
-import android.os.Process
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,20 +27,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.elnix.dragonlauncher.PINNED_SHORTCUTS
-import io.github.elnix90.logging.logD
-import io.github.elnix90.logging.logE
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Action.LaunchShortcut.Companion.toAction
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.actions.ShortcutIcon
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppDrawerSearch
 
@@ -60,10 +56,10 @@ private fun PinnedShortcutItem.matchesShortcutSearch(q: String): Boolean {
     if (q.isBlank()) return true
     val s = shortcutInfo
     return appName.contains(q, ignoreCase = true) ||
-        packageName.contains(q, ignoreCase = true) ||
-        (s.shortLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
-        (s.longLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
-        s.id.contains(q, ignoreCase = true)
+            packageName.contains(q, ignoreCase = true) ||
+            (s.shortLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
+            (s.longLabel?.toString()?.contains(q, ignoreCase = true) == true) ||
+            s.id.contains(q, ignoreCase = true)
 }
 
 /**
@@ -72,18 +68,32 @@ private fun PinnedShortcutItem.matchesShortcutSearch(q: String): Boolean {
  */
 @Composable
 fun PinnedShortcutsPickerDialog(
+    drawerViewModel: DrawerViewModel = activityViewModel(),
     onDismiss: () -> Unit,
     onShortcutSelected: (Action.LaunchShortcut) -> Unit
 ) {
-    val ctx = LocalContext.current
+    var searchQuery by remember { mutableStateOf("") }
 
-    val groupedShortcuts: Map<String, List<PinnedShortcutItem>> = remember {
-        try {
-            queryAllPinnedShortcuts(ctx)
-        } catch (e: Exception) {
-            logE(PINNED_SHORTCUTS, e) { "Failed to query pinned shortcuts" }
-            emptyMap()
+    val shortcuts by drawerViewModel.searchShortcuts(searchQuery).collectAsStateWithLifecycle(emptyList())
+    val applications by drawerViewModel.allApps.collectAsStateWithLifecycle()
+
+    val groupedShortcuts: Map<String, List<PinnedShortcutItem>> = remember(shortcuts, applications) {
+        val allShortcuts = mutableListOf<PinnedShortcutItem>()
+
+        for (shortcut in shortcuts) {
+            val appLabel = applications.firstOrNull { it.packageName == shortcut.`package` }?.label ?: continue
+            allShortcuts.add(
+                PinnedShortcutItem(
+                    shortcutInfo = shortcut,
+                    appName = appLabel,
+                    packageName = shortcut.`package`
+                )
+            )
         }
+
+        allShortcuts
+            .groupBy { it.appName }
+            .toSortedMap(String.CASE_INSENSITIVE_ORDER)
     }
 
     AlertDialog(
@@ -110,7 +120,6 @@ fun PinnedShortcutsPickerDialog(
                     )
                 }
             } else {
-                var searchQuery by remember { mutableStateOf("") }
                 val filteredGrouped = remember(searchQuery, groupedShortcuts) {
                     if (searchQuery.isBlank()) groupedShortcuts
                     else {
@@ -221,7 +230,6 @@ private fun ShortcutRow(
     shortcut: ShortcutInfo,
     onClick: () -> Unit
 ) {
-
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -251,69 +259,4 @@ private fun ShortcutRow(
             }
         }
     }
-}
-
-/**
- * Queries all pinned shortcuts across all installed apps.
- * Returns a map of appName -> list of PinnedShortcutItem.
- */
-@SuppressLint("InlinedApi")
-private fun queryAllPinnedShortcuts(
-    ctx: android.content.Context
-): Map<String, List<PinnedShortcutItem>> {
-    val launcherApps = ctx.getSystemService(LauncherApps::class.java)
-        ?: return emptyMap()
-    val pm = ctx.packageManager
-    val userHandle = Process.myUserHandle()
-
-    // Get only launchable apps to avoid querying system packages
-    val launchIntent = android.content.Intent(android.content.Intent.ACTION_MAIN, null)
-    launchIntent.addCategory(android.content.Intent.CATEGORY_LAUNCHER)
-    val packages = pm.queryIntentActivities(launchIntent, 0)
-        .map { it.activityInfo.packageName }
-        .distinct()
-
-    val allShortcuts = mutableListOf<PinnedShortcutItem>()
-
-    for (pkg in packages) {
-        try {
-
-            val query = LauncherApps.ShortcutQuery()
-                .setPackage(pkg)
-                .setQueryFlags(
-                    LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED or
-                            LauncherApps.ShortcutQuery.FLAG_MATCH_DYNAMIC or
-                            LauncherApps.ShortcutQuery.FLAG_MATCH_MANIFEST or
-                            LauncherApps.ShortcutQuery.FLAG_MATCH_CACHED
-                )
-
-            val shortcuts = launcherApps.getShortcuts(query, userHandle)
-            if (shortcuts.isNullOrEmpty()) continue
-
-            val appName = try {
-                pm.getApplicationLabel(pm.getApplicationInfo(pkg, 0)).toString()
-            } catch (_: Exception) {
-                pkg
-            }
-
-            for (shortcut in shortcuts) {
-                allShortcuts.add(
-                    PinnedShortcutItem(
-                        shortcutInfo = shortcut,
-                        appName = appName,
-                        packageName = pkg
-                    )
-                )
-            }
-        } catch (e: SecurityException) {
-            logD(PINNED_SHORTCUTS, e) { "SecurityException for $pkg" }
-        } catch (e: Exception) {
-            logE(PINNED_SHORTCUTS, e) { "Error querying shortcuts for $pkg" }
-        }
-    }
-
-    // Group by app name, sorted alphabetically
-    return allShortcuts
-        .groupBy { it.appName }
-        .toSortedMap(String.CASE_INSENSITIVE_ORDER)
 }

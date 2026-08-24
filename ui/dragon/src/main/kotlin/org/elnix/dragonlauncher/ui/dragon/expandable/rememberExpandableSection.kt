@@ -11,10 +11,11 @@ import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionState
 
 @Composable
 fun rememberExpandableSection(
-    title: String,
-    description: String? = null,
+    title: Int,
+    description: Int?,
+    icon: Int?,
     mode: ExpandableSectionMode = ExpandableSectionMode.ModalSheet(),
-    enabled: () -> Boolean = { true }
+    enabled: Boolean = true
 ): ExpandableSectionState {
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -24,6 +25,7 @@ fun rememberExpandableSection(
             enabled = enabled,
             title = title,
             description = description,
+            icon = icon,
             mode = mode,
             toggle = { isExpanded = !isExpanded }
         )

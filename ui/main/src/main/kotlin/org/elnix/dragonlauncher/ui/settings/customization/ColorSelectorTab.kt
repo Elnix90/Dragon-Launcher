@@ -19,13 +19,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,8 +55,8 @@ import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes.System
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
-import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
+import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
@@ -66,9 +64,10 @@ import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
+import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
@@ -87,13 +86,41 @@ fun ColorSelectorTab() {
     val defaultTheme by ColorModesSettingsStore.defaultTheme.asStateNull()
     val colorTestMode by ColorModesSettingsStore.colorTestMode.asState()
 
-    val primarySectionState = rememberExpandableSection(stringResource(R.string.primary_colors_section))
-    val secondarySectionState = rememberExpandableSection(stringResource(R.string.secondary_colors_section))
-    val tertiarySectionState = rememberExpandableSection(stringResource(R.string.tertiary_colors_section))
-    val backgroundSectionState = rememberExpandableSection(stringResource(R.string.background_surface_colors_section))
-    val errorSectionState = rememberExpandableSection(stringResource(R.string.error_colors_section))
-    val outlineSectionState = rememberExpandableSection(stringResource(R.string.outline_colors_section))
-    val surfaceContainerSectionState = rememberExpandableSection(stringResource(R.string.surface_container_colors_section))
+    val primarySectionState = rememberExpandableSection(
+        title = R.string.primary_colors_section,
+        description = R.string.primary_colors_section_desc,
+        icon = null
+    )
+    val secondarySectionState = rememberExpandableSection(
+        title = R.string.secondary_colors_section,
+        description = R.string.secondary_colors_section_desc,
+        icon = null
+    )
+    val tertiarySectionState = rememberExpandableSection(
+        title = R.string.tertiary_colors_section,
+        description = R.string.tertiary_colors_section_desc,
+        icon = null
+    )
+    val backgroundSectionState = rememberExpandableSection(
+        title = R.string.background_surface_colors_section,
+        description = R.string.background_surface_colors_section_desc,
+        icon = null
+    )
+    val errorSectionState = rememberExpandableSection(
+        title = R.string.error_colors_section,
+        description = R.string.error_colors_section_desc,
+        icon = null
+    )
+    val outlineSectionState = rememberExpandableSection(
+        title = R.string.outline_colors_section,
+        description = R.string.outline_colors_section_desc,
+        icon = null
+    )
+    val surfaceContainerSectionState = rememberExpandableSection(
+        title = R.string.surface_container_colors_section,
+        description = R.string.surface_container_colors_section_desc,
+        icon = null
+    )
 
     var showResetValidation by remember { mutableStateOf(false) }
     var showBurgerMenu by remember { mutableStateOf(false) }
@@ -110,6 +137,47 @@ fun ColorSelectorTab() {
             scope.launch {
                 ColorSettingsStore.resetAll(ctx)
                 ColorModesSettingsStore.resetAll(ctx)
+            }
+        },
+        specialSettingsTitleContent = {
+            Box {
+                AnimatedFab(
+                    icon = R.drawable.more_vert,
+                ) { showBurgerMenu = true }
+
+                BurgerListAction(
+                    actions = listOf(
+                        MoreOptions(
+                            onClick = {
+                                showRandomColorsValidation = true
+                                showBurgerMenu = false
+                            },
+                            icon = R.drawable.shuffle,
+                            text = { stringResource(R.string.make_every_colors_random) }
+                        ),
+                        MoreOptions(
+                            onClick = {
+                                showAllColorsValidation = true
+                                showBurgerMenu = false
+                            },
+                            icon = R.drawable.select_all,
+                            text = { stringResource(R.string.make_all_colors_identical) }
+                        ),
+                        MoreOptions(
+                            onClick = {
+                                scope.launch {
+                                    ColorSettingsStore.backupColors(ctx)
+                                    ColorModesSettingsStore.colorTestMode.set(ctx, true)
+                                    navigator.onBack()
+                                }
+                            },
+                            icon = R.drawable.colorize,
+                            text = { stringResource(R.string.test_colors) }
+                        )
+                    ),
+                    isExpanded = showBurgerMenu,
+                    onDismissRequest = { showBurgerMenu = false }
+                )
             }
         }
     ) {
@@ -220,8 +288,9 @@ fun ColorSelectorTab() {
             AnimatedVisibility(defaultTheme == Dark || defaultTheme == Amoled) {
                 SwitchRow(
                     state = defaultTheme == Amoled,
-                    title = stringResource(R.string.amoled_theme),
-                    description = stringResource(R.string.use_pure_black_background)
+                    title = R.string.amoled_theme,
+                    description = R.string.use_pure_black_background,
+                    icon = R.drawable.opacity
                 ) {
                     scope.launch {
                         ColorModesSettingsStore.defaultTheme.set(ctx, if (it) Amoled else Dark)
@@ -235,10 +304,7 @@ fun ColorSelectorTab() {
             }
 
             AnimatedVisibility(colorTestMode) {
-                DragonButton(
-                    onClick = { showExitTestValidation = true },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                DragonButton(onClick = { showExitTestValidation = true }) {
                     Text(stringResource(R.string.exit_test_mode))
                 }
             }
@@ -249,61 +315,13 @@ fun ColorSelectorTab() {
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                @Suppress("DEPRECATION")
-                Row(
+
+                SingleSelectConnectedButtonRow(
+                    entries = ColorSelectorModes.entries,
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    SingleSelectConnectedButtonRow(
-                        entries = ColorSelectorModes.entries,
-                        modifier = Modifier.weight(1f),
-                        checked = { it == selectedCustomView }
-                    ) { selectedCustomView = it }
+                    checked = { it == selectedCustomView }
+                ) { selectedCustomView = it }
 
-                    Box {
-                        DragonIconButton(
-                            colors = AppObjectsColors.iconButtonColors(),
-                            icon = R.drawable.more_vert,
-                            contentDescription = stringResource(R.string.open_burger_menu)
-                        ) { showBurgerMenu = true }
-
-
-                        BurgerListAction(
-                            actions = listOf(
-                                MoreOptions(
-                                    onClick = {
-                                        showRandomColorsValidation = true
-                                        showBurgerMenu = false
-                                    },
-                                    icon = R.drawable.shuffle,
-                                    text = { stringResource(R.string.make_every_colors_random) }
-                                ),
-                                MoreOptions(
-                                    onClick = {
-                                        showAllColorsValidation = true
-                                        showBurgerMenu = false
-                                    },
-                                    icon = R.drawable.select_all,
-                                    text = { stringResource(R.string.make_all_colors_identical) }
-                                ),
-                                MoreOptions(
-                                    onClick = {
-                                        scope.launch {
-                                            ColorSettingsStore.backupColors(ctx)
-                                            ColorModesSettingsStore.colorTestMode.set(ctx, true)
-                                            navigator.onBack()
-                                        }
-                                    },
-                                    icon = R.drawable.colorize,
-                                    text = { stringResource(R.string.test_colors) }
-                                )
-                            ),
-                            isExpanded = showBurgerMenu,
-                            onDismissRequest = { showBurgerMenu = false }
-                        )
-                    }
-                }
 
                 AnimatedContent(selectedCustomView) {
                     DragonSettingsGroup {
@@ -469,32 +487,26 @@ fun ColorSelectorTab() {
         AlertDialog(
             onDismissRequest = { showAllColorsValidation = false },
             confirmButton = {
-                TextButton(
-                    onClick = {
-                        scope.launch {
-                            ColorSettingsStore.setAllSameColors(ctx, applyColor)
-                            showAllColorsValidation = false
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(CircleShape)
-                        .padding(5.dp)
+                ValidateCancelButtons(
+                    validateText = stringResource(R.string.apply),
+                    onCancel = { showAllColorsValidation = false }
                 ) {
-                    Text(
-                        text = stringResource(R.string.apply),
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    scope.launch {
+                        ColorSettingsStore.setAllSameColors(ctx, applyColor)
+                        showAllColorsValidation = false
+                    }
                 }
             },
             title = {
-                ColorPickerRow(
-                    description = null,
-                    title = stringResource(R.string.color_mode_all),
-                    currentColor = applyColor,
-                    defaultColor = null
-                ) {
-                    if (it != null) applyColor = it
+                DragonSettingsGroup {
+                    ColorPickerRow(
+                        description = null,
+                        title = stringResource(R.string.color_mode_all),
+                        currentColor = applyColor,
+                        defaultColor = null
+                    ) {
+                        if (it != null) applyColor = it
+                    }
                 }
             },
             containerColor = MaterialTheme.colorScheme.surface,
@@ -530,15 +542,17 @@ fun ColorSelectorTab() {
 
 
 @Composable
-private fun ColorsGroup(
+private fun DragonGroupScope.ColorsGroup(
     expandableSectionState: ExpandableSectionState,
     colors: List<ColorSettingObject>,
     examples: @Composable (ColumnScope.() -> Unit)? = null
 ) {
     ExpandableSection(expandableSectionState) {
         examples?.let { it() }
-        colors.forEach {
-            Setting(it)
+        DragonSettingsGroup(expandableSectionState.title) {
+            colors.forEach {
+                this@ColorsGroup.Setting(it)
+            }
         }
     }
 }

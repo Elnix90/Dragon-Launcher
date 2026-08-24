@@ -132,8 +132,8 @@ fun EditCustomObjectBlock(
         if (properties.allowMirrorCustomization) {
             SwitchRow(
                 state = editObject.mirror,
-                title = stringResource(R.string.mirror),
-                description = stringResource(R.string.mirror_desc),
+                title = R.string.mirror,
+                description = R.string.mirror_desc,
                 resetEnabled = editObject.mirror != default.mirror,
                 onReset = {
                     onEdit(editObject.copy(mirror = default.mirror))
@@ -145,8 +145,8 @@ fun EditCustomObjectBlock(
         if (properties.allowAlignCustomization) {
             SwitchRow(
                 state = editObject.alignsWithDragAngle,
-                title = stringResource(R.string.align_with_angle),
-                description = stringResource(R.string.align_with_angle_desc),
+                title = R.string.align_with_angle,
+                description = R.string.align_with_angle_desc,
                 resetEnabled = editObject.alignsWithDragAngle != default.alignsWithDragAngle,
                 onReset = {
                     onEdit(editObject.copy(alignsWithDragAngle = default.alignsWithDragAngle))
@@ -158,7 +158,7 @@ fun EditCustomObjectBlock(
         if (properties.allowEraseBackgroundCustomization) {
             SwitchRow(
                 state = editObject.eraseBackground,
-                title = stringResource(R.string.erase_background),
+                title = R.string.erase_background,
                 resetEnabled = editObject.eraseBackground != default.eraseBackground,
                 onReset = {
                     onEdit(editObject.copy(eraseBackground = default.eraseBackground))

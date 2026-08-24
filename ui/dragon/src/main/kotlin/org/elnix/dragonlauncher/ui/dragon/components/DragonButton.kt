@@ -3,9 +3,7 @@ package org.elnix.dragonlauncher.ui.dragon.components
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ButtonGroupScope
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.base.withHaptic
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
@@ -28,12 +27,14 @@ fun DragonButton(
     enabled: Boolean = true,
     needConfirm: Boolean = false,
     confirmText: String = stringResource(R.string.are_you_sure),
-    colors: ButtonColors = AppObjectsColors.buttonColors(),
+    isCancel: Boolean = false,
+    interactionSource: MutableInteractionSource = rememberInteractionSource(),
     content: @Composable RowScope.() -> Unit,
 ) {
     var showConfirmPopup by remember { mutableStateOf(false) }
 
 
+    val colors = if (isCancel) AppObjectsColors.cancelButtonColors() else AppObjectsColors.buttonColors()
     Button(
         modifier = modifier,
         onClick = withHaptic {
@@ -43,6 +44,7 @@ fun DragonButton(
         shapes = ButtonDefaults.shapes(),
         enabled = enabled,
         colors = colors,
+        interactionSource = interactionSource,
         content = content
     )
 
@@ -57,43 +59,23 @@ fun DragonButton(
     }
 }
 
-
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun ButtonGroupScope.DragonButton(
+fun DragonGroupScope.DragonButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    needValidation: Boolean = false,
+    needConfirm: Boolean = false,
     confirmText: String = stringResource(R.string.are_you_sure),
-    colors: ButtonColors = AppObjectsColors.buttonColors(),
+    isCancel: Boolean = false,
     content: @Composable RowScope.() -> Unit,
 ) {
-    var showConfirmPopup by remember { mutableStateOf(false) }
-
-    val interactionSource = remember { MutableInteractionSource() }
-
-    Button(
-        modifier = modifier
-            .weight(1f)
-            .animateWidth(interactionSource),
-        onClick = withHaptic {
-            if (needValidation) showConfirmPopup = true
-            else onClick()
-        },
-        shapes = ButtonDefaults.shapes(),
+    DragonButton(
+        onClick = onClick,
+        modifier = Modifier.dragonSettingGroup(enabled = enabled),
         enabled = enabled,
-        colors = colors,
+        needConfirm = needConfirm,
+        confirmText = confirmText,
+        isCancel = isCancel,
         content = content
     )
-
-    if (showConfirmPopup) {
-        UserValidation(
-            message = confirmText,
-            onDismiss = { showConfirmPopup = false }
-        ) {
-            onClick()
-            showConfirmPopup = false
-        }
-    }
 }

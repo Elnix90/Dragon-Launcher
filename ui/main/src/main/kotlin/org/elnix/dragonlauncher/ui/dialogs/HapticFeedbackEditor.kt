@@ -46,9 +46,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.HAPTIC_TAG
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.HAPTIC_TAG
 import org.elnix.dragonlauncher.base.model.json
 import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.base.model.serializables.HapticEntry
@@ -59,7 +59,6 @@ import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.pasteClipboard
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
@@ -210,7 +209,7 @@ fun HapticFeedbackEditor(
                     .background(MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 CustomHapticFeedback.allPresets.forEach { (name, preset) ->
-                    DragonButton(
+                    this@DragonSettingsGroup.DragonButton(
                         onClick = { selectPreset(preset) }
                     ) {
                         Text(
@@ -360,15 +359,14 @@ fun HapticFeedbackEditor(
                                             onClick = {
                                                 entries.add(index + 1, entries[index].copy())
                                             },
-                                            colors = AppObjectsColors.iconButtonColors(),
                                             icon = R.drawable.copy,
-                                            contentDescription = stringResource(R.string.copy)
+                                            contentDescription = R.string.copy
                                         )
 
                                         DragonIconButton(
-                                            colors = AppObjectsColors.cancelIconButtonColors(),
                                             icon = R.drawable.delete_forever,
-                                            contentDescription = stringResource(R.string.remove)
+                                            isCancel = true,
+                                            contentDescription = R.string.remove
                                         ) { entries.removeAt(index) }
 
                                         Icon(
@@ -379,7 +377,7 @@ fun HapticFeedbackEditor(
                                         )
                                     }
 
-                                    SliderWithLabel(
+                                    this@DragonSettingsGroup.SliderWithLabel(
                                         label = stringResource(R.string.duration_ms),
                                         value = entry.durationMs,
                                         valueRange = 0..1000,
@@ -418,7 +416,7 @@ private fun RotatingPlayIcon(
         modifier = Modifier.rotate(playIconRotation.value),
         enabled = enabled,
         icon = R.drawable.play_arrow,
-        contentDescription = stringResource(R.string.play),
+        contentDescription = R.string.play
     ) {
         scope.launch {
             playIconRotation.animateTo(

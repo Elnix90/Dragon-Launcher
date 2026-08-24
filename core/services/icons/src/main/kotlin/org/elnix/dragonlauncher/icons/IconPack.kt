@@ -3,8 +3,10 @@ package org.elnix.dragonlauncher.icons
 import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.ResolveInfo
+import androidx.compose.runtime.Immutable
 import org.elnix.dragonlauncher.database.entities.IconPackEntity
 
+@Immutable
 public data class IconPack(
     val name: String,
     val packageName: String,

@@ -66,3 +66,37 @@ fun provideClickableShape(
 
     return RoundedCornerShape(shapeRound)
 }
+
+//private val defaultDefaultShape = RoundedPolygon.rectangle(
+//    rounding = CornerRounding(35f),
+//).normalized()
+//
+//
+//private val defaultPressedShape = RoundedPolygon.rectangle(
+//    rounding = CornerRounding(20f),
+//).normalized()
+//
+//
+//@Composable
+//fun provideClickableShape(
+//    interactionSource: MutableInteractionSource,
+//    isSelected: Boolean = false,
+//    defaultShape: RoundedPolygon = defaultDefaultShape,
+//    pressedShape: RoundedPolygon = defaultPressedShape,
+//    roundedPolygon: Boolean
+//): Shape {
+//    val isPressed by interactionSource.collectIsPressedAsState()
+//
+//    val pressedProgress by animateFloatAsState(
+//        targetValue = if (isPressed || isSelected) 1f else 0f,
+//        animationSpec = bouncySpec()
+//    )
+//
+//    val morph = remember { Morph(defaultShape, pressedShape) }
+//
+//    val shape = remember(morph, pressedProgress) {
+//        MorphPolygonShape(morph, pressedProgress)
+//    }
+//
+//    return shape
+//}

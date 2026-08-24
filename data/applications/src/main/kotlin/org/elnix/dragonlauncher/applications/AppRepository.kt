@@ -9,7 +9,6 @@ import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
 import android.os.UserHandle
-import io.github.elnix90.logging.logWtf
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
@@ -52,16 +51,33 @@ import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.workspaces.WorkspacesManager
 
 public interface AppRepository {
-    public fun findOne(packageName: String, user: UserHandle): Flow<Application?>
     public fun getAllApps(): Flow<ImmutableList<Application>>
     public fun search(
         query: String,
         workspace: Workspace,
         workspaceViewMode: WorkspaceViewMode
     ): Flow<ImmutableList<Application>>
-
     public suspend fun refreshApps()
 
+
+    /**
+     * Finds an app from a [Action.LaunchApp].
+     * The package name and the profile are compared and both must match
+     *
+     * @param action the requested action to convert to application
+     * @return A flow of the nullable app
+     */
+    public fun findOne(action: Action.LaunchApp): Flow<Application?>
+
+    /**
+     * Retrieve the actual app from a [Action.LaunchApp].
+     *
+     * This function does not return a flow, but is an instant suspend collector.
+     * The package name and the profile are compared and both must match
+     *
+     * @param action the requested action to convert to application
+     * @return the found corresponding application or null if none matches
+     */
     public suspend fun fromAction(action: Action.LaunchApp): Application?
 
     public fun queryAppShortcuts(packageName: String): List<ShortcutInfo>
@@ -236,26 +252,16 @@ internal class AppRepositoryImpl(
 
 
     override fun findOne(
-        packageName: String,
-        user: UserHandle,
+        action: Action.LaunchApp
     ): Flow<Application?> {
         return getAllApps().map { apps ->
             apps.firstOrNull {
-                it.packageName == packageName && it.user == user
+                it.packageName == action.packageName && it.user == action.profile.userHandle
             }
         }
-        // TODO add custom label
     }
 
-    /**
-     * Retrieve the actual app from a [Action.LaunchApp].
-     *
-     * This function does not return a flow, but is an instant suspend collector.
-     * The package name and the profile are compared and both must match
-     *
-     * @param action the requested action to convert to application
-     * @return the found corresponding application or null if none matches
-     */
+
     override suspend fun fromAction(action: Action.LaunchApp): Application? {
         // Resolve the stored profile to the live one, as the persisted userHandle
         // may have been serialized incorrectly (e.g. by older versions).
@@ -356,8 +362,6 @@ internal class AppRepositoryImpl(
             appsForWorkspaces(workspace, workspaceViewMode).map { apps ->
                 val normalizerId = stringNormalizer.id
                 val appResults = mutableListOf<Application>()
-
-                logWtf { "GOT ${apps.size} APPS: ${apps.map { it.key }}" }
 
                 if (query.isEmpty()) {
                     appResults.addAll(apps)

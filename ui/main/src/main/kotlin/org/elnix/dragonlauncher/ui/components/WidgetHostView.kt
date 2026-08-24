@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
 import org.elnix.dragonlauncher.base.model.serializables.Point
@@ -29,7 +31,11 @@ import org.elnix.dragonlauncher.base.model.serializables.Widget
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.ktx.toDp
+import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.ui.actions.ActionIcon
+import org.elnix.dragonlauncher.ui.actions.AppIcon
+import org.elnix.dragonlauncher.ui.actions.ShortcutIcon
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 import org.elnix.dragonlauncher.ui.widgets.LauncherWidgetHolder
@@ -42,6 +48,7 @@ fun WidgetHostView(
     cellSizePx: Float,
     modifier: Modifier = Modifier,
     blockTouches: Boolean = false,
+    widgetsViewModel: WidgetsViewModel = activityViewModel(),
     onLaunchAction: () -> Unit
 ) {
     val ctx = LocalContext.current
@@ -107,39 +114,54 @@ fun WidgetHostView(
     } else {
         val sizeDp = min((widget.spanX * cellSizePx), (widget.spanY * cellSizePx)).toDp
 
-        if (widget.action !is Action.OpenCircleNest) {
-            ActionIcon(
-                action = widget.action,
-                modifier = modifier
-                    .fillMaxSize()
-                    .clip(widget.shape.resolveShape(default = IconShape.RightSquare))
-                    .conditional(!blockTouches) {
-                        clickable { onLaunchAction() }
-                    },
-                size = sizeDp
-            )
-        } else {
-            val editPoint = Point(
-                offset = Offset.Zero,
-                action = Action.OpenCircleNest((widget.action as Action.OpenCircleNest).nestId),
-                id = -2
-            )
+        when (val action = widget.action) {
+            is Action.LaunchApp -> {
+                val app by widgetsViewModel.findOne(action).collectAsStateWithLifecycle(null)
+                app?.let {
+                    AppIcon(it, sizeDp, modifier)
+                }
+            }
 
-            BoxWithConstraints(
-                modifier = modifier
-                    .size(sizeDp)
-                    .clip(widget.shape.resolveShape(default = IconShape.RightSquare))
-                    .conditional(!blockTouches) {
-                        clickable { onLaunchAction() }
-                    },
-            ) {
-                val center = constraints.getCenter()
+            is Action.OpenCircleNest -> {
+                val editPoint = Point(
+                    offset = Offset.Zero,
+                    action = Action.OpenCircleNest(action.nestId),
+                    id = -2
+                )
 
-                PointIcon(
-                    selected = false,
-                    eraseColor = Color.Transparent,
-                    point = editPoint,
-                    center = center
+                BoxWithConstraints(
+                    modifier = modifier
+                        .size(sizeDp)
+                        .clip(widget.shape.resolveShape(default = IconShape.RightSquare))
+                        .conditional(!blockTouches) {
+                            clickable { onLaunchAction() }
+                        },
+                ) {
+                    val center = constraints.getCenter()
+
+                    PointIcon(
+                        selected = false,
+                        eraseColor = Color.Transparent,
+                        point = editPoint,
+                        center = center
+                    )
+                }
+            }
+
+            is Action.LaunchShortcut -> {
+                ShortcutIcon(action, sizeDp, modifier)
+            }
+
+            else -> {
+                ActionIcon(
+                    action = action,
+                    modifier = modifier
+                        .fillMaxSize()
+                        .clip(widget.shape.resolveShape(default = IconShape.RightSquare))
+                        .conditional(!blockTouches) {
+                            clickable { onLaunchAction() }
+                        },
+                    size = sizeDp
                 )
             }
         }

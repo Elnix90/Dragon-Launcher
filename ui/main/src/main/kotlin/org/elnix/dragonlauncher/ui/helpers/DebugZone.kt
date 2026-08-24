@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.helpers
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
@@ -10,14 +11,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.core.objects.BooleanSettingObject
 import io.github.elnix90.runtime.asState
-import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
+import org.elnix.dragonlauncher.ktx.alphaMultiplier
 
 @Composable
-fun DebugZone(visible: Boolean, content: @Composable ColumnScope.() -> Unit) {
+fun DebugZone(
+    visible: Boolean,
+    content: @Composable ColumnScope.() -> Unit
+) {
     if (!visible) return
 
     CompositionLocalProvider(
@@ -26,15 +31,19 @@ fun DebugZone(visible: Boolean, content: @Composable ColumnScope.() -> Unit) {
     ) {
         Column(
             modifier = Modifier
-                .padding(10.dp)
-                .settingsGroup(),
+                .clip(MaterialTheme.shapes.small)
+                .background(MaterialTheme.colorScheme.surface.alphaMultiplier(0.8f))
+            .padding(10.dp),
             content = content
         )
     }
 }
 
 @Composable
-fun DebugZone(setting: BooleanSettingObject, content: @Composable ColumnScope.() -> Unit) {
+fun DebugZone(
+    setting: BooleanSettingObject,
+    content: @Composable ColumnScope.() -> Unit
+) {
     val isVisible by setting.asState()
     DebugZone(isVisible, content)
 }

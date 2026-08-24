@@ -14,7 +14,6 @@ import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -98,7 +97,6 @@ import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore.isInDragAroundMode
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.base.asState
@@ -111,7 +109,7 @@ import org.elnix.dragonlauncher.ui.components.IntersectionShape
 import org.elnix.dragonlauncher.ui.components.SelectedPointsTopBar
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
-import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
+import org.elnix.dragonlauncher.ui.dialogs.ActionPickerDialog
 import org.elnix.dragonlauncher.ui.dialogs.GamblingInputDialog
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
 import org.elnix.dragonlauncher.ui.dialogs.editors.PointEditor
@@ -210,7 +208,7 @@ fun PointsSettingsScreen(
     var isDragging by remember { mutableStateOf(false) }
 
 
-    val rowsScrollStates = List(2) { rememberScrollState() }
+    val rowsScrollStates = List(3) { rememberScrollState() }
 
     val nestsNavigationService = pointsViewModel.nestsNavigationService
     val nestId by nestsNavigationService.currentNestId.collectAsState()
@@ -479,166 +477,162 @@ fun PointsSettingsScreen(
             )
         },
         bottomContent = {
-            RowWithScrollIndicator(rowsScrollStates[1]) {
-                val canResetOffset = offset.value != Offset.Zero
-                val canResetZoom = zoom.value != 1f
-                val canResetRotation = angle.value != 0f
-
-                MultiSelectConnectedButtonRow(
-                    entries = MoveAroundTools.entries,
-                    enabled = {
-                        when (it) {
-                            Center -> canResetOffset
-                            ResetZoom -> canResetZoom
-                            ResetRotation -> canResetRotation
-                        }
-                    },
-                    checked = {
-                        when (it) {
-                            Center -> canResetOffset
-                            ResetZoom -> canResetZoom
-                            ResetRotation -> canResetRotation
-                        }
-                    }
-                ) { entry ->
-                    scope.launch {
-                        when (entry) {
-                            Center -> scope.launch {
-                                offset.animateTo(Offset.Zero, bouncySpec())
-                            }
-
-                            ResetZoom -> scope.launch {
-                                zoom.animateTo(1f, bouncySpec())
-                            }
-
-                            ResetRotation -> scope.launch {
-                                angle.animateTo(0f, bouncySpec())
-                            }
-                        }
-                    }
-                }
-
-                Spacer(12.dp)
-
-                UndoRedoBlock(pointsService.undoRedo)
-            }
-
-
-            // Last Buttons Row, containing the Add/Remove/Copy and the Add circle and Remove circle buttons
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(15.dp),
-                horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
-
-                AnimatedFab(
-                    onClick = { showAddDialog = true },
-                    icon = R.drawable.add,
-                    minSize = 70.dp,
-                    containerColor = MaterialTheme.colorScheme.secondary
-                )
-
-                ToggleAnimatedFab(
-                    checked = isInDragAroundMode,
-                    onCheckedChange = ::toggleDragAroundMode,
-                    minSize = 70.dp,
-                    containerColor = MaterialTheme.colorScheme.secondary
-                ) {
-                    if (it) {
-                        R.drawable.drag_pan
-                    } else {
-                        R.drawable.pan_tool
-                    }
-                }
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(5.dp)
-                ) {
-                    MultiSelectConnectedButtonRow(
-                        entries = SelectedPointEditTools.entries,
-                        checked = {
-                            when (it) {
-                                SelectedPointEditTools.Edit -> aSinglePointIsSelected
-                                SelectedPointEditTools.Duplicate -> selectedPointsIds.isNotEmpty()
-                                SelectedPointEditTools.Remove -> selectedPointsIds.isNotEmpty()
-                            }
-                        },
-                        enabled = {
-                            when (it) {
-                                SelectedPointEditTools.Edit -> aSinglePointIsSelected
-                                SelectedPointEditTools.Duplicate -> selectedPointsIds.isNotEmpty()
-                                SelectedPointEditTools.Remove -> selectedPointsIds.isNotEmpty()
-                            }
-                        }
-                    ) { option ->
-                        when (option) {
-                            SelectedPointEditTools.Edit -> {
-                                showEditDialog = selectedPointsIds.firstOrNull() ?: return@MultiSelectConnectedButtonRow
-                            }
-
-                            SelectedPointEditTools.Remove -> {
-
-                                selectedPointsIds.forEach { id ->
-                                    pointsService.removePoint(id)
-                                }
-                                pointsService.deselectAll()
-
-                            }
-
-                            SelectedPointEditTools.Duplicate -> {
-                                selectedPointsIds.forEach { id ->
-                                    val oldPoint = pointsService.findPointById(id) ?: return@MultiSelectConnectedButtonRow
-                                    val newId = pointsService.addPoint { newId ->
-                                        oldPoint.copy(id = newId)
-                                    }
-                                    select(newId)
-                                    pointsService.autoSeparate(nestId, newId)
-                                }
-                            }
-                        }
-                    }
-
-                    val nestToGo =
-                        if (selectedPointsIds.size == 1) {
-                            val point = pointsService.findPointById(selectedPointsIds.first())
-                            if (point != null && point.action is Action.OpenCircleNest) (point.action as Action.OpenCircleNest).nestId else null
-                        } else null
-
-                    val canGoNest = nestToGo != null
-                    val canGoback = nestId != 0
+                RowWithScrollIndicator(rowsScrollStates[1]) {
+                    val canResetOffset = offset.value != Offset.Zero
+                    val canResetZoom = zoom.value != 1f
+                    val canResetRotation = angle.value != 0f
 
                     MultiSelectConnectedButtonRow(
-                        entries = NestEditTools.entries,
+                        entries = MoveAroundTools.entries,
                         enabled = {
                             when (it) {
-                                NestManagement -> true
-                                GoParentNest -> canGoback
-                                EnterNest -> canGoNest
+                                Center -> canResetOffset
+                                ResetZoom -> canResetZoom
+                                ResetRotation -> canResetRotation
                             }
                         },
                         checked = {
                             when (it) {
-                                NestManagement -> true
-                                GoParentNest -> canGoback
-                                EnterNest -> canGoNest
+                                Center -> canResetOffset
+                                ResetZoom -> canResetZoom
+                                ResetRotation -> canResetRotation
                             }
                         }
                     ) { entry ->
-                        when (entry) {
-                            NestManagement -> {
-                                showNestManagementDialog = true
-                            }
+                        scope.launch {
+                            when (entry) {
+                                Center -> scope.launch {
+                                    offset.animateTo(Offset.Zero, bouncySpec())
+                                }
 
-                            GoParentNest -> {
-                                nestsNavigationService.goBack()
-                                pointsService.deselectAll()
-                            }
+                                ResetZoom -> scope.launch {
+                                    zoom.animateTo(1f, bouncySpec())
+                                }
 
-                            EnterNest -> {
-                                nestToGo?.let {
-                                    nestsNavigationService.goToNest(it)
+                                ResetRotation -> scope.launch {
+                                    angle.animateTo(0f, bouncySpec())
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(12.dp)
+
+                    UndoRedoBlock(pointsService.undoRedo)
+                }
+
+
+                RowWithScrollIndicator(rowsScrollStates[2]) {
+                    AnimatedFab(
+                        onClick = { showAddDialog = true },
+                        icon = R.drawable.add,
+                        minSize = 70.dp,
+                        containerColor = MaterialTheme.colorScheme.secondary
+                    )
+
+                    ToggleAnimatedFab(
+                        checked = isInDragAroundMode,
+                        onCheckedChange = ::toggleDragAroundMode,
+                        minSize = 70.dp,
+                        containerColor = MaterialTheme.colorScheme.secondary
+                    ) {
+                        if (it) {
+                            R.drawable.drag_pan
+                        } else {
+                            R.drawable.pan_tool
+                        }
+                    }
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                        MultiSelectConnectedButtonRow(
+                            entries = SelectedPointEditTools.entries,
+                            checked = {
+                                when (it) {
+                                    SelectedPointEditTools.Edit -> aSinglePointIsSelected
+                                    SelectedPointEditTools.Duplicate -> selectedPointsIds.isNotEmpty()
+                                    SelectedPointEditTools.Remove -> selectedPointsIds.isNotEmpty()
+                                }
+                            },
+                            enabled = {
+                                when (it) {
+                                    SelectedPointEditTools.Edit -> aSinglePointIsSelected
+                                    SelectedPointEditTools.Duplicate -> selectedPointsIds.isNotEmpty()
+                                    SelectedPointEditTools.Remove -> selectedPointsIds.isNotEmpty()
+                                }
+                            }
+                        ) { option ->
+                            when (option) {
+                                SelectedPointEditTools.Edit -> {
+                                    showEditDialog = selectedPointsIds.firstOrNull() ?: return@MultiSelectConnectedButtonRow
+                                }
+
+                                SelectedPointEditTools.Remove -> {
+
+                                    selectedPointsIds.forEach { id ->
+                                        pointsService.removePoint(id)
+                                    }
                                     pointsService.deselectAll()
+
+                                }
+
+                                SelectedPointEditTools.Duplicate -> {
+                                    selectedPointsIds.forEach { id ->
+                                        val oldPoint = pointsService.findPointById(id) ?: return@MultiSelectConnectedButtonRow
+                                        val newId = pointsService.addPoint { newId ->
+                                            oldPoint.copy(id = newId)
+                                        }
+                                        select(newId)
+                                        pointsService.autoSeparate(nestId, newId)
+                                    }
+                                }
+                            }
+                        }
+
+                        val nestToGo =
+                            if (selectedPointsIds.size == 1) {
+                                val point = pointsService.findPointById(selectedPointsIds.first())
+                                if (point != null && point.action is Action.OpenCircleNest) (point.action as Action.OpenCircleNest).nestId else null
+                            } else null
+
+                        val canGoNest = nestToGo != null
+                        val canGoback = nestId != 0
+
+                        MultiSelectConnectedButtonRow(
+                            entries = NestEditTools.entries,
+                            enabled = {
+                                when (it) {
+                                    NestManagement -> true
+                                    GoParentNest -> canGoback
+                                    EnterNest -> canGoNest
+                                }
+                            },
+                            checked = {
+                                when (it) {
+                                    NestManagement -> true
+                                    GoParentNest -> canGoback
+                                    EnterNest -> canGoNest
+                                }
+                            }
+                        ) { entry ->
+                            when (entry) {
+                                NestManagement -> {
+                                    showNestManagementDialog = true
+                                }
+
+                                GoParentNest -> {
+                                    nestsNavigationService.goBack()
+                                    pointsService.deselectAll()
+                                }
+
+                                EnterNest -> {
+                                    nestToGo?.let {
+                                        nestsNavigationService.goToNest(it)
+                                        pointsService.deselectAll()
+                                    }
                                 }
                             }
                         }
@@ -1094,12 +1088,7 @@ fun PointsSettingsScreen(
                 }
 
                 DragonSettingsGroup(R.string.miscellaneous) {
-                    DragonButton(
-                        onClick = { showEditDefaultPoint = true },
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .fillMaxWidth()
-                    ) {
+                    DragonButton(onClick = { showEditDefaultPoint = true }) {
                         Icon(painter = painterResource(R.drawable.edit_rounded), null)
                         Spacer(5.dp)
                         Text(stringResource(R.string.edit_default_point))
@@ -1108,21 +1097,13 @@ fun PointsSettingsScreen(
                         onClick = {
                             pointsService.selectAll(nestId)
                             showMoreSheet = false
-                        },
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .fillMaxWidth()
+                        }
                     ) {
                         Icon(painter = painterResource(R.drawable.select_all), null)
                         Spacer(5.dp)
                         Text(stringResource(R.string.select_all))
                     }
-                    DragonButton(
-                        onClick = { showGambleDialog = true },
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .fillMaxWidth()
-                    ) {
+                    DragonButton(onClick = { showGambleDialog = true }) {
                         Icon(painter = painterResource(R.drawable.casino), null)
                         Spacer(5.dp)
                         Text(stringResource(R.string.gamble_apps))
@@ -1135,10 +1116,10 @@ fun PointsSettingsScreen(
                         Column(
                             verticalArrangement = Arrangement.spacedBy(5.dp)
                         ) {
-                            Setting(UiSettingsStore.snapPoints)
-                            Setting(UiSettingsStore.snapPointsToShapes)
-                            Setting(UiSettingsStore.pointsCellSizeDp)
-                            Setting(UiSettingsStore.showGridWhenSnappingIsOn)
+                            this@DragonSettingsGroup.Setting(UiSettingsStore.snapPoints)
+                            this@DragonSettingsGroup.Setting(UiSettingsStore.snapPointsToShapes)
+                            this@DragonSettingsGroup.Setting(UiSettingsStore.pointsCellSizeDp)
+                            this@DragonSettingsGroup.Setting(UiSettingsStore.showGridWhenSnappingIsOn)
                         }
                     }
                 }
@@ -1146,10 +1127,7 @@ fun PointsSettingsScreen(
                 DragonSettingsGroup(R.string.dangerous_actions) {
                     DragonButton(
                         onClick = { showResetPointsAndNestsDialog = true },
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .fillMaxWidth(),
-                        colors = AppObjectsColors.cancelButtonColors()
+                        isCancel = true
                     ) {
                         Icon(painter = painterResource(R.drawable.delete_forever), null)
                         Spacer(5.dp)
@@ -1200,7 +1178,7 @@ fun PointsSettingsScreen(
     }
 
     if (showAddDialog) {
-        AddPointDialog(
+        ActionPickerDialog(
             onDismiss = {
                 showAddDialog = false
             },

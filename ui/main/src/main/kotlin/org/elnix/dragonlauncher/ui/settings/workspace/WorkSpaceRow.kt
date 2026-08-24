@@ -79,7 +79,7 @@ fun ReorderableCollectionItemScope.WorkspaceRow(
                 DragonIconButton(
                     icon = WorkspaceAction.Delete.iconEnabled,
                     contentDescription = WorkspaceAction.Delete.resId,
-                    colors = AppObjectsColors.cancelIconButtonColors()
+                    isCancel = true
                 ) { onAction(WorkspaceAction.Delete) }
             }
 

@@ -10,7 +10,9 @@ internal class PlaceholderIconProvider(
     private val appRepository: AppRepository
 ) : IconProvider {
     override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
-        val application = appRepository.fromAction(action as Action.LaunchApp) ?: return null
+        if (action !is Action.LaunchApp) return null
+
+        val application = appRepository.fromAction(action) ?: return null
         return application.getPlaceholderIcon(ctx)
     }
 }

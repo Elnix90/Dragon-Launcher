@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.dialogs
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -8,11 +9,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,19 +23,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.models.ADBCommands
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
+import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
-import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
-import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
+import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
+import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T : ADBCommands> AdbCommandPickerDialog(
-    label: String?,
+    label: String,
     options: List<T>,
     selected: () -> T,
     onDismiss: () -> Unit,
@@ -46,89 +48,67 @@ fun <T : ADBCommands> AdbCommandPickerDialog(
     var selected by remember { mutableStateOf(selected()) }
     var toast by remember { mutableStateOf(false) }
 
-    CustomAlertDialog(
-        onDismissRequest = onDismiss, title = {
-            if (label != null) {
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center
-                )
-            }
+    DragonModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = rememberBottomSheetState(true)
+    ) {
+        DialogTitle(label)
 
-        },
-        confirmButton = {
-            ValidateCancelButtons(
-                onCancel = onDismiss,
-                onConfirm = {
-                    onSelected(selected, toast)
-                }
-            )
-        },
-        text = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                options.forEach { option ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(MaterialTheme.shapes.large)
-                            .clickable {
-                                selected = option
+        DragonSettingsGroup {
+            options.forEach { option ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .dragonSettingGroup {
+                            clickable {
+                                onSelected(selected, toast)
                             }
-                            .padding(15.dp),
-                        horizontalArrangement = Arrangement.spacedBy(5.dp)
+                        },
+                    horizontalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
-                        Column(
-                            modifier = Modifier.weight(1f),
-                            verticalArrangement = Arrangement.spacedBy(5.dp)
-                        ) {
-                            Text(
-                                text = option.commandEnable,
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontFamily = FontFamily.Monospace,
-                                modifier = Modifier
-                                    .clip(MaterialTheme.shapes.large)
-                                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                                    .border(1.dp, MaterialTheme.colorScheme.secondary, MaterialTheme.shapes.large)
-                                    .padding(5.dp)
-                            )
-
-                            Text(
-                                text = stringResource(option.resId),
-                                style = MaterialTheme.typography.labelSmall,
-                            )
-                        }
-
-                        RadioButton(
-                            selected = selected == option,
-                            onClick = {
-                                selected = option
-                            },
-                            colors = AppObjectsColors.radioButtonColors(),
-                            modifier = Modifier.size(20.dp)
+                        Text(
+                            text = option.commandEnable,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontFamily = FontFamily.Monospace,
+                            modifier = Modifier
+                                .clip(MaterialTheme.shapes.medium)
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                                .border(1.dp, MaterialTheme.colorScheme.secondary, MaterialTheme.shapes.medium)
+                                .padding(5.dp)
+                        )
+                        Text(
+                            text = stringResource(option.resId),
+                            style = MaterialTheme.typography.labelSmall,
                         )
                     }
                 }
-
-                HorizontalDivider()
-
-                DragonRow(
-                    onClick = {
-                        toast = !toast
-                    }
-                ) {
-                    Checkbox(
-                        checked = toast,
-                        onCheckedChange = {
-                            toast = it
-                        }
-                    )
-
-                    Text(stringResource(R.string.show_toast))
-                }
             }
-        })
+        }
+
+        Spacer(10.dp)
+
+        val interactionSource = rememberInteractionSource()
+        val backgroundColor by animateColorAsState(if (toast) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface)
+
+        DragonRow(
+            onClick = { toast = !toast },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
+                .background(backgroundColor),
+            interactionSource = interactionSource
+        ) {
+            Text(stringResource(R.string.show_toast))
+            Checkbox(
+                checked = toast,
+                onCheckedChange = null,
+                interactionSource = interactionSource
+            )
+
+        }
+    }
 }

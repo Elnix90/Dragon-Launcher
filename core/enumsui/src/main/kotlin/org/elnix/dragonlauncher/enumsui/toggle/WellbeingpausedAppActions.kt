@@ -9,6 +9,6 @@ public enum class WellbeingPausedAppActions(
     override val iconDisabled: Int? = null
 ) : ToggleButtonOption {
     Add(R.string.add_app, R.drawable.add),
-    AddAll(R.string.add_social_media, R.drawable.ic_app_grid),
+    AddAll(R.string.add_social_media, R.drawable.apps),
     ClearAll(R.string.clear_all, R.drawable.reset)
 }

@@ -14,13 +14,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -29,37 +26,54 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
-import kotlinx.coroutines.launch
+import io.github.elnix90.runtime.asMutableState
+import kotlinx.coroutines.delay
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
+import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.pasteClipboard
 import org.elnix.dragonlauncher.enumsui.select.ColorPickerMode
 import org.elnix.dragonlauncher.enumsui.toggle.ColorActions
+import org.elnix.dragonlauncher.enumsui.toggle.ColorActions.Copy
+import org.elnix.dragonlauncher.enumsui.toggle.ColorActions.Paste
+import org.elnix.dragonlauncher.enumsui.toggle.ColorActions.Random
+import org.elnix.dragonlauncher.enumsui.toggle.ColorActions.Reset
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.randomColor
+import org.elnix.dragonlauncher.ktx.rect
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.ktx.toHexWithAlpha
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.composition.LocalColorPickerMode
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
+import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Color picker row
@@ -71,9 +85,9 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
  * @param defaultColor the default color
  * @param onColorPicked when the user saves a color and validate
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun ColorPickerRow(
+fun DragonGroupScope.ColorPickerRow(
     title: String,
     description: String?,
     modifier: Modifier = Modifier,
@@ -82,16 +96,32 @@ fun ColorPickerRow(
     defaultColor: Color?,
     onColorPicked: (Color?) -> Unit
 ) {
-    var showPicker by remember { mutableStateOf(false) }
+    val ctx = LocalContext.current
 
-    val currentColorNotNull = currentColor ?: Color.Unspecified
-    var actualColor by remember(currentColorNotNull) { mutableStateOf(currentColorNotNull) }
+    val initialColorNotNull = currentColor ?: Color.Unspecified
+
+    var currentMode by ColorModesSettingsStore.colorPickerMode.asMutableState()
+    var actualColor by remember(initialColorNotNull) { mutableStateOf(initialColorNotNull) }
+    var previewBoxShape by remember { mutableStateOf(IconShape.Random.resolveShape()) }
+
+    var showPicker by remember { mutableStateOf(false) }
+    LaunchedEffect(showPicker) {
+        if (showPicker) {
+            delay(50.milliseconds)
+            previewBoxShape = IconShape.Random.resolveShape()
+        }
+    }
+
+    var hexText by remember { mutableStateOf(actualColor.toHexWithAlpha) }
+    LaunchedEffect(actualColor) {
+        hexText = actualColor.toHexWithAlpha
+    }
 
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .clickable(enabled) { showPicker = true }
-            .padding(10.dp),
+            .dragonSettingGroup(enabled = enabled) {
+                clickable(enabled) { showPicker = true }
+            },
         verticalAlignment = Alignment.CenterVertically,
     ) {
 
@@ -125,16 +155,7 @@ fun ColorPickerRow(
 
             Spacer(12.dp)
 
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(currentColorNotNull, shape = CircleShape)
-                    .border(
-                        1.dp,
-                        MaterialTheme.colorScheme.outline,
-                        CircleShape
-                    )
-            )
+            ColorCirclePreview(initialColorNotNull, previewBoxShape)
         }
     }
 
@@ -152,186 +173,127 @@ fun ColorPickerRow(
                     .verticalScroll(rememberScrollState())
                     .padding(bottom = 16.dp)
             ) {
-                DialogTitle(
-                    text = title,
-                    trailingIcon = {
-                        MultiSelectConnectedButtonRow(
-                            entries = ColorActions.entries,
-                            enabled = {
-                                when (it) {
-                                    ColorActions.Reset -> actualColor != defaultColor
-                                    ColorActions.Random -> true
-                                }
-                            }
-                        ) {
-                            actualColor = when (it) {
-                                ColorActions.Reset -> defaultColor ?: Color.Unspecified
-                                ColorActions.Random -> randomColor()
+                DialogTitle(title)
+
+                MultiSelectConnectedButtonRow(
+                    entries = ColorActions.entries,
+                    enabled = {
+                        when (it) {
+                            Reset -> actualColor != defaultColor
+                            Random, Copy, Paste -> true
+                        }
+                    }
+                ) {
+                    when (it) {
+                        Reset -> actualColor = defaultColor ?: Color.Unspecified
+                        Random -> actualColor = randomColor()
+                        Copy -> ctx.copyToClipboard(hexText)
+                        Paste -> {
+                            val newColor = pasteColorHexFromClipboard(ctx)
+                            newColor?.let { pasted ->
+                                hexText = pasted.toHexWithAlpha
+                                actualColor = pasted
                             }
                         }
                     }
+                }
+
+
+                SingleSelectConnectedButtonRow(
+                    entries = ColorPickerMode.entries,
+                    checked = { currentMode == it },
+                    modifier = Modifier.fillMaxWidth()
+                ) { currentMode = it }
+
+                Spacer(5.dp)
+
+                val displayedColor by animateColorAsState(
+                    targetValue = actualColor,
+                    animationSpec = tween(durationMillis = 200)
                 )
 
-                ColorPicker(
-                    initialColor = currentColorNotNull,
-                    color = actualColor,
-                    onColorSelected = { actualColor = it }
-                )
-            }
-        }
-    }
-}
-
-
-@Composable
-private fun ColorPicker(
-    initialColor: Color,
-    color: Color,
-    onColorSelected: (Color) -> Unit
-) {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
-
-    val colorPickerMode = LocalColorPickerMode.current
-    val initialPage = remember { ColorPickerMode.entries.indexOf(colorPickerMode) }
-    val pagerState = rememberPagerState(initialPage = initialPage) { ColorPickerMode.entries.size }
-
-    var hexText by remember { mutableStateOf(color.toHexWithAlpha) }
-
-    LaunchedEffect(color) {
-        hexText = color.toHexWithAlpha
-    }
-
-    val currentMode = ColorPickerMode.entries[pagerState.currentPage]
-    // Save the current page as mode whenever changed
-    LaunchedEffect(currentMode) {
-        ColorModesSettingsStore.colorPickerMode.set(ctx, currentMode)
-    }
-
-    Column(modifier = Modifier.fillMaxWidth()) {
-
-        SingleSelectConnectedButtonRow(
-            entries = ColorPickerMode.entries,
-            checked = { currentMode == it },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            scope.launch { pagerState.animateScrollToPage(it.ordinal) }
-        }
-
-        Spacer(5.dp)
-
-        val displayedColor by animateColorAsState(
-            targetValue = color,
-            animationSpec = tween(durationMillis = 200)
-        )
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp)
-                .background(
-                    color = displayedColor,
-                    shape = MaterialTheme.shapes.medium
-                )
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outline,
-                    shape = MaterialTheme.shapes.medium
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val textBoxColor = if (color.luminance() > 0.4) Color.Black else Color.White
-
-                TextField(
-                    value = hexText,
-                    onValueChange = {
-                        if (it.length <= 9) hexText = it
-                        runCatching {
-                            if (it.startsWith("#") && it.length == 9) {
-                                onColorSelected(Color(it.toColorInt()))
-                            }
-                        }
-                    },
-                    label = {
-                        Text(
-                            text = "HEX - AARRGGBB",
-                            color = textBoxColor
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp)
+                        .background(
+                            color = displayedColor,
+                            shape = MaterialTheme.shapes.medium
                         )
-                    },
-                    colors = AppObjectsColors.outlinedTextFieldColors(
-                        backgroundColor = Color.Transparent,
-                        onBackgroundColor = textBoxColor,
-                        removeBorder = true
-                    ),
-                    singleLine = true,
-                    modifier = Modifier.weight(1f)
-                )
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.outline,
+                            shape = MaterialTheme.shapes.medium
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        val textBoxColor = if (actualColor.luminance() > 0.4) Color.Black else Color.White
 
-                Spacer(50.dp)
+                        TextField(
+                            value = hexText,
+                            onValueChange = {
+                                if (it.length <= 9) hexText = it
+                                runCatching {
+                                    if (it.startsWith("#") && it.length == 9) {
+                                        actualColor = Color(it.toColorInt())
+                                    }
+                                }
+                            },
+                            label = {
+                                Text(
+                                    text = "HEX - AARRGGBB",
+                                    color = textBoxColor
+                                )
+                            },
+                            colors = AppObjectsColors.outlinedTextFieldColors(
+                                backgroundColor = Color.Transparent,
+                                onBackgroundColor = textBoxColor,
+                                removeBorder = true
+                            ),
+                            singleLine = true,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
 
-                DragonIconButton(
-                    onClick = {
-                        ctx.copyToClipboard(hexText)
-                    },
-                    colors = IconButtonDefaults.iconButtonColors(containerColor = color, contentColor = textBoxColor),
-                    icon = R.drawable.copy,
-                    contentDescription = R.string.copy
-                )
+                Spacer(15.dp)
 
-                DragonIconButton(
-                    onClick = {
-                        val newColor = pasteColorHexFromClipboard(ctx)
-                        newColor?.let { pasted ->
-                            hexText = pasted.toHexWithAlpha
-                            onColorSelected(pasted)
+                when (currentMode) {
+                    ColorPickerMode.Default -> DefaultColorPicker(
+                        selectedColor = actualColor,
+                        onColorSelected = { actualColor = it }
+                    )
+
+                    ColorPickerMode.Slider -> SliderColorPicker(
+                        actualColor = actualColor,
+                        initialColor = initialColorNotNull,
+                        onColorSelected = { actualColor = it }
+                    )
+
+                    ColorPickerMode.Gradient -> GradientColorPicker(
+                        initialColor = actualColor,
+                        onColorSelected = { actualColor = it }
+                    )
+                }
+
+                Spacer(12.dp)
+
+                DragonSettingsGroup {
+                    SliderWithLabel(
+                        label = stringResource(R.string.transparency),
+                        value = actualColor.alpha,
+                        valueRange = 0f..1f,
+                        resetEnabled = actualColor.alpha != initialColorNotNull.alpha,
+                        onReset = {
+                            actualColor = actualColor.copy(alpha = actualColor.alpha)
                         }
-                    },
-                    colors = IconButtonDefaults.iconButtonColors(containerColor = color, contentColor = textBoxColor),
-                    icon = R.drawable.paste,
-                    contentDescription = "Paste HEX"
-                )
+                    ) { alpha -> actualColor = (actualColor.copy(alpha = alpha)) }
+                }
             }
         }
-
-        Spacer(15.dp)
-
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.height(380.dp)
-        ) { page ->
-            when (ColorPickerMode.entries[page]) {
-                ColorPickerMode.Default -> DefaultColorPicker(
-                    selectedColor = color,
-                    onColorSelected = onColorSelected
-                )
-
-                ColorPickerMode.Slider -> SliderColorPicker(
-                    actualColor = color,
-                    initialColor = initialColor,
-                    onColorSelected = onColorSelected
-                )
-
-                ColorPickerMode.Gradient -> GradientColorPicker(
-                    initialColor = color,
-                    onColorSelected = onColorSelected
-                )
-            }
-        }
-
-        Spacer(12.dp)
-
-        SliderWithLabel(
-            label = stringResource(R.string.transparency),
-            value = color.alpha,
-            valueRange = 0f..1f,
-            resetEnabled = color.alpha != initialColor.alpha,
-            onReset = {
-                onColorSelected(color.copy(alpha = color.alpha))
-            }
-        ) { alpha -> onColorSelected(color.copy(alpha = alpha)) }
     }
 }
 
@@ -349,4 +311,53 @@ fun pasteColorHexFromClipboard(ctx: Context): Color? {
         }
     }
     return null
+}
+
+
+@Composable
+fun ColorCirclePreview(
+    color: Color,
+    shape: Shape
+) {
+    Box(
+        modifier = Modifier
+            .size(50.dp)
+            .clip(shape)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline,
+                shape = shape
+            )
+            .drawBehind {
+                pngBackgroundTexture(color)
+            }
+    )
+}
+
+private fun DrawScope.pngBackgroundTexture(
+    color: Color,
+    gridSize: Dp = 8.dp
+) {
+    val cellSizePx = gridSize.toPx()
+
+    val size = (this.size.width / cellSizePx).roundToInt()
+    var count = 0
+
+    repeat(size) { y ->
+        repeat(size) { x ->
+            drawRect(
+                color = if (count % 2 == 0) Color.White else Color.Gray,
+                size = Size.rect(cellSizePx),
+                blendMode = BlendMode.Src,
+                topLeft = Offset(
+                    x = cellSizePx * x,
+                    y = cellSizePx * y
+                )
+            )
+            count++
+        }
+        if (size % 2 == 0) count++
+    }
+
+    drawRect(color)
 }

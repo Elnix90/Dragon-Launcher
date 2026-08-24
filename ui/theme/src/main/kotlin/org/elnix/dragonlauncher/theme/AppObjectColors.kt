@@ -242,6 +242,7 @@ object AppObjectsColors {
     }
 
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
+    @Deprecated("Do not use this its only there as a placeholder")
     @Composable
     fun toggleButtonColors(): ToggleButtonColors {
         return if (LocalUseCustomColorChannels.current) {
@@ -251,8 +252,8 @@ object AppObjectsColors {
                     contentColor = onPrimary,
                     disabledContainerColor = surfaceVariant,
                     disabledContentColor = onSurfaceVariant,
-                    checkedContainerColor = surface,
-                    checkedContentColor = onSurface
+                    checkedContainerColor = primary,
+                    checkedContentColor = onPrimary
                 )
             }
         } else ToggleButtonDefaults.toggleButtonColors()

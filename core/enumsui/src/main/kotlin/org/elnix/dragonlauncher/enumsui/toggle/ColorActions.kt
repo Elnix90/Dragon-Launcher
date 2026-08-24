@@ -10,4 +10,6 @@ public enum class ColorActions(
 ) : ToggleButtonOption {
     Reset(R.string.reset, R.drawable.reset),
     Random(R.string.random, R.drawable.shuffle),
+    Copy(R.string.copy, R.drawable.copy),
+    Paste(R.string.paste, R.drawable.paste),
 }

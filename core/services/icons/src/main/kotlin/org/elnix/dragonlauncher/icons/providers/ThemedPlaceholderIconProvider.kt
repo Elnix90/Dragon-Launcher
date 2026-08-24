@@ -19,7 +19,9 @@ internal class ThemedPlaceholderIconProvider(
 ) : IconProvider {
 
     override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
-        val application = appRepository.fromAction(action as Action.LaunchApp) ?: return null
+        if (action !is Action.LaunchApp) return null
+
+        val application = appRepository.fromAction(action) ?: return null
         val icon = application.getPlaceholderIcon(ctx)
 
         return StaticLauncherIcon(
@@ -38,5 +40,4 @@ internal class ThemedPlaceholderIconProvider(
             is TransparentLayer -> layer
         }
     }
-
 }

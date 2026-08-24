@@ -2,6 +2,7 @@ package org.elnix.dragonlauncher.base.navigaton
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.runtime.Immutable
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -14,6 +15,7 @@ import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Welcome
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Widgets
 import org.elnix.dragonlauncher.i18n.R
 
+@Immutable
 @Suppress("EqualsOrHashCode")
 @Serializable
 public sealed class NavigationRoute : NavKey {
@@ -171,13 +173,6 @@ public sealed class NavigationRoute : NavKey {
     }
 
     @Serializable
-    @SerialName("Permissions")
-    public data object Permissions : NavigationRoute() {
-        override val resId: Int = R.string.permissions
-        override val icon: Int = R.drawable.privacy_tip
-    }
-
-    @Serializable
     @SerialName("Backup")
     public data object Backup : NavigationRoute() {
         override val resId: Int = R.string.backup
@@ -292,7 +287,6 @@ public sealed class NavigationRoute : NavKey {
                 Behavior,
                 DrawerSettings,
                 Workspace,
-                Permissions,
                 Backup,
                 Wellbeing,
                 Changelogs,

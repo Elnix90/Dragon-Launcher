@@ -139,7 +139,7 @@
     <string name="theme_selector">Theme selector</string>
     <string name="everything_ready">Everything Ready!</string>
     <string name="edit_point">Edit Point</string>
-    <string name="choose_action">Choose Action</string>
+    <string name="choose_action">Choose an Action</string>
     <string name="automatic_backups">Automatic backups</string>
     <string name="remove">Remove</string>
     <string name="trigger_backup">Trigger Backup</string>
@@ -412,8 +412,8 @@
     <string name="use_pure_black_background">Use pure black background</string>
 
 
-    <!--  ───────────── Colors  ─────────────  -->
     <string name="primary_colors_section">Primary Colors</string>
+    <string name="primary_colors_section_desc">Core accent color and its text/container variants</string>
     <string name="primary_color">Primary</string>
     <string name="on_primary_color">On Primary</string>
     <string name="primary_container_color">Primary Container</string>
@@ -421,18 +421,21 @@
     <string name="inverse_primary_color">Inverse Primary</string>
 
     <string name="secondary_colors_section">Secondary Colors</string>
+    <string name="secondary_colors_section_desc">Supporting accent for secondary UI elements</string>
     <string name="secondary_color">Secondary</string>
     <string name="on_secondary_color">On Secondary</string>
     <string name="secondary_container_color">Secondary Container</string>
     <string name="on_secondary_container_color">On Secondary Container</string>
 
     <string name="tertiary_colors_section">Tertiary Colors</string>
+    <string name="tertiary_colors_section_desc">Tertiary accent for distinctive UI highlights</string>
     <string name="tertiary_color">Tertiary</string>
     <string name="on_tertiary_color">On Tertiary</string>
     <string name="tertiary_container_color">Tertiary Container</string>
     <string name="on_tertiary_container_color">On Tertiary Container</string>
 
     <string name="background_surface_colors_section">Background / Surface Colors</string>
+    <string name="background_surface_colors_section_desc">Base surfaces and content backgrounds</string>
     <string name="background_color">Background</string>
     <string name="on_background_color">On Background</string>
     <string name="surface_color">Surface</string>
@@ -444,17 +447,20 @@
     <string name="inverse_on_surface_color">Inverse On Surface</string>
 
     <string name="error_colors_section">Error Colors</string>
+    <string name="error_colors_section_desc">Error states and alerts</string>
     <string name="error_color">Error</string>
     <string name="on_error_color">On Error</string>
     <string name="error_container_color">Error Container</string>
     <string name="on_error_container_color">On Error Container</string>
 
     <string name="outline_colors_section">Outline / Misc Colors</string>
+    <string name="outline_colors_section_desc">Borders, dividers, and focus indicators</string>
     <string name="outline_color">Outline</string>
     <string name="outline_variant_color">Outline Variant</string>
     <string name="scrim_color">Scrim</string>
 
     <string name="surface_container_colors_section">Surface Container Colors</string>
+    <string name="surface_container_colors_section_desc">Layered surface elevation levels</string>
     <string name="surface_bright_color">Surface Bright</string>
     <string name="surface_container_color">Surface Container</string>
     <string name="surface_container_high_color">Surface Container High</string>
@@ -463,6 +469,7 @@
     <string name="surface_container_lowest_color">Surface Container Lowest</string>
     <string name="surface_dim_color">Surface Dim</string>
 
+    <!-- These below aren't used in app (you cant directly customize them, but they are kept here for legacy and maybe future usage -->
     <string name="primary_fixed_color">Primary Fixed</string>
     <string name="primary_fixed_dim_color">Primary Fixed Dim</string>
     <string name="on_primary_fixed_color">On Primary Fixed</string>
@@ -473,6 +480,7 @@
     <string name="on_secondary_fixed_variant_color">On Secondary Fixed Variant</string>
     <string name="on_tertiary_fixed_color">On Tertiary Fixed</string>
     <string name="on_tertiary_fixed_variant_color">On Tertiary Fixed Variant</string>
+
     <string name="custom_colors">Custom Colors</string>
     <string name="normal_colors">Normal Colors</string>
     <string name="reset_all_points">Reset All points</string>
@@ -549,6 +557,7 @@
     <string name="hold_delay_before_starting_long_click_settings_desc">How long to hold before the loading settings starts to load</string>
     <string name="keep_screen_on_desc">Do not turn the screen off and lock, keep it always on when Dragon is focused</string>
     <string name="drag_zone_padding">Drag zone padding</string>
+    <string name="drag_zone_padding_desc">Adjust the global draggable area</string>
     <string name="points_settings">Point settings</string>
     <string name="default_point_live_nest_defaults">Live Nest defaults</string>
     <string name="default_point_live_nest_defaults_summary">Used when you pick a target nest on a point (preview delay, scale, grace, dim).</string>
@@ -676,9 +685,9 @@
     <string name="select_all">Select All</string>
     <string name="invert">Invert</string>
     <string name="advanced">Advanced</string>
-    <string name="yoann_desc">Important contributor (Extensions, performances, widgets)</string>
-    <string name="lucky_desc">Important contributor (Digital wellbeing and reminders)</string>
-    <string name="federico_desc">Important contributor (Widgets screen features and translations)</string>
+    <string name="yoann_desc">Extensions, performances, widgets</string>
+    <string name="lucky_desc">Digital wellbeing &amp; reminders</string>
+    <string name="federico_desc">Live nests features &amp; translations</string>
     <string name="copied_to_clipboard">Copied to clipboard!</string>
     <string name="permission_tab_help">Control the app permissions, and different access it has to external extensions</string>
     <string name="special_system_access">Special system access</string>
@@ -1059,4 +1068,13 @@
     <string name="multi_select_points_desc">Whether to allow or not the multi select of points in the edit screen</string>
     <string name="line_before_nests">Line before nests</string>
     <string name="not_showed">Not showed</string>
+    <string name="device_info">Device info</string>
+    <string name="device_info_desc">Get lots of useful info to share in case of issue to help the dev</string>
+    <string name="translators">Translators</string>
+    <string name="delete">Delete</string>
+    <string name="paste">Paste</string>
+    <string name="open_backup_file">Open backup file</string>
+    <string name="show_reselect_backup_banner">Show reselect backup banner</string>
+    <string name="show_reselect_backup_banner_desc">When enabled, if Dragon cannot touch the selected backup file, you will be promted to reselect it</string>
+    <string name="select_stores">Select stores</string>
 </resources>

@@ -626,9 +626,9 @@
     <string name="select_all">全て選択</string>
     <string name="invert">反転</string>
     <string name="advanced">高度</string>
-    <string name="yoann_desc">重要コントリビューター (拡張機能, パフォーマンス, ウィジェット)</string>
-    <string name="lucky_desc">重要コントリビューター (Digital wellbeing, リマインダー)</string>
-    <string name="federico_desc">重要コントリビューター (ウィジェット画面機能, 翻訳)</string>
+
+
+
     <string name="copied_to_clipboard">クリップボードにコピーしました！</string>
     <string name="permission_tab_help">アプリの権限と、拡張機能ごとのさまざまな権限を管理します</string>
     <string name="special_system_access">特殊なシステムアクセス</string>

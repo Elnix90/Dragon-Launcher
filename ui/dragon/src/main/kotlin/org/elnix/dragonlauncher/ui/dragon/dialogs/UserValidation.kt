@@ -36,7 +36,7 @@ import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.animation.Icon
 import org.elnix.dragonlauncher.ui.base.animation.rememberAnimatedIcon
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
+import org.elnix.dragonlauncher.ui.dragon.components.CopyIcon
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.text.DialogDescription
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
@@ -157,12 +157,7 @@ fun UserValidation(
 
                             if (copy) {
                                 Spacer(Modifier.weight(1f))
-                                DragonIconButton(
-                                    icon = R.drawable.copy,
-                                    contentDescription = "Copy",
-                                    modifier = Modifier
-                                        .padding(8.dp)
-                                ) { ctx.copyToClipboard(message) }
+                                CopyIcon { ctx.copyToClipboard(message) }
                             }
                         }
                     }

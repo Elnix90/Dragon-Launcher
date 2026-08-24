@@ -599,9 +599,9 @@
     <string name="select_all">全选</string>
     <string name="invert">反选</string>
     <string name="advanced">高级进阶设置</string>
-    <string name="yoann_desc">重要开源贡献者（主导：扩展生态、全局性能调优、桌面小部件架构设计）</string>
-    <string name="lucky_desc">重要开源贡献者（主导：数字健康模块、正念呼吸与防分心使用提醒）</string>
-    <string name="federico_desc">重要开源贡献者（主导：独立部件版面交互特性开发与多国语言翻译工作）</string>
+
+
+
     <string name="permission_tab_help">集中统筹本应用的各项系统关键权限，以及核查本软件对外部扩展模块的互联调用安全凭证</string>
     <string name="special_system_access">系统特殊高级访问权限</string>
     <string name="notification_access">通知栏读取读取控制权 (Notification Access)</string>

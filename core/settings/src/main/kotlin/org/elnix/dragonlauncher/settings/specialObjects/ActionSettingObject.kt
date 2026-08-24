@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.settings.specialObjects
 
+import androidx.compose.runtime.Immutable
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import io.github.elnix90.core.objects.SettingObject
@@ -8,11 +9,13 @@ import io.github.elnix90.core.stores.SettingsStore
 import io.github.elnix90.core.util.isNotBlankKey
 import org.elnix.dragonlauncher.base.model.serializables.Action
 
+@Immutable
 public data class ActionSettingObject(
     override val key: String,
     override val default: Action,
     override val title: Int?,
     override val description: Int?,
+    override val icon: Int?,
     override var onChanged: (() -> Unit)?,
     override val backupable: Boolean,
     override val settingsStore: SettingsStore<*, *>
@@ -27,6 +30,7 @@ public fun MapSettingsStore.action(
     default: Action,
     title: Int? = null,
     description: Int? = null,
+    icon: Int? = null,
     key: String = "",
     onChanged: (() -> Unit)? = null,
     backupable: Boolean = true
@@ -34,6 +38,7 @@ public fun MapSettingsStore.action(
     key = key.isNotBlankKey,
     title = title,
     description = description,
+    icon = icon,
     default = default,
     onChanged = onChanged,
     backupable = backupable,

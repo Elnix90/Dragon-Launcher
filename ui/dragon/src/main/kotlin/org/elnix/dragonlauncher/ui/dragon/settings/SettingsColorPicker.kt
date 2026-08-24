@@ -10,28 +10,30 @@ import io.github.elnix90.core.objects.SettingObject
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 
 @Composable
-fun Setting(
-    settingObject: SettingObject<Color, String>,
+fun DragonGroupScope.Setting(
+    setting: SettingObject<Color, String>,
     enabled: Boolean = true,
-    onPicked: ((Color?) -> Unit)?=  null
+    onPicked: ((Color?) -> Unit)? = null
 ) {
+
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val state by settingObject.asState()
+    val state by setting.asState()
 
     ColorPickerRow(
-        title = stringResource(settingObject.title!!),
-        description = settingObject.description?.let { stringResource(it) },
+        title = stringResource(setting.title!!),
+        description = setting.description?.let { stringResource(it) },
         currentColor = state,
         enabled = enabled,
-        defaultColor = settingObject.default
+        defaultColor = setting.default
     ) {
         onPicked?.invoke(it)
         scope.launch {
-            settingObject.set(ctx, it)
+            setting.set(ctx, it)
         }
     }
 }

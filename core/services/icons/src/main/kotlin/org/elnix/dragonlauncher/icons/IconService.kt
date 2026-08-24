@@ -8,7 +8,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
-import org.elnix.dragonlauncher.ICONS_TAG
 import io.github.elnix90.logging.logW
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +23,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.ICONS_TAG
 import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
 import org.elnix.dragonlauncher.appshortcuts.AppShortcutRepository
@@ -181,6 +181,7 @@ public class IconService internal constructor(
                     providers.add(
                         DynamicClockIconProvider(
                             ctx = ctx,
+                            appRepository = appRepository,
                             themed = settings.themedIcons,
                             tint = tint(),
                         )
@@ -349,12 +350,6 @@ public class IconService internal constructor(
     }
 
 
-//    public fun reloadShortcutIcon(shortcut: Action.LaunchShortcut) {
-//        scope.launch {
-//            getShortcutIcon(shortcut, true).first()
-//        }
-//    }
-
     @OptIn(ExperimentalCoroutinesApi::class)
     public fun getShortcutIcon(
         shortcut: Action.LaunchShortcut,
@@ -370,7 +365,7 @@ public class IconService internal constructor(
             )
 
             var icon = if (!reload) {
-                DrawerIconCache[cacheKey]
+                ShortcutIconCache[cacheKey]
             } else null
 
             if (!reload && icon != null) {
@@ -381,7 +376,7 @@ public class IconService internal constructor(
 
             if (icon != null) {
                 icon = icon.transform(transformations)
-                DrawerIconCache.compute(cacheKey) { icon }
+                ShortcutIconCache.compute(cacheKey) { icon }
             }
             return@combine icon
         }

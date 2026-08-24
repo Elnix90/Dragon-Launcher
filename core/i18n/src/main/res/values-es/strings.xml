@@ -600,8 +600,8 @@
     <string name="select_all">Seleccionar todos</string>
     <string name="invert">Invertir</string>
     <string name="advanced">Avanzado</string>
-    <string name="yoann_desc">Colaborar importante (extensiones, mejoras, widgets)</string>
-    <string name="lucky_desc">Colaborador importante (bienestar digital y recordatorios)</string>
+
+
     <string name="permission_tab_help">Controlar los permisos de la aplicación y el acceso a extensiones externas</string>
     <string name="special_system_access">Acceso especial al sistema</string>
     <string name="notification_access">Acceso a notificaciones</string>
@@ -687,7 +687,7 @@
     <string name="default_hold_and_run_delay">Por defecto retardar Mantener y Ejecutar (ms)</string>
     <string name="default_hold_and_run_delay_summary">Retardar aplicados cuando habilite Mantener y Ejecutar en un punto (cubre «Habilitar Mantener y Ejecutar»).</string>
     <string name="app_info_cache_key">Tecla caché = %1$s</string>
-    <string name="federico_desc">Contribuidor Imortant (Características de pantalla de widgets y traducciones)</string>
+
     <string name="hold_settings_help">Los ajustes relacionados para el arco que engendra cuando mantiene por un suficiente largo en la pantalla principal, no puede deshabilitarlo completamente, por otro caso pudo perder la última puerta que puede dejarle establecer, si lo hiciste algo mal, y por lo tanto te verás forzar a reiniciar la aplicación.</string>
     <string name="rotation_per_second">Rotaciones/segundo</string>
     <string name="rotation_per_second_desc">¿Cuántas vueltas da sobre sí mismo en un segundo</string>

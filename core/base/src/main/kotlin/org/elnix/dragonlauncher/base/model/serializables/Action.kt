@@ -5,6 +5,7 @@ import android.os.Process
 import android.os.UserHandle
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -30,6 +31,7 @@ import org.elnix.dragonlauncher.i18n.R
  *  - `launchAction`
  *  - `actionColor`
  */
+@Immutable
 @Serializable
 @SerialName("Action")
 public sealed class Action {
@@ -39,6 +41,7 @@ public sealed class Action {
     @get:StringRes
     public abstract val resId: Int
 
+    @Immutable
     @Serializable
     @SerialName("LaunchApp")
     public data class LaunchApp(
@@ -47,7 +50,7 @@ public sealed class Action {
         @Transient
         val timerDuration: Int? = null
     ) : Action() {
-        override val drawableId: Int = R.drawable.ic_app_grid
+        override val drawableId: Int = R.drawable.apps
         override val resId: Int = R.string.open_app
 
         public constructor(application: Application) : this(
@@ -56,10 +59,11 @@ public sealed class Action {
         )
 
         public companion object {
-            public val dummy: LaunchApp = LaunchApp(DummyApp)
+            public val dummy: LaunchApp = LaunchApp(DummyApp())
         }
     }
 
+    @Immutable
     @Serializable
     @SerialName("LaunchShortcut")
     public data class LaunchShortcut(
@@ -74,10 +78,11 @@ public sealed class Action {
         public companion object {
             public val dummy: LaunchShortcut = LaunchShortcut("", "", Process.myUserHandle())
 
-            public fun ShortcutInfo.toAction(): LaunchShortcut = LaunchShortcut(`package`,id, userHandle)
+            public fun ShortcutInfo.toAction(): LaunchShortcut = LaunchShortcut(`package`, id, userHandle)
         }
     }
 
+    @Immutable
     @Serializable
     @SerialName("OpenUrl")
     public data class OpenUrl(val url: String) : Action() {
@@ -89,6 +94,7 @@ public sealed class Action {
         }
     }
 
+    @Immutable
     @Serializable
     @SerialName("OpenFile")
     public data class OpenFile(
@@ -104,6 +110,7 @@ public sealed class Action {
     }
 
 
+    @Immutable
     @Serializable
     @SerialName("OpenAppDrawer")
     public data class OpenAppDrawer(
@@ -117,6 +124,7 @@ public sealed class Action {
         }
     }
 
+    @Immutable
     @Serializable
     @SerialName("OpenDragonLauncherSettings")
     public data class OpenDragonLauncherSettings(
@@ -130,6 +138,7 @@ public sealed class Action {
         }
     }
 
+    @Immutable
     @Serializable
     @SerialName("OpenCircleNest")
     public data class OpenCircleNest(
@@ -143,6 +152,7 @@ public sealed class Action {
         }
     }
 
+    @Immutable
     @Serializable
     @SerialName("OpenWidget")
     public data class OpenWidget(
@@ -158,6 +168,7 @@ public sealed class Action {
         }
     }
 
+    @Immutable
     @Serializable
     @SerialName("ToggleWifi")
     public data class ToggleWifi(
@@ -172,6 +183,7 @@ public sealed class Action {
         }
     }
 
+    @Immutable
     @Serializable
     @SerialName("ToggleBluetooth")
     public data class ToggleBluetooth(
@@ -186,6 +198,7 @@ public sealed class Action {
         }
     }
 
+    @Immutable
     @Serializable
     @SerialName("ToggleData")
     public data class ToggleData(
@@ -200,6 +213,7 @@ public sealed class Action {
         }
     }
 
+    @Immutable
     @Serializable
     @SerialName("RunAdbCommand")
     public data class RunAdbCommand(
@@ -214,6 +228,7 @@ public sealed class Action {
         }
     }
 
+    @Immutable
     @Serializable
     @SerialName("Lock")
     public object Lock : Action() {
@@ -222,6 +237,7 @@ public sealed class Action {
 
     }
 
+    @Immutable
     @Serializable
     @SerialName("ReloadApps")
     public object ReloadApps : Action() {
@@ -230,6 +246,7 @@ public sealed class Action {
 
     }
 
+    @Immutable
     @Serializable
     @SerialName("OpenRecentApps")
     public object OpenRecentApps : Action() {
@@ -238,6 +255,7 @@ public sealed class Action {
 
     }
 
+    @Immutable
     @Serializable
     @SerialName("NotificationShade")
     public object NotificationShade : Action() {
@@ -246,6 +264,7 @@ public sealed class Action {
 
     }
 
+    @Immutable
     @Serializable
     @SerialName("ControlPanel")
     public object ControlPanel : Action() {
@@ -254,6 +273,7 @@ public sealed class Action {
 
     }
 
+    @Immutable
     @Serializable
     @SerialName("GoParentNest")
     public object GoParentNest : Action() {
@@ -262,6 +282,7 @@ public sealed class Action {
 
     }
 
+    @Immutable
     @Serializable
     @SerialName("KillLauncher")
     public data object KillLauncher : Action() {
@@ -270,6 +291,7 @@ public sealed class Action {
 
     }
 
+    @Immutable
     @Serializable
     @SerialName("None")
     public object None : Action() {
@@ -306,7 +328,8 @@ public sealed class Action {
                     None, null -> Color.Unspecified
                 }
 
-        public val defaultChoosableActions: List<Action> = listOf(
+        public val allActions: List<Action> = listOf(
+            OpenWidget.dummy,
             LaunchApp.dummy,
             OpenCircleNest.dummy,
             GoParentNest,
@@ -323,7 +346,8 @@ public sealed class Action {
             RunAdbCommand.dummy,
             ToggleBluetooth.dummy,
             ToggleWifi.dummy,
-            ToggleData.dummy
+            ToggleData.dummy,
+            KillLauncher
         )
 
         public object ActionJson : DragonJson<Action>()

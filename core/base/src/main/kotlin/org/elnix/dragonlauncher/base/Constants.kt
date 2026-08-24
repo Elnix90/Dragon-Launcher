@@ -143,6 +143,8 @@ public object Constants {
         public const val ELNIX90_GITHUB_PROFILE_LINK: String = "https://github.com/Elnix90"
         public const val ELNIX90_BUY_ME_A_COFFEE: String = "https://buymeacoffee.com/elnix90"
         public const val GITHUB_REPO_LINK: String = "https://github.com/Elnix90/Dragon-Launcher"
+        public const val GITLAB_REPO_LINK: String = "https://gitlab.com/Elnix91/Dragon-Launcher"
+        public const val CODEBERG_REPO_LINK: String = "https://codeberg.org/Elnix90/Dragon-Launcher"
         public const val GITHUB_REPO_RELEASES_LINK: String = "$GITHUB_REPO_LINK/releases/latest"
         public const val GITHUB_REPO_ISSUES_LINK: String = "$GITHUB_REPO_LINK/issues/new"
         public const val EXTENSIONS_GITHUB_REPO_LINK: String = "https://github.com/Elnix90/Dragon-Launcher-Extensions"

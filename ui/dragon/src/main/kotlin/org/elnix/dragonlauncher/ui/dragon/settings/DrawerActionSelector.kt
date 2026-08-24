@@ -1,39 +1,26 @@
 package org.elnix.dragonlauncher.ui.dragon.settings
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import io.github.elnix90.core.objects.EnumSettingObject
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
-import org.elnix.dragonlauncher.ui.composition.LocalSettingsPlacementChecker
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 
 @Composable
-fun DrawerActionSelector(
-    settingObject: EnumSettingObject<DrawerActions>,
+fun DragonGroupScope.DrawerActionSelector(
+    setting: EnumSettingObject<DrawerActions>,
     allowNone: Boolean = false
 ) {
-    // Craches if this setting isn't placed inside a DragonSettingsGroup
-    LocalSettingsPlacementChecker.current
-
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val state by settingObject.asState()
-
-    var tempState by remember { mutableStateOf(state) }
-
-    LaunchedEffect(state) { tempState = state }
-
-    val stateNotDisabled = tempState != DrawerActions.Disabled
+    val state by setting.asState()
 
     val actions = DrawerActions.entries
         .filter { it != DrawerActions.Disabled }
@@ -41,20 +28,19 @@ fun DrawerActionSelector(
 
     ActionSelectorRow(
         options = actions,
-        selected = tempState,
-        label = stringResource(settingObject.title!!),
+        selected = state,
+        label = stringResource(setting.title!!),
         optionLabel = { stringResource(it.resId) },
-        toggled = stateNotDisabled,
-        resetEnabled = state != settingObject.default,
+        toggled = state != DrawerActions.Disabled,
+        resetEnabled = state != setting.default,
         onReset = {
             scope.launch {
-                settingObject.reset(ctx)
+                setting.reset(ctx)
             }
         }
     ) {
-        tempState = it ?: DrawerActions.Disabled
         scope.launch {
-            settingObject.set(ctx, tempState)
+            setting.set(ctx, it)
         }
     }
 }

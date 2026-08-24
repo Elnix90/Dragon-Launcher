@@ -18,6 +18,7 @@ public object BackupSettingsStore : MapSettingsStore() {
     public val autoBackupEnabled: BooleanSettingObject = boolean(
         title = R.string.automatic_backups,
         description = R.string.auto_backup_desc,
+        icon = R.drawable.save,
         default = false
     )
 

@@ -19,6 +19,7 @@ public object DebugSettingsStore : MapSettingsStore() {
     public val debugEnabled: BooleanSettingObject = boolean(
         title = R.string.activate_debug_mode,
         description = R.string.activate_debug_mode_desc,
+        icon = R.drawable.bug_report,
         default = false
     )
 
@@ -26,6 +27,7 @@ public object DebugSettingsStore : MapSettingsStore() {
     public val mainScreenDebugInfos: BooleanSettingObject = boolean(
         title = R.string.show_debug_infos,
         description = R.string.show_debug_infos_desc,
+        icon = R.drawable.home,
         default = false
     )
 
@@ -33,6 +35,7 @@ public object DebugSettingsStore : MapSettingsStore() {
     public val nestDebugOverlay: BooleanSettingObject = boolean(
         title = R.string.nest_debug_overlay,
         description = R.string.nest_debug_overlay_desc,
+        icon = R.drawable.nest_icon,
         default = false
     )
 
@@ -40,6 +43,7 @@ public object DebugSettingsStore : MapSettingsStore() {
     public val nestDebugInfo: BooleanSettingObject = boolean(
         title = R.string.nest_debug_info,
         description = R.string.nest_debug_info_desc,
+        icon = R.drawable.nest_icon,
         default = false
     )
 
@@ -47,6 +51,7 @@ public object DebugSettingsStore : MapSettingsStore() {
     public val settingsDebugInfo: BooleanSettingObject = boolean(
         title = R.string.show_debug_infos_settings,
         description = R.string.show_debug_infos_settings_desc,
+        icon = R.drawable.settings,
         default = false
     )
 
@@ -54,6 +59,7 @@ public object DebugSettingsStore : MapSettingsStore() {
     public val widgetsDebugInfo: BooleanSettingObject = boolean(
         title = R.string.show_debug_infos_widgets,
         description = R.string.show_debug_infos_widgets_desc,
+        icon = R.drawable.widgets,
         default = false
     )
 
@@ -61,6 +67,7 @@ public object DebugSettingsStore : MapSettingsStore() {
     public val workspacesDebugInfo: BooleanSettingObject = boolean(
         title = R.string.show_debug_infos_workspace,
         description = R.string.show_debug_infos_workspace_desc,
+        icon = R.drawable.workspaces,
         default = false
     )
 
@@ -68,6 +75,7 @@ public object DebugSettingsStore : MapSettingsStore() {
     public val forceAppLanguageSelector: BooleanSettingObject = boolean(
         title = R.string.force_app_language_selector,
         description = R.string.force_app_language_selector_desc,
+        icon = R.drawable.web,
         default = false
     )
 
@@ -75,6 +83,7 @@ public object DebugSettingsStore : MapSettingsStore() {
     public val autoRaiseDragonOnSystemLauncher: BooleanSettingObject = boolean(
         title = R.string.auto_raise_dragon_on_system_launcher,
         description = R.string.auto_raise_dragon_on_system_launcher_desc,
+        icon = R.drawable.ic_launcher_luck_white_transparent,
         default = false
     )
 
@@ -85,6 +94,7 @@ public object DebugSettingsStore : MapSettingsStore() {
     public val useAccessibilityInsteadOfContextToExpandActionPanel: BooleanSettingObject = boolean(
         title = R.string.use_accessibility_instead_of_context,
         description = R.string.use_accessibility_instead_of_context_desc,
+        icon = R.drawable.account_circle,
         default = true
     )
 
@@ -92,6 +102,7 @@ public object DebugSettingsStore : MapSettingsStore() {
     public val enableLogging: BooleanSettingObject = boolean(
         title = R.string.enable_logging,
         description = R.string.enable_logging_desc,
+        icon = R.drawable.source_notes,
         default = true
     )
 
@@ -99,6 +110,7 @@ public object DebugSettingsStore : MapSettingsStore() {
     public val disableExtensionSignatureCheck: BooleanSettingObject = boolean(
         title = R.string.disable_extension_signature_check,
         description = R.string.disable_extension_signature_check_desc,
+        icon = R.drawable.vpn_key,
         default = false
     )
 
@@ -106,6 +118,7 @@ public object DebugSettingsStore : MapSettingsStore() {
     public val snackBarLogLevel: IntSettingObject = int(
         title = R.string.snackbar_log_level,
         description = R.string.snackbar_log_level_desc,
+        icon = R.drawable.source_notes,
         default = 8, // No logs
         allowedRange = 2..8
     )
@@ -114,6 +127,7 @@ public object DebugSettingsStore : MapSettingsStore() {
     public val filesLogLevel: IntSettingObject = int(
         title = R.string.files_log_level,
         description = R.string.files_log_level_desc,
+        icon = R.drawable.source_notes,
         default = Log.DEBUG,
         allowedRange = 2..8
     )
@@ -122,6 +136,7 @@ public object DebugSettingsStore : MapSettingsStore() {
     public val filterTag: StringSettingObject = string(
         title = R.string.filter_tag,
         description = R.string.pick_a_character,
+        icon = R.drawable.source_notes,
         default = ""
     )
 
@@ -129,6 +144,7 @@ public object DebugSettingsStore : MapSettingsStore() {
     public val showFps: BooleanSettingObject = boolean(
         title = R.string.show_fps,
         description = R.string.show_fps_desc,
+        icon = R.drawable._123,
         default = false
     )
 
@@ -136,6 +152,7 @@ public object DebugSettingsStore : MapSettingsStore() {
     public val showKillLauncherActionInActionPicker: BooleanSettingObject = boolean(
         title = R.string.show_kill_launcher_action,
         description = R.string.show_kill_launcher_action_desc,
+        icon = R.drawable.ic_action_kill,
         default = false
     )
 }

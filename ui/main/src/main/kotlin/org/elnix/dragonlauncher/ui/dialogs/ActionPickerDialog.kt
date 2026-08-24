@@ -3,7 +3,7 @@ package org.elnix.dragonlauncher.ui.dialogs
 import android.content.pm.ShortcutInfo
 import android.os.Build
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,25 +16,21 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
-import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.APP_LAUNCH_TAG
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.models.Application.Companion.toLaunchApp
@@ -43,30 +39,28 @@ import org.elnix.dragonlauncher.base.model.models.DataADBCommands
 import org.elnix.dragonlauncher.base.model.models.WifiADBCommands
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
-import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.defaultChoosableActions
+import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.allActions
 import org.elnix.dragonlauncher.base.model.serializables.Action.LaunchShortcut.Companion.toAction
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.actions.ActionIcon
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.components.VerticalScrollIndicator
-import org.elnix.dragonlauncher.ui.composition.LocalShowLabelsInAddPointDialog
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
-import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
-import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog
-import org.elnix.dragonlauncher.ui.dragon.text.AutoResizeableText
+import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
+import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
+import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddPointDialog(
-    actions: List<Action> = defaultChoosableActions,
+fun ActionPickerDialog(
     drawerViewModel: DrawerViewModel = activityViewModel(),
+    allowWidgets: Boolean = false,
     onDismiss: () -> Unit,
     onActionSelected: ((Action) -> Unit)? = null,
     onMultipleActionsSelected: ((action: List<Action>) -> Unit)? = null
@@ -74,10 +68,6 @@ fun AddPointDialog(
     require((onActionSelected != null) xor (onMultipleActionsSelected != null)) {
         "You can either use onActionSelected or onMultipleActionsSelected but not both at the same time"
     }
-
-
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
 
     var showAppPicker by remember { mutableStateOf(false) }
     var showUrlInput by remember { mutableStateOf(false) }
@@ -92,16 +82,15 @@ fun AddPointDialog(
     var showSettingsPagePicker by remember { mutableStateOf(false) }
 
     val showKillLauncherActionInActionPicker by DebugSettingsStore.showKillLauncherActionInActionPicker.asState()
-
-    val actualActions = remember(showKillLauncherActionInActionPicker, actions) {
-        if (showKillLauncherActionInActionPicker) actions.toMutableList().apply {
-            add(Action.KillLauncher)
-        } else actions
-    }
-
     val promptForShortcuts by BehaviorSettingsStore.promptForShortcutsWhenAddingApp.asState()
-    val showTooltipsOnAddPointDialog = LocalShowLabelsInAddPointDialog.current
 
+    val actualActions = allActions.filter {
+        when (it) {
+            Action.KillLauncher -> showKillLauncherActionInActionPicker
+            is Action.OpenWidget -> allowWidgets
+            else -> true
+        }
+    }
 
     var selectedApp by remember { mutableStateOf<Application?>(null) }
     var shortcutDialogVisible by remember { mutableStateOf(false) }
@@ -116,130 +105,91 @@ fun AddPointDialog(
         }
     }
 
-    CustomAlertDialog(
-        scroll = false,
-        alignment = Alignment.Center,
-        modifier = Modifier.padding(16.dp),
+    DragonModalBottomSheet(
         onDismissRequest = onDismiss,
-        confirmButton = {},
-        title = {
-            DragonRow(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.choose_action))
-                DragonIconButton(
-                    onClick = {
-                        scope.launch {
-                            UiSettingsStore.showTooltipsOnAddPointDialog.set(ctx, !showTooltipsOnAddPointDialog)
-                        }
-                    },
-                    icon = if (showTooltipsOnAddPointDialog) R.drawable.arrow_drop_down else R.drawable.arrow_drop_up,
-                    contentDescription = stringResource(R.string.show_tooltips)
-                )
-            }
-        },
-        text = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(5.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.heightIn(max = 600.dp)
-            ) {
+        sheetState = rememberBottomSheetState(true)
+    ) {
+        DialogTitle(stringResource(R.string.choose_action))
 
-                if (actualActions.any { it is Action.LaunchApp }) {
+        Spacer(10.dp)
 
-                    val dummyLaunchAppAction = Action.LaunchApp.dummy
-                    val color = dummyLaunchAppAction.actionColor(LocalExtraColors.current)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.heightIn(max = 600.dp)
+        ) {
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(MaterialTheme.shapes.large)
-                            .background(color.copy(0.5f))
-                            .border(1.dp, color, MaterialTheme.shapes.large)
-                            .clickable { showAppPicker = true }
-                            .padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        ActionIcon(dummyLaunchAppAction, size = 30.dp)
-                        Spacer(5.dp)
-                        Text(
-                            text = stringResource(R.string.open_app),
-                            color = Color.White,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
+            val gridState = rememberLazyGridState()
 
-                val gridState = rememberLazyGridState()
-
-                Box {
-                    LazyVerticalGrid(
-                        modifier = Modifier.clip(MaterialTheme.shapes.large),
-                        columns = GridCells.Fixed(if (showTooltipsOnAddPointDialog) 1 else 3),
-                        state = gridState,
-                        verticalArrangement = Arrangement.spacedBy(5.dp),
-                        horizontalArrangement = Arrangement.spacedBy(5.dp)
-                    ) {
-                        // Loop through all actions
-                        items(actualActions.filterNot { it is Action.LaunchApp }) { action ->
-                            AddPointColumn(
-                                action = action,
-                                showText = { showTooltipsOnAddPointDialog },
-                                onSelected = {
-                                    when (action) {
-                                        is Action.LaunchShortcut -> {
-                                            showPinnedShortcutsPicker = true
-                                        }
-
-                                        is Action.OpenAppDrawer -> {
-                                            showWorkspacePicker = true
-                                        }
-
-                                        is Action.OpenCircleNest -> {
-                                            showNestPicker = true
-                                        }
-
-                                        is Action.OpenDragonLauncherSettings -> {
-                                            showSettingsPagePicker = true
-                                        }
-
-                                        is Action.OpenFile -> {
-                                            showFilePicker = true
-                                        }
-
-                                        is Action.OpenUrl -> {
-                                            showUrlInput = true
-                                        }
-
-                                        is Action.RunAdbCommand -> {
-                                            showAdbCommandInput = true
-                                        }
-
-                                        is Action.ToggleData -> {
-                                            showDataCommandInput = true
-                                        }
-
-                                        is Action.ToggleWifi -> {
-                                            showWifiCommandInput = true
-                                        }
-
-                                        is Action.ToggleBluetooth -> {
-                                            showBluetoothCommandInput = true
-                                        }
-
-                                        else -> onActionPicked(action)
+            Box {
+                LazyVerticalGrid(
+                    modifier = Modifier.clip(MaterialTheme.shapes.large),
+                    columns = GridCells.Fixed(2),
+                    state = gridState,
+                    verticalArrangement = Arrangement.spacedBy(5.dp),
+                    horizontalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    items(actualActions) { action ->
+                        ActionItem(
+                            action = action,
+                            onSelected = {
+                                when (action) {
+                                    is Action.LaunchApp -> {
+                                        showAppPicker = true
                                     }
+
+                                    is Action.LaunchShortcut -> {
+                                        showPinnedShortcutsPicker = true
+                                    }
+
+                                    is Action.OpenAppDrawer -> {
+                                        showWorkspacePicker = true
+                                    }
+
+                                    is Action.OpenCircleNest -> {
+                                        showNestPicker = true
+                                    }
+
+                                    is Action.OpenDragonLauncherSettings -> {
+                                        showSettingsPagePicker = true
+                                    }
+
+                                    is Action.OpenFile -> {
+                                        showFilePicker = true
+                                    }
+
+                                    is Action.OpenUrl -> {
+                                        showUrlInput = true
+                                    }
+
+                                    is Action.RunAdbCommand -> {
+                                        showAdbCommandInput = true
+                                    }
+
+                                    is Action.ToggleData -> {
+                                        showDataCommandInput = true
+                                    }
+
+                                    is Action.ToggleWifi -> {
+                                        showWifiCommandInput = true
+                                    }
+
+                                    is Action.ToggleBluetooth -> {
+                                        showBluetoothCommandInput = true
+                                    }
+
+                                    else -> onActionPicked(action)
                                 }
-                            )
-                            this@Column.Spacer(8.dp)
-                        }
+                            }
+                        )
+                        this@Column.Spacer(8.dp)
                     }
-                    VerticalScrollIndicator(gridState.canScrollForward)
                 }
+                VerticalScrollIndicator(gridState.canScrollForward)
             }
         }
-    )
+    }
+
 
     if (showAppPicker) {
         AppPickerDialog(
@@ -415,22 +365,15 @@ fun AddPointDialog(
 
 
 @Composable
-private fun AddPointColumn(
+private fun ActionItem(
     action: Action,
-    showText: () -> Boolean,
     onSelected: () -> Unit
 ) {
     val extraColors = LocalExtraColors.current
 
     val name = when (action) {
-        /** Not verifying for open app, because it is filtered by the filter above in [AddPointColumn] */
-
-
-        is Action.LaunchShortcut -> {
-            if (action.packageName.isEmpty()) stringResource(R.string.pinned_shortcuts)
-            else actionLabel(action)
-        }
-
+        is Action.LaunchApp -> stringResource(R.string.open_app)
+        is Action.LaunchShortcut -> stringResource(R.string.pinned_shortcuts)
         is Action.OpenUrl -> stringResource(R.string.open_url)
         is Action.RunAdbCommand -> stringResource(R.string.run_adb_command)
         is Action.OpenFile -> stringResource(R.string.open_file)
@@ -439,31 +382,26 @@ private fun AddPointColumn(
     }
 
     val color = action.actionColor(extraColors)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.large)
+            .background(color.alphaMultiplier(0.5f))
+            .clickable(onClick = onSelected)
+            .padding(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        ActionIcon(
+            action = action,
+            size = 30.dp
+        )
 
-    DragonTooltip(name) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(MaterialTheme.shapes.large)
-                .background(color.copy(0.5f))
-                .border(1.dp, color, MaterialTheme.shapes.large)
-                .clickable { onSelected() }
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            ActionIcon(
-                action = action,
-                size = 30.dp
-            )
-
-            if (showText()) {
-                Spacer(5.dp)
-                AutoResizeableText(
-                    name,
-                    maxLines = 2
-                )
-            }
-        }
+        Text(
+            text = name,
+            maxLines = 2,
+            modifier = Modifier.basicMarquee(Int.MAX_VALUE),
+            style = MaterialTheme.typography.titleMediumEmphasized
+        )
     }
 }

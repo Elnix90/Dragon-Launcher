@@ -19,14 +19,12 @@ import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.composition.LocalColorPickerMode
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
-import org.elnix.dragonlauncher.ui.composition.LocalShowLabelsInAddPointDialog
 import org.elnix.dragonlauncher.ui.composition.LocalStatusBarElements
 import org.elnix.dragonlauncher.ui.composition.LocalTextMeasurer
 import org.elnix.dragonlauncher.ui.dialogs.rememberMainScreenLayerOrder
@@ -61,8 +59,6 @@ fun ProvideGlobalCompositionLocals(
     val holdCustomObject by rememberHoldCustomObject()
     val layersOrder by rememberMainScreenLayerOrder()
 
-    val showTooltipsOnAddPointDialog by UiSettingsStore.showTooltipsOnAddPointDialog.asState()
-
     val nestDebugOverlay by DebugSettingsStore.nestDebugOverlay.asState()
 
     val colorPickerMode by ColorModesSettingsStore.colorPickerMode.asState()
@@ -81,7 +77,6 @@ fun ProvideGlobalCompositionLocals(
         LocalHoldCustomObject provides holdCustomObject,
 
         LocalMainScreenLayers provides layersOrder,
-        LocalShowLabelsInAddPointDialog provides showTooltipsOnAddPointDialog,
 
         LocalDisableHapticFeedbackGlobally provides disableHapticFeedbackGlobally,
         LocalNestDebugOverlay provides nestDebugOverlay,

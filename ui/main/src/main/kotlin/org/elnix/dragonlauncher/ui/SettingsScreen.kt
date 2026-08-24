@@ -12,19 +12,25 @@ import androidx.activity.ComponentActivity
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ButtonGroupScope
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
@@ -49,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import io.github.elnix90.core.util.clearAllData
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.Constants.URLs.CODEBERG_REPO_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.DISCORD_INVITE_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.DRAGON_WEBSITE
 import org.elnix.dragonlauncher.base.Constants.URLs.ELNIX90_BUY_ME_A_COFFEE
@@ -57,9 +65,16 @@ import org.elnix.dragonlauncher.base.Constants.URLs.EXTENSIONS_GITHUB_REPO_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_ISSUES_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_RELEASES_LINK
+import org.elnix.dragonlauncher.base.Constants.URLs.GITLAB_REPO_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.MAILTO_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.REDDIT_LINK
 import org.elnix.dragonlauncher.base.Constants.URLs.WEBLATE_LINK
+import org.elnix.dragonlauncher.base.model.models.SocialLink
+import org.elnix.dragonlauncher.base.model.models.buyMeACoffee
+import org.elnix.dragonlauncher.base.model.models.codeberg
+import org.elnix.dragonlauncher.base.model.models.github
+import org.elnix.dragonlauncher.base.model.models.gitlab
+import org.elnix.dragonlauncher.base.model.models.openInNew
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.base.utils.LifecycleUtils.closeApp
@@ -88,6 +103,7 @@ import org.elnix.dragonlauncher.ui.warning.GoogleWarningManager
 import org.elnix.dragonlauncher.ui.warning.GoogleWarningReminder
 
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun SettingsScreen(
@@ -170,13 +186,12 @@ fun SettingsScreen(
         DragonSettingsGroup(R.string.advanced) {
             RouteItem(
                 route = NavigationRoute.Extensions,
-                onExternalClick = { uriHandler.openUri(EXTENSIONS_GITHUB_REPO_LINK) }
+                github(EXTENSIONS_GITHUB_REPO_LINK),
             )
 
             SettingsItem(
                 title = stringResource(R.string.android_settings),
-                icon = R.drawable.settings_alert,
-                trailingIcon = R.drawable.open_in_new
+                icon = R.drawable.settings_alert
             ) {
                 val packageName = ctx.packageName
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -190,13 +205,13 @@ fun SettingsScreen(
             }
         }
 
-
-
         DragonSettingsGroup(R.string.about) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                    .height(60.dp)
+                    .dragonSettingGroup(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
             ) {
 
                 fun ButtonGroupScope.ic(
@@ -206,18 +221,23 @@ fun SettingsScreen(
                 ) {
                     customItem(
                         buttonGroupContent = {
-                            Icon(
-                                painter = painterResource(ic),
-                                contentDescription = null,
-                                tint = Color.Unspecified,
+                            Box(
                                 modifier = Modifier
                                     .weight(1f)
                                     .animateWidth(`is`)
-                                    .height(40.dp)
+                                    .fillMaxHeight()
                                     .clip(MaterialTheme.shapes.extraLarge)
                                     .clickable(interactionSource = `is`) { uriHandler.openUri(link) }
-                                    .padding(vertical = 8.dp)
-                            )
+                                    .padding(vertical = 8.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    painter = painterResource(ic),
+                                    contentDescription = null,
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
                         }
                     ) {}
                 }
@@ -246,84 +266,110 @@ fun SettingsScreen(
             SettingsItem(
                 title = stringResource(R.string.source_code),
                 icon = R.drawable.code,
-                trailingIcon = R.drawable.open_in_new,
-                onLongClick = { ctx.copyToClipboard(GITHUB_REPO_LINK) }
+                description = null,
+                github(GITHUB_REPO_LINK),
+                gitlab(GITLAB_REPO_LINK),
+                codeberg(CODEBERG_REPO_LINK)
             ) { uriHandler.openUri(GITHUB_REPO_LINK) }
 
 
             SettingsItem(
                 title = stringResource(R.string.changelogs),
                 icon = R.drawable.source_notes,
-                trailingIcon = R.drawable.open_in_new,
-                onExternalClick = { uriHandler.openUri("$GITHUB_REPO_LINK/blob/main/fastlane/metadata/android/en-US/changelogs/${versionCode}.txt") }
+                description = null,
+                openInNew("$GITHUB_REPO_LINK/blob/main/fastlane/metadata/android/en-US/changelogs/${versionCode}.txt")
             ) { navigator.navigate(NavigationRoute.Changelogs) }
 
             SettingsItem(
                 title = stringResource(R.string.check_for_update),
-                description = stringResource(R.string.check_for_updates_github),
                 icon = R.drawable.reset,
-                trailingIcon = R.drawable.open_in_new,
-                onLongClick = { ctx.copyToClipboard(GITHUB_REPO_RELEASES_LINK) }
+                description = stringResource(R.string.check_for_updates_github),
+                openInNew(GITHUB_REPO_RELEASES_LINK)
             ) { uriHandler.openUri(GITHUB_REPO_RELEASES_LINK) }
 
             SettingsItem(
                 title = stringResource(R.string.report_a_bug),
-                description = stringResource(R.string.open_an_issue_on_github),
                 icon = R.drawable.report,
-                trailingIcon = R.drawable.open_in_new,
-                onLongClick = { ctx.copyToClipboard(GITHUB_REPO_ISSUES_LINK) }
+                description = stringResource(R.string.open_an_issue_on_github),
+                openInNew(GITHUB_REPO_ISSUES_LINK)
             ) { uriHandler.openUri(GITHUB_REPO_ISSUES_LINK) }
         }
+
 
 
         DragonSettingsGroup(R.string.app_developer) {
             ContributorItem(
                 name = "Elnix90",
+                shape = MaterialShapes.Circle,
                 imageRes = R.mipmap.elnix90,
                 description = stringResource(R.string.app_developer),
-                githubUrl = ELNIX90_GITHUB_PROFILE_LINK
+                github(ELNIX90_GITHUB_PROFILE_LINK),
+                buyMeACoffee(ELNIX90_BUY_ME_A_COFFEE)
             )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { uriHandler.openUri(ELNIX90_BUY_ME_A_COFFEE) }
-                    .padding(horizontal = 24.dp, vertical = 12.dp)
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.buy_me_a_coffee),
-                    contentDescription = stringResource(R.string.buy_me_a_coffee),
-                    modifier = Modifier.size(32.dp)
-                )
-                Text(
-                    text = stringResource(R.string.buy_me_a_coffee),
-                    style = MaterialTheme.typography.bodySmallEmphasized
-                )
-            }
         }
 
         DragonSettingsGroup(R.string.contributors) {
             ContributorItem(
                 name = "YoannDev90",
+                shape = MaterialShapes.Gem,
                 imageRes = R.mipmap.yoanndev90,
                 description = stringResource(R.string.yoann_desc),
-                githubUrl = "https://github.com/YoannDev90"
+                github("https://github.com/YoannDev90"),
+                buyMeACoffee("https://buymeacoffee.com/yoanndev90")
             )
 
+
+            // TODO write script to fetch total lines added / removed and diaslay them per user
             ContributorItem(
                 name = "Lucky",
+                shape = MaterialShapes.Cookie7Sided,
                 imageRes = R.mipmap.lucky_the_cookie,
                 description = stringResource(R.string.lucky_desc),
-                githubUrl = "https://lthb.fr"
+                github("https://lthb.fr")
             )
 
             ContributorItem(
                 name = "Federico",
+                shape = MaterialShapes.Pill,
                 imageRes = R.mipmap.federico,
                 description = stringResource(R.string.federico_desc),
-                githubUrl = "https://github.com/federicobuttafuori"
+                github("https://github.com/federicobuttafuori"),
             )
+
+
+            DragonSettingsGroup(R.string.translators) {
+                val translators = listOf(
+                    SocialLink("https://github.com/manmen2414", R.mipmap.mameeenn),
+                    SocialLink("https://github.com/acress1", R.mipmap.acress1),
+                    SocialLink("https://github.com/TamilNeram", R.mipmap.tamilneram),
+                    SocialLink("https://github.com/sudo-py-dev", R.mipmap.sudopydev)
+                )
+
+                Column(
+                    modifier = Modifier
+                        .dragonSettingGroup(),
+                    verticalArrangement = Arrangement.spacedBy(15.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    translators.chunked(7).forEach { translatorRow -> // Magic number hehe (it simply fits the screen perfectly
+                        Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
+                            translatorRow.forEach { translator ->
+                                Image(
+                                    painter = painterResource(id = translator.icon),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clip(CircleShape)
+                                        .clickable {
+                                            uriHandler.openUri(translator.url)
+                                        },
+                                    contentScale = ContentScale.Fit
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
 
 

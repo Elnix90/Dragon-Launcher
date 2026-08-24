@@ -113,7 +113,7 @@ import org.elnix.dragonlauncher.ui.settings.customization.AppearanceTab
 import org.elnix.dragonlauncher.ui.settings.customization.BehaviorTab
 import org.elnix.dragonlauncher.ui.settings.customization.ColorSelectorTab
 import org.elnix.dragonlauncher.ui.settings.customization.FontTab
-import org.elnix.dragonlauncher.ui.settings.customization.HoldToActivateArcTab
+import org.elnix.dragonlauncher.ui.settings.customization.HoldToActivateTab
 import org.elnix.dragonlauncher.ui.settings.customization.IconsTab
 import org.elnix.dragonlauncher.ui.settings.customization.NestEditScreen
 import org.elnix.dragonlauncher.ui.settings.customization.StatusBarTab
@@ -128,7 +128,7 @@ import org.elnix.dragonlauncher.ui.settings.debug.SettingsDebugTab
 import org.elnix.dragonlauncher.ui.settings.extensions.ExtensionsTab
 import org.elnix.dragonlauncher.ui.settings.wellbeing.WellbeingTab
 import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceDetailScreen
-import org.elnix.dragonlauncher.ui.settings.workspace.WorkspaceListScreen
+import org.elnix.dragonlauncher.ui.settings.workspace.WorkspacesTab
 import org.elnix.dragonlauncher.ui.warning.SignatureWarningDialog
 import org.elnix.dragonlauncher.ui.welcome.WelcomeScreen
 import org.elnix.dragonlauncher.ui.wellbeing.DigitalPauseScreen
@@ -462,7 +462,7 @@ fun MainAppUi(
                         entry<NavigationRoute.StatusBar>(metadata = horizontalMetadata) { StatusBarTab() }
                         entry<NavigationRoute.Fonts>(metadata = horizontalMetadata) { FontTab() }
                         entry<NavigationRoute.AngleLineEdit>(metadata = horizontalMetadata) { AngleLineTab() }
-                        entry<NavigationRoute.HoldToActivateArc>(metadata = horizontalMetadata) { HoldToActivateArcTab() }
+                        entry<NavigationRoute.HoldToActivateArc>(metadata = horizontalMetadata) { HoldToActivateTab() }
                         entry<NavigationRoute.MainScreenLayers>(metadata = horizontalMetadata) { MainScreeLayersTab() }
 
                         entry<NavigationRoute.NestEdit>(metadata = horizontalMetadata) { NestEditScreen() }
@@ -478,7 +478,7 @@ fun MainAppUi(
                             )
                         }
 
-                        entry<NavigationRoute.Workspace>(metadata = horizontalMetadata) { WorkspaceListScreen() }
+                        entry<NavigationRoute.Workspace>(metadata = horizontalMetadata) { WorkspacesTab() }
                         entry<NavigationRoute.WorkspaceDetail>(metadata = horizontalMetadata) { key -> WorkspaceDetailScreen(key.workspaceId) }
 
                         entry<NavigationRoute.TimerExceeded> { key -> TimeLimitExceededScreen(key.appName) }

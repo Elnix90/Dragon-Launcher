@@ -8,11 +8,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.applications.AppRepository
+import org.elnix.dragonlauncher.appshortcuts.AppShortcutRepository
 import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Widget
@@ -28,7 +31,9 @@ import kotlin.random.Random
 @Stable
 @HiltViewModel
 public class WidgetsViewModel @Inject constructor(
-    application: Application
+    application: Application,
+    private val appsRepository: AppRepository,
+    private val shortcutRepository: AppShortcutRepository,
 ) : AndroidViewModel(application) {
 
 
@@ -208,4 +213,6 @@ public class WidgetsViewModel @Inject constructor(
         val cellHeightDp = 100
         return ((minHeightDp ?: minSize) / cellHeightDp).coerceAtLeast(minSize)
     }
+
+    public fun findOne(action: Action.LaunchApp): Flow<org.elnix.dragonlauncher.base.model.models.Application?> = appsRepository.findOne(action)
 }

@@ -11,14 +11,15 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.UserHandle
 import androidx.annotation.DrawableRes
+import androidx.compose.runtime.Immutable
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
-import org.elnix.dragonlauncher.APP_LAUNCH_TAG
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.elnix.dragonlauncher.APP_LAUNCH_TAG
 import org.elnix.dragonlauncher.base.icons.ColorLayer
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.icons.StaticIconLayer
@@ -31,6 +32,7 @@ import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import java.io.File
 import java.text.Collator
 
+@Immutable
 public abstract class Application : Comparable<Application> {
 
     public abstract val label: String

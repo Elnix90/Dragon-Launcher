@@ -156,7 +156,7 @@ fun AppGrid(
                                 } else {
                                     DragonIconButton(
                                         icon = R.drawable.refresh,
-                                        contentDescription = stringResource(R.string.reload_apps)
+                                        contentDescription = R.string.reload_apps
                                     ) {
                                         onReload()
                                         isLoading = true

@@ -15,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
@@ -55,8 +57,9 @@ fun StatusBarNotifications(
         notifications.take(maxIcons).forEach { notification ->
             val pkg = notification?.packageName ?: "Unknown"
             val user = notification?.user ?: Process.myUserHandle()
+            val action = Action.LaunchApp(pkg, Profile.fromUserHandle(ctx, user))
 
-            val app by drawerViewModel.findOne(pkg, user).collectAsState(null)
+            val app by drawerViewModel.findOne(action).collectAsState(null)
 
 
             app?.let {

@@ -31,6 +31,7 @@ public object ColorModesSettingsStore : MapSettingsStore() {
     public val dynamicColors: BooleanSettingObject = boolean(
         title = R.string.dynamic_colors,
         description = R.string.dynamic_colors_desc,
+        icon = R.drawable.cyclone,
         default = false
     )
 
@@ -45,6 +46,7 @@ public object ColorModesSettingsStore : MapSettingsStore() {
     public val useCustomColorChannels: BooleanSettingObject = boolean(
         title = R.string.use_custom_color_channels,
         description = R.string.use_custom_color_channels_desc,
+        icon = R.drawable.display_settings,
         default = true
     )
 }

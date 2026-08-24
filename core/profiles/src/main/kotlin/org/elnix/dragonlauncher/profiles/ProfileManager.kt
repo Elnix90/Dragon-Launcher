@@ -12,7 +12,6 @@ import android.os.UserManager.USER_TYPE_PROFILE_MANAGED
 import android.os.UserManager.USER_TYPE_PROFILE_PRIVATE
 import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
-import org.elnix.dragonlauncher.PROFILES_TAG
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logI
 import kotlinx.coroutines.CoroutineScope
@@ -27,6 +26,7 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.elnix.dragonlauncher.PROFILES_TAG
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.ktx.isAtLeastApiLevel
 import org.elnix.dragonlauncher.permissions.PermissionGroup
@@ -214,6 +214,22 @@ public class ProfileManager(
         return profileStates.value.firstOrNull { it?.profile?.userHandle == profile.userHandle }
             ?.profile
     }
+//    public suspend fun resolveProfile(profile: Profile): Flow<Profile?> {
+//        return profileStates.map { profiles ->
+//            if (profiles.none { it != null }) {
+//                runCatching { refreshProfiles() }
+//            }
+//
+//            if (profile.serial != 0L) {
+//                profiles.firstOrNull { it?.profile?.serial == profile.serial }
+//                    ?.profile
+//                    ?.let { return@map it }
+//            }
+//
+//            profiles.firstOrNull { it?.profile?.userHandle == profile.userHandle }?.profile
+//        }
+//    }
+
 
     @RequiresApi(28)
     public fun unlockProfile(profile: Profile): Boolean {

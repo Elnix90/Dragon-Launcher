@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -42,21 +41,22 @@ import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
+import org.elnix.dragonlauncher.ui.dialogs.ActionPickerDialog
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 
 @Composable
-private fun ActionSelectorImpl(
+fun DragonGroupScope.ActionSelector(
     label: String,
     currentAction: Action?,
     nullText: String? = null,
     enabled: Boolean = true,
     switchEnabled: Boolean = true,
+    drawerViewModel: DrawerViewModel = activityViewModel(),
     onToggle: () -> Unit,
     resetEnabled: Boolean,
     onReset: () -> Unit,
-    onSelected: (Action) -> Unit,
-    drawerViewModel: DrawerViewModel = activityViewModel()
+    onSelected: (Action) -> Unit
 ) {
     val extraColors = LocalExtraColors.current
 
@@ -69,9 +69,9 @@ private fun ActionSelectorImpl(
 
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable(enabled = enabled) { showDialog = true }
-            .padding(10.dp),
+            .dragonSettingGroup(enabled) {
+                clickable(enabled = enabled) { showDialog = true }
+            },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
@@ -94,7 +94,7 @@ private fun ActionSelectorImpl(
                     if (toggled) {
                         when (currentAction) {
                             is Action.LaunchApp -> {
-                                val app by drawerViewModel.findOne(currentAction.packageName, currentAction.profile.userHandle).collectAsState(null)
+                                val app by drawerViewModel.findOne(currentAction).collectAsState(null)
 
                                 app?.let {
                                     AppIcon(
@@ -166,7 +166,7 @@ private fun ActionSelectorImpl(
     }
 
     if (showDialog) {
-        AddPointDialog(
+        ActionPickerDialog(
             onDismiss = { showDialog = false },
             onActionSelected = {
                 onSelected(it)
@@ -175,40 +175,14 @@ private fun ActionSelectorImpl(
         )
     }
 }
-
 @Composable
-fun CustomActionSelector(
-    label: String,
-    currentAction: Action?,
-    resetEnabled: Boolean,
-    nullText: String? = null,
-    enabled: Boolean = true,
-    switchEnabled: Boolean = true,
-    onToggle: () -> Unit,
-    onReset: () -> Unit,
-    onSelected: (Action) -> Unit
-) {
-    ActionSelectorImpl(
-        label = label,
-        currentAction = currentAction,
-        nullText = nullText,
-        enabled = enabled,
-        resetEnabled = resetEnabled,
-        switchEnabled = switchEnabled,
-        onToggle = onToggle,
-        onReset = onReset,
-        onSelected = onSelected
-    )
-}
-
-@Composable
-fun SettingActionSelector(setting: ActionSettingObject) {
+fun DragonGroupScope.SettingActionSelector(setting: ActionSettingObject) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
     val currentAction by setting.asState()
 
-    ActionSelectorImpl(
+    ActionSelector(
         label = stringResource(setting.title!!),
         currentAction = currentAction,
         nullText = null,

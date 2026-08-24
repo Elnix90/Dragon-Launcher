@@ -7,27 +7,22 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import io.github.elnix90.core.objects.IntSettingObject
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.ui.composition.LocalSettingsPlacementChecker
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 
 @Composable
 
-fun Setting(
+fun DragonGroupScope.Setting(
     setting: IntSettingObject,
-    modifier: Modifier = Modifier,
     enabled: Boolean = true,
     customDesc: ((Int) -> String)? = null,
     onChange: ((Int) -> Unit)? = null,
 ) {
-    // Craches if this setting isn't placed inside a DragonSettingsGroup
-    LocalSettingsPlacementChecker.current
-
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -38,7 +33,6 @@ fun Setting(
     LaunchedEffect(state) { tempState = state }
 
     SliderWithLabel(
-        modifier = modifier,
         label = stringResource(setting.title!!),
         description = customDesc?.invoke(state) ?: stringResource(setting.description!!),
         value = tempState,

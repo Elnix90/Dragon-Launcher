@@ -685,9 +685,9 @@
     <string name="select_all">تحديد الكل</string>
     <string name="invert">عكس</string>
     <string name="advanced">متقدم</string>
-    <string name="yoann_desc">مساهم مهم (الإضافات، الأداء، الأدوات المصغرة)</string>
-    <string name="lucky_desc">مساهم مهم (الرفاهية الرقمية والتذكيرات)</string>
-    <string name="federico_desc">مساهم مهم (ميزات شاشة الأدوات المصغرة والترجمات)</string>
+
+
+
     <string name="permission_tab_help">التحكم في أذونات التطبيق، والوصول المختلف للإضافات الخارجية</string>
     <string name="special_system_access">وصول خاص للنظام</string>
     <string name="notification_access">الوصول إلى الإشعارات</string>

@@ -45,7 +45,7 @@ import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Compani
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.objects.MainScreenLayersSettingsStore
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
-import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -159,7 +159,7 @@ fun MainScreeLayersTab() {
                                         var tempShowAfter by remember { mutableIntStateOf(item.showAfterMs) }
                                         var tempDimAmount by remember { mutableFloatStateOf(item.dimAmount) }
 
-                                        DragonColumnGroup {
+                                        DragonSettingsGroup {
                                             SliderWithLabel(
                                                 value = tempShowAfter,
                                                 valueRange = 0..5000,
@@ -210,18 +210,20 @@ fun MainScreeLayersTab() {
                                 is MainScreenLayer.DragOverlay -> {
                                     AnimatedVisibility(item.enabled) {
                                         @Suppress("SimplifyBooleanWithConstants")
-                                        SwitchRow(
-                                            state = item.lineBeforeNests,
-                                            title = stringResource(R.string.line_before_nests),
-                                            resetEnabled = item.lineBeforeNests != MainScreenLayer.DragOverlay.defaultLineBeforeNests,
-                                            onReset = {
-                                                objects = objects.map {
-                                                    if (it is MainScreenLayer.DragOverlay) it.copy(lineBeforeNests = MainScreenLayer.DragOverlay.defaultLineBeforeNests) else it
+                                        DragonSettingsGroup {
+                                            SwitchRow(
+                                                state = item.lineBeforeNests,
+                                                title = R.string.line_before_nests,
+                                                resetEnabled = item.lineBeforeNests != MainScreenLayer.DragOverlay.defaultLineBeforeNests,
+                                                onReset = {
+                                                    objects = objects.map {
+                                                        if (it is MainScreenLayer.DragOverlay) it.copy(lineBeforeNests = MainScreenLayer.DragOverlay.defaultLineBeforeNests) else it
+                                                    }
                                                 }
-                                            }
-                                        ) { newValue ->
-                                            objects = objects.map {
-                                                if (it is MainScreenLayer.DragOverlay) it.copy(lineBeforeNests = newValue) else it
+                                            ) { newValue ->
+                                                objects = objects.map {
+                                                    if (it is MainScreenLayer.DragOverlay) it.copy(lineBeforeNests = newValue) else it
+                                                }
                                             }
                                         }
                                     }

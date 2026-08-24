@@ -11,16 +11,18 @@ import org.elnix.dragonlauncher.icons.DynamicCalendarIcon
 import org.elnix.dragonlauncher.ktx.obtainTypedArrayOrNull
 
 internal class CalendarIconProvider(
-    val ctx: Context,
-    val appRepository: AppRepository,
-    val themed: Boolean,
-    val tint: Int?
+    private val ctx: Context,
+    private val appRepository: AppRepository,
+    private val themed: Boolean,
+    private val tint: Int?
 ): IconProvider {
     override suspend fun getIcon(action: Action, size: Int): LauncherIcon? = withContext(Dispatchers.IO) {
-        val component = appRepository.fromAction(action as Action.LaunchApp)?.componentName ?: return@withContext null
+        if (action !is Action.LaunchApp) return@withContext null
+
+        val componentName = appRepository.fromAction(action)?.componentName ?: return@withContext null
         val pm = ctx.packageManager
         val ai = try {
-            pm.getActivityInfo(component, PackageManager.GET_META_DATA)
+            pm.getActivityInfo(componentName, PackageManager.GET_META_DATA)
         } catch (e: PackageManager.NameNotFoundException) {
             return@withContext null
         }
@@ -31,7 +33,7 @@ internal class CalendarIconProvider(
             ?: return@withContext null
         if (arrayId == 0) return@withContext null
         val resources = try {
-            pm.getResourcesForActivity(component)
+            pm.getResourcesForActivity(componentName)
         } catch (e: PackageManager.NameNotFoundException) {
             return@withContext null
         }

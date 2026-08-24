@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -40,11 +42,10 @@ import org.elnix.dragonlauncher.ui.base.animation.slideOutHorizontalBouncy
 fun <T> LazyRowWithScrollIndicator(
     items: List<T>,
     modifier: Modifier = Modifier,
+    state: LazyListState = rememberLazyListState(),
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(5.dp),
-    content: @Composable (T) -> Unit
+    content: @Composable LazyItemScope.(T) -> Unit
 ) {
-    val state = rememberLazyListState()
-
     Box {
         LazyRow(
             horizontalArrangement = horizontalArrangement,

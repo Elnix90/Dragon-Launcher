@@ -8,7 +8,6 @@ import android.os.Process
 import android.os.UserHandle
 import androidx.core.content.getSystemService
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +15,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -31,7 +29,7 @@ import org.elnix.dragonlauncher.profiles.ProfileManager
 
 public interface AppShortcutRepository {
 
-//    fun findMany(
+//    public fun findMany(
 //        componentName: ComponentName? = null,
 //        user: UserHandle = Process.myUserHandle(),
 //        manifest: Boolean = false,
@@ -43,6 +41,7 @@ public interface AppShortcutRepository {
 
     public fun search(query: String): Flow<ImmutableList<ShortcutInfo>>
 
+    public fun findOne(action: Action.LaunchShortcut): Flow<ShortcutInfo?>
     public suspend fun fromAction(action: Action.LaunchShortcut): ShortcutInfo?
 
     public suspend fun getShortcutsConfigActivities(): List<AppShortcutConfigActivity>
@@ -62,6 +61,8 @@ internal class AppShortcutRepositoryImpl(
     private val launcherApps = context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
 
     init {
+        // FUUUUUUCK!! Basically this function was never called. Idk if the callback below works, but at least it is called at least once!
+        refreshShortcuts()
         launcherApps.registerCallback(
             object : LauncherApps.Callback() {
                 override fun onPackageRemoved(packageName: String?, user: UserHandle?) {
@@ -126,7 +127,7 @@ internal class AppShortcutRepositoryImpl(
 //        }
 //        emit(shortcuts.toImmutableList())
 //    }
-
+//
 //    @SuppressLint("InlinedApi")
 //    private fun buildQueryFlags(
 //        manifest: Boolean,
@@ -167,10 +168,6 @@ internal class AppShortcutRepositoryImpl(
 
     @SuppressLint("InlinedApi")
     override fun search(query: String): Flow<ImmutableList<ShortcutInfo>> {
-        if (query.length < 3) {
-            return flowOf(persistentListOf())
-        }
-
         val normalizedQuery = stringNormalizer.normalize(query)
 
         return installedShortcuts.map { shortcuts ->
@@ -190,14 +187,18 @@ internal class AppShortcutRepositoryImpl(
         }.flowOn(Dispatchers.Default)
     }
 
-    override suspend fun fromAction(action: Action.LaunchShortcut): ShortcutInfo? {
-        return installedShortcuts
-            .first()
-            .firstOrNull {
+    override fun findOne(action: Action.LaunchShortcut): Flow<ShortcutInfo?> {
+        return installedShortcuts.map { shortcuts ->
+            shortcuts.firstOrNull {
                 it.userHandle == action.user &&
                         it.`package` == action.packageName &&
                         it.id == action.shortcutId
             }
+        }
+    }
+
+    override suspend fun fromAction(action: Action.LaunchShortcut): ShortcutInfo? {
+        return findOne(action).first()
     }
 
     override suspend fun getShortcutsConfigActivities(): List<AppShortcutConfigActivity> {

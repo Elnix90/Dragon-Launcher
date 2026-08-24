@@ -1,94 +1,73 @@
 package org.elnix.dragonlauncher.ui.helpers.settings
 
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import org.elnix.dragonlauncher.base.model.models.SocialLink
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
-import org.elnix.dragonlauncher.ui.base.modifiers.conditional
-import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
+import org.elnix.dragonlauncher.ui.base.components.BoxedIcon
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
-fun SettingsItem(
+fun DragonGroupScope.SettingsItem(
     title: String,
-    modifier: Modifier = Modifier,
-    description: String? = null,
-    enabled: Boolean = true,
     icon: Int,
-    trailingIcon: Int? = null,
-    onLongClick: (() -> Unit)? = null,
-    onExternalClick: (() -> Unit)? = null,
+    description: String? = null,
+    vararg trailingIcons: SocialLink,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
-
+    val uriHandler = LocalUriHandler.current
     Row(
-        modifier = modifier
-            .combinedClickable(
-                enabled = enabled,
-                onLongClick = onLongClick,
-                onClick = onClick
-            )
-            .padding(16.dp),
+        modifier = Modifier
+            .dragonSettingGroup(enabled) {
+                clickable(
+                    enabled = enabled,
+                    onClick = onClick
+                )
+            },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Icon(
-            painter = painterResource(icon),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(enabled)
+        BoxedIcon(icon, enabled)
+
+        TextWithDescription(
+            text = title,
+            description = description,
+            modifier = Modifier.weight(1f),
+            enabled = enabled
         )
 
-//        CompositionLocalProvider(
-//            LocalContentColor provides MaterialTheme.colorScheme.onSurface.semiTransparentIfDisabled(enabled)
-//        ) {
-            TextWithDescription(
-                text = title,
-                description = description,
-                modifier = Modifier.weight(1f),
-                enabled = enabled
-            )
-//        }
-
-        if (trailingIcon != null) {
-            Icon(
-                painter = painterResource(trailingIcon),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary.semiTransparentIfDisabled(enabled),
-                modifier = Modifier
-                    .sizeIn(maxHeight = 25.dp)
-                    .conditional(onExternalClick != null) {
-                        shapedClickable(onClick = onExternalClick!!)
-                    }
-            )
+        trailingIcons.forEach {
+            BoxedIcon(it.icon) {
+                uriHandler.openUri(it.url)
+            }
         }
     }
 }
 
 @Composable
-fun RouteItem(
+fun DragonGroupScope.RouteItem(
     route: NavigationRoute,
+    vararg trailingIcons: SocialLink,
     enabled: Boolean = true,
-    onExternalClick: (() -> Unit)? = null
 ) {
     val navigator = LocalNavigator.current
     SettingsItem(
         title = stringResource(route.resId),
         enabled = enabled,
-        onExternalClick = onExternalClick,
+        trailingIcons = trailingIcons,
         icon = route.icon
     ) {
         navigator.navigate(route)
     }
 }
+

@@ -19,6 +19,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
     public val backAction: ActionSettingObject = action(
         title = R.string.back_action,
         description = R.string.back_action_desc,
+        icon = R.drawable.back,
         default = Action.None
     )
 

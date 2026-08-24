@@ -5,7 +5,13 @@ import android.content.Context
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 
-public object DummyApp : Application() {
+
+/**
+ * Dummy app
+ *
+ * This is a class, as it has imported some public properties across the app and therefore made some core icons system completely destroyed
+ */
+public class DummyApp : Application() {
     override val isSystem: Boolean = false
     override val isLaunchable: Boolean = true
     override val isSuspended: Boolean = false

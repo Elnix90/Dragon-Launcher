@@ -17,11 +17,13 @@ internal class CompatIconProvider(
     private val tint: Int?
 ) : IconProvider {
     override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
-        val component = appRepository.fromAction(action as Action.LaunchApp)?.componentName ?: return null
+        if (action !is Action.LaunchApp) return null
+
+        val componentName = appRepository.fromAction(action)?.componentName ?: return null
 
         val icon = withContext(Dispatchers.IO) {
             val activityInfo = try {
-                ctx.packageManager.getActivityInfo(component, 0)
+                ctx.packageManager.getActivityInfo(componentName, 0)
             } catch (_: PackageManager.NameNotFoundException) {
                 return@withContext null
             }

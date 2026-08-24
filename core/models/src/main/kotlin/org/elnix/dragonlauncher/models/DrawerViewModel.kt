@@ -3,7 +3,6 @@
 package org.elnix.dragonlauncher.models
 
 import android.content.pm.ShortcutInfo
-import android.os.UserHandle
 import android.service.notification.StatusBarNotification
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
@@ -11,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +21,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
+import org.elnix.dragonlauncher.appshortcuts.AppShortcutRepository
 import org.elnix.dragonlauncher.base.model.models.Application
+import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Workspace
 import org.elnix.dragonlauncher.enumsui.select.WorkspaceViewMode
 import org.elnix.dragonlauncher.icons.IconPack
@@ -39,6 +41,7 @@ import javax.inject.Inject
 @HiltViewModel
 public class DrawerViewModel @Inject constructor(
     private val appsRepository: AppRepository,
+    private val shortcutRepository: AppShortcutRepository,
     private val recentsService: RecentsService,
     private val permissionsManager: PermissionsManager,
     private val iconPackManager: IconPackManager,
@@ -71,7 +74,7 @@ public class DrawerViewModel @Inject constructor(
 
     public val searchQuery: MutableState<String> = mutableStateOf("")
 
-    public fun findOne(packageName: String, userHandle: UserHandle): Flow<Application?> = appsRepository.findOne(packageName, userHandle)
+    public fun findOne(action: Action.LaunchApp): Flow<Application?> = appsRepository.findOne(action)
 
     public fun search(
         workspace: Workspace,
@@ -117,6 +120,9 @@ public class DrawerViewModel @Inject constructor(
     public fun hasPermission(permission: PermissionGroup): Flow<Boolean> = permissionsManager.hasPermission(permission)
 
     public fun getInstalledIconPacks(): Flow<List<IconPack>> = iconPackManager.getInstalledIconPacks()
+
+    public fun searchShortcuts(searchQuery: String): Flow<ImmutableList<ShortcutInfo>> = shortcutRepository.search(searchQuery)
+
 
     init {
         viewModelInitialized()

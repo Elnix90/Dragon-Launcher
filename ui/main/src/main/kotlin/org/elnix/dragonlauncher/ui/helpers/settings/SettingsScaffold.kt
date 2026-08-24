@@ -88,8 +88,7 @@ fun SettingsScaffold(
         bottomBar = {
 
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             ) {
                 if (bottomContent != null) {
                     bottomContent()
@@ -111,7 +110,7 @@ fun SettingsScaffold(
                         DragonIconButton(
                             onClick = { showHelpDialog = true },
                             icon = R.drawable.help,
-                            contentDescription = stringResource(R.string.help)
+                            contentDescription = R.string.help
                         )
                     }
                 }

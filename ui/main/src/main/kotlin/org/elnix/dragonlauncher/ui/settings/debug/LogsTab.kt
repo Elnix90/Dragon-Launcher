@@ -32,11 +32,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-import org.elnix.dragonlauncher.LOGS_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logLevelName
@@ -45,6 +45,7 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.elnix.dragonlauncher.LOGS_TAG
 import org.elnix.dragonlauncher.base.model.json
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
@@ -64,6 +65,7 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
+import org.elnix.dragonlauncher.ui.dragon.components.CopyIcon
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -71,6 +73,7 @@ import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
+import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import java.io.File
@@ -192,30 +195,27 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
             )
         },
     ) {
-        ExpandableSection(rememberExpandableSection("Device info")) {
-            Card(Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "Device Information",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        DragonIconButton(
-                            onClick = {
+        DragonSettingsGroup {
+            ExpandableSection(
+                rememberExpandableSection(
+                    title = R.string.device_info,
+                    description = R.string.device_info_desc,
+                    icon = R.drawable.bug_report
+                )
+            ) {
+                DragonSettingsGroup {
+                    DialogTitle(
+                        text = stringResource(R.string.device_info),
+                        modifier = Modifier.dragonSettingGroup(),
+                        trailingIcon = {
+                            CopyIcon {
                                 ctx.copyToClipboard(deviceDetails)
                                 ctx.showToast("Device info copied")
-                            },
-                            icon = R.drawable.copy,
-                            contentDescription = "Copy Info"
-                        )
-                    }
-                    Spacer(8.dp)
-                    SelectionContainer {
+                            }
+                        })
+                    SelectionContainer(
+                        modifier = Modifier.dragonSettingGroup()
+                    ) {
                         Text(
                             text = deviceDetails,
                             style = MaterialTheme.typography.bodySmall,
@@ -225,13 +225,13 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
                     }
                 }
             }
-        }
 
-        DragonSettingsGroup { Setting(DebugSettingsStore.enableLogging) }
+            Setting(DebugSettingsStore.enableLogging)
+        }
 
         AnimatedVisibility(enableLogging) {
             Column(
-                verticalArrangement = Arrangement.spacedBy(5.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
@@ -247,23 +247,21 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
                     )
 
                     Setting(DebugSettingsStore.filterTag, singleChar = false)
-                }
-
-                DragonButton(
-                    onClick = {
-                        dragonLogViewModel.clearLogs()
-                        refreshTrigger++
-                    },
-                    modifier = Modifier.padding(16.dp),
-                    needConfirm = true,
-                    confirmText = "Are you sure you want to delete all logs files?"
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.delete_forever),
-                        contentDescription = "Delete"
-                    )
-                    Spacer(8.dp)
-                    Text("Clear All Logs")
+                    this.DragonButton(
+                        onClick = {
+                            dragonLogViewModel.clearLogs()
+                            refreshTrigger++
+                        },
+                        needConfirm = true,
+                        confirmText = "Are you sure you want to delete all logs files?"
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.delete_forever),
+                            contentDescription = "Delete"
+                        )
+                        Spacer(8.dp)
+                        Text("Clear All Logs")
+                    }
                 }
 
                 HorizontalDivider()
@@ -285,7 +283,7 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(5.dp),
+                                    .padding(8.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -307,7 +305,7 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
 
                                     DragonIconButton(
                                         icon = R.drawable.delete_forever,
-                                        contentDescription = "Delete"
+                                        contentDescription = R.string.delete
                                     ) { showDeleteDialog = file }
 
                                     DragonIconButton(
@@ -315,12 +313,12 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
                                             ctx.copyToClipboard(dragonLogViewModel.readLogFile(file))
                                         },
                                         icon = R.drawable.copy,
-                                        contentDescription = "Copy"
+                                        contentDescription = R.string.copy
                                     )
 
                                     DragonIconButton(
                                         icon = R.drawable.share,
-                                        contentDescription = "Export",
+                                        contentDescription = R.string.export,
                                     ) { exportLogFile(dragonLogViewModel, ctx, file) }
                                 }
                             }

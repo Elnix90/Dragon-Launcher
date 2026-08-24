@@ -58,14 +58,13 @@ import org.elnix.dragonlauncher.ui.base.animation.rememberAnimatedIcon
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.PointPreviewCanvas
 import org.elnix.dragonlauncher.ui.defaultHapticFeedback
-import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
+import org.elnix.dragonlauncher.ui.dialogs.ActionPickerDialog
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedBackEditorButtonWithPlayTest
 import org.elnix.dragonlauncher.ui.dialogs.HapticFeedbackEditor
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -130,7 +129,7 @@ fun PointEditor(
                 )
             }
 
-            DragonColumnGroup {
+            DragonSettingsGroup {
                 PointPreviewCanvas(
                     editPoint = editPoint,
                     backgroundColor = MaterialTheme.colorScheme.surface,
@@ -142,7 +141,7 @@ fun PointEditor(
             }
         }
 
-        Spacer(5.dp)
+        this.Spacer(5.dp)
 
         Column(
             verticalArrangement = Arrangement.spacedBy(5.dp),
@@ -161,482 +160,471 @@ fun PointEditor(
                             PointFeaturePanel.CycleActions -> editPoint.cycleActions != null
                             PointFeaturePanel.HoldAndRun -> editPoint.holdAndRunDelayMs != null
                         }
-                    }
+                    },
+                    modifier = Modifier.dragonSettingGroup()
                 ) {
                     expandedFeaturePanel = it.takeIf {
                         expandedFeaturePanel != it
                     }
                 }
 
-                AnimatedContent(expandedFeaturePanel) { expandedFeature ->
-                    @Suppress("UnusedExpression")
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(10.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        when (expandedFeature) {
-                            PointFeaturePanel.LiveNest -> {
+                @Suppress("UnusedExpression")
+                when (expandedFeaturePanel) {
+                    PointFeaturePanel.LiveNest -> {
+                        val liveNestTargetNestId = editPoint.liveNestTargetNestId
+                        val liveNestEnabled = liveNestTargetNestId != null
+                        val targetNest = if (liveNestEnabled) pointsViewModel.pointsService.findNestById(liveNestTargetNestId) else null
+                        val nestLabel = targetNest?.name ?: targetNest?.let { "Nest ${it.id}" } ?: ""
 
-                                val liveNestTargetNestId = editPoint.liveNestTargetNestId
-                                val liveNestEnabled = liveNestTargetNestId != null
-                                val targetNest = if (liveNestEnabled) pointsViewModel.pointsService.findNestById(liveNestTargetNestId) else null
-                                val nestLabel = targetNest?.name ?: targetNest?.let { "Nest ${it.id}" } ?: ""
+                        if (!liveNestEnabled && !isDefaultEditing) {
+                            DragonButton(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .fillMaxWidth(),
+                                onClick = { showLiveNestNestPicker = true }
+                            ) {
+                                Text(stringResource(R.string.live_nest_pick_nest))
+                            }
 
-                                if (!liveNestEnabled && !isDefaultEditing) {
+                        } else {
+                            if (isDefaultEditing) {
+                                TextWithDescription(
+                                    text = stringResource(R.string.default_point_live_nest_defaults),
+                                    description = stringResource(R.string.default_point_live_nest_defaults_summary),
+                                    modifier = Modifier.padding(10.dp)
+                                )
+                            } else {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                                    modifier = Modifier
+                                        .padding(10.dp)
+                                        .fillMaxWidth()
+                                ) {
                                     DragonButton(
-                                        modifier = Modifier
-                                            .padding(10.dp)
-                                            .fillMaxWidth(),
+                                        modifier = Modifier.weight(1f),
                                         onClick = { showLiveNestNestPicker = true }
                                     ) {
-                                        Text(stringResource(R.string.live_nest_pick_nest))
-                                    }
-
-                                } else {
-                                    if (isDefaultEditing) {
-                                        TextWithDescription(
-                                            text = stringResource(R.string.default_point_live_nest_defaults),
-                                            description = stringResource(R.string.default_point_live_nest_defaults_summary),
-                                            modifier = Modifier.padding(10.dp)
+                                        Icon(
+                                            painter = painterResource(R.drawable.edit_rounded),
+                                            contentDescription = null
                                         )
-                                    } else {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(5.dp),
-                                            modifier = Modifier
-                                                .padding(10.dp)
-                                                .fillMaxWidth()
-                                        ) {
-                                            DragonButton(
-                                                modifier = Modifier.weight(1f),
-                                                onClick = { showLiveNestNestPicker = true }
-                                            ) {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.edit_rounded),
-                                                    contentDescription = null
-                                                )
-                                                Spacer(5.dp)
-                                                Text(
-                                                    text = stringResource(R.string.live_nest_target_nest),
-                                                    style = MaterialTheme.typography.bodyMedium,
-                                                    modifier = Modifier.weight(1f)
-                                                )
-                                                Text(
-                                                    text = nestLabel,
-                                                    style = MaterialTheme.typography.bodyMedium
-                                                )
-                                            }
-
-                                            DragonIconButton(
-                                                icon = R.drawable.close,
-                                                contentDescription = stringResource(R.string.disable)
-                                            ) {
-                                                editPoint = editPoint.copy(
-                                                    liveNestTargetNestId = null,
-                                                    liveNestPreviewDelayMs = null,
-                                                    liveNestScale = null,
-                                                    liveNestGraceDistance = null,
-                                                    liveNestSubNestOpacityPercent = null
-                                                )
-                                            }
-                                        }
+                                        this.Spacer(5.dp)
+                                        Text(
+                                            text = stringResource(R.string.live_nest_target_nest),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Text(
+                                            text = nestLabel,
+                                            style = MaterialTheme.typography.bodyMedium
+                                        )
                                     }
 
-
-                                    SliderWithLabel(
-                                        label = stringResource(R.string.live_nest_hold_delay),
-                                        value = editPoint.getLiveNestPreviewDelayMs(defaultPoint, isDefaultEditing),
-                                        valueRange = 0..5000,
-                                        resetEnabled = editPoint.liveNestPreviewDelayMs != null,
-                                        onReset = {
-                                            editPoint = editPoint.copy(liveNestPreviewDelayMs = null)
-                                        }
+                                    DragonIconButton(
+                                        icon = R.drawable.close,
+                                        contentDescription = R.string.disable
                                     ) {
-                                        editPoint = editPoint.copy(liveNestPreviewDelayMs = it.takeIf {
-                                            it != emptyPoint.getLiveNestPreviewDelayMs(
-                                                defaultPoint,
-                                                isDefaultEditing
-                                            )
-                                        })
-                                    }
-
-                                    SliderWithLabel(
-                                        label = stringResource(R.string.live_nest_scale),
-                                        value = editPoint.getLiveNestScale(defaultPoint, isDefaultEditing),
-                                        valueRange = 0.3f..1.0f,
-                                        resetEnabled = editPoint.liveNestScale != null,
-                                        onReset = {
-                                            editPoint = editPoint.copy(liveNestScale = null)
-                                        }
-                                    ) {
-                                        editPoint = editPoint.copy(liveNestScale = it.takeIf {
-                                            it != emptyPoint.getLiveNestScale(
-                                                defaultPoint,
-                                                isDefaultEditing
-                                            )
-                                        })
-                                    }
-
-                                    SliderWithLabel(
-                                        label = stringResource(R.string.live_nest_grace_distance),
-                                        value = editPoint.getLiveNestGraceDistance(defaultPoint, isDefaultEditing),
-                                        valueRange = (-1).dp..3000.dp,
-                                        resetEnabled = editPoint.liveNestGraceDistance != null,
-                                        onReset = {
-                                            editPoint = editPoint.copy(liveNestGraceDistance = null)
-                                        }
-                                    ) {
-                                        editPoint = editPoint.copy(liveNestGraceDistance = it.takeIf {
-                                            it != emptyPoint.getLiveNestGraceDistance(
-                                                defaultPoint,
-                                                isDefaultEditing
-                                            )
-                                        })
-                                    }
-
-                                    SwitchRow(
-                                        title = stringResource(R.string.fast_activation),
-                                        description = stringResource(R.string.fast_activation_desc),
-                                        state = editPoint.getFastActivation(defaultPoint, isDefaultEditing),
-                                        resetEnabled = editPoint.fastActivation != null,
-                                        onReset = {
-                                            editPoint = editPoint.copy(fastActivation = null)
-                                        }
-                                    ) {
-                                        editPoint = editPoint.copy(fastActivation = it.takeIf {
-                                            it != emptyPoint.getFastActivation(
-                                                defaultPoint,
-                                                isDefaultEditing
-                                            )
-                                        })
-                                    }
-
-
-                                    SwitchRow(
-                                        state = editPoint.getLiveNestSnapsToFingerPosition(defaultPoint, isDefaultEditing),
-                                        title = stringResource(R.string.live_nest_snaps_to_finger_position),
-                                        description = stringResource(R.string.live_nest_snaps_to_finger_position_desc),
-                                        resetEnabled = editPoint.liveNestSnapsToFingerPosition != null,
-                                        onReset = {
-                                            editPoint = editPoint.copy(liveNestSnapsToFingerPosition = null)
-                                        }
-                                    ) { on ->
-                                        editPoint = editPoint.copy(liveNestSnapsToFingerPosition = on.takeIf {
-                                            it != emptyPoint.getLiveNestSnapsToFingerPosition(
-                                                defaultPoint,
-                                                isDefaultEditing
-                                            )
-                                        })
-                                    }
-
-                                    SliderWithLabel(
-                                        label = stringResource(R.string.live_nest_sub_nest_opacity),
-                                        description = stringResource(R.string.live_nest_dim_main_nest_desc),
-                                        value = editPoint.getLiveNestMainNestOpacityPercent(defaultPoint, isDefaultEditing),
-                                        valueRange = 0..100,
-                                        resetEnabled = editPoint.liveNestSubNestOpacityPercent != null,
-                                        onReset = {
-                                            editPoint = editPoint.copy(liveNestSubNestOpacityPercent = null)
-                                        }
-                                    ) { newValue ->
-                                        editPoint = editPoint.copy(liveNestSubNestOpacityPercent = newValue.takeIf {
-                                            it != emptyPoint.getLiveNestMainNestOpacityPercent(
-                                                defaultPoint,
-                                                isDefaultEditing
-                                            )
-                                        })
+                                        editPoint = editPoint.copy(
+                                            liveNestTargetNestId = null,
+                                            liveNestPreviewDelayMs = null,
+                                            liveNestScale = null,
+                                            liveNestGraceDistance = null,
+                                            liveNestSubNestOpacityPercent = null
+                                        )
                                     }
                                 }
                             }
 
-                            PointFeaturePanel.CycleActions -> {
-                                val cycleStages = editPoint.cycleActions ?: emptyList()
 
-                                if (!isDefaultEditing) {
-                                    cycleStages.forEachIndexed { index, stage ->
-                                        val stageLabel = actionLabel(stage.action)
-                                        val stageActionColor = stage.action.actionColor(extraColors)
-
-                                        Card(
-                                            modifier = Modifier
-                                                .padding(10.dp)
-                                                .fillMaxWidth(),
-                                            shape = MaterialTheme.shapes.large
-                                        ) {
-                                            Column(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(horizontal = 14.dp, vertical = 12.dp),
-                                                verticalArrangement = Arrangement.spacedBy(10.dp)
-                                            ) {
-                                                Row(
-                                                    modifier = Modifier.fillMaxWidth(),
-                                                    verticalAlignment = Alignment.CenterVertically,
-                                                    horizontalArrangement = Arrangement.SpaceBetween
-                                                ) {
-                                                    Text(
-                                                        text = stringResource(
-                                                            R.string.cycle_actions_stage,
-                                                            index + 1
-                                                        ),
-                                                        style = MaterialTheme.typography.titleSmall,
-                                                        color = MaterialTheme.colorScheme.primary,
-                                                        modifier = Modifier.weight(1f)
-                                                    )
-                                                    DragonIconButton(
-                                                        icon = R.drawable.close,
-                                                        contentDescription = stringResource(R.string.disable),
-                                                        colors = AppObjectsColors.cancelIconButtonColors()
-                                                    ) {
-                                                        val updated = cycleStages.toMutableList()
-                                                            .also { it.removeAt(index) }
-                                                        editPoint = if (updated.isEmpty()) {
-                                                            editPoint.copy(
-                                                                cycleActions = null,
-                                                                cycleActionsLoopDelayMs = null
-                                                            )
-                                                        } else {
-                                                            editPoint.copy(cycleActions = updated)
-                                                        }
-                                                    }
-                                                }
-
-                                                DragonButton(
-                                                    modifier = Modifier.fillMaxWidth(),
-                                                    onClick = { editingCycleStageActionIndex = index }
-                                                ) {
-                                                    Text(
-                                                        text = stageLabel,
-                                                        color = stageActionColor,
-                                                        fontSize = 16.sp,
-                                                        fontWeight = FontWeight.Bold,
-                                                        modifier = Modifier.weight(1f)
-                                                    )
-                                                    Spacer()
-                                                    Icon(
-                                                        painter = painterResource(R.drawable.edit_rounded),
-                                                        contentDescription = stringResource(R.string.edit_action),
-                                                        tint = MaterialTheme.colorScheme.primary
-                                                    )
-                                                }
-
-                                                SliderWithLabel(
-                                                    label = stringResource(R.string.cycle_actions_delay),
-                                                    value = stage.triggerTimeMs,
-                                                    valueRange = 100..5000,
-                                                    resetEnabled = stage.triggerTimeMs != (defaultPoint.cycleActionsLoopDelayMs
-                                                        ?: Point.defaultCycleActionsLoopDelayMs),
-                                                    onReset = {
-                                                        val updated = cycleStages.toMutableList().also {
-                                                            it[index] = it[index].copy(
-                                                                triggerTimeMs = defaultPoint.cycleActionsLoopDelayMs
-                                                                    ?: Point.defaultCycleActionsLoopDelayMs
-                                                            )
-                                                        }
-                                                        editPoint = editPoint.copy(cycleActions = updated)
-                                                    }
-                                                ) { newDelay ->
-                                                    val updated = cycleStages.toMutableList().also {
-                                                        it[index] = it[index].copy(triggerTimeMs = newDelay)
-                                                    }
-                                                    editPoint = editPoint.copy(cycleActions = updated)
-                                                }
-
-                                                HapticFeedBackEditorButtonWithPlayTest(
-                                                    customHapticFeedback = stage.hapticFeedback ?: defaultHapticFeedback(),
-                                                    titleExt = " (Stage ${index + 1})",
-                                                    onClick = { editingCycleStageHapticIndex = index }
-                                                )
-                                            }
-                                        }
-                                    }
-
-                                    DragonButton(
-                                        modifier = Modifier
-                                            .padding(10.dp)
-                                            .fillMaxWidth(),
-                                        onClick = {
-                                            val newStage = CycleActionStage(
-                                                triggerTimeMs = 500,
-                                                action = editPoint.action
-                                            )
-                                            editPoint = editPoint.copy(
-                                                cycleActions = cycleStages + newStage
-                                            )
-                                        }
-                                    ) {
-                                        Text(stringResource(R.string.cycle_actions_add_stage))
-                                    }
+                            this.SliderWithLabel(
+                                label = stringResource(R.string.live_nest_hold_delay),
+                                value = editPoint.getLiveNestPreviewDelayMs(defaultPoint, isDefaultEditing),
+                                valueRange = 0..5000,
+                                resetEnabled = editPoint.liveNestPreviewDelayMs != null,
+                                onReset = {
+                                    editPoint = editPoint.copy(liveNestPreviewDelayMs = null)
                                 }
-
-                                AnimatedVisibility(cycleStages.isNotEmpty() || isDefaultEditing) {
-                                    Column(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        verticalArrangement = Arrangement.spacedBy(10.dp),
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        val cycleActionLoop = editPoint.getCycleActionsStageLoop(defaultPoint, isDefaultEditing)
-                                        SwitchRow(
-                                            state = cycleActionLoop,
-                                            title = stringResource(R.string.cycle_actions_loop),
-                                            description = stringResource(R.string.cycle_actions_loop_desc)
-                                        ) { on ->
-                                            editPoint = editPoint.copy(
-                                                cycleActionsLoop = on.takeIf {
-                                                    it != emptyPoint.getCycleActionsStageLoop(
-                                                        defaultPoint,
-                                                        isDefaultEditing
-                                                    )
-                                                }
-                                            )
-                                        }
-
-                                        AnimatedVisibility(cycleActionLoop) {
-                                            SliderWithLabel(
-                                                label = stringResource(R.string.cycle_actions_loop_delay),
-                                                value = editPoint.getCycleActionsStageLoopDelayMs(defaultPoint, isDefaultEditing),
-                                                valueRange = 50..5000,
-                                                resetEnabled = true,
-                                                onReset = {
-                                                    editPoint = editPoint.copy(cycleActionsLoopDelayMs = null)
-                                                }
-                                            ) { ms ->
-                                                editPoint = editPoint.copy(cycleActionsLoopDelayMs = ms.takeIf {
-                                                    it != emptyPoint.getCycleActionsStageLoopDelayMs(
-                                                        defaultPoint,
-                                                        isDefaultEditing
-                                                    )
-                                                })
-                                            }
-                                        }
-                                    }
-                                }
+                            ) {
+                                editPoint = editPoint.copy(liveNestPreviewDelayMs = it.takeIf {
+                                    it != emptyPoint.getLiveNestPreviewDelayMs(
+                                        defaultPoint,
+                                        isDefaultEditing
+                                    )
+                                })
                             }
 
-                            PointFeaturePanel.HoldAndRun -> {
-                                if (isDefaultEditing) {
-                                    SliderWithLabel(
-                                        label = stringResource(R.string.default_hold_and_run_delay),
-                                        description = stringResource(R.string.default_hold_and_run_delay_summary),
-                                        value = editPoint.getHoldAndRunDelayMs(defaultPoint, true),
-                                        valueRange = 100..5000,
-                                        resetEnabled = editPoint.holdAndRunDelayMs != null,
-                                        onReset = {
-                                            editPoint = editPoint.copy(holdAndRunDelayMs = null)
-                                        }
-                                    ) {
-                                        editPoint = editPoint.copy(holdAndRunDelayMs = it.takeIf {
-                                            it != emptyPoint.getHoldAndRunDelayMs(
-                                                defaultPoint,
-                                                true
-                                            )
-                                        })
-                                    }
-
-                                } else {
-                                    val harEnabled = editPoint.holdAndRunDelayMs != null
-
-                                    if (!harEnabled) {
-                                        DragonButton(
-                                            onClick = {
-                                                editPoint = editPoint.copy(
-                                                    holdAndRunDelayMs = defaultPoint.holdAndRunDelayMs ?: 1000
-                                                )
-                                            },
-                                            modifier = Modifier
-                                                .padding(10.dp)
-                                                .fillMaxWidth()
-                                        ) {
-                                            Text(stringResource(R.string.hold_and_run_enable))
-                                        }
-                                    } else {
-                                        SliderWithLabel(
-                                            label = stringResource(R.string.hold_and_run_delay),
-                                            value = editPoint.getHoldAndRunDelayMs(defaultPoint, false),
-                                            valueRange = 50..5000,
-                                            resetEnabled = editPoint.holdAndRunDelayMs != null,
-                                            onReset = {
-                                                editPoint = editPoint.copy(holdAndRunDelayMs = null)
-                                            }
-                                        ) { newDelay ->
-                                            editPoint = editPoint.copy(holdAndRunDelayMs = newDelay.takeIf {
-                                                it != emptyPoint.getHoldAndRunDelayMs(
-                                                    defaultPoint,
-                                                    false
-                                                )
-                                            })
-                                        }
-
-                                        SwitchRow(
-                                            state = editPoint.holdAndRunAction != null,
-                                            title = stringResource(R.string.hold_and_run_custom_action),
-                                            description = stringResource(R.string.hold_and_run_custom_action_desc)
-                                        ) { on ->
-                                            editPoint = if (on) {
-                                                showHoldAndRunActionDialog = true
-                                                editPoint.copy(
-                                                    holdAndRunAction = editPoint.holdAndRunAction
-                                                        ?: editPoint.action
-                                                )
-                                            } else {
-                                                editPoint.copy(holdAndRunAction = null)
-                                            }
-                                        }
-
-                                        editPoint.holdAndRunAction?.let { harAction ->
-                                            val harLabel = actionLabel(harAction)
-                                            val harColor = harAction.actionColor(extraColors, editPoint.customActionColor)
-                                            Row(
-                                                modifier = Modifier
-                                                    .padding(10.dp)
-                                                    .fillMaxWidth()
-                                                    .clip(MaterialTheme.shapes.large)
-                                                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                                                    .clickable { showHoldAndRunActionDialog = true }
-                                                    .padding(12.dp),
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                            ) {
-                                                Text(
-                                                    text = harLabel,
-                                                    color = harColor,
-                                                    fontSize = 16.sp,
-                                                    fontWeight = FontWeight.Medium
-                                                )
-                                                Spacer(Modifier.weight(1f))
-                                                Icon(
-                                                    painter = painterResource(R.drawable.edit_rounded),
-                                                    contentDescription = stringResource(R.string.edit_action),
-                                                    tint = MaterialTheme.colorScheme.primary
-                                                )
-                                            }
-                                        }
-
-                                        DragonButton(
-                                            onClick = {
-                                                editPoint = editPoint.copy(
-                                                    holdAndRunDelayMs = null,
-                                                    holdAndRunAction = null
-                                                )
-                                            },
-                                            modifier = Modifier
-                                                .padding(10.dp)
-                                                .fillMaxWidth(),
-                                            colors = AppObjectsColors.cancelButtonColors()
-                                        ) {
-                                            Text(
-                                                text = stringResource(R.string.disable),
-                                                style = MaterialTheme.typography.labelLarge
-                                            )
-                                        }
-                                    }
+                            this.SliderWithLabel(
+                                label = stringResource(R.string.live_nest_scale),
+                                value = editPoint.getLiveNestScale(defaultPoint, isDefaultEditing),
+                                valueRange = 0.3f..1.0f,
+                                resetEnabled = editPoint.liveNestScale != null,
+                                onReset = {
+                                    editPoint = editPoint.copy(liveNestScale = null)
                                 }
+                            ) {
+                                editPoint = editPoint.copy(liveNestScale = it.takeIf {
+                                    it != emptyPoint.getLiveNestScale(
+                                        defaultPoint,
+                                        isDefaultEditing
+                                    )
+                                })
                             }
 
-                            null -> null
+                            this.SliderWithLabel(
+                                label = stringResource(R.string.live_nest_grace_distance),
+                                value = editPoint.getLiveNestGraceDistance(defaultPoint, isDefaultEditing),
+                                valueRange = (-1).dp..3000.dp,
+                                resetEnabled = editPoint.liveNestGraceDistance != null,
+                                onReset = {
+                                    editPoint = editPoint.copy(liveNestGraceDistance = null)
+                                }
+                            ) {
+                                editPoint = editPoint.copy(liveNestGraceDistance = it.takeIf {
+                                    it != emptyPoint.getLiveNestGraceDistance(
+                                        defaultPoint,
+                                        isDefaultEditing
+                                    )
+                                })
+                            }
+
+                            this.SwitchRow(
+                                title = R.string.fast_activation,
+                                description = R.string.fast_activation_desc,
+                                state = editPoint.getFastActivation(defaultPoint, isDefaultEditing),
+                                resetEnabled = editPoint.fastActivation != null,
+                                onReset = {
+                                    editPoint = editPoint.copy(fastActivation = null)
+                                }
+                            ) {
+                                editPoint = editPoint.copy(fastActivation = it.takeIf {
+                                    it != emptyPoint.getFastActivation(
+                                        defaultPoint,
+                                        isDefaultEditing
+                                    )
+                                })
+                            }
+
+
+                            this.SwitchRow(
+                                state = editPoint.getLiveNestSnapsToFingerPosition(defaultPoint, isDefaultEditing),
+                                title = R.string.live_nest_snaps_to_finger_position,
+                                description = R.string.live_nest_snaps_to_finger_position_desc,
+                                resetEnabled = editPoint.liveNestSnapsToFingerPosition != null,
+                                onReset = {
+                                    editPoint = editPoint.copy(liveNestSnapsToFingerPosition = null)
+                                }
+                            ) { on ->
+                                editPoint = editPoint.copy(liveNestSnapsToFingerPosition = on.takeIf {
+                                    it != emptyPoint.getLiveNestSnapsToFingerPosition(
+                                        defaultPoint,
+                                        isDefaultEditing
+                                    )
+                                })
+                            }
+
+                            this.SliderWithLabel(
+                                label = stringResource(R.string.live_nest_sub_nest_opacity),
+                                description = stringResource(R.string.live_nest_dim_main_nest_desc),
+                                value = editPoint.getLiveNestMainNestOpacityPercent(defaultPoint, isDefaultEditing),
+                                valueRange = 0..100,
+                                resetEnabled = editPoint.liveNestSubNestOpacityPercent != null,
+                                onReset = {
+                                    editPoint = editPoint.copy(liveNestSubNestOpacityPercent = null)
+                                }
+                            ) { newValue ->
+                                editPoint = editPoint.copy(liveNestSubNestOpacityPercent = newValue.takeIf {
+                                    it != emptyPoint.getLiveNestMainNestOpacityPercent(
+                                        defaultPoint,
+                                        isDefaultEditing
+                                    )
+                                })
+                            }
                         }
                     }
+
+                    PointFeaturePanel.CycleActions -> {
+                        val cycleStages = editPoint.cycleActions ?: emptyList()
+
+                        if (!isDefaultEditing) {
+                            cycleStages.forEachIndexed { index, stage ->
+                                val stageLabel = actionLabel(stage.action)
+                                val stageActionColor = stage.action.actionColor(extraColors)
+
+                                Card(
+                                    modifier = Modifier
+                                        .padding(10.dp)
+                                        .fillMaxWidth(),
+                                    shape = MaterialTheme.shapes.large
+                                ) {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 14.dp, vertical = 12.dp),
+                                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Text(
+                                                text = stringResource(
+                                                    R.string.cycle_actions_stage,
+                                                    index + 1
+                                                ),
+                                                style = MaterialTheme.typography.titleSmall,
+                                                color = MaterialTheme.colorScheme.primary,
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                            DragonIconButton(
+                                                icon = R.drawable.close,
+                                                contentDescription = R.string.disable,
+                                                isCancel = true,
+                                            ) {
+                                                val updated = cycleStages.toMutableList()
+                                                    .also { it.removeAt(index) }
+                                                editPoint = if (updated.isEmpty()) {
+                                                    editPoint.copy(
+                                                        cycleActions = null,
+                                                        cycleActionsLoopDelayMs = null
+                                                    )
+                                                } else {
+                                                    editPoint.copy(cycleActions = updated)
+                                                }
+                                            }
+                                        }
+
+                                        DragonButton(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            onClick = { editingCycleStageActionIndex = index }
+                                        ) {
+                                            Text(
+                                                text = stageLabel,
+                                                color = stageActionColor,
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                            this.Spacer()
+                                            Icon(
+                                                painter = painterResource(R.drawable.edit_rounded),
+                                                contentDescription = stringResource(R.string.edit_action),
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
+
+                                        this@DragonSettingsGroup.SliderWithLabel(
+                                            label = stringResource(R.string.cycle_actions_delay),
+                                            value = stage.triggerTimeMs,
+                                            valueRange = 100..5000,
+                                            resetEnabled = stage.triggerTimeMs != (defaultPoint.cycleActionsLoopDelayMs
+                                                ?: Point.defaultCycleActionsLoopDelayMs),
+                                            onReset = {
+                                                val updated = cycleStages.toMutableList().also {
+                                                    it[index] = it[index].copy(
+                                                        triggerTimeMs = defaultPoint.cycleActionsLoopDelayMs
+                                                            ?: Point.defaultCycleActionsLoopDelayMs
+                                                    )
+                                                }
+                                                editPoint = editPoint.copy(cycleActions = updated)
+                                            }
+                                        ) { newDelay ->
+                                            val updated = cycleStages.toMutableList().also {
+                                                it[index] = it[index].copy(triggerTimeMs = newDelay)
+                                            }
+                                            editPoint = editPoint.copy(cycleActions = updated)
+                                        }
+
+                                        HapticFeedBackEditorButtonWithPlayTest(
+                                            customHapticFeedback = stage.hapticFeedback ?: defaultHapticFeedback(),
+                                            titleExt = " (Stage ${index + 1})",
+                                            onClick = { editingCycleStageHapticIndex = index }
+                                        )
+                                    }
+                                }
+                            }
+
+                            DragonButton(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .fillMaxWidth(),
+                                onClick = {
+                                    val newStage = CycleActionStage(
+                                        triggerTimeMs = 500,
+                                        action = editPoint.action
+                                    )
+                                    editPoint = editPoint.copy(
+                                        cycleActions = cycleStages + newStage
+                                    )
+                                }
+                            ) {
+                                Text(stringResource(R.string.cycle_actions_add_stage))
+                            }
+                        }
+
+                        this.AnimatedVisibility(cycleStages.isNotEmpty() || isDefaultEditing) {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalArrangement = Arrangement.spacedBy(10.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                val cycleActionLoop = editPoint.getCycleActionsStageLoop(defaultPoint, isDefaultEditing)
+                                this@DragonSettingsGroup.SwitchRow(
+                                    state = cycleActionLoop,
+                                    title = R.string.cycle_actions_loop,
+                                    description = R.string.cycle_actions_loop_desc
+                                ) { on ->
+                                    editPoint = editPoint.copy(
+                                        cycleActionsLoop = on.takeIf {
+                                            it != emptyPoint.getCycleActionsStageLoop(
+                                                defaultPoint,
+                                                isDefaultEditing
+                                            )
+                                        }
+                                    )
+                                }
+
+                                this.AnimatedVisibility(cycleActionLoop) {
+                                    this@DragonSettingsGroup.SliderWithLabel(
+                                        label = stringResource(R.string.cycle_actions_loop_delay),
+                                        value = editPoint.getCycleActionsStageLoopDelayMs(defaultPoint, isDefaultEditing),
+                                        valueRange = 50..5000,
+                                        resetEnabled = true,
+                                        onReset = {
+                                            editPoint = editPoint.copy(cycleActionsLoopDelayMs = null)
+                                        }
+                                    ) { ms ->
+                                        editPoint = editPoint.copy(cycleActionsLoopDelayMs = ms.takeIf {
+                                            it != emptyPoint.getCycleActionsStageLoopDelayMs(
+                                                defaultPoint,
+                                                isDefaultEditing
+                                            )
+                                        })
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    PointFeaturePanel.HoldAndRun -> {
+                        if (isDefaultEditing) {
+                            this.SliderWithLabel(
+                                label = stringResource(R.string.default_hold_and_run_delay),
+                                description = stringResource(R.string.default_hold_and_run_delay_summary),
+                                value = editPoint.getHoldAndRunDelayMs(defaultPoint, true),
+                                valueRange = 100..5000,
+                                resetEnabled = editPoint.holdAndRunDelayMs != null,
+                                onReset = {
+                                    editPoint = editPoint.copy(holdAndRunDelayMs = null)
+                                }
+                            ) {
+                                editPoint = editPoint.copy(holdAndRunDelayMs = it.takeIf {
+                                    it != emptyPoint.getHoldAndRunDelayMs(
+                                        defaultPoint,
+                                        true
+                                    )
+                                })
+                            }
+
+                        } else {
+                            val harEnabled = editPoint.holdAndRunDelayMs != null
+
+                            if (!harEnabled) {
+                                DragonButton(
+                                    onClick = {
+                                        editPoint = editPoint.copy(
+                                            holdAndRunDelayMs = defaultPoint.holdAndRunDelayMs ?: 1000
+                                        )
+                                    },
+                                    modifier = Modifier
+                                        .padding(10.dp)
+                                        .fillMaxWidth()
+                                ) {
+                                    Text(stringResource(R.string.hold_and_run_enable))
+                                }
+                            } else {
+                                this.SliderWithLabel(
+                                    label = stringResource(R.string.hold_and_run_delay),
+                                    value = editPoint.getHoldAndRunDelayMs(defaultPoint, false),
+                                    valueRange = 50..5000,
+                                    resetEnabled = editPoint.holdAndRunDelayMs != null,
+                                    onReset = {
+                                        editPoint = editPoint.copy(holdAndRunDelayMs = null)
+                                    }
+                                ) { newDelay ->
+                                    editPoint = editPoint.copy(holdAndRunDelayMs = newDelay.takeIf {
+                                        it != emptyPoint.getHoldAndRunDelayMs(
+                                            defaultPoint,
+                                            false
+                                        )
+                                    })
+                                }
+
+                                this.SwitchRow(
+                                    state = editPoint.holdAndRunAction != null,
+                                    title = R.string.hold_and_run_custom_action,
+                                    description = R.string.hold_and_run_custom_action_desc
+                                ) { on ->
+                                    editPoint = if (on) {
+                                        showHoldAndRunActionDialog = true
+                                        editPoint.copy(
+                                            holdAndRunAction = editPoint.holdAndRunAction
+                                                ?: editPoint.action
+                                        )
+                                    } else {
+                                        editPoint.copy(holdAndRunAction = null)
+                                    }
+                                }
+
+                                editPoint.holdAndRunAction?.let { harAction ->
+                                    val harLabel = actionLabel(harAction)
+                                    val harColor = harAction.actionColor(extraColors, editPoint.customActionColor)
+                                    Row(
+                                        modifier = Modifier
+                                            .padding(10.dp)
+                                            .fillMaxWidth()
+                                            .clip(MaterialTheme.shapes.large)
+                                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                                            .clickable { showHoldAndRunActionDialog = true }
+                                            .padding(12.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                    ) {
+                                        Text(
+                                            text = harLabel,
+                                            color = harColor,
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                        Spacer(Modifier.weight(1f))
+                                        Icon(
+                                            painter = painterResource(R.drawable.edit_rounded),
+                                            contentDescription = stringResource(R.string.edit_action),
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                }
+
+                                DragonButton(
+                                    onClick = {
+                                        editPoint = editPoint.copy(
+                                            holdAndRunDelayMs = null,
+                                            holdAndRunAction = null
+                                        )
+                                    },
+                                    isCancel = true
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.disable),
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    null -> null
                 }
             }
 
@@ -661,7 +649,7 @@ fun PointEditor(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
                             )
-                            Spacer(5.dp)
+                            this.Spacer(5.dp)
                             Icon(
                                 painter = painterResource(R.drawable.edit_rounded),
                                 contentDescription = stringResource(R.string.edit_action),
@@ -708,7 +696,7 @@ fun PointEditor(
                         }
                     )
 
-                    ColorPickerRow(
+                    this.ColorPickerRow(
                         title = stringResource(R.string.custom_action_color),
                         description = null,
                         currentColor = editPoint.customActionColor,
@@ -720,7 +708,7 @@ fun PointEditor(
             }
 
             DragonSettingsGroup(R.string.size) {
-                SliderWithLabel(
+                this.SliderWithLabel(
                     label = stringResource(R.string.inner_padding),
                     value = editPoint.getInnerPadding(defaultPoint, isDefaultEditing),
                     valueRange = 0.dp..100.dp,
@@ -737,7 +725,7 @@ fun PointEditor(
                     )
                 }
 
-                SliderWithLabel(
+                this.SliderWithLabel(
                     label = stringResource(R.string.size),
                     value = editPoint.getSize(defaultPoint, isDefaultEditing),
                     valueRange = 1.dp..200.dp,
@@ -765,7 +753,7 @@ fun PointEditor(
                             .fillMaxWidth()
                     ) {
                         Text(stringResource(R.string.edit_icon))
-                        Spacer(5.dp)
+                        this.Spacer(5.dp)
                         Icon(
                             painter = painterResource(R.drawable.edit_rounded),
                             contentDescription = stringResource(R.string.edit_icon)
@@ -787,7 +775,7 @@ fun PointEditor(
                         }
 
                         if (selected) {
-                            SliderWithLabel(
+                            this@DragonSettingsGroup.SliderWithLabel(
                                 label = stringResource(R.string.border_stroke_selected),
                                 value = editPoint.getBorderStroke(true, defaultPoint, isDefaultEditing),
                                 valueRange = 0.dp..50.dp,
@@ -807,7 +795,7 @@ fun PointEditor(
                                 )
                             }
 
-                            ColorPickerRow(
+                            this@DragonSettingsGroup.ColorPickerRow(
                                 title = stringResource(R.string.border_color_selected),
                                 description = null,
                                 currentColor = editPoint.getBorderColor(true, defaultPoint, extraColors, isDefaultEditing),
@@ -825,7 +813,7 @@ fun PointEditor(
                                 )
                             }
 
-                            ColorPickerRow(
+                            this@DragonSettingsGroup.ColorPickerRow(
                                 title = stringResource(R.string.background_selected),
                                 description = null,
                                 currentColor = editPoint.getBackgroundColor(true, defaultPoint, isDefaultEditing),
@@ -842,7 +830,7 @@ fun PointEditor(
                             }
 
 
-                            SliderWithLabel(
+                            this@DragonSettingsGroup.SliderWithLabel(
                                 label = stringResource(R.string.glow_radius),
                                 description = stringResource(R.string.zero_means_no_glow),
                                 value = editPoint.getGlow(true, defaultPoint, isDefaultEditing).radius!!,
@@ -861,7 +849,7 @@ fun PointEditor(
                                 )
                             }
 
-                            ColorPickerRow(
+                            this@DragonSettingsGroup.ColorPickerRow(
                                 title = stringResource(R.string.glow_color),
                                 description = null,
                                 enabled = true,
@@ -876,7 +864,7 @@ fun PointEditor(
                                 )
                             }
 
-                            ShapeRow(
+                            this@DragonSettingsGroup.ShapeRow(
                                 selected = editPoint.getBorderShape(true, defaultPoint, isDefaultEditing),
                                 title = stringResource(R.string.edit_border_shape),
                                 resetEnabled = editPoint.borderShapeSelected != null,
@@ -886,7 +874,7 @@ fun PointEditor(
                             ) { showShapeSelectedPickerDialog = true }
 
                         } else {
-                            SliderWithLabel(
+                            this@DragonSettingsGroup.SliderWithLabel(
                                 label = stringResource(R.string.border_stroke),
                                 value = editPoint.getBorderStroke(false, defaultPoint, isDefaultEditing),
                                 valueRange = 0.dp..50.dp,
@@ -904,7 +892,7 @@ fun PointEditor(
                                 )
                             }
 
-                            ColorPickerRow(
+                            this@DragonSettingsGroup.ColorPickerRow(
                                 title = stringResource(R.string.border_color),
                                 description = null,
                                 currentColor = editPoint.getBorderColor(false, defaultPoint, extraColors, isDefaultEditing),
@@ -922,7 +910,7 @@ fun PointEditor(
                                 )
                             }
 
-                            ColorPickerRow(
+                            this@DragonSettingsGroup.ColorPickerRow(
                                 title = stringResource(R.string.background_color),
                                 description = null,
                                 currentColor = editPoint.getBackgroundColor(false, defaultPoint, isDefaultEditing),
@@ -939,7 +927,7 @@ fun PointEditor(
                                 )
                             }
 
-                            SliderWithLabel(
+                            this@DragonSettingsGroup.SliderWithLabel(
                                 label = stringResource(R.string.glow_radius),
                                 description = stringResource(R.string.zero_means_no_glow),
                                 value = editPoint.getGlow(false, defaultPoint, isDefaultEditing).radius!!,
@@ -958,7 +946,7 @@ fun PointEditor(
                                 )
                             }
 
-                            ColorPickerRow(
+                            this@DragonSettingsGroup.ColorPickerRow(
                                 title = stringResource(R.string.glow_color),
                                 description = null,
                                 enabled = true,
@@ -973,7 +961,7 @@ fun PointEditor(
                                 )
                             }
 
-                            ShapeRow(
+                            this@DragonSettingsGroup.ShapeRow(
                                 selected = editPoint.getBorderShape(false, defaultPoint, isDefaultEditing),
                                 title = stringResource(R.string.edit_border_shape),
                                 resetEnabled = editPoint.borderShape != null,
@@ -1006,7 +994,7 @@ fun PointEditor(
     }
 
     if (showEditActionDialog) {
-        AddPointDialog(
+        ActionPickerDialog(
             onDismiss = { showEditActionDialog = false },
             onActionSelected = { selectedAction ->
                 editPoint = editPoint.copy(action = selectedAction)
@@ -1016,7 +1004,7 @@ fun PointEditor(
     }
 
     if (showHoldAndRunActionDialog) {
-        AddPointDialog(
+        ActionPickerDialog(
             onDismiss = { showHoldAndRunActionDialog = false },
             onActionSelected = { selectedAction ->
                 editPoint = editPoint.copy(holdAndRunAction = selectedAction)
@@ -1090,7 +1078,7 @@ fun PointEditor(
 
     if (editingCycleStageActionIndex != null) {
         val idx = editingCycleStageActionIndex!!
-        AddPointDialog(
+        ActionPickerDialog(
             onDismiss = { editingCycleStageActionIndex = null },
             onActionSelected = { selectedAction ->
                 val current = editPoint.cycleActions ?: emptyList()

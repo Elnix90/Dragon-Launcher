@@ -2,10 +2,8 @@ package org.elnix.dragonlauncher.ui.dialogs
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,8 +14,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.i18n.R
-
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 
 @Composable
 fun UrlInputDialog(
@@ -51,27 +49,17 @@ fun UrlInputDialog(
             }
         },
         confirmButton = {
-            Button(
-                onClick = {
-                    val ok = text.startsWith("http://") || text.startsWith("https://")
-                    if (!ok) {
-                        error = true
-                        return@Button
-                    }
-                    onUrlSelected(Action.OpenUrl(text))
-                    onDismiss()
-                },
-                colors = AppObjectsColors.buttonColors()
+            ValidateCancelButtons(
+                onCancel = onDismiss
             ) {
-                Text(stringResource(R.string.ok))
+                val ok = text.startsWith("http://") || text.startsWith("https://")
+                if (!ok) {
+                    error = true
+                    return@ValidateCancelButtons
+                }
+                onUrlSelected(Action.OpenUrl(text))
+                onDismiss()
             }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = onDismiss,
-                colors = AppObjectsColors.cancelButtonColors()
-            ) { Text(stringResource(R.string.cancel)) }
-        },
-        containerColor = MaterialTheme.colorScheme.surface
+        }
     )
 }

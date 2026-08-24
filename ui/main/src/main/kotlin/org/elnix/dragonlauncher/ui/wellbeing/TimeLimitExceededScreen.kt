@@ -26,8 +26,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,6 +51,7 @@ import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
+import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -150,14 +149,11 @@ fun TimeLimitExceededScreen(appName: String) {
 
                 Spacer(40.dp)
 
-                Button(
+                DragonButton(
                     onClick = LocalNavigator.current::onBack,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(60.dp),
-                    shape = RoundedCornerShape(30.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = AccentTeal),
-                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 12.dp)
+                        .height(60.dp)
                 ) {
                     Text(
                         text = stringResource(R.string.time_exceeded_ok),

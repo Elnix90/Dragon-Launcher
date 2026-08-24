@@ -14,7 +14,6 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -24,10 +23,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuGroup
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -59,12 +61,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.elnix.dragonlauncher.WIDGET_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import org.elnix.dragonlauncher.WIDGET_TAG
 import org.elnix.dragonlauncher.base.model.models.ResizeSide
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
@@ -91,19 +93,18 @@ import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.base.components.RowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
-import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
-import org.elnix.dragonlauncher.ui.dialogs.AddPointDialog
+import org.elnix.dragonlauncher.ui.dialogs.ActionPickerDialog
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
-import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonColumn
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
+import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.SmallShapeRow
 import org.elnix.dragonlauncher.ui.helpers.UndoRedoBlock
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -128,8 +129,6 @@ fun WidgetsTab(
     val cellSizeDp by UiSettingsStore.widgetsCellSizeDp.asState()
     val widgets by widgetsViewModel.widgets.asState()
     val scope = rememberCoroutineScope()
-
-    val widgetsDebugInfos by DebugSettingsStore.widgetsDebugInfo.asState()
 
     var selected by remember { mutableStateOf<Widget?>(null) }
     val aWidgetIsSelected = selected != null
@@ -425,11 +424,9 @@ fun WidgetsTab(
                 }
             }
 
-            if (widgetsDebugInfos && widgets.isNotEmpty()) {
-                DragonColumnGroup {
-                    widgets.forEach {
-                        Text(it.toString())
-                    }
+            DebugZone(DebugSettingsStore.widgetsDebugInfo) {
+                widgets.forEach {
+                    Text(it.toString())
                 }
             }
         }
@@ -438,11 +435,9 @@ fun WidgetsTab(
     StatusBar(null)
 
     if (showAddDialog) {
-        AddPointDialog(
+        ActionPickerDialog(
             onDismiss = { showAddDialog = false },
-            actions = Action.defaultChoosableActions.toMutableList().apply {
-                add(0, Action.OpenWidget.dummy)
-            },
+            allowWidgets = true,
             onActionSelected = { action ->
                 when (action) {
                     is Action.OpenWidget -> onLaunchSystemWidgetPicker(nestId)
@@ -966,56 +961,51 @@ private fun DraggableWidget(
                         .clip(CircleShape)
                         .background(Color.Transparent),
                     icon = R.drawable.edit_rounded,
-                    contentDescription = stringResource(R.string.edit)
+                    contentDescription = R.string.edit
                 ) { showEditPopup = true }
 
                 DropdownMenu(
                     expanded = showEditPopup,
-                    onDismissRequest = { showEditPopup = false },
-                    containerColor = Color.Transparent,
-                    shadowElevation = 0.dp,
-                    tonalElevation = 0.dp
+                    onDismissRequest = { showEditPopup = false }
                 ) {
-                    Column(
-                        modifier = Modifier.settingsGroup()
-                    ) {
+                    DropdownMenuGroup(shapes = MenuDefaults.groupShapes()) {
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = stringResource(R.string.ghosted),
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 12.sp
+                                )
+                            },
+                            leadingIcon = {
+                                Checkbox(
+                                    checked = app.ghosted == true,
+                                    onCheckedChange = null
+                                )
+                            },
+                            onClick = {
+                                commitChange(app.copy(ghosted = !(app.ghosted ?: Widget.defaultGhosted)))
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = stringResource(R.string.foreground),
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 12.sp
+                                )
+                            },
+                            leadingIcon = {
+                                Checkbox(
+                                    checked = app.foreground == true,
+                                    onCheckedChange = null
+                                )
 
-                        Row(
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Checkbox(
-                                checked = app.ghosted == true,
-                                onCheckedChange = {
-                                    commitChange(app.copy(ghosted = it))
-                                }
-                            )
-
-                            Text(
-                                text = stringResource(R.string.ghosted),
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 12.sp
-                            )
-                        }
-
-                        Row(
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Checkbox(
-                                checked = app.foreground == true,
-                                onCheckedChange = {
-                                    commitChange(app.copy(foreground = it))
-                                }
-                            )
-
-                            Text(
-                                text = stringResource(R.string.foreground),
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 12.sp
-                            )
-                        }
-
+                            },
+                            onClick = {
+                                commitChange(app.copy(foreground = !(app.foreground ?: Widget.defaultForeground)))
+                            }
+                        )
                         SmallShapeRow(
                             selected = app.shape ?: IconShape.RightSquare,
                             onReset = {

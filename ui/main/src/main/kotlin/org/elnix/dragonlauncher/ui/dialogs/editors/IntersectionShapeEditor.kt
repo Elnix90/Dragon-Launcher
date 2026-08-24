@@ -257,8 +257,8 @@ fun IntersectionShapeEditor(
             DragonSettingsGroup(R.string.advanced) {
                 SwitchRow(
                     state = pointsKeepTheirRelativePosition,
-                    title = stringResource(R.string.points_keep_their_relative_position),
-                    description = stringResource(R.string.points_keep_their_relative_position_desc),
+                    title = R.string.points_keep_their_relative_position,
+                    description = R.string.points_keep_their_relative_position_desc,
                     resetEnabled = shape.pointsKeepTheirRelativePosition != null,
                     onReset = {
                         onChangeShape(shape.copy(pointsKeepTheirRelativePosition = null))

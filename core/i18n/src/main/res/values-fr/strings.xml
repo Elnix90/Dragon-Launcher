@@ -623,8 +623,8 @@
     <string name="select_all">Tout sélectionner</string>
     <string name="invert">Inverser</string>
     <string name="advanced">Avancé</string>
-    <string name="yoann_desc">Contributeur majeur (extensions, performances, widgets)</string>
-    <string name="lucky_desc">Contributeur majeur (Bien-être numérique et rappels)</string>
+
+
     <string name="snap_points_angle_desc">Arroundis l\'angle des points à une valeur multiple de 15°</string>
     <string name="snap_points">Accroche les points aux angles</string>
     <string name="snap_points_desc">Colle les points sur une grille virtuelle de taille configurable</string>
@@ -698,7 +698,7 @@
     <string name="default_hold_and_run_delay">Délai par défaut du Maintient et active (ms)</string>
     <string name="default_hold_and_run_delay_summary">Délai appliqué lorsque vous activez Hold &amp; Run sur un point (appuyez sur “Activer Hold &amp; Run”).</string>
     <string name="app_info_cache_key">Cache key = %1$s</string>
-    <string name="federico_desc">Imortant contributeur (Widgets fonctions d\'écran et traductions)</string>
+
     <string name="custom_dim">Opacité custom</string>
     <string name="dim_amount">Quantité d\'opacité</string>
     <string name="refresh">Rafraîchir</string>

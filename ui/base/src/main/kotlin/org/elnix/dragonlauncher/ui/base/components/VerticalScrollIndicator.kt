@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ui.base.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,12 +30,14 @@ import org.elnix.dragonlauncher.ui.base.animation.slideOutVerticalBouncyUp
  * @param T The type of items in the list
  * @param items The list of items to display
  * @param modifier Modifier applied to the LazyColumn
+ * @param verticalArrangement The list's vertical arrangement
  * @param content Composable lambda to render each item
  */
 @Composable
 fun <T> LazyColumnWithScrollIndicator(
     items: List<T>,
     modifier: Modifier = Modifier,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     content: @Composable (T) -> Unit
 ) {
     val state = rememberLazyListState()
@@ -42,6 +45,7 @@ fun <T> LazyColumnWithScrollIndicator(
     Box {
         LazyColumn(
             modifier = modifier,
+            verticalArrangement = verticalArrangement,
             state = state,
         ) {
             items(

@@ -46,8 +46,6 @@ import org.elnix.dragonlauncher.ui.dialogs.ToolbarsOrderDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
-import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
-import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.DrawerActionSelector
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
@@ -69,8 +67,6 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
     val rightDrawerAction by DrawerSettingsStore.rightDrawerAction.asState()
     val leftDrawerWidth by DrawerSettingsStore.leftDrawerWidth.asState()
     val rightDrawerWidth by DrawerSettingsStore.rightDrawerWidth.asState()
-
-    val drawerCategorySettingsState = rememberExpandableSection(stringResource(R.string.category_settings))
 
     val autoOpenSingleMatch by DrawerSettingsStore.autoOpenSingleMatch.asState()
     val showRecentlyUsed by DrawerSettingsStore.showRecentlyUsedApps.asState()
@@ -154,11 +150,9 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
             Setting(DrawerSettingsStore.showAppLabelsInDrawer)
             Setting(DrawerSettingsStore.labelTextColor)
 
-            ExpandableSection(drawerCategorySettingsState) {
-                Setting(DrawerSettingsStore.useCategory)
-                Setting(DrawerSettingsStore.showCategoryName, enabled = useCategory)
-                Setting(DrawerSettingsStore.categoryGridCells)
-            }
+            Setting(DrawerSettingsStore.useCategory)
+            Setting(DrawerSettingsStore.showCategoryName, enabled = useCategory)
+            Setting(DrawerSettingsStore.categoryGridCells)
 
             DrawerIconShapePicker()
         }

@@ -23,6 +23,7 @@ public object HoldToActivateArcSettingsStore : MapSettingsStore() {
     public val holdDelayBeforeStartingLongClickSettings: IntSettingObject = int(
         title = R.string.hold_delay_before_starting_long_click_settings,
         description = R.string.hold_delay_before_starting_long_click_settings_desc,
+        icon = R.drawable.timer,
         default = 500,
         allowedRange = 0..2000
     )
@@ -31,6 +32,7 @@ public object HoldToActivateArcSettingsStore : MapSettingsStore() {
     public val longCLickSettingsDuration: IntSettingObject = int(
         title = R.string.long_click_settings_duration,
         description = R.string.long_click_settings_duration_desc,
+        icon = R.drawable.timer,
         default = 2000,
         allowedRange = 0..5000
     )
@@ -39,6 +41,7 @@ public object HoldToActivateArcSettingsStore : MapSettingsStore() {
     public val holdToActivateSettingsTolerance: DpSettingObject = dp(
         title = R.string.hold_to_activate_tolerance,
         description = R.string.hold_to_activate_tolerance_desc,
+        icon = R.drawable.circle,
         default = 10.dp,
         allowedRange = 5.dp..200.dp
     )
@@ -47,6 +50,7 @@ public object HoldToActivateArcSettingsStore : MapSettingsStore() {
     public val showToleranceOnMainScreen: BooleanSettingObject = boolean(
         title = R.string.show_tolerance_on_main_screen,
         description = R.string.show_tolerance_on_main_screen_desc,
+        icon = R.drawable.circle,
         default = false,
     )
 
@@ -54,6 +58,7 @@ public object HoldToActivateArcSettingsStore : MapSettingsStore() {
     public val rotationsPerSecond: FloatSettingObject = float(
         title = R.string.rotation_per_second,
         description = R.string.rotation_per_second_desc,
+        icon = R.drawable.trhee_d_rotation,
         default = 0f,
         allowedRange = 0f..5f
     )
@@ -66,6 +71,7 @@ public object HoldToActivateArcSettingsStore : MapSettingsStore() {
     public val holdRgbLoading: BooleanSettingObject = boolean(
         title = R.string.rgb_loading_settings,
         description = R.string.rgb_loading_description,
+        icon = R.drawable.palette,
         default = true
     )
 }

@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -43,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
@@ -94,7 +96,6 @@ import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
-import org.elnix.dragonlauncher.ui.base.modifiers.settingsGroup
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
@@ -539,7 +540,8 @@ fun AppDrawerScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(5.dp)
-                                .settingsGroup()
+                                .clip(MaterialTheme.shapes.large)
+                                .background(MaterialTheme.colorScheme.surface)
                         ) {
                             AppGrid(
                                 apps = recentApps,

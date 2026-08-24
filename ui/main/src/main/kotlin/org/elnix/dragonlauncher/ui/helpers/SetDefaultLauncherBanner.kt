@@ -32,7 +32,7 @@ fun SetDefaultLauncherBanner() {
 
         DragonIconButton(
             icon = R.drawable.close,
-            contentDescription = stringResource(R.string.close)
+            contentDescription = R.string.close
         ) {
             scope.launch { PrivateSettingsStore.showSetDefaultLauncherBanner.set(ctx, false) }
         }

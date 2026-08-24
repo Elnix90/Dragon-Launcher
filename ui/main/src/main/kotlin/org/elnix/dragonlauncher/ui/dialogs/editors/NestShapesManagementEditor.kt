@@ -25,11 +25,11 @@ import org.elnix.dragonlauncher.base.model.serializables.IntersectionShape
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.cleanString
 import org.elnix.dragonlauncher.ktx.getNextId
-import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.selfAlignHorizontally
 import org.elnix.dragonlauncher.ui.components.IntersectionShapePreview
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
+import org.elnix.dragonlauncher.ui.dragon.components.CopyIcon
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
@@ -196,16 +196,12 @@ private fun ShapeItem(
 
         Spacer()
 
-        DragonIconButton(
-            icon = R.drawable.copy,
-            contentDescription = R.string.copy,
-            onClick = onClone
-        )
+        CopyIcon(onCopy = onClone)
 
         DragonIconButton(
             icon = R.drawable.close,
             contentDescription = R.string.remove,
-            colors = AppObjectsColors.cancelIconButtonColors(),
+            isCancel = true,
             onClick = onDelete
         )
     }

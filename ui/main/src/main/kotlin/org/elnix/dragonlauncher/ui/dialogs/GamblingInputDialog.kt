@@ -1,9 +1,7 @@
 package org.elnix.dragonlauncher.ui.dialogs
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
@@ -16,17 +14,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
@@ -47,7 +44,7 @@ fun GamblingInputDialog(
         onDismissRequest = onDismiss,
         title = { DialogTitle(stringResource(R.string.gamble_apps)) },
         text = {
-            Column {
+            DragonSettingsGroup {
                 TextField(
                     value = text,
                     onValueChange = {
@@ -68,10 +65,7 @@ fun GamblingInputDialog(
                 AnimatedVisibility(allowFreePoints) {
                     SwitchRow(
                         state = snapToShapes,
-                        title = stringResource(R.string.snap_points),
-                        modifier = Modifier
-                            .padding(top = 5.dp)
-                            .clip(MaterialTheme.shapes.large)
+                        title = R.string.snap_points
                     ) { snapToShapes = it }
                 }
             }

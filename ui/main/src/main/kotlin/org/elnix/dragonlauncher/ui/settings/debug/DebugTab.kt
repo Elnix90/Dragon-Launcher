@@ -6,10 +6,7 @@ import android.provider.Settings
 import android.system.Os.kill
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -65,7 +62,11 @@ fun DebugTab() {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val storeResetSectionState = rememberExpandableSection(stringResource(R.string.store_reset))
+    val storeResetSectionState = rememberExpandableSection(
+        R.string.store_reset,
+        description = R.string.store_reset,
+        icon = R.drawable.delete_forever
+    )
 
     var packageResult by remember { mutableStateOf<String?>(null) }
     var showPermissionDialog by remember { mutableStateOf(false) }
@@ -84,36 +85,22 @@ fun DebugTab() {
         }
 
         DragonSettingsGroup(R.string.ui_flow_and_debug) {
-            DragonButton(
-                onClick = { scope.launch { PrivateSettingsStore.lastSeenVersionCodeWhatsNew.reset(ctx) } },
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth()
-            ) {
+            this.DragonButton(onClick = { scope.launch { PrivateSettingsStore.lastSeenVersionCodeWhatsNew.reset(ctx) } }) {
                 Text(text = "Show What's New sheet")
             }
 
-            DragonButton(
-                onClick = { scope.launch { PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.reset(ctx) } },
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth()
-            ) {
+            this.DragonButton(onClick = { scope.launch { PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.reset(ctx) } }) {
                 Text(text = "Show Google lockdown warning")
             }
 
-            DragonButton(
-                onClick = { scope.launch { PrivateSettingsStore.hasSeenWelcome.reset(ctx) } },
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth()
-            ) {
+            this.DragonButton(onClick = { scope.launch { PrivateSettingsStore.hasSeenWelcome.reset(ctx) } }) {
                 Text(text = "Show Welcome Screen")
             }
 
             Setting(DebugSettingsStore.forceAppLanguageSelector)
             Setting(PrivateSettingsStore.hideBetaVersionWarning)
             Setting(PrivateSettingsStore.showSetDefaultLauncherBanner)
+            Setting(PrivateSettingsStore.showReselectBackupBanner)
             Setting(DebugSettingsStore.showFps)
             Setting(DebugSettingsStore.showKillLauncherActionInActionPicker)
             Setting(UiSettingsStore.doNotRemindMeAgainPinLockWarning)
@@ -166,9 +153,7 @@ fun DebugTab() {
                     removeBorder = true
                 ),
                 shape = CircleShape,
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth(1f),
+                modifier = Modifier.dragonSettingGroup(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done
@@ -195,7 +180,7 @@ fun DebugTab() {
                     text = it,
                     style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.dragonSettingGroup()
                 )
             }
         }
@@ -204,12 +189,7 @@ fun DebugTab() {
             Setting(DebugSettingsStore.useAccessibilityInsteadOfContextToExpandActionPanel)
             Setting(DebugSettingsStore.autoRaiseDragonOnSystemLauncher)
 
-            DragonButton(
-                onClick = { SystemControl.openServiceSettings((ctx)) },
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth()
-            ) {
+            this.DragonButton(onClick = { SystemControl.openServiceSettings((ctx)) }) {
                 Text("Open Accessibility Services")
             }
         }
@@ -229,52 +209,46 @@ fun DebugTab() {
             val systemLauncherPackageNameSetting by DebugSettingsStore.systemLauncherPackageName.asState()
             val systemLauncherPackageName = remember { ctx.detectSystemLauncher() }
 
-            Column(modifier = Modifier.padding(10.dp)) {
 
-                val setButtonEnabled = systemLauncherPackageName != systemLauncherPackageNameSetting
-                DragonButton(
-                    onClick = {
-                        scope.launch {
-                            DebugSettingsStore.systemLauncherPackageName.set(ctx, systemLauncherPackageName)
-                        }
-                    },
-                    enabled = setButtonEnabled,
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth()
-                ) {
-                    AnimatedContent(setButtonEnabled) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            if (it) {
-                                Icon(
-                                    painter = painterResource(R.drawable.save),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimary
-                                )
-                                Spacer(5.dp)
-                                Text("Set Detected Launcher")
-                            } else {
-                                Icon(
-                                    painter = painterResource(R.drawable.check),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                                Spacer(5.dp)
-                                Text("Detected In use!")
-                            }
+            val setButtonEnabled = systemLauncherPackageName != systemLauncherPackageNameSetting
+            this@DragonSettingsGroup.DragonButton(
+                onClick = {
+                    scope.launch {
+                        DebugSettingsStore.systemLauncherPackageName.set(ctx, systemLauncherPackageName)
+                    }
+                },
+                enabled = setButtonEnabled
+            ) {
+                AnimatedContent(setButtonEnabled) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (it) {
+                            Icon(
+                                painter = painterResource(R.drawable.save),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                            Spacer(5.dp)
+                            Text("Set Detected Launcher")
+                        } else {
+                            Icon(
+                                painter = painterResource(R.drawable.check),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(5.dp)
+                            Text("Detected In use!")
                         }
                     }
                 }
-
-
-                TextWithDescription(
-                    text = "Detected system launcher:",
-                    description = systemLauncherPackageName ?: "unknown",
-                    modifier = Modifier.padding(top = 4.dp)
-                )
             }
+
+            TextWithDescription(
+                text = "Detected system launcher:",
+                description = systemLauncherPackageName ?: "unknown",
+                modifier = Modifier.dragonSettingGroup()
+            )
 
             TextField(
                 value = customSystemPackage,
@@ -284,9 +258,7 @@ fun DebugTab() {
                     removeBorder = true
                 ),
                 shape = CircleShape,
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth(1f),
+                modifier = Modifier.dragonSettingGroup(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done
@@ -310,7 +282,7 @@ fun DebugTab() {
         }
 
         DragonSettingsGroup(R.string.test_overlays) {
-            DragonButton(
+            this.DragonButton(
                 onClick = {
                     if (!Settings.canDrawOverlays(ctx)) {
                         showPermissionDialog = true
@@ -326,15 +298,12 @@ fun DebugTab() {
                         hasLimit = true,
                         mode = "reminder"
                     )
-                },
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth()
+                }
             ) {
                 Text(text = "Test: Reminder overlay")
             }
 
-            DragonButton(
+            this.DragonButton(
                 onClick = {
                     if (!Settings.canDrawOverlays(ctx)) {
                         showPermissionDialog = true
@@ -350,46 +319,26 @@ fun DebugTab() {
                         hasLimit = true,
                         mode = "time_warning"
                     )
-                },
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth()
+                }
             ) {
                 Text(text = "Test: Limit overlay")
             }
         }
 
         DragonSettingsGroup(R.string.risky) {
-            DragonButton(
+            this.DragonButton(
                 onClick = {
                     @Suppress("DIVISION_BY_ZERO")
                     5 / 0
-                },
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth()
+                }
             ) { Text(text = "What is 5 / 0? \uD83E\uDD2F") }
 
-            DragonButton(
-                modifier = Modifier
-                    .padding(horizontal = 10.dp)
-                    .fillMaxWidth(),
-                onClick = { LifecycleUtils.closeApp(ctx as ComponentActivity) }
-            ) { Text("Close app (gently)") }
-
-            DragonButton(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth(),
-                onClick = { kill(9, 9) }
-            ) { Text("☠\uFE0F Kill Process") }
+            this.DragonButton(onClick = { LifecycleUtils.closeApp(ctx as ComponentActivity) }) { Text("Close app (gently)") }
+            this.DragonButton(onClick = { kill(9, 9) }) { Text("☠\uFE0F Kill Process") }
         }
 
         DragonSettingsGroup(R.string.dangerous_actions) {
-            DragonButton(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth(),
+            this.DragonButton(
                 onClick = {
                     ctx.startActivity(
                         Intent(Intent.ACTION_DELETE).apply {
@@ -402,15 +351,14 @@ fun DebugTab() {
             Setting(DebugSettingsStore.disableExtensionSignatureCheck)
 
             ExpandableSection(storeResetSectionState) {
-                AllStores.forEach { store ->
-                    DragonButton(
-                        onClick = { scope.launch { store.resetAll(ctx) } },
-                        colors = AppObjectsColors.cancelButtonColors(),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                    ) {
-                        Text("Reset ${store.name}")
+                DragonSettingsGroup {
+                    AllStores.forEach { store ->
+                        DragonButton(
+                            onClick = { scope.launch { store.resetAll(ctx) } },
+                            isCancel = true
+                        ) {
+                            Text("Reset ${store.name}")
+                        }
                     }
                 }
             }

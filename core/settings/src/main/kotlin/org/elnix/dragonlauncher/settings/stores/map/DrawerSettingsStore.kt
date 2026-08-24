@@ -36,6 +36,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val autoOpenSingleMatch: BooleanSettingObject = boolean(
         title = R.string.auto_launch_single_match,
         description = R.string.auto_launch_single_match_desc,
+        icon = R.drawable.open_in_new,
         default = true
     )
 
@@ -43,6 +44,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val disableAutoLaunchWhenFirstCharIs: StringSettingObject = string(
         title = R.string.disable_auto_launch_when_first_char_is,
         description = R.string.pick_a_character,
+        icon = R.drawable.motion_photos,
         default = " "
     )
 
@@ -50,6 +52,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val searchAllWorkspacesOnlyWhenFirstCharIs: StringSettingObject = string(
         title = R.string.search_all_workspaces_when_first_char_is,
         description = R.string.pick_a_character,
+        icon = R.drawable.workspaces,
         default = "."
     )
 
@@ -57,6 +60,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val showAppIconsInDrawer: BooleanSettingObject = boolean(
         title = R.string.show_app_icons_in_drawer,
         description = R.string.show_app_icons_in_drawer_desc,
+        icon = R.drawable.apps,
         default = true
     )
 
@@ -64,6 +68,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val showAppLabelsInDrawer: BooleanSettingObject = boolean(
         title = R.string.show_app_labels_in_drawer,
         description = R.string.show_app_labels_in_drawer_desc,
+        icon = R.drawable.text_fields_alt,
         default = true
     )
 
@@ -71,6 +76,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val labelTextColor: ColorSettingObject = color(
         title = R.string.drawer_label_color,
         description = R.string.drawer_label_color_desc,
+        icon = R.drawable.text_fields_alt,
         default = Color.Unspecified
     )
 
@@ -78,6 +84,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val autoShowKeyboardOnDrawer: BooleanSettingObject = boolean(
         title = R.string.auto_show_keyboard,
         description = R.string.auto_show_keyboard_desc,
+        icon = R.drawable.keyboard,
         default = true
     )
 
@@ -85,21 +92,15 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val autoAskToUnlockProfile: BooleanSettingObject = boolean(
         title = R.string.auto_show_keyboard,
         description = R.string.auto_show_keyboard_desc,
+        icon = R.drawable.lock_open,
         default = true
-    )
-
-
-
-    @SettingKey
-    public val tapEmptySpaceAction: EnumSettingObject<DrawerActions> = enum(
-        title = R.string.tap_empty_space_action,
-        default = DrawerActions.Close
     )
 
     @SettingKey
     public val gridSize: IntSettingObject = int(
         title = R.string.grid_size,
         description = R.string.grid_size_desc,
+        icon = R.drawable.grid_on,
         default = 5,
         allowedRange = 1..15
     )
@@ -111,6 +112,12 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val lastWorkspaceUsed: StringSettingObject = string(
         default = "",
         backupable = false
+    )
+
+    @SettingKey
+    public val tapEmptySpaceAction: EnumSettingObject<DrawerActions> = enum(
+        title = R.string.tap_empty_space_action,
+        default = DrawerActions.Close
     )
 
     @SettingKey
@@ -174,6 +181,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val iconShape: IconShapeSettingObject = shape(
         title = R.string.edit_icons_shape,
         description = R.string.edit_icons_shape_desc,
+        icon = R.drawable.shapes,
         default = IconShape.PlatformDefault
     )
 
@@ -181,6 +189,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val iconsSpacingHorizontal: DpSettingObject = dp(
         title = R.string.icons_spacing_horizontal,
         description = R.string.icons_spacing_horizontal_desc,
+        icon = R.drawable.more_horiz,
         default = 0.dp,
         allowedRange = 0.dp..50.dp
     )
@@ -189,6 +198,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val iconsSpacingVertical: DpSettingObject = dp(
         title = R.string.icons_spacing_vertical,
         description = R.string.icons_spacing_vertical_desc,
+        icon = R.drawable.more_vert,
         default = 8.dp,
         allowedRange = 0.dp..50.dp
 
@@ -198,6 +208,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val iconSize: DpSettingObject = dp(
         description = R.string.icon_size_desc,
         title = R.string.icon_size,
+        icon = R.drawable.format_size,
         default = 48.dp,
         allowedRange = 0.dp..200.dp
     )
@@ -206,6 +217,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val useCategory: BooleanSettingObject = boolean(
         title = R.string.use_categories,
         description = R.string.use_categories_desc,
+        icon = R.drawable.fullscreen,
         default = false
     )
 
@@ -213,6 +225,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val categoryGridCells: IntSettingObject = int(
         title = R.string.category_cells,
         description = R.string.category_cells,
+        icon = R.drawable.more_horiz,
         default = 3,
         allowedRange = 2..5
     )
@@ -221,6 +234,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val showCategoryName: BooleanSettingObject = boolean(
         title = R.string.show_category_name,
         description = R.string.show_category_name_desc,
+        icon = R.drawable.text_fields_alt,
         default = true
     )
 
@@ -232,16 +246,19 @@ public object DrawerSettingsStore : MapSettingsStore() {
 
     @SettingKey
     public val showRecentlyUsedApps: BooleanSettingObject = boolean(
-        default = false,
         title = R.string.show_recently_used_apps,
-        description = R.string.show_recently_used_apps_desc
+        description = R.string.show_recently_used_apps_desc,
+        icon = R.drawable.recent,
+        default = false
     )
+
 
     @SettingKey
     public val recentlyUsedAppsCount: IntSettingObject = int(
         default = 5,
         title = R.string.recently_used_apps_count,
         description = R.string.recently_used_apps_count_desc,
+        icon = R.drawable.recent,
         allowedRange = 1..20
     )
 
@@ -256,6 +273,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val pullDownAnimations: BooleanSettingObject = boolean(
         title = R.string.pull_down_animations,
         description = R.string.pull_down_animations_desc,
+        icon = R.drawable.animation,
         default = true
     )
 
@@ -263,6 +281,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val pullDownWallPaperDim: BooleanSettingObject = boolean(
         title = R.string.pull_down_wallpaper_dim,
         description = R.string.pull_down_wallpaper_dim_desc,
+        icon = R.drawable.wallpaper,
         default = true
     )
 
@@ -273,6 +292,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     public val pullDownScaleIn: BooleanSettingObject = boolean(
         title = R.string.pull_down_scale_in,
         description = R.string.pull_down_scale_in_desc,
+        icon = R.drawable.format_size,
         default = true
     )
 
@@ -282,6 +302,7 @@ public object DrawerSettingsStore : MapSettingsStore() {
     @SettingKey
     public val toolbarsOrder: EnumListSettingObject<DrawerToolbar> = enumList(
         title = R.string.toolbars_order,
-        default = DrawerToolbar.defaultToolbarOrder
+        icon = R.drawable.drag_indicator,
+        default = DrawerToolbar.defaultToolbarOrder,
     )
 }

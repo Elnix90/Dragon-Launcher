@@ -1,24 +1,25 @@
 package org.elnix.dragonlauncher.ui.dragon.components
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.base.components.BoxedIcon
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 @Composable
-fun SwitchRow(
+fun DragonGroupScope.SwitchRow(
     state: Boolean?,
-    title: String,
-    modifier: Modifier = Modifier,
-    description: String? = null,
+    title: Int,
+    description: Int? = null,
+    icon: Int? = null,
     enabled: Boolean = true,
     resetEnabled: Boolean = true,
     defaultValue: Boolean = false,
@@ -29,23 +30,29 @@ fun SwitchRow(
 
     val interactionSource = rememberInteractionSource()
     Row(
-        modifier = modifier
-            .clickable(
-                enabled = enabled,
-                onClick = { onCheck(!checked) },
-                interactionSource = interactionSource
-            )
-            .padding(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(5.dp),
         verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .dragonSettingGroup(enabled = enabled) {
+                clickable(
+                    enabled = enabled,
+                    onClick = { onCheck(!checked) },
+                    interactionSource = interactionSource
+                )
+            }
     ) {
+        if (icon != null) {
+            BoxedIcon(icon, enabled)
+            Spacer(8.dp)
+        }
+
         TextWithDescription(
-            text = title,
-            description = description,
+            text = stringResource(title),
+            description = description?.let { stringResource(description) },
             modifier = Modifier.weight(1f),
             enabled = enabled
         )
 
+        Spacer(5.dp)
         Switch(
             checked = checked,
             enabled = enabled,

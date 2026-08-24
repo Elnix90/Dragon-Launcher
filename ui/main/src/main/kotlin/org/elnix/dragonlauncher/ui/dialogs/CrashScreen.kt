@@ -92,6 +92,7 @@ fun CrashScreen(
             }
 
 
+            // These 2 buttons are here because I want to avoid loading anything
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {

@@ -41,8 +41,9 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
     val mainScreenLayers = LocalMainScreenLayers.current
 
     val topOverlaySettingsState = rememberExpandableSection(
-        title = stringResource(R.string.app_preview_settings),
-        description = stringResource(R.string.app_preview_settings_desc)
+        title = R.string.app_preview_settings,
+        description = R.string.app_preview_settings_desc,
+        icon = R.drawable.visibility
     )
 
     SettingsScaffold(
@@ -62,8 +63,9 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
             val showChargingAnimation by showChargingAnimation()
 
             SwitchRow(
-                title = stringResource(R.string.charging_animation),
-                description = stringResource(R.string.charging_animation_desc),
+                title = R.string.charging_animation,
+                description = R.string.charging_animation_desc,
+                icon = R.drawable.battery_charging,
                 state = showChargingAnimation
             ) {
                 scope.launch {
@@ -87,11 +89,13 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
             val showAppLaunchingPreview by UiSettingsStore.showAppLaunchingPreview.asState()
             AnimatedVisibility(showAppLaunchingPreview) {
                 ExpandableSection(topOverlaySettingsState) {
-                    Setting(UiSettingsStore.showLaunchingAppLabel)
-                    Setting(UiSettingsStore.showLaunchingAppIcon)
-                    Setting(UiSettingsStore.appLabelIconOverlayTopPadding)
-                    Setting(UiSettingsStore.appLabelOverlaySize)
-                    Setting(UiSettingsStore.appIconOverlaySize)
+                    DragonSettingsGroup {
+                        Setting(UiSettingsStore.showLaunchingAppLabel)
+                        Setting(UiSettingsStore.showLaunchingAppIcon)
+                        Setting(UiSettingsStore.appLabelIconOverlayTopPadding)
+                        Setting(UiSettingsStore.appLabelOverlaySize)
+                        Setting(UiSettingsStore.appIconOverlaySize)
+                    }
                 }
             }
 

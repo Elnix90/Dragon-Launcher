@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
-import org.elnix.dragonlauncher.base.model.models.DummyApp.componentName
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.icons.compat.AdaptiveIconDrawableCompat
 import org.elnix.dragonlauncher.icons.compat.ClockIconConfig
@@ -13,11 +13,16 @@ import org.elnix.dragonlauncher.icons.compat.toLauncherIcon
 
 internal class DynamicClockIconProvider(
     private val ctx: Context,
+    private val appRepository: AppRepository,
     private val themed: Boolean,
     private val tint: Int?
 ) : IconProvider {
     override suspend fun getIcon(action: Action, size: Int): LauncherIcon? = withContext(Dispatchers.IO) {
+        if (action !is Action.LaunchApp) return@withContext null
+
+        val componentName = appRepository.fromAction(action)?.componentName ?: return@withContext null
         val pm = ctx.packageManager
+
         val appInfo = try {
             pm.getApplicationInfo(
                 componentName.packageName,

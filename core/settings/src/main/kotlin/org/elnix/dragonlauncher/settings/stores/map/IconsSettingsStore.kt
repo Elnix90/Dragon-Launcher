@@ -25,6 +25,7 @@ public object IconsSettingsStore : MapSettingsStore() {
     public val useIconTint: BooleanSettingObject = boolean(
         title = R.string.use_icon_tint,
         description = R.string.use_icon_tint_desc,
+        icon = R.drawable.colorize,
         default = false
     )
 
@@ -39,6 +40,7 @@ public object IconsSettingsStore : MapSettingsStore() {
     public val onlyTintIconPack: BooleanSettingObject = boolean(
         title = R.string.only_tint_icon_packs,
         description = R.string.only_tint_icon_packs_desc,
+        icon = R.drawable.apps,
         default = true
     )
 
@@ -47,6 +49,7 @@ public object IconsSettingsStore : MapSettingsStore() {
     public val renderForeground: BooleanSettingObject = boolean(
         title = R.string.render_foreground,
         description = R.string.render_foreground_desc,
+        icon = R.drawable.wallpaper,
         default = true
     )
 
@@ -55,6 +58,7 @@ public object IconsSettingsStore : MapSettingsStore() {
     public val renderBackground: BooleanSettingObject = boolean(
         title = R.string.render_background,
         description = R.string.render_background_desc,
+        icon = R.drawable.wallpaper,
         default = true
     )
 
@@ -62,6 +66,7 @@ public object IconsSettingsStore : MapSettingsStore() {
     public val themedIcons: BooleanSettingObject = boolean(
         title = R.string.themed_icons,
         description = R.string.themed_icons_desc,
+        icon = R.drawable.wallpaper,
         default = false
     )
 
@@ -69,6 +74,7 @@ public object IconsSettingsStore : MapSettingsStore() {
     public val forceThemed: BooleanSettingObject = boolean(
         title = R.string.force_themed,
         description = R.string.force_themed_icons_desc,
+        icon = R.drawable.wallpaper,
         default = false
     )
 
@@ -76,6 +82,7 @@ public object IconsSettingsStore : MapSettingsStore() {
     public val adaptify: BooleanSettingObject = boolean(
         title = R.string.adaptify,
         description = R.string.adaptify_icons_desc,
+        icon = R.drawable.question_mark,
         default = false
     )
 }

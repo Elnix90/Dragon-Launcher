@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui.helpers
 
-import android.os.Process
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -8,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -30,6 +28,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.icons.IconPack
 import org.elnix.dragonlauncher.models.DrawerViewModel
@@ -37,6 +37,7 @@ import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
@@ -60,36 +61,36 @@ fun IconPackListContent(
         isLoading = false
     }
 
-    DragonSettingsGroup(R.string.icon_packs) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.padding(vertical = 8.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.icon_packs_found, packs.size),
-                style = MaterialTheme.typography.bodyLargeEmphasized
-            )
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.padding(vertical = 8.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.icon_packs_found, packs.size),
+            style = MaterialTheme.typography.bodyLargeEmphasized
+        )
 
-            AnimatedContent(isLoading) {
-                if (it) {
-                    LoadingIndicator()
-                } else {
-                    DragonIconButton(
-                        icon = R.drawable.refresh,
-                        contentDescription = stringResource(R.string.reload)
-                    ) {
-                        isLoading = true
-                        iconViewModel.updateIconPacks()
-                    }
+        AnimatedContent(isLoading) {
+            if (it) {
+                LoadingIndicator()
+            } else {
+                DragonIconButton(
+                    icon = R.drawable.refresh,
+                    contentDescription = R.string.reload
+                ) {
+                    isLoading = true
+                    iconViewModel.updateIconPacks()
                 }
             }
         }
+    }
 
+    DragonSettingsGroup(R.string.icon_packs) {
         packs.forEach { pack ->
-
             val packPkg = pack.packageName
-            val packApp by drawerViewModel.findOne(packPkg, Process.myUserHandle()).collectAsState(null)
+            val packAction = Action.LaunchApp(packPkg, Profile.dummy())
+            val packApp by drawerViewModel.findOne(packAction).collectAsState(null)
 
             PackItem(
                 selected = selectedPackPackage == packPkg,
@@ -130,7 +131,7 @@ fun IconPackListContent(
 
 
 @Composable
-private fun PackItem(
+private fun DragonGroupScope.PackItem(
     selected: Boolean,
     text: String,
     description: String,
@@ -139,9 +140,9 @@ private fun PackItem(
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(10.dp),
+            .dragonSettingGroup() {
+                clickable(onClick = onClick)
+            },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         icon()

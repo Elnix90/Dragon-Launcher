@@ -8,7 +8,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -20,8 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -53,10 +50,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
-import org.elnix.dragonlauncher.STATUS_BAR_TAG
 import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.STATUS_BAR_TAG
 import org.elnix.dragonlauncher.base.model.models.DateFormat
 import org.elnix.dragonlauncher.base.model.models.TimeFormat
 import org.elnix.dragonlauncher.base.model.serializables.Action
@@ -71,19 +68,17 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.animation.slideInVerticalBouncy
-import org.elnix.dragonlauncher.ui.base.animation.slideOutVerticalBouncy
+import org.elnix.dragonlauncher.ui.base.components.LazyRowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.composition.LocalStatusBarElements
-import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
-import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.DragonTooltip
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
-import org.elnix.dragonlauncher.ui.helpers.CustomActionSelector
+import org.elnix.dragonlauncher.ui.helpers.ActionSelector
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import java.util.UUID
@@ -294,7 +289,8 @@ fun EditStatusBar() {
     CompositionLocalProvider(
         LocalContentColor provides statusBarText
     ) {
-        LazyRow(
+        LazyRowWithScrollIndicator(
+            items = elements,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(100.dp)
@@ -306,248 +302,213 @@ fun EditStatusBar() {
                     end = rightStatusBarPadding.dp,
                     bottom = bottomStatusBarPadding.dp
                 ),
-            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(3.dp),
             state = lazyListState
-        ) {
+        ) { statusBarElement ->
+            ReorderableItem(
+                state = reorderState,
+                key = statusBarElement.id
+            ) { isDragging ->
 
-            items(elements, key = { it.id }) { statusBarElement ->
-                ReorderableItem(
-                    state = reorderState,
-                    key = statusBarElement.id
-                ) { isDragging ->
+                val element = statusBarElement.item
+                val selected = statusBarElement.id == selectedElementId
 
-                    val element = statusBarElement.item
-                    val selected = statusBarElement.id == selectedElementId
-
-                    val scale by animateFloatAsState(
-                        targetValue = when {
-                            isDragging && selected -> 1.2f
-                            isDragging -> 1.3f
-                            selected -> 0.9f
-                            else -> 1f
-                        },
-                        label = "reorderScale"
-                    )
-                    val backgroundColor by animateColorAsState(
-                        targetValue = if (selected) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.surfaceVariant
-                        },
-                        label = "reorderBackground"
-                    )
+                val scale by animateFloatAsState(
+                    targetValue = when {
+                        isDragging && selected -> 1.2f
+                        isDragging -> 1.3f
+                        selected -> 0.9f
+                        else -> 1f
+                    },
+                    label = "reorderScale"
+                )
+                val backgroundColor by animateColorAsState(
+                    targetValue = if (selected) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant
+                    },
+                    label = "reorderBackground"
+                )
 
 
-                    val borderColor by animateColorAsState(
-                        targetValue = if (selected) {
-                            MaterialTheme.colorScheme.onPrimary
-                        } else {
-                            MaterialTheme.colorScheme.primary
-                        },
-                        label = "reorderBorder"
-                    )
+                val borderColor by animateColorAsState(
+                    targetValue = if (selected) {
+                        MaterialTheme.colorScheme.onPrimary
+                    } else {
+                        MaterialTheme.colorScheme.primary
+                    },
+                    label = "reorderBorder"
+                )
 
-                    LaunchedEffect(isDragging) {
-                        if (isDragging) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    }
+                LaunchedEffect(isDragging) {
+                    if (isDragging) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                }
 
-                    Box(
-                        modifier = Modifier
-                            .scale(scale)
-                            .longPressDraggableHandle(onDragStopped = ::save)
-                            .sizeIn(minWidth = 50.dp, minHeight = 50.dp)
-                            .border(1.dp, borderColor, MaterialTheme.shapes.large)
-                            .clip(MaterialTheme.shapes.large)
-                            .background(backgroundColor)
-                            .clickable {
-                                selectedElementId =
-                                    if (selectedElementId == statusBarElement.id) null
-                                    else statusBarElement.id
-                            }
-                            .padding(10.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        StatusBarItem(element, previewMode = true)
-                    }
+                Box(
+                    modifier = Modifier
+                        .scale(scale)
+                        .longPressDraggableHandle(onDragStopped = ::save)
+                        .sizeIn(minWidth = 50.dp, minHeight = 50.dp)
+                        .border(1.dp, borderColor, MaterialTheme.shapes.large)
+                        .clip(MaterialTheme.shapes.large)
+                        .background(backgroundColor)
+                        .clickable {
+                            selectedElementId =
+                                if (selectedElementId == statusBarElement.id) null
+                                else statusBarElement.id
+                        }
+                        .padding(10.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    StatusBarItem(element, previewMode = true)
                 }
             }
         }
 
-        AnimatedVisibility(
-            visible = selectedElementId != null,
-            enter = slideInVerticalBouncy,
-            exit = slideOutVerticalBouncy
-        ) {
+        AnimatedVisibility(selectedElementId != null) {
             elements.firstOrNull { it.id == selectedElementId }?.let { element ->
-                DragonColumnGroup(
-                    Modifier.fillMaxWidth()
-                ) {
-
+                DragonSettingsGroup {
                     when (val item = element.item) {
-
                         is StatusBar.Bandwidth -> {
                             SwitchRow(
-                                title = stringResource(R.string.merge_bandwidth),
-                                description = "",
-                                state = item.merge,
+                                title = R.string.merge_bandwidth,
+                                description = null,
+                                state = item.merge
                             ) {
                                 updateElement(item.copy(merge = it))
                             }
                         }
 
                         is StatusBar.Connectivity -> {
-                            Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                                SwitchRow(
-                                    title = stringResource(R.string.show_airplane_mode),
-                                    description = "",
-                                    state = item.showAirplaneMode,
-                                ) {
-                                    updateElement(item.copy(showAirplaneMode = it))
-                                }
-                                SwitchRow(
-                                    title = stringResource(R.string.show_wifi),
-                                    description = "",
-                                    state = item.showWifi,
-                                ) {
-                                    updateElement(item.copy(showWifi = it))
-                                }
-                                SwitchRow(
-                                    title = stringResource(R.string.show_bluetooth),
-                                    description = "",
-                                    state = item.showBluetooth,
-                                ) {
-                                    updateElement(item.copy(showBluetooth = it))
-                                }
-                                SwitchRow(
-                                    title = stringResource(R.string.show_vpn),
-                                    description = "",
-                                    state = item.showVpn,
-                                ) {
-                                    updateElement(item.copy(showVpn = it))
-                                }
-                                SwitchRow(
-                                    title = stringResource(R.string.show_mobile_data),
-                                    description = "",
-                                    state = item.showMobileData,
-                                ) {
-                                    updateElement(item.copy(showMobileData = it))
-                                }
-                                SwitchRow(
-                                    title = stringResource(R.string.show_hotspot),
-                                    description = "",
-                                    state = item.showHotspot,
-                                ) {
-                                    updateElement(item.copy(showHotspot = it))
-                                }
-                                SliderWithLabel(
-                                    label = stringResource(R.string.connectivity_update_frequency),
-                                    value = item.updateFrequency,
-                                    valueRange = 1..60,
-                                    resetEnabled = item.updateFrequency != StatusBar.Connectivity.defaultUpdateFrequency,
-                                    onReset = { updateElement(item.copy(updateFrequency = StatusBar.Connectivity.defaultUpdateFrequency)) }
-                                ) {
-                                    updateElement(item.copy(updateFrequency = it))
-                                }
-                            }
+                            SwitchRow(
+                                title = R.string.show_airplane_mode,
+                                description = null,
+                                state = item.showAirplaneMode
+                            ) { updateElement(item.copy(showAirplaneMode = it)) }
+                            SwitchRow(
+                                title = R.string.show_wifi,
+                                description = null,
+                                state = item.showWifi
+                            ) { updateElement(item.copy(showWifi = it)) }
+                            SwitchRow(
+                                title = R.string.show_bluetooth,
+                                description = null,
+                                state = item.showBluetooth
+                            ) { updateElement(item.copy(showBluetooth = it)) }
+                            SwitchRow(
+                                title = R.string.show_vpn,
+                                description = null,
+                                state = item.showVpn
+                            ) { updateElement(item.copy(showVpn = it)) }
+                            SwitchRow(
+                                title = R.string.show_mobile_data,
+                                description = null,
+                                state = item.showMobileData
+                            ) { updateElement(item.copy(showMobileData = it)) }
+                            SwitchRow(
+                                title = R.string.show_hotspot,
+                                description = null,
+                                state = item.showHotspot
+                            ) { updateElement(item.copy(showHotspot = it)) }
+                            SliderWithLabel(
+                                label = stringResource(R.string.connectivity_update_frequency),
+                                value = item.updateFrequency,
+                                valueRange = 1..60,
+                                resetEnabled = item.updateFrequency != StatusBar.Connectivity.defaultUpdateFrequency,
+                                onReset = { updateElement(item.copy(updateFrequency = StatusBar.Connectivity.defaultUpdateFrequency)) }
+                            ) { updateElement(item.copy(updateFrequency = it)) }
                         }
 
                         is StatusBar.Date -> {
-
-                            Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                                FlowRow(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    DateFormat.entries.filter { it != DateFormat.Custom }.forEach { format ->
-                                        DragonButton(
-                                            onClick = { updateElement(item.copy(formatter = format.pattern)) }
-                                        ) {
-                                            Text(DateUtils.nowFormattedDate(format.format))
-                                        }
+                            FlowRow(
+                                modifier = Modifier.dragonSettingGroup(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                DateFormat.entries.filter { it != DateFormat.Custom }.forEach { format ->
+                                    org.elnix.dragonlauncher.ui.dragon.components.DragonButton(
+                                        onClick = { updateElement(item.copy(formatter = format.pattern)) }
+                                    ) {
+                                        Text(DateUtils.nowFormattedDate(format.format))
                                     }
                                 }
-
-                                OutlinedTextField(
-                                    label = {
-                                        Text(stringResource(R.string.date_format_title))
-                                    },
-                                    value = item.formatter,
-                                    onValueChange = { newValue ->
-                                        updateElement(item.copy(formatter = newValue))
-                                    },
-                                    singleLine = true,
-                                    isError = !isValidDateFormat(item.formatter),
-                                    supportingText = if (!isValidDateFormat(item.formatter)) {
-                                        { Text(stringResource(R.string.invalid_format)) }
-                                    } else null,
-                                    placeholder = { Text("MMM dd") },
-                                    trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.reset),
-                                            contentDescription = stringResource(R.string.reset),
-                                            tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.clickable {
-                                                updateElement(item.copy(formatter = "MMM dd"))
-                                            }
-                                        )
-                                    },
-                                    modifier = Modifier.fillMaxWidth(),
-                                    colors = AppObjectsColors.outlinedTextFieldColors()
-                                )
-
-                                CustomActionSelector(
-                                    currentAction = item.action,
-                                    label = stringResource(R.string.clock_action),
-                                    nullText = stringResource(R.string.opens_alarm_clock_app),
-                                    resetEnabled = item.action != null,
-                                    onReset = { updateElement(item.copy(action = null)) },
-                                    onToggle = { updateElement(item.copy(action = null)) }
-                                ) { updateElement(item.copy(action = it)) }
                             }
+
+                            OutlinedTextField(
+                                label = { Text(stringResource(R.string.date_format_title)) },
+                                value = item.formatter,
+                                onValueChange = { newValue ->
+                                    updateElement(item.copy(formatter = newValue))
+                                },
+                                singleLine = true,
+                                isError = !isValidDateFormat(item.formatter),
+                                supportingText = if (!isValidDateFormat(item.formatter)) {
+                                    { Text(stringResource(R.string.invalid_format)) }
+                                } else null,
+                                placeholder = { Text("MMM dd") },
+                                trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.reset),
+                                        contentDescription = stringResource(R.string.reset),
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.clickable {
+                                            updateElement(item.copy(formatter = "MMM dd"))
+                                        }
+                                    )
+                                },
+                                modifier = Modifier.dragonSettingGroup(),
+                                colors = AppObjectsColors.outlinedTextFieldColors()
+                            )
+
+                            ActionSelector(
+                                currentAction = item.action,
+                                label = stringResource(R.string.clock_action),
+                                nullText = stringResource(R.string.opens_alarm_clock_app),
+                                resetEnabled = item.action != null,
+                                onReset = { updateElement(item.copy(action = null)) },
+                                onToggle = { updateElement(item.copy(action = null)) }
+                            ) { updateElement(item.copy(action = it)) }
                         }
 
                         is StatusBar.Time -> {
-                            Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                                FlowRow(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    TimeFormat.entries.filter { it != TimeFormat.Custom }.forEach { format ->
-                                        DragonButton(
-                                            onClick = { updateElement(item.copy(formatter = format.pattern)) }
-                                        ) {
-                                            Text(DateUtils.nowFormattedTime(format.format))
-                                        }
+                            FlowRow(
+                                modifier = Modifier.dragonSettingGroup(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                TimeFormat.entries.filter { it != TimeFormat.Custom }.forEach { format ->
+                                    org.elnix.dragonlauncher.ui.dragon.components.DragonButton(
+                                        onClick = { updateElement(item.copy(formatter = format.pattern)) }
+                                    ) {
+                                        Text(DateUtils.nowFormattedTime(format.format))
                                     }
                                 }
-
-                                OutlinedTextField(
-                                    label = { Text(stringResource(R.string.time_format_title)) },
-                                    value = item.formatter,
-                                    onValueChange = { newValue ->
-                                        updateElement(item.copy(formatter = newValue))
-                                    },
-                                    singleLine = true,
-                                    isError = !isValidTimeFormat(item.formatter),
-                                    supportingText = if (!isValidTimeFormat(item.formatter)) {
-                                        { Text(stringResource(R.string.invalid_format)) }
-                                    } else null,
-                                    placeholder = { Text("HH:mm:ss") },
-                                    trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.reset),
-                                            contentDescription = stringResource(R.string.reset),
-                                            tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.clickable {
-                                                updateElement(item.copy(formatter = "HH:mm:ss"))
-                                            }
-                                        )
-                                    },
-                                    modifier = Modifier.fillMaxWidth(),
-                                    colors = AppObjectsColors.outlinedTextFieldColors()
-                                )
                             }
+
+                            OutlinedTextField(
+                                label = { Text(stringResource(R.string.time_format_title)) },
+                                value = item.formatter,
+                                onValueChange = { newValue ->
+                                    updateElement(item.copy(formatter = newValue))
+                                },
+                                singleLine = true,
+                                isError = !isValidTimeFormat(item.formatter),
+                                supportingText = if (!isValidTimeFormat(item.formatter)) {
+                                    { Text(stringResource(R.string.invalid_format)) }
+                                } else null,
+                                placeholder = { Text("HH:mm:ss") },
+                                trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.reset),
+                                        contentDescription = stringResource(R.string.reset),
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.clickable {
+                                            updateElement(item.copy(formatter = "HH:mm:ss"))
+                                        }
+                                    )
+                                },
+                                modifier = Modifier.dragonSettingGroup(),
+                                colors = AppObjectsColors.outlinedTextFieldColors()
+                            )
                         }
 
                         is StatusBar.Notifications -> {
@@ -587,69 +548,65 @@ fun EditStatusBar() {
 
                         is StatusBar.Battery -> {
                             SwitchRow(
-                                title = stringResource(R.string.show_percentage),
-                                description = stringResource(R.string.show_percentage_desc),
-                                state = item.showPercentage,
+                                title = R.string.show_percentage,
+                                description = R.string.show_percentage_desc,
+                                state = item.showPercentage
                             ) {
                                 updateElement(item.copy(showPercentage = it))
                             }
                         }
 
                         is StatusBar.NextAlarm -> {
-                            Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                                Text(
-                                    text = stringResource(R.string.time_format_examples),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onBackground
-                                )
+                            Text(
+                                text = stringResource(R.string.time_format_examples),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                modifier = Modifier.dragonSettingGroup()
+                            )
 
-                                OutlinedTextField(
-                                    label = { Text(stringResource(R.string.time_format_title)) },
-                                    value = item.formatter,
-                                    onValueChange = { newValue ->
-                                        updateElement(item.copy(formatter = newValue))
-                                    },
-                                    singleLine = true,
-                                    isError = !isValidTimeFormat(item.formatter),
-                                    supportingText = if (!isValidTimeFormat(item.formatter)) {
-                                        { Text(stringResource(R.string.invalid_format)) }
-                                    } else null,
-                                    placeholder = { Text("HH:mm") },
-                                    trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.reset),
-                                            contentDescription = stringResource(R.string.reset),
-                                            tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.clickable {
-                                                updateElement(item.copy(formatter = "HH:mm"))
-                                            }
-                                        )
-                                    },
-                                    modifier = Modifier.fillMaxWidth(),
-                                    colors = AppObjectsColors.outlinedTextFieldColors()
-                                )
-                            }
+                            OutlinedTextField(
+                                label = { Text(stringResource(R.string.time_format_title)) },
+                                value = item.formatter,
+                                onValueChange = { newValue ->
+                                    updateElement(item.copy(formatter = newValue))
+                                },
+                                singleLine = true,
+                                isError = !isValidTimeFormat(item.formatter),
+                                supportingText = if (!isValidTimeFormat(item.formatter)) {
+                                    { Text(stringResource(R.string.invalid_format)) }
+                                } else null,
+                                placeholder = { Text("HH:mm") },
+                                trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.reset),
+                                        contentDescription = stringResource(R.string.reset),
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.clickable {
+                                            updateElement(item.copy(formatter = "HH:mm"))
+                                        }
+                                    )
+                                },
+                                modifier = Modifier.dragonSettingGroup(),
+                                colors = AppObjectsColors.outlinedTextFieldColors()
+                            )
                         }
                     }
+
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.dragonSettingGroup(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         DragonIconButton(
-                            onClick = {
-                                duplicateElement(element)
-                            },
+                            onClick = { duplicateElement(element) },
                             icon = R.drawable.copy,
-                            contentDescription = stringResource(R.string.copy)
+                            contentDescription = R.string.copy
                         )
 
                         DragonIconButton(
-                            onClick = {
-                                removeElement(element)
-                            },
+                            onClick = { removeElement(element) },
                             icon = R.drawable.close,
-                            contentDescription = stringResource(R.string.copy)
+                            contentDescription = R.string.close
                         )
                     }
                 }

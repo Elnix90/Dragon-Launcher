@@ -7,17 +7,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import org.elnix.dragonlauncher.SHAPES_TAG
 import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.SHAPES_TAG
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.helpers.ShapeRow
 
 
 @Composable
-fun DrawerIconShapePicker() {
+fun DragonGroupScope.DrawerIconShapePicker() {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 

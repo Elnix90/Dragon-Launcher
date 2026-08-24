@@ -38,6 +38,7 @@ fun BottomBanners(currentRoute: NavKey) {
 
     val autoBackupEnabled by BackupSettingsStore.autoBackupEnabled.asState()
     val autoBackupUriString by BackupSettingsStore.autoBackupUri.asStateNull()
+    val showReselectBackupBanner by PrivateSettingsStore.showReselectBackupBanner.asStateNull()
     val autoBackupUri by remember(autoBackupUriString) {
         derivedStateOf { autoBackupUriString?.toUri() }
     }
@@ -55,8 +56,8 @@ fun BottomBanners(currentRoute: NavKey) {
         }
     }
 
-    val showReselectAutoBackupFile = autoBackupEnabled && hasAutoBackupPermission == false && autoBackupUri != null
     val showSetAsDefaultBanner = (showSetDefaultLauncherBanner == true) && !isDefaultLauncher
+    val showReselectAutoBackupFile = (showReselectBackupBanner == true) && autoBackupEnabled && hasAutoBackupPermission == false && autoBackupUri != null
 
 
     if (showSetAsDefaultBanner || showReselectAutoBackupFile) {

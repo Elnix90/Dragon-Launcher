@@ -599,9 +599,9 @@
     <string name="select_all">அனைத்தையும் தெரிவுசெய்</string>
     <string name="invert">தலைகீழாக மாற்றவும்</string>
     <string name="advanced">மேம்பட்ட</string>
-    <string name="yoann_desc">முக்கிய பங்களிப்பாளர் (நீட்டிப்புகள், செயல்திறன், விட்செட்டுகள்)</string>
-    <string name="lucky_desc">முக்கிய பங்களிப்பாளர் (டிசிட்டல் நல்வாழ்வு மற்றும் நினைவூட்டல்கள்)</string>
-    <string name="federico_desc">முக்கியமான பங்களிப்பாளர் (விட்செட்ச் திரை நற்பொருத்தங்கள் மற்றும் மொழிபெயர்ப்பு)</string>
+
+
+
     <string name="permission_tab_help">பயன்பாட்டு அனுமதிகளைக் கட்டுப்படுத்தவும், வெளிப்புற நீட்டிப்புகளுக்கு வெவ்வேறு அணுகல் உள்ளது</string>
     <string name="special_system_access">சிறப்பு அமைப்பு அணுகல்</string>
     <string name="notification_access">அறிவிப்பு அணுகல்</string>

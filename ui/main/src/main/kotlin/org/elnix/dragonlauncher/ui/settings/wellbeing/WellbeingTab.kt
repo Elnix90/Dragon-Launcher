@@ -2,14 +2,13 @@ package org.elnix.dragonlauncher.ui.settings.wellbeing
 
 import android.content.Intent
 import android.provider.Settings
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -23,33 +22,30 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.Constants.PackageNameLists.knownSocialMediaApps
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.models.ReminderMode
-import org.elnix.dragonlauncher.enumsui.toggle.WellbeingPausedAppActions
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
-import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
 import org.elnix.dragonlauncher.ui.dialogs.AppUsagePermissionDialog
-import org.elnix.dragonlauncher.ui.dragon.components.DragonColumnGroup
+import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
-import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -97,32 +93,24 @@ fun WellbeingTab(
 
         DragonSettingsGroup(R.string.social_media_pause) {
             Setting(WellbeingSettingsStore.socialMediaPauseEnabled)
-
-            AnimatedVisibility(visible = socialMediaPauseEnabled) {
-                Column {
-                    Setting(
-                        WellbeingSettingsStore.guiltModeEnabled,
-                        enabled = true,
-                    ) { newValue ->
-                        if (newValue && hasUsageStatsPermission) {
-                            showPermissionDialog = true
-                        } else {
-                            scope.launch {
-                                WellbeingSettingsStore.guiltModeEnabled.set(ctx, newValue)
-                            }
-                        }
+            Setting(
+                WellbeingSettingsStore.guiltModeEnabled,
+                enabled = socialMediaPauseEnabled,
+            ) { newValue ->
+                if (newValue && hasUsageStatsPermission) {
+                    showPermissionDialog = true
+                } else {
+                    scope.launch {
+                        WellbeingSettingsStore.guiltModeEnabled.set(ctx, newValue)
                     }
-
-                    Setting(WellbeingSettingsStore.pauseDurationSeconds)
                 }
             }
+            Setting(WellbeingSettingsStore.pauseDurationSeconds, enabled = socialMediaPauseEnabled)
         }
-
-
 
         DragonSettingsGroup(R.string.reminder_mode_title) {
             Setting(
-                WellbeingSettingsStore.reminderEnabled,
+                setting = WellbeingSettingsStore.reminderEnabled,
                 enabled = socialMediaPauseEnabled,
             ) { newValue ->
                 if (newValue && reminderMode == ReminderMode.Overlay && !Settings.canDrawOverlays(ctx)) {
@@ -130,34 +118,16 @@ fun WellbeingTab(
                 }
             }
 
-            AnimatedVisibility(visible = socialMediaPauseEnabled && reminderEnabled) {
-                Setting(WellbeingSettingsStore.reminderIntervalMinutes)
-            }
+            Setting(WellbeingSettingsStore.reminderIntervalMinutes, enabled = socialMediaPauseEnabled && reminderEnabled)
         }
 
-        AnimatedVisibility(reminderMode == ReminderMode.Overlay && socialMediaPauseEnabled && reminderEnabled) {
+        DragonSettingsGroup(R.string.popup_display_title) {
+            Setting(WellbeingSettingsStore.reminderMode, enabled = socialMediaPauseEnabled && reminderEnabled)
 
-            DragonSettingsGroup(R.string.popup_display_title) {
-                ActionSelectorRow(
-                    options = ReminderMode.entries,
-                    selected = reminderMode,
-                    label = stringResource(R.string.mode),
-                    resetEnabled = reminderMode != ReminderMode.Overlay,
-                    onReset = {
-                        scope.launch {
-                            WellbeingSettingsStore.reminderMode.reset(ctx)
-                        }
-                    }
-                ) {
-                    scope.launch {
-                        WellbeingSettingsStore.reminderMode.set(ctx, it)
-                    }
-                }
-
-                Setting(WellbeingSettingsStore.popupShowSessionTime)
-                Setting(WellbeingSettingsStore.popupShowTodayTime)
-                Setting(WellbeingSettingsStore.popupShowRemainingTime)
-            }
+            val enabled = reminderMode == ReminderMode.Overlay && socialMediaPauseEnabled && reminderEnabled
+            Setting(WellbeingSettingsStore.popupShowSessionTime, enabled = enabled)
+            Setting(WellbeingSettingsStore.popupShowTodayTime, enabled = enabled)
+            Setting(WellbeingSettingsStore.popupShowRemainingTime, enabled = enabled)
         }
 
         DragonSettingsGroup(R.string.other) {
@@ -165,40 +135,63 @@ fun WellbeingTab(
         }
 
         DragonSettingsGroup(R.string.paused_apps) {
-            MultiSelectConnectedButtonRow(
-                entries = WellbeingPausedAppActions.entries,
-                enabled = {
-                    when (it) {
-                        WellbeingPausedAppActions.Add, WellbeingPausedAppActions.AddAll -> true
-                        WellbeingPausedAppActions.ClearAll -> pausedApps.isNotEmpty()
-                    }
-                }
-            ) { action ->
-                when (action) {
-                    WellbeingPausedAppActions.Add -> {
-                        showAppPicker = true
-                    }
+            val interactionSources = remember { List(2) { MutableInteractionSource() } }
 
-                    WellbeingPausedAppActions.AddAll -> {
-                        scope.launch {
-                            val installedPackages = allApps.map { it.packageName }.toSet()
-                            val socialApps = knownSocialMediaApps.filter {
-                                it in installedPackages
-                            }
-                            WellbeingSettingsStore.pausedApps.set(ctx, pausedApps + socialApps)
-                        }
-                    }
+            ButtonGroup(
+                overflowIndicator = { ButtonGroupDefaults.OverflowIndicator(it) },
+                modifier = Modifier.dragonSettingGroup(),
+            ) {
 
-                    WellbeingPausedAppActions.ClearAll -> {
-                        scope.launch {
-                            WellbeingSettingsStore.pausedApps.reset(ctx)
+                customItem(
+                    buttonGroupContent = {
+                        DragonButton(
+                            onClick = { showAppPicker = true },
+                            interactionSource = interactionSources[0],
+                            modifier = Modifier
+                                .weight(1f)
+                                .animateWidth(interactionSources[0])
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.add),
+                                contentDescription = null
+                            )
+                            Spacer(5.dp)
+                            Text(stringResource(R.string.add_app))
                         }
-                    }
-                }
+                    },
+                    menuContent = {}
+                )
+
+                customItem(
+                    buttonGroupContent = {
+                        DragonButton(
+                            onClick = {
+                                scope.launch {
+                                    val installedPackages = allApps.map { it.packageName }.toSet()
+                                    val socialApps = knownSocialMediaApps.filter {
+                                        it in installedPackages
+                                    }
+                                    WellbeingSettingsStore.pausedApps.set(ctx, pausedApps + socialApps)
+                                }
+                            },
+                            interactionSource = interactionSources[1],
+                            modifier = Modifier
+                                .weight(1f)
+                                .animateWidth(interactionSources[1])
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.apps),
+                                contentDescription = null
+                            )
+                            Spacer(5.dp)
+                            Text(stringResource(R.string.add_social_media))
+                        }
+                    },
+                    menuContent = {}
+                )
             }
 
             if (pausedApps.isNotEmpty()) {
-
                 pausedApps.forEach { packageName ->
                     val app = allApps.find { it.packageName == packageName }
 
@@ -214,24 +207,13 @@ fun WellbeingTab(
                     }
                 }
             } else {
-                DragonColumnGroup {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = "🐉",
-                            fontSize = 28.sp
-                        )
-                        Text(
-                            text = stringResource(R.string.no_paused_apps),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(horizontal = 32.dp)
-                        )
-                    }
-                }
+                Text(
+                    text = stringResource(R.string.no_paused_apps),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.dragonSettingGroup()
+                )
             }
         }
     }
@@ -285,38 +267,28 @@ fun WellbeingTab(
 }
 
 @Composable
-private fun PausedAppItem(
+private fun DragonGroupScope.PausedAppItem(
     app: Application,
     onRemove: () -> Unit
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.large)
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(horizontal = 16.dp, vertical = 10.dp),
+        modifier = Modifier.dragonSettingGroup(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        AppIcon(app, 30.dp)
+
+        TextWithDescription(
+            text = app.label,
+            description = app.packageName,
             modifier = Modifier.weight(1f)
-        ) {
+        )
 
-            AppIcon(app, 30.dp)
-
-            TextWithDescription(
-                text = app.label,
-                description = app.packageName
-            )
-        }
+        DragonIconButton(
+            icon = R.drawable.close,
+            contentDescription = R.string.remove,
+            onClick = onRemove,
+            isCancel = true
+        )
     }
-
-    DragonIconButton(
-        onClick = onRemove,
-        icon = R.drawable.close,
-        contentDescription = stringResource(R.string.remove),
-        colors = AppObjectsColors.cancelIconButtonColors()
-    )
 }

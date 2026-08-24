@@ -1,7 +1,5 @@
 package org.elnix.dragonlauncher.ui.dialogs
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -15,10 +13,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.ValidateCancelButtons
 import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 
@@ -44,10 +42,7 @@ fun CreateOrEditWorkspaceDialog(
             textAlign = TextAlign.Center
         )
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
+        DragonSettingsGroup  {
             TextField(
                 value = name,
                 onValueChange = onNameChange,
@@ -55,7 +50,7 @@ fun CreateOrEditWorkspaceDialog(
                 placeholder = {
                     Text(stringResource(R.string.workspace_name))
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.dragonSettingGroup(),
             )
 
             ActionSelectorRow(
@@ -71,6 +66,7 @@ fun CreateOrEditWorkspaceDialog(
                 selectedType = it!!
             }
         }
+
         ValidateCancelButtons(
             onCancel = onDismiss,
             onConfirm = {

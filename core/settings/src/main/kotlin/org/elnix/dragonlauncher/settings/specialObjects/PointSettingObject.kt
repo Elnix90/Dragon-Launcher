@@ -14,6 +14,7 @@ public data class PointSettingObject(
     override val title: Int?,
     override val description: Int?,
     override var onChanged: (() -> Unit)?,
+    override val icon: Int?,
     override val backupable: Boolean,
     override val settingsStore: SettingsStore<*, *>
 ) : SettingObject<Point, String>() {
@@ -27,12 +28,14 @@ public fun MapSettingsStore.point(
     default: Point,
     title: Int? = null,
     description: Int? = null,
+    icon: Int? = null,
     key: String = "",
     onChanged: (() -> Unit)? = null,
     backupable: Boolean = true
 ): PointSettingObject = PointSettingObject(
     key = key.isNotBlankKey,
     title = title,
+    icon = icon,
     description = description,
     default = default,
     onChanged = onChanged,

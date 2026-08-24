@@ -12,12 +12,12 @@ import io.github.elnix90.core.objects.BooleanSettingObject
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ui.composition.LocalSettingsPlacementChecker
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 @Composable
-fun Setting(
+fun DragonGroupScope.Setting(
     setting: BooleanSettingObject,
     enabled: Boolean = true,
     needValidationToEnable: Boolean = false,
@@ -25,9 +25,6 @@ fun Setting(
     confirmText: Int = R.string.are_you_sure,
     onCheck: ((Boolean) -> Unit)? = null
 ) {
-    // Craches if this setting isn't placed inside a DragonSettingsGroup
-    LocalSettingsPlacementChecker.current
-
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -44,8 +41,9 @@ fun Setting(
 
     SwitchRow(
         state = state,
-        title = stringResource(setting.title!!),
-        description = stringResource(setting.description!!),
+        title = setting.title!!,
+        description = setting.description!!, // Keep the !! to enforce all boolean settings to have a desc
+        icon = setting.icon,
         enabled = enabled
     ) { clicked ->
         when {

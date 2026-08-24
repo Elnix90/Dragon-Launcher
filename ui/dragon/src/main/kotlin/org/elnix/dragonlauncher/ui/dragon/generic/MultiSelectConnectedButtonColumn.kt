@@ -58,13 +58,14 @@ fun <T : ToggleButtonOption> MultiSelectConnectedButtonColumn(
     ) {
         entries.forEachIndexed { index, entry ->
 
-            // No idea why, but using a not here feels more natural for the displayed entries
-            val checked = !checked(entry)
+            val checked = checked(entry)
+            val enabled = enabled(entry)
 
             DragonTooltip(entry.resId ?: -1) {
+                @Suppress("DEPRECATION")
                 ToggleButton(
                     checked = checked,
-                    enabled = enabled(entry),
+                    enabled = enabled,
                     onCheckedChange = {
                         onCheck(entry)
                         if (hapticFeedback) {

@@ -42,11 +42,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.core.SettingsBackupManager
-import org.elnix.dragonlauncher.BACKUP_TAG
-import org.elnix.dragonlauncher.THEMES_TAG
 import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.BACKUP_TAG
+import org.elnix.dragonlauncher.THEMES_TAG
 import org.elnix.dragonlauncher.base.loadThemes
 import org.elnix.dragonlauncher.base.model.models.ThemeObject
 import org.elnix.dragonlauncher.base.utils.DateUtils
@@ -58,7 +58,6 @@ import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.settings.themeSettingsStores
-import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
@@ -223,7 +222,7 @@ fun ThemesTab(backupViewModel: BackupViewModel = activityViewModel()) {
                     DragonIconButton(
                         onClick = ::addCurrentTheme,
                         icon = R.drawable.add,
-                        contentDescription = stringResource(R.string.add_current_theme)
+                        contentDescription = R.string.add_current_theme
                     )
                     Text(stringResource(R.string.add_current_theme))
                 }
@@ -333,8 +332,8 @@ private fun UserThemeCard(
         DragonIconButton(
             onClick = onRemove,
             icon = R.drawable.remove_circle,
-            contentDescription = stringResource(R.string.remove),
-            colors = AppObjectsColors.cancelIconButtonColors()
+            contentDescription = R.string.remove,
+            isCancel = true
         )
     }
 }

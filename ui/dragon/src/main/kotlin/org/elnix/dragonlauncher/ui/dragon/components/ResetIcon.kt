@@ -22,3 +22,12 @@ fun MoreIcon(enabled: Boolean = true, onReset: () -> Unit) {
         onClick = onReset
     )
 }
+@Composable
+fun CopyIcon(enabled: Boolean = true, onCopy: () -> Unit) {
+    DragonIconButton(
+        icon = R.drawable.copy,
+        contentDescription = R.string.copy,
+        enabled = enabled,
+        onClick = onCopy
+    )
+}

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 
 sealed class ExpandableSectionMode {
     data class ModalSheet(
-        val skipPartiallyExpanded: Boolean = false
+        val skipPartiallyExpanded: Boolean = true
     ) : ExpandableSectionMode()
 
     data object Expandable : ExpandableSectionMode()
@@ -13,9 +13,10 @@ sealed class ExpandableSectionMode {
 @Stable
 data class ExpandableSectionState(
     val isExpanded: () -> Boolean,
-    val enabled: () -> Boolean,
-    val title: String,
-    val description: String?,
+    val enabled: Boolean,
+    val title: Int,
+    val description: Int?,
+    val icon: Int?,
     val mode: ExpandableSectionMode,
     val toggle: () -> Unit,
 )

@@ -11,19 +11,27 @@ import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
 import org.elnix.dragonlauncher.base.theme.ExtraColors
 
+/**
+ * ### Action icon provider
+ * Provides an icon for every [Action]
+ *
+ * **This is the core and base function of all Dragon Launcher providers.**
+ */
 internal class ActionIconProvider(
     private val ctx: Context,
     private val extraColors: ExtraColors
 ) : IconProvider {
     override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
 
+
         when (action) {
             is Action.LaunchApp -> {
                 // When the launch app is the dummy one, I return the app grid instead of an action icon
                 if (action != Action.LaunchApp.dummy) return null
             }
-//            is Action.LaunchShortcut -> {
-//            }
+            is Action.LaunchShortcut -> {
+                if (action != Action.LaunchShortcut.dummy) return null
+            }
             else -> {/* no-op */}
         }
 

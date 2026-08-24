@@ -35,7 +35,6 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -61,7 +60,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -71,13 +69,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
-import org.elnix.dragonlauncher.FONT_PROVIDER
 import io.github.elnix90.logging.logD
 import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.FONT_PROVIDER
 import org.elnix.dragonlauncher.base.Constants
 import org.elnix.dragonlauncher.fonts.fontNameToFont
 import org.elnix.dragonlauncher.i18n.R
@@ -86,7 +84,11 @@ import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
+import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import java.io.File
 import java.io.FileOutputStream
@@ -459,20 +461,14 @@ fun FontTab() {
 
                         customItem(
                             buttonGroupContent = {
-                                IconButton(
-                                    onClick = { isDeleteMode = true },
+                                DragonIconButton(
+                                    icon = R.drawable.delete_forever,
+                                    contentDescription = R.string.delete,
                                     interactionSource = interactionSources[2],
                                     modifier = Modifier
                                         .weight(1f)
                                         .animateWidth(interactionSources[2]),
-                                    colors = AppObjectsColors.cancelIconButtonColors(),
-                                    shapes = IconButtonDefaults.shapes()
-                                ) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.delete_forever),
-                                        contentDescription = null
-                                    )
-                                }
+                                ) { isDeleteMode = true }
                             },
                             menuContent = {}
                         )
@@ -670,14 +666,8 @@ fun FontTab() {
         }
 
 
-        Column {
+        DragonSettingsGroup(R.string.font_installed_fonts) {
             if (filteredLocal.isNotEmpty()) {
-                Text(
-                    stringResource(R.string.font_installed_fonts),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-                )
                 filteredLocal.forEach { font ->
                     val isDeletable = font !in listOf(
                         "Default",
@@ -711,34 +701,21 @@ fun FontTab() {
             }
 
             if (filteredRemote.isNotEmpty()) {
-                HorizontalDivider(
-                    modifier = Modifier.padding(
-                        vertical = 8.dp,
-                        horizontal = 16.dp
-                    ), thickness = 0.5.dp
-                )
-                Text(
-                    stringResource(
-                        R.string.font_available_in_extension,
-                        filteredRemote.size
-                    ),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-                )
-                filteredRemote.forEach { (name, _) ->
-                    FontRow(
-                        font = name,
-                        isSelected = globalFontName == name,
-                        isInstalled = false
-                    ) {
-                        val i =
-                            Intent("org.elnix.dragonlauncher.ACTION_GET_FONTS").apply {
-                                putExtra("FONT_NAME", name)
-                                setPackage(Constants.Extensions.FONT_EXTENSION_PKG)
-                            }
-                        ctx.startService(i)
-                        ctx.showToast("Downloading $name...")
+                DragonSettingsGroup(stringResource(R.string.font_available_in_extension, filteredRemote.size)) {
+                    filteredRemote.forEach { (name, _) ->
+                        FontRow(
+                            font = name,
+                            isSelected = globalFontName == name,
+                            isInstalled = false
+                        ) {
+                            val i =
+                                Intent("org.elnix.dragonlauncher.ACTION_GET_FONTS").apply {
+                                    putExtra("FONT_NAME", name)
+                                    setPackage(Constants.Extensions.FONT_EXTENSION_PKG)
+                                }
+                            ctx.startService(i)
+                            ctx.showToast("Downloading $name...")
+                        }
                     }
                 }
             }
@@ -747,7 +724,7 @@ fun FontTab() {
 }
 
 @Composable
-fun FontRow(
+private fun DragonGroupScope.FontRow(
     font: String,
     isSelected: Boolean,
     isInstalled: Boolean,
@@ -755,16 +732,16 @@ fun FontRow(
     onClick: () -> Unit
 ) {
     val ctx = LocalContext.current
-    val containerColor =
-        if (isSelected && !showCheckbox) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f) else Color.Transparent
+    val primaryContainer = MaterialTheme.colorScheme.primaryContainer
 
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.large)
-            .background(containerColor)
-            .clickable { onClick() }
-            .padding(horizontal = 12.dp, vertical = 8.dp),
+            .dragonSettingGroup() {
+                clickable { onClick() }
+                    .conditional(isSelected && !showCheckbox) {
+                        background(primaryContainer)
+                    }
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (showCheckbox) {

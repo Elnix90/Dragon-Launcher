@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
 import org.elnix.dragonlauncher.enumsui.select.LocalWorkspaceViewMode
@@ -39,6 +40,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
 import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceLockedContent
 import org.elnix.dragonlauncher.ui.helpers.workspace.WorkspaceUnavailableContent
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun WorkspaceDetailScreen(
@@ -51,7 +53,7 @@ fun WorkspaceDetailScreen(
     val workspaces by workspaceManager.workspaces.asState()
     val workspace = workspaces.first { it.id == workspaceId }
 
-    var selectedView by remember { mutableStateOf(WorkspaceViewMode.Default) }
+    var workspaceViewMode by remember { mutableStateOf(WorkspaceViewMode.Default) }
     var showAppPicker by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -62,11 +64,14 @@ fun WorkspaceDetailScreen(
     }
 
     val apps by drawerViewModel
-        .search(
-            workspace = workspace,
-            workspaceViewMode = selectedView
-        )
+        .search(workspace, workspaceViewMode)
         .collectAsState(initial = emptyList())
+
+
+    LaunchedEffect(Unit) {
+        delay(1.seconds)
+        val apps = null
+    }
 
     Box(Modifier.fillMaxSize()) {
         SettingsScaffold(
@@ -85,8 +90,8 @@ fun WorkspaceDetailScreen(
                 ) {
                     SingleSelectConnectedButtonRow(
                         entries = WorkspaceViewMode.entries,
-                        checked = { it == selectedView }
-                    ) { selectedView = it }
+                        checked = { it == workspaceViewMode }
+                    ) { workspaceViewMode = it }
 
                     val profiles by profilesViewModel.profiles.collectAsState(emptyList())
                     val profileStates by profilesViewModel.profileStates.collectAsState(emptyList())
@@ -117,7 +122,7 @@ fun WorkspaceDetailScreen(
                         }
 
                         else -> {
-                            CompositionLocalProvider(LocalWorkspaceViewMode provides selectedView) {
+                            CompositionLocalProvider(LocalWorkspaceViewMode provides workspaceViewMode) {
                                 AppGrid(
                                     apps = apps.sortedBy { it.label },
                                     longPressPopup = true,

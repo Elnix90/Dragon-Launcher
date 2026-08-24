@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.LauncherApps
 import androidx.core.content.getSystemService
-import org.elnix.dragonlauncher.ICONS_TAG
 import io.github.elnix90.logging.logD
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.elnix.dragonlauncher.ICONS_TAG
 import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.model.serializables.Action
@@ -23,7 +23,9 @@ internal class IconPackIconProvider(
     private val allowThemed: Boolean,
 ) : IconProvider {
     override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
-        val application = appRepository.fromAction(action as Action.LaunchApp) ?: return null
+        if (action !is Action.LaunchApp) return null
+
+        val application = appRepository.fromAction(action) ?: return null
         val componentName = application.componentName
 
         return iconPackManager.getIcon(

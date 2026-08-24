@@ -69,11 +69,11 @@ public class AppLaunchViewModel @Inject constructor(
                 return@launch
             }
 
-            val app = appRepository.findOne(launchAction.packageName, profile.userHandle).first()
+            val app = appRepository.findOne(launchAction).first()
             if (app != null) {
                 requestAppLaunch(app)
             } else {
-                launchLockedApp(profile, launchAction.packageName)
+                launchLockedApp(profile, launchAction)
             }
         }
     }
@@ -82,20 +82,20 @@ public class AppLaunchViewModel @Inject constructor(
      * Requests an unlock of the given profile and launches the app once it's
      * available. The wait for the unlock is unbounded: it lasts as long as it
      * takes the user to confirm the unlock dialog. Only the wait for the app to
-     * appear in the app list afterwards is bounded.
+     * appear in the app list afterward is bounded.
      */
-    private fun launchLockedApp(profile: Profile, packageName: String) {
+    private fun launchLockedApp(profile: Profile, action: Action.LaunchApp) {
         if (!isAtLeastApiLevel(28) || !profileManager.isProfileLocked(profile)) {
-            logW(APP_LAUNCH_TAG) { "App $packageName not available and ${profile.type} profile is not locked" }
+            logW(APP_LAUNCH_TAG) { "App ${action.packageName} not available and ${profile.type} profile is not locked" }
             return
         }
 
-        logI(APP_LAUNCH_TAG) { "Unlocking ${profile.type} profile to launch $packageName" }
+        logI(APP_LAUNCH_TAG) { "Unlocking ${profile.type} profile to launch ${action.packageName}" }
         profileManager.unlockProfile(profile)
 
         viewModelScope.launch {
             if (!waitForProfileUnlock(profile)) return@launch
-            val app = waitForAppAvailability(profile, packageName) ?: return@launch
+            val app = waitForAppAvailability(profile, action) ?: return@launch
             requestAppLaunch(app)
         }
     }
@@ -169,11 +169,12 @@ public class AppLaunchViewModel @Inject constructor(
         false
     }
 
-    private suspend fun waitForAppAvailability(profile: Profile, packageName: String): Application? {
+    private suspend fun waitForAppAvailability(profile: Profile, action: Action.LaunchApp): Application? {
         return withTimeoutOrNull(15_000L.milliseconds) {
-            appRepository.findOne(packageName, profile.userHandle).first { it != null }
+            val modifiedAction = action.copy(profile = profile)
+            appRepository.findOne(modifiedAction).first { it != null }
         } ?: run {
-            logW(APP_LAUNCH_TAG) { "App $packageName still not available after ${profile.type} profile unlock" }
+            logW(APP_LAUNCH_TAG) { "App ${action.packageName} still not available after ${profile.type} profile unlock" }
             null
         }
     }

@@ -10,7 +10,12 @@ internal class SystemIconProvider(
     private val tint: Int?
 ) : IconProvider {
     override suspend fun getIcon(action: Action, size: Int): LauncherIcon? {
-        val application = appRepository.fromAction(action as Action.LaunchApp) ?: return null
-        return application.loadIcon(themedIcons, tint)
+        return when (action) {
+            is Action.LaunchApp -> {
+                val application = appRepository.fromAction(action) ?: return null
+                application.loadIcon(themedIcons, tint)
+            }
+            else -> null
+        }
     }
 }

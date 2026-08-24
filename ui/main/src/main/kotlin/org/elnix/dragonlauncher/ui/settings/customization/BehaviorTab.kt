@@ -49,15 +49,23 @@ fun BehaviorTab() {
     val lockMethod by PrivateSettingsStore.lockMethod.asState()
     val superWarningModeEnabled = lockMethod != None
 
-    val paddingState = rememberExpandableSection(stringResource(R.string.drag_zone_padding), mode = ExpandableSectionMode.Expandable)
+    val paddingState = rememberExpandableSection(
+        title = R.string.drag_zone_padding,
+        description = R.string.drag_zone_padding_desc,
+        icon = R.drawable.center_focus_strong,
+        mode = ExpandableSectionMode.Expandable
+    )
     val showAppPreviewOverlay = paddingState.isExpanded()
 
-    var showLockMethodPicker by remember { mutableStateOf(false) }
-
     val superWarningState = rememberExpandableSection(
-        stringResource(R.string.super_warning_mode)
-    ) { superWarningModeEnabled }
+        title = R.string.super_warning_mode,
+        description = R.string.super_warning_mode_desc,
+        icon = R.drawable.lock,
+        mode = ExpandableSectionMode.ModalSheet(true),
+        enabled = superWarningModeEnabled
+    )
 
+    var showLockMethodPicker by remember { mutableStateOf(false) }
 
     SettingsScaffold(
         title = stringResource(R.string.behavior),
@@ -87,10 +95,10 @@ fun BehaviorTab() {
 
         DragonSettingsGroup(R.string.padding) {
             ExpandableSection(paddingState) {
-                Setting(BehaviorSettingsStore.rightPadding)
-                Setting(BehaviorSettingsStore.leftPadding)
-                Setting(BehaviorSettingsStore.topPadding)
-                Setting(BehaviorSettingsStore.bottomPadding)
+                this@DragonSettingsGroup.Setting(BehaviorSettingsStore.rightPadding)
+                this@DragonSettingsGroup.Setting(BehaviorSettingsStore.leftPadding)
+                this@DragonSettingsGroup.Setting(BehaviorSettingsStore.topPadding)
+                this@DragonSettingsGroup.Setting(BehaviorSettingsStore.bottomPadding)
             }
         }
 
@@ -107,27 +115,27 @@ fun BehaviorTab() {
             ) { showLockMethodPicker = true }
 
             ExpandableSection(superWarningState) {
-                Setting(
+                this@DragonSettingsGroup.Setting(
                     setting = BehaviorSettingsStore.superWarningMode,
                     enabled = superWarningModeEnabled
                 )
 
-                Setting(
+                this@DragonSettingsGroup.Setting(
                     setting = BehaviorSettingsStore.vibrateOnError,
                     enabled = superWarningModeEnabled
                 )
 
-                Setting(
+                this@DragonSettingsGroup.Setting(
                     setting = BehaviorSettingsStore.alarmSound,
                     enabled = superWarningModeEnabled
                 )
 
-                Setting(
+                this@DragonSettingsGroup.Setting(
                     setting = BehaviorSettingsStore.metalPipesSound,
                     enabled = superWarningModeEnabled
                 )
 
-                Setting(
+                this@DragonSettingsGroup.Setting(
                     setting = BehaviorSettingsStore.superWarningModeSound,
                     enabled = superWarningModeEnabled
                 )

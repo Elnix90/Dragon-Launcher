@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
@@ -41,7 +45,7 @@ import org.elnix.dragonlauncher.ui.components.VerticalDragZone
 import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.HoldSettingsOrderSheet
-import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
+import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
@@ -56,7 +60,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
-fun HoldToActivateArcTab() {
+fun HoldToActivateTab() {
     val ctx = LocalContext.current
     val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
@@ -123,19 +127,21 @@ fun HoldToActivateArcTab() {
 
                 Spacer(5.dp)
 
-                SliderWithLabel(
-                    label = stringResource(R.string.animated_progress),
-                    value = progress.value,
-                    valueRange = 0f..1f,
-                    resetEnabled = progress.value != 0f,
-                    onReset = {
-                        scope.launch {
-                            progress.snapTo(0f)
+                DragonSettingsGroup {
+                    SliderWithLabel(
+                        label = stringResource(R.string.animated_progress),
+                        value = progress.value,
+                        valueRange = 0f..1f,
+                        resetEnabled = progress.value != 0f,
+                        onReset = {
+                            scope.launch {
+                                progress.snapTo(0f)
+                            }
                         }
-                    }
-                ) {
-                    scope.launch {
-                        progress.animateTo(it)
+                    ) {
+                        scope.launch {
+                            progress.animateTo(it)
+                        }
                     }
                 }
             }
@@ -214,18 +220,9 @@ fun HoldToActivateArcTab() {
         DragonSettingsGroup(R.string.configuration) {
             Setting(HoldToActivateArcSettingsStore.longCLickSettingsDuration)
             Setting(HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
-            ) {
-                Setting(
-                    setting = HoldToActivateArcSettingsStore.rotationsPerSecond,
-                    modifier = Modifier.weight(1f)
-                )
-                DragonIconButton(
-                    icon = R.drawable.flash_auto,
-                    contentDescription = R.string.automatic_magic_number
-                ) {
+            Setting(HoldToActivateArcSettingsStore.rotationsPerSecond)
+            DragonButton(
+                onClick = {
                     scope.launch {
                         val duration = HoldToActivateArcSettingsStore.longCLickSettingsDuration.get(ctx)
 
@@ -236,7 +233,18 @@ fun HoldToActivateArcTab() {
                         HoldToActivateArcSettingsStore.rotationsPerSecond.set(ctx, magicNumber)
                     }
                 }
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.flash_auto),
+                    contentDescription = null
+                )
+                Spacer(5.dp)
+                Text(
+                    text = stringResource(R.string.automatic_magic_number),
+                    style = MaterialTheme.typography.labelMediumEmphasized
+                )
             }
+
             SettingsItem(
                 title = stringResource(R.string.edit_hold_to_activate_elements),
                 description = stringResource(R.string.edit_hold_to_activate_elements_desc),

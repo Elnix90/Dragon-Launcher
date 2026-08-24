@@ -2,6 +2,7 @@ package org.elnix.dragonlauncher.ui.dialogs
 
 import android.content.pm.ShortcutInfo
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -122,6 +123,7 @@ fun AppShortcutPickerDialog(
                     filteredShortcuts.forEach { shortcut ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(5.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(MaterialTheme.shapes.large)
