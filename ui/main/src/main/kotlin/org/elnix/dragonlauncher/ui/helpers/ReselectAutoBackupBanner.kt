@@ -15,9 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.modifiers.shapedClickable
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.remembers.rememberAutoBackupLauncher
@@ -30,7 +28,7 @@ import org.elnix.dragonlauncher.ui.remembers.rememberAutoBackupLauncher
  * now since it auto get uri permissions on import
  */
 @Composable
-fun ReselectAutoBackupBanner() {
+fun ReselectAutoBackupBanner(onHide: () -> Unit) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -58,12 +56,8 @@ fun ReselectAutoBackupBanner() {
 
         DragonIconButton(
             icon = R.drawable.close,
-            contentDescription = R.string.close
-        ) {
-            scope.launch {
-                PrivateSettingsStore.showReselectBackupBanner.set(ctx, false)
-            }
-        }
+            contentDescription = R.string.close,
+            onClick = onHide
+        )
     }
-
 }

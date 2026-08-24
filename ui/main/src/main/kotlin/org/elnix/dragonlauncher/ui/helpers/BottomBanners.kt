@@ -11,6 +11,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -19,6 +20,7 @@ import androidx.core.net.toUri
 import androidx.navigation3.runtime.NavKey
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
+import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.rememberIsDefaultLauncher
 import org.elnix.dragonlauncher.ktx.hasUriReadWritePermission
@@ -30,8 +32,8 @@ import org.elnix.dragonlauncher.ui.base.components.Spacer
 fun BottomBanners(currentRoute: NavKey) {
     if (currentRoute == NavigationRoute.Welcome) return
 
-
     val ctx = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     val showSetDefaultLauncherBanner by PrivateSettingsStore.showSetDefaultLauncherBanner.asStateNull()
     val isDefaultLauncher by rememberIsDefaultLauncher()
@@ -69,10 +71,18 @@ fun BottomBanners(currentRoute: NavKey) {
         ) {
             Spacer()
             AnimatedVisibility(showSetAsDefaultBanner) {
-                SetDefaultLauncherBanner()
+                SetDefaultLauncherBanner {
+                    scope.launch {
+                        PrivateSettingsStore.showSetDefaultLauncherBanner.set(ctx, false)
+                    }
+                }
             }
             AnimatedVisibility(showReselectAutoBackupFile) {
-                ReselectAutoBackupBanner()
+                ReselectAutoBackupBanner {
+                    scope.launch {
+                        PrivateSettingsStore.showReselectBackupBanner.set(ctx, false)
+                    }
+                }
             }
         }
     }

@@ -7,16 +7,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.openDefaultLauncherSettings
-import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 
 
 @Composable
-fun SetDefaultLauncherBanner() {
+fun SetDefaultLauncherBanner(onHide: () -> Unit) {
 
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -32,9 +30,8 @@ fun SetDefaultLauncherBanner() {
 
         DragonIconButton(
             icon = R.drawable.close,
-            contentDescription = R.string.close
-        ) {
-            scope.launch { PrivateSettingsStore.showSetDefaultLauncherBanner.set(ctx, false) }
-        }
+            contentDescription = R.string.close,
+            onClick = onHide
+        )
     }
 }
