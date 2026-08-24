@@ -56,6 +56,7 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
     val ctx = LocalContext.current
+    val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
 
     val autoBackupEnabled by BackupSettingsStore.autoBackupEnabled.asState()
@@ -64,18 +65,9 @@ fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
 
 
     val snapshotStateMapStores = remember(backupStores) {
+        val settingStoreList = backupStores.toSettingsStoreList()
         mutableStateMapOf<SettingsStore<*, *>, Boolean>().apply {
-            backupableStores.forEach { put(it, backupStores.isEmpty() || it in backupStores.toSettingsStoreList()) }
-        }
-    }
-
-    fun save() {
-        scope.launch {
-            if (snapshotStateMapStores.size == backupableStores.size) {
-                BackupSettingsStore.backupStores.reset(ctx)
-            } else {
-                BackupSettingsStore.backupStores.set(ctx, snapshotStateMapStores.keys.mapTo(mutableSetOf()) { it.name })
-            }
+            backupableStores.forEach { put(it, backupStores.isEmpty() || it in settingStoreList) }
         }
     }
 
@@ -95,7 +87,21 @@ fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
 
     SettingsScaffold(
         title = ctx.getString(R.string.backup),
-        onBack = LocalNavigator.current::onBack,
+        onBack = {
+            scope.launch {
+                if (snapshotStateMapStores.count { it.value } == backupableStores.size) {
+                    BackupSettingsStore.backupStores.reset(ctx)
+                } else {
+                    val final = snapshotStateMapStores
+                        .filter { it.value }
+                        .keys
+                        .mapTo(mutableSetOf()) { it.name }
+
+                    BackupSettingsStore.backupStores.set(ctx, final)
+                }
+                navigator.onBack()
+            }
+        },
         helpText = ctx.getString(R.string.backup_restore_text),
         resetText = stringResource(R.string.reset_backup_tab),
         onReset = {
@@ -201,8 +207,8 @@ fun BackupTab(backupViewModel: BackupViewModel = activityViewModel()) {
 
         AnimatedVisibility(autoBackupEnabled) {
             DragonSettingsGroup(R.string.auto_backup_stores) {
-                SelectedActionRow(snapshotStateMapStores,) { save() }
-                StoreItemsNotScrollable(snapshotStateMapStores) { save() }
+                SelectedActionRow(snapshotStateMapStores)
+                StoreItemsNotScrollable(snapshotStateMapStores)
             }
         }
     }

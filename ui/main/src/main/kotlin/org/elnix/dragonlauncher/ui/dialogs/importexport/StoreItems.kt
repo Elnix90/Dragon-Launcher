@@ -36,12 +36,10 @@ fun DragonGroupScope.StoreItems(
 @Composable
 fun DragonGroupScope.StoreItemsNotScrollable(
     snapshotStateMapStores: SnapshotStateMap<SettingsStore<*, *>, Boolean>,
-    onAnyAction: () -> Unit = { },
 ) {
     snapshotStateMapStores.forEach { (store, selected) ->
         StoreItem(selected, store) {
             snapshotStateMapStores[store] = it
-            onAnyAction()
         }
     }
 }

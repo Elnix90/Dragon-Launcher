@@ -13,7 +13,6 @@ import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 @Composable
 fun <T> DragonGroupScope.SelectedActionRow(
     snapshotStateMapStores: SnapshotStateMap<T, Boolean>,
-    onAnyAction: (() -> Unit)? = null
 ) {
     val totalNumber = snapshotStateMapStores.size
     val selectedCount = snapshotStateMapStores.count { it.value }
@@ -38,21 +37,18 @@ fun <T> DragonGroupScope.SelectedActionRow(
                     snapshotStateMapStores.forEach { (store, _) ->
                         snapshotStateMapStores[store] = false
                     }
-                    onAnyAction?.invoke()
                 }
 
                 BackupSelectStoresButtons.SelectAll -> {
                     snapshotStateMapStores.forEach { (store, _) ->
                         snapshotStateMapStores[store] = true
                     }
-                    onAnyAction?.invoke()
                 }
 
                 BackupSelectStoresButtons.Invert -> {
                     snapshotStateMapStores.forEach { (store, isSelected) ->
                         snapshotStateMapStores[store] = !isSelected
                     }
-                    onAnyAction?.invoke()
                 }
             }
         }
