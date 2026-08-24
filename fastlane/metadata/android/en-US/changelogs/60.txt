@@ -1,0 +1,14 @@
+4.1.0 (Labyrinth)
+2026-08-24
+[NEW]
+* Line before nests feature
+* Complete UI refactor and old dialogs refresh
+[IMPROVED]
+* Class stability improvements
+ [FIXED]
+* Shortcuts icons are now correctly displayed
+* Widgets apps and shortcuts + save issue
+* Points and icons persistence issues
+* Show points in center position
+* Other minor UI/UX issues
+* Crash when setting widgets (icons related)
