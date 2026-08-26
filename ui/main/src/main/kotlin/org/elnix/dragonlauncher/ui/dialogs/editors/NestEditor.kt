@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -38,12 +37,12 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.components.IntersectionShapePreview
-import org.elnix.dragonlauncher.ui.components.NestNameEditor
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
+import org.elnix.dragonlauncher.ui.dragon.settings.TextRow
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
 
@@ -127,12 +126,8 @@ fun NestEditor(
                         .padding(5.dp)
                 )
             }
-            DragonButton(
-                onClick = { showNestShapesManagementDialog = true },
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth()
-            ) {
+
+            DragonButton(onClick = { showNestShapesManagementDialog = true },) {
                 Text(
                     text = stringResource(R.string.edit_shapes),
                     style = MaterialTheme.typography.labelMediumEmphasized
@@ -157,14 +152,16 @@ fun NestEditor(
 
             DragonSettingsGroup {
                 if (!isDefaultEditing) {
-                    NestNameEditor(
-                        editNest, Modifier
-                            .padding(10.dp)
-                            .fillMaxWidth()
+                    TextRow(
+                        currentValue = editNest.name,
+                        defaultValue = null,
+                        label = null,
+                        placeHolder = stringResource(R.string.custom_name),
                     ) {
                         editNest = editNest.copy(name = it)
                     }
                 }
+
                 val showAllPointsInCurrentShape by UiSettingsStore.showAllPointsInCurrentShape.asState()
 
                 SliderWithLabel(

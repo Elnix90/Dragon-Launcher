@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.ui.dialogs.editors
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -31,9 +30,11 @@ import org.elnix.dragonlauncher.ui.components.IntersectionShapePreview
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
 import org.elnix.dragonlauncher.ui.dragon.components.CopyIcon
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
 
@@ -103,31 +104,33 @@ fun NestShapesManagementEditor(
 
         Spacer(10.dp)
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(5.dp),
-            modifier = Modifier.heightIn(600.dp)
-        ) {
-            items(shapesInternal.values.toList()) { shape ->
-                ShapeItem(
-                    shape = shape,
-                    isDefaultEditing = isDefaultEditing,
-                    defaultShape = defaultShape,
-                    onChangeShape = { newShape ->
-                        updateShape(shape.id) { old ->
-                            old.copy(shape = newShape)
-                        }
-                    },
-                    onClone = {
-                        val id = shapesInternal.keys.getNextId()
-                        shapesInternal[id] = shape.copy(id = id)
-                        triggerUpdate()
-                    },
-                    onDelete = {
-                        shapesInternal.remove(shape.id)
-                        triggerUpdate()
-                    },
-                    oClick = { showDetails = shape.id }
-                )
+        DragonSettingsGroup {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+                modifier = Modifier.heightIn(max = 600.dp)
+            ) {
+                items(shapesInternal.values.toList()) { shape ->
+                    ShapeItem(
+                        shape = shape,
+                        isDefaultEditing = isDefaultEditing,
+                        defaultShape = defaultShape,
+                        onChangeShape = { newShape ->
+                            updateShape(shape.id) { old ->
+                                old.copy(shape = newShape)
+                            }
+                        },
+                        onClone = {
+                            val id = shapesInternal.keys.getNextId()
+                            shapesInternal[id] = shape.copy(id = id)
+                            triggerUpdate()
+                        },
+                        onDelete = {
+                            shapesInternal.remove(shape.id)
+                            triggerUpdate()
+                        },
+                        oClick = { showDetails = shape.id }
+                    )
+                }
             }
         }
     }
@@ -153,7 +156,7 @@ fun NestShapesManagementEditor(
 }
 
 @Composable
-private fun ShapeItem(
+private fun DragonGroupScope.ShapeItem(
     shape: IntersectionShape,
     defaultShape: IntersectionShape,
     isDefaultEditing: Boolean,
@@ -166,7 +169,7 @@ private fun ShapeItem(
 
     DragonRow(
         onClick = oClick,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.dragonSettingGroup()
     ) {
         IntersectionShapePreview(
             shape = shape,

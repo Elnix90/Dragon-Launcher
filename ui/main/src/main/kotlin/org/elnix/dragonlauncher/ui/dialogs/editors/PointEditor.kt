@@ -12,16 +12,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,13 +25,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.elnix.dragonlauncher.base.model.enumsui.select.PointFeaturePanel
+import org.elnix.dragonlauncher.base.model.enumsui.select.SelectedUnselectedViewMode
+import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Action.Companion.actionColor
 import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
 import org.elnix.dragonlauncher.base.model.serializables.CycleActionStage
@@ -45,16 +41,11 @@ import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.emptyPo
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.isNotDefault
 import org.elnix.dragonlauncher.base.model.serializables.isSpecified
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.base.model.enumsui.select.PointFeaturePanel
-import org.elnix.dragonlauncher.base.model.enumsui.select.SelectedUnselectedViewMode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.round
 import org.elnix.dragonlauncher.models.PointsViewModel
-import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.actions.actionLabel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.animation.Icon
-import org.elnix.dragonlauncher.ui.base.animation.rememberAnimatedIcon
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.PointPreviewCanvas
 import org.elnix.dragonlauncher.ui.defaultHapticFeedback
@@ -72,6 +63,7 @@ import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
+import org.elnix.dragonlauncher.ui.dragon.settings.TextRow
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import org.elnix.dragonlauncher.ui.helpers.ShapeRow
@@ -197,9 +189,7 @@ fun PointEditor(
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(5.dp),
-                                    modifier = Modifier
-                                        .padding(10.dp)
-                                        .fillMaxWidth()
+                                    modifier = Modifier.dragonSettingGroup()
                                 ) {
                                     DragonButton(
                                         modifier = Modifier.weight(1f),
@@ -351,104 +341,91 @@ fun PointEditor(
                                 val stageLabel = actionLabel(stage.action)
                                 val stageActionColor = stage.action.actionColor(extraColors)
 
-                                Card(
-                                    modifier = Modifier
-                                        .padding(10.dp)
-                                        .fillMaxWidth(),
-                                    shape = MaterialTheme.shapes.large
+                                Column(
+                                    modifier = Modifier.dragonSettingGroup(),
+                                    verticalArrangement = Arrangement.spacedBy(10.dp)
                                 ) {
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 14.dp, vertical = 12.dp),
-                                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        Text(
+                                            text = stringResource(
+                                                R.string.cycle_actions_stage,
+                                                index + 1
+                                            ),
+                                            style = MaterialTheme.typography.titleSmall,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        DragonIconButton(
+                                            icon = R.drawable.close,
+                                            contentDescription = R.string.disable,
+                                            isCancel = true,
                                         ) {
-                                            Text(
-                                                text = stringResource(
-                                                    R.string.cycle_actions_stage,
-                                                    index + 1
-                                                ),
-                                                style = MaterialTheme.typography.titleSmall,
-                                                color = MaterialTheme.colorScheme.primary,
-                                                modifier = Modifier.weight(1f)
-                                            )
-                                            DragonIconButton(
-                                                icon = R.drawable.close,
-                                                contentDescription = R.string.disable,
-                                                isCancel = true,
-                                            ) {
-                                                val updated = cycleStages.toMutableList()
-                                                    .also { it.removeAt(index) }
-                                                editPoint = if (updated.isEmpty()) {
-                                                    editPoint.copy(
-                                                        cycleActions = null,
-                                                        cycleActionsLoopDelayMs = null
-                                                    )
-                                                } else {
-                                                    editPoint.copy(cycleActions = updated)
-                                                }
+                                            val updated = cycleStages.toMutableList()
+                                                .also { it.removeAt(index) }
+                                            editPoint = if (updated.isEmpty()) {
+                                                editPoint.copy(
+                                                    cycleActions = null,
+                                                    cycleActionsLoopDelayMs = null
+                                                )
+                                            } else {
+                                                editPoint.copy(cycleActions = updated)
                                             }
                                         }
+                                    }
+                                    DragonButton(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        onClick = { editingCycleStageActionIndex = index }
+                                    ) {
+                                        Text(
+                                            text = stageLabel,
+                                            color = stageActionColor,
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        this.Spacer()
+                                        Icon(
+                                            painter = painterResource(R.drawable.edit_rounded),
+                                            contentDescription = stringResource(R.string.edit_action),
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
 
-                                        DragonButton(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            onClick = { editingCycleStageActionIndex = index }
-                                        ) {
-                                            Text(
-                                                text = stageLabel,
-                                                color = stageActionColor,
-                                                fontSize = 16.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                modifier = Modifier.weight(1f)
-                                            )
-                                            this.Spacer()
-                                            Icon(
-                                                painter = painterResource(R.drawable.edit_rounded),
-                                                contentDescription = stringResource(R.string.edit_action),
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-
-                                        this@DragonSettingsGroup.SliderWithLabel(
-                                            label = stringResource(R.string.cycle_actions_delay),
-                                            value = stage.triggerTimeMs,
-                                            valueRange = 100..5000,
-                                            resetEnabled = stage.triggerTimeMs != (defaultPoint.cycleActionsLoopDelayMs
-                                                ?: Point.defaultCycleActionsLoopDelayMs),
-                                            onReset = {
-                                                val updated = cycleStages.toMutableList().also {
-                                                    it[index] = it[index].copy(
-                                                        triggerTimeMs = defaultPoint.cycleActionsLoopDelayMs
-                                                            ?: Point.defaultCycleActionsLoopDelayMs
-                                                    )
-                                                }
-                                                editPoint = editPoint.copy(cycleActions = updated)
-                                            }
-                                        ) { newDelay ->
+                                    this@DragonSettingsGroup.SliderWithLabel(
+                                        label = stringResource(R.string.cycle_actions_delay),
+                                        value = stage.triggerTimeMs,
+                                        valueRange = 100..5000,
+                                        resetEnabled = stage.triggerTimeMs != (defaultPoint.cycleActionsLoopDelayMs
+                                            ?: Point.defaultCycleActionsLoopDelayMs),
+                                        onReset = {
                                             val updated = cycleStages.toMutableList().also {
-                                                it[index] = it[index].copy(triggerTimeMs = newDelay)
+                                                it[index] = it[index].copy(
+                                                    triggerTimeMs = defaultPoint.cycleActionsLoopDelayMs
+                                                        ?: Point.defaultCycleActionsLoopDelayMs
+                                                )
                                             }
                                             editPoint = editPoint.copy(cycleActions = updated)
                                         }
-
-                                        HapticFeedBackEditorButtonWithPlayTest(
-                                            customHapticFeedback = stage.hapticFeedback ?: defaultHapticFeedback(),
-                                            titleExt = " (Stage ${index + 1})",
-                                            onClick = { editingCycleStageHapticIndex = index }
-                                        )
+                                    ) { newDelay ->
+                                        val updated = cycleStages.toMutableList().also {
+                                            it[index] = it[index].copy(triggerTimeMs = newDelay)
+                                        }
+                                        editPoint = editPoint.copy(cycleActions = updated)
                                     }
+
+                                    this@DragonSettingsGroup.HapticFeedBackEditorButtonWithPlayTest(
+                                        customHapticFeedback = stage.hapticFeedback ?: defaultHapticFeedback(),
+                                        titleExt = " (Stage ${index + 1})",
+                                        onClick = { editingCycleStageHapticIndex = index }
+                                    )
                                 }
                             }
 
                             DragonButton(
-                                modifier = Modifier
-                                    .padding(10.dp)
-                                    .fillMaxWidth(),
                                 onClick = {
                                     val newStage = CycleActionStage(
                                         triggerTimeMs = 500,
@@ -624,83 +601,45 @@ fun PointEditor(
                         }
                     }
 
-                    null -> null
+                    null -> {
+                        null
+                    }
                 }
             }
 
 
             if (!isDefaultEditing) {
                 DragonSettingsGroup(R.string.name_and_action) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(15.dp)
-                    ) {
-                        DragonButton(
-                            onClick = { showEditActionDialog = true },
-                            modifier = Modifier
-                                .padding(10.dp)
-                                .fillMaxWidth()
-                        ) {
-                            Text(
-                                text = label,
-                                color = actionColor,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                            this.Spacer(5.dp)
-                            Icon(
-                                painter = painterResource(R.drawable.edit_rounded),
-                                contentDescription = stringResource(R.string.edit_action),
-                                tint = actionColor
-                            )
-                        }
+                    DragonButton(onClick = { showEditActionDialog = true }) {
+                        Text(
+                            text = label,
+                            color = actionColor,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(5.dp)
+                        Icon(
+                            painter = painterResource(R.drawable.edit_rounded),
+                            contentDescription = stringResource(R.string.edit_action),
+                            tint = actionColor
+                        )
                     }
 
+                    TextRow(
+                        currentValue = editPoint.customName ?: "",
+                        defaultValue = "",
+                        label = stringResource(R.string.custom_name),
+                        placeHolder = null,
+                        singleChar = false
+                    ) { editPoint = editPoint.copy(customName = it) }
 
-                    val focusManager = LocalFocusManager.current
-                    val animatedIcon = rememberAnimatedIcon()
-
-                    TextField(
-                        value = editPoint.customName ?: "",
-                        onValueChange = {
-                            editPoint = editPoint.copy(customName = it.takeIf { it.isNotEmpty() })
-                        },
-                        placeholder = { Text(stringResource(R.string.custom_name)) },
-                        colors = AppObjectsColors.outlinedTextFieldColors(
-                            removeBorder = true
-                        ),
-                        shape = CircleShape,
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .fillMaxWidth(1f),
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                focusManager.clearFocus()
-                                animatedIcon.setSuccess()
-                            }
-                        ),
-                        trailingIcon = {
-                            animatedIcon.Icon(
-                                defaultIcon = R.drawable.reset,
-                                enabled = editPoint.customName?.isNotEmpty() == true
-                            ) {
-                                focusManager.clearFocus()
-                                animatedIcon.setSuccess()
-                            }
-                        }
-                    )
-
-                    this.ColorPickerRow(
+                    // Only enable the color picker when the point has a customizable action
+                    ColorPickerRow(
                         title = stringResource(R.string.custom_action_color),
                         description = null,
                         currentColor = editPoint.customActionColor,
-                        defaultColor = null
+                        defaultColor = null,
+                        enabled = editPoint.action !is Action.LaunchApp && editPoint.action !is Action.LaunchShortcut
                     ) { selectedColor ->
                         editPoint = editPoint.copy(customActionColor = selectedColor)
                     }
@@ -708,7 +647,7 @@ fun PointEditor(
             }
 
             DragonSettingsGroup(R.string.size) {
-                this.SliderWithLabel(
+                SliderWithLabel(
                     label = stringResource(R.string.inner_padding),
                     value = editPoint.getInnerPadding(defaultPoint, isDefaultEditing),
                     valueRange = 0.dp..100.dp,
@@ -725,7 +664,7 @@ fun PointEditor(
                     )
                 }
 
-                this.SliderWithLabel(
+                SliderWithLabel(
                     label = stringResource(R.string.size),
                     value = editPoint.getSize(defaultPoint, isDefaultEditing),
                     valueRange = 1.dp..200.dp,
@@ -746,239 +685,236 @@ fun PointEditor(
 
             DragonSettingsGroup(R.string.appearance) {
                 if (!isDefaultEditing) {
-                    DragonButton(
-                        onClick = { showEditIconDialog = true },
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .fillMaxWidth()
-                    ) {
+                    DragonButton(onClick = { showEditIconDialog = true }) {
                         Text(stringResource(R.string.edit_icon))
-                        this.Spacer(5.dp)
+                        Spacer(5.dp)
                         Icon(
                             painter = painterResource(R.drawable.edit_rounded),
                             contentDescription = stringResource(R.string.edit_icon)
                         )
                     }
                 }
+            }
 
-                SingleSelectConnectedButtonRow(
-                    entries = SelectedUnselectedViewMode.entries,
-                    checked = { selectedView == it },
-                ) { selectedView = it }
+            SingleSelectConnectedButtonRow(
+                entries = SelectedUnselectedViewMode.entries,
+                checked = { selectedView == it },
+            ) { selectedView = it }
 
 
-                AnimatedContent(targetState = selectedView) { view ->
-                    Column {
-                        val selected = when (view) {
-                            SelectedUnselectedViewMode.Unselected -> false
-                            SelectedUnselectedViewMode.Selected -> true
+            AnimatedContent(targetState = selectedView) { view ->
+                DragonSettingsGroup(R.string.fine_grained) {
+                    val selected = when (view) {
+                        SelectedUnselectedViewMode.Unselected -> false
+                        SelectedUnselectedViewMode.Selected -> true
+                    }
+
+                    if (selected) {
+                        SliderWithLabel(
+                            label = stringResource(R.string.border_stroke_selected),
+                            value = editPoint.getBorderStroke(true, defaultPoint, isDefaultEditing),
+                            valueRange = 0.dp..50.dp,
+                            resetEnabled = editPoint.borderStrokeSelected != null,
+                            onReset = {
+                                editPoint = editPoint.copy(borderStrokeSelected = null)
+                            }
+                        ) { newValue ->
+                            editPoint = editPoint.copy(
+                                borderStrokeSelected = newValue.takeIf {
+                                    it.value.round(2) != emptyPoint.getBorderStroke(
+                                        true,
+                                        defaultPoint,
+                                        isDefaultEditing
+                                    ).value.round(2)
+                                }
+                            )
                         }
 
-                        if (selected) {
-                            this@DragonSettingsGroup.SliderWithLabel(
-                                label = stringResource(R.string.border_stroke_selected),
-                                value = editPoint.getBorderStroke(true, defaultPoint, isDefaultEditing),
-                                valueRange = 0.dp..50.dp,
-                                resetEnabled = editPoint.borderStrokeSelected != null,
-                                onReset = {
-                                    editPoint = editPoint.copy(borderStrokeSelected = null)
+                        ColorPickerRow(
+                            title = stringResource(R.string.border_color_selected),
+                            description = null,
+                            currentColor = editPoint.getBorderColor(true, defaultPoint, extraColors, isDefaultEditing),
+                            defaultColor = null
+                        ) { selectedColor ->
+                            editPoint = editPoint.copy(
+                                borderColorSelected = selectedColor.takeIf {
+                                    it != emptyPoint.getBorderColor(
+                                        true,
+                                        defaultPoint,
+                                        extraColors,
+                                        isDefaultEditing
+                                    )
                                 }
-                            ) { newValue ->
-                                editPoint = editPoint.copy(
-                                    borderStrokeSelected = newValue.takeIf {
-                                        it.value.round(2) != emptyPoint.getBorderStroke(
-                                            true,
-                                            defaultPoint,
-                                            isDefaultEditing
-                                        ).value.round(2)
-                                    }
-                                )
-                            }
-
-                            this@DragonSettingsGroup.ColorPickerRow(
-                                title = stringResource(R.string.border_color_selected),
-                                description = null,
-                                currentColor = editPoint.getBorderColor(true, defaultPoint, extraColors, isDefaultEditing),
-                                defaultColor = null
-                            ) { selectedColor ->
-                                editPoint = editPoint.copy(
-                                    borderColorSelected = selectedColor.takeIf {
-                                        it != emptyPoint.getBorderColor(
-                                            true,
-                                            defaultPoint,
-                                            extraColors,
-                                            isDefaultEditing
-                                        )
-                                    }
-                                )
-                            }
-
-                            this@DragonSettingsGroup.ColorPickerRow(
-                                title = stringResource(R.string.background_selected),
-                                description = null,
-                                currentColor = editPoint.getBackgroundColor(true, defaultPoint, isDefaultEditing),
-                                defaultColor = null
-                            ) { selectedColor ->
-                                editPoint = editPoint.copy(
-                                    backgroundColorSelected = selectedColor.takeIf {
-                                        it != emptyPoint.getBackgroundColor(
-                                            true,
-                                            defaultPoint,
-                                            isDefaultEditing
-                                        )
-                                    })
-                            }
-
-
-                            this@DragonSettingsGroup.SliderWithLabel(
-                                label = stringResource(R.string.glow_radius),
-                                description = stringResource(R.string.zero_means_no_glow),
-                                value = editPoint.getGlow(true, defaultPoint, isDefaultEditing).radius!!,
-                                valueRange = 0.dp..200.dp,
-                                decimals = 1,
-                                resetEnabled = editPoint.glowSelected?.radius != null,
-                                onReset = {
-                                    editPoint = editPoint.copy(glowSelected = editPoint.glowSelected?.copy(radius = null).takeIf { it.isSpecified })
-                                }
-                            ) { newGlowRadius ->
-                                editPoint = editPoint.copy(
-                                    glowSelected = (editPoint.glowSelected
-                                        ?.copy(radius = newGlowRadius)
-                                        ?: CustomGlow(radius = newGlowRadius))
-                                        .takeIf { it.isSpecified }
-                                )
-                            }
-
-                            this@DragonSettingsGroup.ColorPickerRow(
-                                title = stringResource(R.string.glow_color),
-                                description = null,
-                                enabled = true,
-                                currentColor = editPoint.getGlow(true, defaultPoint, isDefaultEditing).color,
-                                defaultColor = null
-                            ) { newColor ->
-                                editPoint = editPoint.copy(
-                                    glowSelected = (editPoint.glowSelected
-                                        ?.copy(color = newColor)
-                                        ?: CustomGlow(color = newColor))
-                                        .takeIf { it.isSpecified }
-                                )
-                            }
-
-                            this@DragonSettingsGroup.ShapeRow(
-                                selected = editPoint.getBorderShape(true, defaultPoint, isDefaultEditing),
-                                title = stringResource(R.string.edit_border_shape),
-                                resetEnabled = editPoint.borderShapeSelected != null,
-                                onReset = {
-                                    editPoint = editPoint.copy(borderShapeSelected = null)
-                                }
-                            ) { showShapeSelectedPickerDialog = true }
-
-                        } else {
-                            this@DragonSettingsGroup.SliderWithLabel(
-                                label = stringResource(R.string.border_stroke),
-                                value = editPoint.getBorderStroke(false, defaultPoint, isDefaultEditing),
-                                valueRange = 0.dp..50.dp,
-                                resetEnabled = editPoint.borderStroke != null,
-                                onReset = { editPoint = editPoint.copy(borderStroke = null) }
-                            ) { newValue ->
-                                editPoint = editPoint.copy(
-                                    borderStroke = newValue.takeIf {
-                                        it.value.round(2) != emptyPoint.getBorderStroke(
-                                            false,
-                                            defaultPoint,
-                                            isDefaultEditing
-                                        ).value.round(2)
-                                    }
-                                )
-                            }
-
-                            this@DragonSettingsGroup.ColorPickerRow(
-                                title = stringResource(R.string.border_color),
-                                description = null,
-                                currentColor = editPoint.getBorderColor(false, defaultPoint, extraColors, isDefaultEditing),
-                                defaultColor = null
-                            ) { selectedColor ->
-                                editPoint = editPoint.copy(
-                                    borderColor = selectedColor.takeIf {
-                                        it != emptyPoint.getBorderColor(
-                                            false,
-                                            defaultPoint,
-                                            extraColors,
-                                            isDefaultEditing
-                                        )
-                                    }
-                                )
-                            }
-
-                            this@DragonSettingsGroup.ColorPickerRow(
-                                title = stringResource(R.string.background_color),
-                                description = null,
-                                currentColor = editPoint.getBackgroundColor(false, defaultPoint, isDefaultEditing),
-                                defaultColor = null
-                            ) { selectedColor ->
-                                editPoint = editPoint.copy(
-                                    backgroundColor = selectedColor.takeIf {
-                                        it != emptyPoint.getBackgroundColor(
-                                            false,
-                                            defaultPoint,
-                                            isDefaultEditing
-                                        )
-                                    }
-                                )
-                            }
-
-                            this@DragonSettingsGroup.SliderWithLabel(
-                                label = stringResource(R.string.glow_radius),
-                                description = stringResource(R.string.zero_means_no_glow),
-                                value = editPoint.getGlow(false, defaultPoint, isDefaultEditing).radius!!,
-                                valueRange = 0.dp..200.dp,
-                                decimals = 1,
-                                resetEnabled = editPoint.glow?.radius != null,
-                                onReset = {
-                                    editPoint = editPoint.copy(glow = editPoint.glow?.copy(radius = null).takeIf { it.isSpecified })
-                                }
-                            ) { newGlowRadius ->
-                                editPoint = editPoint.copy(
-                                    glow = (editPoint.glow
-                                        ?.copy(radius = newGlowRadius)
-                                        ?: CustomGlow(radius = newGlowRadius))
-                                        .takeIf { it.isSpecified }
-                                )
-                            }
-
-                            this@DragonSettingsGroup.ColorPickerRow(
-                                title = stringResource(R.string.glow_color),
-                                description = null,
-                                enabled = true,
-                                currentColor = editPoint.getGlow(false, defaultPoint, isDefaultEditing).color,
-                                defaultColor = null
-                            ) { newColor ->
-                                editPoint = editPoint.copy(
-                                    glow = (editPoint.glow
-                                        ?.copy(color = newColor)
-                                        ?: CustomGlow(color = newColor))
-                                        .takeIf { it.isSpecified }
-                                )
-                            }
-
-                            this@DragonSettingsGroup.ShapeRow(
-                                selected = editPoint.getBorderShape(false, defaultPoint, isDefaultEditing),
-                                title = stringResource(R.string.edit_border_shape),
-                                resetEnabled = editPoint.borderShape != null,
-                                onReset = {
-                                    editPoint = editPoint.copy(borderShape = null)
-                                }
-                            ) { showShapePickerDialog = true }
+                            )
                         }
+
+                        ColorPickerRow(
+                            title = stringResource(R.string.background_selected),
+                            description = null,
+                            currentColor = editPoint.getBackgroundColor(true, defaultPoint, isDefaultEditing),
+                            defaultColor = null
+                        ) { selectedColor ->
+                            editPoint = editPoint.copy(
+                                backgroundColorSelected = selectedColor.takeIf {
+                                    it != emptyPoint.getBackgroundColor(
+                                        true,
+                                        defaultPoint,
+                                        isDefaultEditing
+                                    )
+                                })
+                        }
+
+
+                        SliderWithLabel(
+                            label = stringResource(R.string.glow_radius),
+                            description = stringResource(R.string.zero_means_no_glow),
+                            value = editPoint.getGlow(true, defaultPoint, isDefaultEditing).radius!!,
+                            valueRange = 0.dp..200.dp,
+                            decimals = 1,
+                            resetEnabled = editPoint.glowSelected?.radius != null,
+                            onReset = {
+                                editPoint = editPoint.copy(glowSelected = editPoint.glowSelected?.copy(radius = null).takeIf { it.isSpecified })
+                            }
+                        ) { newGlowRadius ->
+                            editPoint = editPoint.copy(
+                                glowSelected = (editPoint.glowSelected
+                                    ?.copy(radius = newGlowRadius)
+                                    ?: CustomGlow(radius = newGlowRadius))
+                                    .takeIf { it.isSpecified }
+                            )
+                        }
+
+                        ColorPickerRow(
+                            title = stringResource(R.string.glow_color),
+                            description = null,
+                            enabled = true,
+                            currentColor = editPoint.getGlow(true, defaultPoint, isDefaultEditing).color,
+                            defaultColor = null
+                        ) { newColor ->
+                            editPoint = editPoint.copy(
+                                glowSelected = (editPoint.glowSelected
+                                    ?.copy(color = newColor)
+                                    ?: CustomGlow(color = newColor))
+                                    .takeIf { it.isSpecified }
+                            )
+                        }
+
+                        ShapeRow(
+                            selected = editPoint.getBorderShape(true, defaultPoint, isDefaultEditing),
+                            title = stringResource(R.string.edit_border_shape),
+                            resetEnabled = editPoint.borderShapeSelected != null,
+                            onReset = {
+                                editPoint = editPoint.copy(borderShapeSelected = null)
+                            }
+                        ) { showShapeSelectedPickerDialog = true }
+
+                    } else {
+                        SliderWithLabel(
+                            label = stringResource(R.string.border_stroke),
+                            value = editPoint.getBorderStroke(false, defaultPoint, isDefaultEditing),
+                            valueRange = 0.dp..50.dp,
+                            resetEnabled = editPoint.borderStroke != null,
+                            onReset = { editPoint = editPoint.copy(borderStroke = null) }
+                        ) { newValue ->
+                            editPoint = editPoint.copy(
+                                borderStroke = newValue.takeIf {
+                                    it.value.round(2) != emptyPoint.getBorderStroke(
+                                        false,
+                                        defaultPoint,
+                                        isDefaultEditing
+                                    ).value.round(2)
+                                }
+                            )
+                        }
+
+                        ColorPickerRow(
+                            title = stringResource(R.string.border_color),
+                            description = null,
+                            currentColor = editPoint.getBorderColor(false, defaultPoint, extraColors, isDefaultEditing),
+                            defaultColor = null
+                        ) { selectedColor ->
+                            editPoint = editPoint.copy(
+                                borderColor = selectedColor.takeIf {
+                                    it != emptyPoint.getBorderColor(
+                                        false,
+                                        defaultPoint,
+                                        extraColors,
+                                        isDefaultEditing
+                                    )
+                                }
+                            )
+                        }
+
+                        ColorPickerRow(
+                            title = stringResource(R.string.background_color),
+                            description = null,
+                            currentColor = editPoint.getBackgroundColor(false, defaultPoint, isDefaultEditing),
+                            defaultColor = null
+                        ) { selectedColor ->
+                            editPoint = editPoint.copy(
+                                backgroundColor = selectedColor.takeIf {
+                                    it != emptyPoint.getBackgroundColor(
+                                        false,
+                                        defaultPoint,
+                                        isDefaultEditing
+                                    )
+                                }
+                            )
+                        }
+
+                        SliderWithLabel(
+                            label = stringResource(R.string.glow_radius),
+                            description = stringResource(R.string.zero_means_no_glow),
+                            value = editPoint.getGlow(false, defaultPoint, isDefaultEditing).radius!!,
+                            valueRange = 0.dp..200.dp,
+                            decimals = 1,
+                            resetEnabled = editPoint.glow?.radius != null,
+                            onReset = {
+                                editPoint = editPoint.copy(glow = editPoint.glow?.copy(radius = null).takeIf { it.isSpecified })
+                            }
+                        ) { newGlowRadius ->
+                            editPoint = editPoint.copy(
+                                glow = (editPoint.glow
+                                    ?.copy(radius = newGlowRadius)
+                                    ?: CustomGlow(radius = newGlowRadius))
+                                    .takeIf { it.isSpecified }
+                            )
+                        }
+
+                        ColorPickerRow(
+                            title = stringResource(R.string.glow_color),
+                            description = null,
+                            enabled = true,
+                            currentColor = editPoint.getGlow(false, defaultPoint, isDefaultEditing).color,
+                            defaultColor = null
+                        ) { newColor ->
+                            editPoint = editPoint.copy(
+                                glow = (editPoint.glow
+                                    ?.copy(color = newColor)
+                                    ?: CustomGlow(color = newColor))
+                                    .takeIf { it.isSpecified }
+                            )
+                        }
+
+                        ShapeRow(
+                            selected = editPoint.getBorderShape(false, defaultPoint, isDefaultEditing),
+                            title = stringResource(R.string.edit_border_shape),
+                            resetEnabled = editPoint.borderShape != null,
+                            onReset = {
+                                editPoint = editPoint.copy(borderShape = null)
+                            }
+                        ) { showShapePickerDialog = true }
                     }
                 }
             }
 
             if (!isDefaultEditing) {
-                HapticFeedBackEditorButtonWithPlayTest(
-                    customHapticFeedback = editPoint.haptic ?: defaultHapticFeedback(),
-                    onClick = { showHapticFeedbackEditor = true },
-                )
+                DragonSettingsGroup(R.string.haptic_feedback) {
+                    HapticFeedBackEditorButtonWithPlayTest(
+                        customHapticFeedback = editPoint.haptic ?: defaultHapticFeedback(),
+                        onClick = { showHapticFeedbackEditor = true },
+                    )
+                }
             }
         }
     }

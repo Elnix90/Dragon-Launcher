@@ -16,10 +16,11 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SettingsWithTitle(
     title: String?,
+    modifier: Modifier = Modifier,
     trailingIcon: (@Composable RowScope.() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
-    Column {
+    Column(modifier = modifier) {
         if (title != null) {
             Row(
                 modifier = Modifier

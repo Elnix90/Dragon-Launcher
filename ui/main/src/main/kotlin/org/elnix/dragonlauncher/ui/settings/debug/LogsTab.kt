@@ -246,8 +246,8 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
                         customDesc = { it.logLevelName }
                     )
 
-                    Setting(DebugSettingsStore.filterTag, singleChar = false)
-                    this.DragonButton(
+                    Setting(DebugSettingsStore.filterTag)
+                    DragonButton(
                         onClick = {
                             dragonLogViewModel.clearLogs()
                             refreshTrigger++

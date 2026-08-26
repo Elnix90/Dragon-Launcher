@@ -1084,4 +1084,5 @@
     <string name="secret_unlock_button_desc">Adds a secret clickable zone (no indication at all) that unlocks the screen (when you forgot the password)</string>
     <string name="actions_lock_method">Actions lock method</string>
     <string name="actions_lock_method_desc">What lock method to use to launch actions. You can condigure what type of actions are affected and use the same password as the settings</string>
+    <string name="fine_grained">Fine-Grained</string>
 </resources>

@@ -1,17 +1,13 @@
 package org.elnix.dragonlauncher.ui.dialogs
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -32,30 +28,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Nest
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
-import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.components.NestNameEditor
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonDropDownMenu
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.MoreIcon
+import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
+import org.elnix.dragonlauncher.ui.dragon.settings.TextRow
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
 
@@ -83,46 +78,53 @@ fun NestManagementDialog(
 
     val nestsList = remember(recomposeTrigger, nests.size) { nests.toList() }
 
-    DragonModalBottomSheet(onDismissRequest) {
+    DragonModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        sheetState = rememberBottomSheetState(true)
+    ) {
         DialogTitle(title ?: stringResource(R.string.manage_nests))
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(5.dp),
-            modifier = Modifier.heightIn(max = 700.dp),
-            state = listState
-        ) {
-            item {
-                DragonButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        hasClickedNewNest = pointsService.addNest()
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.add_circle),
-                        contentDescription = stringResource(R.string.create_new_nest),
-                    )
-                    Spacer(15.dp)
-                    Text(stringResource(R.string.create_new_nest))
-                }
-            }
+        Spacer(10.dp)
 
-            items(nestsList) { (id, nest) ->
-                NestManagementItem(
-                    nest = nest,
-                    modifier = Modifier.animateItem(),
-                    onEditName = { newName ->
-                        pointsService.editNest(nest.id) { old ->
-                            old.copy(name = newName)
-                        }
-                    },
-                    onDelete = { pointsService.removeNest(nest.id) },
-                    onDuplicate = { pointsService.duplicateNest(nest.id) },
-                    onEdit = {
-                        pointsViewModel.nestsNavigationService.goToNest(id)
-                        navigator.navigate(NavigationRoute.NestEdit)
-                    },
-                    onSelect = { onSelect?.invoke(nest) }
-                )
+        DragonButton(
+            onClick = {
+                hasClickedNewNest = pointsService.addNest()
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.add_circle),
+                contentDescription = stringResource(R.string.create_new_nest),
+            )
+            Spacer(15.dp)
+            Text(stringResource(R.string.create_new_nest))
+        }
+
+        Spacer(15.dp)
+
+        DragonSettingsGroup {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+                modifier = Modifier.heightIn(max = 700.dp),
+                state = listState
+            ) {
+                items(nestsList) { (id, nest) ->
+                    NestManagementItem(
+                        nest = nest,
+                        modifier = Modifier.animateItem(),
+                        onEditName = { newName ->
+                            pointsService.editNest(nest.id) { old ->
+                                old.copy(name = newName)
+                            }
+                        },
+                        onDelete = { pointsService.removeNest(nest.id) },
+                        onDuplicate = { pointsService.duplicateNest(nest.id) },
+                        onEdit = {
+                            pointsViewModel.nestsNavigationService.goToNest(id)
+                            navigator.navigate(NavigationRoute.NestEdit)
+                        },
+                        onSelect = { onSelect?.invoke(nest) }
+                    )
+                }
             }
         }
     }
@@ -130,7 +132,7 @@ fun NestManagementDialog(
 
 
 @Composable
-private fun NestManagementItem(
+private fun DragonGroupScope.NestManagementItem(
     nest: Nest,
     modifier: Modifier,
     onEditName: (newName: String?) -> Unit,
@@ -139,20 +141,17 @@ private fun NestManagementItem(
     onEdit: () -> Unit,
     onSelect: (() -> Unit)? = null
 ) {
-    val ctx = LocalContext.current
-
-    val bgColor = MaterialTheme.colorScheme.surface
+    // Same as in dragonSettingGroup, needed to prevent the nest to erase the bg
+    val bgColor = MaterialTheme.colorScheme.surfaceContainerHigh
 
     var showPopup by remember { mutableStateOf(false) }
 
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .height(120.dp)
-            .clip(MaterialTheme.shapes.large)
-            .background(bgColor)
-            .clickable { onSelect?.invoke() }
-            .padding(5.dp),
+            .dragonSettingGroup {
+                height(120.dp)
+                    .clickable { onSelect?.invoke() }
+            },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End
     ) {
@@ -175,30 +174,14 @@ private fun NestManagementItem(
             )
         }
 
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-
-            Row(
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .height(IntrinsicSize.Min)
-                    .padding(end = 8.dp)
-                    .clip(MaterialTheme.shapes.large)
-                    .clickable {
-                        ctx.copyToClipboard(nest.id.toString())
-                    },
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                Text(
-                    text = "ID: ${nest.id}",
-                    color = MaterialTheme.colorScheme.onSurface.copy(0.9f),
-                    fontSize = 10.sp
-                )
-            }
-
-            NestNameEditor(nest, onEditName = onEditName)
+        DragonSettingsGroup(modifier = Modifier.weight(1f)){
+            this@NestManagementItem.TextRow(
+                currentValue = nest.name,
+                defaultValue = null,
+                label = null,
+                placeHolder = stringResource(R.string.custom_name),
+                onFinish = onEditName
+            )
         }
 
         Box {

@@ -43,7 +43,6 @@ import org.elnix.dragonlauncher.ui.dialogs.HapticFeedbackEditor
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
-import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 
@@ -76,7 +75,7 @@ fun IntersectionShapeEditor(
     val stroke = shape.getBorderStroke(defaultShape, isDefaultEditing)
     val color = shape.getColor(defaultShape, extraColors, isDefaultEditing)
     val haptic = shape.getHapticFeedback(defaultShape, isDefaultEditing)
-    val pointsKeepTheirRelativePosition = shape.getPointsKeepTheirRelativePosition(defaultShape, isDefaultEditing)
+//    val pointsKeepTheirRelativePosition = shape.getPointsKeepTheirRelativePosition(defaultShape, isDefaultEditing)
 
     var showHapticFeedbackEditor by remember { mutableStateOf(false) }
 
@@ -250,32 +249,36 @@ fun IntersectionShapeEditor(
                 )
             }
 
-            HapticFeedBackEditorButtonWithPlayTest(haptic) {
-                showHapticFeedbackEditor = true
-            }
-
-            DragonSettingsGroup(R.string.advanced) {
-                SwitchRow(
-                    state = pointsKeepTheirRelativePosition,
-                    title = R.string.points_keep_their_relative_position,
-                    description = R.string.points_keep_their_relative_position_desc,
-                    resetEnabled = shape.pointsKeepTheirRelativePosition != null,
-                    onReset = {
-                        onChangeShape(shape.copy(pointsKeepTheirRelativePosition = null))
-                    }
-                ) {
-                    onChangeShape(
-                        shape.copy(
-                            pointsKeepTheirRelativePosition = it.takeIf {
-                                it != emptyIntersectionShape.getPointsKeepTheirRelativePosition(
-                                    defaultShape,
-                                    isDefaultEditing
-                                )
-                            }
-                        )
-                    )
+            DragonSettingsGroup(R.string.haptic_feedback) {
+                HapticFeedBackEditorButtonWithPlayTest(haptic) {
+                    showHapticFeedbackEditor = true
                 }
             }
+
+
+            // Not implemented for now TODO
+//            DragonSettingsGroup(R.string.advanced) {
+//                SwitchRow(
+//                    state = pointsKeepTheirRelativePosition,
+//                    title = R.string.points_keep_their_relative_position,
+//                    description = R.string.points_keep_their_relative_position_desc,
+//                    resetEnabled = shape.pointsKeepTheirRelativePosition != null,
+//                    onReset = {
+//                        onChangeShape(shape.copy(pointsKeepTheirRelativePosition = null))
+//                    }
+//                ) {
+//                    onChangeShape(
+//                        shape.copy(
+//                            pointsKeepTheirRelativePosition = it.takeIf {
+//                                it != emptyIntersectionShape.getPointsKeepTheirRelativePosition(
+//                                    defaultShape,
+//                                    isDefaultEditing
+//                                )
+//                            }
+//                        )
+//                    )
+//                }
+//            }
         }
     }
 

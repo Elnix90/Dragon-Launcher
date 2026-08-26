@@ -128,12 +128,14 @@ internal constructor(
 
 @Composable
 fun DragonSettingsGroup(
-    title: Int? = null,
+    title: Int? ,
+    modifier: Modifier = Modifier,
     trailingIcon: (@Composable RowScope.() -> Unit)? = null,
     content: @Composable DragonGroupScope.() -> Unit
 ) {
    DragonSettingsGroup(
        title = title?.let{ stringResource(title) },
+       modifier = modifier,
        trailingIcon = trailingIcon,
        content = content
    )
@@ -142,14 +144,16 @@ fun DragonSettingsGroup(
 
 @Composable
 fun DragonSettingsGroup(
-    title: String?,
+    title: String? = null,
+    @SuppressLint("ModifierParameter")
+    modifier: Modifier = Modifier,
     trailingIcon: (@Composable RowScope.() -> Unit)? = null,
     content: @Composable DragonGroupScope.() -> Unit
 ) {
     CompositionLocalProvider(
         LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant,
     ) {
-        SettingsWithTitle(title, trailingIcon) {
+        SettingsWithTitle(title, modifier, trailingIcon) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(4.dp),

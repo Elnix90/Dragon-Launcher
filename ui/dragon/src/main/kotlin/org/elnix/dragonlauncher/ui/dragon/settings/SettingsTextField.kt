@@ -14,14 +14,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import io.github.elnix90.core.objects.StringSettingObject
-import io.github.elnix90.runtime.asMutableState
+import io.github.elnix90.runtime.asState
+import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.animation.Icon
@@ -33,9 +36,12 @@ fun DragonGroupScope.Setting(
     setting: StringSettingObject,
     enabled: Boolean = true,
     singleChar: Boolean = true,
-    singleLine: Boolean = true
+    singleLine: Boolean = false
 ) {
-    var state by setting.asMutableState()
+    val ctx = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    val state by setting.asState()
 
     TextRow(
         currentValue = state,
@@ -45,20 +51,24 @@ fun DragonGroupScope.Setting(
         enabled = enabled,
         singleChar = singleChar,
         singleLine = singleLine
-    ) { state = it }
+    ) {
+        scope.launch {
+            setting.set(ctx, it)
+        }
+    }
 }
 
 
 @Composable
 fun DragonGroupScope.TextRow(
-    currentValue: String,
-    defaultValue: String,
-    label: String,
-    placeHolder: String,
+    currentValue: String?,
+    defaultValue: String?,
+    label: String?,
+    placeHolder: String?,
     enabled: Boolean = true,
-    singleChar: Boolean = true,
+    singleChar: Boolean = false,
     singleLine: Boolean = true,
-    onFinish: (String) -> Unit
+    onFinish: (String?) -> Unit
 ) {
     var tempState by rememberSaveable { mutableStateOf(currentValue) }
 
@@ -100,7 +110,7 @@ fun DragonGroupScope.TextRow(
     }
 
     TextField(
-        value = tempState,
+        value = tempState ?: "",
         onValueChange = {
             if (singleChar && it.length > 1) {
                 animatedIcon.setError()
@@ -108,8 +118,8 @@ fun DragonGroupScope.TextRow(
             }
             tempState = it
         },
-        label = { Text(label) },
-        placeholder = { Text(placeHolder) },
+        label = label?.let{ { Text(label) } },
+        placeholder = placeHolder?.let { { Text(placeHolder) } },
         colors = AppObjectsColors.outlinedTextFieldColors(
             removeBorder = true
         ),
