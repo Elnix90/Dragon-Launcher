@@ -7,7 +7,7 @@ public enum class ColorActions(
     override val resId: Int,
     override val iconEnabled: Int,
     override val iconDisabled: Int? = null
-) : org.elnix.dragonlauncher.base.model.enumsui.ToggleButtonOption {
+) : ToggleButtonOption {
     Reset(R.string.reset, R.drawable.reset),
     Random(R.string.random, R.drawable.shuffle),
     Copy(R.string.copy, R.drawable.copy),

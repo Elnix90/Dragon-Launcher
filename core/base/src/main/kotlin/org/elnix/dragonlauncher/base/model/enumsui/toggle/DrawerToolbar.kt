@@ -7,7 +7,7 @@ public enum class DrawerToolbar(
     override val resId: Int,
     override val iconEnabled: Int,
     override val iconDisabled: Int? = null
-) : org.elnix.dragonlauncher.base.model.enumsui.ToggleButtonOption {
+) : ToggleButtonOption {
     Spacer(R.string.spacer, R.drawable.height),
     RecentlyUsed(R.string.recently_used_apps, R.drawable.reset),
     SearchBar(R.string.search_bar, R.drawable.search);

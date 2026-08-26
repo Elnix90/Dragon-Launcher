@@ -8,7 +8,7 @@ public enum class DrawerActions(
     override val resId: Int,
     override val iconEnabled: Int,
     override val iconDisabled: Int? = null
-) : org.elnix.dragonlauncher.base.model.enumsui.ToggleButtonOption {
+) : ToggleButtonOption {
     Close(R.string.close_app_drawer, R.drawable.close),
     Clear(R.string.drawer_action_clear, R.drawable.close),
     ToggleKb(R.string.toggle_kb, R.drawable.keyboard),

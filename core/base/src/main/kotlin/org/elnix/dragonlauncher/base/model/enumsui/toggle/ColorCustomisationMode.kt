@@ -8,7 +8,7 @@ public enum class DefaultThemes(
     override val resId: Int,
     override val iconEnabled: Int? = null,
     override val iconDisabled: Int? = null
-) : org.elnix.dragonlauncher.base.model.enumsui.ToggleButtonOption {
+) : ToggleButtonOption {
     Light(R.string.flashbang_theme),
     Dark(R.string.dark_theme),
     Amoled(R.string.amoled_theme),

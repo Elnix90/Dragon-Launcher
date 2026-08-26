@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.base.model.enumsui.toggle
 
+import org.elnix.dragonlauncher.base.model.enumsui.ToggleButtonOption
 import org.elnix.dragonlauncher.i18n.R
 
 /**
@@ -9,7 +10,7 @@ public enum class LockMethod(
     override val resId: Int,
     override val iconEnabled: Int? = null,
     override val iconDisabled: Int? = null
-) : org.elnix.dragonlauncher.base.model.enumsui.ToggleButtonOption {
+) : ToggleButtonOption {
     /** No lock - settings are freely accessible */
     None(R.string.lock_none),
 
