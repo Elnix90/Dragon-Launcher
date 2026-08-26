@@ -1085,4 +1085,8 @@
     <string name="actions_lock_method">Actions lock method</string>
     <string name="actions_lock_method_desc">What lock method to use to launch actions. You can condigure what type of actions are affected and use the same password as the settings</string>
     <string name="fine_grained">Fine-Grained</string>
+    <string name="snap_points_angle_threshold">Snap points angle threshold</string>
+    <string name="snap_points_angle_threshold_desc">The angle at which the points are snapped. Use a multiple of 360 for best results</string>
+    <string name="show_snap_point_angle_lines">Show snap points angle lines</string>
+    <string name="show_snap_point_angle_lines_desc">Whether to display a visual aid to preview where the angle will snap</string>
 </resources>

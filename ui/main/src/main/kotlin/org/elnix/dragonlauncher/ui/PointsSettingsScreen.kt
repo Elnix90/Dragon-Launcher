@@ -62,15 +62,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.Constants
 import org.elnix.dragonlauncher.base.Constants.Settings.COLLIDING_SHAPE_THRESHOLD_PX
-import org.elnix.dragonlauncher.base.Constants.Settings.SNAP_STEP_DEG
 import org.elnix.dragonlauncher.base.Constants.Settings.TOUCH_THRESHOLD_PX
 import org.elnix.dragonlauncher.base.cache.NestIntersectionShapesPathCache
-import org.elnix.dragonlauncher.base.model.serializables.Action
-import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
-import org.elnix.dragonlauncher.base.model.serializables.Point
-import org.elnix.dragonlauncher.base.navigation.ManipulationSystem
-import org.elnix.dragonlauncher.base.navigation.NavigationRoute
-import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.MoveAroundTools
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.MoveAroundTools.Center
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.MoveAroundTools.ResetRotation
@@ -80,10 +73,15 @@ import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.EnterNes
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.GoParentNest
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.NestEditTools.NestManagement
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.SelectedPointEditTools
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.CustomGlow
+import org.elnix.dragonlauncher.base.model.serializables.Point
+import org.elnix.dragonlauncher.base.navigation.ManipulationSystem
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
+import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.alphaMultiplier
-import org.elnix.dragonlauncher.ktx.angleRad
-import org.elnix.dragonlauncher.ktx.degrees
+import org.elnix.dragonlauncher.ktx.angleDeg
 import org.elnix.dragonlauncher.ktx.distanceTo
 import org.elnix.dragonlauncher.ktx.px
 import org.elnix.dragonlauncher.ktx.rotateBy
@@ -170,7 +168,11 @@ fun PointsSettingsScreen(
 
     val snapPoints by UiSettingsStore.snapPoints.asState()
     val snapPointsToShapes by UiSettingsStore.snapPointsToShapes.asState()
+
     val snapPointsAngle by UiSettingsStore.snapPointsAngle.asState()
+    val snapPointAngleThreshold by UiSettingsStore.snapPointAngleThreshold.asState()
+    val showSnapPointAngleLines by UiSettingsStore.showSnapPointAngleLines.asState()
+
     val allowFreePoints by UiSettingsStore.allowFreePoints.asState()
     val autoSeparatePoints by UiSettingsStore.autoSeparatePoints.asState()
     val autoMerge by UiSettingsStore.autoMerge.asState()
@@ -689,6 +691,22 @@ fun PointsSettingsScreen(
                                 cells = cellNumber
                             )
                         }
+
+                        if (showSnapPointAngleLines) {
+                            var a = 0
+                            val defaultOffset = Offset(1000f, 0f)
+                            while (a < 360) {
+
+                                val endPos = defaultOffset.rotateBy(a.toFloat())
+                                drawLine(
+                                    start = center,
+                                    end = center + endPos,
+                                    color = onBackgroundColor.alphaMultiplier(0.5f)
+                                )
+
+                                a += snapPointAngleThreshold
+                            }
+                        }
                     }
 
                     val eraseColor = MaterialTheme.colorScheme.background.alphaMultiplier(0.5f)
@@ -942,13 +960,13 @@ fun PointsSettingsScreen(
                                             val shape = shapes.firstOrNull { it.id == tempPos.shapeId.value }
                                             val effectiveFinalPos: Offset = if (snapPointsAngle && shape != null) {
                                                 val pointRelativeOffset = finalPos - shape.getOffset(defaultIntersectionShape, false)
-                                                val angleRad = pointRelativeOffset.angleRad().degrees.toFloat()
-                                                val snappedAngle = angleRad.snapToGrid(SNAP_STEP_DEG)
+                                                val angleDeg = pointRelativeOffset.angleDeg()
+                                                val snappedAngle = angleDeg.snapToGrid(snapPointAngleThreshold.toFloat())
 
                                                 /**
                                                  * By how much the final offset has to rotate to match the asked angle
                                                  */
-                                                val angleDiff = snappedAngle - angleRad
+                                                val angleDiff = snappedAngle - angleDeg
 
                                                 pointRelativeOffset.rotateBy(angleDiff)
 
@@ -1082,6 +1100,13 @@ fun PointsSettingsScreen(
 
                 DragonSettingsGroup(R.string.move_around_mode) {
                     Setting(UiSettingsStore.snapPointsAngle)
+                    AnimatedVisibility(snapPointsAngle) {
+                        Setting(UiSettingsStore.snapPointAngleThreshold)
+                    }
+                    AnimatedVisibility(snapPointsAngle) {
+                        Setting(UiSettingsStore.showSnapPointAngleLines)
+                    }
+
                     Setting(UiSettingsStore.autoMerge)
                     Setting(UiSettingsStore.multiSelectPoints)
 //                    Setting(UiSettingsStore.autoSeparatePoints)

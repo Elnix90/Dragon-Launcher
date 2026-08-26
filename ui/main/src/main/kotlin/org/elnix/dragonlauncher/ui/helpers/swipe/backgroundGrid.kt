@@ -51,7 +51,7 @@ fun DrawScope.backgroundGrid(
  * @param cells how many cells to draw in width and height (the grid is a square)
  * @param color what color the grid is drawn from (defaults to White with 0.25 alpha value)
  */
-fun DrawScope.backgroundCenteredSquareGrid(
+fun DrawScope.  backgroundCenteredSquareGrid(
     center: Offset,
     cellSizePx: Dp,
     cells: Int,

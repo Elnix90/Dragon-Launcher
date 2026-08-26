@@ -291,6 +291,23 @@ public object UiSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
+    public val snapPointAngleThreshold: IntSettingObject = int(
+        title = R.string.snap_points_angle_threshold,
+        description = R.string.snap_points_angle_threshold_desc,
+        icon = R.drawable.arrow_right,
+        default = 15,
+        allowedRange = 1..180
+    )
+
+    @SettingKey
+    public val showSnapPointAngleLines: BooleanSettingObject = boolean(
+        title = R.string.show_snap_point_angle_lines,
+        description = R.string.show_snap_point_angle_lines_desc,
+        icon = R.drawable.visibility,
+        default = false
+    )
+
+    @SettingKey
     public val allowFreePoints: BooleanSettingObject = boolean(
         title = R.string.allow_free_points,
         description = R.string.allow_free_points_desc,
