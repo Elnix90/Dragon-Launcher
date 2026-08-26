@@ -83,24 +83,6 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
 
     var showToolbarsOrderDialog by remember { mutableStateOf(false) }
 
-
-    // Animate the sroll to the bottom drawer action width when user enables them, otherwise it could be missed
-    val scrollState = rememberScrollState()
-    var isFirstLaunch by remember { mutableStateOf(true) }
-    LaunchedEffect(leftDrawerAction, rightDrawerAction) {
-        if (leftDrawerAction.notDisabled || rightDrawerAction.notDisabled) {
-            delay(100.milliseconds)
-            if (!isFirstLaunch) {
-                scrollState.animateScrollBy(
-                    1000f,
-                    animationSpec = easingSpec()
-                )
-            } else {
-                isFirstLaunch = false
-            }
-        }
-    }
-
     SettingsScaffold(
         title = stringResource(R.string.app_drawer),
         helpText = stringResource(R.string.drawer_tab_text),
