@@ -161,6 +161,7 @@ Dragon Launcher is a launcher: some of the permissions below are required by And
         <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/buck_fpv.webp" width="22%" alt="buck fpv Screenshot"/>
         <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/elryantheexplorer.webp" width="22%" alt="elryantheexplorer Screenshot"/>
         <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/federico.webp" width="22%" alt="federico Screenshot"/>
+        <img src="https://raw.githubusercontent.com/Elnix90/Dragon-Launcher/main/assets/user-screenshots/hopekx.png" width="22%" alt="hopekx Screenshot"/>
     </p>
 </details>
 
