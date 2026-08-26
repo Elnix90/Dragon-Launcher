@@ -7,7 +7,7 @@ import org.elnix.dragonlauncher.base.model.enumsui.SelectButtonOption
 public enum class WallpaperEditMode(
     override val resId: Int,
     override val iconResId: Int? = null
-) : org.elnix.dragonlauncher.base.model.enumsui.SelectButtonOption {
+) : SelectButtonOption {
     Main(R.string.main_screen),
     Drawer(R.string.drawer_screen)
 }

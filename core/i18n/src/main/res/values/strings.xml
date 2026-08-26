@@ -523,6 +523,7 @@
     <string name="set_pin">Set PIN</string>
     <string name="pin_mismatch">PINs do not match</string>
     <string name="pin_set_success">PIN set successfully</string>
+    <string name="device_lock_set_success">Device lock set successfully</string>
     <string name="wrong_pin">Wrong PIN</string>
     <string name="unlock_settings">Unlock Settings</string>
     <string name="biometric_prompt_title">Unlock Dragon Settings</string>

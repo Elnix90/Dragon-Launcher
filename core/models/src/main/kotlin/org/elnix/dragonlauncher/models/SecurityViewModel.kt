@@ -16,6 +16,7 @@ import org.elnix.dragonlauncher.base.SettingFlow
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.Device
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.Pattern
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.Pin
+import org.elnix.dragonlauncher.base.model.serializables.LockTarget
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.checkSignature
@@ -42,40 +43,81 @@ public class SecurityViewModel @Inject constructor(
         viewModelInitialized()
     }
 
-
-    public fun removeLock() {
+    public fun removeLock(target: LockTarget) {
         viewModelScope.launch {
-            PrivateSettingsStore.settingsHash.reset(application)
-            PrivateSettingsStore.lockMethod.reset(application)
-            unlock()
+            when (target) {
+                is LockTarget.Settings -> {
+                    PrivateSettingsStore.settingsHash.reset(application)
+                    PrivateSettingsStore.lockMethod.reset(application)
+                    unlock()
+                }
+
+                is LockTarget.Action -> {
+                    PrivateSettingsStore.actionsHash.reset(application)
+                    PrivateSettingsStore.actionsLockMethod.reset(application)
+                }
+            }
         }
     }
 
-    public fun setPinLockMethod(pin: String) {
+    public fun setPinLockMethod(pin: String, target: LockTarget) {
         viewModelScope.launch {
             val hash = securityService.hash(pin)
-            PrivateSettingsStore.settingsHash.set(application, hash)
-            PrivateSettingsStore.lockMethod.set(application, Pin)
-            application.showToast(application.getString(R.string.pin_set_success))
-            unlock()
+            when (target) {
+                is LockTarget.Settings -> {
+                    PrivateSettingsStore.settingsHash.set(application, hash)
+                    PrivateSettingsStore.lockMethod.set(application, Pin)
+                    application.showToast(application.getString(R.string.pin_set_success))
+                    unlock()
+                }
+
+                is LockTarget.Action -> {
+                    PrivateSettingsStore.actionsHash.set(application, hash)
+                    PrivateSettingsStore.actionsLockMethod.set(application, Pin)
+                    application.showToast(application.getString(R.string.pin_set_success))
+                }
+            }
         }
     }
 
-    public fun setPatternLockMethod(pattern: String) {
+    public fun setPatternLockMethod(pattern: String, target: LockTarget) {
         viewModelScope.launch {
             val hash = securityService.hash(pattern)
-            PrivateSettingsStore.settingsHash.set(application, hash)
-            PrivateSettingsStore.lockMethod.set(application, Pattern)
-            application.showToast(application.getString(R.string.pattern_set_successfully))
-            unlock()
+
+            when (target) {
+                is LockTarget.Settings -> {
+                    PrivateSettingsStore.settingsHash.set(application, hash)
+                    PrivateSettingsStore.lockMethod.set(application, Pattern)
+                    application.showToast(application.getString(R.string.pattern_set_successfully))
+                    unlock()
+                }
+
+                is LockTarget.Action -> {
+                    PrivateSettingsStore.actionsHash.set(application, hash)
+                    PrivateSettingsStore.actionsLockMethod.set(application, Pattern)
+                    application.showToast(application.getString(R.string.pattern_set_successfully))
+                }
+            }
         }
     }
 
-    public fun setDeviceLockScreenMethod() {
+    public fun setDeviceLockScreenMethod(target: LockTarget) {
+
         viewModelScope.launch {
-            PrivateSettingsStore.settingsHash.reset(application)
-            PrivateSettingsStore.lockMethod.set(application, Device)
-            unlock()
+            when (target) {
+                is LockTarget.Settings -> {
+                    PrivateSettingsStore.settingsHash.reset(application)
+                    PrivateSettingsStore.lockMethod.set(application, Device)
+                    application.showToast(application.getString(R.string.device_lock_set_success))
+                    unlock()
+                }
+
+                is LockTarget.Action -> {
+                    PrivateSettingsStore.actionsHash.reset(application)
+                    PrivateSettingsStore.actionsLockMethod.set(application, Device)
+                    application.showToast(application.getString(R.string.device_lock_set_success))
+                }
+            }
         }
     }
 

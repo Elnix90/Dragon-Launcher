@@ -542,15 +542,14 @@ fun MainAppUi(
                         }
 
                         entry<NavigationRoute.LockScreenSetup>(metadata = verticalMetadata) { key ->
-                            val lockMethod = key.lockMethod
-
+                            val target = key.lockTarget
                             fun onDismiss() {
                                 backStack.remove(key)
                             }
 
-                            when (lockMethod) {
+                            when (target.method) {
                                 None -> {
-                                    securityViewModel.removeLock()
+                                    securityViewModel.removeLock(target)
                                     onDismiss()
                                 }
 
@@ -604,7 +603,7 @@ fun MainAppUi(
                     }
                 )
 
-                if (currentRoute !is NavigationRoute.LockScreen) {
+                if (currentRoute !is NavigationRoute.LockScreen && currentRoute !is NavigationRoute.LockScreenSetup) {
                     if (showFilePicker != null) {
                         val currentPoint = showFilePicker!!
 

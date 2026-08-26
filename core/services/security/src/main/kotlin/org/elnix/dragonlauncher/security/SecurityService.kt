@@ -10,7 +10,6 @@ import androidx.fragment.app.FragmentActivity
 import io.github.elnix90.logging.logD
 import kotlinx.coroutines.flow.first
 import org.elnix.dragonlauncher.SECURITY_SERVICE
-import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import java.security.MessageDigest
 
@@ -40,6 +39,8 @@ public interface SecurityService {
      */
     public fun showDeviceUnlockPrompt(
         activity: FragmentActivity,
+        title: Int,
+        subtitle: Int,
         onSuccess: () -> Unit,
         onError: (String) -> Unit,
         onFailed: () -> Unit
@@ -98,6 +99,8 @@ internal class SecurityServiceImpl(
 
     override fun showDeviceUnlockPrompt(
         activity: FragmentActivity,
+        title: Int,
+        subtitle: Int,
         onSuccess: () -> Unit,
         onError: (String) -> Unit,
         onFailed: () -> Unit
@@ -131,8 +134,8 @@ internal class SecurityServiceImpl(
         val biometricPrompt = BiometricPrompt(activity, executor, callback)
 
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle(activity.getString(R.string.biometric_prompt_title))
-            .setSubtitle(activity.getString(R.string.biometric_prompt_subtitle))
+            .setTitle(activity.getString(title))
+            .setSubtitle(activity.getString(subtitle))
             .setAllowedAuthenticators(
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     BiometricManager.Authenticators.BIOMETRIC_STRONG or

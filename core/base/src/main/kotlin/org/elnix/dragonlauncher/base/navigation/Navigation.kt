@@ -6,7 +6,8 @@ import androidx.compose.runtime.Immutable
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod
+import org.elnix.dragonlauncher.base.model.serializables.LockResult
+import org.elnix.dragonlauncher.base.model.serializables.LockTarget
 import org.elnix.dragonlauncher.i18n.R
 
 @Immutable
@@ -255,7 +256,7 @@ public sealed class NavigationRoute : NavKey {
     @Serializable
     @SerialName("LockScreen")
     public data class LockScreen(
-        val screenToGo: NavigationRoute
+        val lockResult: LockResult
     ) : NavigationRoute() {
         override val resId: Int = R.string.lock
         override val icon: Int = R.drawable.lock
@@ -263,7 +264,9 @@ public sealed class NavigationRoute : NavKey {
 
     @Serializable
     @SerialName("LockScreenSetup")
-    public data class LockScreenSetup(val lockMethod: LockMethod) : NavigationRoute() {
+    public data class LockScreenSetup(
+        val lockTarget: LockTarget
+    ) : NavigationRoute() {
         override val resId: Int = R.string.lock
         override val icon: Int = R.drawable.lock
     }
@@ -324,7 +327,7 @@ public val NavKey.inTransparentScreen: Boolean
         NavigationRoute.Drawer,
         NavigationRoute.DrawerSettings,
         NavigationRoute.Wallpaper,
-        NavigationRoute.LockScreen,
+        is NavigationRoute.LockScreen,
         is NavigationRoute.LockScreenSetup,
         is NavigationRoute.Widgets -> true
 
