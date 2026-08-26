@@ -11,24 +11,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsIgnoringVisibility
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,19 +36,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.lock.PinLock
-import io.github.elnix90.lock.pin.PinIndicator
+import io.github.elnix90.runtime.asMutableState
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.model.serializables.IconShape
-import org.elnix.dragonlauncher.base.model.serializables.IconShape.Companion.pinMaterialShapes
-import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.vibrate
 import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 
 /**
@@ -67,52 +57,32 @@ fun PinUnlock(
     onSuccess: () -> Unit,
     securityViewModel: SecurityViewModel = activityViewModel()
 ) {
+    val scope = rememberCoroutineScope()
     val haptic = LocalHapticFeedback.current
-    val pinHash by PrivateSettingsStore.lockHash.asState()
 
-    var pin by remember { mutableStateOf("") }
-    val pinShapes = remember { mutableStateListOf<IconShape>() }
     var failedTries by remember { mutableIntStateOf(0) }
-    var pinError by remember { mutableStateOf<String?>(null) }
-
+    var pinErrorMessage by remember { mutableStateOf<String?>(null) }
     val wrongPinText = stringResource(R.string.wrong_pin)
 
     PinPrompt(
         title = stringResource(R.string.unlock_settings),
         subtitle = stringResource(R.string.enter_pin),
-        pinValue = pin,
-        pinShapes = pinShapes,
-        errorMessage = pinError,
+        errorMessage = pinErrorMessage,
         failedTries = failedTries,
-        onPinChanged = { newValue ->
-            pinError = null
-            pin = newValue
-            if (pinShapes.size < newValue.length) {
-                repeat(newValue.length - pinShapes.size) {
-                    pinShapes.add(pinMaterialShapes.random())
-                }
-            } else {
-                repeat(pinShapes.size - newValue.length) {
-                    pinShapes.removeAt(pinShapes.lastIndex)
-                }
-            }
-        },
         onDismiss = {
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
             onDismiss()
         }
-    ) {
-        if (securityViewModel.verify(pin, pinHash)) {
-            haptic.performHapticFeedback(HapticFeedbackType.Confirm)
-            onSuccess()
-            pinShapes.clear()
-            pin = ""
-        } else {
-            haptic.performHapticFeedback(HapticFeedbackType.Reject)
-            pinError = wrongPinText
-            failedTries++
-            pinShapes.clear()
-            pin = ""
+    ) { pin ->
+        scope.launch {
+            if (securityViewModel.verify(pin)) {
+                haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+                onSuccess()
+            } else {
+                haptic.performHapticFeedback(HapticFeedbackType.Reject)
+                pinErrorMessage = wrongPinText
+                failedTries++
+            }
         }
     }
 }
@@ -129,98 +99,65 @@ fun PinSetup(
     val haptic = LocalHapticFeedback.current
 
     var firstPin by remember { mutableStateOf("") }
-    var confirmPin by remember { mutableStateOf("") }
     var isConfirmStep by remember { mutableStateOf(false) }
 
     var showWarningDialog by remember { mutableStateOf(false) }
-    val doNotRemindMeWarningDialog by UiSettingsStore.doNotRemindMeAgainPinLockWarning.asState()
+    var doNotRemindMeWarningDialog by UiSettingsStore.doNotRemindMeAgainPinLockWarning.asMutableState()
 
-    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var pinErrorMessage by remember { mutableStateOf<String?>(null) }
     var failedTries by remember { mutableIntStateOf(0) }
-    val pinMismatch = stringResource(R.string.pin_mismatch)
-
-    val pinShapes = remember(isConfirmStep) { mutableStateListOf<IconShape>() }
-    val currentPin = if (isConfirmStep) confirmPin else firstPin
+    val pinMismatchText = stringResource(R.string.pin_mismatch)
 
     PinPrompt(
         title = stringResource(R.string.set_pin),
         subtitle = if (isConfirmStep) stringResource(R.string.confirm_pin) else stringResource(R.string.enter_pin),
-        pinValue = currentPin,
-        pinShapes = pinShapes,
-        errorMessage = errorMessage,
+        errorMessage = pinErrorMessage,
         failedTries = failedTries,
-        onPinChanged = { newValue ->
-            errorMessage = null
-            if (pinShapes.size < newValue.length) {
-                repeat(newValue.length - pinShapes.size) {
-                    pinShapes.add(pinMaterialShapes.random())
-                }
-            } else {
-                repeat(pinShapes.size - newValue.length) {
-                    pinShapes.removeAt(pinShapes.lastIndex)
-                }
-            }
-            if (isConfirmStep) {
-                confirmPin = newValue
-            } else {
-                firstPin = newValue
-            }
-        },
         onDismiss = {
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
             if (isConfirmStep) {
                 isConfirmStep = false
-                confirmPin = ""
-                errorMessage = null
+                pinErrorMessage = null
             } else {
                 onDismiss()
             }
-        }
-    ) {
-        if (!isConfirmStep) {
-            isConfirmStep = true
-            confirmPin = ""
-            haptic.performHapticFeedback(HapticFeedbackType.Confirm)
-        } else {
-            when {
-                // Error
-                firstPin != confirmPin -> {
-                    errorMessage = pinMismatch
-                    confirmPin = ""
-                    pinShapes.clear()
-                    failedTries++
-                    haptic.performHapticFeedback(HapticFeedbackType.Reject)
-                }
+        },
+        onValidate = { pin ->
+            if (isConfirmStep) {
+                when {
+                    // Error
+                    firstPin != pin -> {
+                        pinErrorMessage = pinMismatchText
+                        failedTries++
+                        haptic.performHapticFeedback(HapticFeedbackType.Reject)
+                    }
 
-                else -> {
-                    haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+                    else -> {
+                        haptic.performHapticFeedback(HapticFeedbackType.Confirm)
 
-                    if (doNotRemindMeWarningDialog) {
-                        onPinSet(firstPin)
-                    } else {
-                        showWarningDialog = true
+                        if (doNotRemindMeWarningDialog) {
+                            onPinSet(firstPin)
+                        } else {
+                            showWarningDialog = true
+                        }
                     }
                 }
+            } else {
+                isConfirmStep = true
+                firstPin = pin
+                haptic.performHapticFeedback(HapticFeedbackType.Confirm)
             }
         }
-    }
-    
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+    )
 
     if (showWarningDialog) {
         UserValidation(
             title = stringResource(R.string.pin_code_warning_title),
             message = stringResource(R.string.pin_code_warning_desc),
-            doNotRemindMeAgain = {
-              scope.launch {
-                  UiSettingsStore.doNotRemindMeAgainPinLockWarning.set(ctx, true)
-              }
-            },
-            onDismiss = onDismiss
-        ) {
-            onPinSet(firstPin)
-        }
+            doNotRemindMeAgain = { doNotRemindMeWarningDialog = it },
+            onDismiss = onDismiss,
+            onValidate = { onPinSet(firstPin) }
+        )
     }
 }
 
@@ -230,15 +167,10 @@ fun PinSetup(
 private fun PinPrompt(
     title: String,
     subtitle: String,
-    pinValue: String,
-    pinShapes: List<IconShape>,
     errorMessage: String? = null,
     failedTries: Int,
-    minDigits: Int = 1,
-    maxDigits: Int = Int.MAX_VALUE,
-    onPinChanged: (String) -> Unit,
     onDismiss: () -> Unit,
-    onPrimaryAction: () -> Unit
+    onValidate: (pin: String) -> Unit
 ) {
     val ctx = LocalContext.current
     val horizontalOffsetError = remember {
@@ -289,6 +221,7 @@ private fun PinPrompt(
                 if (vibrateOnError) {
                     // Forcefully vibrate using the low-level API to not rely on the phone settings.
                     // This will ALWAYS vibrate,no matter what the user settings are 😈
+                    // EDIT: since a while, it doesn't work anymore, but I still need it to play a 500 milliseconds haptic repetitively
                     @Suppress("DEPRECATION")
                     ctx.vibrate(500L)
                 }
@@ -322,75 +255,51 @@ private fun PinPrompt(
 
     BackHandler(onBack = onDismiss)
 
-
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.background,
-        contentWindowInsets = WindowInsets.statusBarsIgnoringVisibility
-    ) { paddingValues ->
+    LockScreenScaffold { paddingValues ->
         Column(
             modifier = Modifier
-                .padding(paddingValues)
                 .fillMaxSize()
+                .padding(paddingValues)
                 .background(backgroundOverlayColor.value)
                 .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.Bottom
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Spacer(modifier = Modifier.height(8.dp))
+            Icon(
+                painter = painterResource(R.drawable.lock),
+                contentDescription = null,
+                tint = lockColor.value,
+                modifier = Modifier
+                    .offset(x = horizontalOffsetError.value.dp)
+                    .size(50.dp)
+            )
+            Spacer(8.dp)
 
-                Icon(
-                    painter = painterResource(R.drawable.lock),
-                    contentDescription = null,
-                    tint = lockColor.value,
-                    modifier = Modifier
-                        .offset(x = horizontalOffsetError.value.dp)
-                        .size(34.dp)
-                )
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
 
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
 
-                )
-
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-                PinIndicator(pinShapes) { it.resolveShape() }
-                AnimatedVisibility(errorMessage != null) {
-                    if (errorMessage != null) {
-                        Text(
-                            text = errorMessage,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
+            AnimatedVisibility(errorMessage != null) {
+                if (errorMessage != null) {
+                    Text(
+                        text = errorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
             }
-
+            Spacer(40.dp)
             PinLock(
-                modifier = Modifier.fillMaxWidth(),
-                onDigit = { digit ->
-                    if (pinValue.length < maxDigits) {
-                        onPinChanged(pinValue + digit)
-                    }
-                },
-                validateEnabled = pinValue.length >= minDigits,
-                onValidate = onPrimaryAction,
-                backSpaceOrClose = pinValue.isNotEmpty(),
-                onClear = {
-                    if (pinValue.isEmpty()) onDismiss()
-                    else onPinChanged("")
-                }
+                modifier = Modifier.padding(bottom = 80.dp),
+                onValidate = onValidate
             )
         }
     }

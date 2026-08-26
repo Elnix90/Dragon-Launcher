@@ -32,9 +32,9 @@ import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.DragonJson
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Companion.settingsRoutes
-import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute.Companion.settingsRoutes
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.BackupSelectStoresButtons
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore

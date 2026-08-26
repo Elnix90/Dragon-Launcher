@@ -33,10 +33,10 @@ fun DragonGroupScope.Setting(
     var showConfirmPopup by remember { mutableStateOf<Boolean?>(null) }
 
     fun toggle(state: Boolean) {
+        onCheck?.invoke(state)
         scope.launch {
             setting.set(ctx, state)
         }
-        onCheck?.invoke(state)
     }
 
     SwitchRow(

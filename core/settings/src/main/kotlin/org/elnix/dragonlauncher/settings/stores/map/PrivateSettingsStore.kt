@@ -11,7 +11,7 @@ import io.github.elnix90.core.objects.enum
 import io.github.elnix90.core.objects.int
 import io.github.elnix90.core.objects.string
 import io.github.elnix90.core.stores.MapSettingsStore
-import org.elnix.dragonlauncher.enumsui.toggle.LockMethod
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod
 import org.elnix.dragonlauncher.i18n.R
 
 @SettingsStore
@@ -65,30 +65,29 @@ public object PrivateSettingsStore : MapSettingsStore(backupable = false) {
     /**
      *  Hashed code for settings lock (SHA-256).
      *  This can contain either the Pattern hashed or the PIN hashed.
-     *  They are both stored as string, containing the digits in the LtR direction.
-     *
-     * For example:
-     * Pin can be: `"1234"`, and a patteran can also be the same (`"0123"`)
+     *  They are both handled as string, containing the digits in the LtR direction:
      */
     @SettingKey
-    public val lockHash: StringSettingObject = string("")
+    public val settingsHash: StringSettingObject = string("")
 
     /**
-     * Only used when a pattern is used. determined the size of the used pattern
-     *
-     * CRITICAL: when the pattern size changes, the hash must be also recomputed!!
+     *  Hashed code for launching actions (SHA-256).
+     *  This can contain either the Pattern hashed or the PIN hashed.
+     *  They are both handled as string, containing the digits in the LtR direction:
      */
     @SettingKey
-    public val patternSize: IntSettingObject = int(
-        title = R.string.pattern_size,
-        description = R.string.pattern_size_desc,
-        icon = R.drawable.apps,
-        default = 3,
-        allowedRange = 2..10
-    )
+    public val actionsHash: StringSettingObject = string("")
+
 
     @SettingKey
     public val lockMethod: EnumSettingObject<LockMethod> = enum(LockMethod.None)
+
+    /**
+     * The lock method for the actions
+     */
+    @SettingKey
+    public val actionsLockMethod: EnumSettingObject<LockMethod> = enum(LockMethod.None)
+
 
     /**
      * Used to remember the page the user left when exiting the welcome screen, and going, for example to the default launcher selection

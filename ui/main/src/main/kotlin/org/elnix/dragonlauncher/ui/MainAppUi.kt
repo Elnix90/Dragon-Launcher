@@ -45,24 +45,23 @@ import io.github.elnix90.logging.logE
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.SECURITY_SERVICE
 import org.elnix.dragonlauncher.SHIZUKU_TAG
 import org.elnix.dragonlauncher.TAG
 import org.elnix.dragonlauncher.base.Constants.PackageNames.SHIZUKU_PACKAGE_NAME
 import org.elnix.dragonlauncher.base.Constants.URLs.URL_SHIZUKU_SITE
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.Device
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.None
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.Pattern
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.LockMethod.Pin
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.model.serializables.Widget
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.base.navigaton.halfTransparentScreen
-import org.elnix.dragonlauncher.base.navigaton.inTransparentScreen
-import org.elnix.dragonlauncher.base.navigaton.isIgnoredReturnScreen
-import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Device
-import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.None
-import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Pattern
-import org.elnix.dragonlauncher.enumsui.toggle.LockMethod.Pin
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
+import org.elnix.dragonlauncher.base.navigation.halfTransparentScreen
+import org.elnix.dragonlauncher.base.navigation.inTransparentScreen
+import org.elnix.dragonlauncher.base.navigation.isIgnoredReturnScreen
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ktx.findFragmentActivity
@@ -97,7 +96,9 @@ import org.elnix.dragonlauncher.ui.dialogs.MainScreeLayersTab
 import org.elnix.dragonlauncher.ui.dialogs.ShizukuOutputDialog
 import org.elnix.dragonlauncher.ui.dialogs.ShizukuUnavailableDialog
 import org.elnix.dragonlauncher.ui.dialogs.WidgetPickerDialog
+import org.elnix.dragonlauncher.ui.dialogs.security.PatternSetup
 import org.elnix.dragonlauncher.ui.dialogs.security.PatternUnlock
+import org.elnix.dragonlauncher.ui.dialogs.security.PinSetup
 import org.elnix.dragonlauncher.ui.dialogs.security.PinUnlock
 import org.elnix.dragonlauncher.ui.drawer.AppDrawerScreen
 import org.elnix.dragonlauncher.ui.helpers.BottomBanners
@@ -180,7 +181,6 @@ fun MainAppUi(
     }
 
     val isLocked by securityViewModel.isLocked.asState()
-    val screenToUnlock by securityViewModel.screenToUnlock.asState()
     val lockMethod by PrivateSettingsStore.lockMethod.asState()
 
     LaunchedEffect(currentRoute) {
@@ -200,11 +200,10 @@ fun MainAppUi(
                 return
             }
 
-            if (NavigationRoute.LockScreen in backStack) return
+            if (backStack.any { it is NavigationRoute.LockScreen }) return
 
             if (screen in NavigationRoute.settingsRoutes && lockMethod != None) {
-                backStack.add(NavigationRoute.LockScreen)
-                securityViewModel.requestUnlock(screen)
+                backStack.add(NavigationRoute.LockScreen(screen))
             } else {
                 go(screen)
             }
@@ -482,65 +481,121 @@ fun MainAppUi(
                         entry<NavigationRoute.WorkspaceDetail>(metadata = horizontalMetadata) { key -> WorkspaceDetailScreen(key.workspaceId) }
 
                         entry<NavigationRoute.TimerExceeded> { key -> TimeLimitExceededScreen(key.appName) }
-                        entry<NavigationRoute.LockScreen> {
+                        entry<NavigationRoute.LockScreen> { key ->
+
+                            fun onSuccess() {
+                                backStack.remove(key)
+                                navigator.go(key.screenToGo)
+                                securityViewModel.unlock()
+                            }
+
+                            fun onDismiss() {
+                                backStack.remove(key)
+                            }
+
+
+                            // Quick toggle to bypass unlock when I'm blocked out because I forgot the password :)
+//                            LaunchedEffect(screenToUnlock) {
+//                                if (screenToUnlock != null) onSuccess()
+//                            }
+
                             when (lockMethod) {
                                 None -> {
-                                    // This block shouldn't be called
-                                    backStack.remove(NavigationRoute.LockScreen)
-                                    navigator.go(screenToUnlock!!)
-                                    securityViewModel.unlock()
+                                    // This block is only called when the user pressed the secret unlock button
+                                    onSuccess()
                                 }
 
                                 Pin -> {
                                     PinUnlock(
-                                        onDismiss = {
-                                            backStack.remove(NavigationRoute.LockScreen)
-                                            securityViewModel.cancelUnlock()
-                                        },
-                                        onSuccess = {
-                                            logD(SECURITY_SERVICE) { "onSuccess() called!" }
-                                            backStack.remove(NavigationRoute.LockScreen)
-                                            navigator.go(screenToUnlock!!)
-                                            securityViewModel.unlock()
-                                        }
+                                        onDismiss = ::onDismiss,
+                                        onSuccess = ::onSuccess
                                     )
                                 }
 
                                 Pattern -> {
                                     PatternUnlock(
-                                        onDismiss = {
-                                            backStack.remove(NavigationRoute.LockScreen)
-                                            securityViewModel.cancelUnlock()
-                                        },
-                                        onSuccess = {
-                                            backStack.remove(NavigationRoute.LockScreen)
-                                            navigator.go(screenToUnlock!!)
-                                            securityViewModel.unlock()
+                                        onDismiss = ::onDismiss,
+                                        onSuccess = ::onSuccess
+                                    )
+                                }
+
+                                Device -> {
+                                    LaunchedEffect(Unit) {
+                                        val activity = ctx.findFragmentActivity()
+                                        if (activity != null && securityViewModel.isDeviceUnlockAvailable()) {
+                                            securityViewModel.showDeviceUnlockPrompt(
+                                                activity = activity,
+                                                onSuccess = ::onSuccess,
+                                                onError = { msg ->
+                                                    ctx.showToast(ctx.getString(R.string.authentication_error, msg))
+                                                    onDismiss()
+                                                },
+                                                onFailed = {
+                                                    ctx.showToast(ctx.getString(R.string.authentication_failed))
+                                                    onDismiss()
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        entry<NavigationRoute.LockScreenSetup>(metadata = verticalMetadata) { key ->
+                            val lockMethod = key.lockMethod
+
+                            fun onDismiss() {
+                                backStack.remove(key)
+                            }
+
+                            when (lockMethod) {
+                                None -> {
+                                    securityViewModel.removeLock()
+                                    onDismiss()
+                                }
+
+                                Pin -> {
+                                    PinSetup(
+                                        onDismiss = ::onDismiss,
+                                        onPinSet = { pin ->
+                                            securityViewModel.setPinLockMethod(pin)
+                                            onDismiss()
+                                        }
+                                    )
+                                }
+
+                                Pattern -> {
+                                    PatternSetup(
+                                        onDismiss = ::onDismiss,
+                                        onPattern = { pattern ->
+                                            securityViewModel.setPatternLockMethod(pattern)
+                                            onDismiss()
                                         }
                                     )
                                 }
 
                                 Device -> {
-                                    LaunchedEffect(screenToUnlock) {
+                                    LaunchedEffect(Unit) {
                                         val activity = ctx.findFragmentActivity()
                                         if (activity != null && securityViewModel.isDeviceUnlockAvailable()) {
                                             securityViewModel.showDeviceUnlockPrompt(
                                                 activity = activity,
                                                 onSuccess = {
-                                                    navigator.go(screenToUnlock!!)
-                                                    securityViewModel.unlock()
+                                                    securityViewModel.setDeviceLockScreenMethod()
+                                                    onDismiss()
                                                 },
                                                 onError = { msg ->
                                                     ctx.showToast(ctx.getString(R.string.authentication_error, msg))
-                                                    backStack.remove(NavigationRoute.LockScreen)
-                                                    securityViewModel.cancelUnlock()
+                                                    onDismiss()
                                                 },
                                                 onFailed = {
                                                     ctx.showToast(ctx.getString(R.string.authentication_failed))
-                                                    backStack.remove(NavigationRoute.LockScreen)
-                                                    securityViewModel.cancelUnlock()
+                                                    onDismiss()
                                                 }
                                             )
+                                        } else {
+                                            ctx.showToast(ctx.getString(R.string.device_credentials_not_available))
+                                            securityViewModel.removeLock()
                                         }
                                     }
                                 }
@@ -549,7 +604,7 @@ fun MainAppUi(
                     }
                 )
 
-                if (screenToUnlock == null) {
+                if (currentRoute !is NavigationRoute.LockScreen) {
                     if (showFilePicker != null) {
                         val currentPoint = showFilePicker!!
 

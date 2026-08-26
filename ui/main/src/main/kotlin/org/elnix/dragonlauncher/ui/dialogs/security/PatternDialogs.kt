@@ -11,18 +11,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsIgnoringVisibility
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,27 +35,23 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.lock.Dot
 import io.github.elnix90.lock.PatternLock
-import io.github.elnix90.lock.patttern.ComposeLockCallback
+import io.github.elnix90.lock.patttern.PatternLockOptions
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.vibrate
 import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
-import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.animation.slideInVerticalBouncyUp
 import org.elnix.dragonlauncher.ui.base.animation.slideOutVerticalBouncyUp
-import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
-import org.elnix.dragonlauncher.ui.base.modifiers.selfAlignHorizontally
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
+import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
-import org.elnix.dragonlauncher.ui.dragon.text.DialogDescription
-import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
 /**
  * Dialog for entering a PIN to unlock settings.
@@ -72,10 +62,9 @@ fun PatternUnlock(
     onSuccess: () -> Unit,
     securityViewModel: SecurityViewModel = activityViewModel()
 ) {
+    val scope = rememberCoroutineScope()
     val haptic = LocalHapticFeedback.current
-    val pinHash by PrivateSettingsStore.lockHash.asState()
 
-    var pattern by remember { mutableStateOf("") }
     var failedTries by remember { mutableIntStateOf(0) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
@@ -85,26 +74,22 @@ fun PatternUnlock(
         title = stringResource(R.string.unlock_settings),
         subtitle = stringResource(R.string.draw_pattern),
         errorMessage = errorMessage,
-        showSizeSlider = false,
+        showOptionSlider = false,
         failedTries = failedTries,
-        onAddPoint = { newDotId ->
-            errorMessage = null
-            pattern += newDotId
-        },
         onDismiss = {
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
             onDismiss()
         }
-    ) {
-        if (securityViewModel.verify(pattern, pinHash)) {
-            haptic.performHapticFeedback(HapticFeedbackType.Confirm)
-            pattern = ""
-            onSuccess()
-        } else {
-            haptic.performHapticFeedback(HapticFeedbackType.Reject)
-            errorMessage = wrongPinText
-            failedTries++
-            pattern = ""
+    ) { patternString ->
+        scope.launch {
+            if (securityViewModel.verify(patternString)) {
+                haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+                onSuccess()
+            } else {
+                haptic.performHapticFeedback(HapticFeedbackType.Reject)
+                errorMessage = wrongPinText
+                failedTries++
+            }
         }
     }
 }
@@ -116,16 +101,15 @@ fun PatternUnlock(
 @Composable
 fun PatternSetup(
     onDismiss: () -> Unit,
-    onPinSet: (pattern: String) -> Unit
+    onPattern: (pattern: String) -> Unit
 ) {
     val haptic = LocalHapticFeedback.current
 
-    val patternSize by PrivateSettingsStore.patternSize.asState()
+    val patternSize by BehaviorSettingsStore.patternSize.asState()
     val doNotRemindMeWarningDialog by UiSettingsStore.doNotRemindMeAgainPinLockWarning.asState()
 
 
     var firstPattern by remember { mutableStateOf("") }
-    var confirmPattern by remember { mutableStateOf("") }
     var isConfirmStep by remember { mutableStateOf(false) }
 
     var showWarningDialog by remember { mutableStateOf(false) }
@@ -137,7 +121,6 @@ fun PatternSetup(
     LaunchedEffect(patternSize) {
         errorMessage = null
         firstPattern = ""
-        confirmPattern = ""
     }
 
 
@@ -146,36 +129,26 @@ fun PatternSetup(
         subtitle = if (isConfirmStep) stringResource(R.string.confirm_pattern) else stringResource(R.string.draw_pattern),
         errorMessage = errorMessage,
         failedTries = failedTries,
-        showSizeSlider = true,
-        onAddPoint = { newDotId ->
-            errorMessage = null
-            if (isConfirmStep) {
-                confirmPattern += newDotId
-            } else {
-                firstPattern += newDotId
-            }
-        },
+        showOptionSlider = true,
         onDismiss = {
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
             if (isConfirmStep) {
                 isConfirmStep = false
-                confirmPattern = ""
                 errorMessage = null
             } else {
                 onDismiss()
             }
         }
-    ) {
+    ) { patternString ->
         if (!isConfirmStep) {
             isConfirmStep = true
-            confirmPattern = ""
+            firstPattern = patternString
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
         } else {
             when {
                 // Error
-                firstPattern != confirmPattern -> {
+                firstPattern != patternString -> {
                     errorMessage = pinMismatch
-                    confirmPattern = ""
                     failedTries++
                     haptic.performHapticFeedback(HapticFeedbackType.Reject)
                 }
@@ -184,7 +157,7 @@ fun PatternSetup(
                     haptic.performHapticFeedback(HapticFeedbackType.Confirm)
 
                     if (doNotRemindMeWarningDialog) {
-                        onPinSet(firstPattern)
+                        onPattern(firstPattern)
                     } else {
                         showWarningDialog = true
                     }
@@ -207,7 +180,7 @@ fun PatternSetup(
             },
             onDismiss = onDismiss
         ) {
-            onPinSet(firstPattern)
+            onPattern(firstPattern)
         }
     }
 }
@@ -218,15 +191,17 @@ fun PatternSetup(
 private fun PatternPrompt(
     title: String,
     subtitle: String,
-    showSizeSlider: Boolean,
+    showOptionSlider: Boolean,
     errorMessage: String? = null,
     failedTries: Int,
-    onAddPoint: (String) -> Unit,
     onDismiss: () -> Unit,
-    onDrawEnd: () -> Unit
+    onDrawEnd: (String) -> Unit
 ) {
     val ctx = LocalContext.current
-    val patternSize by PrivateSettingsStore.patternSize.asState()
+
+    val patternSize by BehaviorSettingsStore.patternSize.asState()
+    val patternSensitivity by BehaviorSettingsStore.patternSensitivity.asState()
+    var showSensitivity by remember { mutableStateOf(false) }
 
     val horizontalOffsetError = remember {
         Animatable(
@@ -308,95 +283,73 @@ private fun PatternPrompt(
 
     BackHandler(onBack = onDismiss)
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.background,
-        contentWindowInsets = WindowInsets.statusBarsIgnoringVisibility
-    ) { paddingValues ->
+    LockScreenScaffold { paddingValues ->
         Column(
             modifier = Modifier
-                .padding(paddingValues)
                 .fillMaxSize()
+                .padding(paddingValues)
                 .background(backgroundOverlayColor.value)
                 .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.Bottom
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+            Icon(
+                painter = painterResource(R.drawable.lock),
+                contentDescription = null,
+                tint = lockColor.value,
+                modifier = Modifier
+                    .offset(x = horizontalOffsetError.value.dp)
+                    .size(50.dp)
+            )
+            Spacer(8.dp)
+
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            AnimatedVisibility(
+                visible = errorMessage != null,
+                enter = slideInVerticalBouncyUp,
+                exit = slideOutVerticalBouncyUp
             ) {
-                Spacer(modifier = Modifier.height(8.dp))
+                if (errorMessage != null) {
+                    Text(
+                        text = errorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
 
-                Icon(
-                    painter = painterResource(R.drawable.lock),
-                    contentDescription = null,
-                    tint = lockColor.value,
-                    modifier = Modifier
-                        .offset(x = horizontalOffsetError.value.dp)
-                        .size(34.dp)
-                )
 
-                DialogTitle(
-                    text = title,
-                    modifier = Modifier.selfAlignHorizontally()
-                )
-                DialogDescription(subtitle)
-
-                if (showSizeSlider) DragonSettingsGroup { Setting(PrivateSettingsStore.patternSize) }
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    AnimatedVisibility(
-                        visible = errorMessage != null,
-                        enter = slideInVerticalBouncyUp,
-                        exit = slideOutVerticalBouncyUp
-                    ) {
-                        if (errorMessage != null) {
-                            Text(
-                                text = errorMessage,
-                                color = MaterialTheme.colorScheme.error,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-                    }
+            if (showOptionSlider) {
+                DragonSettingsGroup {
+                    Setting(BehaviorSettingsStore.patternSize)
+                    Setting(BehaviorSettingsStore.patternSensitivity)
+                    SwitchRow(
+                        state = showSensitivity,
+                        title = R.string.show_sensitivity,
+                        icon = R.drawable.visibility
+                    ) { showSensitivity = it }
                 }
             }
 
             PatternLock(
-                dimension = patternSize,
-                sensitivity = 100f,
-                dotsColor = MaterialTheme.colorScheme.primary,
-                dotsSize = 20f,
-                linesColor = MaterialTheme.colorScheme.secondary,
-                linesStroke = 30f,
-                animationDuration = 200,
-                animationDelay = 100,
-                callback = object : ComposeLockCallback {
-                    override fun onDotConnected(dot: Dot) {
-                        onAddPoint(dot.id.toString())
-                    }
-
-                    override fun onResult(result: List<Dot>) {
-                        onDrawEnd()
-                    }
-
-                    override fun onStart(dot: Dot) {
-                        onAddPoint(dot.id.toString())
-                    }
-                }
-            )
-
-
-            AnimatedFab(
-                icon = R.drawable.close,
-                minSize = 100.dp,
-                containerColor = MaterialTheme.colorScheme.errorContainer,
-                onClick = onDismiss
+                modifier = Modifier.padding(bottom = 80.dp),
+                patternLockOptions = PatternLockOptions.defaultPatternLockOptions.copy(
+                    dimension = patternSize,
+                    sensitivity = patternSensitivity,
+                    showSensibility = showSensitivity
+                ),
+                onFinished = onDrawEnd,
             )
         }
     }

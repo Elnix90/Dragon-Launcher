@@ -42,7 +42,7 @@ import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Compani
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
 import org.elnix.dragonlauncher.base.model.serializables.Widget
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.isInsideActiveZone
 import org.elnix.dragonlauncher.ktx.toDp

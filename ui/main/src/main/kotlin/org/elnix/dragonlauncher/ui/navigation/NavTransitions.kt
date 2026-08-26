@@ -5,7 +5,6 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
@@ -16,10 +15,16 @@ import org.elnix.dragonlauncher.ui.base.animation.navigationBouncySpec
 val verticalMetadata: Map<String, Any> = NavDisplay.transitionSpec {
     slideInVertically(navigationBouncySpec) { it } + fadeIn() togetherWith fadeOut()
 }
+val horizontalMetadata: Map<String, Any> = emptyMap()
+//val horizontalMetadata: Map<String, Any> = NavDisplay.transitionSpec {
+//    slideInHorizontally(
+//        tween(
+//            durationMillis = 300,
+//            easing = LinearOutSlowInEasing
+//        )
+//    ) { it } + fadeIn() togetherWith fadeOut()
+//}
 
-val horizontalMetadata: Map<String, Any> = NavDisplay.transitionSpec {
-    slideInHorizontally(navigationBouncySpec) { it } + fadeIn() togetherWith fadeOut()
-}
 val drawerMetadata: Map<String, Any> =
     metadata {
         put(NavDisplay.TransitionKey) {

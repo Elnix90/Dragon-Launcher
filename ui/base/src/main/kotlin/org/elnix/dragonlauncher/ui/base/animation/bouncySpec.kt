@@ -4,12 +4,9 @@ import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.SizeTransform
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.SpringSpec
-import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -27,11 +24,6 @@ fun <T> bouncySpec(): SpringSpec<T> = spring(
 fun <T> defaultSpec(): SpringSpec<T> = spring(
     dampingRatio = Spring.DampingRatioHighBouncy,
     stiffness = Spring.StiffnessHigh
-)
-
-fun <T> easingSpec(): TweenSpec<T> = tween(
-    durationMillis = 300,
-    easing = FastOutSlowInEasing
 )
 
 val navigationBouncySpec: SpringSpec<IntOffset> = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessLow)

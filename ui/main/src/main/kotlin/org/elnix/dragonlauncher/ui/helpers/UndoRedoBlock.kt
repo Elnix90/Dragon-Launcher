@@ -19,7 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.sp
 import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.undoredo.UndoRedoManager
-import org.elnix.dragonlauncher.enumsui.toggle.UndRedoEditTools
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.UndRedoEditTools
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource

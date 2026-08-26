@@ -3,7 +3,6 @@ package org.elnix.dragonlauncher.ui.settings.customization.drawer
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -30,17 +28,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.Companion.notDisabled
-import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions.Companion.notNone
-import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions.Companion.notDisabled
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions.Companion.notNone
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.HorizontalAlignment
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
-import org.elnix.dragonlauncher.ui.base.animation.easingSpec
 import org.elnix.dragonlauncher.ui.base.modifiers.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ui.dialogs.ToolbarsOrderDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -53,7 +49,6 @@ import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 import org.elnix.dragonlauncher.ui.helpers.workspace.AppGrid
-import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
@@ -87,7 +82,6 @@ fun DrawerTab(drawerViewModel: DrawerViewModel = activityViewModel()) {
         title = stringResource(R.string.app_drawer),
         helpText = stringResource(R.string.drawer_tab_text),
         resetText = stringResource(R.string.reset_drawer),
-        scrollState = scrollState,
         onReset = {
             scope.launch {
                 DrawerSettingsStore.resetAll(ctx)

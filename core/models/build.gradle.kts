@@ -43,7 +43,6 @@ dependencies {
 
     implementation(project(":core:settings"))
     implementation(project(":core:i18n"))
-    implementation(project(":core:enumsui"))
     implementation(project(":core:services:timer"))
     implementation(project(":core:ktx"))
 

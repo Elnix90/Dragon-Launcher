@@ -16,7 +16,7 @@ import org.elnix.dragonlauncher.base.theme.DarkDragonColorScheme
 import org.elnix.dragonlauncher.base.theme.DefaultExtraColors
 import org.elnix.dragonlauncher.base.theme.LightDragonColorScheme
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes
 import org.elnix.dragonlauncher.models.ColorsViewModel
 import org.elnix.dragonlauncher.models.FontViewModel
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore

@@ -32,8 +32,8 @@ import androidx.compose.ui.util.fastForEachIndexed
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.models.Application
-import org.elnix.dragonlauncher.enumsui.select.LocalWorkspaceViewMode
-import org.elnix.dragonlauncher.enumsui.select.WorkspaceViewMode
+import org.elnix.dragonlauncher.base.model.enumsui.select.LocalWorkspaceViewMode
+import org.elnix.dragonlauncher.base.model.enumsui.select.WorkspaceViewMode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.AppLaunchViewModel

@@ -31,11 +31,6 @@ if [[ -z "$FFMPEG_BIN" || ! -x "$FFMPEG_BIN" ]]; then
   FFMPEG_BIN="$(command -v ffmpeg)"
 fi
 
-# Optional: override video filter parameters
-FPS="${FPS:-30}"
-SCALE="${SCALE:-1216:2688}"
-FLAGS="${FLAGS:-lanczos}"
-MAX_COLORS="${MAX_COLORS:-256}"
 STATS_MODE="${STATS_MODE:-diff}"
 DITHER="${DITHER:-none}"
 
@@ -46,13 +41,13 @@ trap 'rm -f "$palette_file"' EXIT
 echo "Generating palette for '$input_file'..."
 
 "$FFMPEG_BIN" -y -i "$input_file" \
-  -vf "fps=$FPS,scale=$SCALE:flags=$FLAGS,palettegen=max_colors=$MAX_COLORS:stats_mode=$STATS_MODE" \
+  -vf "fps=30,palettegen=max_colors=256:stats_mode=$STATS_MODE" \
   "$palette_file"
 
 echo "Encoding GIF -> '$output_file'..."
 
 "$FFMPEG_BIN" -y -i "$input_file" -i "$palette_file" \
-  -lavfi "fps=$FPS,scale=$SCALE:flags=$FLAGS[x];[x][1:v]paletteuse=dither=$DITHER" \
+  -lavfi "fps=30,paletteuse=dither=$DITHER" \
   "$output_file"
 
 echo "Done: '$output_file'"

@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.geometry.Offset
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.navigaton.ManipulationSystem
-import org.elnix.dragonlauncher.enumsui.toggle.MoveAroundTools
+import org.elnix.dragonlauncher.base.navigation.ManipulationSystem
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.MoveAroundTools
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 

@@ -75,7 +75,7 @@ import org.elnix.dragonlauncher.base.model.models.codeberg
 import org.elnix.dragonlauncher.base.model.models.github
 import org.elnix.dragonlauncher.base.model.models.gitlab
 import org.elnix.dragonlauncher.base.model.models.openInNew
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.base.utils.LifecycleUtils.closeApp
 import org.elnix.dragonlauncher.base.utils.VersionsUtils.isBetaVersion

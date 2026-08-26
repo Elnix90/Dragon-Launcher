@@ -6,7 +6,7 @@ import android.os.Build
 import android.os.Process
 import androidx.core.net.toUri
 import org.elnix.dragonlauncher.base.model.serializables.Action
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.ConnectivityUtils.getMobileDataStatus
 import org.elnix.dragonlauncher.base.utils.ConnectivityUtils.isBluetoothEnabled
 import org.elnix.dragonlauncher.base.utils.ConnectivityUtils.isWifiEnabled

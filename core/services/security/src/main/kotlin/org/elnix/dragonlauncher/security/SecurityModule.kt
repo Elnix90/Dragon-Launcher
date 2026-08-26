@@ -1,8 +1,10 @@
 package org.elnix.dragonlauncher.security
 
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -11,5 +13,5 @@ import javax.inject.Singleton
 internal object SecurityModule {
     @Provides
     @Singleton
-    fun provideSecurityService(): SecurityService = SecurityServiceImpl()
+    fun provideSecurityService(@ApplicationContext ctx: Context): SecurityService = SecurityServiceImpl(ctx)
 }

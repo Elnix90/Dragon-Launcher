@@ -52,8 +52,6 @@ dependencies {
     implementation(project(":core:ktx"))
     implementation(project(":core:libs:material-shapes"))
 
-    api(project(":core:enumsui"))
-
     // Compose UI instrumented tests (src/androidTest/)
     androidTestImplementation(libs.compose.ui.test.junit4)
     androidTestImplementation(libs.junit)

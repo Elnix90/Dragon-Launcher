@@ -22,10 +22,10 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.applications.AppRepository
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
 import org.elnix.dragonlauncher.appshortcuts.AppShortcutRepository
+import org.elnix.dragonlauncher.base.model.enumsui.select.WorkspaceViewMode
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Workspace
-import org.elnix.dragonlauncher.enumsui.select.WorkspaceViewMode
 import org.elnix.dragonlauncher.icons.IconPack
 import org.elnix.dragonlauncher.icons.IconPackManager
 import org.elnix.dragonlauncher.models.utils.viewModelInitialized

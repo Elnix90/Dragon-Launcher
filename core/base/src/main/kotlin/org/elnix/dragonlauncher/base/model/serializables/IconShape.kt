@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.base.model.serializables
 
-import androidx.compose.material3.MaterialShapes
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -212,26 +211,6 @@ public sealed class IconShape {
     override fun toString(): String = this.javaClass.simpleName
 
     public companion object {
-
-        /**
-         * A selection of shapes for the pin that makes them pretty. not all of the [MaterialShapes] fit
-         */
-        public val pinMaterialShapes: Set<IconShape> = setOf(
-            Circle,
-            Slanted,
-            Arch,
-            Arrow,
-            Oval,
-            Pill,
-            Triangle,
-            Diamond,
-            Pentagon,
-            Gem,
-            Cookie4Sided,
-            Cookie7Sided,
-            Cookie9Sided,
-            Cookie12Sided
-        )
 
 
         /**

@@ -7,9 +7,11 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import org.elnix.dragonlauncher.SECURITY_SERVICE
 import io.github.elnix90.logging.logD
+import kotlinx.coroutines.flow.first
+import org.elnix.dragonlauncher.SECURITY_SERVICE
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import java.security.MessageDigest
 
 
@@ -22,9 +24,9 @@ public interface SecurityService {
 
 
     /**
-     * Verifies a PIN against a stored hash.
+     * Verifies a PIN against the stored hash
      */
-    public fun verify(pin: String, storedHash: String): Boolean
+    public suspend fun verify(pin: String): Boolean
 
     /**
      * Checks if device unlock (biometric or device credentials) is available.
@@ -47,16 +49,20 @@ public interface SecurityService {
 /**
  * Utility object for settings lock security operations.
  */
-internal class SecurityServiceImpl : SecurityService {
+internal class SecurityServiceImpl(
+    ctx: Context
+) : SecurityService {
     private val digest = MessageDigest.getInstance("SHA-256")
+
+    private val storedHash = PrivateSettingsStore.settingsHash.flow(ctx)
 
     override fun hash(pin: String): String {
         val hashBytes = digest.digest(pin.toByteArray(Charsets.UTF_8))
         return hashBytes.joinToString("") { "%02x".format(it) }
     }
 
-    override fun verify(pin: String, storedHash: String): Boolean {
-        return hash(pin) == storedHash
+    override suspend fun verify(pin: String): Boolean {
+        return hash(pin) == storedHash.first()
     }
 
     override fun isDeviceUnlockAvailable(ctx: Context): Boolean {

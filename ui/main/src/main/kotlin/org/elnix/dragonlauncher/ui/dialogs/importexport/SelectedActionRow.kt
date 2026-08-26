@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.elnix.dragonlauncher.enumsui.toggle.BackupSelectStoresButtons
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.BackupSelectStoresButtons
 import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 

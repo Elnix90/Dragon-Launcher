@@ -22,5 +22,4 @@ dependencies {
     runtimeOnly(project(":data:notifications"))
 
     api(project(":core:base"))
-    api(project(":core:enumsui"))
 }

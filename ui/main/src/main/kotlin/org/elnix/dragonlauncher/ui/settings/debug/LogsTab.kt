@@ -47,7 +47,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.elnix.dragonlauncher.LOGS_TAG
 import org.elnix.dragonlauncher.base.model.json
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.createShareableFile
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.shareContent

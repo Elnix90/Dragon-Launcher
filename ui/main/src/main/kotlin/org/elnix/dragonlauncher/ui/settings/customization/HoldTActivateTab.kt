@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.CustomObjectBlockProperties
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
-import org.elnix.dragonlauncher.enumsui.toggle.HoldActions
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.HoldActions
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.ktx.toDp

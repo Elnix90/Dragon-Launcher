@@ -8,7 +8,7 @@ import androidx.compose.ui.res.stringResource
 import io.github.elnix90.core.objects.EnumSettingObject
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions
 import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.generic.ActionSelectorRow
 

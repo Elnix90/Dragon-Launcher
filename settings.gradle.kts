@@ -35,7 +35,7 @@ include(":core:libs:material-shapes")
 
 include(":core:ktx")
 include(":core:settings")
-include(":core:enumsui")
+//include(":core:enumsui")
 include(":core:models")
 include(":core:base")
 include(":core:shizuku")

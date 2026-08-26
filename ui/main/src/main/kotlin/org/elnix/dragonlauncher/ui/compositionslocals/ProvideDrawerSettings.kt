@@ -11,9 +11,9 @@ import androidx.compose.ui.unit.Dp
 import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.models.IconSettings
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
-import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
-import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar
-import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerToolbar
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.models.IconsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel

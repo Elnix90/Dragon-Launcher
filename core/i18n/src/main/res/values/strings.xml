@@ -1036,6 +1036,9 @@
     <string name="confirm_pattern">Confirm Pattern</string>
     <string name="pattern_size_desc">The number on dots in each row/column (it\'s always a square)</string>
     <string name="pattern_size">Pattern Size</string>
+    <string name="pattern_sensitivity">Pattern Sensitivity</string>
+    <string name="pattern_sensitivity_desc">From how far dots are activated</string>
+    <string name="show_sensitivity">Show Sensitivity</string>
     <string name="export_apk">Export APK</string>
     <string name="allow_free_points">Allow free points</string>
     <string name="allow_free_points_desc">Points are no longer required to snap to a shape, they can be moved around freely, and only snaps when close to a shape</string>
@@ -1077,4 +1080,8 @@
     <string name="show_reselect_backup_banner">Show reselect backup banner</string>
     <string name="show_reselect_backup_banner_desc">When enabled, if Dragon cannot touch the selected backup file, you will be promted to reselect it</string>
     <string name="select_stores">Select stores</string>
+    <string name="secret_unlock_button">Secret unlock button</string>
+    <string name="secret_unlock_button_desc">Adds a secret clickable zone (no indication at all) that unlocks the screen (when you forgot the password)</string>
+    <string name="actions_lock_method">Actions lock method</string>
+    <string name="actions_lock_method_desc">What lock method to use to launch actions. You can condigure what type of actions are affected and use the same password as the settings</string>
 </resources>

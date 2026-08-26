@@ -17,7 +17,7 @@ import org.elnix.dragonlauncher.base.model.models.DataADBCommands
 import org.elnix.dragonlauncher.base.model.models.DummyApp
 import org.elnix.dragonlauncher.base.model.models.WifiADBCommands
 import org.elnix.dragonlauncher.base.model.serializables.serializers.UserHandleSerializer
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.theme.ExtraColors
 import org.elnix.dragonlauncher.i18n.R
 

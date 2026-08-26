@@ -35,7 +35,7 @@ import `in`.hridayan.shapeindicators.ShapeIndicatorRow
 import io.github.elnix90.logging.logD
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.WELCOME_TAG
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.InitializationViewModel
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore

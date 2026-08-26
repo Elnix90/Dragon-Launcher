@@ -14,8 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute.Companion.settingsRoutes
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute.Companion.settingsRoutes
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.components.LazyColumnWithScrollIndicator
 import org.elnix.dragonlauncher.ui.dragon.dialogs.CustomAlertDialog

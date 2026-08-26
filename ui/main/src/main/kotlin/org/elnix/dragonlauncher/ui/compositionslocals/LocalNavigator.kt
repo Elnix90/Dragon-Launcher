@@ -2,7 +2,7 @@ package org.elnix.dragonlauncher.ui.compositionslocals
 
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 
 
 interface Navigator {

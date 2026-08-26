@@ -7,9 +7,9 @@ import io.github.elnix90.core.objects.EnumSettingObject
 import io.github.elnix90.core.objects.boolean
 import io.github.elnix90.core.objects.enum
 import io.github.elnix90.core.stores.MapSettingsStore
-import org.elnix.dragonlauncher.enumsui.select.ColorPickerMode
-import org.elnix.dragonlauncher.enumsui.toggle.ColorPickerButtonAction
-import org.elnix.dragonlauncher.enumsui.toggle.DefaultThemes
+import org.elnix.dragonlauncher.base.model.enumsui.select.ColorPickerMode
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.ColorPickerButtonAction
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.DefaultThemes
 import org.elnix.dragonlauncher.i18n.R
 
 @SettingsStore
@@ -22,10 +22,12 @@ public object ColorModesSettingsStore : MapSettingsStore() {
     public val defaultTheme: EnumSettingObject<DefaultThemes> = enum(DefaultThemes.Amoled)
 
     @SettingKey
-    public val colorPickerButtonOne: EnumSettingObject<ColorPickerButtonAction> = enum(ColorPickerButtonAction.Random)
+    public val colorPickerButtonOne: EnumSettingObject<ColorPickerButtonAction> = enum(
+        ColorPickerButtonAction.Random)
 
     @SettingKey
-    public val colorPickerButtonTwo: EnumSettingObject<ColorPickerButtonAction> = enum(ColorPickerButtonAction.Copy)
+    public val colorPickerButtonTwo: EnumSettingObject<ColorPickerButtonAction> = enum(
+        ColorPickerButtonAction.Copy)
 
     @SettingKey
     public val dynamicColors: BooleanSettingObject = boolean(

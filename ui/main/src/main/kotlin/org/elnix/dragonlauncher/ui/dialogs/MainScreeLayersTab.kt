@@ -43,7 +43,7 @@ import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Compani
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.enabled
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.label
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.stores.objects.MainScreenLayersSettingsStore
+import org.elnix.dragonlauncher.settings.stores.array.MainScreenLayersSettingsStore
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel

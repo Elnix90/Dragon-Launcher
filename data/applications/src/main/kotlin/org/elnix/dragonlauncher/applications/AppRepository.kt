@@ -28,6 +28,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.elnix.dragonlauncher.StringNormalizer
 import org.elnix.dragonlauncher.appoverrides.AppOverridesManager
+import org.elnix.dragonlauncher.base.model.enumsui.select.WorkspaceViewMode
 import org.elnix.dragonlauncher.base.model.models.AppCategory.Companion.mapAppToSection
 import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.models.Application.Companion.getPackageVersionName
@@ -45,7 +46,6 @@ import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.System
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.User
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType.Work
 import org.elnix.dragonlauncher.compat.PackageManagerCompat
-import org.elnix.dragonlauncher.enumsui.select.WorkspaceViewMode
 import org.elnix.dragonlauncher.profiles.ProfileManager
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.workspaces.WorkspacesManager

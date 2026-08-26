@@ -42,7 +42,7 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultStartCustomObject
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.enumsui.select.AngleObject
+import org.elnix.dragonlauncher.base.model.enumsui.select.AngleObject
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.angle360FromOffset
 import org.elnix.dragonlauncher.ktx.distanceSquaredTo

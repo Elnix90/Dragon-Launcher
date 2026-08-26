@@ -77,9 +77,8 @@ dependencies {
     implementation(project(":ui:base"))
 
     api(project(":core:base"))
-    implementation(project(":core:i18n"))
+    api(project(":core:i18n"))
     api(project(":core:models"))
-    api(project(":core:enumsui"))
     api(project(":core:settings"))
 
     implementation(project(":core:ktx"))

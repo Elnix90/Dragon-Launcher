@@ -45,8 +45,8 @@ import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.emptyPo
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.isNotDefault
 import org.elnix.dragonlauncher.base.model.serializables.isSpecified
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.enumsui.select.PointFeaturePanel
-import org.elnix.dragonlauncher.enumsui.select.SelectedUnselectedViewMode
+import org.elnix.dragonlauncher.base.model.enumsui.select.PointFeaturePanel
+import org.elnix.dragonlauncher.base.model.enumsui.select.SelectedUnselectedViewMode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.round
 import org.elnix.dragonlauncher.models.PointsViewModel

@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.serializables.Profile
 import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
-import org.elnix.dragonlauncher.enumsui.select.LocalWorkspaceViewMode
-import org.elnix.dragonlauncher.enumsui.select.WorkspaceViewMode
+import org.elnix.dragonlauncher.base.model.enumsui.select.LocalWorkspaceViewMode
+import org.elnix.dragonlauncher.base.model.enumsui.select.WorkspaceViewMode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.ProfilesViewModel

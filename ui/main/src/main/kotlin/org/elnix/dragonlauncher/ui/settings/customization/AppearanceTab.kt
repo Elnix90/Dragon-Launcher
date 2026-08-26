@@ -2,7 +2,7 @@ package org.elnix.dragonlauncher.ui.settings.customization
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.helpers.settings.RouteItem

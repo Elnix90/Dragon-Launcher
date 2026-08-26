@@ -19,6 +19,7 @@ dependencies {
     implementation(libs.javax.inject)
     implementation(libs.timber)
     implementation(libs.hilt.android)
+    implementation(libs.settings.core)
 
     ksp(libs.hilt.compiler)
 
@@ -28,4 +29,5 @@ dependencies {
     runtimeOnly(libs.kotlinx.coroutines.android)
 
     implementation(project(":core:i18n"))
+    implementation(project(":core:settings"))
 }

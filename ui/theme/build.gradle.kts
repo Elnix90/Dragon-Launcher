@@ -34,7 +34,6 @@ dependencies {
     implementation(project(":ui:base"))
     implementation(project(":ui:composition"))
     implementation(project(":core:base"))
-    implementation(project(":core:enumsui"))
     implementation(project(":core:settings"))
     implementation(project(":core:ktx"))
 

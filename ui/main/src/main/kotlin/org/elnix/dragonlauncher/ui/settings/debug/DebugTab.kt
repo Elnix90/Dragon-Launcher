@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.navigaton.NavigationRoute
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.LifecycleUtils
 import org.elnix.dragonlauncher.base.utils.detectSystemLauncher
 import org.elnix.dragonlauncher.i18n.R

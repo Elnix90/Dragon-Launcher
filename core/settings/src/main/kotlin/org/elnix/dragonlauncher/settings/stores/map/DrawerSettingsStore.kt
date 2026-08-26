@@ -21,10 +21,10 @@ import io.github.elnix90.core.objects.int
 import io.github.elnix90.core.objects.string
 import io.github.elnix90.core.objects.stringList
 import io.github.elnix90.core.stores.MapSettingsStore
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerToolbar
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.base.model.serializables.IconShape
-import org.elnix.dragonlauncher.enumsui.toggle.DrawerActions
-import org.elnix.dragonlauncher.enumsui.toggle.DrawerToolbar
-import org.elnix.dragonlauncher.enumsui.toggle.HorizontalAlignment
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.specialObjects.IconShapeSettingObject
 import org.elnix.dragonlauncher.settings.specialObjects.shape
@@ -106,7 +106,8 @@ public object DrawerSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val horizontalAlignment: EnumSettingObject<HorizontalAlignment> = enum(HorizontalAlignment.Start)
+    public val horizontalAlignment: EnumSettingObject<HorizontalAlignment> = enum(
+        HorizontalAlignment.Start)
 
     @SettingKey
     public val lastWorkspaceUsed: StringSettingObject = string(

@@ -50,7 +50,7 @@ import org.elnix.dragonlauncher.THEMES_TAG
 import org.elnix.dragonlauncher.base.loadThemes
 import org.elnix.dragonlauncher.base.model.models.ThemeObject
 import org.elnix.dragonlauncher.base.utils.DateUtils
-import org.elnix.dragonlauncher.enumsui.select.ExportImportTheme
+import org.elnix.dragonlauncher.base.model.enumsui.select.ExportImportTheme
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.BackupResult
 import org.elnix.dragonlauncher.models.BackupViewModel
