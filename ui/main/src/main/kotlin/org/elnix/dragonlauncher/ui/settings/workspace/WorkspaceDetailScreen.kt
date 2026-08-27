@@ -21,10 +21,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
-import org.elnix.dragonlauncher.base.model.serializables.Profile
-import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
 import org.elnix.dragonlauncher.base.model.enumsui.select.LocalWorkspaceViewMode
 import org.elnix.dragonlauncher.base.model.enumsui.select.WorkspaceViewMode
+import org.elnix.dragonlauncher.base.model.serializables.Profile
+import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.ProfilesViewModel
@@ -57,7 +57,7 @@ fun WorkspaceDetailScreen(
     var showAppPicker by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        drawerViewModel.searchQuery.value = ""
+        drawerViewModel.clearSearchQuery()
 
         // This way, the remove from workspace and add to workspace will work, otherwise they add and remove apps to the real last workspace used
         DrawerSettingsStore.lastWorkspaceUsed.set(ctx, workspaceId)

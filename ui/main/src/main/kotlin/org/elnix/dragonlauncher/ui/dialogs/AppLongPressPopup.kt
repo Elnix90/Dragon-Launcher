@@ -31,12 +31,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.base.model.enumsui.select.LocalWorkspaceViewMode
 import org.elnix.dragonlauncher.base.model.enumsui.select.WorkspaceViewMode
+import org.elnix.dragonlauncher.base.model.models.Application
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.actions.AppIcon
@@ -50,8 +49,8 @@ import org.elnix.dragonlauncher.ui.dialogs.editors.AppIconEditor
 @Composable
 fun AppLongPressPopup(
     app: Application,
-    appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
     drawerViewModel: DrawerViewModel = activityViewModel(),
+    onOpenApp: () -> Unit,
     close: () -> Unit
 ) {
     val ctx = LocalContext.current
@@ -176,7 +175,7 @@ fun AppLongPressPopup(
             customItem(
                 buttonGroupContent = {
                     Button(
-                        onClick = { appLaunchViewModel.requestAppLaunch(app) },
+                        onClick = onOpenApp,
                         icon = R.drawable.open_in_new
                     )
                 },
@@ -216,7 +215,7 @@ fun AppLongPressPopup(
             shapes = MenuDefaults.groupShapes()
         ) {
             DropdownMenuItem(
-                onClick = { appLaunchViewModel.requestAppLaunch(app) },
+                onClick = onOpenApp,
                 shape = MenuDefaults.leadingItemShape,
                 text = { Text(app.label) },
                 leadingIcon = { AppIcon(app, size = 35.dp) }

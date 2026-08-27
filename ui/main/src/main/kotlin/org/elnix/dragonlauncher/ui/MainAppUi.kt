@@ -425,13 +425,16 @@ fun MainAppUi(
 
                         entry<NavigationRoute.Main>(metadata = verticalMetadata) { MainScreen(::launchAction) }
                         entry<NavigationRoute.Drawer>(metadata = drawerMetadata) {
+                            LaunchedEffect(Unit) {
+                                drawerViewModel.clearSearchQuery()
+                            }
                             AppDrawerScreen(
                                 onRegisterHomeHandler = { handler ->
                                     // This part of the code is frightful
                                     drawerHomeHandler = handler
                                 },
                                 onLaunchAction = {
-                                    drawerViewModel.searchQuery.value = ""
+                                    drawerViewModel.clearSearchQuery()
                                     launchAction(it)
                                     navigator.onBack()
                                 }

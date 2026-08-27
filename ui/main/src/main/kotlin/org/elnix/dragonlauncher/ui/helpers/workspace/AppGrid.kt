@@ -213,11 +213,13 @@ fun AppGrid(
                     AppItemHorizontal(
                         app = app,
                         selected = app in selectedPackages,
-                        onLongClick = if (onEnterMultiSelect != null && onToggleSelect != null) { app ->
-                            if (!isMultiSelectMode) {
-                                onEnterMultiSelect(app)
-                            } else {
-                                onToggleSelect(app)
+                        onLongClick = if (onEnterMultiSelect != null && onToggleSelect != null) {
+                            {
+                                if (!isMultiSelectMode) {
+                                    onEnterMultiSelect(app)
+                                } else {
+                                    onToggleSelect(app)
+                                }
                             }
                         } else null,
                         longPressPopup = longPressPopup,
@@ -246,11 +248,13 @@ fun AppGrid(
                     AppItemGrid(
                         app = app,
                         selected = app in selectedPackages,
-                        onLongClick = if (onEnterMultiSelect != null && onToggleSelect != null) { app ->
-                            if (!isMultiSelectMode) {
-                                onEnterMultiSelect(app)
-                            } else {
-                                onToggleSelect(app)
+                        onLongClick = if (onEnterMultiSelect != null && onToggleSelect != null) {
+                            {
+                                if (!isMultiSelectMode) {
+                                    onEnterMultiSelect(app)
+                                } else {
+                                    onToggleSelect(app)
+                                }
                             }
                         } else null,
                         longPressPopup = longPressPopup,
@@ -335,13 +339,15 @@ private fun AppDefinedGrid(
                         modifier = Modifier.weight(1f),
                         contentAlignment = Alignment.Center
                     ) {
+                        val app = apps[appIndex]
+
                         if (appIndex < sanitizedAppNumber) {
                             AppItemGrid(
-                                app = apps[appIndex],
+                                app = app,
                                 selected = false,
-                                onLongClick = onLongClick,
+                                onLongClick = { onLongClick?.invoke(app) },
                                 longPressPopup = longPressPopup,
-                                onClick = onClick
+                                onClick = { onClick?.invoke(app) }
                             )
                         } else if (appNumber > maxAppNumber) {
                             Box(

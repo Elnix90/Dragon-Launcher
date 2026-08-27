@@ -74,6 +74,10 @@ public class DrawerViewModel @Inject constructor(
 
     public val searchQuery: MutableState<String> = mutableStateOf("")
 
+    public fun clearSearchQuery() {
+        searchQuery.value = ""
+    }
+
     public fun findOne(action: Action.LaunchApp): Flow<Application?> = appsRepository.findOne(action)
 
     public fun search(

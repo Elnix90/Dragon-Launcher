@@ -75,6 +75,10 @@ fun AppPickerDialog(
     var searchQuery by drawerViewModel.searchQuery
     var isSearchBarEnabled by remember { mutableStateOf(false) }
 
+    LaunchedEffect(Unit) {
+        drawerViewModel.clearSearchQuery()
+    }
+
     // Auto Show keyboard logic
     LaunchedEffect(isSearchBarEnabled) {
         if (isSearchBarEnabled) {
@@ -106,7 +110,7 @@ fun AppPickerDialog(
                 isMultiSelectMode = false
                 selectedApps.clear()
             } else {
-                searchQuery = ""
+                drawerViewModel.clearSearchQuery()
                 onDismiss()
             }
         },
@@ -164,7 +168,7 @@ fun AppPickerDialog(
                                     tint = MaterialTheme.colorScheme.error,
                                     modifier = Modifier.clickable {
                                         isSearchBarEnabled = false
-                                        searchQuery = ""
+                                        drawerViewModel.clearSearchQuery()
                                     }
                                 )
                             },
@@ -232,7 +236,6 @@ fun AppPickerDialog(
                         DragonButton(
                             onClick = {
                                 onMultipleAppsSelected(selectedApps)
-                                searchQuery = ""
                                 onDismiss()
                             },
                             modifier = Modifier.fillMaxWidth()
