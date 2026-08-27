@@ -567,8 +567,6 @@
     <string name="angle_object">Winkelobjekt</string>
     <string name="start_object">Startobjekt</string>
     <string name="end_object">Endobjekt</string>
-
-
     <string name="configure_draw_order">Ziehreihenfolge konfigurieren</string>
     <string name="debug_mode_already_enabled">Der Debug-Modus ist bereits aktiviert</string>
     <string name="not_supported_in_this_android_version">Nicht unterstützt in dieser Android-Version</string>

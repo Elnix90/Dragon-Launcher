@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="accessibility_service_description">DragonLauncher가 알림 창, 빠른 설정 패널, 최근 앱 열기, 현재 활동 확인 등을 할 수 있게 해줍니다(제스처 내비게이션을 잃지 않고는 Dragon을 기본 런처로 설정할 수 없는 Xiaomi 사용자를 위한 경우)</string>
     <string name="help">도움말</string>
@@ -230,7 +231,6 @@
     <string name="inner_padding">내부 패딩</string>
     <string name="tint">색조</string>
     <string name="show_app_icon_start_drag_position">드래그 시작 위치에 앱 아이콘 표시</string>
-
     <!--  ─────────────  Multi Select  ─────────────  -->
     <string name="multi_select_count">%d개 선택됨</string>
     <string name="add_all_manual">하나씩 배치</string>
@@ -238,7 +238,6 @@
     <string name="tap_circle_to_place">원을 탭하여 앱 배치</string>
     <string name="multi_select_drawer_hint">💡 앱을 길게 눌러 여러 개를 한 번에 선택</string>
     <string name="deselect_all">모두 선택 해제</string>
-
     <!--  ─────────────  Lock Settings  ─────────────  -->
     <string name="lock_settings_description">보안 방법으로 런처 설정을 보호</string>
     <string name="lock_method">잠금 방법</string>
@@ -257,17 +256,14 @@
     <string name="device_credentials_not_available">잠금 화면이 설정되지 않았습니다</string>
     <string name="authentication_failed">인증 실패</string>
     <string name="authentication_error">인증 오류: %s</string>
-
     <!--  ─────────────  Drawer Workspace Selection  ─────────────  -->
     <string name="select_default_workspace">기본 워크스페이스 선택</string>
     <string name="select_workspace_hint">기본으로 열리는 워크스페이스를 선택하세요. 서랍에서 좌우로 스와이프하여 언제든 변경할 수 있습니다.</string>
     <string name="workspace_default">기본값</string>
-
     <!--  ─────────────  Pinned Shortcuts  ─────────────  -->
     <string name="pinned_shortcut_failed">고정된 바로가기 추가 실패</string>
     <string name="pinned_shortcuts">고정된 바로가기</string>
     <string name="no_pinned_shortcuts">사용 가능한 고정된 바로가기 없음</string>
-
     <!--  ─────────────  Recently Used Apps  ─────────────  -->
     <string name="recently_used_apps">최근 사용한 앱</string>
     <string name="show_recently_used_apps">최근 앱 표시</string>

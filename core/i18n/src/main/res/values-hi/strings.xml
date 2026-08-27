@@ -564,8 +564,6 @@
     <string name="angle_object">कोण वस्तु</string>
     <string name="start_object">ऑब्जेक्ट प्रारंभ करें</string>
     <string name="end_object">अंतिम वस्तु</string>
-
-
     <string name="configure_draw_order">ड्रा ऑर्डर कॉन्फ़िगर करें</string>
     <string name="debug_mode_already_enabled">डीबग मोड पहले से ही सक्षम है</string>
     <string name="not_supported_in_this_android_version">इस Android संस्करण में समर्थित नहीं है</string>
