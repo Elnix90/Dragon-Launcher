@@ -67,7 +67,6 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
-import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
@@ -161,7 +160,7 @@ fun DragonGroupScope.ColorPickerRow(
 
     if (showPicker) {
         DragonModalBottomSheet(
-            sheetState = rememberBottomSheetState(true),
+            skipPartiallyExpanded = true,
             onDismissRequest = {
                 onColorPicked(actualColor)
                 showPicker = false

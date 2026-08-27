@@ -53,7 +53,6 @@ import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.components.VerticalScrollIndicator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
-import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -107,7 +106,7 @@ fun ActionPickerDialog(
 
     DragonModalBottomSheet(
         onDismissRequest = onDismiss,
-        sheetState = rememberBottomSheetState(true)
+        skipPartiallyExpanded = true
     ) {
         DialogTitle(stringResource(R.string.choose_action))
 
@@ -192,7 +191,7 @@ fun ActionPickerDialog(
 
 
     if (showAppPicker) {
-        AppPickerDialog(
+        AppPickerSheet(
             multiSelectEnabled = onMultipleActionsSelected != null,
             onDismiss = { showAppPicker = false },
             onAppSelected = { app ->
@@ -315,7 +314,7 @@ fun ActionPickerDialog(
                 onActionPicked(shortcut.toAction())
                 shortcutDialogVisible = false
             },
-            onOpenApp = {
+            onAppSelected = {
                 onActionPicked(app.toLaunchApp())
                 onDismiss()
             }

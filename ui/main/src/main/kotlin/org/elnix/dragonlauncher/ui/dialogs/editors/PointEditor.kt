@@ -103,7 +103,7 @@ fun PointEditor(
 
     DragonModalBottomSheet(
         onDismissRequest = { onDismiss(editPoint) },
-        sheetState = rememberBottomSheetState(true)
+        skipPartiallyExpanded = true
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(5.dp),

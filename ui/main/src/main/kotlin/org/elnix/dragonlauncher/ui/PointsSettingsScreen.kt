@@ -464,6 +464,7 @@ fun PointsSettingsScreen(
         resetText = null,
         horizontalPadding = 0.dp,
         scrollableContent = false,
+        imePadding = false,
         specialSettingsTitleContent = {
             AnimatedFab(
                 onClick = { showMoreSheet = true },
@@ -1076,7 +1077,7 @@ fun PointsSettingsScreen(
 
         DragonModalBottomSheet(
             onDismissRequest = { showMoreSheet = false },
-            sheetState = rememberBottomSheetState(true)
+            skipPartiallyExpanded = true
         ) {
             Column(
                 modifier = Modifier

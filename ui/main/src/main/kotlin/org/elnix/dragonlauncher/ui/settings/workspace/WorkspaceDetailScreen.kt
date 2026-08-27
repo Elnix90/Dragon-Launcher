@@ -33,7 +33,7 @@ import org.elnix.dragonlauncher.settings.stores.map.DrawerSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
-import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
+import org.elnix.dragonlauncher.ui.dialogs.AppPickerSheet
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
@@ -150,7 +150,7 @@ fun WorkspaceDetailScreen(
     }
 
     if (showAppPicker) {
-        AppPickerDialog(
+        AppPickerSheet(
             onDismiss = { showAppPicker = false },
             onAppSelected = { app ->
                 workspaceManager.addAppToWorkspace(workspaceId, app.key)

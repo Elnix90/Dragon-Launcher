@@ -68,10 +68,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.yield
 import org.elnix.dragonlauncher.base.Constants
-import org.elnix.dragonlauncher.base.model.serializables.Action
-import org.elnix.dragonlauncher.base.model.serializables.Profile
-import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
-import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions.Clear
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions.Close
@@ -86,6 +82,10 @@ import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerActions.ToggleKb
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerToolbar.RecentlyUsed
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerToolbar.SearchBar
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.DrawerToolbar.Spacer
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.Profile
+import org.elnix.dragonlauncher.base.model.serializables.WorkspaceType
+import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.openSearch
 import org.elnix.dragonlauncher.ktx.px
@@ -563,7 +563,6 @@ fun AppDrawerScreen(
                         }
                     ) {
                         AppDrawerSearch(
-                            searchQuery = searchQuery,
                             trailingIcon = {
                                 Box {
                                     Icon(
@@ -587,7 +586,6 @@ fun AppDrawerScreen(
                                     )
                                 }
                             },
-                            onSearchChanged = { searchQuery = it },
                             modifier = Modifier.focusRequester(focusRequester),
                             onEnterPressed = { launchDrawerAction(drawerSettings.drawerEnterAction) },
                             onFocusStateChanged = { isSearchFocused = it }

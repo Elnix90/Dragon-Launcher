@@ -31,7 +31,6 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.ResetIcon
-import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
 
@@ -120,7 +119,7 @@ fun <T> ActionSelector(
 
     DragonModalBottomSheet(
         onDismissRequest = onDismiss,
-        sheetState = rememberBottomSheetState(true)
+        skipPartiallyExpanded = true
     ) {
         DragonSettingsGroup(label) {
             options.forEach { option ->

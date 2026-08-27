@@ -9,16 +9,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,13 +21,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.Action.LaunchShortcut.Companion.toAction
@@ -41,7 +32,11 @@ import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.ui.actions.ShortcutIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.helpers.workspace.AppDrawerSearch
+import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
+import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
+import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
+import org.elnix.dragonlauncher.ui.helpers.workspace.AppShortcutSearch
 
 /**
  * Represents a pinned shortcut with extra metadata for display.
@@ -66,6 +61,7 @@ private fun PinnedShortcutItem.matchesShortcutSearch(q: String): Boolean {
  * Dialog that displays all pinned shortcuts from all installed apps,
  * grouped by app. Allows the user to pick one to add as a swipe action.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PinnedShortcutsPickerDialog(
     drawerViewModel: DrawerViewModel = activityViewModel(),
@@ -96,16 +92,26 @@ fun PinnedShortcutsPickerDialog(
             .toSortedMap(String.CASE_INSENSITIVE_ORDER)
     }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = stringResource(R.string.pinned_shortcuts),
-                fontWeight = FontWeight.Bold
-            )
-        },
-        text = {
-            if (groupedShortcuts.isEmpty()) {
+    val filteredGrouped = remember(searchQuery, groupedShortcuts) {
+        if (searchQuery.isBlank()) groupedShortcuts
+        else {
+            val q = searchQuery
+            groupedShortcuts.mapNotNull { (appName, items) ->
+                val filteredItems = items.filter { it.matchesShortcutSearch(q) }
+                if (filteredItems.isEmpty()) null else appName to filteredItems
+            }.toMap()
+        }
+    }
+
+    DragonModalBottomSheet(onDismissRequest = onDismiss, true) {
+        DialogTitle(stringResource(R.string.pinned_shortcuts))
+        Spacer(10.dp)
+
+        AppShortcutSearch(searchQuery) { searchQuery = it }
+        Spacer(10.dp)
+
+        when {
+            groupedShortcuts.isEmpty() -> {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -119,127 +125,67 @@ fun PinnedShortcutsPickerDialog(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-            } else {
-                val filteredGrouped = remember(searchQuery, groupedShortcuts) {
-                    if (searchQuery.isBlank()) groupedShortcuts
-                    else {
-                        val q = searchQuery
-                        groupedShortcuts.mapNotNull { (appName, items) ->
-                            val filteredItems = items.filter { it.matchesShortcutSearch(q) }
-                            if (filteredItems.isEmpty()) null else appName to filteredItems
-                        }.toMap()
-                    }
-                }
+            }
 
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    AppDrawerSearch(
-                        searchQuery = searchQuery,
-                        onSearchChanged = { searchQuery = it },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 12.dp),
-                        placeholderText = stringResource(R.string.search_shortcuts),
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.search),
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        },
-                        trailingIcon = {
-                            if (searchQuery.isNotEmpty()) {
-                                IconButton(onClick = { searchQuery = "" }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.close),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-                            }
-                        }
+            filteredGrouped.isEmpty() && searchQuery.isNotEmpty() -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.no_search_match),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                }
+            }
 
-                    if (filteredGrouped.isEmpty() && searchQuery.isNotEmpty()) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 24.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = stringResource(R.string.no_search_match),
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    } else {
-                        Column(
-                            modifier = Modifier
-                                .heightIn(max = 450.dp)
-                                .verticalScroll(rememberScrollState())
-                        ) {
-                            var isFirst = true
-                            filteredGrouped.forEach { (appName, shortcuts) ->
-                                if (!isFirst) {
-                                    Spacer(8.dp)
-                                    HorizontalDivider()
-                                    Spacer(8.dp)
-                                }
-                                isFirst = false
-
-                                Text(
-                                    text = appName,
-                                    style = MaterialTheme.typography.titleSmall,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                                )
-
-                                shortcuts.forEach { item ->
-                                    ShortcutRow(
-                                        shortcut = item.shortcutInfo,
-                                        onClick = {
-                                            onShortcutSelected(
-                                                Action.LaunchShortcut(
-                                                    packageName = item.packageName,
-                                                    shortcutId = item.shortcutInfo.id,
-                                                    user = item.shortcutInfo.userHandle
-                                                )
+            else -> {
+                Column(
+                    modifier = Modifier
+                        .heightIn(max = 500.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    filteredGrouped.forEach { (appName, shortcuts) ->
+                        DragonSettingsGroup(appName) {
+                            shortcuts.forEach { item ->
+                                ShortcutItem(
+                                    shortcut = item.shortcutInfo,
+                                    onClick = {
+                                        onShortcutSelected(
+                                            Action.LaunchShortcut(
+                                                packageName = item.packageName,
+                                                shortcutId = item.shortcutInfo.id,
+                                                user = item.shortcutInfo.userHandle
                                             )
-                                        }
-                                    )
-                                }
+                                        )
+                                    }
+                                )
                             }
                         }
                     }
                 }
             }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(android.R.string.cancel))
-            }
-        },
-        containerColor = MaterialTheme.colorScheme.surface,
-        shape = MaterialTheme.shapes.large
-    )
+        }
+    }
 }
 
 @Composable
-private fun ShortcutRow(
+fun DragonGroupScope.ShortcutItem(
     shortcut: ShortcutInfo,
     onClick: () -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.large)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .dragonSettingGroup {
+                clickable(onClick = onClick)
+            }
     ) {
         ShortcutIcon(shortcut.toAction(), 36.dp)
-
+        Spacer(8.dp)
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = shortcut.shortLabel?.toString() ?: shortcut.id,
@@ -250,11 +196,10 @@ private fun ShortcutRow(
             shortcut.longLabel?.toString()?.takeIf { it.isNotBlank() }?.let { longLabel ->
                 Text(
                     text = longLabel,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    fontSize = 11.sp
                 )
             }
         }

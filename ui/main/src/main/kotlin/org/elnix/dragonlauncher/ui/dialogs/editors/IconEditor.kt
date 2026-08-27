@@ -42,7 +42,6 @@ import org.elnix.dragonlauncher.ui.dragon.colors.ColorPickerRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
-import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.ShapeRow
@@ -126,7 +125,7 @@ private fun IconEditorImpl(
 
     DragonModalBottomSheet(
         onDismissRequest = { onDismiss(editIcon, editProperties) },
-        sheetState = rememberBottomSheetState(true),
+        skipPartiallyExpanded = true,
         content = {
             DialogTitle(stringResource(R.string.icon_editor), resetEnabled = editIcon != null || editProperties.isNotEmpty) {
                 editIcon = null

@@ -40,7 +40,7 @@ import org.elnix.dragonlauncher.settings.stores.map.WellbeingSettingsStore
 import org.elnix.dragonlauncher.ui.actions.AppIcon
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.dialogs.AppPickerDialog
+import org.elnix.dragonlauncher.ui.dialogs.AppPickerSheet
 import org.elnix.dragonlauncher.ui.dialogs.AppUsagePermissionDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
@@ -220,7 +220,7 @@ fun WellbeingTab(
 
 
     if (showAppPicker) {
-        AppPickerDialog(
+        AppPickerSheet(
             onDismiss = { showAppPicker = false },
             onAppSelected = { app ->
                 scope.launch {

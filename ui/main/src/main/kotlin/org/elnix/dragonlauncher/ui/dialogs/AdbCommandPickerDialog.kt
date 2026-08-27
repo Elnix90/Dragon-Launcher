@@ -1,13 +1,11 @@
 package org.elnix.dragonlauncher.ui.dialogs
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,9 +27,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
-import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 
 
@@ -50,7 +46,7 @@ fun <T : ADBCommands> AdbCommandPickerDialog(
 
     DragonModalBottomSheet(
         onDismissRequest = onDismiss,
-        sheetState = rememberBottomSheetState(true)
+        skipPartiallyExpanded = true
     ) {
         DialogTitle(label)
 
@@ -92,23 +88,22 @@ fun <T : ADBCommands> AdbCommandPickerDialog(
         Spacer(10.dp)
 
         val interactionSource = rememberInteractionSource()
-        val backgroundColor by animateColorAsState(if (toast) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface)
 
-        DragonRow(
-            onClick = { toast = !toast },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
-                .background(backgroundColor),
-            interactionSource = interactionSource
-        ) {
-            Text(stringResource(R.string.show_toast))
-            Checkbox(
-                checked = toast,
-                onCheckedChange = null,
-                interactionSource = interactionSource
-            )
-
+        DragonSettingsGroup {
+            Row(
+                modifier = Modifier
+                    .dragonSettingGroup {
+                        clickable(interactionSource = interactionSource) { toast = !toast }
+                    },
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                Text(stringResource(R.string.show_toast))
+                Checkbox(
+                    checked = toast,
+                    onCheckedChange = null,
+                    interactionSource = interactionSource
+                )
+            }
         }
     }
 }

@@ -109,7 +109,7 @@ fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
                 onDismiss()
             }
         },
-        sheetState = rememberBottomSheetState(true)
+        skipPartiallyExpanded = true
     ) {
         DialogTitle(stringResource(R.string.edit_hold_to_activate_elements))
         val selectedCount = menuItems.count { it.isSelected.value }

@@ -22,7 +22,7 @@ import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionState
 /**
  * Used in modal sheets to give padding to the content to avoid it being directly on the edges
  */
-val modalWindowInsets: @Composable (() -> WindowInsets)
+private val modalWindowInsets: @Composable (() -> WindowInsets)
     get() = {
         WindowInsets.safeDrawing.add(
             WindowInsets(
@@ -34,7 +34,19 @@ val modalWindowInsets: @Composable (() -> WindowInsets)
         )
     }
 
-
+@Composable
+@ExperimentalMaterial3Api
+fun DragonModalBottomSheet(
+    onDismissRequest: () -> Unit,
+    skipPartiallyExpanded: Boolean,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    DragonModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        sheetState = rememberBottomSheetState(skipPartiallyExpanded),
+        content = content
+    )
+}
 
 @Composable
 @ExperimentalMaterial3Api

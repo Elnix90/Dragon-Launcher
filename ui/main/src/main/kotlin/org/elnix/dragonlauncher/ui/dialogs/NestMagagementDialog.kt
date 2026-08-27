@@ -80,7 +80,7 @@ fun NestManagementDialog(
 
     DragonModalBottomSheet(
         onDismissRequest = onDismissRequest,
-        sheetState = rememberBottomSheetState(true)
+        skipPartiallyExpanded = true
     ) {
         DialogTitle(title ?: stringResource(R.string.manage_nests))
         Spacer(10.dp)

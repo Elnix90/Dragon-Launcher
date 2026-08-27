@@ -55,7 +55,6 @@ import org.elnix.dragonlauncher.base.icons.DynamicLauncherIcon
 import org.elnix.dragonlauncher.base.icons.LauncherIcon
 import org.elnix.dragonlauncher.base.icons.StaticLauncherIcon
 import org.elnix.dragonlauncher.base.icons.TextLayer
-import org.elnix.dragonlauncher.base.icons.TransparentLayer
 import org.elnix.dragonlauncher.base.icons.VectorLayer
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ktx.drawWithColorFilter
@@ -113,7 +112,9 @@ fun ShapedLauncherIcon(
             .sizeIn(maxWidth = size, maxHeight = size)
     ) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(shape),
             contentAlignment = Alignment.Center
         ) {
             val bmp = currentBitmap
@@ -122,26 +123,24 @@ fun ShapedLauncherIcon(
             if (bmp != null && ic != null) {
                 Canvas(modifier = Modifier.requiredSize(size)) {
                     val brush = BitmapShaderBrush(bmp)
-                    if (ic.backgroundLayer is TransparentLayer) {
+//                    if (ic.backgroundLayer is TransparentLayer) {
                         drawRect(brush)
-                    } else {
-                        val outline =
-                            shape.createOutline(
-                                this.size,
-                                layoutDirection,
-                                Density(density, fontScale)
-                            )
-                        drawOutline(outline, brush)
-                    }
+//                    } else {
+//                        val outline =
+//                            shape.createOutline(
+//                                this.size,
+//                                layoutDirection,
+//                                Density(density, fontScale)
+//                            )
+//                        drawOutline(outline, brush)
+//                    }
                 }
 
                 // Background layer is always static layer, color layer, or transparent layer
                 when (val fg = ic.foregroundLayer) {
                     is ClockLayer -> {
                         ClockLayer(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(shape),
+                            modifier = Modifier.fillMaxSize(),
                             sublayers = fg.sublayers,
                             defaultMinute = fg.defaultMinute,
                             defaultHour = fg.defaultHour,
@@ -174,8 +173,7 @@ fun ShapedLauncherIcon(
             } else {
                 val color = MaterialTheme.colorScheme.secondaryContainer
                 Canvas(
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     val outline =
                         shape.createOutline(this.size, layoutDirection, Density(density, fontScale))
