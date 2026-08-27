@@ -18,9 +18,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,6 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
+import androidx.graphics.shapes.RoundedPolygon
 import io.github.elnix90.runtime.asMutableState
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.enumsui.select.ColorPickerMode
@@ -51,8 +54,6 @@ import org.elnix.dragonlauncher.base.model.enumsui.toggle.ColorActions.Copy
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.ColorActions.Paste
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.ColorActions.Random
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.ColorActions.Reset
-import org.elnix.dragonlauncher.base.model.serializables.IconShape
-import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.pasteClipboard
 import org.elnix.dragonlauncher.i18n.R
@@ -73,6 +74,34 @@ import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.milliseconds
+
+/**
+ * A selection of shapes for the colorPicker that makes them pretty. not all of the [MaterialShapes] fit
+ * The selected ones are more rounded and not spiky
+ */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+private val colorPickerMaterialShapes: Set<RoundedPolygon> = setOf(
+    MaterialShapes.Slanted,
+    MaterialShapes.Arrow,
+    MaterialShapes.Oval,
+    MaterialShapes.Pill,
+    MaterialShapes.Triangle,
+    MaterialShapes.Diamond,
+    MaterialShapes.Pentagon,
+    MaterialShapes.Gem,
+    MaterialShapes.Cookie4Sided,
+    MaterialShapes.Cookie7Sided,
+    MaterialShapes.Cookie9Sided,
+    MaterialShapes.Cookie12Sided,
+    MaterialShapes.SoftBurst,
+    MaterialShapes.Cookie12Sided,
+    MaterialShapes.Flower,
+    MaterialShapes.Clover4Leaf,
+    MaterialShapes.Sunny,
+    MaterialShapes.VerySunny,
+    MaterialShapes.Clover4Leaf
+)
+
 
 /**
  * Color picker row
@@ -101,13 +130,13 @@ fun DragonGroupScope.ColorPickerRow(
 
     var currentMode by ColorModesSettingsStore.colorPickerMode.asMutableState()
     var actualColor by remember(initialColorNotNull) { mutableStateOf(initialColorNotNull) }
-    var previewBoxShape by remember { mutableStateOf(IconShape.Random.resolveShape()) }
+    var previewBoxShape by remember { mutableStateOf(colorPickerMaterialShapes.random()) }
 
     var showPicker by remember { mutableStateOf(false) }
     LaunchedEffect(showPicker) {
         if (showPicker) {
             delay(50.milliseconds)
-            previewBoxShape = IconShape.Random.resolveShape()
+            previewBoxShape = colorPickerMaterialShapes.random()
         }
     }
 
@@ -154,7 +183,7 @@ fun DragonGroupScope.ColorPickerRow(
 
             Spacer(12.dp)
 
-            ColorCirclePreview(initialColorNotNull, previewBoxShape)
+            ColorCirclePreview(initialColorNotNull, previewBoxShape.toShape())
         }
     }
 
