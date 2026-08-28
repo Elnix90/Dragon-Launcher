@@ -111,7 +111,7 @@ public object BehaviorSettingsStore : MapSettingsStore() {
     public val alarmSound: BooleanSettingObject = boolean(
         title = R.string.alarm_sound,
         description = R.string.super_warning_mode_desc,
-//        icon = R.drawable., TODO add speaker icon
+        icon = R.drawable.volume_up,
         default = false
     )
 
@@ -119,7 +119,8 @@ public object BehaviorSettingsStore : MapSettingsStore() {
     public val metalPipesSound: BooleanSettingObject = boolean(
         title = R.string.metal_pipes_sound,
         description = R.string.metal_pipes_sound_desc,
-        default = false // TODO same here
+        icon = R.drawable.volume_up,
+        default = false
     )
 
     @SettingKey
