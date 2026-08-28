@@ -1078,12 +1078,12 @@
     <string name="paste">Paste</string>
     <string name="open_backup_file">Open backup file</string>
     <string name="show_reselect_backup_banner">Show reselect backup banner</string>
-    <string name="show_reselect_backup_banner_desc">When enabled, if Dragon cannot touch the selected backup file, you will be promted to reselect it</string>
+    <string name="show_reselect_backup_banner_desc">When enabled, if Dragon cannot touch the selected backup file, you will be prompted to reselect it</string>
     <string name="select_stores">Select stores</string>
     <string name="secret_unlock_button">Secret unlock button</string>
     <string name="secret_unlock_button_desc">Adds a secret clickable zone (no indication at all) that unlocks the screen (when you forgot the password)</string>
     <string name="actions_lock_method">Actions lock method</string>
-    <string name="actions_lock_method_desc">What lock method to use to launch actions. You can condigure what type of actions are affected and use the same password as the settings</string>
+    <string name="actions_lock_method_desc">What lock method to use to launch actions. You can configure what type of actions are affected and use the same password as the settings</string>
     <string name="fine_grained">Fine-Grained</string>
     <string name="snap_points_angle_threshold">Snap points angle threshold</string>
     <string name="snap_points_angle_threshold_desc">The angle at which the points are snapped. Use a multiple of 360 for best results</string>
