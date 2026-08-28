@@ -76,7 +76,7 @@ fun DragonGroupScope.ExpandableSection(
                     }
                 },
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             if (state.icon != null) {
                 BoxedIcon(state.icon)
