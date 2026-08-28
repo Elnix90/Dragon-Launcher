@@ -1,6 +1,7 @@
 package org.elnix.dragonlauncher.ui.dragon.components
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,19 +27,19 @@ import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.dragon.text.SettingsWithTitle
 
-sealed class DragonSettingGroupItems {
-    data class Setting(val setting: SettingObject<*, *>) : DragonSettingGroupItems()
-    data class Item(val title: String) : DragonSettingGroupItems()
-}
-
-
-private val bigRounding = 24.dp
-private val smallRounding = 6.dp
-
-private val firstShape = RoundedCornerShape(topStart = bigRounding, topEnd = bigRounding, bottomStart = smallRounding, bottomEnd = smallRounding)
-private val lastShape = RoundedCornerShape(topStart = smallRounding, topEnd = smallRounding, bottomStart = bigRounding, bottomEnd = bigRounding)
-private val middleShape = RoundedCornerShape(smallRounding)
-private val singleShape = RoundedCornerShape(bigRounding)
+//sealed class DragonSettingGroupItems {
+//    data class Setting(val setting: SettingObject<*, *>) : DragonSettingGroupItems()
+//    data class Item(val title: String) : DragonSettingGroupItems()
+//}
+//
+//
+//private val bigRounding = 24.dp
+//private val smallRounding = 6.dp
+//
+//private val firstShape = RoundedCornerShape(topStart = bigRounding, topEnd = bigRounding, bottomStart = smallRounding, bottomEnd = smallRounding)
+//private val lastShape = RoundedCornerShape(topStart = smallRounding, topEnd = smallRounding, bottomStart = bigRounding, bottomEnd = bigRounding)
+//private val middleShape = RoundedCornerShape(smallRounding)
+//private val singleShape = RoundedCornerShape(bigRounding)
 
 
 class DragonGroupScope
@@ -113,32 +115,35 @@ internal constructor(
     @SuppressLint("UnnecessaryComposedModifier")
     fun Modifier.dragonSettingGroup(
         enabled: Boolean = true,
+        selected: Boolean = false,
         clickModifier: (Modifier.() -> Modifier)? = null
     ): Modifier = composed {
+
+        val animatedBgColor by animateColorAsState(if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh)
+
         this
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.extraSmall)
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh.semiTransparentIfDisabled(enabled))
+            .background(animatedBgColor.semiTransparentIfDisabled(enabled))
             .conditional(clickModifier) { it() }
             .padding(10.dp)
     }
 }
 
 
-
 @Composable
 fun DragonSettingsGroup(
-    title: Int? ,
+    title: Int?,
     modifier: Modifier = Modifier,
     trailingIcon: (@Composable RowScope.() -> Unit)? = null,
     content: @Composable DragonGroupScope.() -> Unit
 ) {
-   DragonSettingsGroup(
-       title = title?.let{ stringResource(title) },
-       modifier = modifier,
-       trailingIcon = trailingIcon,
-       content = content
-   )
+    DragonSettingsGroup(
+        title = title?.let { stringResource(title) },
+        modifier = modifier,
+        trailingIcon = trailingIcon,
+        content = content
+    )
 }
 
 

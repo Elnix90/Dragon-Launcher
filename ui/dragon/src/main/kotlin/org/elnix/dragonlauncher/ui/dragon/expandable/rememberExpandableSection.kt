@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionMode
 import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionState
 
 
@@ -14,7 +13,8 @@ fun rememberExpandableSection(
     title: Int,
     description: Int?,
     icon: Int?,
-    mode: ExpandableSectionMode = ExpandableSectionMode.ModalSheet(),
+    customLeadingContent: (@Composable () -> Unit)? = null,
+    skipPartiallyExpanded: Boolean = true,
     enabled: Boolean = true
 ): ExpandableSectionState {
     var isExpanded by remember { mutableStateOf(false) }
@@ -26,7 +26,8 @@ fun rememberExpandableSection(
             title = title,
             description = description,
             icon = icon,
-            mode = mode,
+            customLeadingContent = customLeadingContent,
+            skipPartiallyExpanded = skipPartiallyExpanded,
             toggle = { isExpanded = !isExpanded }
         )
     }

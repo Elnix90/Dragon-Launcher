@@ -1089,4 +1089,5 @@
     <string name="snap_points_angle_threshold_desc">The angle at which the points are snapped. Use a multiple of 360 for best results</string>
     <string name="show_snap_point_angle_lines">Show snap points angle lines</string>
     <string name="show_snap_point_angle_lines_desc">Whether to display a visual aid to preview where the angle will snap</string>
+    <string name="show_padding_box">Show padding box</string>
 </resources>

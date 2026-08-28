@@ -12,7 +12,6 @@ import android.provider.OpenableColumns
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -84,7 +83,6 @@ import org.elnix.dragonlauncher.services.ExtensionManager
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
@@ -678,7 +676,7 @@ fun FontTab() {
                     )
                     FontRow(
                         font = font,
-                        isSelected = if (isDeleteMode) selectedFontsToDelete.contains(
+                        selected = if (isDeleteMode) selectedFontsToDelete.contains(
                             font
                         ) else globalFontName == font,
                         isInstalled = true,
@@ -705,7 +703,7 @@ fun FontTab() {
                     filteredRemote.forEach { (name, _) ->
                         FontRow(
                             font = name,
-                            isSelected = globalFontName == name,
+                            selected = globalFontName == name,
                             isInstalled = false
                         ) {
                             val i =
@@ -726,33 +724,30 @@ fun FontTab() {
 @Composable
 private fun DragonGroupScope.FontRow(
     font: String,
-    isSelected: Boolean,
+    selected: Boolean,
     isInstalled: Boolean,
     showCheckbox: Boolean = false,
     onClick: () -> Unit
 ) {
     val ctx = LocalContext.current
-    val primaryContainer = MaterialTheme.colorScheme.primaryContainer
 
     Row(
         modifier = Modifier
-            .dragonSettingGroup() {
+            .dragonSettingGroup(selected = selected) {
                 clickable { onClick() }
-                    .conditional(isSelected && !showCheckbox) {
-                        background(primaryContainer)
-                    }
-            },
+            }
+            .padding(10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (showCheckbox) {
             Checkbox(
-                checked = isSelected,
+                checked = selected,
                 onCheckedChange = null,
                 colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.error)
             )
         } else if (isInstalled) {
             RadioButton(
-                selected = isSelected,
+                selected = selected,
                 onClick = null,
                 colors = AppObjectsColors.radioButtonColors()
             )

@@ -6,17 +6,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
-import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.MainScreenLayerJson
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore
-import org.elnix.dragonlauncher.settings.stores.array.MainScreenLayersSettingsStore
-import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
@@ -29,9 +27,7 @@ import org.elnix.dragonlauncher.ui.statusbar.showStatusBar
 fun StatusBarTab() {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
-
-    val mainScreenLayers = LocalMainScreenLayers.current
-    val showStatusBar by showStatusBar()
+    var showStatusBar by showStatusBar()
 
     SettingsScaffold(
         title = stringResource(R.string.status_bar),
@@ -41,6 +37,12 @@ fun StatusBarTab() {
             scope.launch {
                 StatusBarSettingsStore.resetAll(ctx)
                 StatusBarJsonSettingsStore.resetAll(ctx)
+                showStatusBar = false
+            }
+        },
+        topContent = {
+            if (showStatusBar) {
+                Spacer()
             }
         }
     ) {
@@ -49,19 +51,7 @@ fun StatusBarTab() {
                 title = R.string.show_status_bar,
                 description = R.string.show_status_bar_desc,
                 state = showStatusBar
-            ) {
-                scope.launch {
-                    MainScreenLayersSettingsStore.jsonSetting.set(
-                        ctx,
-                        MainScreenLayerJson.encode(
-                            mainScreenLayers.map {
-                                if (it is MainScreenLayer.StatusBar) it.copy(enabled = !it.enabled)
-                                else it
-                            }
-                        )
-                    )
-                }
-            }
+            ) { showStatusBar = it }
         }
 
         AnimatedVisibility(showStatusBar) {

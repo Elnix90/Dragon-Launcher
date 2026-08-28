@@ -28,8 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -58,6 +57,7 @@ import org.elnix.dragonlauncher.base.model.models.DateFormat
 import org.elnix.dragonlauncher.base.model.models.TimeFormat
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
+import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.MainScreenLayerJson
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.base.model.serializables.StatusBarJson
 import org.elnix.dragonlauncher.base.model.serializables.allStatusBars
@@ -65,6 +65,7 @@ import org.elnix.dragonlauncher.base.utils.DateUtils
 import org.elnix.dragonlauncher.base.utils.DateUtils.isValidDateFormat
 import org.elnix.dragonlauncher.base.utils.DateUtils.isValidTimeFormat
 import org.elnix.dragonlauncher.i18n.R
+import org.elnix.dragonlauncher.settings.stores.array.MainScreenLayersSettingsStore
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
@@ -686,33 +687,70 @@ fun StatusBarItem(
 }
 
 
+
 @Composable
-fun showStatusBar(): State<Boolean> {
-    val mainScreensLayers = LocalMainScreenLayers.current
+fun showStatusBar(): MutableState<Boolean> {
+    val scope = rememberCoroutineScope()
+    val ctx = LocalContext.current
+    val mainScreenLayers = LocalMainScreenLayers.current
 
-    return remember(mainScreensLayers) {
-        derivedStateOf {
-            val bar = mainScreensLayers
-                .find { it is MainScreenLayer.StatusBar }
-                ?: error("No status bar provided in the list")
+    return remember(mainScreenLayers) {
+        object: MutableState<Boolean> {
+            override var value: Boolean
+                get() = ((mainScreenLayers
+                    .find { it is MainScreenLayer.StatusBar }
+                    ?: error("No charging animation provided in the list")) as MainScreenLayer.StatusBar).enabled
 
-            (bar as MainScreenLayer.StatusBar).enabled
+                set(value) {
+                    scope.launch {
+                        MainScreenLayersSettingsStore.jsonSetting.set(
+                            ctx,
+                            MainScreenLayerJson.encode(
+                                mainScreenLayers.map {
+                                    if (it is MainScreenLayer.StatusBar) it.copy(enabled = value)
+                                    else it
+                                }
+                            )
+                        )
+                    }
+                }
+
+            override fun component1(): Boolean = value
+            override fun component2(): (Boolean) -> Unit = { value }
         }
     }
 }
 
 
 @Composable
-fun showChargingAnimation(): State<Boolean> {
-    val mainScreensLayers = LocalMainScreenLayers.current
+fun showChargingAnimation(): MutableState<Boolean> {
+    val scope = rememberCoroutineScope()
+    val ctx = LocalContext.current
+    val mainScreenLayers = LocalMainScreenLayers.current
 
-    return remember(mainScreensLayers) {
-        derivedStateOf {
-            val charging = mainScreensLayers
+    return remember(mainScreenLayers) {
+        object: MutableState<Boolean> {
+            override var value: Boolean
+                get() = ((mainScreenLayers
                 .find { it is MainScreenLayer.ChargingAnimation }
-                ?: error("No charging animation provided in the list")
+                ?: error("No charging animation provided in the list")) as MainScreenLayer.ChargingAnimation).enabled
 
-            (charging as MainScreenLayer.ChargingAnimation).enabled
+                set(value) {
+                    scope.launch {
+                        MainScreenLayersSettingsStore.jsonSetting.set(
+                            ctx,
+                            MainScreenLayerJson.encode(
+                                mainScreenLayers.map {
+                                    if (it is MainScreenLayer.ChargingAnimation) it.copy(enabled = value)
+                                    else it
+                                }
+                            )
+                        )
+                    }
+                }
+
+            override fun component1(): Boolean = value
+            override fun component2(): (Boolean) -> Unit = { value }
         }
     }
 }

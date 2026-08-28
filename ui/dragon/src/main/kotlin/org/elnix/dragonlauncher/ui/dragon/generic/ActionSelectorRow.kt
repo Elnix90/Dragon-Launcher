@@ -1,6 +1,5 @@
 package org.elnix.dragonlauncher.ui.dragon.generic
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -25,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.theme.AppObjectsColors
-import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
@@ -124,25 +122,20 @@ fun <T> ActionSelector(
         DragonSettingsGroup(label) {
             options.forEach { option ->
                 val isSelected = selected == option
-                val primaryContainer = MaterialTheme.colorScheme.primaryContainer
                 val interactionSource = rememberInteractionSource()
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     modifier = Modifier
-                        .dragonSettingGroup {
+                        .dragonSettingGroup(selected = isSelected) {
                             clickable(
                                 interactionSource = interactionSource
                             ) {
                                 onSelected(option)
                                 onDismiss()
                             }
-                                .conditional(isSelected) {
-                                    background(primaryContainer)
-                                }
                         }
                         .padding(10.dp)
-
                 ) {
                     RadioButton(
                         selected = (isSelected),

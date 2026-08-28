@@ -16,8 +16,6 @@ import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionMode
-import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionState
 
 /**
  * Used in modal sheets to give padding to the content to avoid it being directly on the edges
@@ -87,8 +85,3 @@ fun rememberBottomSheetState(skipPartiallyExpanded: Boolean = false): SheetState
             add(SheetValue.Expanded)
         }
     )
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun rememberBottomSheetState(state: ExpandableSectionState): SheetState =
-    rememberBottomSheetState(state.mode is ExpandableSectionMode.ModalSheet && state.mode.skipPartiallyExpanded)

@@ -30,9 +30,9 @@ import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.dialogs.security.LockMethodDialog
 import org.elnix.dragonlauncher.ui.dialogs.security.SecretUnlockButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
+import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
 import org.elnix.dragonlauncher.ui.dragon.expandable.rememberExpandableSection
-import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionMode
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
 import org.elnix.dragonlauncher.ui.helpers.SettingActionSelector
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
@@ -54,22 +54,14 @@ fun BehaviorTab() {
     val lockMethod by PrivateSettingsStore.lockMethod.asState()
     val superWarningModeEnabled = lockMethod != None
 
-    val paddingState = rememberExpandableSection(
-        title = R.string.drag_zone_padding,
-        description = R.string.drag_zone_padding_desc,
-        icon = R.drawable.center_focus_strong,
-        mode = ExpandableSectionMode.Expandable
-    )
-    val showAppPreviewOverlay = paddingState.isExpanded()
-
     val superWarningState = rememberExpandableSection(
         title = R.string.super_warning_mode,
         description = R.string.super_warning_mode_desc,
         icon = R.drawable.lock,
-        mode = ExpandableSectionMode.ModalSheet(true),
         enabled = superWarningModeEnabled
     )
 
+    var showPaddingBox by remember { mutableStateOf(false) }
     var showLockMethodPicker by remember { mutableStateOf(false) }
     var hasEnabledSecretUnlockButton by remember { mutableStateOf(false) }
     LaunchedEffect(hasEnabledSecretUnlockButton) {
@@ -106,12 +98,16 @@ fun BehaviorTab() {
             }
 
             DragonSettingsGroup(R.string.padding) {
-                ExpandableSection(paddingState) {
-                    this@DragonSettingsGroup.Setting(BehaviorSettingsStore.rightPadding)
-                    this@DragonSettingsGroup.Setting(BehaviorSettingsStore.leftPadding)
-                    this@DragonSettingsGroup.Setting(BehaviorSettingsStore.topPadding)
-                    this@DragonSettingsGroup.Setting(BehaviorSettingsStore.bottomPadding)
-                }
+                SwitchRow(
+                    state = showPaddingBox,
+                    title = R.string.show_padding_box,
+                    icon = R.drawable.visibility,
+                ) { showPaddingBox = it }
+
+                Setting(BehaviorSettingsStore.rightPadding)
+                Setting(BehaviorSettingsStore.leftPadding)
+                Setting(BehaviorSettingsStore.topPadding)
+                Setting(BehaviorSettingsStore.bottomPadding)
             }
 
             DragonSettingsGroup(R.string.security) {
@@ -129,27 +125,27 @@ fun BehaviorTab() {
                 Setting(BehaviorSettingsStore.secretUnlockButton, enabled = lockMethod != None) { hasEnabledSecretUnlockButton = it }
 
                 ExpandableSection(superWarningState) {
-                    this@DragonSettingsGroup.Setting(
+                    Setting(
                         setting = BehaviorSettingsStore.superWarningMode,
                         enabled = superWarningModeEnabled
                     )
 
-                    this@DragonSettingsGroup.Setting(
+                    Setting(
                         setting = BehaviorSettingsStore.vibrateOnError,
                         enabled = superWarningModeEnabled
                     )
 
-                    this@DragonSettingsGroup.Setting(
+                    Setting(
                         setting = BehaviorSettingsStore.alarmSound,
                         enabled = superWarningModeEnabled
                     )
 
-                    this@DragonSettingsGroup.Setting(
+                    Setting(
                         setting = BehaviorSettingsStore.metalPipesSound,
                         enabled = superWarningModeEnabled
                     )
 
-                    this@DragonSettingsGroup.Setting(
+                    Setting(
                         setting = BehaviorSettingsStore.superWarningModeSound,
                         enabled = superWarningModeEnabled
                     )
@@ -162,7 +158,7 @@ fun BehaviorTab() {
         }
     }
 
-    if (showAppPreviewOverlay) {
+    if (showPaddingBox) {
         Canvas(Modifier.fillMaxSize()) {
             drawRect(
                 color = Color(0x40FF0000),

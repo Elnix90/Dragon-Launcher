@@ -1,12 +1,10 @@
 package org.elnix.dragonlauncher.ui.dragon.expandable
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -27,11 +25,11 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.alphaMultiplier
 import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
+import org.elnix.dragonlauncher.ui.base.components.BoxedIcon
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
-import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
-import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionMode
+import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.model.ExpandableSectionState
 import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 
@@ -40,7 +38,7 @@ import org.elnix.dragonlauncher.ui.dragon.text.TextWithDescription
 @Composable
 fun DragonGroupScope.ExpandableSection(
     state: ExpandableSectionState,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable DragonGroupScope.() -> Unit
 ) {
     val enabled = state.enabled
     val expanded = state.isExpanded() && enabled
@@ -78,8 +76,14 @@ fun DragonGroupScope.ExpandableSection(
                     }
                 },
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
+            if (state.icon != null) {
+                BoxedIcon(state.icon)
+            } else {
+                state.customLeadingContent!!()
+            }
+
             TextWithDescription(
                 text = stringResource(state.title),
                 description = if (state.description != null) stringResource(state.description) else null,
@@ -96,26 +100,14 @@ fun DragonGroupScope.ExpandableSection(
                     .rotate(rotationDegrees.value)
             )
         }
-
-        if (state.mode == ExpandableSectionMode.Expandable) {
-            AnimatedVisibility(
-                visible = expanded
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(5.dp)
-                ) {
-                    content()
-                }
-            }
-        }
     }
-    if (state.mode is ExpandableSectionMode.ModalSheet && expanded) {
+
+    if (expanded) {
         DragonModalBottomSheet(
             onDismissRequest = { state.toggle() },
-            sheetState = rememberBottomSheetState(skipPartiallyExpanded = state.mode.skipPartiallyExpanded)
+            skipPartiallyExpanded = state.skipPartiallyExpanded
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(5.dp),
+            DragonSettingsGroup(
                 modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
                 content()

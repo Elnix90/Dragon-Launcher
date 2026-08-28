@@ -196,33 +196,31 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
         },
     ) {
         DragonSettingsGroup {
-            ExpandableSection(
-                rememberExpandableSection(
-                    title = R.string.device_info,
-                    description = R.string.device_info_desc,
-                    icon = R.drawable.bug_report
-                )
-            ) {
-                DragonSettingsGroup {
-                    DialogTitle(
-                        text = stringResource(R.string.device_info),
-                        modifier = Modifier.dragonSettingGroup(),
-                        trailingIcon = {
-                            CopyIcon {
-                                ctx.copyToClipboard(deviceDetails)
-                                ctx.showToast("Device info copied")
-                            }
-                        })
-                    SelectionContainer(
-                        modifier = Modifier.dragonSettingGroup()
-                    ) {
-                        Text(
-                            text = deviceDetails,
-                            style = MaterialTheme.typography.bodySmall,
-                            fontFamily = FontFamily.Monospace,
-                            fontSize = 11.sp
-                        )
-                    }
+            val expandableSectionState = rememberExpandableSection(
+                title = R.string.device_info,
+                description = R.string.device_info_desc,
+                icon = R.drawable.bug_report
+            )
+
+            ExpandableSection(expandableSectionState) {
+                DialogTitle(
+                    text = stringResource(R.string.device_info),
+                    modifier = Modifier.dragonSettingGroup(),
+                    trailingIcon = {
+                        CopyIcon {
+                            ctx.copyToClipboard(deviceDetails)
+                            ctx.showToast("Device info copied")
+                        }
+                    })
+                SelectionContainer(
+                    modifier = Modifier.dragonSettingGroup()
+                ) {
+                    Text(
+                        text = deviceDetails,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 11.sp
+                    )
                 }
             }
 

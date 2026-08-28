@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,8 +24,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -89,36 +93,74 @@ fun ColorSelectorTab() {
     val primarySectionState = rememberExpandableSection(
         title = R.string.primary_colors_section,
         description = R.string.primary_colors_section_desc,
+        customLeadingContent = {
+            with(MaterialTheme.colorScheme) {
+                PalettePreview(primary, onPrimary, primaryContainer, onPrimaryContainer)
+            }
+        },
         icon = null
     )
+
     val secondarySectionState = rememberExpandableSection(
         title = R.string.secondary_colors_section,
         description = R.string.secondary_colors_section_desc,
+        customLeadingContent = {
+            with(MaterialTheme.colorScheme) {
+                PalettePreview(secondary, onSecondary, secondaryContainer, onSecondaryContainer)
+            }
+        },
         icon = null
     )
+
     val tertiarySectionState = rememberExpandableSection(
         title = R.string.tertiary_colors_section,
         description = R.string.tertiary_colors_section_desc,
+        customLeadingContent = {
+            with(MaterialTheme.colorScheme) {
+                PalettePreview(tertiary, onTertiary, tertiaryContainer, onTertiaryContainer)
+            }
+        },
         icon = null
     )
+
     val backgroundSectionState = rememberExpandableSection(
         title = R.string.background_surface_colors_section,
         description = R.string.background_surface_colors_section_desc,
+        customLeadingContent = {
+            with(MaterialTheme.colorScheme) {
+                PalettePreview(background, onBackground, surface, onSecondary)
+            }
+        },
         icon = null
     )
     val errorSectionState = rememberExpandableSection(
         title = R.string.error_colors_section,
         description = R.string.error_colors_section_desc,
+        customLeadingContent = {
+            with(MaterialTheme.colorScheme) {
+                PalettePreview(error, onError, errorContainer, onErrorContainer)
+            }
+        },
         icon = null
     )
     val outlineSectionState = rememberExpandableSection(
         title = R.string.outline_colors_section,
         description = R.string.outline_colors_section_desc,
+        customLeadingContent = {
+            with(MaterialTheme.colorScheme) {
+                PalettePreview(outline, outlineVariant, scrim, Color.Transparent)
+            }
+        },
         icon = null
     )
     val surfaceContainerSectionState = rememberExpandableSection(
         title = R.string.surface_container_colors_section,
         description = R.string.surface_container_colors_section_desc,
+        customLeadingContent = {
+            with(MaterialTheme.colorScheme) {
+                PalettePreview(surfaceContainer, surfaceContainerHigh, surfaceContainerHighest, surfaceContainerLow)
+            }
+        },
         icon = null
     )
 
@@ -555,4 +597,41 @@ private fun DragonGroupScope.ColorsGroup(
             }
         }
     }
+}
+
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun PalettePreview(
+    color1: Color,
+    color2: Color,
+    color3: Color,
+    color4: Color
+) {
+    Box(
+        modifier = Modifier
+            .size(50.dp)
+            .clip(MaterialShapes.Clover4Leaf.toShape())
+    ) {
+        Column {
+            Row(Modifier.weight(1f)) {
+                PaletteColor(color1)
+                PaletteColor(color2)
+            }
+            Row(Modifier.weight(1f)) {
+                PaletteColor(color3)
+                PaletteColor(color4)
+            }
+        }
+    }
+}
+
+@Composable
+private fun RowScope.PaletteColor(color: Color) {
+    Box(
+        modifier = Modifier
+            .weight(1f)
+            .fillMaxSize()
+            .background(color)
+    )
 }

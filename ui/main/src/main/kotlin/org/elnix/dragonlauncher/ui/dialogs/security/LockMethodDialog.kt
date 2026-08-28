@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.ui.dialogs.security
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -26,7 +25,6 @@ import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.base.modifiers.conditional
 import org.elnix.dragonlauncher.ui.base.remember.rememberInteractionSource
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
@@ -57,8 +55,6 @@ fun LockMethodDialog(
         Spacer(8.dp)
 
         DragonSettingsGroup {
-            val primaryContainer = MaterialTheme.colorScheme.primaryContainer
-
             LockMethod.entries.forEach { method ->
                 val selected = method == currentLockMethod
 
@@ -71,7 +67,7 @@ fun LockMethodDialog(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     modifier = Modifier
-                        .dragonSettingGroup {
+                        .dragonSettingGroup(selected = selected) {
                             clickable(
                                 interactionSource = interactionSource,
                                 onClick = {
@@ -79,9 +75,6 @@ fun LockMethodDialog(
                                     navigator.go(NavigationRoute.LockScreenSetup(method))
                                 }
                             )
-                                .conditional(selected) {
-                                    background(primaryContainer)
-                                }
                         }
                         .padding(10.dp)
                         .selectableGroup()

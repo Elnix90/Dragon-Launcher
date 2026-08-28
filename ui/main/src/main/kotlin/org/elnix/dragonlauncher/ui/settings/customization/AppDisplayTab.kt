@@ -14,14 +14,11 @@ import androidx.compose.ui.res.stringResource
 import io.github.elnix90.runtime.asMutableState
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
-import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.MainScreenLayerJson
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.settings.stores.array.MainScreenLayersSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.components.PointPreviewTitle
 import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
@@ -60,26 +57,14 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
         DragonSettingsGroup(R.string.common_settings) {
             Setting(UiSettingsStore.fullScreen)
 
-            val showChargingAnimation by showChargingAnimation()
+            var showChargingAnimation by showChargingAnimation()
 
             SwitchRow(
                 title = R.string.charging_animation,
                 description = R.string.charging_animation_desc,
                 icon = R.drawable.battery_charging,
                 state = showChargingAnimation
-            ) {
-                scope.launch {
-                    MainScreenLayersSettingsStore.jsonSetting.set(
-                        ctx,
-                        MainScreenLayerJson.encode(
-                            mainScreenLayers.map {
-                                if (it is MainScreenLayer.ChargingAnimation) it.copy(enabled = !it.enabled)
-                                else it
-                            }
-                        )
-                    )
-                }
-            }
+            ) { showChargingAnimation = it }
         }
 
 
@@ -89,13 +74,11 @@ fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
             val showAppLaunchingPreview by UiSettingsStore.showAppLaunchingPreview.asState()
             AnimatedVisibility(showAppLaunchingPreview) {
                 ExpandableSection(topOverlaySettingsState) {
-                    DragonSettingsGroup {
-                        Setting(UiSettingsStore.showLaunchingAppLabel)
-                        Setting(UiSettingsStore.showLaunchingAppIcon)
-                        Setting(UiSettingsStore.appLabelIconOverlayTopPadding)
-                        Setting(UiSettingsStore.appLabelOverlaySize)
-                        Setting(UiSettingsStore.appIconOverlaySize)
-                    }
+                    Setting(UiSettingsStore.showLaunchingAppLabel)
+                    Setting(UiSettingsStore.showLaunchingAppIcon)
+                    Setting(UiSettingsStore.appLabelIconOverlayTopPadding)
+                    Setting(UiSettingsStore.appLabelOverlaySize)
+                    Setting(UiSettingsStore.appIconOverlaySize)
                 }
             }
 

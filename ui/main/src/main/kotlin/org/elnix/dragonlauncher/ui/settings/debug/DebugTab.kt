@@ -211,7 +211,7 @@ fun DebugTab() {
 
 
             val setButtonEnabled = systemLauncherPackageName != systemLauncherPackageNameSetting
-            this@DragonSettingsGroup.DragonButton(
+            DragonButton(
                 onClick = {
                     scope.launch {
                         DebugSettingsStore.systemLauncherPackageName.set(ctx, systemLauncherPackageName)
@@ -351,14 +351,12 @@ fun DebugTab() {
             Setting(DebugSettingsStore.disableExtensionSignatureCheck)
 
             ExpandableSection(storeResetSectionState) {
-                DragonSettingsGroup {
-                    AllStores.forEach { store ->
-                        DragonButton(
-                            onClick = { scope.launch { store.resetAll(ctx) } },
-                            isCancel = true
-                        ) {
-                            Text("Reset ${store.name}")
-                        }
+                AllStores.forEach { store ->
+                    DragonButton(
+                        onClick = { scope.launch { store.resetAll(ctx) } },
+                        isCancel = true
+                    ) {
+                        Text("Reset ${store.name}")
                     }
                 }
             }
@@ -368,16 +366,4 @@ fun DebugTab() {
     if (showPermissionDialog) {
         AppUsagePermissionDialog { showPermissionDialog = false }
     }
-
-//    if (showEditAppOverrides) {
-//        PointIconEditor(
-//            point = dummySwipePoint(),
-//            onDismiss = { showEditAppOverrides = false }
-//        ) { newIcon ->
-//            appsViewModel.applyIconToApps(
-//                icon = newIcon
-//            )
-//            showEditAppOverrides = false
-//        }
-//    }
 }
