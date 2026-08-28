@@ -88,7 +88,13 @@ fun SettingsScaffold(
             .conditional(imePadding) {
                 imePadding()
             },
-        contentWindowInsets = WindowInsets.safeDrawing.add(WindowInsets(left = horizontalPadding, right = horizontalPadding)),
+        contentWindowInsets = WindowInsets.safeDrawing.add(
+            WindowInsets(
+                top = 8.dp,
+                left = horizontalPadding,
+                right = horizontalPadding
+            )
+        ),
         bottomBar = {
             val insets = WindowInsets.systemBars.only(WindowInsetsSides.Bottom)
             Column(
