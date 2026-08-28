@@ -18,32 +18,24 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.runtime.asStateNull
-import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
-import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.MainScreenLayerJson
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.copyWithEnabled
-import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.defaultMainScreenLayers
-import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.enabled
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.label
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.stores.array.MainScreenLayersSettingsStore
+import org.elnix.dragonlauncher.models.SwipeViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SliderWithLabel
@@ -53,23 +45,18 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
-fun MainScreeLayersTab() {
-    val ctx = LocalContext.current
+fun MainScreeLayersTab(
+    swipeViewModel: SwipeViewModel = activityViewModel()
+) {
     val navigator = LocalNavigator.current
-    val scope = rememberCoroutineScope()
 
-    val order by rememberMainScreenLayerOrder()
-    var objects by remember { mutableStateOf(order) }
-
-    LaunchedEffect(order) {
-        objects = order
-    }
+    val order by swipeViewModel.mainScreenLayerOrder.asState()
 
     val lazyListState = rememberLazyListState()
     val reorderState = rememberReorderableLazyListState(
         lazyListState = lazyListState,
         onMove = { from, to ->
-            objects = objects.toMutableList().apply {
+            swipeViewModel.mainScreenLayerOrder.value = order.toMutableList().apply {
                 add(to.index, removeAt(from.index))
             }
         }
@@ -79,22 +66,17 @@ fun MainScreeLayersTab() {
         title = stringResource(R.string.main_screen_layers),
         helpText = stringResource(R.string.main_screen_layers_help),
         onReset = {
-            scope.launch {
-                MainScreenLayersSettingsStore.jsonSetting.reset(ctx)
-            }
+            swipeViewModel.resetMainScreenLayers()
         },
         onBack = {
-            scope.launch {
-                val encoded = MainScreenLayerJson.encode(objects)
-                MainScreenLayersSettingsStore.jsonSetting.set(ctx, encoded)
-                navigator.onBack()
-            }
+            swipeViewModel.saveMainScreenLayers()
+            navigator.onBack()
         },
         lasyListState = lazyListState,
         resetTitle = stringResource(R.string.main_screen_layers_reset_title),
         resetText = stringResource(R.string.main_screen_layers_reset),
         lazyContent = {
-            items(objects, key = { it.toString() }) { item ->
+            items(order, key = { it.toString() }) { item ->
 
                 ReorderableItem(
                     state = reorderState,
@@ -131,7 +113,7 @@ fun MainScreeLayersTab() {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Checkbox(
                                     onCheckedChange = {
-                                        objects = objects.map {
+                                        swipeViewModel.mainScreenLayerOrder.value = order.map {
                                             if (it == item) it.copyWithEnabled(!it.enabled) else it
                                         }
                                     },
@@ -167,13 +149,13 @@ fun MainScreeLayersTab() {
                                                 description = stringResource(R.string.show_after_help),
                                                 resetEnabled = tempShowAfter != MainScreenLayer.CustomDim.defaultShowAfterMs,
                                                 onReset = {
-                                                    objects = objects.map {
+                                                    swipeViewModel.mainScreenLayerOrder.value = order.map {
                                                         if (it is MainScreenLayer.CustomDim) it.copy(showAfterMs = MainScreenLayer.CustomDim.defaultShowAfterMs) else it
                                                     }
                                                 },
                                                 onDragStateChange = { isDragging ->
                                                     if (!isDragging) {
-                                                        objects = objects.map {
+                                                        swipeViewModel.mainScreenLayerOrder.value = order.map {
                                                             if (it is MainScreenLayer.CustomDim) it.copy(showAfterMs = tempShowAfter) else it
                                                         }
                                                     }
@@ -189,13 +171,13 @@ fun MainScreeLayersTab() {
                                                 description = stringResource(R.string.dim_amount_help),
                                                 resetEnabled = tempDimAmount != MainScreenLayer.CustomDim.defaultDimAmount,
                                                 onReset = {
-                                                    objects = objects.map {
+                                                    swipeViewModel.mainScreenLayerOrder.value = order.map {
                                                         if (it is MainScreenLayer.CustomDim) it.copy(dimAmount = MainScreenLayer.CustomDim.defaultDimAmount) else it
                                                     }
                                                 },
                                                 onDragStateChange = { isDragging ->
                                                     if (!isDragging) {
-                                                        objects = objects.map {
+                                                        swipeViewModel.mainScreenLayerOrder.value = order.map {
                                                             if (it is MainScreenLayer.CustomDim) it.copy(dimAmount = tempDimAmount) else it
                                                         }
                                                     }
@@ -216,12 +198,12 @@ fun MainScreeLayersTab() {
                                                 title = R.string.line_before_nests,
                                                 resetEnabled = item.lineBeforeNests != MainScreenLayer.DragOverlay.defaultLineBeforeNests,
                                                 onReset = {
-                                                    objects = objects.map {
+                                                    swipeViewModel.mainScreenLayerOrder.value = order.map {
                                                         if (it is MainScreenLayer.DragOverlay) it.copy(lineBeforeNests = MainScreenLayer.DragOverlay.defaultLineBeforeNests) else it
                                                     }
                                                 }
                                             ) { newValue ->
-                                                objects = objects.map {
+                                                swipeViewModel.mainScreenLayerOrder.value = order.map {
                                                     if (it is MainScreenLayer.DragOverlay) it.copy(lineBeforeNests = newValue) else it
                                                 }
                                             }
@@ -237,29 +219,4 @@ fun MainScreeLayersTab() {
             }
         }
     )
-}
-
-@Composable
-fun rememberMainScreenLayerOrder(): MutableState<List<MainScreenLayer>> {
-    val orderString by MainScreenLayersSettingsStore.jsonSetting.asStateNull()
-
-    return remember(orderString) {
-        val decoded = orderString
-            ?.let { MainScreenLayerJson.decode<List<MainScreenLayer>>(it) }
-            ?.takeIf { layers ->
-                val expectedTypes = setOf(
-                    MainScreenLayer.ChargingAnimation::class,
-                    MainScreenLayer.StatusBar::class, // Fuuuuuuuuuuck it imported the wrong status bar class
-                    MainScreenLayer.Widgets::class,
-                    MainScreenLayer.CustomDim::class,
-                    MainScreenLayer.DragOverlay::class,
-                    MainScreenLayer.HoldToActivate::class
-                )
-
-                layers.map { it::class }.toSet() == expectedTypes
-            }
-            ?: defaultMainScreenLayers
-
-        mutableStateOf(decoded)
-    }
 }

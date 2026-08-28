@@ -30,19 +30,19 @@ import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.model.serializables.CustomObject
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.HoldActions
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.CustomObjectBlockProperties
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
-import org.elnix.dragonlauncher.base.model.enumsui.toggle.HoldActions
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.getCenter
 import org.elnix.dragonlauncher.ktx.toDp
+import org.elnix.dragonlauncher.models.SwipeViewModel
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
-import org.elnix.dragonlauncher.settings.stores.objects.HoldToActivateObject
+import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.VerticalDragZone
-import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.HoldSettingsOrderSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
@@ -54,23 +54,23 @@ import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
 import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsItem
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
-import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson
 import org.elnix.dragonlauncher.ui.remembers.rememberHoldToOpenSettings
 import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
-fun HoldToActivateTab() {
+fun HoldToActivateTab(
+    swipeViewModel: SwipeViewModel = activityViewModel()
+) {
     val ctx = LocalContext.current
     val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
-    val holdCustomObject = LocalHoldCustomObject.current
+
+    val holdObject by swipeViewModel.holdObject.asState()
 
     val holdDelayBeforeStartingLongClickSettings by HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings.asState()
     val longCLickSettingsDuration by HoldToActivateArcSettingsStore.longCLickSettingsDuration.asState()
 
-
-    var mutableHoldObject by remember(holdCustomObject) { mutableStateOf(holdCustomObject) }
     var showHoldSettingsOrderDialog by remember { mutableStateOf(false) }
     var playAnimation by remember { mutableStateOf(true) }
     var manualMode by remember { mutableStateOf(false) }
@@ -87,9 +87,7 @@ fun HoldToActivateTab() {
         title = stringResource(R.string.hold_settings),
         onBack = {
             scope.launch {
-                if (mutableHoldObject != CustomObject.defaultHoldCustomObject) {
-                    HoldToActivateObject.jsonSetting.set(ctx, CustomObjectJson.encode(mutableHoldObject))
-                }
+                swipeViewModel.saveHoldObject()
                 navigator.onBack()
             }
         },
@@ -98,7 +96,7 @@ fun HoldToActivateTab() {
         onReset = {
             scope.launch {
                 HoldToActivateArcSettingsStore.resetAll(ctx)
-                HoldToActivateObject.resetAll(ctx)
+                swipeViewModel.resetHoldObject()
             }
         },
         topContent = {
@@ -174,7 +172,7 @@ fun HoldToActivateTab() {
                     HoldToActivateArc(
                         center = center,
                         progress = progress,
-                        customObject = mutableHoldObject,
+                        customObject = holdObject,
                         playAnimation = playAnimation
                     )
                 }
@@ -208,13 +206,13 @@ fun HoldToActivateTab() {
 
         EditCustomObjectBlock(
             title = R.string.object_properties,
-            editObject = mutableHoldObject,
+            editObject = holdObject,
             default = defaultAngleCustomObject,
             properties = CustomObjectBlockProperties(
                 allowAlignCustomization = false,
                 allowEraseBackgroundCustomization = false
             )
-        ) { mutableHoldObject = it }
+        ) { swipeViewModel.holdObject.value = it }
 
 
         DragonSettingsGroup(R.string.configuration) {

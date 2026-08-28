@@ -17,32 +17,34 @@ import org.elnix.dragonlauncher.i18n.R
 @Serializable
 @SerialName("MainScreenLayer")
 public sealed class MainScreenLayer {
+    public abstract val enabled: Boolean
+
     @Immutable
     @Serializable
     @SerialName("ChargingAnimation")
     public data class ChargingAnimation(
-        val enabled: Boolean = true
+        override val enabled: Boolean = true
     ) : MainScreenLayer()
 
     @Immutable
     @Serializable
     @SerialName("Widgets")
     public data class Widgets(
-        val enabled: Boolean = true
+        override val enabled: Boolean = true
     ) : MainScreenLayer()
 
     @Immutable
     @Serializable
     @SerialName("StatusBar")
     public data class StatusBar(
-        val enabled: Boolean = false
+        override val enabled: Boolean = false
     ) : MainScreenLayer()
 
     @Immutable
     @Serializable
     @SerialName("DragOverlay")
     public data class DragOverlay(
-        val enabled: Boolean = true,
+        override val enabled: Boolean = true,
         val lineBeforeNests: Boolean = defaultLineBeforeNests
     ) : MainScreenLayer() {
         public companion object {
@@ -54,14 +56,14 @@ public sealed class MainScreenLayer {
     @Serializable
     @SerialName("HoldToActivate")
     public data class HoldToActivate(
-        val enabled: Boolean = true
+        override val enabled: Boolean = true
     ) : MainScreenLayer()
 
     @Immutable
     @Serializable
     @SerialName("CustomDim")
     public data class CustomDim(
-        val enabled: Boolean = true,
+        override val enabled: Boolean = true,
         /** How powerful the fim is */
         @FloatRange(from = 0.0, to = 1.0)
         val dimAmount: Float = defaultDimAmount,

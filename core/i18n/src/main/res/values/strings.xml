@@ -1090,4 +1090,6 @@
     <string name="show_snap_point_angle_lines">Show snap points angle lines</string>
     <string name="show_snap_point_angle_lines_desc">Whether to display a visual aid to preview where the angle will snap</string>
     <string name="show_padding_box">Show padding box</string>
+    <string name="use_snapped_angle_or_real_angle">Use snapped angle or real angle</string>
+    <string name="use_snapped_angle_or_real_angle_desc">When using \"snap to point\", the computed angle is the real angle or the angle at which the selected point belongs?</string>
 </resources>

@@ -57,7 +57,6 @@ import org.elnix.dragonlauncher.base.model.models.DateFormat
 import org.elnix.dragonlauncher.base.model.models.TimeFormat
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
-import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.MainScreenLayerJson
 import org.elnix.dragonlauncher.base.model.serializables.StatusBar
 import org.elnix.dragonlauncher.base.model.serializables.StatusBarJson
 import org.elnix.dragonlauncher.base.model.serializables.allStatusBars
@@ -65,13 +64,14 @@ import org.elnix.dragonlauncher.base.utils.DateUtils
 import org.elnix.dragonlauncher.base.utils.DateUtils.isValidDateFormat
 import org.elnix.dragonlauncher.base.utils.DateUtils.isValidTimeFormat
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.stores.array.MainScreenLayersSettingsStore
+import org.elnix.dragonlauncher.models.SwipeViewModel
 import org.elnix.dragonlauncher.settings.stores.array.StatusBarJsonSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.StatusBarSettingsStore
 import org.elnix.dragonlauncher.theme.AppObjectsColors
+import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.LazyRowWithScrollIndicator
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.composition.LocalStatusBarElements
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -643,7 +643,7 @@ fun EditStatusBar() {
 //    DragonButton(
 //        onClick = {
 //            scope.launch {
-////                TODO()
+////                currentLayer.copy(enabled = value) as MainScreenLayer
 //                ctx.showToast("Not implemented yet")
 ////                load()
 //            }
@@ -687,32 +687,28 @@ fun StatusBarItem(
 }
 
 
-
 @Composable
-fun showStatusBar(): MutableState<Boolean> {
-    val scope = rememberCoroutineScope()
-    val ctx = LocalContext.current
-    val mainScreenLayers = LocalMainScreenLayers.current
+private inline fun <reified T: MainScreenLayer> showX(swipeViewModel: SwipeViewModel = activityViewModel()): MutableState<Boolean> {
+    val mainScreenLayers by swipeViewModel.mainScreenLayerOrder.asState()
 
     return remember(mainScreenLayers) {
-        object: MutableState<Boolean> {
+        object : MutableState<Boolean> {
             override var value: Boolean
                 get() = ((mainScreenLayers
-                    .find { it is MainScreenLayer.StatusBar }
-                    ?: error("No charging animation provided in the list")) as MainScreenLayer.StatusBar).enabled
-
+                    .find { it is T }
+                    ?: error("No ${T::class.simpleName} provided in the list")) as T).enabled
                 set(value) {
-                    scope.launch {
-                        MainScreenLayersSettingsStore.jsonSetting.set(
-                            ctx,
-                            MainScreenLayerJson.encode(
-                                mainScreenLayers.map {
-                                    if (it is MainScreenLayer.StatusBar) it.copy(enabled = value)
-                                    else it
-                                }
-                            )
-                        )
+                    swipeViewModel.mainScreenLayerOrder.value = mainScreenLayers.map { currentLayer ->
+                        when (currentLayer) {
+                            is MainScreenLayer.ChargingAnimation -> currentLayer.copy(enabled = value) as MainScreenLayer
+                            is MainScreenLayer.CustomDim -> currentLayer.copy(enabled = value) as MainScreenLayer
+                            is MainScreenLayer.DragOverlay -> currentLayer.copy(enabled = value) as MainScreenLayer
+                            is MainScreenLayer.HoldToActivate -> currentLayer.copy(enabled = value) as MainScreenLayer
+                            is MainScreenLayer.StatusBar -> currentLayer.copy(enabled = value) as MainScreenLayer
+                            is MainScreenLayer.Widgets -> currentLayer.copy(enabled = value) as MainScreenLayer
+                        }
                     }
+                    swipeViewModel.saveMainScreenLayers()
                 }
 
             override fun component1(): Boolean = value
@@ -721,36 +717,8 @@ fun showStatusBar(): MutableState<Boolean> {
     }
 }
 
+@Composable
+fun showChargingAnimation(): MutableState<Boolean> = showX<MainScreenLayer.ChargingAnimation>()
 
 @Composable
-fun showChargingAnimation(): MutableState<Boolean> {
-    val scope = rememberCoroutineScope()
-    val ctx = LocalContext.current
-    val mainScreenLayers = LocalMainScreenLayers.current
-
-    return remember(mainScreenLayers) {
-        object: MutableState<Boolean> {
-            override var value: Boolean
-                get() = ((mainScreenLayers
-                .find { it is MainScreenLayer.ChargingAnimation }
-                ?: error("No charging animation provided in the list")) as MainScreenLayer.ChargingAnimation).enabled
-
-                set(value) {
-                    scope.launch {
-                        MainScreenLayersSettingsStore.jsonSetting.set(
-                            ctx,
-                            MainScreenLayerJson.encode(
-                                mainScreenLayers.map {
-                                    if (it is MainScreenLayer.ChargingAnimation) it.copy(enabled = value)
-                                    else it
-                                }
-                            )
-                        )
-                    }
-                }
-
-            override fun component1(): Boolean = value
-            override fun component2(): (Boolean) -> Unit = { value }
-        }
-    }
-}
+fun showStatusBar(): MutableState<Boolean> = showX<MainScreenLayer.StatusBar>()

@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.model.enumsui.select.AngleObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.CustomObjectBlockProperties
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultAngleCustomObject
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultEndCustomObject
@@ -42,24 +43,21 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.
 import org.elnix.dragonlauncher.base.model.serializables.CustomObject.Companion.defaultStartCustomObject
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
-import org.elnix.dragonlauncher.base.model.enumsui.select.AngleObject
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.angle360FromOffset
 import org.elnix.dragonlauncher.ktx.distanceSquaredTo
 import org.elnix.dragonlauncher.ktx.toDp
+import org.elnix.dragonlauncher.models.SwipeViewModel
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
-import org.elnix.dragonlauncher.settings.stores.objects.AngleObjectSettingStore
-import org.elnix.dragonlauncher.settings.stores.objects.EndObjectSettingStore
-import org.elnix.dragonlauncher.settings.stores.objects.LineObjectSettingStore
-import org.elnix.dragonlauncher.settings.stores.objects.StartObjectSettingStore
+import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.animation.bouncySpec
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.AnimatedFab
 import org.elnix.dragonlauncher.ui.components.VerticalDragZone
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.AngleLineObjectsOrderDialog
-import org.elnix.dragonlauncher.ui.dialogs.rememberLineObjectsOrder
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.generic.SingleSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
@@ -67,44 +65,40 @@ import org.elnix.dragonlauncher.ui.helpers.customobjects.EditCustomObjectBlock
 import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine
 import org.elnix.dragonlauncher.ui.helpers.customobjects.resolveRotation
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
-import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson
-import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.LocalAngleLineObjects
 import org.elnix.dragonlauncher.ui.remembers.rememberSweepAngle
 
 @Composable
-fun AngleLineTab() {
+fun AngleLineTab(
+    swipeViewModel: SwipeViewModel = activityViewModel()
+) {
     val ctx = LocalContext.current
     val navigator = LocalNavigator.current
     val density = LocalDensity.current
     val extraColors = LocalExtraColors.current
-    val lineObjects = LocalAngleLineObjects.current
     val scope = rememberCoroutineScope()
 
     val backgroundColor = MaterialTheme.colorScheme.background
 
-    // TODO create AngleLine View model, or even better, a swipe view model that hosts all the swipe related settings
     val showLineObjectPreview by AngleLineSettingsStore.showLineObjectPreview.asState()
     val showAngleLineObjectPreview by AngleLineSettingsStore.showAngleLineObjectPreview.asState()
     val showStartObjectPreview by AngleLineSettingsStore.showStartObjectPreview.asState()
     val showEndObjectPreview by AngleLineSettingsStore.showEndObjectPreview.asState()
     val rgbLine by AngleLineSettingsStore.rgbLine.asState()
 
-    var mutableLineObject by remember(lineObjects.line) { mutableStateOf(lineObjects.line) }
-    var mutableAngleLineObject by remember(lineObjects.angleLine) { mutableStateOf(lineObjects.angleLine) }
-    var mutableStartObject by remember(lineObjects.startLine) { mutableStateOf(lineObjects.startLine) }
-    var mutableEndObject by remember(lineObjects.endLine) { mutableStateOf(lineObjects.endLine) }
-
     var currentEditObject by remember { mutableStateOf(AngleObject.Line) }
 
-    val start = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
-    val end = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
-    val angleDeg = angle360FromOffset(start.value, end.value)
+    val lineObject by swipeViewModel.lineObject.asState()
+    val angleObject by swipeViewModel.angleObject.asState()
+    val startObject by swipeViewModel.startObject.asState()
+    val endObject by swipeViewModel.endObject.asState()
+
+    val startOffset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
+    val endOffset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
+    val angleDeg = angle360FromOffset(startOffset.value, endOffset.value)
 
     var moveStartOrEnd by remember { mutableStateOf(false) }
 
-    val order by rememberLineObjectsOrder()
-    var orderMutable by remember { mutableStateOf(order) }
-
+    val order by swipeViewModel.lineObjectOrder.asState()
     var showOrderDialog by remember { mutableStateOf(false) }
 
     val sweepState = rememberSweepAngle()
@@ -116,14 +110,14 @@ fun AngleLineTab() {
     val sweepAngle = sweepState.sweepAngle()
     val sweep = sweepAngle.toInt()
 
-    val pickedRememberShapeAngle = remember(mutableAngleLineObject.shape) { mutableAngleLineObject.shape.resolveShape() }
-    val pickedRememberRotationAngle = mutableAngleLineObject.resolveRotation(true, sweep)
+    val pickedRememberShapeAngle = remember(angleObject.shape) { angleObject.shape.resolveShape() }
+    val pickedRememberRotationAngle = angleObject.resolveRotation(true, sweep)
 
-    val pickedRememberShapeStart = remember(mutableStartObject.shape) { mutableStartObject.shape.resolveShape() }
-    val pickedRememberRotationStart = mutableStartObject.resolveRotation(true, sweep)
+    val pickedRememberShapeStart = remember(startObject.shape) { startObject.shape.resolveShape() }
+    val pickedRememberRotationStart = startObject.resolveRotation(true, sweep)
 
-    val pickedRememberShapeEnd = remember(mutableEndObject.shape) { mutableEndObject.shape.resolveShape() }
-    val pickedRememberRotationEnd = mutableEndObject.resolveRotation(false, sweep)
+    val pickedRememberShapeEnd = remember(endObject.shape) { endObject.shape.resolveShape() }
+    val pickedRememberRotationEnd = endObject.resolveRotation(false, sweep)
 
     Canvas(Modifier.fillMaxSize()) {
         val lineColor =
@@ -131,11 +125,11 @@ fun AngleLineTab() {
             else extraColors.angleLine
 
         actionLine(
-            start = start.value,
-            end = end.value,
+            start = startOffset.value,
+            end = endOffset.value,
             sweepAngle = sweepAngle,
             lineColor = lineColor,
-            order = orderMutable,
+            order = order,
             eraseColor = backgroundColor,
             showLineObjectPreview = showLineObjectPreview,
             showAngleLineObjectPreview = showAngleLineObjectPreview,
@@ -147,56 +141,25 @@ fun AngleLineTab() {
             pickedRememberShapeStart = pickedRememberShapeStart,
             pickedRememberRotationEnd = pickedRememberRotationEnd,
             pickedRememberShapeEnd = pickedRememberShapeEnd,
-            lineCustomObject = mutableLineObject,
-            angleLineCustomObject = mutableAngleLineObject,
-            startCustomObject = mutableStartObject,
-            endCustomObject = mutableEndObject
+            lineCustomObject = lineObject,
+            angleLineCustomObject = angleObject,
+            startCustomObject = startObject,
+            endCustomObject = endObject
         )
     }
-
 
     SettingsScaffold(
         title = stringResource(R.string.angle_line),
         onBack = {
-            scope.launch {
-                if (mutableLineObject != defaultLineCustomObject) {
-                    LineObjectSettingStore.jsonSetting.set(ctx, CustomObjectJson.encode(mutableLineObject))
-                } else {
-                    LineObjectSettingStore.jsonSetting.reset(ctx)
-                }
-
-                if (mutableAngleLineObject != defaultAngleCustomObject) {
-                    AngleObjectSettingStore.jsonSetting.set(ctx, CustomObjectJson.encode(mutableAngleLineObject))
-                } else {
-                    AngleObjectSettingStore.jsonSetting.reset(ctx)
-                }
-
-                if (mutableStartObject != defaultStartCustomObject) {
-                    StartObjectSettingStore.jsonSetting.set(ctx, CustomObjectJson.encode(mutableStartObject))
-                } else {
-                    StartObjectSettingStore.jsonSetting.reset(ctx)
-                }
-
-                if (mutableEndObject != defaultEndCustomObject) {
-                    EndObjectSettingStore.jsonSetting.set(ctx, CustomObjectJson.encode(mutableEndObject))
-                } else {
-                    EndObjectSettingStore.jsonSetting.reset(ctx)
-                }
-
-                navigator.onBack()
-            }
+            swipeViewModel.saveLineObjects()
+            swipeViewModel.saveOrder()
+            navigator.onBack()
         },
         helpText = stringResource(R.string.angle_line_help),
         resetText = stringResource(R.string.reset_angle_tab),
         onReset = {
-            scope.launch {
-                AngleLineSettingsStore.resetAll(ctx)
-
-                LineObjectSettingStore.resetAll(ctx)
-                AngleObjectSettingStore.resetAll(ctx)
-                StartObjectSettingStore.resetAll(ctx)
-                EndObjectSettingStore.resetAll(ctx)
-            }
+            swipeViewModel.resetLineObjects()
+            swipeViewModel.resetOrder()
         },
         specialSettingsTitleContent = {
             AnimatedFab(
@@ -222,8 +185,8 @@ fun AngleLineTab() {
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDragStart = { position: Offset ->
-                                val distanceToStart = start.value distanceSquaredTo position
-                                val distanceToEnd = end.value distanceSquaredTo position
+                                val distanceToStart = startOffset.value distanceSquaredTo position
+                                val distanceToEnd = endOffset.value distanceSquaredTo position
 
                                 moveStartOrEnd = if (distanceToEnd < distanceToStart) {
                                     false
@@ -234,12 +197,12 @@ fun AngleLineTab() {
                             onDrag = { change, _ ->
                                 scope.launch {
                                     if (moveStartOrEnd) {
-                                        start.animateTo(
+                                        startOffset.animateTo(
                                             targetValue = change.position,
                                             animationSpec = bouncySpec()
                                         )
                                     } else {
-                                        end.animateTo(
+                                        endOffset.animateTo(
                                             targetValue = change.position,
                                             animationSpec = bouncySpec()
                                         )
@@ -253,7 +216,7 @@ fun AngleLineTab() {
                         val rectSize = (rect.height * density.density).toInt() / 4
 
                         scope.launch {
-                            start.animateTo(
+                            startOffset.animateTo(
                                 targetValue = Offset(
                                     rect.center.x + (-rectSize..rectSize).random(),
                                     rect.center.y + (-rectSize..rectSize).random()
@@ -263,7 +226,7 @@ fun AngleLineTab() {
                         }
 
                         scope.launch {
-                            end.animateTo(
+                            endOffset.animateTo(
                                 targetValue = Offset(
                                     rect.center.x + (-rectSize..rectSize).random(),
                                     rect.center.y + (-rectSize..rectSize).random()
@@ -288,18 +251,18 @@ fun AngleLineTab() {
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
-            AnimatedContent(currentEditObject) { angleObject ->
+            AnimatedContent(currentEditObject) { currentEditObject ->
                 Column(
                     verticalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
-                    when (angleObject) {
+                    when (currentEditObject) {
                         AngleObject.Line -> {
                             DragonSettingsGroup { Setting(AngleLineSettingsStore.showLineObjectPreview) }
 
                             AnimatedVisibility(showLineObjectPreview) {
                                 EditCustomObjectBlock(
                                     title = R.string.line_object,
-                                    editObject = mutableLineObject,
+                                    editObject = lineObject,
                                     default = defaultLineCustomObject,
                                     properties = CustomObjectBlockProperties(
                                         allowSizeCustomization = false,
@@ -307,7 +270,7 @@ fun AngleLineTab() {
                                         allowRotationCustomization = false,
                                         allowAlignCustomization = false
                                     )
-                                ) { mutableLineObject = it }
+                                ) { swipeViewModel.lineObject.value = it }
                             }
                         }
 
@@ -318,11 +281,9 @@ fun AngleLineTab() {
                             AnimatedVisibility(showAngleLineObjectPreview) {
                                 EditCustomObjectBlock(
                                     title = R.string.angle_object,
-                                    editObject = mutableAngleLineObject,
+                                    editObject = angleObject,
                                     default = defaultAngleCustomObject
-                                ) {
-                                    mutableAngleLineObject = it
-                                }
+                                ) { swipeViewModel.angleObject.value = it }
                             }
                         }
 
@@ -333,11 +294,10 @@ fun AngleLineTab() {
                             AnimatedVisibility(showStartObjectPreview) {
                                 EditCustomObjectBlock(
                                     title = R.string.start_object,
-                                    editObject = mutableStartObject,
+                                    editObject = startObject,
                                     default = defaultStartCustomObject
-                                ) { mutableStartObject = it }
+                                ) { swipeViewModel.startObject.value = it }
                             }
-
                         }
 
                         AngleObject.End -> {
@@ -347,9 +307,9 @@ fun AngleLineTab() {
                             AnimatedVisibility(showEndObjectPreview) {
                                 EditCustomObjectBlock(
                                     title = R.string.end_object,
-                                    editObject = mutableEndObject,
+                                    editObject = endObject,
                                     default = defaultEndCustomObject
-                                ) { mutableEndObject = it }
+                                ) { swipeViewModel.endObject.value = it }
                             }
                         }
                     }
@@ -368,6 +328,7 @@ fun AngleLineTab() {
                 }
                 val snap by UiSettingsStore.linePreviewSnapToAction.asState()
                 Setting(UiSettingsStore.animationWhenSnapping, enabled = snap)
+                Setting(AngleLineSettingsStore.useSnappedAngleOrRealAngle, enabled = snap)
                 Setting(ColorSettingsStore.angleLineColor)
             }
         }
@@ -376,12 +337,7 @@ fun AngleLineTab() {
     if (showOrderDialog) {
         AngleLineObjectsOrderDialog(
             order = order,
-            onChange = { orderMutable = it }
-        ) {
-            scope.launch {
-                AngleLineSettingsStore.angleLineObjectsOrder.set(ctx, orderMutable.joinToString(","))
-                showOrderDialog = false
-            }
-        }
+            onChange = { swipeViewModel.lineObjectOrder.value = it }
+        ) { swipeViewModel.saveOrder() }
     }
 }

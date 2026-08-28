@@ -27,12 +27,6 @@ public inline infix fun Offset.distanceSquaredTo(other: Offset): Float =
 public fun angle360FromOffset(center: Offset, offset: Offset): Float {
     if (center == offset) return 0f
     return (offset - center).angleDeg()
-//    val dx = offset.x - center.x
-//    val dy = offset.y - center.y
-//    val angleRad = atan2(dx.toDouble(), -dy.toDouble())
-//    var deg = angleRad.degrees.toFloat()
-//    if (deg < 0f) deg += 360f
-//    return deg
 }
 
 public fun Offset.angleRad(): Float = atan2(y, x)

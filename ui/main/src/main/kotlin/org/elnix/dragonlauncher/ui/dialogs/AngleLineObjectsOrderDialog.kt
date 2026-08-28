@@ -18,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,12 +28,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.elnix.dragonlauncher.ANGLE_LINE_TAG
-import io.github.elnix90.logging.logE
-import io.github.elnix90.runtime.asState
 import org.elnix.dragonlauncher.base.model.models.AngleLineObjects
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import sh.calvin.reorderable.ReorderableItem
@@ -57,6 +52,7 @@ fun AngleLineObjectsOrderDialog(
     val reorderState = rememberReorderableLazyListState(
         lazyListState = lazyListState,
         onMove = { from, to ->
+            // TODO use onChange here and not another state
             objects = objects.toMutableList().apply {
                 add(to.index, removeAt(from.index))
             }
@@ -123,26 +119,5 @@ fun AngleLineObjectsOrderDialog(
                 }
             }
         }
-    }
-}
-
-
-@Composable
-fun rememberLineObjectsOrder(): MutableState<List<AngleLineObjects>> {
-    val orderString by AngleLineSettingsStore.angleLineObjectsOrder.asState()
-
-    return remember(orderString) {
-        val decoded: List<AngleLineObjects> =
-            try {
-                orderString
-                    .takeIf { it.isNotEmpty() }
-                    ?.split(",")
-                    ?.map { AngleLineObjects.valueOf(it) }
-            } catch (e: Exception) {
-                logE(ANGLE_LINE_TAG, e) { "Failed to decode angle line objects order, using default value" }
-                null
-            } ?: AngleLineObjects.entries.toList()
-
-        mutableStateOf(decoded)
     }
 }

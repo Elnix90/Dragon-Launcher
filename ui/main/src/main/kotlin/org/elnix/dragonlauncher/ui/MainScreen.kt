@@ -47,6 +47,7 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.isInsideActiveZone
 import org.elnix.dragonlauncher.ktx.toDp
 import org.elnix.dragonlauncher.models.PointsViewModel
+import org.elnix.dragonlauncher.models.SwipeViewModel
 import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
@@ -56,8 +57,6 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.components.WidgetHostView
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
-import org.elnix.dragonlauncher.ui.composition.LocalHoldCustomObject
-import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.rememberHoldMenuEntries
 import org.elnix.dragonlauncher.ui.helpers.ChargingAnimation
@@ -73,13 +72,15 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun MainScreen(
     onLaunchAction: (Point) -> Unit,
+    swipeViewModel: SwipeViewModel = activityViewModel(),
     widgetsViewModel: WidgetsViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
     val navigator = LocalNavigator.current
-    val holdCustomObject = LocalHoldCustomObject.current
-    val mainScreenLayers = LocalMainScreenLayers.current
+
+    val mainScreenLayers by swipeViewModel.mainScreenLayerOrder.asState()
+    val holdObject by swipeViewModel.holdObject.asState()
 
     var lastClickTime by remember { mutableLongStateOf(0L) }
 
@@ -301,15 +302,13 @@ fun MainScreen(
                 }
 
                 is MainScreenLayer.HoldToActivate -> {
-                    // Hold to activate
                     HoldToActivateArc(
                         center = hold.center,
                         progress = hold.progress,
-                        customObject = holdCustomObject,
+                        customObject = holdObject,
                     )
 
                     if (holdOffset != null) {
-
                         val actions = holdMenuEntries.map {
                             MoreOptions(
                                 onClick = {

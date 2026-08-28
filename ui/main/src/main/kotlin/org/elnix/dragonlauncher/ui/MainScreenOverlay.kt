@@ -34,6 +34,7 @@ import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.ktx.cleanString
 import org.elnix.dragonlauncher.models.PointsViewModel
+import org.elnix.dragonlauncher.models.SwipeViewModel
 import org.elnix.dragonlauncher.settings.stores.map.AngleLineSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
@@ -43,14 +44,12 @@ import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.compositionlocals.LocalDisableHapticFeedbackGlobally
 import org.elnix.dragonlauncher.ui.components.PointPreviewTitle
 import org.elnix.dragonlauncher.ui.composition.LocalNestDebugOverlay
-import org.elnix.dragonlauncher.ui.dialogs.rememberLineObjectsOrder
 import org.elnix.dragonlauncher.ui.helpers.DebugZone
 import org.elnix.dragonlauncher.ui.helpers.PointerLocation
 import org.elnix.dragonlauncher.ui.helpers.customobjects.actionLine
 import org.elnix.dragonlauncher.ui.helpers.customobjects.resolveRotation
 import org.elnix.dragonlauncher.ui.helpers.swipe.NestOverlay
 import org.elnix.dragonlauncher.ui.helpers.swipe.rememberDrawParams
-import org.elnix.dragonlauncher.ui.remembers.CustomObjectJson.LocalAngleLineObjects
 import org.elnix.dragonlauncher.ui.remembers.LiveNestState
 import org.elnix.dragonlauncher.ui.remembers.rememberCustomText
 import org.elnix.dragonlauncher.ui.remembers.rememberCycleActionsController
@@ -60,6 +59,7 @@ import org.elnix.dragonlauncher.ui.remembers.rememberLiveNestControllerStack
 @Composable
 fun MainScreenOverlay(
     pointsViewModel: PointsViewModel = activityViewModel(),
+    swipeViewModel: SwipeViewModel = activityViewModel(),
     lineBeforeNests: Boolean,
     start: Offset?,
     current: Offset?,
@@ -75,11 +75,11 @@ fun MainScreenOverlay(
 
     val disableHapticFeedbackGlobally = LocalDisableHapticFeedbackGlobally.current
 
-    val lineObjects = LocalAngleLineObjects.current
-    val lineObject = lineObjects.line
-    val angleLineObject = lineObjects.angleLine
-    val startObject = lineObjects.startLine
-    val endObject = lineObjects.endLine
+    val lineObject by swipeViewModel.lineObject.asState()
+    val angleObject by swipeViewModel.angleObject.asState()
+    val startObject by swipeViewModel.startObject.asState()
+    val endObject by swipeViewModel.endObject.asState()
+    val order by swipeViewModel.lineObjectOrder.asState()
 
     val rgbLine by AngleLineSettingsStore.rgbLine.asState()
 
@@ -90,10 +90,9 @@ fun MainScreenOverlay(
 
     val linePreviewSnapToAction by UiSettingsStore.linePreviewSnapToAction.asState()
     val animationWhenSnapping by UiSettingsStore.animationWhenSnapping.asState()
+    val useSnappedAngleOrRealAngle by AngleLineSettingsStore.useSnappedAngleOrRealAngle.asState()
 
     val isDragging = start != null && current != null
-
-    val order by rememberLineObjectsOrder()
 
     val liveNestControllersStack: List<LiveNestState> = rememberLiveNestControllerStack(
         isDragging = isDragging,
@@ -360,14 +359,14 @@ fun MainScreenOverlay(
 
                     val sweep = sweepAngle.toInt()
 
-                    val pickedRememberShapeAngle = angleLineObject.shape.resolveShape()
-                    val pickedRememberRotationAngle = angleLineObject.resolveRotation(true, sweep, controller.liveNestCenter)
+                    val pickedRememberShapeAngle = remember(angleObject.shape) { angleObject.shape.resolveShape() }
+                    val pickedRememberRotationAngle = angleObject.resolveRotation(true, sweep)
 
-                    val pickedRememberShapeStart = startObject.shape.resolveShape()
-                    val pickedRememberRotationStart = startObject.resolveRotation(true, sweep, controller.liveNestCenter)
+                    val pickedRememberShapeStart = remember(startObject.shape) { startObject.shape.resolveShape() }
+                    val pickedRememberRotationStart = startObject.resolveRotation(true, sweep)
 
-                    val pickedRememberShapeEnd = endObject.shape.resolveShape()
-                    val pickedRememberRotationEnd = endObject.resolveRotation(false, sweep, controller.liveNestCenter)
+                    val pickedRememberShapeEnd = remember(endObject.shape) { endObject.shape.resolveShape() }
+                    val pickedRememberRotationEnd = endObject.resolveRotation(false, sweep)
 
                     fun DrawScope.lineDrawing() {
                         val lineColor: Color =
@@ -392,7 +391,7 @@ fun MainScreenOverlay(
                             pickedRememberRotationEnd = pickedRememberRotationEnd,
                             pickedRememberShapeEnd = pickedRememberShapeEnd,
                             lineCustomObject = lineObject,
-                            angleLineCustomObject = angleLineObject,
+                            angleLineCustomObject = angleObject,
                             startCustomObject = startObject,
                             endCustomObject = endObject
                         )

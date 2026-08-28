@@ -31,7 +31,13 @@ public object AngleLineSettingsStore : MapSettingsStore() {
         default = false
     )
 
-
+    @SettingKey
+    public val useSnappedAngleOrRealAngle: BooleanSettingObject = boolean(
+        title = R.string.use_snapped_angle_or_real_angle,
+        description = R.string.use_snapped_angle_or_real_angle_desc,
+        icon = R.drawable.call_missed,
+        default = true
+    )
 
     @SettingKey
     public val showLineObjectPreview: BooleanSettingObject = boolean(

@@ -21,7 +21,6 @@ import org.elnix.dragonlauncher.settings.stores.map.ColorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.components.PointPreviewTitle
-import org.elnix.dragonlauncher.ui.composition.LocalMainScreenLayers
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.SwitchRow
 import org.elnix.dragonlauncher.ui.dragon.expandable.ExpandableSection
@@ -35,7 +34,6 @@ import org.elnix.dragonlauncher.ui.statusbar.showChargingAnimation
 fun AppDisplayTab(pointsViewModel: PointsViewModel = activityViewModel()) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
-    val mainScreenLayers = LocalMainScreenLayers.current
 
     val topOverlaySettingsState = rememberExpandableSection(
         title = R.string.app_preview_settings,
