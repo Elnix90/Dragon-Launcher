@@ -213,24 +213,24 @@ fun AngleLineTab(
                     }
                     .onGloballyPositioned { coordinates ->
                         val rect = coordinates.boundsInRoot()
-                        val rectSize = (rect.height * density.density).toInt() / 4
+                        val rectHeight = (rect.height / 2.5f).toInt()
+                        val rectWidth = (rect.width / 2.5f).toInt()
+
+                        fun randomPosition(): Offset = Offset(
+                            rect.center.x + (-rectWidth..rectWidth).random(),
+                            rect.center.y + (-rectHeight..rectHeight).random()
+                        )
 
                         scope.launch {
                             startOffset.animateTo(
-                                targetValue = Offset(
-                                    rect.center.x + (-rectSize..rectSize).random(),
-                                    rect.center.y + (-rectSize..rectSize).random()
-                                ),
+                                targetValue = randomPosition(),
                                 animationSpec = bouncySpec()
                             )
                         }
 
                         scope.launch {
                             endOffset.animateTo(
-                                targetValue = Offset(
-                                    rect.center.x + (-rectSize..rectSize).random(),
-                                    rect.center.y + (-rectSize..rectSize).random()
-                                ),
+                                targetValue = randomPosition(),
                                 animationSpec = bouncySpec()
                             )
                         }
