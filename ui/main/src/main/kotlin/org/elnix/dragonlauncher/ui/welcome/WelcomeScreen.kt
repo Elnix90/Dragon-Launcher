@@ -135,7 +135,7 @@ fun WelcomeScreen(
                             // Initialize only when exiting from the welcome screen, to avoid the initialization layer to override points/nests
                             initializationViewModel.checkLauncherInitialization()
                             navigator.popBackMainScreen()
-                            navigator.go(NavigationRoute.PointsSettings())
+                            navigator.go(NavigationRoute.PointsSettings)
                         },
                         onEnterApp = {
                             setHasSeen()

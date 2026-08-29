@@ -48,7 +48,7 @@ public interface AppShortcutRepository {
 }
 
 internal class AppShortcutRepositoryImpl(
-    private val context: Context,
+    private val ctx: Context,
     private val permissionsManager: PermissionsManager,
     private val profileManager: ProfileManager,
     private val stringNormalizer: StringNormalizer,
@@ -58,7 +58,7 @@ internal class AppShortcutRepositoryImpl(
     private val mutex = Mutex()
 
     private val installedShortcuts = MutableStateFlow<List<ShortcutInfo>>(emptyList())
-    private val launcherApps = context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+    private val launcherApps = ctx.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
 
     init {
         // FUUUUUUCK!! Basically this function was never called. Idk if the callback below works, but at least it is called at least once!
@@ -150,7 +150,7 @@ internal class AppShortcutRepositoryImpl(
         scope.launch {
             mutex.withLock {
                 if (!permissionsManager.hasPermission(PermissionGroup.AppShortcuts).first()) return@launch
-                val launcherApps = context.getSystemService<LauncherApps>() ?: return@launch
+                val launcherApps = ctx.getSystemService<LauncherApps>() ?: return@launch
 
                 val shortcutQuery = LauncherApps.ShortcutQuery()
                 shortcutQuery.setQueryFlags(
@@ -202,7 +202,7 @@ internal class AppShortcutRepositoryImpl(
     }
 
     override suspend fun getShortcutsConfigActivities(): List<AppShortcutConfigActivity> {
-        val launcherApps = context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+        val launcherApps = ctx.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
         if (!launcherApps.hasShortcutHostPermission()) return emptyList()
         val results = mutableListOf<AppShortcutConfigActivity>()
         val profiles = profileManager.activeProfiles.first()

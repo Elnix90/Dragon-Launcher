@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.elnix90.logging.logE
 import io.github.elnix90.logging.logI
 import io.github.elnix90.logging.logW
+import io.github.elnix90.logging.logWtf
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -71,8 +72,11 @@ public class AppLaunchViewModel @Inject constructor(
 
             val app = appRepository.findOne(launchAction).first()
             if (app != null) {
+                logWtf(APP_LAUNCH_TAG) { "Found app corresponding: ${app.packageName}, ${app.profile}, Launching it!" }
                 requestAppLaunch(app)
             } else {
+                logWtf(APP_LAUNCH_TAG) { "No app found for: $launchAction" }
+
                 launchLockedApp(profile, launchAction)
             }
         }

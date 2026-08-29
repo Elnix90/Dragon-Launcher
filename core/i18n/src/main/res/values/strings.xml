@@ -872,7 +872,7 @@
     <string name="animated_progress">Animated progress</string>
     <string name="miscellaneous">Miscellaneous</string>
     <string name="cant_remove_to_avoid_lock_out">Can\'t remove this to avoid being locked out of settings</string>
-    <string name="cannot_add_more_than_5">Can\'t add more than 5 settings</string>
+    <string name="cannot_add_more_than_x">Can\'t add more than %1$d settings</string>
     <string name="object_properties">Object Properties</string>
     <string name="security">Security</string>
     <string name="ui_flow_and_debug">UI Flow &amp; Debug</string>
@@ -1092,4 +1092,5 @@
     <string name="show_padding_box">Show padding box</string>
     <string name="use_snapped_angle_or_real_angle">Use snapped angle or real angle</string>
     <string name="use_snapped_angle_or_real_angle_desc">When using \"snap to point\", the computed angle is the real angle or the angle at which the selected point belongs?</string>
+    <string name="widget_not_found">Widget not found</string>
 </resources>

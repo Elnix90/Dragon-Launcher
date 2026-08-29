@@ -802,7 +802,7 @@
     <string name="animated_progress">Progrès animé</string>
     <string name="miscellaneous">Divers</string>
     <string name="cant_remove_to_avoid_lock_out">Vous ne pouvez pas retirer ceci, vous risqueriez d\'êtres bloquées en dehors des paramètres</string>
-    <string name="cannot_add_more_than_5">Vous ne pouvez pas ajouter plus de 5 paramètres</string>
+    <string name="cannot_add_more_than_x">Vous ne pouvez pas ajouter plus de %1$d paramètres</string>
     <string name="object_properties">Propriétés de l\'objet</string>
     <string name="security">Sécurité</string>
     <string name="do_something">Agir!</string>

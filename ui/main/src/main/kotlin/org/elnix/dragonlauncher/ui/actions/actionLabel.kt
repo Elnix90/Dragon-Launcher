@@ -66,7 +66,7 @@ fun actionLabel(
             ctx.getFilePathFromUri(action.uri.toUri())
 
 
-        is Action.OpenCircleNest -> {
+        is Action.OpenNest -> {
             pointsService.nests.value[action.nestId]
                 ?.name
                 ?.takeIf { it.trim().isNotEmpty() }

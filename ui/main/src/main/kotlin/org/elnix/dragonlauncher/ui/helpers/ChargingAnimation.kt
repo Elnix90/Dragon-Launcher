@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.os.BatteryManager
 import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -32,13 +33,12 @@ import kotlin.time.Duration.Companion.milliseconds
 // https://github.com/MM2-0/Kvaesitso/blob/07e3e9669f8990e76d9d4062492dc741793e49a5/app/ui/src/main/java/de/mm20/launcher2/ui/component/NavBarEffects.kt
 
 @Composable
-fun ChargingAnimation(
-    modifier: Modifier = Modifier
-) {
+fun ChargingAnimation() {
     val ctx = LocalContext.current
+    val density = LocalDensity.current.density
+    val scope = rememberCoroutineScope()
 
     var intensity by remember { mutableIntStateOf(0) }
-    val scope = rememberCoroutineScope()
 
     DisposableEffect(null) {
 
@@ -87,7 +87,6 @@ fun ChargingAnimation(
 
     var bubbles by remember { mutableStateOf(arrayOf<Bubble>()) }
 
-    val dp = LocalDensity.current.density
 
     LaunchedEffect(intensity) {
         bubbles = Array(intensity) {
@@ -102,11 +101,11 @@ fun ChargingAnimation(
                 val bubble = newBubbles[i]
                 val oldBubble = bubbles[i]
                 if (oldBubble.lifetime <= 0f) {
-                    bubble.posX = (Math.random() * 48 - 24).toFloat() * dp
+                    bubble.posX = (Math.random() * 48 - 24).toFloat() * density
                     bubble.posY = 0f
-                    bubble.deltaX = (Math.random() - 0.5).toFloat() * 1f * dp
-                    bubble.deltaY = Math.random().toFloat() * 3f * dp
-                    bubble.radius = (Math.random() * 2 + 2).toFloat() * dp
+                    bubble.deltaX = (Math.random() - 0.5).toFloat() * 1f * density
+                    bubble.deltaY = Math.random().toFloat() * 3f * density
+                    bubble.radius = (Math.random() * 2 + 2).toFloat() * density
                     bubble.lifetime = (Math.random() * 80 + 40).toInt().toFloat()
                 } else {
                     bubble.posX = oldBubble.deltaX + oldBubble.posX
@@ -121,7 +120,7 @@ fun ChargingAnimation(
         }
     }
 
-    Canvas(modifier = modifier) {
+    Canvas(modifier = Modifier.fillMaxSize()) {
         for (bubble in bubbles) {
             val x = size.width / 2 + bubble.posX
             val y = size.height - bubble.posY

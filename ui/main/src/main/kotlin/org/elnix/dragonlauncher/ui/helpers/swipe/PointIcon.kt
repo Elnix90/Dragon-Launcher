@@ -71,7 +71,7 @@ fun DrawScope.PointIcon(
     val action = point.action
 
     if (
-        action is Action.OpenCircleNest &&
+        action is Action.OpenNest &&
         point.customIcon == null &&
         depth < drawParams.maxNestsDepth &&
         !drawParams.preventDrawingSubNests

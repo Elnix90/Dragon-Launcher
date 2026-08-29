@@ -4,7 +4,6 @@ package org.elnix.dragonlauncher.ktx
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.util.fastRoundToInt
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -108,34 +107,6 @@ public fun Offset.snapToGrid(cellSizePx: Float): Offset {
         y = this.y.snapToGrid(cellSizePx)
     )
 }
-
-/**
- * Determines whether a pointer position lies within the allowed interaction zone.
- *
- * The active zone is defined as the rectangular area of the screen obtained by
- * excluding padding margins from each edge. Any position inside this rectangle
- * is considered valid for gesture handling.
- *
- * @receiver [Offset] Pointer position in screen coordinates.
- * @param size Full size of the available surface.
- * @param left Excluded distance from the left edge.
- * @param right Excluded distance from the right edge.
- * @param top Excluded distance from the top edge.
- * @param bottom Excluded distance from the bottom edge.
- *
- * @return `true` if the position is inside the active zone, `false` otherwise.
- */
-public fun Offset.isInsideActiveZone(
-    size: IntSize,
-    left: Int,
-    right: Int,
-    top: Int,
-    bottom: Int
-): Boolean = x >= left &&
-        x <= size.width - right &&
-        y >= top &&
-        y <= size.height - bottom
-
 
 /**
  * Outputs a receiver [Offset] to a string, well formatted and human-readable in the `"x ; y"` format:

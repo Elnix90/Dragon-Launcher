@@ -43,10 +43,7 @@ public sealed class NavigationRoute : NavKey {
 
     @Serializable
     @SerialName("PointsSettings")
-    public data class PointsSettings(
-        val initialNestId: Int = 0
-    ) : NavigationRoute() {
-        override fun hashCode(): Int = super.hashCode()
+    public data object PointsSettings : NavigationRoute() {
         override val resId: Int = R.string.points_settings
         override val icon: Int = R.drawable.settings
     }
@@ -88,10 +85,7 @@ public sealed class NavigationRoute : NavKey {
 
     @Serializable
     @SerialName("Widgets")
-    public data class Widgets(
-        val nestId: Int = 0
-    ) : NavigationRoute() {
-        override fun hashCode(): Int = super.hashCode()
+    public data object Widgets: NavigationRoute() {
         override val resId: Int = R.string.widgets
         override val icon: Int = R.drawable.widgets
     }
@@ -274,13 +268,13 @@ public sealed class NavigationRoute : NavKey {
     public companion object {
         public val settingsRoutes: List<NavigationRoute> by lazy {
             listOf(
-                PointsSettings(),
+                PointsSettings,
                 Settings,
                 Appearance,
                 AppDisplay,
                 Colors,
                 Wallpaper,
-                Widgets(),
+                Widgets,
                 Icons,
                 StatusBar,
                 Fonts,
@@ -312,7 +306,7 @@ public val NavKey.isIgnoredReturnScreen: Boolean
         NavigationRoute.Welcome,
         NavigationRoute.Backup,
         NavigationRoute.Wallpaper,
-        is NavigationRoute.Widgets -> true
+        NavigationRoute.Widgets -> true
 
         else -> false
     }
@@ -324,9 +318,9 @@ public val NavKey.inTransparentScreen: Boolean
         NavigationRoute.Drawer,
         NavigationRoute.DrawerSettings,
         NavigationRoute.Wallpaper,
-        NavigationRoute.LockScreen,
-        is NavigationRoute.LockScreenSetup,
-        is NavigationRoute.Widgets -> true
+        NavigationRoute.Widgets,
+        is NavigationRoute.LockScreen,
+        is NavigationRoute.LockScreenSetup, -> true
 
         else -> false
     }
@@ -334,8 +328,8 @@ public val NavKey.inTransparentScreen: Boolean
 /** Screen that are transparents for the main scaffold, in order to see the wallpaper behind */
 public val NavKey.halfTransparentScreen: Boolean
     get() = when (this) {
-        is NavigationRoute.PointsSettings,
-        is NavigationRoute.NestEdit -> true
+        NavigationRoute.PointsSettings,
+        NavigationRoute.NestEdit -> true
 
         else -> false
     }

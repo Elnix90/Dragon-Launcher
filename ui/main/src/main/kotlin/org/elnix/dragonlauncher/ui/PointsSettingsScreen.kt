@@ -114,7 +114,6 @@ import org.elnix.dragonlauncher.ui.dialogs.editors.PointEditor
 import org.elnix.dragonlauncher.ui.dragon.components.DragonButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
-import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import org.elnix.dragonlauncher.ui.dragon.dialogs.UserValidation
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.settings.Setting
@@ -287,8 +286,6 @@ fun PointsSettingsScreen(
 
         (((dist + screenMaxDimension) / cellSizePx) * 1.5 * (1 / zoom.value)).toInt().fastCoerceAtMost(5000)
     }
-
-//    TODO("add icons to settings plugin system additionally to title/desc") flemme
 
     /**
      * Holds an Offset and provides helper functions and value to manage it in the [PointsSettingsScreen] scope.
@@ -598,7 +595,7 @@ fun PointsSettingsScreen(
                         val nestToGo =
                             if (selectedPointsIds.size == 1) {
                                 val point = pointsService.findPointById(selectedPointsIds.first())
-                                if (point != null && point.action is Action.OpenCircleNest) (point.action as Action.OpenCircleNest).nestId else null
+                                if (point != null && point.action is Action.OpenNest) (point.action as Action.OpenNest).nestId else null
                             } else null
 
                         val canGoNest = nestToGo != null
@@ -791,7 +788,7 @@ fun PointsSettingsScreen(
                         val liveTargetId = point.liveNestTargetNestId ?: return@forEach
 
                         // Don't draw if the action is opening the same nest it is displaying
-                        if (point.action is Action.OpenCircleNest && (point.action as Action.OpenCircleNest).nestId == liveTargetId) return@forEach
+                        if (point.action is Action.OpenNest && (point.action as Action.OpenNest).nestId == liveTargetId) return@forEach
 
                         val nestedNest = pointsService.findNestById(liveTargetId)
 //                        val nestScale = point.liveNestScale ?: Point.defaultLiveNestScale
@@ -904,11 +901,11 @@ fun PointsSettingsScreen(
                                         val closest = closestHoveredPoint!!
 
                                         // When the action is to open a nest, put the point in that Nest
-                                        if (closest.action is Action.OpenCircleNest) {
+                                        if (closest.action is Action.OpenNest) {
                                             // Put all selected points into that nest
                                             selectedPointTempOffset.forEach { (id, _) ->
                                                 pointsService.editPoint(id) { old ->
-                                                    val targetNestId = (closest.action as Action.OpenCircleNest).nestId
+                                                    val targetNestId = (closest.action as Action.OpenNest).nestId
                                                     old.copy(nestId = targetNestId)
                                                 }
                                             }
@@ -922,7 +919,7 @@ fun PointsSettingsScreen(
                                                     offset = closest.offset.snap(),
                                                     shapeId = closest.shapeId,
                                                     nestId = nestId,
-                                                    action = Action.OpenCircleNest(
+                                                    action = Action.OpenNest(
                                                         newNestId
                                                     ),
                                                     id = id,
@@ -1010,7 +1007,7 @@ fun PointsSettingsScreen(
                                     val action = manualPlacementQueue.first()
 
                                     val newLiveNest =
-                                        if (action is Action.OpenCircleNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
+                                        if (action is Action.OpenNest && createLiveNestByDefaultWhenCreatingOpenCircleNestPoint) {
                                             action.nestId
                                         } else null
 
@@ -1051,9 +1048,9 @@ fun PointsSettingsScreen(
                                     // Checks whether if there are only 1 point selected, and if it is the case, open its editor or nest
                                     if (selectedPointsIds.size == 1 && id in selectedPointsIds) {
                                         // Same point tapped -> if circle nest, open it, else edit point
-                                        if (bestP.action is Action.OpenCircleNest) {
+                                        if (bestP.action is Action.OpenNest) {
                                             pointsService.deselectAll()
-                                            nestsNavigationService.goToNest((bestP.action as Action.OpenCircleNest).nestId)
+                                            nestsNavigationService.goToNest((bestP.action as Action.OpenNest).nestId)
                                         } else {
                                             showEditDialog = bestP.id
                                         }

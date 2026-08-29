@@ -25,7 +25,7 @@ internal object AppShortcutsModule {
         stringNormalizer: StringNormalizer
     ): AppShortcutRepository {
         return AppShortcutRepositoryImpl(
-            context = ctx,
+            ctx = ctx,
             permissionsManager = permissionManager,
             profileManager = profileManager,
             stringNormalizer = stringNormalizer

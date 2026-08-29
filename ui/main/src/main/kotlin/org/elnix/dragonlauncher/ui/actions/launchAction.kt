@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Build
 import android.os.Process
 import androidx.core.net.toUri
+import io.github.elnix90.logging.logE
+import org.elnix.dragonlauncher.TAG
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.ConnectivityUtils.getMobileDataStatus
@@ -14,8 +16,6 @@ import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.expandQuickActionsDrawer
 import org.elnix.dragonlauncher.ktx.hasUriReadPermission
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.TAG
-import io.github.elnix90.logging.logE
 import org.elnix.dragonlauncher.models.AppLaunchViewModel
 import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.services.SystemControl
@@ -163,7 +163,7 @@ internal fun launchAction(
         // Handled by the main screen / settings
         // The widget action isn't meant to be part of the choosable actions, so nothing on launch
         // None do nothing, pretty straightforward
-        is Action.OpenCircleNest, is Action.GoParentNest, is Action.OpenWidget, Action.None -> error("Action $action shouldn't be handled here")
+        is Action.OpenNest, is Action.GoParentNest, is Action.OpenWidget, Action.None -> error("Action $action shouldn't be handled here")
     }
 }
 

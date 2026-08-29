@@ -128,27 +128,27 @@ public sealed class Action {
     @Serializable
     @SerialName("OpenDragonLauncherSettings")
     public data class OpenDragonLauncherSettings(
-        val route: NavigationRoute = NavigationRoute.PointsSettings()
+        val route: NavigationRoute = NavigationRoute.PointsSettings
     ) : Action() {
         override val drawableId: Int = R.mipmap.dragon_launcher_foreground
         override val resId: Int = R.string.dragon_launcher_settings
 
         public companion object {
-            public val dummy: OpenDragonLauncherSettings = OpenDragonLauncherSettings(NavigationRoute.PointsSettings())
+            public val dummy: OpenDragonLauncherSettings = OpenDragonLauncherSettings()
         }
     }
 
     @Immutable
     @Serializable
     @SerialName("OpenCircleNest")
-    public data class OpenCircleNest(
+    public data class OpenNest(
         val nestId: Int
     ) : Action() {
         override val drawableId: Int = R.drawable.nest_icon
         override val resId: Int = R.string.open_nest
 
         public companion object {
-            public val dummy: OpenCircleNest = OpenCircleNest(0)
+            public val dummy: OpenNest = OpenNest(0)
         }
     }
 
@@ -313,7 +313,7 @@ public sealed class Action {
                     is OpenDragonLauncherSettings -> extraColors.launcherSettings
                     is OpenFile -> extraColors.openFile
                     is ReloadApps -> extraColors.reload
-                    is OpenCircleNest -> extraColors.openCircleNest
+                    is OpenNest -> extraColors.openCircleNest
                     is RunAdbCommand -> extraColors.runAdbCommand
                     is ToggleBluetooth -> extraColors.toggleBluetooth
                     is ToggleData -> extraColors.toggleData
@@ -331,7 +331,7 @@ public sealed class Action {
         public val allActions: List<Action> = listOf(
             OpenWidget.dummy,
             LaunchApp.dummy,
-            OpenCircleNest.dummy,
+            OpenNest.dummy,
             GoParentNest,
             LaunchShortcut.dummy,
             OpenUrl.dummy,

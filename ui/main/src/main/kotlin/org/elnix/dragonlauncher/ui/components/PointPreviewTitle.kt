@@ -49,6 +49,7 @@ fun PointPreviewTitle(
 
     val label = point.customName ?: actionLabel(point.action)
 
+
     val appLabelOverlaySize by UiSettingsStore.appLabelOverlaySize.asState()
     val appIconOverlaySize by UiSettingsStore.appIconOverlaySize.asState()
 

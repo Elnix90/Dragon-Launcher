@@ -49,7 +49,6 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonGroupScope
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.dragon.components.MoreIcon
-import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import org.elnix.dragonlauncher.ui.dragon.settings.TextRow
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import org.elnix.dragonlauncher.ui.helpers.swipe.PointIcon
@@ -166,7 +165,7 @@ private fun DragonGroupScope.NestManagementItem(
                 selected = false,
                 point = Point(
                     offset = Offset.Zero,
-                    action = Action.OpenCircleNest(nest.id),
+                    action = Action.OpenNest(nest.id),
                     id = -3
                 ),
                 center = center,

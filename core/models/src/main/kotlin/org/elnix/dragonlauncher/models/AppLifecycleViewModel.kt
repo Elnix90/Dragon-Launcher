@@ -71,7 +71,7 @@ public class AppLifecycleViewModel @Inject constructor(
     }
 
     /**
-     * Block home actions temporarily for [HOME_REENTER_WINDOW_MS]ms, to prevent them to fire,
+     * Block home actions temporarily for [BLOCK_DELAY]ms, to prevent them to fire,
      * when user returns to launcher right after launching an action, such as launching an app
      */
     public fun blockHomeActionsTemporarily() {

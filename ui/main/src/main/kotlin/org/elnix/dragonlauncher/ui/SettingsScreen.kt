@@ -163,7 +163,7 @@ fun SettingsScreen(
         DragonSettingsGroup(R.string.common_settings) {
             RouteItem(NavigationRoute.Appearance)
             RouteItem(NavigationRoute.Wallpaper)
-            RouteItem(NavigationRoute.Widgets(nestId))
+            RouteItem(NavigationRoute.Widgets)
             RouteItem(NavigationRoute.Behavior)
             RouteItem(NavigationRoute.Backup)
             RouteItem(NavigationRoute.DrawerSettings)

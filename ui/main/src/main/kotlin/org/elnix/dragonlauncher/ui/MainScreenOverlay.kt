@@ -32,6 +32,7 @@ import org.elnix.dragonlauncher.base.model.serializables.CustomHapticFeedback
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
+import org.elnix.dragonlauncher.ktx.angleDeg
 import org.elnix.dragonlauncher.ktx.cleanString
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.models.SwipeViewModel
@@ -68,12 +69,14 @@ fun MainScreenOverlay(
 ) {
     val ctx = LocalContext.current
     val extraColors = LocalExtraColors.current
+    val disableHapticFeedbackGlobally = LocalDisableHapticFeedbackGlobally.current
+    val scope = rememberCoroutineScope()
+
     val pointsService = pointsViewModel.pointsService
 
     val defaultPoint by pointsService.defaultPoint.asState()
     val defaultNest by pointsService.defaultNest.asState()
 
-    val disableHapticFeedbackGlobally = LocalDisableHapticFeedbackGlobally.current
 
     val lineObject by swipeViewModel.lineObject.asState()
     val angleObject by swipeViewModel.angleObject.asState()
@@ -116,7 +119,6 @@ fun MainScreenOverlay(
             }
         }
 
-    val scope = rememberCoroutineScope()
     val hoveredPoint = selectedPointsPerLevel.findLast { it != null }
 
     val animatedCurrent: Animatable<Offset, AnimationVector2D> = remember(start) { Animatable(start ?: Offset.Unspecified, Offset.VectorConverter) }
@@ -176,7 +178,7 @@ fun MainScreenOverlay(
         val idx = cycleActionsController.currentStageIndex
         if (idx > 0) {
             val staged = ca.getOrNull(idx - 1)?.action ?: return@let hp
-            if (staged is Action.OpenCircleNest || hp.action is Action.OpenCircleNest)
+            if (staged is Action.OpenNest || hp.action is Action.OpenNest)
                 hp.copy(action = staged, customIcon = null)
             else {
                 hp.copy(action = staged)
@@ -333,9 +335,6 @@ fun MainScreenOverlay(
                     val hitResult = controller.nestedHit
                     val outerSelectedPoint = hitResult?.selectedPoint
 
-                    val sweepAngle = controller.sweepAngleState.sweepAngle()
-                    val angle360 = controller.sweepAngleState.angle360()
-
                     val effectiveCurrentPos: Offset =
                         remember(animatedCurrent.value, isDeepestController, current, hoveredPoint, isAnyLiveNestActive, activeLevelIndex) {
                             when {
@@ -357,7 +356,20 @@ fun MainScreenOverlay(
                         }
 
 
-                    val sweep = sweepAngle.toInt()
+
+                    val sweepAngle = controller.sweepAngleState.sweepAngle()
+                    val angle360 = controller.sweepAngleState.angle360()
+
+                    val effectiveAngle: Float = if (useSnappedAngleOrRealAngle) {
+                        hoveredPoint?.offset?.angleDeg() ?: sweepAngle
+                    } else sweepAngle
+
+                    val effectiveAngle360 = if (useSnappedAngleOrRealAngle) {
+                        hoveredPoint?.offset?.angleDeg() ?: angle360
+                    } else angle360
+
+                    val sweep = effectiveAngle.toInt()
+
 
                     val pickedRememberShapeAngle = remember(angleObject.shape) { angleObject.shape.resolveShape() }
                     val pickedRememberRotationAngle = angleObject.resolveRotation(true, sweep)
@@ -370,7 +382,7 @@ fun MainScreenOverlay(
 
                     fun DrawScope.lineDrawing() {
                         val lineColor: Color =
-                            if (rgbLine) Color.hsv(angle360, 1f, 1f)
+                            if (rgbLine) Color.hsv(effectiveAngle360, 1f, 1f)
                             else extraColors.angleLine
 
                         actionLine(

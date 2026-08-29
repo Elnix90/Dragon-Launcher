@@ -805,7 +805,7 @@
     <string name="animated_progress">アニメーション進捗</string>
     <string name="miscellaneous">その他</string>
     <string name="cant_remove_to_avoid_lock_out">設定画面に入れなくなる可能性があるため、これを削除することはできません</string>
-    <string name="cannot_add_more_than_5">5つより多くの設定を追加することはできません</string>
+    <string name="cannot_add_more_than_x">%1$dつより多くの設定を追加することはできません</string>
     <string name="object_properties">オブジェクトプロパティ</string>
     <string name="security">セキュリティ</string>
     <string name="ui_flow_and_debug">UIフロー &amp; デバッグ</string>

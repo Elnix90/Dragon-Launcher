@@ -57,12 +57,16 @@ public interface AppRepository {
         workspace: Workspace,
         workspaceViewMode: WorkspaceViewMode
     ): Flow<ImmutableList<Application>>
+
     public suspend fun refreshApps()
 
 
     /**
      * Finds an app from a [Action.LaunchApp].
-     * The package name and the profile are compared and both must match
+     *
+     * The package name and the profile are compared.
+     * The profile if passed through [ProfileManager.resolveProfile] in order to correct any profile serialization issues
+     * After correction, both package name and profile must match exactly
      *
      * @param action the requested action to convert to application
      * @return A flow of the nullable app
@@ -71,12 +75,11 @@ public interface AppRepository {
 
     /**
      * Retrieve the actual app from a [Action.LaunchApp].
-     *
-     * This function does not return a flow, but is an instant suspend collector.
-     * The package name and the profile are compared and both must match
+     * Same function as findOne but returns an instant [Application] not a [Flow]
+     * @see findOne
      *
      * @param action the requested action to convert to application
-     * @return the found corresponding application or null if none matches
+     * @return the found corresponding application or null if none matches     *
      */
     public suspend fun fromAction(action: Action.LaunchApp): Application?
 
@@ -255,23 +258,16 @@ internal class AppRepositoryImpl(
         action: Action.LaunchApp
     ): Flow<Application?> {
         return getAllApps().map { apps ->
-            apps.firstOrNull {
-                it.packageName == action.packageName && it.user == action.profile.userHandle
+            // Resolve the stored profile to the live one, as the persisted userHandle
+            // may have been serialized incorrectly (e.g. by older versions).
+            val correctedActionProfile = profileManager.resolveProfile(action.profile)
+            apps.firstOrNull { app ->
+                app.packageName == action.packageName && app.profile == correctedActionProfile
             }
         }
     }
 
-
-    override suspend fun fromAction(action: Action.LaunchApp): Application? {
-        // Resolve the stored profile to the live one, as the persisted userHandle
-        // may have been serialized incorrectly (e.g. by older versions).
-        val profile = profileManager.resolveProfile(action.profile) ?: return null
-        return getAllApps()
-            .first()
-            .firstOrNull {
-                it.packageName == action.packageName && it.profile == profile
-            }
-    }
+    override suspend fun fromAction(action: Action.LaunchApp): Application? = findOne(action).first()
 
     /**
      * Returns a filtered and sorted list of apps for the specified workspace as a reactive Flow.

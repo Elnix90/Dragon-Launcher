@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.registerReceiver
 import androidx.lifecycle.Lifecycle
@@ -72,6 +73,7 @@ import org.elnix.dragonlauncher.models.DrawerViewModel
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.models.ShizukuViewModel
+import org.elnix.dragonlauncher.models.SwipeViewModel
 import org.elnix.dragonlauncher.settings.stores.map.BehaviorSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.ColorModesSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
@@ -95,7 +97,6 @@ import org.elnix.dragonlauncher.ui.dialogs.GoogleLockingWarningDialog
 import org.elnix.dragonlauncher.ui.dialogs.MainScreeLayersTab
 import org.elnix.dragonlauncher.ui.dialogs.ShizukuOutputDialog
 import org.elnix.dragonlauncher.ui.dialogs.ShizukuUnavailableDialog
-import org.elnix.dragonlauncher.ui.dialogs.WidgetPickerDialog
 import org.elnix.dragonlauncher.ui.dialogs.security.PatternSetup
 import org.elnix.dragonlauncher.ui.dialogs.security.PatternUnlock
 import org.elnix.dragonlauncher.ui.dialogs.security.PinSetup
@@ -148,34 +149,35 @@ fun MainAppUi(
     appLaunchViewModel: AppLaunchViewModel = activityViewModel(),
     shizukuViewModel: ShizukuViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel(),
+    swipeViewModel: SwipeViewModel = activityViewModel(),
     onBindCustomWidget: (Int, ComponentName, nestId: Int) -> Unit,
     onResetWidgetSize: (id: Int, widgetId: Int) -> Unit,
     onRemoveWidget: (Widget) -> Unit
 ) {
     val ctx = LocalContext.current
     val uriHandler = LocalUriHandler.current
-    val pointsService = pointsViewModel.pointsService
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     val scope = rememberCoroutineScope()
+    val pointsService = pointsViewModel.pointsService
 
-    var showWidgetPicker by remember { mutableStateOf<Int?>(null) }
     var showFilePicker: Point? by remember { mutableStateOf(null) }
-
-
     var showShizukuCommandPromter by remember { mutableStateOf<Action.RunAdbCommand?>(null) }
+
     val showShizukuUnavailableDialog by shizukuViewModel.showUnavailable.collectAsState()
     val hasShizukuPermission by shizukuViewModel.shizukuPermissionState().collectAsState()
     val isShizukuInstalled by drawerViewModel.isAppInstalled(SHIZUKU_PACKAGE_NAME).collectAsState()
 
 
     val homeAction by BehaviorSettingsStore.homeAction.asState()
+    val doubleClickAction by BehaviorSettingsStore.doubleClickAction.asStateNull()
+
     val useAccessibilityInsteadOfContextToExpandActionPanel by DebugSettingsStore.useAccessibilityInsteadOfContextToExpandActionPanel.asState()
 
 
-    val lifecycleOwner = LocalLifecycleOwner.current
+    val backStack = rememberNavBackStack(NavigationRoute.Main)
 
-    val startScreen = NavigationRoute.Main
-    val backStack = rememberNavBackStack(startScreen)
+    // Forced to use a state here, to make compose react to the changes, especially the hole events handles
     val currentRoute by remember {
         derivedStateOf { backStack.lastOrNull() ?: NavigationRoute.Main }
     }
@@ -189,23 +191,23 @@ fun MainAppUi(
 
     val navigator: Navigator = object : Navigator {
 
-        override fun go(screen: NavigationRoute) {
-            backStack.remove(screen)
-            backStack.add(screen)
+        override fun go(route: NavigationRoute) {
+            backStack.remove(route)
+            backStack.add(route)
         }
 
-        override fun navigate(screen: NavigationRoute) {
+        override fun navigate(route: NavigationRoute) {
             if (!isLocked) {
-                go(screen)
+                go(route)
                 return
             }
 
             if (backStack.any { it is NavigationRoute.LockScreen }) return
 
-            if (screen in NavigationRoute.settingsRoutes && lockMethod != None) {
-                backStack.add(NavigationRoute.LockScreen(screen))
+            if (route in NavigationRoute.settingsRoutes && lockMethod != None) {
+                backStack.add(NavigationRoute.LockScreen(route))
             } else {
-                go(screen)
+                go(route)
             }
         }
 
@@ -271,11 +273,6 @@ fun MainAppUi(
     }
 
 
-    fun launchWidgetsPicker(nestId: Int) {
-        showWidgetPicker = nestId
-    }
-
-
     fun runShisukuCommandNotEmpty(command: Action.RunAdbCommand) {
         if (!Shizuku.pingBinder()) {
             logD(SHIZUKU_TAG) { "Shizuku is not running, opening it..." }
@@ -298,6 +295,8 @@ fun MainAppUi(
 
     fun launchAction(point: Point) {
         val action = point.action
+
+        swipeViewModel.clearAfterLaunch()
         appLifecycleViewModel.blockHomeActionsTemporarily()
 
         try {
@@ -360,6 +359,13 @@ fun MainAppUi(
             }
         }
     }
+    LaunchedEffect(Unit) {
+        swipeViewModel.doubleClicActionChannel.collect {
+            if (doubleClickAction != null) {
+                launchAction(doubleClickAction!!)
+            }
+        }
+    }
 
     val pointsScreensTransparency by UiSettingsStore.pointsScreensTransparency.asState()
 
@@ -391,7 +397,8 @@ fun MainAppUi(
                     if (colorTestMode) {
                         AnimatedFab(
                             onClick = { navigator.navigate(NavigationRoute.Colors) },
-                            icon = R.drawable.edit_rounded
+                            icon = R.drawable.edit_rounded,
+                            modifier = Modifier.padding(bottom = 80.dp)
                         )
                     }
                 },
@@ -466,6 +473,7 @@ fun MainAppUi(
                         entry<NavigationRoute.AngleLineEdit>(metadata = horizontalMetadata) { AngleLineTab() }
                         entry<NavigationRoute.HoldToActivateArc>(metadata = horizontalMetadata) { HoldToActivateTab() }
                         entry<NavigationRoute.MainScreenLayers>(metadata = horizontalMetadata) { MainScreeLayersTab() }
+                        entry<NavigationRoute.Workspace>(metadata = horizontalMetadata) { WorkspacesTab() }
 
                         entry<NavigationRoute.NestEdit>(metadata = horizontalMetadata) { NestEditScreen() }
 
@@ -473,14 +481,12 @@ fun MainAppUi(
 
                         entry<NavigationRoute.Widgets>(metadata = horizontalMetadata) { key ->
                             WidgetsTab(
-                                onLaunchSystemWidgetPicker = ::launchWidgetsPicker,
+                                onBindCustomWidget = onBindCustomWidget,
                                 onResetWidgetSize = onResetWidgetSize,
-                                onRemoveWidget = onRemoveWidget,
-                                initialNestId = key.nestId
+                                onRemoveWidget = onRemoveWidget
                             )
                         }
 
-                        entry<NavigationRoute.Workspace>(metadata = horizontalMetadata) { WorkspacesTab() }
                         entry<NavigationRoute.WorkspaceDetail>(metadata = horizontalMetadata) { key -> WorkspaceDetailScreen(key.workspaceId) }
 
                         entry<NavigationRoute.TimerExceeded> { key -> TimeLimitExceededScreen(key.appName) }
@@ -491,16 +497,7 @@ fun MainAppUi(
                                 navigator.go(key.screenToGo)
                                 securityViewModel.unlock()
                             }
-
-                            fun onDismiss() {
-                                backStack.remove(key)
-                            }
-
-
-                            // Quick toggle to bypass unlock when I'm blocked out because I forgot the password :)
-//                            LaunchedEffect(screenToUnlock) {
-//                                if (screenToUnlock != null) onSuccess()
-//                            }
+                            fun onDismiss() { backStack.remove(key) }
 
                             when (lockMethod) {
                                 None -> {
@@ -607,7 +604,7 @@ fun MainAppUi(
                     }
                 )
 
-                if (currentRoute !is NavigationRoute.LockScreen) {
+                if (currentRoute !is NavigationRoute.LockScreen && currentRoute !is NavigationRoute.LockScreenSetup) {
                     if (showFilePicker != null) {
                         val currentPoint = showFilePicker!!
 
@@ -620,16 +617,6 @@ fun MainAppUi(
                                 launchAction(updatedPoint)
                             }
                         )
-                    }
-
-
-                    if (showWidgetPicker != null) {
-                        val nestToBind = showWidgetPicker!!
-                        WidgetPickerDialog(
-                            onBindCustomWidget = { id, info ->
-                                onBindCustomWidget(id, info, nestToBind)
-                            }
-                        ) { showWidgetPicker = null }
                     }
 
 

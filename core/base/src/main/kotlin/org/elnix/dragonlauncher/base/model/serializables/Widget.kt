@@ -26,6 +26,9 @@ public data class Widget(
     public companion object {
         public const val defaultGhosted: Boolean = false
         public const val defaultForeground: Boolean = true
+
+        public const val MIN_SIZE: Float = 1.5f
+
         public object WidgetsJson : DragonJson<List<Widget>>()
     }
 }

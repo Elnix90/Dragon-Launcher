@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.settings.customization
 
+import android.content.ComponentName
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.VectorConverter
@@ -37,7 +38,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -61,16 +61,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.github.elnix90.logging.logD
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
-import org.elnix.dragonlauncher.WIDGET_TAG
-import org.elnix.dragonlauncher.base.model.models.ResizeSide
-import org.elnix.dragonlauncher.base.model.serializables.Action
-import org.elnix.dragonlauncher.base.model.serializables.IconShape
-import org.elnix.dragonlauncher.base.model.serializables.Widget
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.MoveAroundTools
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.MoveAroundTools.Center
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.MoveAroundTools.ResetRotation
@@ -80,10 +74,15 @@ import org.elnix.dragonlauncher.base.model.enumsui.toggle.WidgetsToolsCenterRese
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.WidgetsToolsMoveUpDown
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.WidgetsToolsSnapping
 import org.elnix.dragonlauncher.base.model.enumsui.toggle.WidgetsToolsUpDown
+import org.elnix.dragonlauncher.base.model.models.ResizeSide
+import org.elnix.dragonlauncher.base.model.serializables.Action
+import org.elnix.dragonlauncher.base.model.serializables.IconShape
+import org.elnix.dragonlauncher.base.model.serializables.Widget
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.rotateBy
 import org.elnix.dragonlauncher.ktx.semiTransparentIfDisabled
 import org.elnix.dragonlauncher.ktx.toDp
+import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.models.WidgetsViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.UiSettingsStore
@@ -98,6 +97,7 @@ import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dialogs.ActionPickerDialog
 import org.elnix.dragonlauncher.ui.dialogs.NestManagementDialog
 import org.elnix.dragonlauncher.ui.dialogs.ShapePickerDialog
+import org.elnix.dragonlauncher.ui.dialogs.WidgetPickerDialog
 import org.elnix.dragonlauncher.ui.dragon.components.DragonIconButton
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
@@ -120,14 +120,17 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun WidgetsTab(
     widgetsViewModel: WidgetsViewModel = activityViewModel(),
-    onLaunchSystemWidgetPicker: (nestId: Int) -> Unit,
+    pointsViewModel: PointsViewModel = activityViewModel(),
+    onBindCustomWidget: (Int, ComponentName, nestId: Int) -> Unit,
     onResetWidgetSize: (id: Int, widgetId: Int) -> Unit,
-    onRemoveWidget: (Widget) -> Unit,
-    initialNestId: Int = 0
+    onRemoveWidget: (Widget) -> Unit
 ) {
     val navigator = LocalNavigator.current
     val cellSizeDp by UiSettingsStore.widgetsCellSizeDp.asState()
-    val widgets by widgetsViewModel.widgets.asState()
+
+    val widgetsService = widgetsViewModel.widgetsService
+
+    val widgets by widgetsService.widgets.asState()
     val scope = rememberCoroutineScope()
 
     var selected by remember { mutableStateOf<Widget?>(null) }
@@ -140,8 +143,10 @@ fun WidgetsTab(
     var showMoreSheet by remember { mutableStateOf(false) }
     var showAddDialog by remember { mutableStateOf(false) }
     var showNestPickerDialog by remember { mutableStateOf(false) }
-    var nestId by remember { mutableIntStateOf(initialNestId) }
     var isPrecisionModeActive by remember { mutableStateOf(false) }
+
+    val nestNavigation = pointsViewModel.nestsNavigationService
+    val nestId by nestNavigation.currentNestId.collectAsState()
 
 
     fun removeWidget(widget: Widget) {
@@ -162,13 +167,13 @@ fun WidgetsTab(
             if (selected != null) {
                 selected = null
             } else {
-                widgetsViewModel.save()
+                widgetsService.save()
                 navigator.onBack()
             }
         },
         helpText = stringResource(R.string.widgets_tab_help),
         resetText = stringResource(R.string.reset_widgets_tab),
-        onReset = { widgetsViewModel.resetAllWidgets() },
+        onReset = { widgetsService.resetAllWidgets() },
         applyPadding = false,
         scrollableContent = false,
         specialSettingsTitleContent = {
@@ -206,7 +211,7 @@ fun WidgetsTab(
                 }
 
                 Spacer(12.dp)
-                UndoRedoBlock(widgetsViewModel.undoRedo)
+                UndoRedoBlock(widgetsService.undoRedo)
             }
 
             RowWithScrollIndicator(rowsScrollStates[1]) {
@@ -260,7 +265,7 @@ fun WidgetsTab(
                         when (entry) {
                             WidgetsToolsCenterReset.Center -> {
                                 selected?.let {
-                                    widgetsViewModel.centerWidget(it.id)
+                                    widgetsService.centerWidget(it.id)
                                 }
                             }
 
@@ -269,7 +274,7 @@ fun WidgetsTab(
                                     if (it.action is Action.OpenWidget) {
                                         onResetWidgetSize(it.id, (it.action as Action.OpenWidget).widgetId)
                                     } else {
-                                        widgetsViewModel.resetWidgetSize(it.id)
+                                        widgetsService.resetWidgetSize(it.id)
                                     }
                                 }
                             }
@@ -312,14 +317,14 @@ fun WidgetsTab(
                         when (entry) {
                             WidgetsToolsMoveUpDown.MoveUp -> {
                                 selected?.let {
-                                    widgetsViewModel.moveWidgetDown(it.id)
+                                    widgetsService.moveWidgetDown(it.id)
 
                                 }
                             }
 
                             WidgetsToolsMoveUpDown.MoveDown -> {
                                 selected?.let {
-                                    widgetsViewModel.moveWidgetUp(it.id)
+                                    widgetsService.moveWidgetUp(it.id)
                                 }
                             }
                         }
@@ -391,14 +396,14 @@ fun WidgetsTab(
                     .forEach { widget ->
                         DraggableWidget(
                             widgetsViewModel = widgetsViewModel,
-                            app = widget,
+                            widget = widget,
                             snapRotation = { snapRotation },
                             snapMove = { snapMove },
                             snapResize = { snapResize },
                             selected = widget.id == selected?.id,
                             onPrecisionModeChange = { isPrecisionModeActive = it },
                             onSelect = { selected = widget },
-                            onEdit = { widgetsViewModel.editWidget(it) }
+                            onEdit = { new -> widgetsService.updateWidget(widget.id) { new } }
                         )
                     }
             }
@@ -434,18 +439,29 @@ fun WidgetsTab(
 
     StatusBar(null)
 
+
+    var showWidgetPicker by remember { mutableStateOf<Int?>(null) }
+
     if (showAddDialog) {
         ActionPickerDialog(
             onDismiss = { showAddDialog = false },
             allowWidgets = true,
             onActionSelected = { action ->
                 when (action) {
-                    is Action.OpenWidget -> onLaunchSystemWidgetPicker(nestId)
-                    else -> widgetsViewModel.addWidget(action, nestId = nestId)
+                    is Action.OpenWidget -> showWidgetPicker = nestId
+                    else -> widgetsService.addWidget(action, nestId = nestId)
                 }
                 showAddDialog = false
             }
         )
+    }
+
+    if (showWidgetPicker != null) {
+        WidgetPickerDialog(
+            onBindCustomWidget = { id, info ->
+                onBindCustomWidget(id, info, showWidgetPicker!!)
+            }
+        ) { showWidgetPicker = null }
     }
 
 
@@ -509,11 +525,8 @@ fun WidgetsTab(
         NestManagementDialog(
             title = stringResource(R.string.pick_a_nest),
             onSelect = {
-                logD(WIDGET_TAG) { it.toString() }
-                nestId = it.id
+                nestNavigation.goToNest(it.id)
                 selected = null
-                logD(WIDGET_TAG) { nestId.toString() }
-
                 showNestPickerDialog = false
             }
         ) { showNestPickerDialog = false }
@@ -534,8 +547,8 @@ fun WidgetsTab(
  * Position compensation on resize and move is angle-aware: deltas are rotated through the
  * widget's current angle so handles behave correctly at any rotation.
  *
- * @param widgetsViewModel Provides `cellSizePx`, `minSize` and screen dimensions.
- * @param app Current immutable widget data used as the source of truth on each commit.
+ * @param widgetsViewModel Provides `cellSizePx`, `Widget.MIN_SIZE` and screen dimensions.
+ * @param widget Current immutable widget data used as the source of truth on each commit.
  * @param selected Whether this widget is currently selected, controls handle visibility.
  * @param snapRotation Returns true if rotation should snap to 15° increments.
  * @param snapMove Returns true if position should snap to the cell grid.
@@ -547,7 +560,7 @@ fun WidgetsTab(
 @Composable
 private fun DraggableWidget(
     widgetsViewModel: WidgetsViewModel,
-    app: Widget,
+    widget: Widget,
     selected: Boolean,
 
     snapRotation: () -> Boolean,
@@ -560,9 +573,9 @@ private fun DraggableWidget(
 ) {
     val haptic = LocalHapticFeedback.current
 
-    val cellSizePx by widgetsViewModel.cellSizePx.collectAsState()
-    val minSize = widgetsViewModel.minSize
-    val dm = widgetsViewModel.dm
+    val widgetsService = widgetsViewModel.widgetsService
+    val cellSizePx by widgetsService.cellSizePx.collectAsState()
+    val dm = widgetsService.dm
 
     val widthPixels = dm.widthPixels
     val heightPixels = dm.heightPixels
@@ -573,17 +586,17 @@ private fun DraggableWidget(
     var widgetCenter by remember(selected) { mutableStateOf(Offset.Zero) }
     var handleCoordinates by remember(selected) { mutableStateOf<LayoutCoordinates?>(null) }
 
-    var widgetAngle by remember(app.angle) { mutableFloatStateOf(app.angle) }
+    var widgetAngle by remember(widget.angle) { mutableFloatStateOf(widget.angle) }
 
-    var widgetX by remember(app.x) { mutableFloatStateOf(app.x) }
-    var widgetY by remember(app.y) { mutableFloatStateOf(app.y) }
-    var rawWidgetX by remember(app.x) { mutableFloatStateOf(app.x) }
-    var rawWidgetY by remember(app.y) { mutableFloatStateOf(app.y) }
+    var widgetX by remember(widget.x) { mutableFloatStateOf(widget.x) }
+    var widgetY by remember(widget.y) { mutableFloatStateOf(widget.y) }
+    var rawWidgetX by remember(widget.x) { mutableFloatStateOf(widget.x) }
+    var rawWidgetY by remember(widget.y) { mutableFloatStateOf(widget.y) }
 
-    var widgetWidth by remember(app.spanX) { mutableFloatStateOf(app.spanX) }
-    var widgetHeight by remember(app.spanY) { mutableFloatStateOf(app.spanY) }
-    var rawWidgetWidth by remember(app.spanX) { mutableFloatStateOf(app.spanX) }
-    var rawWidgetHeight by remember(app.spanY) { mutableFloatStateOf(app.spanY) }
+    var widgetWidth by remember(widget.spanX) { mutableFloatStateOf(widget.spanX) }
+    var widgetHeight by remember(widget.spanY) { mutableFloatStateOf(widget.spanY) }
+    var rawWidgetWidth by remember(widget.spanX) { mutableFloatStateOf(widget.spanX) }
+    var rawWidgetHeight by remember(widget.spanY) { mutableFloatStateOf(widget.spanY) }
 
 
     var isPrecisionMode by remember { mutableStateOf(false) }
@@ -597,7 +610,7 @@ private fun DraggableWidget(
 
     fun commitChange(newApp: Widget? = null) {
         onEdit(
-            newApp ?: app.copy(
+            newApp ?: widget.copy(
                 spanX = widgetWidth,
                 spanY = widgetHeight,
                 x = widgetX,
@@ -623,21 +636,21 @@ private fun DraggableWidget(
 
         when (corner) {
             ResizeSide.Left -> {
-                rawWidgetWidth = (rawWidgetWidth - deltaSpanX).coerceAtLeast(minSize)
+                rawWidgetWidth = (rawWidgetWidth - deltaSpanX).coerceAtLeast(Widget.MIN_SIZE)
                 localDeltaX = deltaPosX
             }
 
             ResizeSide.Right -> {
-                rawWidgetWidth = (rawWidgetWidth + deltaSpanX).coerceAtLeast(minSize)
+                rawWidgetWidth = (rawWidgetWidth + deltaSpanX).coerceAtLeast(Widget.MIN_SIZE)
             }
 
             ResizeSide.Top -> {
-                rawWidgetHeight = (rawWidgetHeight - deltaSpanY).coerceAtLeast(minSize)
+                rawWidgetHeight = (rawWidgetHeight - deltaSpanY).coerceAtLeast(Widget.MIN_SIZE)
                 localDeltaY = deltaPosY
             }
 
             ResizeSide.Bottom -> {
-                rawWidgetHeight = (rawWidgetHeight + deltaSpanY).coerceAtLeast(minSize)
+                rawWidgetHeight = (rawWidgetHeight + deltaSpanY).coerceAtLeast(Widget.MIN_SIZE)
             }
         }
 
@@ -648,11 +661,11 @@ private fun DraggableWidget(
         widgetY += worldDeltaY
 
         widgetWidth = if (snapResize()) {
-            rawWidgetWidth.roundToInt().toFloat().coerceAtLeast(minSize)
+            rawWidgetWidth.roundToInt().toFloat().coerceAtLeast(Widget.MIN_SIZE)
         } else rawWidgetWidth
 
         widgetHeight = if (snapResize()) {
-            rawWidgetHeight.roundToInt().toFloat().coerceAtLeast(minSize)
+            rawWidgetHeight.roundToInt().toFloat().coerceAtLeast(Widget.MIN_SIZE)
         } else rawWidgetHeight
     }
 
@@ -691,7 +704,7 @@ private fun DraggableWidget(
 
         // Widget / App content (touch blocked during editing)
         WidgetHostView(
-            widget = app,
+            widget = widget,
             blockTouches = true,
             cellSizePx = cellSizePx
         ) { }
@@ -701,7 +714,7 @@ private fun DraggableWidget(
         Box(
             modifier = Modifier
                 .matchParentSize()
-                .pointerInput(app.id) {
+                .pointerInput(widget.id) {
                     detectTapGestures(
                         onPress = {
                             isPrecisionMode = false
@@ -717,7 +730,7 @@ private fun DraggableWidget(
                         }
                     )
                 }
-                .pointerInput(app.id, app.angle, app.x, app.y) {
+                .pointerInput(widget.id, widget.angle, widget.x, widget.y) {
                     detectDragGestures(
                         onDragStart = {
                             onSelect()
@@ -774,7 +787,7 @@ private fun DraggableWidget(
                     .size(40.dp)
                     .clip(CircleShape)
                     .onGloballyPositioned { handleCoordinates = it }
-                    .pointerInput(app.id, app.angle) {
+                    .pointerInput(widget.id, widget.angle) {
 
                         var dragStartFingerAngle: Float? = null
                         var dragStartWidgetAngle = 0f
@@ -860,7 +873,7 @@ private fun DraggableWidget(
                     .size(dotSize + hitboxPadding * 2)
                     .clip(CircleShape)
                     .background(Color.Transparent)
-                    .pointerInput(ResizeSide.Top, app.spanX, app.spanY) {
+                    .pointerInput(ResizeSide.Top, widget.spanX, widget.spanY) {
                         detectDragGestures(
                             onDragEnd = ::commitChange
                         ) { change, dragAmount ->
@@ -885,7 +898,7 @@ private fun DraggableWidget(
                     .size(dotSize + hitboxPadding * 2)
                     .clip(CircleShape)
                     .background(Color.Transparent)
-                    .pointerInput(ResizeSide.Bottom, app.spanX, app.spanY) {
+                    .pointerInput(ResizeSide.Bottom, widget.spanX, widget.spanY) {
                         detectDragGestures(
                             onDragEnd = ::commitChange
                         ) { change, dragAmount ->
@@ -910,7 +923,7 @@ private fun DraggableWidget(
                     .size(dotSize + hitboxPadding * 2)
                     .clip(CircleShape)
                     .background(Color.Transparent)
-                    .pointerInput(ResizeSide.Left, app.spanX, app.spanY) {
+                    .pointerInput(ResizeSide.Left, widget.spanX, widget.spanY) {
                         detectDragGestures(
                             onDragEnd = ::commitChange
                         ) { change, dragAmount ->
@@ -935,7 +948,7 @@ private fun DraggableWidget(
                     .size(dotSize + hitboxPadding * 2)
                     .clip(CircleShape)
                     .background(Color.Transparent)
-                    .pointerInput(ResizeSide.Right, app.spanX, app.spanY) {
+                    .pointerInput(ResizeSide.Right, widget.spanX, widget.spanY) {
                         detectDragGestures(
                             onDragEnd = ::commitChange
                         ) { change, dragAmount ->
@@ -979,12 +992,12 @@ private fun DraggableWidget(
                             },
                             leadingIcon = {
                                 Checkbox(
-                                    checked = app.ghosted == true,
+                                    checked = widget.ghosted == true,
                                     onCheckedChange = null
                                 )
                             },
                             onClick = {
-                                commitChange(app.copy(ghosted = !(app.ghosted ?: Widget.defaultGhosted)))
+                                commitChange(widget.copy(ghosted = !(widget.ghosted ?: Widget.defaultGhosted)))
                             }
                         )
                         DropdownMenuItem(
@@ -997,19 +1010,19 @@ private fun DraggableWidget(
                             },
                             leadingIcon = {
                                 Checkbox(
-                                    checked = app.foreground == true,
+                                    checked = widget.foreground == true,
                                     onCheckedChange = null
                                 )
 
                             },
                             onClick = {
-                                commitChange(app.copy(foreground = !(app.foreground ?: Widget.defaultForeground)))
+                                commitChange(widget.copy(foreground = !(widget.foreground ?: Widget.defaultForeground)))
                             }
                         )
                         SmallShapeRow(
-                            selected = app.shape ?: IconShape.RightSquare,
+                            selected = widget.shape ?: IconShape.RightSquare,
                             onReset = {
-                                commitChange(app.copy(shape = null))
+                                commitChange(widget.copy(shape = null))
                             }
                         ) { showShapeEditor = true }
                     }
@@ -1020,10 +1033,10 @@ private fun DraggableWidget(
 
     if (showShapeEditor) {
         ShapePickerDialog(
-            selected = app.shape ?: IconShape.RightSquare,
+            selected = widget.shape ?: IconShape.RightSquare,
             onDismiss = { showShapeEditor = false }
         ) {
-            commitChange(app.copy(shape = it))
+            commitChange(widget.copy(shape = it))
             showShapeEditor = false
         }
     }

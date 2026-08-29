@@ -161,6 +161,16 @@ public object Constants {
         public const val COLLIDING_SHAPE_THRESHOLD_PX: Float = 50f
         public const val HOVER_POINT_DURATION: Long = 500L
         public val HOVER_GRADIENT_RADIUS: Dp = 75.dp
+
+        /**
+         * Max items allowed in the settings drop down menu, for UX reasons, otherwise it would be a scrolling thing, and I don't like it that much.
+         *
+         *
+         * TODO This SHOULD be removed one day, maybe next time I read this, and implement a scrolling menu with maximum size.
+         *
+         * For now, I'll only increase it a bit. from 5 to
+         */
+        public const val MAX_ITEMS_ALLOWED: Int = 8
     }
 
     public object Drawer {

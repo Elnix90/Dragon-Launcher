@@ -201,7 +201,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                 logE(WIDGET_TAG, e) { "DRAGON_FLOW: Proxy launch failed" }
                 showToast("Failed to launch configuration")
                 // Add it anyway if config fails to launch
-                widgetsViewModel.addWidget(
+                widgetsViewModel.widgetsService.addWidget(
                     action = Action.OpenWidget(
                         widgetId,
                         info.provider.packageName,
@@ -214,7 +214,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
             }
         } else {
             logD(WIDGET_TAG) { "DRAGON_FLOW: No configuration needed, adding widget" }
-            widgetsViewModel.addWidget(
+            widgetsViewModel.widgetsService.addWidget(
                 action = Action.OpenWidget(
                     widgetId,
                     info.provider.packageName,
@@ -238,7 +238,7 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
             if (resultCode == RESULT_OK && widgetId != -1) {
                 val info = widgetHolder.getAppWidgetInfo(widgetId)
                 if (info != null) {
-                    widgetsViewModel.addWidget(
+                    widgetsViewModel.widgetsService.addWidget(
                         action = Action.OpenWidget(
                             widgetId,
                             info.provider.packageName,
@@ -260,8 +260,10 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
     /**
      * Deletes a widget ID and removes it from the host.
      */
-    fun deleteWidget(widgetId: Int) {
-        widgetHolder.deleteAppWidgetId(widgetId)
+    fun deleteWidget(widgetId: Int?) {
+        if (widgetId != null) {
+            widgetHolder.deleteAppWidgetId(widgetId)
+        }
     }
 
     private val fontsReceiver = FontReceiver()
@@ -415,11 +417,11 @@ class MainActivity : FragmentActivity(), WidgetHostProvider {
                         },
                         onResetWidgetSize = { id, widgetId ->
                             val info = appWidgetManager.getAppWidgetInfo(widgetId)
-                            widgetsViewModel.resetWidgetSize(id, info)
+                            widgetsViewModel.widgetsService.resetWidgetSize(id, info)
                         },
                         onRemoveWidget = { widgetObject ->
-                            widgetsViewModel.removeWidget(widgetObject.id) {
-                                (ctx as MainActivity).deleteWidget(it)
+                            widgetsViewModel.widgetsService.removeWidget(widgetObject) {
+                                (ctx as MainActivity).deleteWidget(widgetObject.appWidgetId)
                             }
                         }
                     )

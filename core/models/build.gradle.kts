@@ -48,19 +48,23 @@ dependencies {
 
     api(project(":core:base"))
     api(project(":core:shizuku"))
+    api(project(":core:permissions"))
+
     api(project(":core:services:icons"))
     api(project(":core:services:fonts"))
     api(project(":core:services:colors"))
     api(project(":core:services:points"))
     api(project(":core:services:compat"))
     api(project(":core:services:badges"))
+    api(project(":core:services:widgets"))
     api(project(":core:services:recents"))
     api(project(":core:services:security"))
     api(project(":core:services:migration"))
+
     api(project(":data:notifications"))
     api(project(":data:applications"))
     api(project(":data:workspaces"))
     api(project(":data:appoverrides"))
     api(project(":core:profiles"))
-    api(project(":core:permissions"))
+
 }

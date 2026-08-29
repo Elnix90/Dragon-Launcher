@@ -106,14 +106,6 @@ public object UiSettingsStore : MapSettingsStore() {
     )
 
     @SettingKey
-    public val showAppLaunchingPreview: BooleanSettingObject = boolean(
-        title = R.string.show_app_launch_preview,
-        description = R.string.show_app_launch_preview_desc,
-        icon = R.drawable.visibility,
-        default = true
-    )
-
-    @SettingKey
     public val showAllPointsInCurrentShape: BooleanSettingObject = boolean(
         title = R.string.show_all_actions_on_current_shape,
         description = R.string.show_all_actions_on_current_shape_desc,

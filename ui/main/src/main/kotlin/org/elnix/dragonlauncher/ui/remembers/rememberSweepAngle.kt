@@ -17,18 +17,18 @@ data class SweepAngleState(
      */
     val sweepAngle: () -> Float,
     /**
-     * Computes the current angle in the range `0..360`
-     * Used for ex in the HSV color computation
-     */
-    val angle360: () -> Float,
-    /**
      * Feed this with the raw gesture angle in degrees (0..360) on every
      * pointer move event.
      */
     val onAngleChanged: (newAngle: Float) -> Unit,
     /** Resets all state, typically called on gesture end or cancel. */
     val reset: () -> Unit
-)
+) {
+    fun angle360(): Float {
+        val wrapped = sweepAngle() % 360f
+        return if (wrapped < 0f) wrapped + 360f else wrapped
+    }
+}
 
 @Composable
 fun rememberSweepAngle(): SweepAngleState {
@@ -49,10 +49,6 @@ fun rememberSweepAngle(): SweepAngleState {
                 in -720f..-360f -> wrapped + 720f
                 else -> wrapped
             }
-        },
-        angle360 = {
-            val wrapped = cumulativeAngle % 360f
-            if (wrapped < 0f) wrapped + 360f else wrapped
         },
         onAngleChanged = { newRaw ->
             var delta = newRaw - lastRawAngle
@@ -85,10 +81,6 @@ fun createSweepAngleState(): SweepAngleState {
                 in -720f..-360f -> wrapped + 720f
                 else -> wrapped
             }
-        },
-        angle360 = {
-            val wrapped = cumulativeAngle % 360f
-            if (wrapped < 0f) wrapped + 360f else wrapped
         },
         onAngleChanged = { newRaw ->
             var delta = newRaw - lastRawAngle

@@ -1,7 +1,6 @@
 package org.elnix.dragonlauncher.ui
 
 import android.annotation.SuppressLint
-import android.util.DisplayMetrics
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,7 +13,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -23,28 +21,20 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.changedToDown
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.elnix90.runtime.asState
 import io.github.elnix90.runtime.asStateNull
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.base.model.serializables.Action
 import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer
-import org.elnix.dragonlauncher.base.model.serializables.MainScreenLayer.Companion.enabled
 import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.model.serializables.Point.Companion.dummySwipePoint
-import org.elnix.dragonlauncher.base.model.serializables.Widget
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
-import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ktx.isInsideActiveZone
 import org.elnix.dragonlauncher.ktx.toDp
 import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.models.SwipeViewModel
@@ -58,7 +48,6 @@ import org.elnix.dragonlauncher.ui.components.WidgetHostView
 import org.elnix.dragonlauncher.ui.components.burger.BurgerListAction
 import org.elnix.dragonlauncher.ui.components.burger.MoreOptions
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
-import org.elnix.dragonlauncher.ui.dialogs.rememberHoldMenuEntries
 import org.elnix.dragonlauncher.ui.helpers.ChargingAnimation
 import org.elnix.dragonlauncher.ui.helpers.HoldToActivateArc
 import org.elnix.dragonlauncher.ui.helpers.wallpaper.CustomDim
@@ -76,40 +65,27 @@ fun MainScreen(
     widgetsViewModel: WidgetsViewModel = activityViewModel(),
     pointsViewModel: PointsViewModel = activityViewModel()
 ) {
-    val ctx = LocalContext.current
     val navigator = LocalNavigator.current
+    val density = LocalDensity.current
 
     val mainScreenLayers by swipeViewModel.mainScreenLayerOrder.asState()
     val holdObject by swipeViewModel.holdObject.asState()
 
-    var lastClickTime by remember { mutableLongStateOf(0L) }
+    val widgetsService = widgetsViewModel.widgetsService
+    val dm = widgetsService.dm
+    val widgetsObjects by widgetsService.widgets.asState()
 
-    val widgetsObjects by widgetsViewModel.widgets.asState()
-
-    val doubleClickAction by BehaviorSettingsStore.doubleClickAction.asStateNull()
     val backAction by BehaviorSettingsStore.backAction.asStateNull()
-    val leftPadding by BehaviorSettingsStore.leftPadding.asState()
-    val rightPadding by BehaviorSettingsStore.rightPadding.asState()
-    val topPadding by BehaviorSettingsStore.topPadding.asState()
-    val bottomPadding by BehaviorSettingsStore.bottomPadding.asState()
-
 
     val holdDelayBeforeStartingLongClickSettings by HoldToActivateArcSettingsStore.holdDelayBeforeStartingLongClickSettings.asState()
     val longCLickSettingsDuration by HoldToActivateArcSettingsStore.longCLickSettingsDuration.asState()
 
 
-    var start by remember { mutableStateOf<Offset?>(null) }
-    var current by remember { mutableStateOf<Offset?>(null) }
-    var size by remember { mutableStateOf(IntSize.Zero) }
-
-    var showCustomDim by remember { mutableStateOf(false) }
+    val start by swipeViewModel.start.asState()
+    val current by swipeViewModel.current.asState()
 
     var holdOffset by remember { mutableStateOf<Offset?>(null) }
     var showDropDownMenuSettings by remember { mutableStateOf(false) }
-
-
-
-    LaunchedEffect(Unit) { lastClickTime = 0 }
 
     val nestNavigation = pointsViewModel.nestsNavigationService
     val nestId by nestNavigation.currentNestId.collectAsState()
@@ -121,21 +97,11 @@ fun MainScreen(
     }
 
 
-    val dm = ctx.resources.displayMetrics
-    val density = LocalDensity.current
-    val cellSizePx by widgetsViewModel.cellSizePx.collectAsState()
-
-
     fun launchAction(point: Point) {
-        start = null
-        current = null
-        lastClickTime = 0
-
-
         // Handle nest related actions here, and let the rest pass through
         when (val action = point.action) {
             Action.GoParentNest -> nestNavigation.goBack()
-            is Action.OpenCircleNest -> nestNavigation.goToNest(action.nestId)
+            is Action.OpenNest -> nestNavigation.goToNest(action.nestId)
             else -> {
                 nestNavigation.clearStack()
                 onLaunchAction(point)
@@ -144,7 +110,7 @@ fun MainScreen(
     }
 
 
-    val holdMenuEntries by rememberHoldMenuEntries()
+    val holdMenuEntries by swipeViewModel.holdMenuEntriesString.asState()
 
     val hold = rememberHoldToOpenSettings(
         onSettings = { offset ->
@@ -159,17 +125,16 @@ fun MainScreen(
 
                 holdMenuEntries.size == 1 -> {
                     val routeToGo = holdMenuEntries.first()
-                    navigator.navigate(routeToGo)
+                    val action = Action.OpenDragonLauncherSettings(routeToGo)
+                    launchAction(dummySwipePoint(action))
                 }
 
                 else -> {
                     // If list is empty, directly navigate to settings root. Never block the user out of settings
-                    navigator.navigate(NavigationRoute.PointsSettings(nestId))
+                    val action = Action.OpenDragonLauncherSettings(NavigationRoute.PointsSettings)
+                    launchAction(dummySwipePoint(action))
                 }
             }
-
-            start = null
-            current = null
         },
         holdDelay = holdDelayBeforeStartingLongClickSettings.toLong(),
         loadDuration = longCLickSettingsDuration.toLong()
@@ -198,84 +163,18 @@ fun MainScreen(
             .fillMaxSize()
             .background(Color.Transparent)
             .pointerInput(Unit, nestId) {
-                awaitPointerEventScope {
-                    while (true) {
-                        val event = awaitPointerEvent(PointerEventPass.Initial)
-
-                        val down = event.changes.firstOrNull { it.changedToDown() } ?: continue
-                        val pos = down.position
-
-                        val allowed = pos.isInsideActiveZone(
-                            size = size,
-                            left = leftPadding,
-                            right = rightPadding,
-                            top = topPadding,
-                            bottom = bottomPadding
-                        )
-
-                        if (!allowed) {
-                            continue
-                        }
-
-                        if (pos.isInsideForegroundWidget(
-                                widgets = filteredWidgetObjects,
-                                dm = dm,
-                                cellSizePx = cellSizePx
-                            )
-                        ) {
-                            // Let widget handle scroll - do NOT consume or process
-                            continue
-                        }
-
-                        start = down.position
-                        current = down.position
-
-                        val pointerId = down.id
-
-                        val currentTime = System.currentTimeMillis()
-                        val diff = currentTime - lastClickTime
-                        if (diff < 500) {
-                            doubleClickAction?.let { action ->
-                                launchAction(
-                                    dummySwipePoint(action)
-                                )
-                                continue
-                            }
-                        }
-                        lastClickTime = currentTime
-
-                        while (true) {
-                            val event = awaitPointerEvent(PointerEventPass.Initial)
-                            val change = event.changes.firstOrNull { it.id == pointerId }
-
-                            if (change != null) {
-                                if (change.pressed) {
-                                    change.consume()
-                                    current = change.position
-                                } else {
-                                    start = null
-                                    current = null
-                                    break
-                                }
-                            } else {
-                                start = null
-                                current = null
-                                break
-                            }
-                        }
-                    }
-                }
+                with(swipeViewModel) { mainDragGesture() }
             }
-            .onSizeChanged { size = it }
             .then(hold.pointerModifier)
     ) {
         mainScreenLayers.filter { it.enabled }.forEach { layer ->
             when (layer) {
                 is MainScreenLayer.ChargingAnimation -> {
-                    ChargingAnimation(modifier = Modifier.fillMaxSize())
+                    ChargingAnimation()
                 }
 
                 is MainScreenLayer.CustomDim -> {
+                    var showCustomDim by remember { mutableStateOf(false) }
 
                     LaunchedEffect(start) {
                         if (start != null) {
@@ -309,14 +208,14 @@ fun MainScreen(
                     )
 
                     if (holdOffset != null) {
-                        val actions = holdMenuEntries.map {
+                        val actions = holdMenuEntries.map { route ->
                             MoreOptions(
                                 onClick = {
                                     showDropDownMenuSettings = false
-                                    navigator.navigate(it)
+                                    navigator.navigate(route)
                                 },
-                                icon = R.drawable.settings,
-                                text = { stringResource(it.resId) }
+                                icon = route.icon,
+                                text = { stringResource(route.resId) }
                             )
                         }
 
@@ -343,40 +242,40 @@ fun MainScreen(
                 }
 
                 is MainScreenLayer.StatusBar -> {
-                    StatusBar(
-                        launchAction = { launchAction(dummySwipePoint(it)) },
-                    )
+                    StatusBar { action -> launchAction(dummySwipePoint(action)) }
                 }
 
                 is MainScreenLayer.Widgets -> {
-                    filteredWidgetObjects.forEach { widgetObject ->
-                        key(widgetObject.id, nestId) {
+                    val cellSizePx by widgetsViewModel.widgetsService.cellSizePx.collectAsStateWithLifecycle()
+
+                    filteredWidgetObjects.forEach { widget ->
+                        key(widget.id, nestId) {
                             WidgetHostView(
-                                widget = widgetObject,
+                                widget = widget,
                                 cellSizePx = cellSizePx,
                                 modifier = Modifier
                                     .offset {
                                         IntOffset(
-                                            x = (widgetObject.x * dm.widthPixels).toInt(),
-                                            y = (widgetObject.y * dm.heightPixels).toInt()
+                                            x = (widget.x * dm.widthPixels).toInt(),
+                                            y = (widget.y * dm.heightPixels).toInt()
                                         )
                                     }
                                     .size(
-                                        width = (widgetObject.spanX * cellSizePx).toDp,
-                                        height = (widgetObject.spanY * cellSizePx).toDp
+                                        width = (widget.spanX * cellSizePx).toDp,
+                                        height = (widget.spanY * cellSizePx).toDp
                                     )
                                     .graphicsLayer {
-                                        rotationZ = widgetObject.angle
+                                        rotationZ = widget.angle
                                         transformOrigin = TransformOrigin.Center
                                     },
                                 onLaunchAction = {
                                     launchAction(
                                         dummySwipePoint(
-                                            action = widgetObject.action
+                                            action = widget.action
                                         )
                                     )
                                 },
-                                blockTouches = widgetObject.ghosted == true
+                                blockTouches = widget.ghosted == true
                             )
                         }
                     }
@@ -384,28 +283,4 @@ fun MainScreen(
             }
         }
     }
-}
-
-
-/**
- * Checks if pointer position is inside any foreground widget bounds.
- */
-private fun Offset.isInsideForegroundWidget(
-    widgets: List<Widget>,
-    dm: DisplayMetrics,
-    cellSizePx: Float
-): Boolean = widgets.any { widget ->
-    if (widget.foreground == false) return@any false
-
-    val left = widget.x * dm.widthPixels
-    val top = widget.y * dm.heightPixels
-
-    val width = widget.spanX * cellSizePx
-    val height = widget.spanY * cellSizePx
-
-    val right = left + width
-    val bottom = top + height
-
-    x in left..right &&
-            y in top..bottom
 }

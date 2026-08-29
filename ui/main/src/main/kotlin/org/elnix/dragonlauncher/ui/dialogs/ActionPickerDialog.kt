@@ -145,7 +145,7 @@ fun ActionPickerDialog(
                                         showWorkspacePicker = true
                                     }
 
-                                    is Action.OpenCircleNest -> {
+                                    is Action.OpenNest -> {
                                         showNestPicker = true
                                     }
 
@@ -326,7 +326,7 @@ fun ActionPickerDialog(
             onDismissRequest = { showNestPicker = false },
             title = stringResource(R.string.pick_a_nest),
             onSelect = {
-                onActionPicked(Action.OpenCircleNest(it.id))
+                onActionPicked(Action.OpenNest(it.id))
                 showNestPicker = false
             }
         )
@@ -376,7 +376,7 @@ private fun ActionItem(
         is Action.OpenUrl -> stringResource(R.string.open_url)
         is Action.RunAdbCommand -> stringResource(R.string.run_adb_command)
         is Action.OpenFile -> stringResource(R.string.open_file)
-        is Action.OpenCircleNest -> stringResource(R.string.open_nest)
+        is Action.OpenNest -> stringResource(R.string.open_nest)
         else -> actionLabel(action)
     }
 

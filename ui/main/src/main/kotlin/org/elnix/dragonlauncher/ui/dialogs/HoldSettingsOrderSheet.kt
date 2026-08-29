@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.ui.dialogs
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,12 +15,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -29,20 +26,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.runtime.asState
-import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.model.DragonJson
+import org.elnix.dragonlauncher.base.Constants.Settings.MAX_ITEMS_ALLOWED
+import org.elnix.dragonlauncher.base.model.enumsui.toggle.BackupSelectStoresButtons
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute.Companion.settingsRoutes
-import org.elnix.dragonlauncher.base.model.enumsui.toggle.BackupSelectStoresButtons
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.settings.stores.map.HoldToActivateArcSettingsStore
+import org.elnix.dragonlauncher.models.SwipeViewModel
+import org.elnix.dragonlauncher.ui.base.activityViewModel
+import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.base.components.VerticalScrollIndicator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 import org.elnix.dragonlauncher.ui.dragon.components.DragonRow
-import org.elnix.dragonlauncher.ui.dragon.components.rememberBottomSheetState
 import org.elnix.dragonlauncher.ui.dragon.generic.MultiSelectConnectedButtonRow
 import org.elnix.dragonlauncher.ui.dragon.text.DialogTitle
 import sh.calvin.reorderable.ReorderableItem
@@ -54,18 +50,19 @@ private data class MenuItem(
     val isSelected: MutableState<Boolean>,
 )
 
-private const val MAX_ITEMS_ALLOWED: Int = 5
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
+fun HoldSettingsOrderSheet(
+    swipeViewModel: SwipeViewModel = activityViewModel(),
+    onDismiss: () -> Unit
+) {
     val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
+    val holdMenuEntries by swipeViewModel.holdMenuEntriesString.asState()
 
-    val holdMenuEntries by rememberHoldMenuEntries()
-    var menuItems: List<MenuItem> by remember {
-        mutableStateOf(emptyList())
-    }
+    // I don't want to put this in the viewmodel as it might be a lot of boilerplate, so I fall back to retain API
+    var menuItems: List<MenuItem> by retain { mutableStateOf(emptyList()) }
 
     LaunchedEffect(holdMenuEntries) {
         menuItems = buildList {
@@ -98,16 +95,13 @@ fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
     DragonModalBottomSheet(
         onDismissRequest = {
             // Save in the reordered state, but only selected items
-            val saveList = HoldMenuEntriesJson.encode(
+            swipeViewModel.holdMenuEntriesString.value =
                 menuItems
                     .filter { it.isSelected.value }
                     .map { it.route }
-            )
 
-            scope.launch {
-                HoldToActivateArcSettingsStore.holdMenuEntriesJson.set(ctx, saveList)
-                onDismiss()
-            }
+            swipeViewModel.saveHoldMenuEntries()
+            onDismiss()
         },
         skipPartiallyExpanded = true
     ) {
@@ -124,22 +118,22 @@ fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
                     BackupSelectStoresButtons.Invert -> true
                 }
             }
-        ) {
-            when (it) {
+        ) { button ->
+            when (button) {
                 BackupSelectStoresButtons.DeselectAll -> {
-                    menuItems.forEach { item ->
+                    menuItems.filter { it.route !is NavigationRoute.PointsSettings }.forEach { item ->
                         item.isSelected.value = false
                     }
                 }
 
                 BackupSelectStoresButtons.SelectAll -> {
-                    menuItems.forEach { item ->
+                    menuItems.filter { it.route !is NavigationRoute.PointsSettings }.forEach { item ->
                         item.isSelected.value = true
                     }
                 }
 
                 BackupSelectStoresButtons.Invert -> {
-                    menuItems.forEach { item ->
+                    menuItems.filter { it.route !is NavigationRoute.PointsSettings }.forEach { item ->
                         item.isSelected.value = !item.isSelected.value
                     }
                 }
@@ -162,14 +156,12 @@ fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
                         val scale by animateFloatAsState(if (isDragging) 1.03f else 1f)
 
                         val isEnabled = entry.route != NavigationRoute.PointsSettings
-                        val cannotRemovePointsSettings = stringResource(R.string.cant_remove_to_avoid_lock_out)
-                        val cannotAddMoreThan5 = stringResource(R.string.cannot_add_more_than_5)
 
                         DragonRow(
                             onClick = {
                                 when {
-                                    !isEnabled -> ctx.showToast(cannotRemovePointsSettings)
-                                    selectedCount >= MAX_ITEMS_ALLOWED && !entry.isSelected.value -> ctx.showToast(cannotAddMoreThan5)
+                                    !isEnabled -> ctx.showToast(ctx.getString(R.string.cant_remove_to_avoid_lock_out))
+                                    selectedCount >= MAX_ITEMS_ALLOWED && !entry.isSelected.value -> ctx.showToast(ctx.getString(R.string.cannot_add_more_than_x, MAX_ITEMS_ALLOWED))
                                     else -> entry.isSelected.value = !isSelected
                                 }
                             },
@@ -206,37 +198,3 @@ fun HoldSettingsOrderSheet(onDismiss: () -> Unit) {
         }
     }
 }
-
-
-/**
- * Decodes the hold menu entries from the [HoldToActivateArcSettingsStore], and decode them using the [HoldMenuEntriesJson] object
- *
- * Applies a safe modification to the returned list:
- *  - If the decoded value fails, it returns empty list, that'll be interpreted as directly going to the settings root.
- *  - If the list isn't `null`, but contains things, it checks whether if the list contains at least a [NavigationRoute.PointsSettings] element, and if not adds in to the list
- *
- *  In the compose screen, [org.elnix.dragonlauncher.ui.MainAppUi] the list is interpreted and triggers either the popup menu
- *  Since recently, you can no more add a single screen that is not the poins settings, because otherwise it would mean that you are locked out of settings.
- *
- *  @return
- */
-@Composable
-fun rememberHoldMenuEntries(): State<List<NavigationRoute>> {
-    val holdMenuEntriesString by HoldToActivateArcSettingsStore.holdMenuEntriesJson.asState()
-
-    return retain(holdMenuEntriesString) {
-        derivedStateOf {
-            HoldMenuEntriesJson.decode<List<NavigationRoute>>(holdMenuEntriesString, emptyList())
-                .take(MAX_ITEMS_ALLOWED)
-                .toMutableList()
-                .apply {
-                    if (!this.any { it is NavigationRoute.PointsSettings }) {
-                        add(0, NavigationRoute.PointsSettings())
-                    }
-                }
-        }
-    }
-}
-
-
-private object HoldMenuEntriesJson : DragonJson<List<NavigationRoute>>()
