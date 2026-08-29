@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
+import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_LINK
 import org.elnix.dragonlauncher.base.loadChangelogs
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.base.utils.rememberVersionCode
@@ -67,9 +68,9 @@ fun WhatsNewBottomSheet() {
                 val matchResult = updateRegex.find(update.versionName)
 
                 val link = if (matchResult != null) {
-                    "https://github.com/Elnix90/Dragon-Launcher/releases/tag/v${matchResult.value}"
+                    "$GITHUB_REPO_LINK/releases/tag/v${matchResult.value}"
                 } else {
-                    "https://github.com/Elnix90/Dragon-Launcher/releases/latest"
+                    "$GITHUB_REPO_LINK/releases/latest"
                 }
 
                 UpdateCard(
