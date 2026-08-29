@@ -2,12 +2,14 @@ package org.elnix.dragonlauncher.ui.navigation
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.navigation3.runtime.metadata
@@ -17,16 +19,21 @@ import org.elnix.dragonlauncher.ui.base.animation.navigationBouncySpec
 val verticalMetadata: Map<String, Any> = NavDisplay.transitionSpec {
     slideInVertically(navigationBouncySpec) { it } + fadeIn() togetherWith fadeOut()
 }
-//val horizontalMetadata: Map<String, Any> = emptyMap()
-//TODO()
-val horizontalMetadata: Map<String, Any> = NavDisplay.transitionSpec {
-    slideInHorizontally(
-        tween(
-            durationMillis = 300,
-            easing = LinearOutSlowInEasing
-        )
-    ) { it } + fadeIn() togetherWith fadeOut()
-}
+
+val horizontalMetadata: Map<String, Any> =
+    metadata {
+        put(NavDisplay.TransitionKey) {
+            slideInHorizontally { it / 2 } + scaleIn(initialScale = 0.9f) + fadeIn() togetherWith slideOutHorizontally { -it / 4 } + fadeOut()
+        }
+
+        put(NavDisplay.PopTransitionKey) {
+            slideInHorizontally { -it / 4 } + fadeIn() togetherWith slideOutHorizontally { it / 2 } + scaleOut(targetScale = 0.9f) + fadeOut()
+        }
+
+        put(NavDisplay.PredictivePopTransitionKey) {
+            slideInHorizontally { -it / 4 } + fadeIn() togetherWith slideOutHorizontally { it / 2 } + scaleOut(targetScale = 0.9f) + fadeOut()
+        }
+    }
 
 val drawerMetadata: Map<String, Any> =
     metadata {
