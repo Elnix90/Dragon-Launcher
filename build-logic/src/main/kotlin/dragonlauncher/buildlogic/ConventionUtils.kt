@@ -11,7 +11,7 @@ internal const val TARGET_SDK = 37
 /**
  * Version code, will be used in the Gradle build to add it to the version name, but only at build time to avoid fdroid failures
  */
-internal const val VERSION_CODE = "Labyrinth"
+internal const val CODE_NAME = "Labyrinth"
 internal val JAVA_VERSION: JavaVersion = JavaVersion.VERSION_21
 
 internal const val KOTLIN_METADATA_VERSION = "2.3.0-Beta1"
