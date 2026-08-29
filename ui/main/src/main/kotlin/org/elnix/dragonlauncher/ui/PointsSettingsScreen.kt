@@ -5,7 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector2D
 import androidx.compose.animation.core.VectorConverter
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -54,7 +54,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.isSpecified
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastCoerceAtMost
 import io.github.elnix90.runtime.asState
@@ -191,10 +190,6 @@ fun PointsSettingsScreen(
     var closestHoveredPoint by remember { mutableStateOf<Point?>(null) }
     var closestHoveredTempOffset by remember { mutableStateOf<Offset?>(null) }
     var ableToLaunchHoverAction by remember { mutableStateOf(false) }
-
-    val hoveredPointRadialGradientProgress by animateDpAsState(
-        targetValue = if (ableToLaunchHoverAction) Constants.Settings.HOVER_GRADIENT_RADIUS else Dp.Unspecified
-    )
 
     var showMoreSheet by remember { mutableStateOf(false) }
     var showEditDefaultPoint by remember { mutableStateOf(false) }
@@ -803,14 +798,12 @@ fun PointsSettingsScreen(
                         )
                     }
 
-                    // Glow that indicates the merge
-                    if (closestHoveredTempOffset != null && ableToLaunchHoverAction && hoveredPointRadialGradientProgress.isSpecified) {
+                    val hoveredPointRadialGradientProgress by animateFloatAsState(if (ableToLaunchHoverAction) 1f else 0f)
+
+                    if (closestHoveredTempOffset != null && ableToLaunchHoverAction && hoveredPointRadialGradientProgress > 0f) {
                         GlowOverlay(
                             center = closestHoveredTempOffset!!,
-                            glow = CustomGlow(
-                                color = primaryColor,
-                                radius = hoveredPointRadialGradientProgress
-                            )
+                            progress = hoveredPointRadialGradientProgress
                         )
                     }
                 }

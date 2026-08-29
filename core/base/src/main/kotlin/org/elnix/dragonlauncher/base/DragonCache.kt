@@ -1,7 +1,5 @@
 package org.elnix.dragonlauncher.base
 
-import org.elnix.dragonlauncher.ICONS_TAG
-import io.github.elnix90.logging.logD
 import java.util.Collections
 import java.util.UUID
 
@@ -55,25 +53,6 @@ public abstract class DragonCache <K,V> (initialMaxSize: Int) {
             cacheTrigger.update { it + 1 }
             compute()
         }
-
-    /**
-     * Get or lazy compute, used in the `AppPreviewTitle` Composable, to delegate computing to the viewmodel,
-     * when it can't directly load the object, with the scope it has
-     *
-     * @param compute the function block used to compute the object, it returns [androidx.compose.ui.graphics.ImageBitmap]
-     * @return [androidx.compose.ui.graphics.ImageBitmap] the actual object, not null
-     */
-    public fun getOrLazyCompute(
-        key: K,
-        compute: () -> Unit
-    ): V? {
-        val result = items[key]
-        if (result == null) {
-            compute()
-            logD(ICONS_TAG) { "Failed to get object for $key. Computing it lazily\ncacheUUID: $cacheUUID\nmaxSize: $maxSize, size: $size" }
-        }
-        return result
-    }
 
     /** Compute simply a new object, don't return it */
     public fun compute(key: K, compute: () -> V) {

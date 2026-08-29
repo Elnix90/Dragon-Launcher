@@ -30,7 +30,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.runtime.asState
@@ -73,7 +72,6 @@ fun AngleLineTab(
 ) {
     val ctx = LocalContext.current
     val navigator = LocalNavigator.current
-    val density = LocalDensity.current
     val extraColors = LocalExtraColors.current
     val scope = rememberCoroutineScope()
 
@@ -120,8 +118,15 @@ fun AngleLineTab(
     val pickedRememberRotationEnd = endObject.resolveRotation(false, sweep)
 
     Canvas(Modifier.fillMaxSize()) {
-        val lineColor =
-            if (rgbLine) Color.hsv(sweepState.angle360(), 1f, 1f)
+        /**
+         * The line color uses a [Int] angle, that it converts to a float, to prevent tiny difference in colors.
+         * This method can only produce at most 360 different colors.
+         *
+         * This is needed by the [org.elnix.dragonlauncher.ui.helpers.customobjects.customGlowPaint] to provide optimizations when dealing with the low-level Paint APIs.
+         * This prevents the [org.elnix.dragonlauncher.ui.helpers.customobjects.PaintCache] to be made useless by too much different [android.graphics.Paint] requests
+         */
+        val lineColor: Color =
+            if (rgbLine) Color.hsv(sweepState.angle360().toInt().toFloat(), 1f, 1f)
             else extraColors.angleLine
 
         actionLine(

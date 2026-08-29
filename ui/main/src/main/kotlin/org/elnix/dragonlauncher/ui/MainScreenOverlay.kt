@@ -356,34 +356,39 @@ fun MainScreenOverlay(
                         }
 
 
-
                     val sweepAngle = controller.sweepAngleState.sweepAngle()
                     val angle360 = controller.sweepAngleState.angle360()
 
-                    val effectiveAngle: Float = if (useSnappedAngleOrRealAngle) {
-                        hoveredPoint?.offset?.angleDeg() ?: sweepAngle
-                    } else sweepAngle
-
-                    val effectiveAngle360 = if (useSnappedAngleOrRealAngle) {
-                        hoveredPoint?.offset?.angleDeg() ?: angle360
-                    } else angle360
-
-                    val sweep = effectiveAngle.toInt()
-
+                    val effectiveSweepAngle = if (useSnappedAngleOrRealAngle) {
+                        (hoveredPoint?.offset?.angleDeg() ?: sweepAngle).toInt()
+                    } else sweepAngle.toInt()
 
                     val pickedRememberShapeAngle = remember(angleObject.shape) { angleObject.shape.resolveShape() }
-                    val pickedRememberRotationAngle = angleObject.resolveRotation(true, sweep)
+                    val pickedRememberRotationAngle = angleObject.resolveRotation(true, effectiveSweepAngle)
 
                     val pickedRememberShapeStart = remember(startObject.shape) { startObject.shape.resolveShape() }
-                    val pickedRememberRotationStart = startObject.resolveRotation(true, sweep)
+                    val pickedRememberRotationStart = startObject.resolveRotation(true, effectiveSweepAngle)
 
                     val pickedRememberShapeEnd = remember(endObject.shape) { endObject.shape.resolveShape() }
-                    val pickedRememberRotationEnd = endObject.resolveRotation(false, sweep)
+                    val pickedRememberRotationEnd = endObject.resolveRotation(false, effectiveSweepAngle)
 
                     fun DrawScope.lineDrawing() {
+
+                        /**
+                         * The line color uses a [Int] angle, that it converts to a float, to prevent tiny difference in colors.
+                         * This method can only produce at most 360 different colors.
+                         *
+                         * This is needed by the [org.elnix.dragonlauncher.ui.helpers.customobjects.customGlowPaint] to provide optimizations when dealing with the low-level Paint APIs.
+                         * This prevents the [org.elnix.dragonlauncher.ui.helpers.customobjects.PaintCache] to be made useless by too much different [android.graphics.Paint] requests
+                         */
                         val lineColor: Color =
-                            if (rgbLine) Color.hsv(effectiveAngle360, 1f, 1f)
-                            else extraColors.angleLine
+                            if (rgbLine) {
+                                val effectiveAngle360 = if (useSnappedAngleOrRealAngle) {
+                                    (hoveredPoint?.offset?.angleDeg() ?: angle360).toInt()
+                                } else angle360.toInt()
+
+                                Color.hsv(effectiveAngle360.toFloat(), 1f, 1f)
+                            } else extraColors.angleLine
 
                         actionLine(
                             start = liveNestCenterForDraw,

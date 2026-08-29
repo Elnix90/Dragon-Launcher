@@ -16,7 +16,6 @@ import org.elnix.dragonlauncher.base.model.serializables.Point
 import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.ktx.rect
 import org.elnix.dragonlauncher.ktx.toPath
-import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowDrawOrder
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
 import kotlin.math.roundToInt
 
@@ -66,7 +65,6 @@ fun DrawScope.PointBg(
             path = path,
             color = borderColor,
             lineStrokeWidth = borderStroke,
-            drawOrder = GlowDrawOrder.First,
             glow = glow,
             erase = true,
             eraseColor = drawParams.eraseColor

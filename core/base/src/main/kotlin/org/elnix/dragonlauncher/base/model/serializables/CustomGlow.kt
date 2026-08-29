@@ -1,5 +1,6 @@
 package org.elnix.dragonlauncher.base.model.serializables
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
@@ -8,6 +9,7 @@ import kotlinx.serialization.Serializable
 import org.elnix.dragonlauncher.base.model.serializables.serializers.ColorSerializer
 import org.elnix.dragonlauncher.base.model.serializables.serializers.DpSerializer
 
+@Immutable
 @Serializable
 @SerialName("CustomGlow")
 public data class CustomGlow(

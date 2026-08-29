@@ -23,7 +23,6 @@ import org.elnix.dragonlauncher.base.resolveShape
 import org.elnix.dragonlauncher.base.theme.ExtraColors
 import org.elnix.dragonlauncher.base.theme.LocalExtraColors
 import org.elnix.dragonlauncher.ui.base.modifiers.conditional
-import org.elnix.dragonlauncher.ui.helpers.customobjects.GlowDrawOrder
 import org.elnix.dragonlauncher.ui.helpers.customobjects.drawPathGlow
 import org.elnix.dragonlauncher.ui.helpers.customobjects.erasePath
 
@@ -67,7 +66,6 @@ fun DrawScope.IntersectionShape(
                 color = shape.getColor(defaultShape, extraColors, isDefaultEditing),
                 lineStrokeWidth = shape.getBorderStroke(defaultShape, isDefaultEditing),
                 glow = shape.getGlow(defaultShape, isDefaultEditing),
-                drawOrder = GlowDrawOrder.First,
                 erase = false,
                 eraseColor = eraseColor
             )
