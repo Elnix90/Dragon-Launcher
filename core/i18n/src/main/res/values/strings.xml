@@ -1099,4 +1099,9 @@
     <string name="code_name_string">Code name</string>
     <string name="version_code">Version code</string>
     <string name="build_type">Build type</string>
+    <string name="note">Note</string>
+    <string name="new_string">New</string>
+    <string name="improvements">Improvements</string>
+    <string name="fixes">Fixes</string>
+    <string name="known_issues">Known issues</string>
 </resources>

@@ -1,0 +1,14 @@
+4.1.1 (Labyrinth)
+2026-08-29
+[NEW]
+* Dragon Launcher WIKI! Check on GitHub
+* Can customize angle a which points are snapped (defaults to 15°)
+* Complete UI refactor and old dialogs refresh
+[IMPROVED]
+* Revrote global navigation system to a viewmodel for performance and stability improvements
+* Transformed several dialogs and pickers to modal sheets
+ [FIXED]
+* Global UI tweaks
+* New navigation animations
+* Correctly clears search query
+* Corrected floating apps not openning
