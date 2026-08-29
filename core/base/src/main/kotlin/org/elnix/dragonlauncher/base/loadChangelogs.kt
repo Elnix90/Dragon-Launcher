@@ -1,10 +1,10 @@
 package org.elnix.dragonlauncher.base
 
 import android.content.Context
-import org.elnix.dragonlauncher.TAG
 import io.github.elnix90.logging.logE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.elnix.dragonlauncher.TAG
 import org.elnix.dragonlauncher.base.model.models.Update
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -40,7 +40,14 @@ public suspend fun loadChangelogs(
 
             if (lines.size < 2) return@mapNotNull null
 
-            val versionName = lines[0]
+            val fullVersion = lines[0]
+
+
+            val (versionName, codeName) = if (fullVersion.contains(" ")) {
+                fullVersion.substringBefore(' ') to fullVersion.substringAfter('(').substringBefore(')')
+            } else fullVersion to null
+
+
             val date = runCatching {
                 dateFormat.parse(lines[1])
             }.getOrElse { Date(0) }
@@ -73,6 +80,7 @@ public suspend fun loadChangelogs(
             Update(
                 versionCode = versionCode,
                 versionName = versionName,
+                codeName = codeName,
                 date = date,
                 note = note.takeIf { it.isNotEmpty() },
                 whatsNew = whatsNew.takeIf { it.isNotEmpty() },

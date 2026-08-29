@@ -15,13 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLocale
-import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.models.Update
+import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.components.Spacer
-import org.elnix.dragonlauncher.ui.components.CodeNameChip
-import org.elnix.dragonlauncher.ui.components.VersionCodeChip
-import org.elnix.dragonlauncher.ui.components.VersionNumberChip
+import org.elnix.dragonlauncher.ui.components.BaseVersionChip
 import java.text.SimpleDateFormat
 
 @Composable
@@ -44,61 +43,64 @@ fun UpdateCard(
         elevation = CardDefaults.cardElevation(3.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-
-            Text(
-                text = dateFormatter.format(update.date),
-                style = MaterialTheme.typography.labelMedium,
-            )
-
-            Spacer(4.dp)
-
             Row(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                VersionNumberChip()
-                CodeNameChip()
-                VersionCodeChip()
+                BaseVersionChip(
+                    text = update.versionName,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                update.codeName?.let { codeName ->
+                    BaseVersionChip(
+                        text = codeName,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+                BaseVersionChip(
+                    text = update.versionCode.toString(),
+                    color = MaterialTheme.colorScheme.tertiary
+                )
+                Spacer()
+                Text(
+                    text = dateFormatter.format(update.date),
+                    style = MaterialTheme.typography.labelMedium,
+                )
             }
 
-            Text(
-                text = "Version ${update.versionName} (${update.versionCode})",
-                style = MaterialTheme.typography.headlineSmallEmphasized
-            )
-
-            Spacer(12.dp)
+            Spacer(10.dp)
 
             update.note?.takeIf { it.isNotEmpty() }?.let {
                 UpdateSection(
-                    title = "Note",
+                    title = stringResource(R.string.note),
                     items = it
                 )
             }
 
             update.whatsNew?.takeIf { it.isNotEmpty() }?.let {
                 UpdateSection(
-                    title = "What’s new",
+                    title = stringResource(R.string.new_string),
                     items = it
                 )
             }
 
             update.improved?.takeIf { it.isNotEmpty() }?.let {
                 UpdateSection(
-                    title = "Improvements",
+                    title = stringResource(R.string.improvements),
                     items = it
                 )
             }
 
             update.fixed?.takeIf { it.isNotEmpty() }?.let {
                 UpdateSection(
-                    title = "Fixes",
+                    title = stringResource(R.string.fixes),
                     items = it
                 )
             }
 
             update.knownIssues?.takeIf { it.isNotEmpty() }?.let {
                 UpdateSection(
-                    title = "Known issues",
+                    title = stringResource(R.string.known_issues),
                     items = it
                 )
             }
@@ -115,8 +117,7 @@ private fun ColumnScope.UpdateSection(
 
     Text(
         text = title,
-        style = MaterialTheme.typography.titleSmall,
-        textDecoration = TextDecoration.Underline
+        style = MaterialTheme.typography.titleSmallEmphasized,
     )
 
     Spacer(4.dp)

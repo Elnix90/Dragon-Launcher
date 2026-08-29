@@ -7,6 +7,7 @@ import java.util.Date
 public data class Update(
     val versionCode: Int,
     val versionName: String,
+    val codeName: String?,
     val date: Date,
     val note: List<String>?,
     val knownIssues: List<String>?,
