@@ -16,9 +16,9 @@ public val AmoledDragonColorScheme: ColorScheme = ColorScheme(
     onSecondaryContainer = Color(0xFFCECECE),
 
     tertiary = Color(0xFFCB84EC),
-    onTertiary = Color(0xFFCECECE),
+    onTertiary = Color.Black,
     tertiaryContainer = Color(0xFFB070D9),
-    onTertiaryContainer = Color(0xFFCECECE),
+    onTertiaryContainer = Color.Black,
 
     background = Color.Black,
     onBackground = Color(0xFFCECECE),
