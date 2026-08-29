@@ -22,7 +22,7 @@
     <string name="extension_manual_install_desc">Si vous n\'avez pas d\'extension d\'installation, téléchargez l\'APK et sélectionnez-le ci-dessous pour l\'installer.</string>
     <string name="select_apk">Sélectionner l\'APK</string>
     <string name="system_default">Par défaut système</string>
-    <string name="version">Version</string>
+    <string name="version_arg">Version</string>
     <string name="export_cancelled">Exportation annulée</string>
     <string name="import_cancelled">Importation annulée</string>
     <string name="backup">Sauvegarde</string>

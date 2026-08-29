@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import org.elnix.dragonlauncher.base.loadChangelogs
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
-import org.elnix.dragonlauncher.base.utils.rememberVersionCode
+import org.elnix.dragonlauncher.base.utils.VersionsUtils.getVersionCode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 
@@ -17,7 +17,7 @@ import org.elnix.dragonlauncher.ui.helpers.settings.SettingsScaffold
 fun ChangelogsScreen() {
     val ctx = LocalContext.current
     val uriHandler = LocalUriHandler.current
-    val versionCode by rememberVersionCode()
+    val versionCode = ctx.getVersionCode()
 
     val updates by produceState(initialValue = emptyList()) {
         value = loadChangelogs(ctx, versionCode)

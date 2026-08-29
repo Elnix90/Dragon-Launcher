@@ -22,7 +22,7 @@
     <string name="extension_manual_install_desc">Wenn du keine Installationserweiterung hast, lade die APK herunter und wähle sie unten zum Installieren aus.</string>
     <string name="select_apk">APK auswählen</string>
     <string name="system_default">Systemstandard</string>
-    <string name="version">Version</string>
+    <string name="version_arg">Version</string>
     <string name="export_cancelled">Export abgebrochen</string>
     <string name="import_cancelled">Import abgebrochen</string>
     <string name="backup_restore_text">Sichern oder stellen Sie die Einstellungen und Aktionen der App wieder her, automatische Backups werden automatisch bei jedem App-Start / Pause / Beenden oder durch Drücken der \"Trigger\"-Schaltfläche unten ausgelöst</string>

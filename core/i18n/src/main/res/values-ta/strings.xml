@@ -24,7 +24,7 @@
     <string name="extension_manual_install_desc">உங்களிடம் நிறுவல் நீட்டிப்பு இல்லையென்றால், APK ஐப் பதிவிறக்கி, நிறுவுவதற்கு கீழே அதைத் தேர்ந்தெடுக்கவும்.</string>
     <string name="select_apk">APKஐத் தேர்ந்தெடுக்கவும்</string>
     <string name="system_default">கணினி இயல்புநிலை</string>
-    <string name="version">பதிப்பு</string>
+    <string name="version_arg">பதிப்பு</string>
     <string name="export_cancelled">ஏற்றுமதி ரத்து செய்யப்பட்டது</string>
     <string name="import_cancelled">இறக்குமதி ரத்து செய்யப்பட்டது</string>
     <string name="backup">காப்புப்பிரதி</string>
@@ -731,7 +731,7 @@
     <string name="enter_adb_command">ADB கட்டளையை உள்ளிடவும்</string>
     <string name="command_output">கட்டளை வெளியீடு</string>
     <string name="adb_command_leave_empty_notice">💡 கட்டளையை இயக்கும் போது கட்டளையிடும்படி காலியாக விடவும்</string>
-    <string name="dragon_launcher_headline">உங்கள் இடைமுகத்தை உங்களுடையதாக மாற்றுவதற்கான புதிய வழி</string>
+
     <string name="other">மற்றொன்று</string>
     <string name="kill_launcher">கில் லாஞ்சர்</string>
     <string name="multiply_or_subtract_opacity_in_live_nests">நேரடி கூடுகளில் ஒளிபுகாநிலையை பெருக்கவும் அல்லது கழிக்கவும்</string>

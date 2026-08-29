@@ -22,7 +22,7 @@
     <string name="extension_manual_install_desc">Si no tienes una extensión de instalación, descarga el APK y scelútalo abajo para instalar.</string>
     <string name="select_apk">Seleccionar APK</string>
     <string name="system_default">Sistema predeterminado</string>
-    <string name="version">Versión</string>
+    <string name="version_arg">Versión</string>
     <string name="export_cancelled">Exportación cancelada</string>
     <string name="import_cancelled">Importación cancelada</string>
     <string name="backup_restore_text">Respaldar o restaurar los ajustes y las acciones de la app, respaldos automáticos son automáticamente disparados en cada inicio/pausa/salida de la app o apretando el botón \"Disparador\" debajo</string>
@@ -750,7 +750,7 @@
     <string name="enter_adb_command">Introduzca comando ADB</string>
     <string name="command_output">Salida de comando</string>
     <string name="adb_command_leave_empty_notice">💡 Deje vacío para que se le solicite el comando al ejecutarlo</string>
-    <string name="dragon_launcher_headline">Una nueva forma de personalizar tu interfaz</string>
+
     <string name="other">Otro</string>
     <string name="kill_launcher">Matar Lanzador</string>
     <string name="multiply_or_subtract_opacity_in_live_nests">Multiplicar o restar la opacidad en nidos vivos</string>

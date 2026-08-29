@@ -1,8 +1,10 @@
 package org.elnix.dragonlauncher.ui.whatsnew
 
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
@@ -10,12 +12,16 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import org.elnix.dragonlauncher.base.model.models.Update
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.components.CodeNameChip
+import org.elnix.dragonlauncher.ui.components.VersionCodeChip
+import org.elnix.dragonlauncher.ui.components.VersionNumberChip
 import java.text.SimpleDateFormat
 
 @Composable
@@ -45,6 +51,15 @@ fun UpdateCard(
             )
 
             Spacer(4.dp)
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                VersionNumberChip()
+                CodeNameChip()
+                VersionCodeChip()
+            }
 
             Text(
                 text = "Version ${update.versionName} (${update.versionCode})",

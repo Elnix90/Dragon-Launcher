@@ -2,11 +2,10 @@ package org.elnix.dragonlauncher.ui.dialogs
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import io.github.elnix90.runtime.asStateNull
-import kotlinx.coroutines.launch
-import org.elnix.dragonlauncher.base.utils.rememberVersionCode
+import io.github.elnix90.runtime.asMutableStateNull
+import org.elnix.dragonlauncher.base.utils.VersionsUtils.getVersionCode
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.asState
 import org.elnix.dragonlauncher.ui.warning.GoogleWarningDialog
@@ -14,19 +13,15 @@ import org.elnix.dragonlauncher.ui.warning.GoogleWarningManager
 
 @Composable
 fun GoogleLockingWarningDialog() {
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val currentVersionCode by rememberVersionCode()
+    val versionCode = LocalContext.current.getVersionCode()
 
-    val lastSeenVersionCodeGoogleLockdownWarning by PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.asStateNull()
+    var lastSeenVersionCodeGoogleLockdownWarning by PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.asMutableStateNull()
     val showWarning by GoogleWarningManager.showWarningDialog.asState()
 
-    if (lastSeenVersionCodeGoogleLockdownWarning != null && (lastSeenVersionCodeGoogleLockdownWarning!! < currentVersionCode) && showWarning) {
+    if (lastSeenVersionCodeGoogleLockdownWarning != null && (lastSeenVersionCodeGoogleLockdownWarning!! < versionCode) && showWarning) {
         GoogleWarningDialog(
             onDismissRequest = {
-                scope.launch {
-                    PrivateSettingsStore.lastSeenVersionCodeGoogleLockdownWarning.set(ctx, currentVersionCode)
-                }
+                lastSeenVersionCodeGoogleLockdownWarning = versionCode
                 GoogleWarningManager.updateWarningDialog(false)
             }
         )

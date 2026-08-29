@@ -1,7 +1,9 @@
 package org.elnix.dragonlauncher.base.model.models
 
+import androidx.compose.runtime.Immutable
 import java.util.Date
 
+@Immutable
 public data class Update(
     val versionCode: Int,
     val versionName: String,

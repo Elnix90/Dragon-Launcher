@@ -24,7 +24,7 @@
     <string name="extension_manual_install_desc">إذا لم يكن لديك إضافة تثبيت، فقم بتنزيل ملف APK وحدده أدناه للتثبيت.</string>
     <string name="select_apk">حدد ملف APK</string>
     <string name="system_default">افتراضي النظام</string>
-    <string name="version">الإصدار</string>
+    <string name="version_arg">الإصدار</string>
     <string name="export_cancelled">تم إلغاء التصدير</string>
     <string name="import_cancelled">تم إلغاء الاستيراد</string>
     <string name="backup">النسخ الاحتياطي</string>
@@ -141,7 +141,7 @@
     <string name="enter_adb_command">أدخل أمر ADB</string>
     <string name="command_output">مخرجات الأمر</string>
     <string name="adb_command_leave_empty_notice">💡 اتركه فارغاً ليُطلب منك الأمر عند تشغيله</string>
-    <string name="dragon_launcher_headline">طريقة جديدة لجعل واجهتك ملكاً لك</string>
+
     <string name="other">أخرى</string>
     <string name="kill_launcher">إغلاق المشغل</string>
     <string name="multiply_or_subtract_opacity_in_live_nests">ضرب أو طرح الشفافية في الأعشاش المباشرة</string>

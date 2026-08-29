@@ -14,7 +14,7 @@
     <string name="color_selector">Seletor de cores</string>
     <string name="debug">Depuração</string>
     <string name="system_default">Sistema Padrão</string>
-    <string name="version">Versão</string>
+    <string name="version_arg">Versão</string>
     <string name="export_cancelled">Exportação Cancelada</string>
     <string name="import_cancelled">Importação Cancelada</string>
     <string name="backup_restore_text">Faça backup ou restaure as configurações e ações do app, backups automáticos são acionados automaticamente a cada iniciação/pausa/saída do app ou pressionando o botão \"Trigger\" abaixo</string>

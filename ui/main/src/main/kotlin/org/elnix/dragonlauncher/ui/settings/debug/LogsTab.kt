@@ -52,10 +52,10 @@ import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.createShareableFile
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.shareContent
 import org.elnix.dragonlauncher.base.utils.DateUtils.formatDateTime
+import org.elnix.dragonlauncher.base.utils.VersionsUtils.getCodeName
+import org.elnix.dragonlauncher.base.utils.VersionsUtils.getVersionNumber
 import org.elnix.dragonlauncher.base.utils.detectSystemLauncher
 import org.elnix.dragonlauncher.base.utils.rememberIsDefaultLauncher
-import org.elnix.dragonlauncher.base.utils.rememberVersionCode
-import org.elnix.dragonlauncher.base.utils.rememberVersionName
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ktx.showToast
 import org.elnix.dragonlauncher.models.DragonLogViewModel
@@ -103,9 +103,10 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
     am.getMemoryInfo(memInfo)
     val currentLauncher = ctx.detectSystemLauncher()
     val isDefault by rememberIsDefaultLauncher()
-    val versionName by rememberVersionName()
-    val versionCode by rememberVersionCode()
-
+    val versionNumber = ctx.getVersionNumber()
+    val codeName = ctx.getCodeName()
+    val versionCode = ctx.getVersionNumber()
+""
     // Build extension list by parsing the registry JSON directly (robust to field names)
     var finalExtensionText = "No extensions installed"
     try {
@@ -160,7 +161,7 @@ fun LogsTab(dragonLogViewModel: DragonLogViewModel = activityViewModel()) {
                 )
             )
             appendLine("Default Launcher: ${if (isDefault) "Yes" else "No ($currentLauncher)"}")
-            appendLine("App version: $versionName ($versionCode)")
+            appendLine("App version: $versionNumber ($codeName) ($versionCode)")
 
             appendLine("\n EXTENSIONS ")
             appendLine(finalExtensionText)

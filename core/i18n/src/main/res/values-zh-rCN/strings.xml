@@ -24,7 +24,7 @@
     <string name="extension_manual_install_desc">如果您没有安装扩展，请下载 APK 并从下方选择进行安装。</string>
     <string name="select_apk">选择 APK</string>
     <string name="system_default">系统默认</string>
-    <string name="version">版本</string>
+    <string name="version_arg">版本</string>
     <string name="export_cancelled">导出已取消</string>
     <string name="import_cancelled">导入已取消</string>
     <string name="backup">备份与恢复</string>
@@ -731,7 +731,7 @@
     <string name="enter_adb_command">输入待执行的 ADB 核心命令</string>
     <string name="command_output">终端回显输出日志结果</string>
     <string name="adb_command_leave_empty_notice">💡 极客小窍门：如果此处选择保持明智的留空，那么后续在每次真正用手势触发去执行它时，系统都会即时弹出一个输入框当面询问您此时此刻想塞入什么命令</string>
-    <string name="dragon_launcher_headline">打破传统交互，让系统的灵魂真正归你调遣</string>
+
     <string name="other">其余未分类杂项</string>
     <string name="kill_launcher">强退并彻底杀死本桌面进程</string>
     <string name="multiply_or_subtract_opacity_in_live_nests">深层嵌套不透明度算法切换（乘法 vs 减法）</string>

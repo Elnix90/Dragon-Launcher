@@ -14,7 +14,7 @@
     <string name="color_selector">カラーセレクター</string>
     <string name="debug">デバッグ</string>
     <string name="system_default">システムデフォルト</string>
-    <string name="version">バージョン %1$s</string>
+    <string name="version_arg">バージョン %1$s</string>
     <string name="export_cancelled">エクスポート中止</string>
     <string name="import_cancelled">インポート中止</string>
     <string name="backup_restore_text">設定やアプリの操作をバックアップまたは復元し、各アプリの起動・一時停止・終了時、または下の「トリガー」ボタンを押すことで自動バックアップが発動します</string>
@@ -773,7 +773,7 @@
     <string name="enter_adb_command">ADBコマンドを入力</string>
     <string name="command_output">コマンドの出力</string>
     <string name="adb_command_leave_empty_notice">💡空欄のままにしておくと、実行時にコマンドの入力を求められます</string>
-    <string name="dragon_launcher_headline">インターフェースを自分好みにカスタマイズする新しい方法</string>
+
     <string name="other">他</string>
     <string name="kill_launcher">ランチャーを強制終了</string>
     <string name="multiply_or_subtract_opacity_in_live_nests">ライブネストの透明度変化に減算を使用</string>

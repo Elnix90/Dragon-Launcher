@@ -14,7 +14,7 @@
     <string name="color_selector">컬러 셀렉터</string>
     <string name="debug">디버그</string>
     <string name="system_default">시스템 기본 상태</string>
-    <string name="version">버전</string>
+    <string name="version_arg">버전</string>
     <string name="export_cancelled">수출 취소</string>
     <string name="import_cancelled">수입 취소</string>
     <string name="backup_restore_text">앱의 설정과 동작을 백업하거나 복원하세요. 자동 백업은 앱 실행/일시정지/종료 시 자동으로 작동하거나 아래의 \"트리거\" 버튼을 누르면 작동합니다</string>

@@ -2,7 +2,6 @@ package org.elnix.dragonlauncher.ui
 
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -10,16 +9,20 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.annotation.DrawableRes
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,13 +31,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ButtonGroupScope
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -54,6 +58,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.elnix90.core.util.clearAllData
+import io.github.elnix90.runtime.asMutableState
 import io.github.elnix90.runtime.asState
 import kotlinx.coroutines.launch
 import org.elnix.dragonlauncher.base.Constants.URLs.CODEBERG_REPO_LINK
@@ -78,21 +83,23 @@ import org.elnix.dragonlauncher.base.model.models.openInNew
 import org.elnix.dragonlauncher.base.navigation.NavigationRoute
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
 import org.elnix.dragonlauncher.base.utils.LifecycleUtils.closeApp
+import org.elnix.dragonlauncher.base.utils.VersionsUtils.getVersionCode
+import org.elnix.dragonlauncher.base.utils.VersionsUtils.getVersionNumber
 import org.elnix.dragonlauncher.base.utils.VersionsUtils.isBetaVersion
-import org.elnix.dragonlauncher.base.utils.rememberVersionCode
-import org.elnix.dragonlauncher.base.utils.rememberVersionName
 import org.elnix.dragonlauncher.i18n.R
-import org.elnix.dragonlauncher.ktx.alphaMultiplier
-import org.elnix.dragonlauncher.ktx.showToast
-import org.elnix.dragonlauncher.models.PointsViewModel
 import org.elnix.dragonlauncher.models.SecurityViewModel
 import org.elnix.dragonlauncher.settings.stores.map.DebugSettingsStore
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.activityViewModel
 import org.elnix.dragonlauncher.ui.base.asState
+import org.elnix.dragonlauncher.ui.base.components.Spacer
 import org.elnix.dragonlauncher.ui.components.BetaVersionType
 import org.elnix.dragonlauncher.ui.components.BetaVersionWarning
+import org.elnix.dragonlauncher.ui.components.BuildTypeChip
+import org.elnix.dragonlauncher.ui.components.CodeNameChip
 import org.elnix.dragonlauncher.ui.components.LocalePickerSheet
+import org.elnix.dragonlauncher.ui.components.VersionCodeChip
+import org.elnix.dragonlauncher.ui.components.VersionNumberChip
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.dragon.components.DragonSettingsGroup
 import org.elnix.dragonlauncher.ui.helpers.settings.ContributorItem
@@ -107,21 +114,18 @@ import org.elnix.dragonlauncher.ui.warning.GoogleWarningReminder
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun SettingsScreen(
-    securityViewModel: SecurityViewModel = activityViewModel(),
-    pointsViewModel: PointsViewModel = activityViewModel()
+    securityViewModel: SecurityViewModel = activityViewModel()
 ) {
     val ctx = LocalContext.current
     val uriHandler = LocalUriHandler.current
     val navigator = LocalNavigator.current
     val scope = rememberCoroutineScope()
 
-    val versionCode by rememberVersionCode()
-    val versionName by rememberVersionName()
+    val versionCode = ctx.getVersionCode()
+    val versionName = ctx.getVersionNumber()
 
-    val isDebugModeEnabled by DebugSettingsStore.debugEnabled.asState()
+    var isDebugModeEnabled by DebugSettingsStore.debugEnabled.asMutableState()
 
-    var toast by remember { mutableStateOf<Toast?>(null) }
-    var timesClickedOnVersion by remember { mutableIntStateOf(0) }
 
     var showLanguageSheet by remember { mutableStateOf(false) }
 
@@ -130,8 +134,6 @@ fun SettingsScreen(
     val showBetaVersionWarning = remember(hideBetaVersionWarning) {
         ctx.isBetaVersion() && !hideBetaVersionWarning
     }
-
-    val nestId by pointsViewModel.nestsNavigationService.currentNestId.collectAsState()
 
     val signatureMatched by securityViewModel.signatureMatched.asState()
 
@@ -175,7 +177,10 @@ fun SettingsScreen(
                 icon = R.drawable.web,
                 onClick = {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !forceAppLanguageSelector) {
-                        openSystemLanguageSettings(ctx)
+                        val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS).apply {
+                            data = Uri.fromParts("package", ctx.packageName, null)
+                        }
+                        ctx.startActivity(intent)
                     } else {
                         showLanguageSheet = true
                     }
@@ -297,6 +302,7 @@ fun SettingsScreen(
 
 
 
+
         DragonSettingsGroup(R.string.app_developer) {
             ContributorItem(
                 name = "Elnix90",
@@ -335,108 +341,149 @@ fun SettingsScreen(
                 description = stringResource(R.string.federico_desc),
                 github("https://github.com/federicobuttafuori"),
             )
+        }
 
+        DragonSettingsGroup(R.string.translators) {
+            val translators = listOf(
+                SocialLink("https://github.com/manmen2414", R.mipmap.mameeenn),
+                SocialLink("https://github.com/acress1", R.mipmap.acress1),
+                SocialLink("https://github.com/TamilNeram", R.mipmap.tamilneram),
+                SocialLink("https://github.com/sudo-py-dev", R.mipmap.sudopydev)
+            )
 
-            DragonSettingsGroup(R.string.translators) {
-                val translators = listOf(
-                    SocialLink("https://github.com/manmen2414", R.mipmap.mameeenn),
-                    SocialLink("https://github.com/acress1", R.mipmap.acress1),
-                    SocialLink("https://github.com/TamilNeram", R.mipmap.tamilneram),
-                    SocialLink("https://github.com/sudo-py-dev", R.mipmap.sudopydev)
-                )
-
-                Column(
-                    modifier = Modifier
-                        .dragonSettingGroup(),
-                    verticalArrangement = Arrangement.spacedBy(15.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    translators.chunked(7).forEach { translatorRow -> // Magic number hehe (it simply fits the screen perfectly
-                        Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
-                            translatorRow.forEach { translator ->
-                                Image(
-                                    painter = painterResource(id = translator.icon),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(40.dp)
-                                        .clip(CircleShape)
-                                        .clickable {
-                                            uriHandler.openUri(translator.url)
-                                        },
-                                    contentScale = ContentScale.Fit
-                                )
-                            }
+            Column(
+                modifier = Modifier.dragonSettingGroup(),
+                verticalArrangement = Arrangement.spacedBy(15.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                translators.chunked(7).forEach { translatorRow -> // Magic number hehe (it simply fits the screen perfectly
+                    Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
+                        translatorRow.forEach { translator ->
+                            Image(
+                                painter = painterResource(id = translator.icon),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                                    .clickable {
+                                        uriHandler.openUri(translator.url)
+                                    },
+                                contentScale = ContentScale.Fit
+                            )
                         }
                     }
                 }
             }
         }
 
-
-        // Version name (clickable to access debug / copy)
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            val infoStyle = MaterialTheme.typography.labelSmall
-            val infoColor = MaterialTheme.colorScheme.onBackground.alphaMultiplier(0.7f)
-
-            val debugModeAlreadyEnabledText =
-                stringResource(R.string.debug_mode_already_enabled)
-            val versionNameCopiedToClipboard =
-                stringResource(R.string.copied_to_clipboard)
-
-            Text(
-                text = "${stringResource(R.string.app_name)} $versionName ($versionCode)",
-                style = infoStyle,
-                textAlign = TextAlign.Center,
-                color = infoColor,
+        Card(shape = MaterialTheme.shapes.extraLarge) {
+            Column(
                 modifier = Modifier
-                    .padding(top = 16.dp, bottom = 16.dp)
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .aspectRatio(1f)
+                            .size(140.dp)
+                            .background(MaterialTheme.colorScheme.background, MaterialShapes.Cookie9Sided.toShape())
+                            .padding(20.dp)
                     ) {
-                        toast?.cancel()
-
-                        when {
-
-                            timesClickedOnVersion == 0 -> {
-                                ctx.copyToClipboard(versionName)
-                                ctx.showToast(versionNameCopiedToClipboard)
-                                timesClickedOnVersion += 1
-                            }
-
-                            isDebugModeEnabled -> {
-                                toast = Toast.makeText(
-                                    ctx,
-                                    debugModeAlreadyEnabledText,
-                                    Toast.LENGTH_SHORT
-                                )
-                                toast?.show()
-                            }
-
-
-                            timesClickedOnVersion < 6 -> {
-                                timesClickedOnVersion++
-                                if (timesClickedOnVersion > 2) {
-                                    toast = Toast.makeText(
-                                        ctx,
-                                        "${7 - timesClickedOnVersion} more times to enable Debug Mode",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                }
-                                toast?.show()
-                            }
-
-                            else -> {
-                                scope.launch { DebugSettingsStore.debugEnabled.set(ctx, true) }
-                            }
-                        }
+                        Image(
+                            painter = painterResource(R.mipmap.dragon_launcher_foreground),
+                            contentDescription = stringResource(R.string.app_name),
+                            modifier = Modifier.fillMaxSize()
+                        )
                     }
-            )
+                    Spacer(16.dp)
+
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+
+                        var toast by remember { mutableStateOf<Toast?>(null) }
+                        var timesClickedOnVersion by remember { mutableIntStateOf(0) }
+
+                        TextRow(stringResource(R.string.version)) {
+                            VersionNumberChip(
+                                modifier = Modifier
+                                    .clickable(
+                                        indication = null,
+                                        interactionSource = remember { MutableInteractionSource() }
+                                    ) {
+                                        toast?.cancel()
+
+                                        when {
+                                            timesClickedOnVersion == 0 -> {
+                                                timesClickedOnVersion += 1
+
+                                                ctx.copyToClipboard(versionName)
+                                                toast = Toast.makeText(
+                                                    ctx,
+                                                    ctx.getString(R.string.copied_to_clipboard),
+                                                    Toast.LENGTH_SHORT
+                                                )
+                                                toast?.show()
+                                            }
+
+                                            isDebugModeEnabled -> {
+                                                toast = Toast.makeText(
+                                                    ctx,
+                                                    ctx.getString(R.string.debug_mode_already_enabled),
+                                                    Toast.LENGTH_SHORT
+                                                )
+                                                toast?.show()
+                                            }
+
+
+                                            timesClickedOnVersion < 6 -> {
+                                                timesClickedOnVersion++
+                                                if (timesClickedOnVersion > 2) {
+                                                    toast = Toast.makeText(
+                                                        ctx,
+                                                        "${7 - timesClickedOnVersion} more times to enable Debug Mode",
+                                                        Toast.LENGTH_SHORT
+                                                    )
+                                                }
+                                                toast?.show()
+                                            }
+
+                                            else -> isDebugModeEnabled = true
+                                        }
+                                    }
+                            )
+                        }
+
+                        TextRow(stringResource(R.string.code_name_string)) { CodeNameChip() }
+                        TextRow(stringResource(R.string.version_code)) { VersionCodeChip() }
+                        TextRow(stringResource(R.string.build_type)) { BuildTypeChip() }
+                    }
+                }
+
+                Text(
+                    text = stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.titleLargeEmphasized,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = stringResource(R.string.app_tagline),
+                    style = MaterialTheme.typography.bodyLargeEmphasized,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 
@@ -446,10 +493,19 @@ fun SettingsScreen(
 }
 
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
-private fun openSystemLanguageSettings(ctx: Context) {
-    val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS).apply {
-        data = Uri.fromParts("package", ctx.packageName, null)
+@Composable
+private fun ColumnScope.TextRow(
+    text: String,
+    tag: @Composable RowScope.() -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
+        Text(
+            text = "$text:",
+            style = MaterialTheme.typography.bodySmallEmphasized
+        )
+        tag()
     }
-    ctx.startActivity(intent)
 }

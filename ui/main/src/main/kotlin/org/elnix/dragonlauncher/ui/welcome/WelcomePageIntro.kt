@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -28,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.ui.base.components.Spacer
+import org.elnix.dragonlauncher.ui.components.VersionNumberChip
 import org.elnix.dragonlauncher.ui.compositionslocals.LocalNavigator
 import org.elnix.dragonlauncher.ui.settings.backup.ImportBackupButton
 import kotlin.time.Duration.Companion.milliseconds
@@ -80,21 +80,15 @@ fun WelcomePageIntro(
             textAlign = TextAlign.Center
         )
 
-        Text(
-            text = stringResource(R.string.version, versionName),
-            color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 12.sp,
-            textAlign = TextAlign.Center,
-            fontStyle = FontStyle.Italic
-        )
+        VersionNumberChip()
 
         Spacer(12.dp)
 
         Text(
-            stringResource(R.string.dragon_launcher_headline),
+            stringResource(id = R.string.app_tagline),
             color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.bodyLargeEmphasized,
             textAlign = TextAlign.Center,
-            fontSize = 18.sp
         )
 
         Spacer(15.dp)

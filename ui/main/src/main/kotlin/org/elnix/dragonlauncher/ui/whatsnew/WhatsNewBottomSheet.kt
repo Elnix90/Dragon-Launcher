@@ -8,7 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -16,12 +16,11 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import io.github.elnix90.runtime.asState
-import kotlinx.coroutines.launch
+import io.github.elnix90.runtime.asMutableState
 import org.elnix.dragonlauncher.base.Constants.URLs.GITHUB_REPO_LINK
 import org.elnix.dragonlauncher.base.loadChangelogs
 import org.elnix.dragonlauncher.base.utils.CopyPasteUtils.copyToClipboard
-import org.elnix.dragonlauncher.base.utils.rememberVersionCode
+import org.elnix.dragonlauncher.base.utils.VersionsUtils.getVersionCode
 import org.elnix.dragonlauncher.i18n.R
 import org.elnix.dragonlauncher.settings.stores.map.PrivateSettingsStore
 import org.elnix.dragonlauncher.ui.base.components.Spacer
@@ -33,10 +32,9 @@ import org.elnix.dragonlauncher.ui.dragon.components.DragonModalBottomSheet
 fun WhatsNewBottomSheet() {
     val ctx = LocalContext.current
     val uriHandler = LocalUriHandler.current
-    val scope = rememberCoroutineScope()
 
-    val lastSeenVersionCodeWhatsNew by PrivateSettingsStore.lastSeenVersionCodeWhatsNew.asState()
-    val versionCode by rememberVersionCode()
+    var lastSeenVersionCodeWhatsNew by PrivateSettingsStore.lastSeenVersionCodeWhatsNew.asMutableState()
+    val versionCode = ctx.getVersionCode()
 
     if (lastSeenVersionCodeWhatsNew >= versionCode) return
 
@@ -45,11 +43,7 @@ fun WhatsNewBottomSheet() {
     }
 
     DragonModalBottomSheet(
-        onDismissRequest = {
-            scope.launch {
-                PrivateSettingsStore.lastSeenVersionCodeWhatsNew.set(ctx, versionCode)
-            }
-        }
+        onDismissRequest = { lastSeenVersionCodeWhatsNew = versionCode }
     ) {
         LazyColumn {
             item {

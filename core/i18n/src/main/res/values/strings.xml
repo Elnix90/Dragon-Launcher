@@ -24,7 +24,8 @@
     <string name="extension_manual_install_desc">If you don\'t have an installation extension, download the APK and select it below to install.</string>
     <string name="select_apk">Select APK</string>
     <string name="system_default">System Default</string>
-    <string name="version">Version %1$s</string>
+    <string name="version">Version</string>
+    <string name="version_arg">Version %1$s</string>
     <string name="export_cancelled">Export Cancelled</string>
     <string name="import_cancelled">Import Cancelled</string>
     <string name="backup">Backup</string>
@@ -840,7 +841,7 @@
     <string name="enter_adb_command">Enter ADB Command</string>
     <string name="command_output">Command output</string>
     <string name="adb_command_leave_empty_notice">💡 Leave empty to be prompted for the command when running it</string>
-    <string name="dragon_launcher_headline">A new way to make your interface yours</string>
+
     <string name="other">Other</string>
     <string name="kill_launcher">Kill Launcher</string>
     <string name="multiply_or_subtract_opacity_in_live_nests">Multiply or subtract opacity in live nests</string>
@@ -1093,4 +1094,9 @@
     <string name="use_snapped_angle_or_real_angle">Use snapped angle or real angle</string>
     <string name="use_snapped_angle_or_real_angle_desc">When using \"snap to point\", the computed angle is the real angle or the angle at which the selected point belongs?</string>
     <string name="widget_not_found">Widget not found</string>
+    <string name="by_elnix">by Elnix90</string>
+    <string name="app_tagline">Fast Gesture based android launcher</string>
+    <string name="code_name_string">Code name</string>
+    <string name="version_code">Version code</string>
+    <string name="build_type">Build type</string>
 </resources>
