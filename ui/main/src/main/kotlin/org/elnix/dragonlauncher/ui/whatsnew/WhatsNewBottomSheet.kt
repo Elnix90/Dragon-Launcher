@@ -1,9 +1,7 @@
 package org.elnix.dragonlauncher.ui.whatsnew
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -52,22 +50,19 @@ fun WhatsNewBottomSheet() {
             }
         }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-        ) {
-            Text(
-                text = stringResource(R.string.whats_new),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
+        LazyColumn {
+            item {
+                Text(
+                    text = stringResource(R.string.whats_new),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+                Spacer(12.dp)
+            }
 
-            Spacer(12.dp)
-
-            updates.forEach { update ->
+           items(updates) { update ->
                 val updateRegex: Regex = "[\\d-.]+".toRegex()
                 val matchResult = updateRegex.find(update.versionName)
 
