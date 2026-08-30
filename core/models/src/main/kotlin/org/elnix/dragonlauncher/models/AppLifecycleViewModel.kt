@@ -66,7 +66,6 @@ public class AppLifecycleViewModel @Inject constructor(
      * Update the value, to be able to compute on return
      * */
     public fun updateLastInteraction() {
-        logD(TAG) { "Last interaction updated!" }
         lastInteraction.value = System.currentTimeMillis()
     }
 
